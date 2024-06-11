@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2023-05-03/DataLakeStorage.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/794c6178bc06c6c9dceb139e9f9d1b35b1a99701/specification/storage/data-plane/Azure.Storage.Files.DataLake/preview/2025-01-05/DataLakeStorage.json
 output-folder: ../azure/storage/filedatalake/_generated
 namespace: azure.storage.filedatalake
 no-namespace-folders: true

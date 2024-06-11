@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-lines,docstring-keyword-should-match-keyword-only
 
 from io import BytesIO
 from typing import (
@@ -18,10 +18,11 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
-from ._shared.request_handlers import get_length, read_length
+from ._shared.request_handlers import get_length
 from ._shared.response_handlers import return_response_headers
-from ._shared.uploads import IterStreamer
+from ._shared.uploads import IterStreamer, prepare_upload_data
 from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.validation import ChecksumAlgorithm, parse_validation_option, SM_HEADER_V1_CRC64
 from ._upload_helper import upload_datalake_file
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
@@ -375,11 +376,11 @@ class DataLakeFileClient(PathClient):
         self._datalake_client_for_blob_operation.path \
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
-    def _upload_options(  # pylint:disable=too-many-statements
-            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            **kwargs
-        ) -> Dict[str, Any]:
+    def _upload_options(
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs
+    ) -> Dict[str, Any]:
 
         encoding = kwargs.pop('encoding', 'UTF-8')
         if isinstance(data, str):
@@ -400,7 +401,7 @@ class DataLakeFileClient(PathClient):
         else:
             raise TypeError(f"Unsupported data type: {type(data)}")
 
-        validate_content = kwargs.pop('validate_content', False)
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
@@ -424,11 +425,11 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace
     def upload_data(
-            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            overwrite: Optional[bool] = False,
-            **kwargs
-        ) -> Dict[str, Any]:
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        length: Optional[int] = None,
+        overwrite: Optional[bool] = False,
+        **kwargs
+    ) -> Dict[str, Any]:
         """
         Upload data to a file.
 
@@ -469,15 +470,27 @@ class DataLakeFileClient(PathClient):
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the file. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword str etag:
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
@@ -510,22 +523,20 @@ class DataLakeFileClient(PathClient):
 
     @staticmethod
     def _append_data_options(
-            data, # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            offset, # type: int
-            scheme, # type: str
-            length=None, # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        offset: int,
+        scheme: str,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        encoding = kwargs.pop('encoding', 'utf-8')
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
 
-        if isinstance(data, str):
-            data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
+        structured_type, structured_length = None, None
+        if validate_content == ChecksumAlgorithm.CRC64:
+            structured_type = SM_HEADER_V1_CRC64
+            structured_length = data_length
 
         cpk_info = get_cpk_info(scheme, kwargs)
         kwargs.update(get_lease_action_properties(kwargs))
@@ -533,20 +544,23 @@ class DataLakeFileClient(PathClient):
         options = {
             'body': data,
             'position': offset,
-            'content_length': length,
-            'validate_content': kwargs.pop('validate_content', False),
+            'content_length': content_length,
+            'validate_content': True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None,
             'cpk_info': cpk_info,
+            'structured_body_type': structured_type,
+            'structured_content_length': structured_length,
             'timeout': kwargs.pop('timeout', None),
             'cls': return_response_headers}
         options.update(kwargs)
         return options
 
     @distributed_trace
-    def append_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                    offset,  # type: int
-                    length=None,  # type: Optional[int]
-                    **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
+    def append_data(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        offset: int,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, "datetime", int]]:
         """Append data to the file.
 
         :param data: Content to be appended to file
@@ -556,13 +570,27 @@ class DataLakeFileClient(PathClient):
         :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the block content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https as https (the default)
-            will already validate. Note that this MD5 hash is not stored with the
-            file.
+        :keyword validate_content:
+            Enables checksum validation for the transfer. Any hash calculated is NOT stored with the blob.
+            The possible options for content validation are as follows:
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease_action:
             Used to perform lease operations along with appending data.
 

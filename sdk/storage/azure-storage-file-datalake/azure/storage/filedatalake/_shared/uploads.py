@@ -4,21 +4,66 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from collections import namedtuple
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
 from math import ceil
 from threading import Lock
+from typing import AnyStr, IO, Iterable, Optional, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
-from .request_handlers import get_length
+from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
+from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
+from .validation import calculate_crc64_bytes, calculate_md5, ChecksumAlgorithm
 
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
+
+
+def prepare_upload_data(
+    data: Union[bytes, str, IO[bytes], Iterable[AnyStr]],
+    encoding: str,
+    data_length: Optional[int],
+    validate_content: Union[bool, str, None]
+) -> Tuple[Union[bytes, IO[bytes]], int, int]:
+    # Trim the incoming data per provided length
+    if data_length is not None and isinstance(data, (str, bytes)) and data_length != len(data):
+        data = data[:data_length]
+    # Encode raw string data
+    if isinstance(data, str):
+        data = data.encode(encoding)
+
+    # Attempt to determine length of data if it's not provided
+    if data_length is None:
+        data_length = get_length(data)
+    # If we still can't get the length, read all the data into memory
+    if data_length is None:
+        data_length, data = read_length(data)
+
+    structured_message = validate_content == ChecksumAlgorithm.CRC64
+    if isinstance(data, bytes):
+        # Structured message requires a stream
+        if structured_message:
+            data = BytesIO(data)
+    elif hasattr(data, 'read'):
+        # TODO: Block IO[str] here?
+        pass
+    elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
+        data = IterStreamer(data, encoding=encoding)
+    else:
+        raise TypeError(f"Unsupported data type: {type(data)}")
+
+    content_length = data_length
+    if structured_message:
+        data = StructuredMessageEncodeStream(data, data_length, StructuredMessageProperties.CRC64)
+        content_length = len(data)
+
+    return data, data_length, content_length
 
 
 def _parallel_uploads(executor, uploader, pending, running):
@@ -47,7 +92,6 @@ def upload_data_chunks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
-        validate_content=None,
         progress_hook=None,
         **kwargs):
 
@@ -62,7 +106,6 @@ def upload_data_chunks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
-        validate_content=validate_content,
         progress_hook=progress_hook,
         **kwargs)
     if parallel:
@@ -117,6 +160,24 @@ def upload_substream_blocks(
     return []
 
 
+class ChunkInfo:
+    offset: int
+    data: bytes
+    length: int
+    md5: Optional[bytes] = None
+    crc64: Optional[bytes] = None
+
+    def __init__(self, offset: int, data: bytes, checksum_algorithm: Optional[Union[bool, str]]):
+        self.offset = offset
+        self.data = data
+        self.length = len(data)
+
+        if checksum_algorithm == ChecksumAlgorithm.MD5:
+            self.md5 = calculate_md5(self.data)
+        if checksum_algorithm == ChecksumAlgorithm.CRC64:
+            self.crc64 = calculate_crc64_bytes(self.data)
+
+
 class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
@@ -128,12 +189,14 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             encryptor=None,
             padder=None,
             progress_hook=None,
+            validate_content=None,
             **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
         self.stream = stream
         self.parallel = parallel
+        self.validate_content = validate_content
 
         # Stream management
         self.stream_lock = Lock() if parallel else None
@@ -150,6 +213,8 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         self.etag = None
         self.last_modified = None
         self.request_options = kwargs
+        # Legacy support for bool - Pass True through to pipeline
+        self.request_options['validate_content'] = self.validate_content if self.validate_content is True else None
 
     def get_chunk_streams(self):
         index = 0
@@ -176,21 +241,21 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                     data = self.padder.update(data)
                 if self.encryptor:
                     data = self.encryptor.update(data)
-                yield index, data
+                yield ChunkInfo(index, data, self.validate_content)
             else:
                 if self.padder:
                     data = self.padder.update(data) + self.padder.finalize()
                 if self.encryptor:
                     data = self.encryptor.update(data) + self.encryptor.finalize()
                 if data:
-                    yield index, data
+                    yield ChunkInfo(index, data, self.validate_content)
                 break
             index += len(data)
 
-    def process_chunk(self, chunk_data):
-        chunk_bytes = chunk_data[1]
-        chunk_offset = chunk_data[0]
-        return self._upload_chunk_with_progress(chunk_offset, chunk_bytes)
+    def process_chunk(self, chunk_info):
+        range_id = self._upload_chunk(chunk_info)
+        self._update_progress(chunk_info.length)
+        return range_id
 
     def _update_progress(self, length):
         if self.progress_lock is not None:
@@ -202,13 +267,8 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         if self.progress_hook:
             self.progress_hook(self.progress_total, self.total_size)
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info):
         raise NotImplementedError("Must be implemented by child class.")
-
-    def _upload_chunk_with_progress(self, chunk_offset, chunk_data):
-        range_id = self._upload_chunk(chunk_offset, chunk_data)
-        self._update_progress(len(chunk_data))
-        return range_id
 
     def get_substream_blocks(self):
         assert self.chunk_size is not None
@@ -251,14 +311,16 @@ class BlockBlobChunkUploader(_ChunkUploader):
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info):
         # TODO: This is incorrect, but works with recording.
-        index = f'{chunk_offset:032d}'
+        index = f'{chunk_info.offset:032d}'
         block_id = encode_base64(url_quote(encode_base64(index)))
         self.service.stage_block(
             block_id,
-            len(chunk_data),
-            chunk_data,
+            chunk_info.length,
+            chunk_info.data,
+            transactional_content_md5=chunk_info.md5,
+            transactional_content_crc64=chunk_info.crc64,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options
@@ -288,17 +350,17 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         # if reached the end without returning, then chunk_data is all 0's
         return not any(bytearray(chunk_data))
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info):
         # avoid uploading the empty pages
-        if not self._is_chunk_empty(chunk_data):
-            chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = f"bytes={chunk_offset}-{chunk_end}"
-            computed_md5 = None
+        if not self._is_chunk_empty(chunk_info.data):
+            chunk_end = chunk_info.offset + chunk_info.length - 1
+            content_range = f"bytes={chunk_info.offset}-{chunk_end}"
             self.response_headers = self.service.upload_pages(
-                body=chunk_data,
-                content_length=len(chunk_data),
-                transactional_content_md5=computed_md5,
+                body=chunk_info.data,
+                content_length=chunk_info.length,
                 range=content_range,
+                transactional_content_md5=chunk_info.md5,
+                transactional_content_crc64=chunk_info.crc64,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -318,11 +380,13 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
         super(AppendBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info):
         if self.current_length is None:
             self.response_headers = self.service.append_block(
-                body=chunk_data,
-                content_length=len(chunk_data),
+                body=chunk_info.data,
+                content_length=chunk_info.length,
+                transactional_content_md5=chunk_info.md5,
+                transactional_content_crc64=chunk_info.crc64,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -331,10 +395,12 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
             self.request_options['append_position_access_conditions'].append_position = \
-                self.current_length + chunk_offset
+                self.current_length + chunk_info.offset
             self.response_headers = self.service.append_block(
-                body=chunk_data,
-                content_length=len(chunk_data),
+                body=chunk_info.data,
+                content_length=chunk_info.length,
+                transactional_content_md5=chunk_info.md5,
+                transactional_content_crc64=chunk_info.crc64,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -347,12 +413,17 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
 
 class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
-        # avoid uploading the empty pages
+    def _upload_chunk(self, chunk_info):
+        # Use a namedtuple here to avoid having a Datalake import in shared code
+        PathHeaders = namedtuple('PathHeaders', ['transactional_content_hash'])
+        path_headers = PathHeaders(chunk_info.md5) if chunk_info.md5 is not None else None
+
         self.response_headers = self.service.append_data(
-            body=chunk_data,
-            position=chunk_offset,
-            content_length=len(chunk_data),
+            body=chunk_info.data,
+            position=chunk_info.offset,
+            content_length=chunk_info.length,
+            path_http_headers=path_headers,  # type: ignore
+            transactional_content_crc64=chunk_info.crc64,
             cls=return_response_headers,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
@@ -379,18 +450,17 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
-        length = len(chunk_data)
-        chunk_end = chunk_offset + length - 1
+    def _upload_chunk(self, chunk_info):
+        chunk_end = chunk_info.offset + chunk_info.length - 1
         response = self.service.upload_range(
-            chunk_data,
-            chunk_offset,
-            length,
+            chunk_info.data,
+            chunk_info.offset,
+            chunk_info.length,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return f'bytes={chunk_offset}-{chunk_end}', response
+        return f'bytes={chunk_info.offset}-{chunk_end}', response
 
     # TODO: Implement this method.
     def _upload_substream_block(self, index, block_stream):

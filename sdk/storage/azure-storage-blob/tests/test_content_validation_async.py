@@ -14,12 +14,11 @@ from azure.storage.blob.aio import (
     ContainerClient
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
 from settings.testcase import BlobPreparer
 
 from encryption_test_helper import KeyWrapper
 from test_content_validation import assert_content_crc64, assert_content_md5, assert_structured_message
-from test_helpers_async import GenericTestProxyParametrize1
 
 
 class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):

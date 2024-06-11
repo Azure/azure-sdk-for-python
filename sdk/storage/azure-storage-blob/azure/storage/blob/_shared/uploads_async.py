@@ -8,6 +8,7 @@ import asyncio
 import inspect
 import threading
 from asyncio import Lock
+from collections import namedtuple
 from io import UnsupportedOperation
 from itertools import islice
 from math import ceil
@@ -378,10 +379,16 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
 class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     async def _upload_chunk(self, chunk_info):
+        # Use a namedtuple here to avoid having a Datalake import in shared code
+        PathHeaders = namedtuple('PathHeaders', ['transactional_content_hash'])
+        path_headers = PathHeaders(chunk_info.md5) if chunk_info.md5 is not None else None
+
         self.response_headers = await self.service.append_data(
             body=chunk_info.data,
             position=chunk_info.offset,
             content_length=chunk_info.length,
+            path_http_headers=path_headers,  # type: ignore
+            transactional_content_crc64=chunk_info.crc64,
             cls=return_response_headers,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,

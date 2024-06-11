@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+import sys
+from typing import Any, Callable, Dict, List, Literal, Optional, Type, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -27,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -46,7 +51,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -87,7 +92,7 @@ def build_set_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -125,7 +130,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +168,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,7 +213,7 @@ def build_list_paths_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -260,7 +265,7 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -352,7 +357,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -442,7 +447,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -519,7 +524,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -605,7 +610,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -709,7 +714,7 @@ class FileSystemOperations:
         :rtype: ~azure.storage.filedatalake.models.PathList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -819,7 +824,7 @@ class FileSystemOperations:
         :rtype: ~azure.storage.filedatalake.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

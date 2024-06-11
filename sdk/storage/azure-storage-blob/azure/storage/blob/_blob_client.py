@@ -672,19 +672,21 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The possible options for content validation are as follows:
 
             bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
-                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
-                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
-                   of https. If using this option, the memory-efficient upload algorithm will not be used.
-            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
-            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
-                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
-                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
-                      client-side data integrity issues.
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-                      NOTE: This requires the `azure-storage-extensions` package to be installed.
-            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
-                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
-                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
         :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. If specified, upload_blob only succeeds if the
@@ -2550,19 +2552,21 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The possible options for content validation are as follows:
 
             bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
-                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
-                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
-                   of https. If using this option, the memory-efficient upload algorithm will not be used.
-            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
-            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
-                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
-                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
-                      client-side data integrity issues.
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-                      NOTE: This requires the `azure-storage-extensions` package to be installed.
-            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
-                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
-                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
         :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
@@ -3626,19 +3630,21 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The possible options for content validation are as follows:
 
             bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
-                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
-                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
-                   of https. If using this option, the memory-efficient upload algorithm will not be used.
-            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
-            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
-                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
-                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
-                      client-side data integrity issues.
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-                      NOTE: This requires the `azure-storage-extensions` package to be installed.
-            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
-                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
-                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
         :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
@@ -4065,19 +4071,21 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The possible options for content validation are as follows:
 
             bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
-                   policy that calculates an MD5 hash for each request body and sends it to the service to verify
-                   it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
-                   of https. If using this option, the memory-efficient upload algorithm will not be used.
-            'auto' - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
-            'crc64' - This is currently the preferred choice for performance reasons and the level of validation.
-                      Performs validation using Azure Storage's specific implementation of CRC64 with a custom
-                      polynomial. This also uses a more sophisticated algorithm internally that may help catch
-                      client-side data integrity issues.
+            policy that calculates an MD5 hash for each request body and sends it to the service to verify
+            it matches. This is primarily valuable for detecting bit-flips on the wire if using http instead
+            of https. If using this option, the memory-efficient upload algorithm will not be used.
 
-                      NOTE: This requires the `azure-storage-extensions` package to be installed.
-            'md5' - Performs validation using MD5. Where available this may use a more sophisticated algorithm
-                    internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
-                    not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
         :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for

@@ -15,11 +15,10 @@ from azure.storage.blob import (
     ContainerClient
 )
 from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
+from devtools_testutils.storage import GenericTestProxyParametrize1, StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 from encryption_test_helper import KeyWrapper
-from test_helpers import GenericTestProxyParametrize1
 
 
 def assert_content_md5(request):
