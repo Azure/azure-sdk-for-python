@@ -3,16 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
 
+from typing import Any
 from datetime import date, datetime
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AzureKeyCredential, AccessToken
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-    from azure.core.credentials import AzureKeyCredential
 
 ACCOUNT_KEY_VALID_YEARS = 10
 
@@ -24,12 +20,11 @@ class MixedRealityAccountKeyCredential(object):
     :param AzureKeyCredential account_key: The Mixed Reality service account primary or secondary key credential.
     """
 
-    def __init__(self, account_id, account_key):
-        # type: (str, AzureKeyCredential) -> None
+    def __init__(self, account_id: str, account_key: AzureKeyCredential) -> None:
         self.account_id = account_id
         self.account_key = account_key
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint: disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint: disable=unused-argument
         token = self.account_id + ":" + self.account_key.key
 
         # No way to know when an account key might expire, so we'll set the

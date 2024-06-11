@@ -29,6 +29,7 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.core.credentials import AccessToken
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -625,3 +626,22 @@ class EndpointAuthToken(RestTranslatableMixin):
             refresh_after_time_utc=self.refresh_after_time_utc,
             token_type=self.token_type,
         )
+
+
+class EndpointAadToken:
+    """Endpoint aad token.
+
+    :ivar access_token: Access token for aad authentication.
+    :vartype access_token: str
+    :ivar expiry_time_utc: Access token expiry time (UTC).
+    :vartype expiry_time_utc: float
+    """
+
+    def __init__(self, obj: AccessToken):
+        """Constructor for Endpoint aad token.
+
+        :param obj: Access token object
+        :type obj: AccessToken
+        """
+        self.access_token = obj.token
+        self.expiry_time_utc = obj.expires_on

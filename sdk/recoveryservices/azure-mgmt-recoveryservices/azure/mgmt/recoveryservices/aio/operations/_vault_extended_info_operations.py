@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -65,7 +65,6 @@ class VaultExtendedInfoOperations:
         :type resource_group_name: str
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -84,21 +83,20 @@ class VaultExtendedInfoOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.VaultExtendedInfoResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -110,13 +108,9 @@ class VaultExtendedInfoOperations:
         deserialized = self._deserialize("VaultExtendedInfoResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/extendedInformation/vaultExtendedInfo"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -141,7 +135,6 @@ class VaultExtendedInfoOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -152,7 +145,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: IO,
+        resource_extended_info_details: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -165,11 +158,10 @@ class VaultExtendedInfoOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_extended_info_details: Details of ResourceExtendedInfo. Required.
-        :type resource_extended_info_details: IO
+        :type resource_extended_info_details: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -180,7 +172,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: Union[_models.VaultExtendedInfoResource, IO],
+        resource_extended_info_details: Union[_models.VaultExtendedInfoResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultExtendedInfoResource:
         """Create vault extended info.
@@ -191,13 +183,9 @@ class VaultExtendedInfoOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_extended_info_details: Details of ResourceExtendedInfo. Is either a
-         VaultExtendedInfoResource type or a IO type. Required.
+         VaultExtendedInfoResource type or a IO[bytes] type. Required.
         :type resource_extended_info_details:
-         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or IO[bytes]
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -225,7 +213,7 @@ class VaultExtendedInfoOperations:
         else:
             _json = self._serialize.body(resource_extended_info_details, "VaultExtendedInfoResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
@@ -233,16 +221,15 @@ class VaultExtendedInfoOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -254,13 +241,9 @@ class VaultExtendedInfoOperations:
         deserialized = self._deserialize("VaultExtendedInfoResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/extendedInformation/vaultExtendedInfo"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -285,7 +268,6 @@ class VaultExtendedInfoOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -296,7 +278,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: IO,
+        resource_extended_info_details: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -309,11 +291,10 @@ class VaultExtendedInfoOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_extended_info_details: Details of ResourceExtendedInfo. Required.
-        :type resource_extended_info_details: IO
+        :type resource_extended_info_details: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -324,7 +305,7 @@ class VaultExtendedInfoOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource_extended_info_details: Union[_models.VaultExtendedInfoResource, IO],
+        resource_extended_info_details: Union[_models.VaultExtendedInfoResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.VaultExtendedInfoResource:
         """Update vault extended info.
@@ -335,13 +316,9 @@ class VaultExtendedInfoOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_extended_info_details: Details of ResourceExtendedInfo. Is either a
-         VaultExtendedInfoResource type or a IO type. Required.
+         VaultExtendedInfoResource type or a IO[bytes] type. Required.
         :type resource_extended_info_details:
-         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource or IO[bytes]
         :return: VaultExtendedInfoResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.VaultExtendedInfoResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -369,7 +346,7 @@ class VaultExtendedInfoOperations:
         else:
             _json = self._serialize.body(resource_extended_info_details, "VaultExtendedInfoResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
@@ -377,16 +354,15 @@ class VaultExtendedInfoOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -398,10 +374,6 @@ class VaultExtendedInfoOperations:
         deserialized = self._deserialize("VaultExtendedInfoResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/extendedInformation/vaultExtendedInfo"
-    }
+        return deserialized  # type: ignore

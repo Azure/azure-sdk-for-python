@@ -993,3 +993,48 @@ async def test_aiohttp_errors():
     generator = AioHttpStreamDownloadGenerator(None, response)
     with pytest.raises(ServiceResponseError):
         await generator.__anext__()
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.asyncio
+async def test_already_close_with_with(caplog, port, http_request):
+    transport = AioHttpTransport()
+
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+
+    async with AsyncPipeline(transport) as pipeline:
+        await pipeline.run(request)
+
+    # This is now closed, new requests should fail
+    with pytest.raises(ValueError) as err:
+        await transport.send(request)
+    assert "HTTP transport has already been closed." in str(err)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.asyncio
+async def test_already_close_manually(caplog, port, http_request):
+    transport = AioHttpTransport()
+
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+
+    await transport.send(request)
+    await transport.close()
+
+    # This is now closed, new requests should fail
+    with pytest.raises(ValueError) as err:
+        await transport.send(request)
+    assert "HTTP transport has already been closed." in str(err)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.asyncio
+async def test_close_too_soon_works_fine(caplog, port, http_request):
+    transport = AioHttpTransport()
+
+    request = http_request("GET", "http://localhost:{}/basic/string".format(port))
+
+    await transport.close()
+    result = await transport.send(request)
+
+    assert result  # No exception is good enough here

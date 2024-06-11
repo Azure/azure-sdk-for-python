@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -88,7 +88,7 @@ class CrossRegionRestoreOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _trigger_initial(  # pylint: disable=inconsistent-return-statements
-        self, azure_region: str, parameters: Union[_models.CrossRegionRestoreRequest, IO], **kwargs: Any
+        self, azure_region: str, parameters: Union[_models.CrossRegionRestoreRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -113,23 +113,22 @@ class CrossRegionRestoreOperations:
         else:
             _json = self._serialize.body(parameters, "CrossRegionRestoreRequest")
 
-        request = build_trigger_request(
+        _request = build_trigger_request(
             azure_region=azure_region,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -140,11 +139,7 @@ class CrossRegionRestoreOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _trigger_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrossRegionRestore"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def begin_trigger(
@@ -169,14 +164,6 @@ class CrossRegionRestoreOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -184,7 +171,7 @@ class CrossRegionRestoreOperations:
 
     @overload
     def begin_trigger(
-        self, azure_region: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, azure_region: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Restores the specified backed up data in a different region as compared to where the data is
         backed up.
@@ -195,18 +182,10 @@ class CrossRegionRestoreOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: resource cross region restore request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -214,7 +193,7 @@ class CrossRegionRestoreOperations:
 
     @distributed_trace
     def begin_trigger(
-        self, azure_region: str, parameters: Union[_models.CrossRegionRestoreRequest, IO], **kwargs: Any
+        self, azure_region: str, parameters: Union[_models.CrossRegionRestoreRequest, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Restores the specified backed up data in a different region as compared to where the data is
         backed up.
@@ -225,20 +204,9 @@ class CrossRegionRestoreOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: resource cross region restore request. Is either a CrossRegionRestoreRequest
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrossRegionRestoreRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrossRegionRestoreRequest or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -267,7 +235,7 @@ class CrossRegionRestoreOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -278,14 +246,10 @@ class CrossRegionRestoreOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_trigger.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrossRegionRestore"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

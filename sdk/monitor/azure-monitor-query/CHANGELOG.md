@@ -1,14 +1,10 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 1.4.0 (2024-06-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- An `audience` keyword argument can now be passed to the `MetricsClient` constructor to specify the audience for the authentication token. This is useful when querying metrics in sovereign clouds. ([#35502](https://github.com/Azure/azure-sdk-for-python/pull/35502))
 
 ## 1.3.0 (2024-03-28)
 

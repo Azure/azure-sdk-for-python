@@ -499,9 +499,8 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def test_begin_populate_availability_zone(self):
         set_bodiless_matcher()
         print("Starting begin_populate_availability_zone")
-        try:
-            self.client.volumes.begin_populate_availability_zone(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, setup.PERMA_VOLUME)
-        except Exception as e:
-            #AFEC still in 2023.5. Fix this in 2023.7 
-            assert str(e).startswith("(")
+        
+        volume = self.client.volumes.begin_populate_availability_zone(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, setup.PERMA_VOLUME).result()
+        assert len(list(volume.zones)) > 0
+
         print("Finished with begin_populate_availability_zone")

@@ -567,7 +567,7 @@ class AdaptiveNetworkHardening(Resource):
 class AdaptiveNetworkHardeningEnforceRequest(_serialization.Model):
     """AdaptiveNetworkHardeningEnforceRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rules: The rules to enforce. Required.
     :vartype rules: list[~azure.mgmt.security.v2020_01_01.models.Rule]
@@ -737,7 +737,7 @@ class AssessmentLinks(_serialization.Model):
 class AssessmentStatus(_serialization.Model):
     """The result of the assessment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: Programmatic code for the status of the assessment. Required. Known values are:
      "Healthy", "Unhealthy", and "NotApplicable".
@@ -897,7 +897,7 @@ class ResourceDetails(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureResourceDetails, OnPremiseResourceDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -925,7 +925,7 @@ class AzureResourceDetails(ResourceDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -1236,7 +1236,7 @@ class DiscoveredSecuritySolution(Resource, Location):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Location where the resource is stored.
     :vartype location: str
@@ -1486,7 +1486,7 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Location where the resource is stored.
     :vartype location: str
@@ -1560,7 +1560,7 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
 class JitNetworkAccessPolicyInitiatePort(_serialization.Model):
     """JitNetworkAccessPolicyInitiatePort.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar number: Required.
     :vartype number: int
@@ -1608,7 +1608,7 @@ class JitNetworkAccessPolicyInitiatePort(_serialization.Model):
 class JitNetworkAccessPolicyInitiateRequest(_serialization.Model):
     """JitNetworkAccessPolicyInitiateRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar virtual_machines: A list of virtual machines & ports to open access for. Required.
     :vartype virtual_machines:
@@ -1645,10 +1645,10 @@ class JitNetworkAccessPolicyInitiateRequest(_serialization.Model):
         self.justification = justification
 
 
-class JitNetworkAccessPolicyInitiateVirtualMachine(_serialization.Model):
+class JitNetworkAccessPolicyInitiateVirtualMachine(_serialization.Model):  # pylint: disable=name-too-long
     """JitNetworkAccessPolicyInitiateVirtualMachine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID of the virtual machine that is linked to this policy. Required.
     :vartype id: str
@@ -1689,7 +1689,7 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(_serialization.Model):
 class JitNetworkAccessPolicyVirtualMachine(_serialization.Model):
     """JitNetworkAccessPolicyVirtualMachine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID of the virtual machine that is linked to this policy. Required.
     :vartype id: str
@@ -1737,7 +1737,7 @@ class JitNetworkAccessPolicyVirtualMachine(_serialization.Model):
 class JitNetworkAccessPortRule(_serialization.Model):
     """JitNetworkAccessPortRule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar number: Required.
     :vartype number: int
@@ -1805,7 +1805,7 @@ class JitNetworkAccessPortRule(_serialization.Model):
 class JitNetworkAccessRequest(_serialization.Model):
     """JitNetworkAccessRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar virtual_machines: Required.
     :vartype virtual_machines:
@@ -1861,7 +1861,7 @@ class JitNetworkAccessRequest(_serialization.Model):
 class JitNetworkAccessRequestPort(_serialization.Model):
     """JitNetworkAccessRequestPort.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar number: Required.
     :vartype number: int
@@ -1946,7 +1946,7 @@ class JitNetworkAccessRequestPort(_serialization.Model):
 class JitNetworkAccessRequestVirtualMachine(_serialization.Model):
     """JitNetworkAccessRequestVirtualMachine.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID of the virtual machine that is linked to this policy. Required.
     :vartype id: str
@@ -1988,7 +1988,7 @@ class OnPremiseResourceDetails(ResourceDetails):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OnPremiseSqlResourceDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -2045,7 +2045,7 @@ class OnPremiseResourceDetails(ResourceDetails):
 class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
     """Details of the On Premise Sql resource that was assessed.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
      "Azure", "OnPremise", and "OnPremiseSql".
@@ -2986,7 +2986,7 @@ class SecurityAssessmentMetadataList(_serialization.Model):
 class SecurityAssessmentMetadataPartnerData(_serialization.Model):
     """Describes the partner that created the assessment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partner_name: Name of the company of the partner. Required.
     :vartype partner_name: str
@@ -3029,7 +3029,7 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: User friendly display name of the assessment. Required.
     :vartype display_name: str
@@ -3154,7 +3154,7 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):  # pylint: dis
 class SecurityAssessmentPartnerData(_serialization.Model):
     """Data regarding 3rd party partner integration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar partner_name: Name of the company of the partner. Required.
     :vartype partner_name: str
@@ -3294,7 +3294,7 @@ class SecuritySolutionsReferenceData(Resource, Location):  # pylint: disable=too
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Location where the resource is stored.
     :vartype location: str

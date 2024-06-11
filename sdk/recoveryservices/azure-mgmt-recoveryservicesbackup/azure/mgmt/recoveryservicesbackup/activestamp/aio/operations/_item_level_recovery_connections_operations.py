@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -93,7 +93,6 @@ class ItemLevelRecoveryConnectionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -108,7 +107,7 @@ class ItemLevelRecoveryConnectionsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -136,11 +135,10 @@ class ItemLevelRecoveryConnectionsOperations:
          for this backed up data. Required.
         :type recovery_point_id: str
         :param parameters: resource ILR request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -155,7 +153,7 @@ class ItemLevelRecoveryConnectionsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.ILRRequestResource, IO],
+        parameters: Union[_models.ILRRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Provisions a script which invokes an iSCSI connection to the backup data. Executing this script
@@ -180,14 +178,10 @@ class ItemLevelRecoveryConnectionsOperations:
          will be provisioned
          for this backed up data. Required.
         :type recovery_point_id: str
-        :param parameters: resource ILR request. Is either a ILRRequestResource type or a IO type.
-         Required.
+        :param parameters: resource ILR request. Is either a ILRRequestResource type or a IO[bytes]
+         type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ILRRequestResource or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -215,7 +209,7 @@ class ItemLevelRecoveryConnectionsOperations:
         else:
             _json = self._serialize.body(parameters, "ILRRequestResource")
 
-        request = build_provision_request(
+        _request = build_provision_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -227,16 +221,15 @@ class ItemLevelRecoveryConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.provision.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -246,11 +239,7 @@ class ItemLevelRecoveryConnectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    provision.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/provisionInstantItemRecovery"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def revoke(  # pylint: disable=inconsistent-return-statements
@@ -283,7 +272,6 @@ class ItemLevelRecoveryConnectionsOperations:
          will be revoked for
          this backed up data. Required.
         :type recovery_point_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -302,7 +290,7 @@ class ItemLevelRecoveryConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_revoke_request(
+        _request = build_revoke_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -311,16 +299,15 @@ class ItemLevelRecoveryConnectionsOperations:
             recovery_point_id=recovery_point_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.revoke.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -330,8 +317,4 @@ class ItemLevelRecoveryConnectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    revoke.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/revokeInstantItemRecovery"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -1,12 +1,12 @@
 {
-  "commit": "08d85e46a12811435ef64876f0274246a75fdb6e",
+  "commit": "53af822b054f0ae1cfa3858e6b7441b6a917d7f9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.13.16",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/network/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/network/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.16 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/network/resource-manager/readme.md",
   "package-2023-02": "2023-11-08 10:08:29 -0800 4b55e2d0e29fb2e829985485c9150f46157c3b80 Microsoft.Network/stable/2023-02-01/virtualWan.json",
   "package-2021-02": "2021-09-14 19:30:27 -0700 54f1c87938269d4706629dc04c26ee1f3634585a Microsoft.Network/stable/2021-02-01/privateLinkService.json",
@@ -32,7 +32,8 @@
   "package-2017-10": "2019-06-13 02:23:37 +0300 e19543a6a361096e5ca11a42424a39025fd008fa Microsoft.Network/stable/2017-10-01/applicationGateway.json",
   "package-2015-06split": "2019-06-13 02:17:06 +0300 f0f79bfa8191ac30cfb0f87665411769bd2063a6 Microsoft.Network/stable/2015-06-15/virtualNetworkGateway.json",
   "package-2023-04": "2023-11-08 10:08:29 -0800 4b55e2d0e29fb2e829985485c9150f46157c3b80 Microsoft.Network/stable/2023-04-01/virtualWan.json",
-  "package-2023-05": "2023-11-08 10:08:29 -0800 4b55e2d0e29fb2e829985485c9150f46157c3b80 Microsoft.Network/stable/2023-05-01/virtualWan.json",
-  "package-2023-06": "2023-11-08 10:08:29 -0800 4b55e2d0e29fb2e829985485c9150f46157c3b80 Microsoft.Network/stable/2023-06-01/webapplicationfirewall.json",
-  "package-2023-09": "2023-12-28 00:43:34 +0530 a6237cbef545ae4cd0d3674a7cb3effa2b7b13d8 Microsoft.Network/stable/2023-09-01/webapplicationfirewall.json"
+  "package-2023-05": "2024-03-26 18:15:54 -0700 22d853c1cb86c38084651732475290eba0cc78a2 Microsoft.Network/stable/2023-05-01/azureFirewall.json",
+  "package-2023-06": "2024-03-26 18:15:54 -0700 22d853c1cb86c38084651732475290eba0cc78a2 Microsoft.Network/stable/2023-06-01/azureFirewall.json",
+  "package-2023-09": "2024-05-07 23:29:27 -0600 0f21c214f0f5b4180ec71655b36b8fbd40fd1ceb Microsoft.Network/stable/2023-09-01/virtualWan.json",
+  "package-2023-11": "2024-05-15 17:57:08 -0700 222ecb7f96343059c8434c7e1f11ad892ffd8c27 Microsoft.Network/stable/2023-11-01/networkVirtualAppliance.json"
 }

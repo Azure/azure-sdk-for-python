@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import os
 import unittest
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -41,6 +42,8 @@ class TestQuery(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        if cls.host == "https://localhost:8081/":
+            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.created_db.create_container(
@@ -337,12 +340,13 @@ class TestQuery(unittest.TestCase):
         # Should equal batch size
         self.assertEqual(totalCount, batchSize)
 
-        # test an invalid value, will ignore start time option
+        # test an invalid value, Attribute error will be raised for passing non datetime object
         invalid_time = "Invalid value"
-        change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
-        totalCount = len(change_feed_iter)
-        # Should not equal batch size
-        self.assertNotEqual(totalCount, batchSize)
+        try:
+            change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
+            self.fail("Cannot format date on a non datetime object.")
+        except AttributeError as e:
+            self.assertTrue("'str' object has no attribute 'astimezone'" == e.args[0])
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container("query_metrics_test",
