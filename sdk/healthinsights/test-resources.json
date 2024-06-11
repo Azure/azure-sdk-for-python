@@ -54,7 +54,7 @@
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
     },
     "resources": [
-         {
+            {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "2023-10-01-preview",
             "name": "[parameters('textAnalyticsName')]",
@@ -68,14 +68,9 @@
             },
             "properties": {
                 "apiProperties": {},
-                "customSubDomainName": "[parameters('textAnalyticsName')]",
-                "networkAcls": {
-                    "defaultAction": "Allow",
-                    "virtualNetworkRules": [],
-                    "ipRules": []
-                },
-                "publicNetworkAccess": "Enabled"
-            },
+                "customSubDomainName": "[parameters('textAnalyticsName')]"
+            }
+        },
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "[variables('cognitiveApiVersion')]",
@@ -106,6 +101,18 @@
         }
     ],
     "outputs": {
+        "LANGUAGE_API_KEY": {
+          "type": "string",
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
+        },
+        "LANGUAGE_API_KEY_ALT": {
+          "type": "string",
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
+        },
+        "ENDPOINT": {
+          "type": "string",
+          "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
+        },
         "HEALTHINSIGHTS_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')), variables('cognitiveApiVersion')).key1]"
