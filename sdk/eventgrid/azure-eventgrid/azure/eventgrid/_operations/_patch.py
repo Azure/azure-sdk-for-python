@@ -136,7 +136,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 raise ResourceNotFoundError(
                     "Resource not found. "
                     "For Event Grid Namespaces, please specify the namespace_topic name on the client. "
-                     "For Event Grid Basic, do not specify the namespace_topic name."
+                    "For Event Grid Basic, do not specify the namespace_topic name."
                 ) from exception
             raise exception
 

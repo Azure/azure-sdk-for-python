@@ -45,5 +45,6 @@ async def publish():
         )
     # [END publish_cloud_event_dict_async]
 
+
 if __name__ == "__main__":
     asyncio.run(publish())
