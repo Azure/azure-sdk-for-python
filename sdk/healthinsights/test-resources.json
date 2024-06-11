@@ -90,6 +90,7 @@
     ],
     "outputs": {
         "LANGUAGE_API_KEY": {
+            "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsBaseName')), '2017-04-18').key1]"
     },
     "LANGUAGE_API_KEY_ALT": {
@@ -100,6 +101,7 @@
         "type": "string",
         "value": "[concat('https://', variables('textAnalyticsBaseName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
     },
+
         "HEALTHINSIGHTS_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')),'2017-04-18').key1]"
