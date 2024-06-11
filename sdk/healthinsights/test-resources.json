@@ -51,7 +51,8 @@
         "type": "string"
     },
     "identity": {
-          "value": {
+         "type": "object",
+         "value": {
               "type": "SystemAssigned"
           }
       },
