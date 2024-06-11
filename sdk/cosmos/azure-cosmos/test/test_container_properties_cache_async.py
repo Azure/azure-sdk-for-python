@@ -4,6 +4,7 @@
 
 """End-to-end test.
 """
+
 import copy
 import unittest
 import uuid
@@ -55,7 +56,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             await client.get_database_client(database_name).create_container(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
-            pass
+            self.fail("Container Should not Already Exist.")
 
         # Delete The cache as this is meant to test calling operations on a preexisting container
         # and not a freshly made one. It's a private attribute so use mangled name.

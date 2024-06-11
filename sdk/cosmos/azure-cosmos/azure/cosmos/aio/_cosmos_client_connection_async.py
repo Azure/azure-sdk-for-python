@@ -3082,7 +3082,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 break
             # If we successfully extract the partition key, break out of loop
             if partitionKeyValue and not isinstance(partitionKeyValue, _Empty) and not isinstance(partitionKeyValue,
-                                                                                                  _Undefined):  # pylint: disable=line-too-long
+                                                                                                  _Undefined):
                 break
 
         return new_options

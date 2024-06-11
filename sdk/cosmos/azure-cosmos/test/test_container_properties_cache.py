@@ -52,6 +52,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
+
         # Delete The cache as this is meant to test calling operations on a preexisting container
         # and not a freshly made one. It's a private attribute so use mangled name.
         client.client_connection._CosmosClientConnection__container_properties_cache = {}
@@ -434,8 +435,6 @@ class TestContainerPropertiesCache(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, 404)
         created_db.delete_container(container_name)
-
-
 
 
 

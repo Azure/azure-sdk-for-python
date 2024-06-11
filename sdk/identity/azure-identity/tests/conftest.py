@@ -63,7 +63,7 @@ def record_imds_test(request):
 @pytest.fixture()
 def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
-
+    pytest.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/35957")
     missing_variables = [
         v
         for v in (

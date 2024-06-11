@@ -1,6 +1,6 @@
 # Release History
 
-## 1.17.0b2 (Unreleased)
+## 1.17.0b3 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,25 @@
 
 ### Bugs Fixed
 
+- Allow credential chains to continue when an IMDS probe request returns a non-JSON response in `ManagedIdentityCredential`. ([#36016](https://github.com/Azure/azure-sdk-for-python/pull/36016))
+
 ### Other Changes
+
+## 1.17.0b2 (2024-06-11)
+
+### Features Added
+
+- `OnBehalfOfCredential` now supports client assertion callbacks through the `client_assertion_func` keyword argument. This enables authenticating with client assertions such as federated credentials.  ([#35812](https://github.com/Azure/azure-sdk-for-python/pull/35812))
+
+### Bugs Fixed
+
+- Managed identity bug fixes
+
+## 1.16.1 (2024-06-11)
+
+### Bugs Fixed
+
+- Managed identity bug fixes
 
 ## 1.17.0b1 (2024-05-13)
 
