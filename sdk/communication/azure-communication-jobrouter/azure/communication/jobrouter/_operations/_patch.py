@@ -210,6 +210,8 @@ class JobRouterAdministrationClientOperationsMixin(
 
         :param str exception_policy_id: Id of the exception policy.
 
+        :param Union[_models.ExceptionPolicy, JSON, IO[bytes]] args: Exception policy arguments.
+
         :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
         :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
@@ -472,7 +474,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         :param str distribution_policy_id: Id of the distribution policy.
 
-        :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
+        :param Union[_models.DistributionPolicy, JSON, IO[bytes]] args: Distribution policy arguments.
+
+        :keyword distribution_policy: An instance of distribution policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
 
@@ -591,7 +595,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
         :param str queue_id: Id of the queue.
 
-        :param queue: An instance of JobQueue. This is a positional-only parameter.
+        :keyword queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
@@ -751,7 +755,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         :param str queue_id: Id of the queue.
 
-        :param queue: An instance of JobQueue. This is a positional-only parameter.
+        :param Union[_models.RouterQueue, JSON, IO[bytes]] args: Router queue arguments.
+
+        :keyword queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
@@ -1067,6 +1073,8 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
+
+        :param Union[_models.ClassificationPolicy, JSON, IO[bytes]] args: Classification policy arguments.
 
         :keyword Optional[str] name: Friendly name of this policy.
 
@@ -1396,6 +1404,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """Update a router worker.
 
         :param str worker_id: Id of the worker.
+
+        :param Union[_models.RouterWorker, JSON, IO[bytes]] args: Router worker arguments.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
@@ -1777,6 +1787,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """Update a job.
 
         :param str job_id: Id of the job.
+
+        :param Union[_models.RouterJob, JSON, IO[bytes]] args: Router job arguments.
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]

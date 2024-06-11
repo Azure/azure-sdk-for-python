@@ -115,6 +115,7 @@ class PhoneNumbersClient(object):
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
+        :return: phone numbers.
         """
         purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
 
@@ -144,6 +145,7 @@ class PhoneNumbersClient(object):
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
+        :return: phone numbers.
         """
         polling_interval = kwargs.pop(
             "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
@@ -187,6 +189,7 @@ class PhoneNumbersClient(object):
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
+        :return: phone numbers.
         """
         search_request = PhoneNumberSearchRequest(
             phone_number_type=phone_number_type,
@@ -228,6 +231,7 @@ class PhoneNumbersClient(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
+        :return: phone number.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
 
@@ -289,6 +293,7 @@ class PhoneNumbersClient(object):
          The default value is 100. Default value is 100.
         :paramtype top: int
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
+        :return: phone number.
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs
@@ -330,7 +335,7 @@ class PhoneNumbersClient(object):
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :param administrative_division: An optional parameter for the name of the state or province
+        :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :type administrative_division: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
@@ -362,12 +367,11 @@ class PhoneNumbersClient(object):
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
+        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
          are: "geographic" and "tollFree". Default value is None.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -398,12 +402,10 @@ class PhoneNumbersClient(object):
         :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
         "geographic" and "tollFree". Required.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
         "person" and "application". Default value is None.
-        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-        :param locality: The name of locality in which to search for the area code. e.g. Seattle.
+        :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
         This is required if the phone number type is Geographic. Default value is None.
-        :type locality: str
         :keyword administrative_division: The name of the state or province in which to search for the
         area code. e.g. California. Default value is None.
         :type administrative_division: str
