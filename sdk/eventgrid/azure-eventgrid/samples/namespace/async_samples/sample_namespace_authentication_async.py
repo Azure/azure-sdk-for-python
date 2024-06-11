@@ -27,7 +27,9 @@ event_subscription_name = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 credential_key = AzureKeyCredential(topic_key)
 publisher_client = EventGridPublisherClient(endpoint, credential_key, namespace_topic=topic_name)
-consumer_client = EventGridConsumerClient(endpoint, credential_key, namespace_topic=topic_name, subscription=event_subscription_name)
+consumer_client = EventGridConsumerClient(
+    endpoint, credential_key, namespace_topic=topic_name, subscription=event_subscription_name
+)
 
 
 from azure.identity.aio import DefaultAzureCredential
@@ -36,4 +38,6 @@ from azure.eventgrid.aio import EventGridPublisherClient
 default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 publisher_client = EventGridPublisherClient(endpoint, default_az_credential, namespace_topic=topic_name)
-consumer_client = EventGridConsumerClient(endpoint, default_az_credential, namespace_topic=topic_name, subscription=event_subscription_name)
+consumer_client = EventGridConsumerClient(
+    endpoint, default_az_credential, namespace_topic=topic_name, subscription=event_subscription_name
+)

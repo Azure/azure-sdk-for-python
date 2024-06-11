@@ -21,12 +21,13 @@ import asyncio
 from azure.eventgrid.aio import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
-topic_key = os.environ["EVENTGRIDKEY"]
+topic_key = os.environ["EVENTGRID_KEY"]
 endpoint = os.environ["EVENTGRID_ENDPOINT"]
 topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
 
 credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential, namespace_topic=topic_name)
+
 
 async def publish():
     client.send(
@@ -42,5 +43,6 @@ async def publish():
         ]
     )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(publish())

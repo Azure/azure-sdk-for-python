@@ -139,7 +139,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         }
         client.send(eg_event)
 
-
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_send_event_grid_namespace(self, **kwargs):
