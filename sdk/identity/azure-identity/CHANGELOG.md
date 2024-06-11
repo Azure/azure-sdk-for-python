@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Raised `CredentialUnavailableError` in IMDS credential if the response is not json. ([#35938](https://github.com/Azure/azure-sdk-for-python/pull/35938))
+- Allow credential chains to continue when an IMDS probe request returns a non-JSON response in `ManagedIdentityCredential`. ([#36016](https://github.com/Azure/azure-sdk-for-python/pull/36016))
 
 ### Other Changes
 
