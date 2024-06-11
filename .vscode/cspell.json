@@ -1814,6 +1814,15 @@
       "words": [
         "dcid"
       ]
+    },
+    {
+      "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
+      "words": [
+        "deid",
+        "deidentification",
+        "healthdataaiservices",
+        "deidentify"
+      ]
     }
   ],
   "allowCompoundWords": true
