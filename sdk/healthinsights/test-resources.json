@@ -4,14 +4,14 @@
     "parameters": {
         "baseName": {
             "type": "string",
-            "defaultValue": "RadiologyInsights-Testing",
+            "defaultValue": "[resourceGroup().name]",
             "metadata": {
                 "description": "The base resource name."
             }
         },
         "location": {
             "type": "string",
-            "defaultValue": "eastus2euap",
+            "defaultValue":"[resourceGroup().location]",
             "metadata": {
                 "description": "The location of the resource. By default, this is the same as the resource group."
             }
@@ -29,32 +29,36 @@
             "metadata": {
                 "description": "The principal to assign the role to. This is application object id."
             }
+        }, "identity": {
+            "value": {
+                "type": "SystemAssigned"
+            }
         }
     },
     "variables": {
-        "textAnalyticsBaseName": "[concat('textanalytics', parameters('baseName'))]",
-        "textAnalyticsResourceId":"[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/ta4htomderay')]",
-        "cognitiveApiVersion": "2023-10-01-preview",
-        "roleDefinitionId": "[concat('/subscriptions/ad436375-8308-4393-85cb-1a7de099ec6e/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "textAnalyticsBaseName":  "[format('textanalytics-{0}', parameters('baseName'))]",
+        "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]",        
+        "cognitiveApiVersion": "2022-03-01",
+        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
-        "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
+        "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]",
+        "systemAndUserIdentities": {
+            "type": "SystemAssigned, UserAssigned",
+            "userAssignedIdentities": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), parameters('identity').userAssignedIdentities, json('{}'))]"
+        }
     },
     "resources": [
             {
             "type": "Microsoft.CognitiveServices/accounts",
-            "apiVersion": "2023-10-01-preview",
-            "name": "ta4htomderay",
-            "location": "eastus2euap",
+            "apiVersion": "2017-04-18",
+            "name": "[variables('textAnalyticsBaseName')]",
+            "location": "[parameters('location')]",
             "sku": {
                 "name": "S"
             },
             "kind": "TextAnalytics",
-            "identity": {
-                "type": "SystemAssigned"
-            },
             "properties": {
-                "apiProperties": {},
-                "customSubDomainName": "ta4htomderay"
+                "customSubDomainName": "[variables('textAnalyticsBaseName')]"
             }
         },
         {
@@ -66,9 +70,7 @@
                 "name": "S0"
             },
             "kind": "HealthInsights",
-            "identity": {
-                "type": "SystemAssigned"
-            },
+            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
             "properties": {
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
@@ -88,20 +90,19 @@
     ],
     "outputs": {
         "LANGUAGE_API_KEY": {
-          "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/ta4htomderay'), '2017-04-18').key1]"
-        },
-        "LANGUAGE_API_KEY_ALT": {
-          "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/ta4htomderay'), '2017-04-18').key2]"
-        },
-        "ENDPOINT": {
-          "type": "string",
-          "value": "[concat('https://ta4htomderay', parameters('cognitiveServicesEndpointSuffix'), '/')]"
-        },
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsBaseName')), '2017-04-18').key1]"
+    },
+    "LANGUAGE_API_KEY_ALT": {
+        "type": "string",
+        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsBaseName')), '2017-04-18').key2]"
+    },
+    "ENDPOINT": {
+        "type": "string",
+        "value": "[concat('https://', variables('textAnalyticsBaseName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
+    },
         "HEALTHINSIGHTS_KEY": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')), variables('cognitiveApiVersion')).key1]"
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')),'2017-04-18').key1]"
         },
         "HEALTHINSIGHTS_ENDPOINT": {
             "type": "string",
