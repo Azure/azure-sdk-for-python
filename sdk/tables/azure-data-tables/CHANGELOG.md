@@ -9,6 +9,7 @@
 
 ### Bugs Fixed
 * Fixed a bug in encoder when Entity property has "@odata.type" provided.
+* Fixed a bug in encoder that int32 and int64 are mapped to int32 when no "@odata.type" provided.
 
 ### Other Changes
 * Removed value range validation for Entity property in int32 and int64.
