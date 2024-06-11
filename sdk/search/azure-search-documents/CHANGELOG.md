@@ -42,10 +42,12 @@
 - SearchAlias operations do not exist in this release
 - `SearchIndexerClient.reset_documents` does not exist in this release
 - `SearchIndexerClient.reset_skills` does not exist in this release
+
 - Below properties do not exist
   - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.identity`
   - `azure.search.documents.indexes.models.SearchIndex.normalizers`
   - `azure.search.documents.indexes.models.SearchField.normalizer_name`
+
 - Below parameters do not exist
   - `SearchClient.search.query_language`
   - `SearchClient.search.query_speller`
