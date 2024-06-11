@@ -210,7 +210,8 @@ print(response.choices[0].message.content)
 
 <!-- END SNIPPET -->
 
-The following types or messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage` (See sample [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`).
+The following types or messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage`. See sample [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`. See [sample_chat_completions_with_images.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_images.py) for usage of `UserMessage` that
+includes uploading an image.
 
 Alternatively, you can provide the messages as dictionary instead of using the strongly typed classes like `SystemMessage` and `UserMessage`:
 
@@ -232,7 +233,10 @@ response = client.complete(
                 "role": "assistant",
                 "content": "The main construction of the International Space Station (ISS) was completed between 1998 and 2011. During this period, more than 30 flights by US space shuttles and 40 by Russian rockets were conducted to transport components and modules to the station.",
             },
-            {"role": "user", "content": "And what was the estimated cost to build it?"},
+            {
+                "role": "user",
+                "content": "And what was the estimated cost to build it?"
+            },
         ]
     }
 )
@@ -399,7 +403,7 @@ try:
     result = client.complete( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code} ({e.reason})")
-    print(f"{e.message}")
+    print(e.message)
 ```
 
 For example, when you provide a wrong authentication key:
