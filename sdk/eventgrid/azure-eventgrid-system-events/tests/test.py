@@ -4,4 +4,5 @@ from azure.eventgrid.system.events.models import AcsChatEventBaseProperties
 
 class SystemEventTest():
     def test_acs_chat_event_base_properties():
-        pass
+        event = AcsChatEventBaseProperties()
+        assert event is not None
