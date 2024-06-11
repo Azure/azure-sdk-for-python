@@ -20,7 +20,7 @@ import os
 from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
-topic_key = os.environ["EVENTGRIDKEY"]
+topic_key = os.environ["EVENTGRID_KEY"]
 endpoint = os.environ["EVENTGRID_ENDPOINT"]
 topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
 
