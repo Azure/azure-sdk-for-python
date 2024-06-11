@@ -50,12 +50,6 @@
         "defaultValue": ".cognitiveservices.azure.com",
         "type": "string"
     },
-    "identity": {
-         "type": "object",
-         "value": {
-              "type": "SystemAssigned"
-          }
-      },
     "textAnalyticsResourceGroupName": {
       "defaultValue": "[resourceGroup().name]",
       "type": "string"
@@ -68,10 +62,6 @@
         "roleDefinitionId": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]",
-        "systemAndUserIdentities": {
-            "type": "SystemAssigned, UserAssigned",
-            "userAssignedIdentities": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), parameters('identity').userAssignedIdentities, json('{}'))]"
-        }
     },
     "resources": [
         {
@@ -96,7 +86,6 @@
                 "name": "S0"
             },
             "kind": "HealthInsights",
-            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
             "properties": {
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
