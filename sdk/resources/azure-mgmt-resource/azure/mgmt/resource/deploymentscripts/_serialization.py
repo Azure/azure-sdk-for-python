@@ -1447,7 +1447,7 @@ class Deserializer(object):
         elif isinstance(response, type) and issubclass(response, Enum):
             return self.deserialize_enum(data, response)
 
-        if data is None:
+        if data is None or data is CoreNull:
             return data
         try:
             attributes = response._attribute_map  # type: ignore
