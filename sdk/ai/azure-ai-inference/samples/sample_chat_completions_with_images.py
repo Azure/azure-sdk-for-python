@@ -21,8 +21,6 @@ USAGE:
     3) CHAT_COMPLETIONS_DEPLOYMENT_NAME - Optional. The value for the HTTP
         request header `azureml-model-deployment`.
 """
-# mypy: disable-error-code="union-attr"
-# pyright: reportAttributeAccessIssue=false
 
 
 def sample_chat_completions_with_images():
