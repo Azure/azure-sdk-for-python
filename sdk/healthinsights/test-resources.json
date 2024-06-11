@@ -89,11 +89,11 @@
     "outputs": {
         "LANGUAGE_API_KEY": {
           "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/ta4htomderay'), '2017-04-18').key1]"
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts','ta4htomderay'), '2017-04-18').key1]"
         },
         "LANGUAGE_API_KEY_ALT": {
           "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/ta4htomderay'), '2017-04-18').key2]"
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts','ta4htomderay'), '2017-04-18').key2]"
         },
         "ENDPOINT": {
           "type": "string",
