@@ -11,8 +11,8 @@
   - `azure.search.documents.models.QueryLanguage`
   - `azure.search.documents.models.QuerySpellerType`
   - `azure.search.documents.models.QueryDebugMode`
-  - `azure.search.documents.models.HybridSearch`
   - `azure.search.documents.models.HybridCountAndFacetMode`
+  - `azure.search.documents.models.HybridSearch`
   - `azure.search.documents.models.SearchScoreThreshold`
   - `azure.search.documents.models.VectorSimilarityThreshold`
   - `azure.search.documents.models.VectorThreshold`
@@ -33,27 +33,29 @@
   - `azure.search.documents.indexes.models.IndexingMode`
   - `azure.search.documents.indexes.models.LexicalNormalizer`
   - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.LineEnding`
   - `azure.search.documents.indexes.models.NativeBlobSoftDeleteDeletionDetectionPolicy`
   - `azure.search.documents.indexes.models.SearchIndexerCache`
-  - `azure.search.documents.indexes.models.VisionVectorizeSkill`
   - `azure.search.documents.indexes.models.SkillNames`
-- SearchAlias alias operations do not exist in this release
+  - `azure.search.documents.indexes.models.VisionVectorizeSkill`
+
+- SearchAlias operations do not exist in this release
+- `SearchIndexerClient.reset_documents` does not exist in this release
+- `SearchIndexerClient.reset_skills` does not exist in this release
 - Below properties do not exist
   - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.identity`
-  - `azure.search.documents.indexes.models.SearchField.normalizer_name`
   - `azure.search.documents.indexes.models.SearchIndex.normalizers`
+  - `azure.search.documents.indexes.models.SearchField.normalizer_name`
 - Below parameters do not exist
-  - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
-  - `SearchIndexerClient.create_or_update_indexer.disable_cache_reprocessing_change_detection`
-  - `SearchIndexerClient.reset_documents.keys_or_ids`
-  - `SearchIndexerClient.create_or_update_data_source_connection.skip_indexer_reset_requirement_for_cache`
-  - `SearchIndexerClient.create_or_update_skillset.skip_indexer_reset_requirement_for_cache`
-  - `SearchIndexerClient.create_or_update_skillset.disable_cache_reprocessing_change_detection`
-  - `SearchIndexerClient.reset_skills.skill_names`
   - `SearchClient.search.query_language`
   - `SearchClient.search.query_speller`
   - `SearchClient.search.debug`
   - `SearchClient.search.hybrid_search`
+  - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_data_source_connection.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_skillset.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_indexer.disable_cache_reprocessing_change_detection`
+  - `SearchIndexerClient.create_or_update_skillset.disable_cache_reprocessing_change_detection`
 
 ### Other Changes
 

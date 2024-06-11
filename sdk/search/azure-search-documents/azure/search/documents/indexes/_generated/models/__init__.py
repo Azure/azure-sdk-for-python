@@ -120,7 +120,6 @@ from ._models_py3 import SearchIndexerKnowledgeStore
 from ._models_py3 import SearchIndexerKnowledgeStoreBlobProjectionSelector
 from ._models_py3 import SearchIndexerKnowledgeStoreFileProjectionSelector
 from ._models_py3 import SearchIndexerKnowledgeStoreObjectProjectionSelector
-from ._models_py3 import SearchIndexerKnowledgeStoreParameters
 from ._models_py3 import SearchIndexerKnowledgeStoreProjection
 from ._models_py3 import SearchIndexerKnowledgeStoreProjectionSelector
 from ._models_py3 import SearchIndexerKnowledgeStoreTableProjectionSelector
@@ -192,7 +191,6 @@ from ._search_service_client_enums import IndexerStatus
 from ._search_service_client_enums import KeyPhraseExtractionSkillLanguage
 from ._search_service_client_enums import LexicalAnalyzerName
 from ._search_service_client_enums import LexicalTokenizerName
-from ._search_service_client_enums import LineEnding
 from ._search_service_client_enums import MicrosoftStemmingTokenizerLanguage
 from ._search_service_client_enums import MicrosoftTokenizerLanguage
 from ._search_service_client_enums import OcrSkillLanguage
@@ -340,7 +338,6 @@ __all__ = [
     "SearchIndexerKnowledgeStoreBlobProjectionSelector",
     "SearchIndexerKnowledgeStoreFileProjectionSelector",
     "SearchIndexerKnowledgeStoreObjectProjectionSelector",
-    "SearchIndexerKnowledgeStoreParameters",
     "SearchIndexerKnowledgeStoreProjection",
     "SearchIndexerKnowledgeStoreProjectionSelector",
     "SearchIndexerKnowledgeStoreTableProjectionSelector",
@@ -411,7 +408,6 @@ __all__ = [
     "KeyPhraseExtractionSkillLanguage",
     "LexicalAnalyzerName",
     "LexicalTokenizerName",
-    "LineEnding",
     "MicrosoftStemmingTokenizerLanguage",
     "MicrosoftTokenizerLanguage",
     "OcrSkillLanguage",

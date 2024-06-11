@@ -656,21 +656,6 @@ class LexicalTokenizerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/core/WhitespaceTokenizer.html"""
 
 
-class LineEnding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the sequence of characters to use between the lines of text recognized by the OCR
-    skill. The default value is "space".
-    """
-
-    SPACE = "space"
-    """Lines are separated by a single space character."""
-    CARRIAGE_RETURN = "carriageReturn"
-    """Lines are separated by a carriage return ('\\r') character."""
-    LINE_FEED = "lineFeed"
-    """Lines are separated by a single line feed ('\\n') character."""
-    CARRIAGE_RETURN_LINE_FEED = "carriageReturnLineFeed"
-    """Lines are separated by a carriage return and a line feed ('\\r\\n') character."""
-
-
 class MicrosoftStemmingTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Lists the languages supported by the Microsoft language stemming tokenizer."""
 

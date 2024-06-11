@@ -5397,10 +5397,6 @@ class OcrSkill(SearchIndexerSkill):
     :ivar should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
     :vartype should_detect_orientation: bool
-    :ivar line_ending: Defines the sequence of characters to use between the lines of text
-     recognized by the OCR skill. The default value is "space". Known values are: "space",
-     "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
-    :vartype line_ending: str or ~azure.search.documents.indexes.models.LineEnding
     """
 
     _validation = {
@@ -5418,7 +5414,6 @@ class OcrSkill(SearchIndexerSkill):
         "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
         "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
         "should_detect_orientation": {"key": "detectOrientation", "type": "bool"},
-        "line_ending": {"key": "lineEnding", "type": "str"},
     }
 
     def __init__(
@@ -5431,7 +5426,6 @@ class OcrSkill(SearchIndexerSkill):
         context: Optional[str] = None,
         default_language_code: Optional[Union[str, "_models.OcrSkillLanguage"]] = None,
         should_detect_orientation: bool = False,
-        line_ending: Optional[Union[str, "_models.LineEnding"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5471,16 +5465,11 @@ class OcrSkill(SearchIndexerSkill):
         :keyword should_detect_orientation: A value indicating to turn orientation detection on or not.
          Default is false.
         :paramtype should_detect_orientation: bool
-        :keyword line_ending: Defines the sequence of characters to use between the lines of text
-         recognized by the OCR skill. The default value is "space". Known values are: "space",
-         "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
-        :paramtype line_ending: str or ~azure.search.documents.indexes.models.LineEnding
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
         self.odata_type: str = "#Microsoft.Skills.Vision.OcrSkill"
         self.default_language_code = default_language_code
         self.should_detect_orientation = should_detect_orientation
-        self.line_ending = line_ending
 
 
 class OutputFieldMappingEntry(_serialization.Model):
@@ -7619,43 +7608,6 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(
     :ivar storage_container: Blob container to store projections in. Required.
     :vartype storage_container: str
     """
-
-
-class SearchIndexerKnowledgeStoreParameters(_serialization.Model):
-    """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
-    specific property. Each value must be of a primitive type.
-
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
-    :ivar synthesize_generated_key_name: Whether or not projections should synthesize a generated
-     key name if one isn't already present.
-    :vartype synthesize_generated_key_name: bool
-    """
-
-    _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "synthesize_generated_key_name": {"key": "synthesizeGeneratedKeyName", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        synthesize_generated_key_name: bool = False,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
-        :keyword synthesize_generated_key_name: Whether or not projections should synthesize a
-         generated key name if one isn't already present.
-        :paramtype synthesize_generated_key_name: bool
-        """
-        super().__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.synthesize_generated_key_name = synthesize_generated_key_name
 
 
 class SearchIndexerKnowledgeStoreProjection(_serialization.Model):
