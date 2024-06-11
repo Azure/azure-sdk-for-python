@@ -92,6 +92,7 @@
                 },
                 "customSubDomainName": "[variables('uniqueSubDomainName')]"
             },
+            "identity": {"type": "SystemAssigned"},
             "dependsOn": [
                 "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
             ]
