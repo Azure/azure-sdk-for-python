@@ -49,10 +49,11 @@
   - `azure.search.documents.indexes.models.SearchField.normalizer_name`
 
 - Below parameters do not exist
-  - `SearchClient.search.query_language`
-  - `SearchClient.search.query_speller`
   - `SearchClient.search.debug`
   - `SearchClient.search.hybrid_search`
+  - `SearchClient.search.query_language`
+  - `SearchClient.search.query_speller`
+  - `SearchClient.search.semantic_fields`
   - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
   - `SearchIndexerClient.create_or_update_data_source_connection.skip_indexer_reset_requirement_for_cache`
   - `SearchIndexerClient.create_or_update_skillset.skip_indexer_reset_requirement_for_cache`

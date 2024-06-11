@@ -159,7 +159,6 @@ class SearchClient(HeadersMixin):
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, QueryCaptionType]] = None,
         query_caption_highlight_enabled: Optional[bool] = None,
-        semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
         skip: Optional[int] = None,
@@ -235,7 +234,6 @@ class SearchClient(HeadersMixin):
         :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
             query caption is set to 'extractive'. Determines whether highlighting is enabled.
             Defaults to 'true'.
-        :keyword list[str] semantic_fields: The list of field names used for semantic search.
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
             processing documents for queries of type semantic.
         :paramtype semantic_configuration_name: str
@@ -333,7 +331,6 @@ class SearchClient(HeadersMixin):
             search_mode=search_mode,
             answers=answers,
             captions=captions,
-            semantic_fields=",".join(semantic_fields) if semantic_fields else None,
             semantic_configuration=semantic_configuration,
             select=select if isinstance(select, str) else None,
             skip=skip,
