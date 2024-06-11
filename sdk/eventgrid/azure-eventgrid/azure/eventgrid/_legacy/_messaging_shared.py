@@ -11,10 +11,10 @@
 # ==========================================================================
 
 
-
 import json
 
-def _get_json_content(obj): # pylint: disable=inconsistent-return-statements
+
+def _get_json_content(obj):  # pylint: disable=inconsistent-return-statements
     """Event mixin to have methods that are common to different Event types
     like CloudEvent, EventGridEvent etc.
 
@@ -39,7 +39,7 @@ def _get_json_content(obj): # pylint: disable=inconsistent-return-statements
             return json.loads(next(obj.body))
         except ValueError as err:
             raise ValueError(msg) from err
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             try:
                 return json.loads(obj)
             except ValueError as err:

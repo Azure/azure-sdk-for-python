@@ -868,8 +868,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         err = e.value.body
         assert err["code"] == "content_filter"
         content_filter_result = err["innererror"]["content_filter_result"]
-        assert content_filter_result["custom_blocklists"][0]["filtered"] is True
-        assert content_filter_result["custom_blocklists"][0]["id"].startswith("CustomBlockList")
+        assert content_filter_result["custom_blocklists"]["filtered"] is True
+        assert content_filter_result["custom_blocklists"]["details"][0]["id"].startswith("CustomBlockList")
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False

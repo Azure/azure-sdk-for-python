@@ -1,6 +1,6 @@
 # Release History
 
-## 12.17.0b1 (Unreleased)
+## 12.17.0b1 (2024-06-11)
 
 ### Features Added
 - Added `enable_snapshot_virtual_directory_access` parameter support for NFS shares on premium-tier Storage accounts.

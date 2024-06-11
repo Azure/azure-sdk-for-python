@@ -34,21 +34,20 @@ signature = generate_sas(endpoint, key, expiration_date_utc)
 credential = AzureSasCredential(signature)
 client = EventGridPublisherClient(endpoint, credential)
 
-services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]    # possible values for data field
+services = ["EventGrid", "ServiceBus", "EventHubs", "Storage"]  # possible values for data field
+
 
 def publish_event():
     # publish events
     for _ in range(3):
 
-        event_list = []     # list of events to publish
+        event_list = []  # list of events to publish
         # create events and append to list
         for j in range(randint(1, 3)):
-            sample_members = sample(services, k=randint(1, 4))      # select random subset of team members
+            sample_members = sample(services, k=randint(1, 4))  # select random subset of team members
             event = CloudEvent(
-                    type="Azure.Sdk.Demo",
-                    source="https://egdemo.dev/demowithsignature",
-                    data={"team": sample_members}
-                    )
+                type="Azure.Sdk.Demo", source="https://egdemo.dev/demowithsignature", data={"team": sample_members}
+            )
             event_list.append(event)
 
         # publish list of events
@@ -56,5 +55,6 @@ def publish_event():
         print("Batch of size {} published".format(len(event_list)))
         time.sleep(randint(1, 5))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     publish_event()
