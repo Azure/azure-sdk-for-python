@@ -1,5 +1,7 @@
+import pytest
 from azure.eventgrid.system.events.models import AcsChatEventBaseProperties
 
 
-def test_acs_chat_event_base_properties():
-    pass
+class SystemEventTest():
+    def test_acs_chat_event_base_properties():
+        pass
