@@ -118,6 +118,8 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 # Try to send via namespace
                 self._publish(self._namespace, _serialize_events(events), **kwargs)
             except Exception as exception:  # pylint: disable=broad-except
+                if exception.response.status_code == 400:
+                    raise HttpResponseError("Are the provided event(s) in CloudEvent format?") from exception
                 self._http_response_error_handler(exception)
                 raise exception
         else:
@@ -307,8 +309,8 @@ def _serialize_events(events):
             # Try to serialize CNCF Cloud Events
             return [_from_cncf_events(e) for e in events]
     else:
-        # Does not conform to format
-        raise TypeError("Invalid event data. Please check the data is of Cloud Event type/format and try again.")
+        # Does not conform to format, try to send
+        return events
 
 
 def _serialize_cloud_event(cloud_event):
