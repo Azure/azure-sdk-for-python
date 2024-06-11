@@ -82,7 +82,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
         """Send events to the Event Grid Service.
 
         :param events: The event(s) to send. If sending to an Event Grid Namespace, the dict, list of dicts,
-         or event should be in the format of a CloudEvent.
+         or event(s) should be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
         :keyword channel_name: The name of the channel to send the event to. Event Grid Basic Resource only.
