@@ -24,6 +24,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
@@ -252,6 +253,7 @@ class IndexOperations(_ScopeDependentOperations):
         return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls, **kwargs)
 
     # pylint: disable=too-many-locals
+    @experimental
     def build_index(
         self,
         *,
@@ -270,7 +272,7 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-    ) -> Union["MLIndex", "Job"]:  # type: ignore[name-defined]
+    ) -> "Job":  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
 
         :keyword name: The name of the index to be created.
@@ -333,8 +335,8 @@ class IndexOperations(_ScopeDependentOperations):
             index=(
                 IndexStore(
                     type="acs",
-                    connection=build_connection_id(index_config.ai_search_connection_id, self._operation_scope),
-                    name=index_config.ai_search_index_name,
+                    connection=build_connection_id(index_config.connection_id, self._operation_scope),
+                    name=index_config.index_name,
                 )
                 if index_config is not None
                 else IndexStore(type="faiss")
@@ -390,9 +392,9 @@ class IndexOperations(_ScopeDependentOperations):
                 return index_job.outputs
 
             git_index_job = git_to_index(
-                git_url=input_source.git_url,
-                branch_name=input_source.git_branch_name,
-                git_connection_id=input_source.git_connection_id,
+                git_url=input_source.url,
+                branch_name=input_source.branch_name,
+                git_connection_id=input_source.connection_id,
             )
             # Ensure repo cloned each run to get latest, comment out to have first clone reused.
             git_index_job.settings.force_rerun = True

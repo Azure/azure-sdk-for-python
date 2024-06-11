@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from azure.ai.ml._utils._experimental import experimental
 from typing import Optional
 
-
+@experimental
 class IndexConfig:  # pylint: disable=too-many-instance-attributes
     """Convenience class that contains all config values that for index creation that are
     NOT specific to the index source data or the created index type. Meant for internal use only

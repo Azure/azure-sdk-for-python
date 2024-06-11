@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
@@ -12,6 +13,7 @@ from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
 
 
 @dataclass
+@experimental
 class ModelConfiguration:
     """Configuration for a embedding model.
 
@@ -47,7 +49,7 @@ class ModelConfiguration:
         connection: WorkspaceConnection,
         model_name: Optional[str] = None,
         deployment_name: Optional[str] = None,
-        **model_kwargs
+        **kwargs
     ) -> "ModelConfiguration":
         """Create an model configuration from a Connection.
 
@@ -57,8 +59,8 @@ class ModelConfiguration:
         :type model_name: Optional[str]
         :param deployment_name: The name of the deployment.
         :type deployment_name: Optional[str]
-        :keyword model_kwargs: Additional keyword arguments for the model.
-        :paramtype model_kwargs: Dict[str, Any]
+        :keyword kwargs: Additional keyword arguments for the model.
+        :paramtype kwargs: Dict[str, Any]
         :return: The model configuration.
         :rtype: ~azure.ai.ml.entities._indexes.entities.ModelConfiguration
         :raises TypeError: If the connection is not an AzureOpenAIConnection.
@@ -97,5 +99,5 @@ class ModelConfiguration:
             connection_type=connection_type,
             model_name=model_name,
             deployment_name=deployment_name,
-            model_kwargs=model_kwargs,
+            model_kwargs=kwargs,
         )
