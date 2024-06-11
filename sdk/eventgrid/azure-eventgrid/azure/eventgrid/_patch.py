@@ -30,7 +30,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
     """EventGridPublisherClient.
 
     Sends events to a basic topic, basic domain, or a namespace topic
-     specified during the client initialization.
+    specified during the client initialization.
 
     A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
     If a list is provided, the list must contain only one type of event.
@@ -97,7 +97,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
     """EventGridConsumerClient.
 
     Consumes and manages events from a namespace topic
-     and event subscription specified during the client initialization.
+    and event subscription specified during the client initialization.
 
     :param endpoint: The host name of the namespace, e.g.
      namespaceName1.westus-1.eventgrid.azure.net. Required.
@@ -108,7 +108,7 @@ class EventGridConsumerClient(InternalEventGridConsumerClient):
      ~azure.core.credentials.TokenCredential
     :keyword namespace_topic: The name of the topic to consume events from. Required.
     :paramtype namespace_topic: str
-    :subscription: The name of the subscription to consume events from. Required.
+    :keyword subscription: The name of the subscription to consume events from. Required.
     :paramtype subscription: str
     :keyword api_version: The API version to use for this operation. Default value is "2024-06-01".
      Note that overriding this default value may result in unsupported behavior.
