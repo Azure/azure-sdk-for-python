@@ -49,7 +49,12 @@
     "cognitiveServicesEndpointSuffix": {
         "defaultValue": ".cognitiveservices.azure.com",
         "type": "string"
-    }, 
+    },
+    "identity": {
+          "value": {
+              "type": "SystemAssigned"
+          }
+      },
   },
     "variables": {
         "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
