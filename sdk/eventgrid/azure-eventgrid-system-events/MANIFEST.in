@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+include azure/eventgrid/system/events/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/__init__.py
+include azure/eventgrid/__init__.py
+include azure/eventgrid/system/__init__.py
