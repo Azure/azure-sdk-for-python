@@ -1787,4 +1787,32 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # read() should still work to get remaining chars
         assert await stream.read() == '你好世界'
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_chars_utf32(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 256
+        encoding = 'utf-32'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, encoding=encoding, overwrite=True)
+
+        stream = await blob.download_blob(encoding=encoding)
+        assert await stream.read() == data
+
+        result = ''
+        stream = await blob.download_blob(encoding=encoding)
+        for _ in range(4):
+            chunk = await stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += await stream.readall()
+        assert result == data
+
 # ------------------------------------------------------------------------------

@@ -1638,4 +1638,29 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # read() should still work to get remaining chars
         assert stream.read() == '你好世界'
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_read_chars_utf32(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        data = '你好世界' * 256
+        encoding = 'utf-32'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, encoding=encoding, overwrite=True)
+
+        stream = blob.download_blob(encoding=encoding)
+        assert stream.read() == data
+
+        result = ''
+        stream = blob.download_blob(encoding=encoding)
+        for _ in range(4):
+            chunk = stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += stream.readall()
+        assert result == data
+
     # ------------------------------------------------------------------------------
