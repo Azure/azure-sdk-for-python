@@ -143,9 +143,7 @@ class InsertUpdateDeleteEntity(object):
                 color="red",
                 maker="maker2",
                 model="model2",
-                production_date=datetime(
-                    year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc
-                ),
+                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
                 mileage=2**31,  # an int64 integer
                 is_second_hand=True,
             )

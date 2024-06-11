@@ -568,11 +568,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
-            response_entity = {
-                "PartitionKey": "PK4",
-                "RowKey": "RK4",
-                "Data": EntityProperty(max_int64, EdmType.INT64)
-            }
+            response_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": EntityProperty(max_int64, EdmType.INT64)}
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
@@ -1429,11 +1425,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
-            response_entity = {
-                "PartitionKey": "PK4",
-                "RowKey": "RK4",
-                "Data": EntityProperty(max_int64, EdmType.INT64)
-            }
+            response_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": EntityProperty(max_int64, EdmType.INT64)}
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
@@ -2332,11 +2324,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 "Data": str(max_int64),
                 "Data@odata.type": "Edm.Int64",
             }
-            response_entity = {
-                "PartitionKey": "PK4",
-                "RowKey": "RK4",
-                "Data": EntityProperty(max_int64, EdmType.INT64)
-            }
+            response_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": EntityProperty(max_int64, EdmType.INT64)}
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
             assert "is too large to be cast to" in str(error.value)
