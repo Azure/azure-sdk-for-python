@@ -51,7 +51,7 @@ def sample_chat_completions_streaming_with_entra_id_auth():
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
-        headers={"azureml-model-deployment": model_deployment}
+        headers={"azureml-model-deployment": model_deployment},
     )
 
     response = client.complete(

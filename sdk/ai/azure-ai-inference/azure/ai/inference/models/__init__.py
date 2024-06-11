@@ -16,6 +16,10 @@ from ._models import ChatCompletionsNamedFunctionToolSelection
 from ._models import ChatCompletionsNamedToolSelection
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
+from ._models import ContentItem
+from ._models import ImageContentItem
+from ._models import ImageUrl
+from ._models import TextContentItem
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
 from ._models import CompletionsUsage
@@ -34,11 +38,12 @@ from ._models import UserMessage
 
 from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
+from ._enums import ImageDetailLevel
 from ._enums import ChatRole
 from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
-from ._enums import CompletionsFinishReason
 from ._enums import ModelType
+from ._enums import CompletionsFinishReason
 
 from ._patch import StreamingChatCompletions
 from ._patch import AsyncStreamingChatCompletions
@@ -57,6 +62,10 @@ __all__ = [
     "ChatCompletionsNamedToolSelection",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
+    "ContentItem",
+    "ImageContentItem",
+    "ImageUrl",
+    "TextContentItem",
     "ChatRequestMessage",
     "ChatResponseMessage",
     "CompletionsUsage",
@@ -74,11 +83,12 @@ __all__ = [
     "UserMessage",
     "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
+    "ImageDetailLevel",
     "ChatRole",
     "EmbeddingEncodingFormat",
     "EmbeddingInputType",
+    "ModelType",
     "CompletionsFinishReason",
-    "ModelType"
 ]
 
 _patch_sdk()
