@@ -535,8 +535,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         count += read
         self._current_content_offset += read
         self._read_offset += read
-        if self._progress_hook:
-            await self._progress_hook(self._read_offset, self.size)
+        await self._check_and_report_progress()
 
         remaining = size - count
         if remaining > 0 and not self._download_complete:
@@ -616,8 +615,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self._current_content_offset = read
                     self._read_offset += read
                     remaining -= read
-                    if self._progress_hook:
-                        await self._progress_hook(self._read_offset, self.size)
+                    await self._check_and_report_progress()
 
         data = output_stream.getvalue()
         if not self._text_mode and self._encoding:
@@ -750,6 +748,13 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._raw_download_offset = self.size
         self._read_offset = self.size
         self._current_content_offset = len(self._current_content)
+
+    async def _check_and_report_progress(self):
+        """Reports progress if necessary."""
+        # Only report progress at the end of each chunk and use download_offset to always report
+        # progress in terms of (approximate) byte count.
+        if self._progress_hook and self._current_content_offset == len(self._current_content):
+            await self._progress_hook(self._download_offset, self.size)
 
     async def content_as_bytes(self, max_concurrency=1):
         """DEPRECATED: Download the contents of this file.

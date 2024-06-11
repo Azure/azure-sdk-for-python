@@ -1475,11 +1475,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
-        # Custom progress tracker for 4 read calls then readall
         class CustomProgressTracker:
             def __init__(self):
                 self.num_read = 0
-                self.currents = [500, 1000, 1024, 1500, 2000, 2048, 3072, 4096, 5120, 5125]
+                self.currents = [1024, 2048, 3072, 4096, 5120, 5125]
                 self.totals = [5125] * len(self.currents)
 
             def assert_progress(self, current, total):
@@ -1493,6 +1492,36 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Act / Assert
         for _ in range(4):
             stream.read(500)
+        stream.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_get_blob_read_progress_chars(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        data = '你好世界' * 260  # 3120 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, overwrite=True)
+
+        class CustomProgressTracker:
+            def __init__(self):
+                self.num_read = 0
+                self.currents = [1024, 2048, 3072, 3120]
+                self.totals = [3120] * len(self.currents)
+
+            def assert_progress(self, current, total):
+                assert total == self.totals[self.num_read]
+                assert current == self.currents[self.num_read]
+                self.num_read += 1
+
+        progress = CustomProgressTracker()
+        stream = blob.download_blob(encoding='utf-8', progress_hook=progress.assert_progress)
+
+        # Act / Assert
+        for _ in range(4):
+            stream.read(chars=50)
         stream.readall()
 
     @BlobPreparer()
