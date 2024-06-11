@@ -52,10 +52,9 @@ class TableEntityEncoderABC(abc.ABC, Generic[T]):
         if isinstance(value, int):
             if MIN_INT32 <= value <= MAX_INT32:
                 return None, value
-            elif MIN_INT64 <= value <= MAX_INT64:
+            if MIN_INT64 <= value <= MAX_INT64:
                 return EdmType.INT64, str(value)
-            else:
-                return None, value
+            return None, value
         if isinstance(value, float):
             if isnan(value):
                 return EdmType.DOUBLE, "NaN"
