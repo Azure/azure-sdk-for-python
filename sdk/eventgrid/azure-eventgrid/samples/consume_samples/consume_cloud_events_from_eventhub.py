@@ -24,19 +24,20 @@ from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
+
+
 def on_event(partition_context, event):
     dict_event: CloudEvent = CloudEvent.from_json(event)
     print("data: {}\n".format(dict_event.data))
 
+
 consumer_client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,
-    consumer_group='$Default',
+    consumer_group="$Default",
     eventhub_name=EVENTHUB_NAME,
 )
 
 with consumer_client:
     event_list = consumer_client.receive(
-        on_event=on_event,
-        starting_position="-1",  # "-1" is from the beginning of the partition.
-        prefetch=5
+        on_event=on_event, starting_position="-1", prefetch=5  # "-1" is from the beginning of the partition.
     )

@@ -1,5 +1,12 @@
 # Release History
 
+## 10.2.0b17 (2024-06-03)
+
+### Features Added
+
+  - Added model ServerDetachVNetParameter
+  - Added model StorageRedundancyEnum
+
 ## 10.2.0b16 (2024-04-22)
 
 ### Features Added

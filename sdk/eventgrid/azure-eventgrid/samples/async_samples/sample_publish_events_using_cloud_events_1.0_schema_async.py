@@ -24,21 +24,24 @@ from azure.core.credentials import AzureKeyCredential
 topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
+
 async def publish():
     credential = AzureKeyCredential(topic_key)
     client = EventGridPublisherClient(endpoint, credential)
 
-    await client.send([
-        CloudEvent(
-            type="Contoso.Items.ItemReceived",
-            source="/contoso/items",
-            data={
-                "itemSku": "Contoso Item SKU #1"
-            },
-            subject="Door1"
-        )
-    ])
+    await client.send(
+        [
+            CloudEvent(
+                type="Contoso.Items.ItemReceived",
+                source="/contoso/items",
+                data={"itemSku": "Contoso Item SKU #1"},
+                subject="Door1",
+            )
+        ]
+    )
+
+
 # [END publish_cloud_event_to_topic_async]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(publish())

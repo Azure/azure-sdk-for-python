@@ -25,13 +25,13 @@ endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 credential = AzureSasCredential(sas)
 client = EventGridPublisherClient(endpoint, credential)
 
-client.send([
-	EventGridEvent(
-		event_type="Contoso.Items.ItemReceived",
-		data={
-			"itemSku": "Contoso Item SKU #1"
-		},
-		subject="Door1",
-		data_version="2.0"
-	)
-])
+client.send(
+    [
+        EventGridEvent(
+            event_type="Contoso.Items.ItemReceived",
+            data={"itemSku": "Contoso Item SKU #1"},
+            subject="Door1",
+            data_version="2.0",
+        )
+    ]
+)
