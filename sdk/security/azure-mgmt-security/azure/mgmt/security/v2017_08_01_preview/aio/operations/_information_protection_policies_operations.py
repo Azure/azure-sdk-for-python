@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -35,6 +36,10 @@ from ...operations._information_protection_policies_operations import (
     build_list_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -76,12 +81,11 @@ class InformationProtectionPoliciesOperations:
          values are: "effective" and "custom". Required.
         :type information_protection_policy_name: str or
          ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicyName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InformationProtectionPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -97,20 +101,19 @@ class InformationProtectionPoliciesOperations:
         )
         cls: ClsType[_models.InformationProtectionPolicy] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             scope=scope,
             information_protection_policy_name=information_protection_policy_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -122,13 +125,9 @@ class InformationProtectionPoliciesOperations:
         deserialized = self._deserialize("InformationProtectionPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/{scope}/providers/Microsoft.Security/informationProtectionPolicies/{informationProtectionPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -156,7 +155,6 @@ class InformationProtectionPoliciesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InformationProtectionPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -167,7 +165,7 @@ class InformationProtectionPoliciesOperations:
         self,
         scope: str,
         information_protection_policy_name: Union[str, _models.InformationProtectionPolicyName],
-        information_protection_policy: IO,
+        information_protection_policy: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -183,11 +181,10 @@ class InformationProtectionPoliciesOperations:
         :type information_protection_policy_name: str or
          ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicyName
         :param information_protection_policy: Information protection policy. Required.
-        :type information_protection_policy: IO
+        :type information_protection_policy: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InformationProtectionPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -198,7 +195,7 @@ class InformationProtectionPoliciesOperations:
         self,
         scope: str,
         information_protection_policy_name: Union[str, _models.InformationProtectionPolicyName],
-        information_protection_policy: Union[_models.InformationProtectionPolicy, IO],
+        information_protection_policy: Union[_models.InformationProtectionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.InformationProtectionPolicy:
         """Details of the information protection policy.
@@ -212,18 +209,14 @@ class InformationProtectionPoliciesOperations:
         :type information_protection_policy_name: str or
          ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicyName
         :param information_protection_policy: Information protection policy. Is either a
-         InformationProtectionPolicy type or a IO type. Required.
+         InformationProtectionPolicy type or a IO[bytes] type. Required.
         :type information_protection_policy:
-         ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicy or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicy or IO[bytes]
         :return: InformationProtectionPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2017_08_01_preview.models.InformationProtectionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -248,23 +241,22 @@ class InformationProtectionPoliciesOperations:
         else:
             _json = self._serialize.body(information_protection_policy, "InformationProtectionPolicy")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             scope=scope,
             information_protection_policy_name=information_protection_policy_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -284,10 +276,6 @@ class InformationProtectionPoliciesOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/{scope}/providers/Microsoft.Security/informationProtectionPolicies/{informationProtectionPolicyName}"
-    }
-
     @distributed_trace
     def list(self, scope: str, **kwargs: Any) -> AsyncIterable["_models.InformationProtectionPolicy"]:
         """Information protection policies of a specific management group.
@@ -296,7 +284,6 @@ class InformationProtectionPoliciesOperations:
          (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName). Required.
         :type scope: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either InformationProtectionPolicy or the result of
          cls(response)
         :rtype:
@@ -311,7 +298,7 @@ class InformationProtectionPoliciesOperations:
         )
         cls: ClsType[_models.InformationProtectionPolicyList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -322,15 +309,14 @@ class InformationProtectionPoliciesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     scope=scope,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -341,14 +327,14 @@ class InformationProtectionPoliciesOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("InformationProtectionPolicyList", pipeline_response)
@@ -358,11 +344,11 @@ class InformationProtectionPoliciesOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -373,5 +359,3 @@ class InformationProtectionPoliciesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/informationProtectionPolicies"}

@@ -4,6 +4,7 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: translation
+      TestTimeoutInMinutes: 200
       Clouds: Public # Skipping INT, re-enable when environment fixed
       CloudConfig:
         Public:

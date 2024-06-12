@@ -1,12 +1,12 @@
 {
-  "commit": "0e456cbdec1f37472feca34fbdc69d62439bbd31",
+  "commit": "5485fc4eb11debd9cc8d92ec156b573998aae977",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.7",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.7.1",
-    "@autorest/modelerfour@4.26.2"
+    "@autorest/python@6.13.16",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/security/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "autorest_command": "autorest specification/security/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.16 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/security/resource-manager/readme.md",
   "package-2023-11-15": "2023-09-12 12:04:57 -0700 32c178f2467f792a322f56174be244135d2c907f Microsoft.Security/stable/2023-11-15/apiCollections.json",
   "package-preview-2023-03-only": "2023-03-23 11:34:42 +0200 2db2beee2fed67b08d273fdac7a51aba02ac2f80 Microsoft.Security/preview/2023-03-01-preview/securityConnectors.json",
@@ -37,5 +37,12 @@
   "package-2018-06-only": "2022-04-13 06:23:26 +0300 880394b28e0f4e7925f4ecb3edc46b651ab58129 Microsoft.Security/stable/2018-06-01/pricings.json",
   "package-2017-08-only": "2022-04-13 06:23:26 +0300 880394b28e0f4e7925f4ecb3edc46b651ab58129 Microsoft.Security/stable/2017-08-01/complianceResults.json",
   "package-2017-08-preview-python-only": "2022-04-13 06:23:26 +0300 880394b28e0f4e7925f4ecb3edc46b651ab58129 Microsoft.Security/preview/2017-08-01-preview/securityContacts.json",
-  "package-2015-06-preview-python-only": "2022-04-13 06:23:26 +0300 880394b28e0f4e7925f4ecb3edc46b651ab58129 Microsoft.Security/preview/2015-06-01-preview/tasks.json"
+  "package-2015-06-preview-python-only": "2022-04-13 06:23:26 +0300 880394b28e0f4e7925f4ecb3edc46b651ab58129 Microsoft.Security/preview/2015-06-01-preview/tasks.json",
+  "package-2024-04": "fatal: invalid object name 'from'. from: securityConnectorsDevOps.json",
+  "package-2024-01": "2023-12-13 05:43:47 +0200 b52464f520b77222ac8b0bdeb80a030c0fdf5b1b Microsoft.Security/stable/2024-01-01/pricings.json",
+  "package-preview-2023-10": "2023-10-27 04:43:14 +0300 2eb036ae2fcf0dab9bbc49f3aeadb7847c953f9a Microsoft.Security/preview/2023-10-01-preview/securityConnectors.json",
+  "package-preview-2023-09": "fatal: invalid object name 'from'. from: securityConnectorsDevOps.json",
+  "package-2023-05": "2023-06-07 22:07:01 -0700 483cdd30332340a14e3d09eafdc1a18f3ba4324c Microsoft.Security/stable/2023-05-01/ServerVulnerabilityAssessmentsSettings.json",
+  "package-preview-2023-05": "2023-05-29 05:03:56 +0300 be02493774ad6450166fa3383c109027658567b4 Microsoft.Security/preview/2023-05-01-preview/healthReports.json",
+  "package-preview-2023-02-15-only": "2024-03-29 06:00:35 +0300 7fa04c618c9a280dba63303b0034fa9f0aabab1f Microsoft.Security/preview/2023-02-15-preview/sensitivitySettings.json"
 }

@@ -44,7 +44,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
     async def tearDown(self):
         await self.client.close()
 
-    async def test_container_properties_cache(self):
+    async def test_container_properties_cache_async(self):
         client = self.client
         database_name = "Container Properties Cache Test DB Async " + str(uuid.uuid4())
         created_db = await client.create_database(database_name)

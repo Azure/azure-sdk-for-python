@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -99,7 +99,6 @@ class IntegrationRuntimesOperations:
     def list(self, **kwargs: Any) -> _models.IntegrationRuntimeListResponse:
         """List Integration Runtimes.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeListResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -154,7 +153,6 @@ class IntegrationRuntimesOperations:
 
         :param integration_runtime_name: The Integration Runtime name. Required.
         :type integration_runtime_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IntegrationRuntimeResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.IntegrationRuntimeResource
         :raises ~azure.core.exceptions.HttpResponseError:

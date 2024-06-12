@@ -1,0 +1,59 @@
+{% set name = "azure-ai-contentsafety" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('CONTENTSAFETY_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - six
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.contentsafety
+    - azure.ai.contentsafety.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentsafety/azure-ai-contentsafety"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure AI Content Safety client library for Python"
+  description: |
+    Azure AI Content Safety detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful:
+
+    Text Analysis API: Scans text for sexual content, violence, hate, and self-harm with multi-severity levels.
+    Image Analysis API: Scans images for sexual content, violence, hate, and self-harm with multi-severity levels.
+    Text Blocklist Management APIs: The default AI classifiers are sufficient for most content safety needs; however, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.
+    Please see https://aka.ms/azsdk/conda/releases/contentsafety for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

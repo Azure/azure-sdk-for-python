@@ -316,7 +316,11 @@ def set_common_sanitizers() -> None:
 
     # General regex sanitizers for sensitive patterns throughout interactions
     batch_sanitizers[Sanitizer.GENERAL_REGEX] = [
-        {"regex": "(?:[\\?&](sig|se|st)=)(?<secret>[^&\\\"\\s]*)", "group_for_replace": "secret", "value": SANITIZED},
+        {
+            "regex": "(?:[\\?&](sig|se|st|sv)=)(?<secret>[^&\\\"\\s]*)",
+            "group_for_replace": "secret",
+            "value": SANITIZED
+        },
     ]
 
     # Header regex sanitizers for sensitive patterns in request/response headers

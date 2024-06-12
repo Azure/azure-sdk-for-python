@@ -312,16 +312,16 @@ def generate_account_sas(
 
 
 def generate_share_sas(
-        account_name,  # type: str
-        share_name,  # type: str
-        account_key,  # type: str
-        permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):  # type: (...) -> str
+    account_name,  # type: str
+    share_name,  # type: str
+    account_key,  # type: str
+    permission=None,  # type: Optional[Union[ShareSasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    start=None,  # type: Optional[Union[datetime, str]]
+    policy_id=None,  # type: Optional[str]
+    ip=None,  # type: Optional[str]
+    **kwargs # type: Any
+):  # type: (...) -> str
     """Generates a shared access signature for a share.
 
     Use the returned signature with the credential parameter of any ShareServiceClient,
@@ -340,7 +340,7 @@ def generate_share_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ShareSasPermissions
+    :type permission: str or ~azure.storage.fileshare.ShareSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -403,17 +403,17 @@ def generate_share_sas(
 
 
 def generate_file_sas(
-        account_name,  # type: str
-        share_name,  # type: str
-        file_path,  # type: List[str]
-        account_key,  # type: str
-        permission=None,  # type: Optional[Union[FileSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs # type: Any
-    ):
+    account_name,  # type: str
+    share_name,  # type: str
+    file_path,  # type: List[str]
+    account_key,  # type: str
+    permission=None,  # type: Optional[Union[FileSasPermissions, str]]
+    expiry=None,  # type: Optional[Union[datetime, str]]
+    start=None,  # type: Optional[Union[datetime, str]]
+    policy_id=None,  # type: Optional[str]
+    ip=None,  # type: Optional[str]
+    **kwargs # type: Any
+):
     # type: (...) -> str
     """Generates a shared access signature for a file.
 
@@ -436,7 +436,7 @@ def generate_file_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or FileSasPermissions
+    :type permission: str or ~azure.storage.fileshare.FileSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy

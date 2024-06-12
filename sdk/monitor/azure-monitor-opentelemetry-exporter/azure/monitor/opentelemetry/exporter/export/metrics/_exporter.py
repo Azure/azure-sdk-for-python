@@ -274,7 +274,13 @@ def _handle_std_metric_envelope(
 
 
 def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
-    return status_code is not None and int(status_code) < threshold
+    if status_code is None:
+        return False
+    try:
+        return int(status_code) < threshold
+    except ValueError:
+        return False
+
 
 def _is_metric_namespace_opted_in() -> bool:
     return os.environ.get(_APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN, "False").lower() == "true"

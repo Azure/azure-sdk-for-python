@@ -880,6 +880,11 @@ test:
     - azure.mgmt.signalr.aio.operations
     - azure.mgmt.signalr.models
     - azure.mgmt.signalr.operations
+    - azure.mgmt.sphere
+    - azure.mgmt.sphere.aio
+    - azure.mgmt.sphere.aio.operations
+    - azure.mgmt.sphere.models
+    - azure.mgmt.sphere.operations
     - azure.mgmt.sql
     - azure.mgmt.sql.aio
     - azure.mgmt.sql.aio.operations

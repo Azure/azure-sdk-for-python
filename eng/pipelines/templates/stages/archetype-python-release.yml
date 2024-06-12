@@ -191,7 +191,6 @@ stages:
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
-                          BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
                           ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
