@@ -22,6 +22,7 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 from azure.core.paging import PageIterator  # type: ignore
+from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._execution_context import execution_dispatcher
 
 # pylint: disable=protected-access
@@ -75,13 +76,15 @@ class QueryIterable(PageIterator):
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function
         )
+        self._last_response_headers = CaseInsensitiveDict()
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None
-        if self._client.last_response_headers:
-            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
-                self._client.last_response_headers.get('etag')
+        self._last_response_headers = block.response_headers
+        if self._last_response_headers:
+            continuation = self._last_response_headers.get("x-ms-continuation") or \
+                self._last_response_headers.get('etag')
         if block:
             self._did_a_call_already = False
         return continuation, block
@@ -94,9 +97,18 @@ class QueryIterable(PageIterator):
 
         :param Any args:
         :return: List of results.
-        :rtype: list
+        :rtype: ~azure.cosmos.CosmosListResponse
         """
         block = self._ex_context.fetch_next_block()
         if not block:
             raise StopIteration
         return block
+
+    @property
+    def response_headers(self) -> CaseInsensitiveDict:
+        """Returns the response headers associated to this result
+
+        :return: Dict of response headers
+        :rtype: ~azure.core.CaseInsensitiveDict
+        """
+        return self._last_response_headers

@@ -51,7 +51,7 @@ from . import documents
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._constants import _Constants as Constants
 from . import http_constants, exceptions
-from ._cosmos_response import CosmosResponse
+from ._cosmos_responses import CosmosDictResponse, CosmosListResponse
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from ._request_object import RequestObject
@@ -2043,7 +2043,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
 
     def Batch(
         self,
@@ -2105,7 +2105,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
         if response_hook:
             response_hook(last_response_headers, final_responses)
-        return final_responses
+        return CosmosListResponse(original_list=final_responses, response_headers=last_response_headers)
 
     def _Batch(
         self,
@@ -2617,7 +2617,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
 
     def Upsert(
         self,
@@ -2661,7 +2661,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
 
     def Replace(
         self,
@@ -2704,7 +2704,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
 
     def Read(
         self,
@@ -2742,7 +2742,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosResponse(original_dict=result, response_headers=last_response_headers)
+        return CosmosDictResponse(original_dict=result, response_headers=last_response_headers)
 
     def DeleteResource(
         self,
@@ -3030,7 +3030,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
         if not is_query_plan:
-            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"  # TODO: check why we have this weird logic
 
         if (self._query_compatibility_mode in (CosmosClientConnection._QueryCompatibilityMode.Default,
                                                CosmosClientConnection._QueryCompatibilityMode.Query)):
@@ -3056,6 +3056,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
         if isPrefixPartitionQuery:
+            last_response_headers = {}
             # here get the over lapping ranges
             partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
             pk_properties = partition_key_definition
