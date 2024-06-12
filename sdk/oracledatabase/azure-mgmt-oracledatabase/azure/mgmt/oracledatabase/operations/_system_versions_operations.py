@@ -50,8 +50,7 @@ def build_list_by_location_request(location: str, subscription_id: str, **kwargs
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Oracle.Database/locations/{location}/autonomousDbVersions",
+        "template_url", "/subscriptions/{subscriptionId}/providers/Oracle.Database/locations/{location}/systemVersions"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -69,7 +68,7 @@ def build_list_by_location_request(location: str, subscription_id: str, **kwargs
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(location: str, autonomousdbversionsname: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(location: str, systemversionname: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -79,14 +78,12 @@ def build_get_request(location: str, autonomousdbversionsname: str, subscription
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Oracle.Database/locations/{location}/autonomousDbVersions/{autonomousdbversionsname}",
+        "/subscriptions/{subscriptionId}/providers/Oracle.Database/locations/{location}/systemVersions/{systemversionname}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "autonomousdbversionsname": _SERIALIZER.url(
-            "autonomousdbversionsname", autonomousdbversionsname, "str", pattern=r".*"
-        ),
+        "systemversionname": _SERIALIZER.url("systemversionname", systemversionname, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -100,14 +97,14 @@ def build_get_request(location: str, autonomousdbversionsname: str, subscription
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AutonomousDatabaseVersionsOperations:
+class SystemVersionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.oracledatabase.OracleDatabaseMgmtClient`'s
-        :attr:`autonomous_database_versions` attribute.
+        :attr:`system_versions` attribute.
     """
 
     models = _models
@@ -120,20 +117,20 @@ class AutonomousDatabaseVersionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_location(self, location: str, **kwargs: Any) -> Iterable["_models.AutonomousDbVersion"]:
-        """List AutonomousDbVersion resources by Location.
+    def list_by_location(self, location: str, **kwargs: Any) -> Iterable["_models.SystemVersion"]:
+        """List SystemVersion resources by Location.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :return: An iterator like instance of either AutonomousDbVersion or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.oracledatabase.models.AutonomousDbVersion]
+        :return: An iterator like instance of either SystemVersion or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.oracledatabase.models.SystemVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AutonomousDbVersionListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SystemVersionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -175,7 +172,7 @@ class AutonomousDatabaseVersionsOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("AutonomousDbVersionListResult", pipeline_response)
+            deserialized = self._deserialize("SystemVersionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -200,15 +197,15 @@ class AutonomousDatabaseVersionsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, location: str, autonomousdbversionsname: str, **kwargs: Any) -> _models.AutonomousDbVersion:
-        """Get a AutonomousDbVersion.
+    def get(self, location: str, systemversionname: str, **kwargs: Any) -> _models.SystemVersion:
+        """Get a SystemVersion.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param autonomousdbversionsname: AutonomousDbVersion name. Required.
-        :type autonomousdbversionsname: str
-        :return: AutonomousDbVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.oracledatabase.models.AutonomousDbVersion
+        :param systemversionname: SystemVersion name. Required.
+        :type systemversionname: str
+        :return: SystemVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.oracledatabase.models.SystemVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -223,11 +220,11 @@ class AutonomousDatabaseVersionsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.AutonomousDbVersion] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SystemVersion] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             location=location,
-            autonomousdbversionsname=autonomousdbversionsname,
+            systemversionname=systemversionname,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -248,7 +245,7 @@ class AutonomousDatabaseVersionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AutonomousDbVersion", pipeline_response)
+        deserialized = self._deserialize("SystemVersion", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
