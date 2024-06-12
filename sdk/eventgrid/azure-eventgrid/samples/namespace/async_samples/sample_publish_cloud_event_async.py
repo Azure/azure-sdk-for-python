@@ -30,18 +30,19 @@ client = EventGridPublisherClient(endpoint, credential, namespace_topic=topic_na
 
 
 async def publish():
-    client.send(
-        [
-            {
-                "type": "Contoso.Items.ItemReceived",
-                "source": "/contoso/items",
-                "data": {"itemSku": "Contoso Item SKU #1"},
-                "subject": "Door1",
-                "specversion": "1.0",
-                "id": "randomclouduuid11",
-            }
-        ]
-    )
+    async with client:
+        await client.send(
+            [
+                {
+                    "type": "Contoso.Items.ItemReceived",
+                    "source": "/contoso/items",
+                    "data": {"itemSku": "Contoso Item SKU #1"},
+                    "subject": "Door1",
+                    "specversion": "1.0",
+                    "id": "randomclouduuid11",
+                }
+            ]
+        )
 
 
 if __name__ == "__main__":
