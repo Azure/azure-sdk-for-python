@@ -30,6 +30,7 @@ from itertools import groupby
 from typing import Any, Callable, Mapping, Optional, Union, Dict, cast, List, Tuple, Iterator
 
 import urllib3
+from urllib3 import HTTPHeaderDict
 
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError, DecodeError
@@ -125,7 +126,7 @@ class _ValuesView(collections.abc.ValuesView):
         return f"dict_values({list(self.__iter__())})"
 
 
-class Urllib3TransportHeaders(urllib3.HTTPHeaderDict):
+class Urllib3TransportHeaders(HTTPHeaderDict):
     """TODO: This is inefficient, as it's reprocessing the items after urllib3 already
     does it. If this transport is made part of Core, this should probably be revised.
     """

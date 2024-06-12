@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-# pylint:diable=undefined-all-variable
+# pylint:disable=undefined-all-variable
 from typing import List
 
 
