@@ -1,6 +1,6 @@
 
 
-# Azure Event Grid System Events client library for Python
+# Azure Event Grid System Events library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -8,7 +8,7 @@
 ### Install the package
 
 ```bash
-python -m pip install azure-eventgrid
+python -m pip install azure-eventgrid-system-events
 ```
 
 #### Prequisites
