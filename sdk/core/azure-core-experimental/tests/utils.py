@@ -35,7 +35,7 @@ from azure.core.experimental.transport import (
     HttpXTransport,
     HttpXTransportResponse,
     AsyncHttpXTransport,
-    AsyncHttpXTransportResponse
+    AsyncHttpXTransportResponse,
 )
 
 # SYNC_TRANSPORTS.append(HttpXTransport)
@@ -46,53 +46,39 @@ from azure.core.experimental.transport import (
 
 from azure.core.experimental.transport import PyodideTransport, PyodideTransportResponse
 
-#ASYNC_TRANSPORTS.append(PyodideTransport)
-#ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
-
+# ASYNC_TRANSPORTS.append(PyodideTransport)
+# ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
 
 
 ############################## HELPER FUNCTIONS ##############################
-
-
-def request_and_responses_product(*args):
-    pipeline_transport = tuple([PipelineTransportHttpRequest]) + tuple(arg[0] for arg in args)
-    rest = tuple([RestHttpRequest]) + tuple(arg[1] for arg in args)
-    return [pipeline_transport, rest]
 
 
 def create_http_request(http_request, *args, **kwargs):
     try:
         method = args[0]
     except IndexError:
-        method = kwargs.pop('method')
+        method = kwargs.pop("method")
     try:
         url = args[1]
     except IndexError:
-        url = kwargs.pop('url')
+        url = kwargs.pop("url")
     try:
         headers = args[2]
     except IndexError:
-        headers = kwargs.pop('headers', None)
+        headers = kwargs.pop("headers", None)
     try:
         files = args[3]
     except IndexError:
-        files = kwargs.pop('files', None)
+        files = kwargs.pop("files", None)
     try:
         data = args[4]
     except IndexError:
-        data = kwargs.pop('data', None)
+        data = kwargs.pop("data", None)
     if hasattr(http_request, "content"):
         return http_request(method=method, url=url, headers=headers, files=files, data=data, **kwargs)
-    content = kwargs.pop('content', None)
-    json = kwargs.pop('json', None)
-    legacy_request = http_request(
-        method,
-        url,
-        headers=headers,
-        data=data,
-        files=files,
-        **kwargs
-    )
+    content = kwargs.pop("content", None)
+    json = kwargs.pop("json", None)
+    legacy_request = http_request(method, url, headers=headers, data=data, files=files, **kwargs)
     if content:
         if isinstance(content, ET.Element):
             legacy_request.set_xml_body(content)
@@ -125,37 +111,6 @@ def assert_transport_connection(transport, is_closed=True):
             assert transport._client
     else:
         raise ValueError(f"Unexpected transport type: {transport}")
-
-
-def create_transport_response(http_response, *args, **kwargs):
-    # this creates transport-specific responses,
-    # like requests responses / aiohttp responses
-    if is_rest(http_response):
-        block_size = args[2] if len(args) > 2 else None
-        return http_response(request=args[0], internal_response=args[1], block_size=block_size, **kwargs)
-    return http_response(*args, **kwargs)
-
-
-def create_http_response(http_response, *args, **kwargs):
-    # since the actual http_response object is
-    # an ABC for our new responses, it's a little more
-    # complicated creating a pure http response.
-    # here, we use the HttpResponsImpl, but we still have to pass
-    # more things to the init, so making a separate operation
-    if is_rest(http_response):
-        block_size = args[2] if len(args) > 2 else None
-        return http_response(
-            request=args[0],
-            internal_response=args[1],
-            block_size=block_size,
-            status_code=kwargs.pop("status_code", 200),
-            reason=kwargs.pop("reason", "OK"),
-            content_type=kwargs.pop("content_type", "application/json"),
-            headers=kwargs.pop("headers", {}),
-            stream_download_generator=kwargs.pop("stream_download_generator", None),
-            **kwargs
-        )
-    return http_response(*args, **kwargs)
 
 
 class NamedIo(io.BytesIO):

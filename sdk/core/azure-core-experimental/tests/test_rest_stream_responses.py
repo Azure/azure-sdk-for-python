@@ -11,7 +11,7 @@ from azure.core.exceptions import (
     StreamConsumedError,
     ResponseNotReadError,
     HttpResponseError,
-    ServiceRequestError
+    ServiceRequestError,
 )
 
 from rest_client import MockRestClient
@@ -128,7 +128,6 @@ def test_cannot_read_after_response_closed(port, transport, requesttype):
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_iter_read(port, transport, requesttype):
-    # thanks to McCoy Patiño for this test!
     request = create_http_request(requesttype, "GET", "/basic/string")
     client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
@@ -141,8 +140,6 @@ def test_iter_read(port, transport, requesttype):
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_iter_read_back_and_forth(port, transport, requesttype):
-    # thanks to McCoy Patiño for this test!
-
     # while this test may look like it's exposing buggy behavior, this is httpx's behavior
     # the reason why the code flow is like this, is because the 'iter_x' functions don't
     # actually read the contents into the response, the output them. Once they're yielded,

@@ -23,6 +23,7 @@ def test_httpresponse_error_with_response(port, transport, requesttype):
     assert error.reason == "OK"
     assert isinstance(error.status_code, int)
 
+
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_malformed_json(port, transport, requesttype):
     request = create_http_request(requesttype, "GET", "/errors/malformed-json")
@@ -34,6 +35,7 @@ def test_malformed_json(port, transport, requesttype):
         str(ex.value)
         == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
     )
+
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_text(port, transport, requesttype):

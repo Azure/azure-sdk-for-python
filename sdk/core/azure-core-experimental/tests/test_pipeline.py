@@ -15,14 +15,14 @@ from utils import (
     HTTP_REQUESTS,
     create_http_request,
     create_transport_from_connection,
-    assert_transport_connection
+    assert_transport_connection,
 )
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_transport_socket_timeout(transport, requesttype):
     request = create_http_request(requesttype, "GET", "https://bing.com")
-    policies = [UserAgentPolicy("myusergant")]
+    policies = [UserAgentPolicy("my-user-agent")]
     # Sometimes this will raise a read timeout, sometimes a socket timeout depending on timing.
     # Either way, the error should always be wrapped as an BaseError to ensure it's caught
     # by the retry policy.
@@ -34,7 +34,7 @@ def test_transport_socket_timeout(transport, requesttype):
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_basic_transport(port, transport, requesttype):
     request = create_http_request(requesttype, "GET", "http://localhost:{}/basic/string".format(port))
-    policies = [UserAgentPolicy("myusergant")]
+    policies = [UserAgentPolicy("my-user-agent")]
     with Pipeline(transport(), policies=policies) as pipeline:
         response = pipeline.run(request)
 
@@ -45,7 +45,7 @@ def test_basic_transport(port, transport, requesttype):
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_basic_options_request(port, transport, requesttype):
     request = create_http_request(requesttype, "OPTIONS", "http://localhost:{}/basic/string".format(port))
-    policies = [UserAgentPolicy("myusergant")]
+    policies = [UserAgentPolicy("my-user-agent")]
     with Pipeline(transport(), policies=policies) as pipeline:
         response = pipeline.run(request)
 
@@ -56,7 +56,7 @@ def test_basic_options_request(port, transport, requesttype):
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
 def test_basic_transport_separate_connection(port, transport, requesttype):
     request = create_http_request(requesttype, "GET", "http://localhost:{}/basic/string".format(port))
-    policies = [UserAgentPolicy("myusergant")]
+    policies = [UserAgentPolicy("my-user-agent")]
     transport = create_transport_from_connection(transport)
     with Pipeline(transport, policies=policies) as pipeline:
         response = pipeline.run(request)

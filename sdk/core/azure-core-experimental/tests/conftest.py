@@ -83,7 +83,7 @@ def terminate_testserver(process):
     if os.name == "nt":
         process.kill()
     else:
-        os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # Send the signal to all the process groups
+        os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # cspell:disable-line
 
 
 @pytest.fixture(autouse=True, scope="package")
@@ -92,8 +92,3 @@ def testserver():
     server = start_testserver()
     yield
     terminate_testserver(server)
-
-
-@pytest.fixture
-def client(port):
-    return MockRestClient(port)

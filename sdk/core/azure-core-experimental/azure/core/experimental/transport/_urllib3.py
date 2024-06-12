@@ -126,13 +126,16 @@ class _ValuesView(collections.abc.ValuesView):
 
 
 class Urllib3TransportHeaders(urllib3.HTTPHeaderDict):
+    """TODO: This is inefficient, as it's reprocessing the items after urllib3 already
+    does it. If this transport is made part of Core, this should probably be revised.
+    """
 
     def items(self) -> _ItemsView:
         return _ItemsView(super().items())
-    
+
     def keys(self) -> _KeysView:
         return _KeysView(self.items())
-    
+
     def values(self) -> _ValuesView:
         return _ValuesView(self.items())
 
@@ -184,7 +187,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
             reason=kwargs.pop("reason", internal_response.reason),
             content_type=kwargs.pop("content-type", headers.get("content-type")),
             stream_download_generator=kwargs.pop("stream_download_generator", Urllib3StreamDownloadGenerator),
-            **kwargs
+            **kwargs,
         )
 
     def __getstate__(self):
@@ -205,7 +208,6 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
 
      - Support for per-request proxy configuration override. Proxy configuration is currently
        only supported at client/transport construction.
-     - Response headers dictionary behaviour differs from the default 'requests' transport.
 
     :keyword pool: A preconfigured urllib3 PoolManager.
     :paramtype pool: ~urllib3.PoolManager or None
@@ -307,7 +309,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     decode_content=False,
                     redirect=False,
                     retries=False,
-                    **kwargs
+                    **kwargs,
                 )
             elif isinstance(request.data, Mapping):
                 result = self._pool.request_encode_body(
@@ -321,7 +323,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     decode_content=False,
                     redirect=False,
                     retries=False,
-                    **kwargs
+                    **kwargs,
                 )
             else:
                 result = self._pool.urlopen(
@@ -334,7 +336,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
                     decode_content=False,
                     redirect=False,
                     retries=False,
-                    **kwargs
+                    **kwargs,
                 )
             response = Urllib3TransportResponse(
                 request=request,

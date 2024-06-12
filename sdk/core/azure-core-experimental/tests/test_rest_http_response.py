@@ -206,7 +206,7 @@ def test_urlencoded_content(send_request, port, transport, requesttype):
         requesttype,
         "POST",
         "/urlencoded/pet/add/1",
-        data={"pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42}
+        data={"pet_type": "dog", "pet_food": "meat", "name": "Fido", "pet_age": 42},
     )
     send_request(port, request, transport())
 

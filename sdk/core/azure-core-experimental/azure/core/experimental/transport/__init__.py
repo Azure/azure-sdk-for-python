@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+# pylint:diable=undefined-all-variable
 from typing import List
 
 
@@ -34,14 +35,15 @@ __all__ = [
     "AsyncHttpXTransport",
     "AsyncHttpXTransportResponse",
     "Urllib3Transport",
-    "Urllib3TransportResponse"
+    "Urllib3TransportResponse",
 ]
 
 
 def __dir__() -> List[str]:
     return __all__
 
-def __getattr__(name: str):
+
+def __getattr__(name: str):  # pylint:disable=too-many-return-statements
     if name == "PyodideTransport":
         try:
             from ._pyodide import PyodideTransport
@@ -99,4 +101,3 @@ def __getattr__(name: str):
         except ImportError as err:
             raise ImportError("urllib3 package is not installed") from err
     raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
-
