@@ -90,7 +90,7 @@ def create_http_request(http_request, *args, **kwargs):
         url,
         headers=headers,
         data=data,
-        files=files
+        files=files,
         **kwargs
     )
     if content:

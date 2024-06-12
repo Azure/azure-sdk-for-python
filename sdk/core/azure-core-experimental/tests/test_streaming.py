@@ -46,7 +46,7 @@ def test_compress_compressed_no_header_offline(port, transport, requesttype):
     # expect compressed text
     client = PipelineClient("", transport=transport())
     request = create_http_request(requesttype, "GET", "http://localhost:{}/streams/compressed_no_header".format(port))
-    pipeline_response = client.pipeline.run(request, stream=True)
+    pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.iter_raw()
     content = b"".join(list(data))
@@ -69,7 +69,7 @@ def test_decompress_plain_header_offline(port, transport, requesttype):
 def test_decompress_compressed_header_offline(port, transport, requesttype):
     request = create_http_request(requesttype, "GET", "http://localhost:{}/streams/decompress_header".format(port))
     with transport() as sender:
-        response = sender.send(request, stream=True).http_response
+        response = sender.send(request, stream=True)
         response.raise_for_status()
         content = response.read()
         decoded = content.decode("utf-8")
@@ -82,7 +82,7 @@ def test_decompress_plain_no_header_offline(port, transport, requesttype):
     url = "http://localhost:{}/streams/string".format(port)
     client = PipelineClient(url, transport=transport())
     request = create_http_request(requesttype, "GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
+    pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     content = response.read()
     decoded = content.decode("utf-8")
@@ -95,7 +95,7 @@ def test_compress_plain_header_offline(port, transport, requesttype):
     url = "http://localhost:{}/streams/plain_header".format(port)
     client = PipelineClient(url, transport=transport())
     request = create_http_request(requesttype, "GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
+    pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.iter_raw()
     content = b"".join(list(data))
@@ -109,7 +109,7 @@ def test_decompress_compressed_no_header_offline(port, transport, requesttype):
     url = "http://localhost:{}/streams/compressed_no_header".format(port)
     client = PipelineClient(url, transport=transport())
     request = create_http_request(requesttype, "GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
+    pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     content = response.read()
     assert content.startswith(b"\x1f\x8b")  # gzip magic number
@@ -123,7 +123,7 @@ def test_compress_compressed_header_offline(port, transport, requesttype):
     url = "http://localhost:{}/streams/compressed_header".format(port)
     client = PipelineClient(url, transport=transport())
     request = create_http_request(requesttype, "GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
+    pipeline_response = client._pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     data = response.iter_raw()
     content = b"".join(list(data))
