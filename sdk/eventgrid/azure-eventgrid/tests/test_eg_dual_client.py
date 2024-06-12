@@ -87,7 +87,7 @@ class TestEventGridDualClient(AzureRecordedTestCase):
 
         basic_client.send(custom_event)
 
-        with pytest.raises(TypeError):
+        with pytest.raises(HttpResponseError):
             namespace_client.send(custom_event)
 
     @pytest.mark.live_test_only
