@@ -106,4 +106,7 @@ class ContainerRecreateRetryPolicy(object):
         return None
 
     def __check_if_rid_different(self, container_link: str, container_properties_caches: Optional[Dict[str, Any]], rid: str):
-        return container_properties_caches[container_link]["_rid"] == rid
+        if container_properties_caches:
+            return container_properties_caches[container_link]["_rid"] == rid
+        else:
+            return rid == ''

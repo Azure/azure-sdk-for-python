@@ -131,7 +131,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :rtype: dict
     """
     headers = dict(default_headers)
-    options = options or {}
+    options = dict(options) or {}
 
     if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
