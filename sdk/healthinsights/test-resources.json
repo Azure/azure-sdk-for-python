@@ -50,18 +50,24 @@
         "defaultValue": ".cognitiveservices.azure.com",
         "type": "string"
     },
-    "textAnalyticsResourceGroupName": {
-      "defaultValue": "[resourceGroup().name]",
-      "type": "string"
-    }
+    "identity": {
+          "defaultvalue": {
+              "type": "SystemAssigned"
+          },
+          "type": "object"
+      }
   },
     "variables": {
         "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
-        "textAnalyticsResourceId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', 'textAnalyticsName')]",        
+        "textAnalyticsResourceId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/', 'textAnalyticsName')]",        
         "cognitiveApiVersion": "2022-03-01",
         "roleDefinitionId": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]",
+        "systemAndUserIdentities": {
+            "type": "SystemAssigned, UserAssigned",
+            "userAssignedIdentities": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), parameters('identity').userAssignedIdentities, json('{}'))]"
+        }
     },
     "resources": [
         {
@@ -86,13 +92,13 @@
                 "name": "S0"
             },
             "kind": "HealthInsights",
+            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
             "properties": {
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
                 },
                 "customSubDomainName": "[variables('uniqueSubDomainName')]"
             },
-            "identity": {"type": "SystemAssigned"},
             "dependsOn": [
                 "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
             ]
