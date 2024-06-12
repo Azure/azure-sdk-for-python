@@ -321,7 +321,6 @@ __all__ = (
     "LexicalTokenizer",
     "LexicalTokenizerName",
     "LimitTokenFilter",
-    "LineEnding",
     "LuceneStandardAnalyzer",
     "LuceneStandardTokenizer",
     "MagnitudeScoringFunction",
