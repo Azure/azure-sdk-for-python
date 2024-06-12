@@ -272,7 +272,7 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-    ) -> "Job":  # type: ignore[name-defined]
+    ) -> Union["Index", "Job"]:  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
 
         :keyword name: The name of the index to be created.
