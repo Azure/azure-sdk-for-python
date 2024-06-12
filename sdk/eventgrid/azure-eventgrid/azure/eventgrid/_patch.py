@@ -74,7 +74,7 @@ class EventGridPublisherClient(InternalEventGridPublisherClient):
             self._publish = self._client.send  # type:ignore[attr-defined]
         else:
             if isinstance(credential, AzureSasCredential):
-                raise TypeError("SAS token authentication is not supported for the standard client.")
+                raise TypeError("SAS token authentication is not supported for Event Grid Namespace.")
             super().__init__(
                 endpoint=endpoint,
                 credential=credential,
