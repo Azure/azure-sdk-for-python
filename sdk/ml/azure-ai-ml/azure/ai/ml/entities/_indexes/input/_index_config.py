@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._utils._experimental import experimental
 from typing import Optional
+from azure.ai.ml._utils._experimental import experimental
+
 
 @experimental
 class IndexConfig:  # pylint: disable=too-many-instance-attributes
