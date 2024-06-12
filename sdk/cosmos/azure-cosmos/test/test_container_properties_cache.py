@@ -331,7 +331,9 @@ class TestContainerPropertiesCache(unittest.TestCase):
             self.fail("Container Should not Already Exist.")
         try:
             item_to_read = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
-            item_to_read2 = created_container.create_item(body={'id': 'item2', 'country': 'MEX', 'state': 'Michoacán'})
+            item_to_read2 = created_container.create_item(body={'id': 'item2',
+                                                                'country': 'MEX',
+                                                                'state': 'Michoacán'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
         # Recreate container
@@ -410,7 +412,8 @@ class TestContainerPropertiesCache(unittest.TestCase):
         # create items
         try:
             item_to_del = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
-            created_container.create_item(body={'id': 'item2', 'country': 'MEX', 'state': 'Michoacán'})
+            created_container.create_item(body={'id': 'item2',
+                                                'country': 'MEX', 'state': 'Michoacán'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
 
