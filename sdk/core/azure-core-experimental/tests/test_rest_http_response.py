@@ -73,20 +73,18 @@ def test_response_html(send_request, port, transport, requesttype):
 def test_raise_for_status(port, transport, requesttype):
     client = MockRestClient(port, transport=transport())
     request = create_http_request(requesttype, "GET", "/basic/string")
-    response = send_request(port, request, transport())
+    response = client.send_request(request)
     response.raise_for_status()
 
     request = create_http_request(requesttype, "GET", "/errors/403")
-    response = send_request(port, request, transport())
+    response = client.send_request(request)
     assert response.status_code == 403
     with pytest.raises(HttpResponseError):
         response.raise_for_status()
 
     request = create_http_request(requesttype, "GET", "/errors/500")
-    response = send_request(
-        port,
+    response = client.send_request(
         request,
-        transport(),
         retry_total=0,  # takes too long with retires on 500
     )
     assert response.status_code == 500

@@ -6,6 +6,7 @@
 import pytest
 import types
 import io
+import xml.etree.ElementTree as ET
 
 import urllib3
 import httpx
@@ -60,29 +61,46 @@ def request_and_responses_product(*args):
 
 
 def create_http_request(http_request, *args, **kwargs):
+    try:
+        method = args[0]
+    except IndexError:
+        method = kwargs.pop('method')
+    try:
+        url = args[1]
+    except IndexError:
+        url = kwargs.pop('url')
+    try:
+        headers = args[2]
+    except IndexError:
+        headers = kwargs.pop('headers', None)
+    try:
+        files = args[3]
+    except IndexError:
+        files = kwargs.pop('files', None)
+    try:
+        data = args[4]
+    except IndexError:
+        data = kwargs.pop('data', None)
     if hasattr(http_request, "content"):
-        try:
-            method = args[0]
-        except IndexError:
-            method = kwargs.pop('method')
-        try:
-            url = args[1]
-        except IndexError:
-            url = kwargs.pop('url')
-        try:
-            headers = args[2]
-        except IndexError:
-            headers = kwargs.pop('headers', None)
-        try:
-            files = args[3]
-        except IndexError:
-            files = kwargs.pop('files', None)
-        try:
-            data = args[4]
-        except IndexError:
-            data = kwargs.pop('data', None)
         return http_request(method=method, url=url, headers=headers, files=files, data=data, **kwargs)
-    return http_request(*args, **kwargs)
+    content = kwargs.pop('content', None)
+    json = kwargs.pop('json', None)
+    legacy_request = http_request(
+        method,
+        url,
+        headers=headers,
+        data=data,
+        files=files
+        **kwargs
+    )
+    if content:
+        if isinstance(content, ET.Element):
+            legacy_request.set_xml_body(content)
+        else:
+            legacy_request.data = content
+    if json:
+        legacy_request.set_json_body(json)
+    return legacy_request
 
 
 def create_transport_from_connection(transport):
