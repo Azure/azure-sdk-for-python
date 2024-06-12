@@ -42,7 +42,7 @@
         "description": "The location of the resources. By default, this is the same as the resource group."
       }
     },
-   "endpointPrefix": {
+  "endpointPrefix": {
         "defaultValue": "healthinsights",
         "type": "string"
     },
@@ -53,6 +53,12 @@
     "textAnalyticsResourceGroupName": {
       "defaultValue": "[resourceGroup().name]",
       "type": "string"
+    },
+    "identity": {
+      "defaultValue": {
+        "type": "SystemAssigned"
+      },
+      "type": "object"
     }
   },
     "variables": {
@@ -62,6 +68,10 @@
         "roleDefinitionId": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]",
+        "systemAndUserIdentities": {
+            "type": "SystemAssigned, UserAssigned",
+            "userAssignedIdentities": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), parameters('identity').userAssignedIdentities, json('{}'))]"
+        }
     },
     "resources": [
         {
@@ -86,13 +96,13 @@
                 "name": "S0"
             },
             "kind": "HealthInsights",
+            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
             "properties": {
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
                 },
                 "customSubDomainName": "[variables('uniqueSubDomainName')]"
             },
-            "identity": {"type": "SystemAssigned"},
             "dependsOn": [
                 "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
             ]
@@ -104,30 +114,29 @@
             "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[parameters('testApplicationOid')]"
-            },
+            }
         }
     ],
     "outputs": {
-        "LANGUAGE_API_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
-    },
-    "LANGUAGE_API_KEY_ALT": {
+      "LANGUAGE_API_KEY": {
         "type": "string",
-        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
-    },
-    "ENDPOINT": {
-        "type": "string",
-        "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
-    },
-
-        "HEALTHINSIGHTS_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')),'2017-04-18').key1]"
-        },
-        "HEALTHINSIGHTS_ENDPOINT": {
-            "type": "string",
-            "value": "[variables('endpointValue')]"
-        }
-    }
+        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
+      },
+      "LANGUAGE_API_KEY_ALT": {
+          "type": "string",
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
+      },
+      "ENDPOINT": {
+          "type": "string",
+          "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
+      },
+      "HEALTHINSIGHTS_KEY": {
+          "type": "string",
+          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')),'2017-04-18').key1]"
+      },
+      "HEALTHINSIGHTS_ENDPOINT": {
+          "type": "string",
+          "value": "[variables('endpointValue')]"
+      }
+  }
 }
