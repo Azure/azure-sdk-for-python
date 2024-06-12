@@ -352,7 +352,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
-        # remove_json_files(pkg_dir)
+        remove_json_files(pkg_dir)
         raise err
 
 

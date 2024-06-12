@@ -121,7 +121,6 @@ class BreakingChangesTracker:
 
     def __str__(self):
         formatted = "\n"
-
         for bc in self.breaking_changes:
             formatted += bc + "\n"
 
@@ -183,7 +182,6 @@ class BreakingChangesTracker:
                     stable_methods_node = stable_class_nodes[self.class_name]["methods"]
                     for method_name, method_components in class_components.get("methods", {}).items():
                         self.function_name = method_name
-                        # current_methods_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"]
                         if self.function_name not in stable_methods_node and \
                                 not isinstance(self.function_name, jsondiff.Symbol):
                             if self.class_name.endswith("Client"):
