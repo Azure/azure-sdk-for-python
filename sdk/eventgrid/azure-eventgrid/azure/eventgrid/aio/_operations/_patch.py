@@ -102,11 +102,12 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                 # Try to send via namespace
                 await self._publish(self._namespace, _serialize_events(events), **kwargs)
             except Exception as exception:  # pylint: disable=broad-except
-                if exception.response.status_code == 400:
-                    e = HttpResponseError("Are the provided event(s) in CloudEvent format?")
-                    e.status_code = exception.response.status_code
-                    e.reason = exception.response.reason
-                    raise e
+                if isinstance(exception, HttpResponseError):
+                    if exception.response.status_code == 400:
+                        e = HttpResponseError("Are the provided event(s) in CloudEvent format?")
+                        e.status_code = exception.response.status_code
+                        e.reason = exception.response.reason
+                        raise e # pylint: disable=raise-missing-from
                 self._http_response_error_handler(exception)
                 raise exception
         else:
