@@ -307,8 +307,8 @@ def _serialize_events(events):
             # Try to serialize CNCF Cloud Events
             return [_from_cncf_events(e) for e in events]
     else:
-        # Does not conform to format
-        raise TypeError("Invalid event data. Please check the data is of Cloud Event type/format and try again.")
+        # Does not conform to format, try to send
+        return events
 
 
 def _serialize_cloud_event(cloud_event):
