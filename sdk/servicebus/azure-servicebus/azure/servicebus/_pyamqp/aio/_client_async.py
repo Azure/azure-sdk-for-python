@@ -389,7 +389,7 @@ class AMQPClientAsync(AMQPClientSync):
                 await mgmt_link.open()
 
         while not self.client_ready_async():
-            time.sleep(0.05)
+            await asyncio.sleep(0.05)
 
         while not await mgmt_link.ready():
             await self._connection.listen(wait=False)
