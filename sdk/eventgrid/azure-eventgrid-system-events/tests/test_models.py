@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import functools
 import pytest
-
 from azure.eventgrid.system.events.models import AcsChatEventBaseProperties
 
-class EventGridSystemEvents(object):
+class TestEventGridSystemEvents(object):
     def test_system_event(self):
         event = AcsChatEventBaseProperties()
 
