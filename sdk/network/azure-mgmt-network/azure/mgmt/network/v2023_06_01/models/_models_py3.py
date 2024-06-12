@@ -100,7 +100,7 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ActiveSecurityAdminRule, ActiveDefaultSecurityAdminRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -426,7 +426,7 @@ class ActiveConnectivityConfiguration(
         self.region = region
 
 
-class ActiveConnectivityConfigurationsListResult(_serialization.Model):
+class ActiveConnectivityConfigurationsListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list active connectivity configurations. It contains a list of active
     connectivity configurations and a skiptoken to get the next set of results.
 
@@ -466,7 +466,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -623,7 +623,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -932,7 +932,7 @@ class BaseAdminRule(ChildResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -981,7 +981,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1805,7 +1805,7 @@ class SubResource(_serialization.Model):
         self.id = id
 
 
-class ApplicationGatewayAuthenticationCertificate(SubResource):
+class ApplicationGatewayAuthenticationCertificate(SubResource):  # pylint: disable=name-too-long
     """Authentication certificates of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1869,7 +1869,7 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):
 class ApplicationGatewayAutoscaleConfiguration(_serialization.Model):
     """Application Gateway autoscale configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min_capacity: Lower bound on number of Application Gateway capacity. Required.
     :vartype min_capacity: int
@@ -1986,7 +1986,7 @@ class ApplicationGatewayAvailableSslOptions(Resource):
         self.available_protocols = available_protocols
 
 
-class ApplicationGatewayAvailableSslPredefinedPolicies(_serialization.Model):
+class ApplicationGatewayAvailableSslPredefinedPolicies(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ApplicationGatewayAvailableSslOptions API service call.
 
     :ivar value: List of available Ssl predefined policy.
@@ -2020,7 +2020,7 @@ class ApplicationGatewayAvailableSslPredefinedPolicies(_serialization.Model):
         self.next_link = next_link
 
 
-class ApplicationGatewayAvailableWafRuleSetsResult(_serialization.Model):
+class ApplicationGatewayAvailableWafRuleSetsResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ApplicationGatewayAvailableWafRuleSets API service call.
 
     :ivar value: The list of application gateway rule sets.
@@ -2166,7 +2166,7 @@ class ApplicationGatewayBackendHealth(_serialization.Model):
         self.backend_address_pools = backend_address_pools
 
 
-class ApplicationGatewayBackendHealthHttpSettings(_serialization.Model):
+class ApplicationGatewayBackendHealthHttpSettings(_serialization.Model):  # pylint: disable=name-too-long
     """Application gateway BackendHealthHttp settings.
 
     :ivar backend_http_settings: Reference to an ApplicationGatewayBackendHttpSettings resource.
@@ -2608,7 +2608,7 @@ class ApplicationGatewayBackendSettings(SubResource):  # pylint: disable=too-man
         self.provisioning_state = None
 
 
-class ApplicationGatewayClientAuthConfiguration(_serialization.Model):
+class ApplicationGatewayClientAuthConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Application gateway client authentication configuration.
 
     :ivar verify_client_cert_issuer_dn: Verify client certificate issuer name on the application
@@ -2650,7 +2650,7 @@ class ApplicationGatewayConnectionDraining(_serialization.Model):
     """Connection draining allows open connections to a backend server to be active for a specified
     time after the backend server got removed from the configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether connection draining is enabled or not. Required.
     :vartype enabled: bool
@@ -2720,10 +2720,10 @@ class ApplicationGatewayCustomError(_serialization.Model):
         self.custom_error_page_url = custom_error_page_url
 
 
-class ApplicationGatewayFirewallDisabledRuleGroup(_serialization.Model):
+class ApplicationGatewayFirewallDisabledRuleGroup(_serialization.Model):  # pylint: disable=name-too-long
     """Allows to disable rules within a rule group or an entire rule group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_group_name: The name of the rule group that will be disabled. Required.
     :vartype rule_group_name: str
@@ -2757,7 +2757,7 @@ class ApplicationGatewayFirewallDisabledRuleGroup(_serialization.Model):
 class ApplicationGatewayFirewallExclusion(_serialization.Model):
     """Allow to exclude some variable satisfy the condition for the WAF check.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar match_variable: The variable to be excluded. Required.
     :vartype match_variable: str
@@ -2798,10 +2798,10 @@ class ApplicationGatewayFirewallExclusion(_serialization.Model):
         self.selector = selector
 
 
-class ApplicationGatewayFirewallManifestRuleSet(_serialization.Model):
+class ApplicationGatewayFirewallManifestRuleSet(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of the web application firewall rule set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_set_type: The type of the web application firewall rule set. Required.
     :vartype rule_set_type: str
@@ -2869,7 +2869,7 @@ class ApplicationGatewayFirewallManifestRuleSet(_serialization.Model):
 class ApplicationGatewayFirewallRule(_serialization.Model):
     """A web application firewall rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_id: The identifier of the web application firewall rule. Required.
     :vartype rule_id: int
@@ -2938,7 +2938,7 @@ class ApplicationGatewayFirewallRule(_serialization.Model):
 class ApplicationGatewayFirewallRuleGroup(_serialization.Model):
     """A web application firewall rule group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_group_name: The name of the web application firewall rule group. Required.
     :vartype rule_group_name: str
@@ -3067,7 +3067,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
         self.tiers = tiers
 
 
-class ApplicationGatewayFrontendIPConfiguration(SubResource):
+class ApplicationGatewayFrontendIPConfiguration(SubResource):  # pylint: disable=name-too-long
     """Frontend IP configuration of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3932,7 +3932,7 @@ class ApplicationGatewayPathRule(SubResource):  # pylint: disable=too-many-insta
         self.firewall_policy = firewall_policy
 
 
-class ApplicationGatewayPrivateEndpointConnection(SubResource):
+class ApplicationGatewayPrivateEndpointConnection(SubResource):  # pylint: disable=name-too-long
     """Private Endpoint connection on an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4008,7 +4008,7 @@ class ApplicationGatewayPrivateEndpointConnection(SubResource):
         self.link_identifier = None
 
 
-class ApplicationGatewayPrivateEndpointConnectionListResult(_serialization.Model):
+class ApplicationGatewayPrivateEndpointConnectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListApplicationGatewayPrivateEndpointConnection API service call. Gets all private
     endpoint connections for an application gateway.
 
@@ -4043,7 +4043,7 @@ class ApplicationGatewayPrivateEndpointConnectionListResult(_serialization.Model
         self.next_link = next_link
 
 
-class ApplicationGatewayPrivateLinkConfiguration(SubResource):
+class ApplicationGatewayPrivateLinkConfiguration(SubResource):  # pylint: disable=name-too-long
     """Private Link Configuration on an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4109,7 +4109,7 @@ class ApplicationGatewayPrivateLinkConfiguration(SubResource):
         self.provisioning_state = None
 
 
-class ApplicationGatewayPrivateLinkIpConfiguration(SubResource):
+class ApplicationGatewayPrivateLinkIpConfiguration(SubResource):  # pylint: disable=name-too-long
     """The application gateway private link ip configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4256,7 +4256,7 @@ class ApplicationGatewayPrivateLinkResource(SubResource):
         self.required_zone_names = required_zone_names
 
 
-class ApplicationGatewayPrivateLinkResourceListResult(_serialization.Model):
+class ApplicationGatewayPrivateLinkResourceListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListApplicationGatewayPrivateLinkResources API service call. Gets all private link
     resources for an application gateway.
 
@@ -4448,7 +4448,7 @@ class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance
         self.port = port
 
 
-class ApplicationGatewayProbeHealthResponseMatch(_serialization.Model):
+class ApplicationGatewayProbeHealthResponseMatch(_serialization.Model):  # pylint: disable=name-too-long
     """Application gateway probe health response match.
 
     :ivar body: Body that must be contained in the health response. Default value is empty.
@@ -5337,7 +5337,7 @@ class ApplicationGatewaySslProfile(SubResource):
         self.provisioning_state = None
 
 
-class ApplicationGatewayTrustedClientCertificate(SubResource):
+class ApplicationGatewayTrustedClientCertificate(SubResource):  # pylint: disable=name-too-long
     """Trusted client certificates of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5619,7 +5619,7 @@ class ApplicationGatewayUrlPathMap(SubResource):  # pylint: disable=too-many-ins
         self.provisioning_state = None
 
 
-class ApplicationGatewayWafDynamicManifestResult(_serialization.Model):
+class ApplicationGatewayWafDynamicManifestResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ApplicationGatewayWafDynamicManifest API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5685,7 +5685,7 @@ class ApplicationGatewayWafDynamicManifestResult(_serialization.Model):
         self.rule_set_version = rule_set_version
 
 
-class ApplicationGatewayWafDynamicManifestResultList(_serialization.Model):
+class ApplicationGatewayWafDynamicManifestResultList(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ApplicationGatewayWafDynamicManifests API service call.
 
     :ivar value: The list of application gateway waf manifest.
@@ -5719,10 +5719,10 @@ class ApplicationGatewayWafDynamicManifestResultList(_serialization.Model):
         self.next_link = next_link
 
 
-class ApplicationGatewayWebApplicationFirewallConfiguration(_serialization.Model):
+class ApplicationGatewayWebApplicationFirewallConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Application gateway web application firewall configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the web application firewall is enabled or not. Required.
     :vartype enabled: bool
@@ -5835,7 +5835,7 @@ class FirewallPolicyRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ApplicationRule, NatRule, NetworkRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the rule.
     :vartype name: str
@@ -5876,7 +5876,7 @@ class FirewallPolicyRule(_serialization.Model):
 class ApplicationRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attributes
     """Rule of type application.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the rule.
     :vartype name: str
@@ -6379,7 +6379,7 @@ class AvailablePrivateEndpointTypesResult(_serialization.Model):
 class AvailableProvidersList(_serialization.Model):
     """List of available countries with details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar countries: List of available countries. Required.
     :vartype countries: list[~azure.mgmt.network.v2023_06_01.models.AvailableProvidersListCountry]
@@ -7739,7 +7739,7 @@ class AzureFirewallSku(_serialization.Model):
 class AzureReachabilityReport(_serialization.Model):
     """Azure reachability report details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar aggregation_level: The aggregation level of Azure reachability report. Can be Country,
      State or City. Required.
@@ -7867,7 +7867,7 @@ class AzureReachabilityReportLatencyInfo(_serialization.Model):
 class AzureReachabilityReportLocation(_serialization.Model):
     """Parameters that define a geographic location.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar country: The name of the country. Required.
     :vartype country: str
@@ -7905,7 +7905,7 @@ class AzureReachabilityReportLocation(_serialization.Model):
 class AzureReachabilityReportParameters(_serialization.Model):
     """Geographic and time constraints for Azure reachability report.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar provider_location: Parameters that define a geographic location. Required.
     :vartype provider_location:
@@ -8662,7 +8662,7 @@ class BastionShareableLink(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm: Reference of the virtual machine resource. Required.
     :vartype vm: ~azure.mgmt.network.v2023_06_01.models.VM
@@ -9260,7 +9260,7 @@ class CloudErrorBody(_serialization.Model):
 
 class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(
     _serialization.Model
-):
+):  # pylint: disable=name-too-long
     """Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9484,7 +9484,7 @@ class ConnectionMonitorDestination(_serialization.Model):
 class ConnectionMonitorEndpoint(_serialization.Model):
     """Describes the connection monitor endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the connection monitor endpoint. Required.
     :vartype name: str
@@ -10227,7 +10227,7 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):  # pylint:
 class ConnectionMonitorSource(_serialization.Model):
     """Describes the source of connection monitor.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: The ID of the resource used as the source by connection monitor. Required.
     :vartype resource_id: str
@@ -10342,7 +10342,7 @@ class ConnectionMonitorTcpConfiguration(_serialization.Model):
 class ConnectionMonitorTestConfiguration(_serialization.Model):
     """Describes a connection monitor test configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the connection monitor test configuration. Required.
     :vartype name: str
@@ -10440,7 +10440,7 @@ class ConnectionMonitorTestConfiguration(_serialization.Model):
 class ConnectionMonitorTestGroup(_serialization.Model):
     """Describes the connection monitor test group.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the connection monitor test group. Required.
     :vartype name: str
@@ -10522,7 +10522,7 @@ class ConnectionMonitorWorkspaceSettings(_serialization.Model):
 class ConnectionResetSharedKey(_serialization.Model):
     """The virtual network connection reset shared key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_length: The virtual network connection reset shared key length, should between 1 and
      128. Required.
@@ -10550,7 +10550,7 @@ class ConnectionResetSharedKey(_serialization.Model):
 class ConnectionSharedKey(SubResource):
     """Response for GetConnectionSharedKey API service call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -10866,7 +10866,7 @@ class ConnectivityDestination(_serialization.Model):
 class ConnectivityGroupItem(_serialization.Model):
     """Connectivity group item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar network_group_id: Network group Id. Required.
     :vartype network_group_id: str
@@ -11079,7 +11079,7 @@ class ConnectivityIssue(_serialization.Model):
 class ConnectivityParameters(_serialization.Model):
     """Parameters that determine how the connectivity check will be performed.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source: The source of the connection. Required.
     :vartype source: ~azure.mgmt.network.v2023_06_01.models.ConnectivitySource
@@ -11141,7 +11141,7 @@ class ConnectivityParameters(_serialization.Model):
 class ConnectivitySource(_serialization.Model):
     """Parameters that define the source of the connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: The ID of the resource from which a connectivity check will be initiated.
      Required.
@@ -11179,17 +11179,6 @@ class Container(SubResource):
     :ivar id: Resource ID.
     :vartype id: str
     """
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        """
-        super().__init__(id=id, **kwargs)
 
 
 class ContainerNetworkInterface(SubResource):
@@ -11535,7 +11524,7 @@ class CustomIpPrefix(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar express_route_advertise: Whether to do express route advertise.
     :vartype express_route_advertise: bool
     :ivar geo: The Geo for CIDR advertising. Should be an Geo code. Known values are: "GLOBAL",
-     "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", "AQ", and "GLOBAL".
+     "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", and "AQ".
     :vartype geo: str or ~azure.mgmt.network.v2023_06_01.models.Geo
     :ivar no_internet_advertise: Whether to Advertise the range to Internet.
     :vartype no_internet_advertise: bool
@@ -11640,7 +11629,7 @@ class CustomIpPrefix(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword express_route_advertise: Whether to do express route advertise.
         :paramtype express_route_advertise: bool
         :keyword geo: The Geo for CIDR advertising. Should be an Geo code. Known values are: "GLOBAL",
-         "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", "AQ", and "GLOBAL".
+         "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", and "AQ".
         :paramtype geo: str or ~azure.mgmt.network.v2023_06_01.models.Geo
         :keyword no_internet_advertise: Whether to Advertise the range to Internet.
         :paramtype no_internet_advertise: bool
@@ -11913,7 +11902,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -12451,7 +12440,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     EffectiveSecurityAdminRule, EffectiveDefaultSecurityAdminRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -12524,7 +12513,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -13118,7 +13107,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -13502,7 +13491,7 @@ class EvaluatedNetworkSecurityGroup(_serialization.Model):
 class ExclusionManagedRule(_serialization.Model):
     """Defines a managed rule to use for exclusion.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_id: Identifier for the managed rule. Required.
     :vartype rule_id: str
@@ -13528,7 +13517,7 @@ class ExclusionManagedRule(_serialization.Model):
 class ExclusionManagedRuleGroup(_serialization.Model):
     """Defines a managed rule group to use for exclusion.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_group_name: The managed rule group for exclusion. Required.
     :vartype rule_group_name: str
@@ -13564,7 +13553,7 @@ class ExclusionManagedRuleGroup(_serialization.Model):
 class ExclusionManagedRuleSet(_serialization.Model):
     """Defines a managed rule set for Exclusions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_set_type: Defines the rule set type to use. Required.
     :vartype rule_set_type: str
@@ -14640,7 +14629,7 @@ class ExpressRouteCircuitsArpTableListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ExpressRouteCircuitServiceProviderProperties(_serialization.Model):
+class ExpressRouteCircuitServiceProviderProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Contains ServiceProviderProperties in an ExpressRouteCircuit.
 
     :ivar service_provider_name: The serviceProviderName.
@@ -14719,7 +14708,7 @@ class ExpressRouteCircuitSku(_serialization.Model):
         self.family = family
 
 
-class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):
+class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListRoutesTable associated with the Express Route Circuits API.
 
     :ivar value: The list of routes table.
@@ -14751,7 +14740,7 @@ class ExpressRouteCircuitsRoutesTableListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ExpressRouteCircuitsRoutesTableSummaryListResult(_serialization.Model):
+class ExpressRouteCircuitsRoutesTableSummaryListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListRoutesTable associated with the Express Route Circuits API.
 
     :ivar value: A list of the routes table.
@@ -14836,7 +14825,7 @@ class ExpressRouteConnection(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -15313,7 +15302,7 @@ class ExpressRouteCrossConnectionPeeringList(_serialization.Model):
         self.next_link = None
 
 
-class ExpressRouteCrossConnectionRoutesTableSummary(_serialization.Model):
+class ExpressRouteCrossConnectionRoutesTableSummary(_serialization.Model):  # pylint: disable=name-too-long
     """The routes table associated with the ExpressRouteCircuit.
 
     :ivar neighbor: IP address of Neighbor router.
@@ -15363,7 +15352,7 @@ class ExpressRouteCrossConnectionRoutesTableSummary(_serialization.Model):
         self.state_or_prefixes_received = state_or_prefixes_received
 
 
-class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(_serialization.Model):
+class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListRoutesTable associated with the Express Route Cross Connections.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15515,7 +15504,7 @@ class ExpressRouteGatewayList(_serialization.Model):
         self.value = value
 
 
-class ExpressRouteGatewayPropertiesAutoScaleConfiguration(_serialization.Model):
+class ExpressRouteGatewayPropertiesAutoScaleConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Configuration for auto scaling.
 
     :ivar bounds: Minimum and maximum number of scale units to deploy.
@@ -15542,7 +15531,7 @@ class ExpressRouteGatewayPropertiesAutoScaleConfiguration(_serialization.Model):
         self.bounds = bounds
 
 
-class ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds(_serialization.Model):
+class ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds(_serialization.Model):  # pylint: disable=name-too-long
     """Minimum and maximum number of scale units to deploy.
 
     :ivar min: Minimum number of scale units deployed for ExpressRoute gateway.
@@ -16378,7 +16367,7 @@ class ExpressRouteServiceProvider(Resource):
         self.provisioning_state = None
 
 
-class ExpressRouteServiceProviderBandwidthsOffered(_serialization.Model):
+class ExpressRouteServiceProviderBandwidthsOffered(_serialization.Model):  # pylint: disable=name-too-long
     """Contains bandwidths offered in ExpressRouteServiceProvider resources.
 
     :ivar offer_name: The OfferName.
@@ -16789,7 +16778,7 @@ class FirewallPolicyRuleCollection(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FirewallPolicyFilterRuleCollection, FirewallPolicyNatRuleCollection
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_collection_type: The type of the rule collection. Required. Known values are:
      "FirewallPolicyNatRuleCollection" and "FirewallPolicyFilterRuleCollection".
@@ -16835,7 +16824,7 @@ class FirewallPolicyRuleCollection(_serialization.Model):
 class FirewallPolicyFilterRuleCollection(FirewallPolicyRuleCollection):
     """Firewall Policy Filter Rule Collection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_collection_type: The type of the rule collection. Required. Known values are:
      "FirewallPolicyNatRuleCollection" and "FirewallPolicyFilterRuleCollection".
@@ -17038,7 +17027,9 @@ class FirewallPolicyIntrusionDetection(_serialization.Model):
         self.configuration = configuration
 
 
-class FirewallPolicyIntrusionDetectionBypassTrafficSpecifications(_serialization.Model):
+class FirewallPolicyIntrusionDetectionBypassTrafficSpecifications(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Intrusion detection bypass traffic specification.
 
     :ivar name: Name of the bypass traffic rule.
@@ -17114,7 +17105,7 @@ class FirewallPolicyIntrusionDetectionBypassTrafficSpecifications(_serialization
         self.destination_ip_groups = destination_ip_groups
 
 
-class FirewallPolicyIntrusionDetectionConfiguration(_serialization.Model):
+class FirewallPolicyIntrusionDetectionConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """The operation for configuring intrusion detection.
 
     :ivar signature_overrides: List of specific signatures states.
@@ -17171,7 +17162,7 @@ class FirewallPolicyIntrusionDetectionConfiguration(_serialization.Model):
         self.private_ranges = private_ranges
 
 
-class FirewallPolicyIntrusionDetectionSignatureSpecification(_serialization.Model):
+class FirewallPolicyIntrusionDetectionSignatureSpecification(_serialization.Model):  # pylint: disable=name-too-long
     """Intrusion detection signatures specification states.
 
     :ivar id: Signature id.
@@ -17298,7 +17289,7 @@ class FirewallPolicyLogAnalyticsWorkspace(_serialization.Model):
 class FirewallPolicyNatRuleCollection(FirewallPolicyRuleCollection):
     """Firewall Policy NAT Rule Collection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_collection_type: The type of the rule collection. Required. Known values are:
      "FirewallPolicyNatRuleCollection" and "FirewallPolicyFilterRuleCollection".
@@ -17491,7 +17482,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
         self.provisioning_state = None
 
 
-class FirewallPolicyRuleCollectionGroupListResult(_serialization.Model):
+class FirewallPolicyRuleCollectionGroupListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListFirewallPolicyRuleCollectionGroups API service call.
 
     :ivar value: List of FirewallPolicyRuleCollectionGroups in a FirewallPolicy.
@@ -17799,7 +17790,7 @@ class FlowLogFormatParameters(_serialization.Model):
 class FlowLogInformation(_serialization.Model):
     """Information on the configuration of flow log and traffic analytics (optional) .
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The ID of the resource to configure for flow log and traffic
      analytics (optional) . Required.
@@ -17903,7 +17894,7 @@ class FlowLogListResult(_serialization.Model):
 class FlowLogStatusParameters(_serialization.Model):
     """Parameters that define a resource to query flow log and traffic analytics (optional) status.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The target resource where getting the flow log and traffic analytics
      (optional) status. Required.
@@ -18070,7 +18061,7 @@ class FrontendIPConfiguration(SubResource):  # pylint: disable=too-many-instance
 class GatewayCustomBgpIpAddressIpConfiguration(_serialization.Model):
     """GatewayCustomBgpIpAddressIpConfiguration for a virtual network gateway connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ip_configuration_id: The IpconfigurationId of ipconfiguration which belongs to gateway.
      Required.
@@ -18234,7 +18225,7 @@ class GatewayRouteListResult(_serialization.Model):
 class GenerateExpressRoutePortsLOARequest(_serialization.Model):
     """The customer name to be printed on a letter of authorization.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar customer_name: The customer name. Required.
     :vartype customer_name: str
@@ -18340,7 +18331,7 @@ class GetOutboundRoutesParameters(_serialization.Model):
 class GetVpnSitesConfigurationRequest(_serialization.Model):
     """List of Vpn-Sites.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vpn_sites: List of resource-ids of the vpn-sites for which config is to be downloaded.
     :vartype vpn_sites: list[str]
@@ -18373,7 +18364,7 @@ class GetVpnSitesConfigurationRequest(_serialization.Model):
 class GroupByUserSession(_serialization.Model):
     """Define user session identifier group by clauses.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar group_by_variables: List of group by clause variables. Required.
     :vartype group_by_variables: list[~azure.mgmt.network.v2023_06_01.models.GroupByVariable]
@@ -18399,7 +18390,7 @@ class GroupByUserSession(_serialization.Model):
 class GroupByVariable(_serialization.Model):
     """Define user session group by clause variables.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar variable_name: User Session clause variable. Required. Known values are: "ClientAddr",
      "GeoLocation", and "None".
@@ -18732,7 +18723,7 @@ class HubPublicIPAddresses(_serialization.Model):
 class HubRoute(_serialization.Model):
     """RouteTable route.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the Route that is unique within a RouteTable. This name can be used to
      access this route. Required.
@@ -20041,7 +20032,7 @@ class IPRule(_serialization.Model):
 class IpsecPolicy(_serialization.Model):
     """An IPSec Policy configuration for a virtual network gateway connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sa_life_time_seconds: The IPSec Security Association (also called Quick Mode or Phase 2
      SA) lifetime in seconds for a site to site VPN tunnel. Required.
@@ -20678,7 +20669,7 @@ class ListVpnGatewaysResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ListVpnServerConfigurationPolicyGroupsResult(_serialization.Model):
+class ListVpnServerConfigurationPolicyGroupsResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list VpnServerConfigurationPolicyGroups. It contains a list of
     VpnServerConfigurationPolicyGroups and a URL nextLink to get the next set of results.
 
@@ -21120,7 +21111,7 @@ class LoadBalancerBackendAddressPoolListResult(_serialization.Model):
         self.next_link = None
 
 
-class LoadBalancerFrontendIPConfigurationListResult(_serialization.Model):
+class LoadBalancerFrontendIPConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListFrontendIPConfiguration API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -21275,7 +21266,7 @@ class LoadBalancerSku(_serialization.Model):
 
     :ivar name: Name of a load balancer SKU. Known values are: "Basic", "Standard", and "Gateway".
     :vartype name: str or ~azure.mgmt.network.v2023_06_01.models.LoadBalancerSkuName
-    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and "Global".
+    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
     :vartype tier: str or ~azure.mgmt.network.v2023_06_01.models.LoadBalancerSkuTier
     """
 
@@ -21295,8 +21286,7 @@ class LoadBalancerSku(_serialization.Model):
         :keyword name: Name of a load balancer SKU. Known values are: "Basic", "Standard", and
          "Gateway".
         :paramtype name: str or ~azure.mgmt.network.v2023_06_01.models.LoadBalancerSkuName
-        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and
-         "Global".
+        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2023_06_01.models.LoadBalancerSkuTier
         """
         super().__init__(**kwargs)
@@ -21336,7 +21326,7 @@ class LoadBalancerVipSwapRequest(_serialization.Model):
         self.frontend_ip_configurations = frontend_ip_configurations
 
 
-class LoadBalancerVipSwapRequestFrontendIPConfiguration(_serialization.Model):
+class LoadBalancerVipSwapRequestFrontendIPConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """VIP swap request's frontend IP configuration object.
 
     :ivar id: The ID of frontend IP configuration resource.
@@ -21697,7 +21687,7 @@ class LogSpecification(_serialization.Model):
 class ManagedRuleGroupOverride(_serialization.Model):
     """Defines a managed rule group override setting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_group_name: The managed rule group to override. Required.
     :vartype rule_group_name: str
@@ -21733,7 +21723,7 @@ class ManagedRuleGroupOverride(_serialization.Model):
 class ManagedRuleOverride(_serialization.Model):
     """Defines a managed rule group override setting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_id: Identifier for the managed rule. Required.
     :vartype rule_id: str
@@ -21782,7 +21772,7 @@ class ManagedRuleOverride(_serialization.Model):
 class ManagedRulesDefinition(_serialization.Model):
     """Allow to exclude some variable satisfy the condition for the WAF check.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar exclusions: The Exclusions that are applied on the policy.
     :vartype exclusions: list[~azure.mgmt.network.v2023_06_01.models.OwaspCrsExclusionEntry]
@@ -21821,7 +21811,7 @@ class ManagedRulesDefinition(_serialization.Model):
 class ManagedRuleSet(_serialization.Model):
     """Defines a managed rule set.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_set_type: Defines the rule set type to use. Required.
     :vartype rule_set_type: str
@@ -21884,9 +21874,9 @@ class ManagedServiceIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.network.v2023_06_01.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with resource. The user
      identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.network.v2023_06_01.models.Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.network.v2023_06_01.models.Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
     """
 
     _validation = {
@@ -21924,9 +21914,9 @@ class ManagedServiceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.network.v2023_06_01.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with resource. The
          user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.network.v2023_06_01.models.Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties]
+         ~azure.mgmt.network.v2023_06_01.models.Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties]  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -21938,7 +21928,7 @@ class ManagedServiceIdentity(_serialization.Model):
 class MatchCondition(_serialization.Model):
     """Define match conditions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar match_variables: List of match variables. Required.
     :vartype match_variables: list[~azure.mgmt.network.v2023_06_01.models.MatchVariable]
@@ -22033,7 +22023,7 @@ class MatchedRule(_serialization.Model):
 class MatchVariable(_serialization.Model):
     """Define match variables.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar variable_name: Match Variable. Required. Known values are: "RemoteAddr", "RequestMethod",
      "QueryString", "PostArgs", "RequestUri", "RequestHeaders", "RequestBody", and "RequestCookies".
@@ -22391,7 +22381,7 @@ class NatGatewaySku(_serialization.Model):
 class NatRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attributes
     """Rule of type nat.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the rule.
     :vartype name: str
@@ -22529,7 +22519,7 @@ class NatRulePortMapping(_serialization.Model):
 class NetworkConfigurationDiagnosticParameters(_serialization.Model):
     """Parameters to get network configuration diagnostic.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The ID of the target resource to perform network configuration
      diagnostic. Valid options are VM, NetworkInterface, VMSS/NetworkInterface and Application
@@ -22581,7 +22571,7 @@ class NetworkConfigurationDiagnosticParameters(_serialization.Model):
 class NetworkConfigurationDiagnosticProfile(_serialization.Model):
     """Parameters to compare with network configuration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar direction: The direction of the traffic. Required. Known values are: "Inbound" and
      "Outbound".
@@ -23375,7 +23365,7 @@ class NetworkInterfaceIPConfiguration(SubResource):  # pylint: disable=too-many-
         self.private_link_connection_properties = None
 
 
-class NetworkInterfaceIPConfigurationListResult(_serialization.Model):
+class NetworkInterfaceIPConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for list ip configurations API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23407,7 +23397,9 @@ class NetworkInterfaceIPConfigurationListResult(_serialization.Model):
         self.next_link = None
 
 
-class NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties(_serialization.Model):
+class NetworkInterfaceIPConfigurationPrivateLinkConnectionProperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """PrivateLinkConnection properties for the network interface.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23561,7 +23553,7 @@ class NetworkInterfaceTapConfiguration(SubResource):
         self.provisioning_state = None
 
 
-class NetworkInterfaceTapConfigurationListResult(_serialization.Model):
+class NetworkInterfaceTapConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for list tap configurations API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23696,7 +23688,7 @@ class NetworkManagerCommit(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar commit_id: Commit Id.
     :vartype commit_id: str
@@ -23978,7 +23970,7 @@ class NetworkManagerDeploymentStatusParameter(_serialization.Model):
         self.skip_token = skip_token
 
 
-class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):
+class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a
     list of groups and a skiptoken to get the next set of results.
 
@@ -24014,7 +24006,7 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.
         self.skip_token = skip_token
 
 
-class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
+class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of
     groups and a skiptoken to get the next set of results.
 
@@ -24078,7 +24070,7 @@ class NetworkManagerListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):
+class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):  # pylint: disable=name-too-long
     """Scope of Network Manager.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -24119,7 +24111,7 @@ class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):
 class NetworkManagerSecurityGroupItem(_serialization.Model):
     """Network manager security group item.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar network_group_id: Network manager group Id. Required.
     :vartype network_group_id: str
@@ -24263,7 +24255,7 @@ class NetworkProfileListResult(_serialization.Model):
 class NetworkRule(FirewallPolicyRule):
     """Rule of type network.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the rule.
     :vartype name: str
@@ -25182,7 +25174,7 @@ class NetworkWatcherListResult(_serialization.Model):
 class NextHopParameters(_serialization.Model):
     """Parameters that define the source and destination endpoint.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The resource identifier of the target resource against which the
      action is to be performed. Required.
@@ -25494,7 +25486,7 @@ class OperationListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class OperationPropertiesFormatServiceSpecification(_serialization.Model):
+class OperationPropertiesFormatServiceSpecification(_serialization.Model):  # pylint: disable=name-too-long
     """Specification of the service.
 
     :ivar metric_specifications: Operation service specification.
@@ -25670,7 +25662,7 @@ class OutboundRule(SubResource):  # pylint: disable=too-many-instance-attributes
 class OwaspCrsExclusionEntry(_serialization.Model):
     """Allow to exclude some variable satisfy the condition for the WAF check.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar match_variable: The variable to be excluded. Required. Known values are:
      "RequestHeaderNames", "RequestCookieNames", "RequestArgNames", "RequestHeaderKeys",
@@ -26063,7 +26055,7 @@ class P2SVpnProfileParameters(_serialization.Model):
 class PacketCapture(_serialization.Model):
     """Parameters that define the create packet capture operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target: The ID of the targeted resource, only AzureVM and AzureVMSS as target type are
      currently supported. Required.
@@ -26283,7 +26275,7 @@ class PacketCaptureMachineScope(_serialization.Model):
 class PacketCaptureParameters(_serialization.Model):
     """Parameters that define the create packet capture operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target: The ID of the targeted resource, only AzureVM and AzureVMSS as target type are
      currently supported. Required.
@@ -26556,7 +26548,7 @@ class PacketCaptureResultProperties(PacketCaptureParameters):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target: The ID of the targeted resource, only AzureVM and AzureVMSS as target type are
      currently supported. Required.
@@ -27047,7 +27039,7 @@ class PeerExpressRouteCircuitConnection(SubResource):  # pylint: disable=too-man
         self.provisioning_state = None
 
 
-class PeerExpressRouteCircuitConnectionListResult(_serialization.Model):
+class PeerExpressRouteCircuitConnectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListPeeredConnections API service call retrieves all global reach peer circuit
     connections that belongs to a Private Peering for an ExpressRouteCircuit.
 
@@ -28246,17 +28238,6 @@ class PrivateLinkServicePropertiesAutoApproval(ResourceSet):
     :vartype subscriptions: list[str]
     """
 
-    _attribute_map = {
-        "subscriptions": {"key": "subscriptions", "type": "[str]"},
-    }
-
-    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword subscriptions: The list of subscriptions.
-        :paramtype subscriptions: list[str]
-        """
-        super().__init__(subscriptions=subscriptions, **kwargs)
-
 
 class PrivateLinkServicePropertiesVisibility(ResourceSet):
     """The visibility list of the private link service.
@@ -28264,17 +28245,6 @@ class PrivateLinkServicePropertiesVisibility(ResourceSet):
     :ivar subscriptions: The list of subscriptions.
     :vartype subscriptions: list[str]
     """
-
-    _attribute_map = {
-        "subscriptions": {"key": "subscriptions", "type": "[str]"},
-    }
-
-    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword subscriptions: The list of subscriptions.
-        :paramtype subscriptions: list[str]
-        """
-        super().__init__(subscriptions=subscriptions, **kwargs)
 
 
 class PrivateLinkServiceVisibility(_serialization.Model):
@@ -28772,8 +28742,7 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPAddressSkuName
-    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
-     "Global".
+    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
     :vartype tier: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPAddressSkuTier
     """
 
@@ -28792,8 +28761,7 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPAddressSkuName
-        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
-         "Global".
+        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -29032,8 +29000,7 @@ class PublicIPPrefixSku(_serialization.Model):
 
     :ivar name: Name of a public IP prefix SKU. "Standard"
     :vartype name: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPPrefixSkuName
-    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
-     "Global".
+    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
     :vartype tier: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPPrefixSkuTier
     """
 
@@ -29052,8 +29019,7 @@ class PublicIPPrefixSku(_serialization.Model):
         """
         :keyword name: Name of a public IP prefix SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPPrefixSkuName
-        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
-         "Global".
+        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2023_06_01.models.PublicIPPrefixSkuTier
         """
         super().__init__(**kwargs)
@@ -29267,7 +29233,7 @@ class QueryResults(_serialization.Model):
 class QueryTroubleshootingParameters(_serialization.Model):
     """Parameters that define the resource to query the troubleshooting result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The target resource ID to query the troubleshooting result. Required.
     :vartype target_resource_id: str
@@ -29294,7 +29260,7 @@ class QueryTroubleshootingParameters(_serialization.Model):
 class RadiusServer(_serialization.Model):
     """Radius Server Settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar radius_server_address: The address of this radius server. Required.
     :vartype radius_server_address: str
@@ -29962,8 +29928,8 @@ class RouteMapRule(_serialization.Model):
     :ivar actions: List of actions which will be applied on a match.
     :vartype actions: list[~azure.mgmt.network.v2023_06_01.models.Action]
     :ivar next_step_if_matched: Next step after rule is evaluated. Current supported behaviors are
-     'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue", "Terminate",
-     and "Continue".
+     'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue", and
+     "Terminate".
     :vartype next_step_if_matched: str or ~azure.mgmt.network.v2023_06_01.models.NextStep
     """
 
@@ -29991,8 +29957,8 @@ class RouteMapRule(_serialization.Model):
         :keyword actions: List of actions which will be applied on a match.
         :paramtype actions: list[~azure.mgmt.network.v2023_06_01.models.Action]
         :keyword next_step_if_matched: Next step after rule is evaluated. Current supported behaviors
-         are 'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue",
-         "Terminate", and "Continue".
+         are 'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue", and
+         "Terminate".
         :paramtype next_step_if_matched: str or ~azure.mgmt.network.v2023_06_01.models.NextStep
         """
         super().__init__(**kwargs)
@@ -30242,7 +30208,7 @@ class RoutingIntent(SubResource):
 class RoutingPolicy(_serialization.Model):
     """The routing policy object used in a RoutingIntent resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The unique name for the routing policy. Required.
     :vartype name: str
@@ -30529,7 +30495,7 @@ class SecurityGroupNetworkInterface(_serialization.Model):
 class SecurityGroupViewParameters(_serialization.Model):
     """Parameters that define the VM to check security groups for.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: ID of the target VM. Required.
     :vartype target_resource_id: str
@@ -31268,7 +31234,7 @@ class ServiceEndpointPolicyDefinition(SubResource):
         self.provisioning_state = None
 
 
-class ServiceEndpointPolicyDefinitionListResult(_serialization.Model):
+class ServiceEndpointPolicyDefinitionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for ListServiceEndpointPolicyDefinition API service call. Retrieves all service
     endpoint policy definition that belongs to a service endpoint policy.
 
@@ -32679,7 +32645,7 @@ class TrafficAnalyticsProperties(_serialization.Model):
 class TrafficSelectorPolicy(_serialization.Model):
     """An traffic selector policy for a virtual network gateway connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar local_address_ranges: A collection of local address spaces in CIDR format. Required.
     :vartype local_address_ranges: list[str]
@@ -32767,7 +32733,7 @@ class TroubleshootingDetails(_serialization.Model):
 class TroubleshootingParameters(_serialization.Model):
     """Parameters that define the resource to troubleshoot.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The target resource to troubleshoot. Required.
     :vartype target_resource_id: str
@@ -32971,7 +32937,7 @@ class Usage(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource identifier.
     :vartype id: str
@@ -33085,7 +33051,7 @@ class UsagesListResult(_serialization.Model):
 class VerificationIPFlowParameters(_serialization.Model):
     """Parameters that define the IP flow to be verified.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: The ID of the target resource to perform next-hop on. Required.
     :vartype target_resource_id: str
@@ -34041,7 +34007,7 @@ class VirtualNetworkBgpCommunities(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar virtual_network_community: The BGP community associated with the virtual network.
      Required.
@@ -34074,7 +34040,7 @@ class VirtualNetworkBgpCommunities(_serialization.Model):
 class VirtualNetworkConnectionGatewayReference(_serialization.Model):
     """A reference to VirtualNetworkGateway or LocalNetworkGateway resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ID of VirtualNetworkGateway or LocalNetworkGateway resource. Required.
     :vartype id: str
@@ -34134,7 +34100,7 @@ class VirtualNetworkEncryption(_serialization.Model):
     """Indicates if encryption is enabled on virtual network and if VM without encryption is allowed
     in encrypted VNet.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Indicates if encryption is enabled on the virtual network. Required.
     :vartype enabled: bool
@@ -34485,7 +34451,7 @@ class VirtualNetworkGatewayAutoScaleBounds(_serialization.Model):
         self.max = max
 
 
-class VirtualNetworkGatewayAutoScaleConfiguration(_serialization.Model):
+class VirtualNetworkGatewayAutoScaleConfiguration(_serialization.Model):  # pylint: disable=name-too-long
     """Virtual Network Gateway Autoscale Configuration details.
 
     :ivar bounds: The bounds of the autoscale configuration.
@@ -34512,7 +34478,7 @@ class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-ins
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -34774,12 +34740,12 @@ class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-ins
         self.enable_private_link_fast_path = enable_private_link_fast_path
 
 
-class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=too-many-instance-attributes,name-too-long
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -35026,7 +34992,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=to
         self.enable_private_link_fast_path = enable_private_link_fast_path
 
 
-class VirtualNetworkGatewayConnectionListResult(_serialization.Model):
+class VirtualNetworkGatewayConnectionListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for the ListVirtualNetworkGatewayConnections API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -35139,7 +35105,7 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
         self.provisioning_state = None
 
 
-class VirtualNetworkGatewayListConnectionsResult(_serialization.Model):
+class VirtualNetworkGatewayListConnectionsResult(_serialization.Model):  # pylint: disable=name-too-long
     """Response for the VirtualNetworkGatewayListConnections API service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -36431,37 +36397,6 @@ class VM(Resource):
     :vartype tags: dict[str, str]
     """
 
-    _validation = {
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        :keyword location: Resource location.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(id=id, location=location, tags=tags, **kwargs)
-
 
 class VnetRoute(_serialization.Model):
     """List of routes that control routing from VirtualHub into a virtual network connection.
@@ -36847,7 +36782,7 @@ class VpnClientConnectionHealthDetail(_serialization.Model):  # pylint: disable=
         self.max_packets_per_second = None
 
 
-class VpnClientConnectionHealthDetailListResult(_serialization.Model):
+class VpnClientConnectionHealthDetailListResult(_serialization.Model):  # pylint: disable=name-too-long
     """List of virtual network gateway vpn client connection health.
 
     :ivar value: List of vpn client connection health.
@@ -36872,7 +36807,7 @@ class VpnClientConnectionHealthDetailListResult(_serialization.Model):
 class VpnClientIPsecParameters(_serialization.Model):
     """An IPSec parameters for a virtual network gateway P2S connection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sa_life_time_seconds: The IPSec Security Association (also called Quick Mode or Phase 2
      SA) lifetime in seconds for P2S client. Required.
@@ -37099,7 +37034,7 @@ class VpnClientRootCertificate(SubResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -37335,7 +37270,7 @@ class VpnConnection(SubResource):  # pylint: disable=too-many-instance-attribute
         self.routing_configuration = routing_configuration
 
 
-class VpnConnectionPacketCaptureStartParameters(_serialization.Model):
+class VpnConnectionPacketCaptureStartParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Vpn Connection packet capture parameters supplied to start packet capture on gateway
     connection.
 
@@ -37877,7 +37812,7 @@ class VpnProfileResponse(_serialization.Model):
         self.profile_url = profile_url
 
 
-class VpnServerConfigRadiusClientRootCertificate(_serialization.Model):
+class VpnServerConfigRadiusClientRootCertificate(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of the Radius client root certificate of VpnServerConfiguration.
 
     :ivar name: The certificate name.
@@ -37903,7 +37838,7 @@ class VpnServerConfigRadiusClientRootCertificate(_serialization.Model):
         self.thumbprint = thumbprint
 
 
-class VpnServerConfigRadiusServerRootCertificate(_serialization.Model):
+class VpnServerConfigRadiusServerRootCertificate(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of Radius Server root certificate of VpnServerConfiguration.
 
     :ivar name: The certificate name.
@@ -38287,7 +38222,7 @@ class VpnServerConfigurationsResponse(_serialization.Model):
         self.vpn_server_configuration_resource_ids = vpn_server_configuration_resource_ids
 
 
-class VpnServerConfigVpnClientRevokedCertificate(_serialization.Model):
+class VpnServerConfigVpnClientRevokedCertificate(_serialization.Model):  # pylint: disable=name-too-long
     """Properties of the revoked VPN client certificate of VpnServerConfiguration.
 
     :ivar name: The certificate name.
@@ -38754,7 +38689,7 @@ class WebApplicationFirewallCustomRule(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the resource that is unique within a policy. This name can be used to
      access the resource.
@@ -39004,7 +38939,7 @@ class WebApplicationFirewallPolicyListResult(_serialization.Model):
 class WebApplicationFirewallScrubbingRules(_serialization.Model):
     """Allow certain variables to be scrubbed on WAF logs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar match_variable: The variable to be scrubbed from the logs. Required. Known values are:
      "RequestHeaderNames", "RequestCookieNames", "RequestArgNames", "RequestPostArgNames",

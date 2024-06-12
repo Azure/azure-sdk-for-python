@@ -46,6 +46,7 @@ from azure.core.pipeline.policies import (
 )
 
 from . import _base as base
+from ._base import _set_properties_cache
 from . import documents
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._constants import _Constants as Constants
@@ -144,7 +145,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: Dict[str, RangePartitionResolver] = {}
-        self.partition_key_definition_cache: Dict[str, Any] = {}
+        self.__container_properties_cache: Dict[str, Dict[str, Any]] = {}
         self.default_headers: Dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -230,6 +231,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Use database_account if no consistency passed in to verify consistency level to be used
         self.session: Optional[_session.Session] = None
         self._set_client_consistency_level(database_account, consistency_level)
+
+    @property
+    def _container_properties_cache(self) -> Dict[str, Dict[str, Any]]:
+        """Gets the container properties cache from the client.
+        :returns: the container properties cache for the client.
+        :rtype: Dict[str, Dict[str, Any]]"""
+        return self.__container_properties_cache
+
+    def _set_container_properties_cache(self, container_link: str, properties: Optional[Dict[str, Any]]) -> None:
+        """Sets the container properties cache for the specified container.
+
+        This will only update the properties cache for a specified container.
+        :param container_link: The container link will be used as the key to cache the container properties.
+        :type container_link: str
+        :param properties: These are the container properties to cache.
+        :type properties:  Optional[Dict[str, Any]]"""
+        if properties:
+            self.__container_properties_cache[container_link] = properties
+        else:
+            self.__container_properties_cache[container_link] = {}
 
     def _set_client_consistency_level(
         self,
@@ -1262,7 +1283,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if base.IsItemContainerLink(database_or_container_link):
             options = self._AddPartitionKey(database_or_container_link, document, options)
-
         return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
 
     def UpsertItem(
@@ -3280,13 +3300,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.session.update_session(response_result, response_headers)
 
     def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
-        partition_key_definition = None
+        partition_key_definition: Optional[Dict[str, Any]]
         # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.partition_key_definition_cache:
-            partition_key_definition = self.partition_key_definition_cache.get(collection_link)
+        if collection_link in self.__container_properties_cache:
+            cached_container: Dict[str, Any] = self.__container_properties_cache.get(collection_link, {})
+            partition_key_definition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
-            collection = self.ReadContainer(collection_link)
-            partition_key_definition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = partition_key_definition
+            container = self.ReadContainer(collection_link)
+            partition_key_definition = container.get("partitionKey")
+            self.__container_properties_cache[collection_link] = _set_properties_cache(container)
         return partition_key_definition
