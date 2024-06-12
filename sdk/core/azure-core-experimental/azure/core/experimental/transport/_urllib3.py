@@ -103,7 +103,7 @@ class _KeysView(collections.abc.KeysView):
         return False
 
     def __repr__(self) -> str:
-        return f"KeysView({list(self.__iter__())})"
+        return f"dict_keys({list(self.__iter__())})"
 
 
 class _ValuesView(collections.abc.ValuesView):
@@ -122,7 +122,7 @@ class _ValuesView(collections.abc.ValuesView):
         return False
 
     def __repr__(self):
-        return f"ValuesView({list(self.__iter__())})"
+        return f"dict_values({list(self.__iter__())})"
 
 
 class Urllib3TransportHeaders(urllib3.HTTPHeaderDict):

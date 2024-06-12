@@ -70,7 +70,7 @@ def test_headers_response_keys(get_response_headers, transport, requesttype):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert set(h.keys()) == set(ref_dict.keys())
-    assert repr(h.keys()) == "KeysView({'a': '123, 456', 'b': '789'})"
+    assert repr(h.keys()) == repr(ref_dict.keys())
     assert "a" in h.keys()
     assert "b" in h.keys()
     assert set(h.keys()) == set(ref_dict.keys())
@@ -93,7 +93,7 @@ def test_headers_response_values(get_response_headers, transport, requesttype):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert set(h.values()) == set(ref_dict.values())
-    assert repr(h.values()) == "ValuesView({'a': '123, 456', 'b': '789'})"
+    assert repr(h.values()) == repr(ref_dict.values())
     assert "123, 456" in h.values()
     assert "789" in h.values()
     assert set(h.values()) == set(ref_dict.values())
@@ -116,7 +116,7 @@ def test_headers_response_items(get_response_headers, transport, requesttype):
     # basically want to make sure this behaves like dict {"a": "123, 456", "b": "789"}
     ref_dict = {"a": "123, 456", "b": "789"}
     assert set(h.items()) == set(ref_dict.items())
-    assert repr(h.items()) == "ItemsView({'a': '123, 456', 'b': '789'})"
+    assert repr(h.items()) == repr(ref_dict.items())
     assert ("a", "123, 456") in h.items()
     assert not ("a", "123, 456", "123, 456") in h.items()
     assert not {"a": "blah", "123, 456": "blah"} in h.items()
