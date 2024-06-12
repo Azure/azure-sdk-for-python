@@ -51,11 +51,6 @@ def get_port():
     raise TypeError("Tried {} times, can't find an open port".format(count))
 
 
-@pytest.fixture
-def port():
-    return os.environ["FLASK_PORT"]
-
-
 def start_testserver():
     port = get_port()
     os.environ["FLASK_APP"] = "coretestserver"
@@ -86,9 +81,8 @@ def terminate_testserver(process):
         os.killpg(os.getpgid(process.pid), signal.SIGTERM)  # cspell:disable-line
 
 
-@pytest.fixture(autouse=True, scope="package")
-def testserver():
-    """Start the Autorest testserver."""
+@pytest.fixture(scope="module")
+def port():
     server = start_testserver()
-    yield
+    yield os.environ["FLASK_PORT"]
     terminate_testserver(server)

@@ -30,7 +30,7 @@ from itertools import groupby
 from typing import Any, Callable, Mapping, Optional, Union, Dict, cast, List, Tuple, Iterator
 
 import urllib3
-from urllib3 import HTTPHeaderDict
+from urllib3 import HTTPHeaderDict  # type: ignore[attr-defined]
 
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError, DecodeError
