@@ -127,19 +127,14 @@ class _ValuesView(collections.abc.ValuesView):
 
 class Urllib3TransportHeaders(urllib3.HTTPHeaderDict):
 
-    def __init__(self, headers: urllib3.HTTPHeaderDict) -> None:
-        super().__init__(self)
-        for k, v in headers.items():
-            self.add(k, v, combine=True)
-
     def items(self) -> _ItemsView:
         return _ItemsView(super().items())
     
     def keys(self) -> _KeysView:
-        return _KeysView(super().keys())
+        return _KeysView(self.items())
     
     def values(self) -> _ValuesView:
-        return _ValuesView(super().values())
+        return _ValuesView(self.items())
 
 
 class Urllib3StreamDownloadGenerator:
