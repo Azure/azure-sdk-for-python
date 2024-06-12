@@ -123,7 +123,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
                         e = HttpResponseError("Are the provided event(s) in CloudEvent format?")
                         e.status_code = exception.response.status_code
                         e.reason = exception.response.reason
-                        raise e # prlint: disable=raise-missing-from
+                        raise e # pylint: disable=raise-missing-from
                 self._http_response_error_handler(exception)
                 raise exception
         else:
