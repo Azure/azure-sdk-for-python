@@ -164,7 +164,6 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 ### Control Plane Limitations:
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
-* Create Geospatial Index
 * Get the connection string
 * Get the minimum RU/s of a container
 

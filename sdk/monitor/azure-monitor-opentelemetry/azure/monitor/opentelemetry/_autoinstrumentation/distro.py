@@ -6,18 +6,12 @@
 from os import environ
 from warnings import warn
 
-from opentelemetry.environment_variables import (
-    OTEL_LOGS_EXPORTER,
-    OTEL_METRICS_EXPORTER,
-    OTEL_TRACES_EXPORTER,
-)
 from opentelemetry.instrumentation.distro import ( # type: ignore
     BaseDistro,
 )
 from opentelemetry.sdk.environment_variables import (
     _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED,
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
-    OTEL_TRACES_SAMPLER,
 )
 
 from azure.core.settings import settings
@@ -62,18 +56,6 @@ class AzureMonitorDistro(BaseDistro):
 
 
 def _configure_auto_instrumentation() -> None:
-    environ.setdefault(
-        OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
-    )
-    environ.setdefault(
-        OTEL_TRACES_EXPORTER, "azure_monitor_opentelemetry_exporter"
-    )
-    environ.setdefault(
-        OTEL_LOGS_EXPORTER, "azure_monitor_opentelemetry_exporter"
-    )
-    environ.setdefault(
-        OTEL_TRACES_SAMPLER, "azure_monitor_opentelemetry_sampler"
-    )
     environ.setdefault(
         _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
     )

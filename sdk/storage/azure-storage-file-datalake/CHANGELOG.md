@@ -5,10 +5,15 @@
 ### Features Added
 
 
-## 12.16.0b1 (Unreleased)
+## 12.16.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.16.0b1 (2024-06-11)
+
+### Features Added
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
 
 ## 12.15.0 (2024-05-07)
 
