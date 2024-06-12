@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- In Azure ML environments with user-assigned managed identities, `ManagedIdentityCredential` will now use the `DEFAULT_IDENTITY_CLIENT_ID` environment variable (if set) as the client ID to authenticate with. ([#36047](https://github.com/Azure/azure-sdk-for-python/pull/36047))
+
 ## 1.17.0b2 (2024-06-11)
 
 ### Features Added
