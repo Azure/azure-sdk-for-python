@@ -18,7 +18,6 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLASS_METHOD = "RemovedOrRenamedClassMethod"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION = "RemovedOrRenamedModuleLevelFunction"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM = "RemovedOrRenamedPositionalParam"
-    ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
     REMOVED_PARAMETER_DEFAULT_VALUE = "RemovedParameterDefaultValue"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE = "RemovedOrRenamedInstanceAttribute"
     REMOVED_OR_RENAMED_ENUM_VALUE = "RemovedOrRenamedEnumValue"
@@ -29,11 +28,13 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
 
-    # ----------------- General Changes -----------------
+# General non-breaking changes
+class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
     ADDED_CLIENT_METHOD = "AddedClientMethod"
     ADDED_CLASS = "AddedClass"
     ADDED_CLASS_METHOD = "AddedClassMethod"
+    ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
@@ -165,7 +166,7 @@ class BreakingChangesTracker:
                         # This is a new client
                         fa = (
                             self.ADDED_CLIENT_MSG,
-                            BreakingChangeType.ADDED_CLIENT,
+                            ChangeType.ADDED_CLIENT,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)
@@ -173,7 +174,7 @@ class BreakingChangesTracker:
                         # This is a new class
                         fa = (
                             self.ADDED_CLASS_MSG,
-                            BreakingChangeType.ADDED_CLASS,
+                            ChangeType.ADDED_CLASS,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)
@@ -189,7 +190,7 @@ class BreakingChangesTracker:
                                 # This is a new client method
                                 fa = (
                                     self.ADDED_CLIENT_METHOD_MSG,
-                                    BreakingChangeType.ADDED_CLIENT_METHOD,
+                                    ChangeType.ADDED_CLIENT_METHOD,
                                     self.module_name, self.class_name, method_name
                                 )
                                 self.features_added.append(fa)
@@ -197,7 +198,7 @@ class BreakingChangesTracker:
                                 # This is a new class method
                                 fa = (
                                     self.ADDED_CLASS_METHOD_MSG,
-                                    BreakingChangeType.ADDED_CLASS_METHOD,
+                                    ChangeType.ADDED_CLASS_METHOD,
                                     self.module_name, class_name, method_name
                                 )
                                 self.features_added.append(fa)
@@ -490,7 +491,7 @@ class BreakingChangesTracker:
             if self.class_name:
                 self.breaking_changes.append(
                     (
-                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
+                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, ChangeType.ADDED_POSITIONAL_PARAM,
                         self.module_name, self.class_name, self.function_name,
                         current_parameters_node["param_type"], self.parameter_name
                     )
@@ -498,7 +499,7 @@ class BreakingChangesTracker:
             else:
                 self.breaking_changes.append(
                     (
-                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
+                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, ChangeType.ADDED_POSITIONAL_PARAM,
                         self.module_name, self.function_name,
                         current_parameters_node["param_type"], self.parameter_name
                     )
