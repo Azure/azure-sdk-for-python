@@ -9,6 +9,8 @@
 import pytest
 from itertools import product
 
+from azure.core.rest import HttpRequest as RestHttpRequest
+
 from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, NamedIo, create_http_request
 
@@ -55,11 +57,12 @@ def test_multipart_tuple_input_multiple_same_name(port, transport, requesttype):
     client.send_request(request).raise_for_status()
 
 
-@pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
-def test_multipart_tuple_input_multiple_same_name_with_tuple_file_value(port, transport, requesttype):
+# Not compatible with legacy HttpRequest object
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_tuple_input_multiple_same_name_with_tuple_file_value(port, transport):
     client = MockRestClient(port, transport=transport())
     request = create_http_request(
-        requesttype,
+        RestHttpRequest,
         "POST",
         "/multipart/tuple-input-multiple-same-name-with-tuple-file-value",
         files=[("images", ("foo.png", NamedIo("notMyName.pdf"), "image/png")), ("images", NamedIo("foo.png"))],

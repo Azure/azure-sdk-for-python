@@ -99,6 +99,7 @@ def create_http_request(http_request, *args, **kwargs):
         else:
             legacy_request.data = content
     if json:
+        legacy_request.headers["Content-Type"] = "application/json"
         legacy_request.set_json_body(json)
     return legacy_request
 

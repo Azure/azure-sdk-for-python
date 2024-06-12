@@ -11,6 +11,7 @@ import pytest
 from itertools import product
 
 from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpRequest as RestHttpRequest
 import xml.etree.ElementTree as ET
 
 from rest_client import MockRestClient
@@ -210,10 +211,12 @@ def test_urlencoded_content(send_request, port, transport, requesttype):
     send_request(port, request, transport())
 
 
-@pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
-def test_multipart_files_content(send_request, port, transport, requesttype):
+# This format of file data is not compatible with legacy HttpRequest object, as the files
+# structure is not compatible with the retry policy.
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_files_content(send_request, port, transport):
     request = create_http_request(
-        requesttype,
+        RestHttpRequest,
         "POST",
         "/multipart/basic",
         files={"fileContent": io.BytesIO(b"<file content>")},
@@ -221,10 +224,12 @@ def test_multipart_files_content(send_request, port, transport, requesttype):
     send_request(port, request, transport())
 
 
-@pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
-def test_multipart_data_and_files_content(send_request, port, transport, requesttype):
+# This format of file data is not compatible with legacy HttpRequest object, as the files
+# structure is not compatible with the retry policy.
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_data_and_files_content(send_request, port, transport):
     request = create_http_request(
-        requesttype,
+        RestHttpRequest,
         "POST",
         "/multipart/data-and-files",
         data={"message": "Hello, world!"},
@@ -233,8 +238,10 @@ def test_multipart_data_and_files_content(send_request, port, transport, request
     send_request(port, request, transport())
 
 
-@pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
-def test_multipart_encode_non_seekable_filelike(send_request, port, transport, requesttype):
+# This format of file data is not compatible with legacy HttpRequest object, as the files
+# structure is not compatible with the retry policy.
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_multipart_encode_non_seekable_filelike(send_request, port, transport):
     """
     Test that special readable but non-seekable filelike objects are supported,
     at the cost of reading them into memory at most once.
@@ -254,7 +261,7 @@ def test_multipart_encode_non_seekable_filelike(send_request, port, transport, r
     fileobj = IteratorIO(data())
     files = {"file": fileobj}
     request = create_http_request(
-        requesttype,
+        RestHttpRequest,
         "POST",
         "/multipart/non-seekable-filelike",
         files=files,

@@ -25,6 +25,8 @@
 # --------------------------------------------------------------------------
 import os
 import functools
+import collections
+from itertools import groupby
 from typing import Any, Callable, Mapping, Optional, Union, Dict, cast, List, Tuple, Iterator
 
 import urllib3
@@ -59,6 +61,85 @@ def _read_files(fields, files):
         else:
             updated = v
         fields.append((k, updated))
+
+
+class _ItemsView(collections.abc.ItemsView):
+    def __init__(self, ref):
+        super().__init__(ref)
+        self._ref = ref
+
+    def __iter__(self):
+        for key, groups in groupby(self._ref.__iter__(), lambda x: x[0]):
+            yield tuple([key, ", ".join(group[1] for group in groups)])
+
+    def __contains__(self, item):
+        if not (isinstance(item, (list, tuple)) and len(item) == 2):
+            return False
+        for k, v in self.__iter__():
+            if item[0].lower() == k.lower() and item[1] == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return f"dict_items({list(self.__iter__())})"
+
+
+class _KeysView(collections.abc.KeysView):
+    def __init__(self, items):
+        super().__init__(items)
+        self._items = items
+
+    def __iter__(self) -> Iterator[str]:
+        for key, _ in self._items:
+            yield key
+
+    def __contains__(self, key):
+        try:
+            for k in self.__iter__():
+                if cast(str, key).lower() == k.lower():
+                    return True
+        except AttributeError:  # Catch "lower()" if key not a string
+            pass
+        return False
+
+    def __repr__(self) -> str:
+        return f"KeysView({list(self.__iter__())})"
+
+
+class _ValuesView(collections.abc.ValuesView):
+    def __init__(self, items):
+        super().__init__(items)
+        self._items = items
+
+    def __iter__(self):
+        for _, value in self._items:
+            yield value
+
+    def __contains__(self, value):
+        for v in self.__iter__():
+            if value == v:
+                return True
+        return False
+
+    def __repr__(self):
+        return f"ValuesView({list(self.__iter__())})"
+
+
+class Urllib3TransportHeaders(urllib3.HTTPHeaderDict):
+
+    def __init__(self, headers: urllib3.HTTPHeaderDict) -> None:
+        super().__init__(self)
+        for k, v in headers.items():
+            self.add(k, v, combine=True)
+
+    def items(self) -> _ItemsView:
+        return _ItemsView(super().items())
+    
+    def keys(self) -> _KeysView:
+        return _KeysView(super().keys())
+    
+    def values(self) -> _ValuesView:
+        return _ValuesView(super().values())
 
 
 class Urllib3StreamDownloadGenerator:
@@ -99,7 +180,7 @@ class Urllib3TransportResponse(HttpResponseImpl):
     def __init__(
         self, *, request: RestHttpRequest, internal_response: urllib3.response.HTTPResponse, **kwargs: Any
     ) -> None:
-        headers = kwargs.pop("headers", internal_response.headers)
+        headers = Urllib3TransportHeaders(kwargs.pop("headers", internal_response.headers))
         super().__init__(
             request=request,
             internal_response=internal_response,
