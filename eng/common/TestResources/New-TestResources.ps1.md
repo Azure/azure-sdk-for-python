@@ -14,7 +14,7 @@ Deploys live test resources defined for a service directory to Azure.
 
 ### Default (Default)
 ```
-New-TestResources.ps1 [-BaseName <String>] [-ResourceGroupName <String>] [-ServiceDirectory] <String>
+New-TestResources.ps1 [-BaseName <String>] [-ResourceGroupName <String>] [-ServiceDirectory <String>]
  [-TestResourcesDirectory <String>] [-TestApplicationId <String>] [-TestApplicationSecret <String>]
  [-TestApplicationOid <String>] [-SubscriptionId <String>] [-DeleteAfterHours <Int32>] [-Location <String>]
  [-Environment <String>] [-ResourceType <String>] [-ArmTemplateParameters <Hashtable>]
