@@ -401,7 +401,10 @@ if __name__ == "__main__":
         default=False,
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
+
     in_venv = args.in_venv
     stable_version = args.stable_version
     target_module = args.target_module
@@ -409,10 +412,10 @@ if __name__ == "__main__":
     package_name = os.path.basename(pkg_dir)
     changelog = args.changelog
     logging.basicConfig(level=logging.INFO)
-    # if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
-    #     _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
-    #                  f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
-    #     exit(0)
+    if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
+        _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
+                     f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
+        exit(0)
 
     if not target_module:
         from ci_tools.parsing import ParsedSetup
