@@ -36,7 +36,7 @@ async def sample_chat_completions_async():
         exit()
 
     # Create a chat completion client for synchronous operations
-    async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client: 
+    async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
         # Do a single chat completion operation
         response = await client.complete(

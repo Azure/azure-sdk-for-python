@@ -23,7 +23,6 @@ from cloudevents.http import CloudEvent
 
 async def publish():
 
-    # To Event Grid Basic
     topic_key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
     endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 
@@ -37,29 +36,6 @@ async def publish():
             )
         ]
     )
-
-    # To Event Grid Namespaces
-
-    topic_endpoint = os.environ["EVENTGRID_ENDPOINT"]
-    topic_key = os.environ["EVENTGRID_KEY"]
-    topic_name = os.environ["EVENTGRID_TOPIC_NAME"]
-
-    credential = AzureKeyCredential(topic_key)
-    client = EventGridPublisherClient(topic_endpoint, credential, namespace_topic=topic_name)
-
-    async with client:
-        await client.send(
-            [
-                CloudEvent(
-                    attributes={
-                        "type": "cloudevent",
-                        "source": "/cncf/cloud/event/1.0",
-                        "subject": "testing-cncf-event",
-                    },
-                    data=b"This is a cncf cloud event.",
-                )
-            ]
-        )
 
 
 if __name__ == "__main__":

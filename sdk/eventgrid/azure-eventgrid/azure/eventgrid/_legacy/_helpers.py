@@ -48,7 +48,7 @@ def generate_sas(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sync_samples/sample_generate_sas.py
+        .. literalinclude:: ../samples/basic/sync_samples/sample_generate_sas.py
             :start-after: [START generate_sas]
             :end-before: [END generate_sas]
             :language: python

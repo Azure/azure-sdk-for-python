@@ -1,11 +1,11 @@
 # Release History
 
-## 4.20.0 (Unreleased)
+## 4.20.0 (2024-06-11)
 
 ### Features Added
-### Breaking Changes
-### Bugs Fixed
-### Other Changes
+
+- This is a GA of the `EventGridConsumerClient`, the `EventGridConsumerClient` supports the following operations for Cloud Events in Event Grid Namespace: `receive`, `release`, `acknowledge`, `reject` and `renew_locks`.
+- The `EventGridPublisherClient` now supports the Event Grid Namespace tier. Initialize the client with the namespace endpoint, and the `namespace_topic` kwarg to send Cloud Events to an Event Grid Namespace topic.
 
 ## 4.20.0b2 (2024-04-25)
 
