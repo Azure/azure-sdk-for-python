@@ -18,6 +18,7 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLASS_METHOD = "RemovedOrRenamedClassMethod"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION = "RemovedOrRenamedModuleLevelFunction"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM = "RemovedOrRenamedPositionalParam"
+    ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
     REMOVED_PARAMETER_DEFAULT_VALUE = "RemovedParameterDefaultValue"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE = "RemovedOrRenamedInstanceAttribute"
     REMOVED_OR_RENAMED_ENUM_VALUE = "RemovedOrRenamedEnumValue"
@@ -34,7 +35,6 @@ class ChangeType(str, Enum):
     ADDED_CLIENT_METHOD = "AddedClientMethod"
     ADDED_CLASS = "AddedClass"
     ADDED_CLASS_METHOD = "AddedClassMethod"
-    ADDED_POSITIONAL_PARAM = "AddedPositionalParam"
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
@@ -491,7 +491,7 @@ class BreakingChangesTracker:
             if self.class_name:
                 self.breaking_changes.append(
                     (
-                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, ChangeType.ADDED_POSITIONAL_PARAM,
+                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
                         self.module_name, self.class_name, self.function_name,
                         current_parameters_node["param_type"], self.parameter_name
                     )
@@ -499,7 +499,7 @@ class BreakingChangesTracker:
             else:
                 self.breaking_changes.append(
                     (
-                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, ChangeType.ADDED_POSITIONAL_PARAM,
+                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
                         self.module_name, self.function_name,
                         current_parameters_node["param_type"], self.parameter_name
                     )
