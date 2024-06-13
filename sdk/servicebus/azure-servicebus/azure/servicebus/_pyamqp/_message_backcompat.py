@@ -31,6 +31,7 @@ if TYPE_CHECKING:
         def settle_messages(
             self,
             delivery_id: Optional[int],
+            delivery_tag: bytes,
             outcome: str,
             *,
             error: Optional[AMQPError] = None,
@@ -159,7 +160,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
 
     def accept(self) -> bool:
         if self._can_settle_message() and self._settler:
-            self._settler.settle_messages(self.delivery_no, "accepted")
+            self._settler.settle_messages(self.delivery_no, self.delivery_tag, "accepted")
             self.state = MessageState.ReceivedSettled
             return True
         return False
@@ -173,6 +174,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         if self._can_settle_message() and self._settler:
             self._settler.settle_messages(
                 self.delivery_no,
+                self.delivery_tag,
                 "rejected",
                 error=AMQPError(
                     condition=condition, description=description, info=info
@@ -184,7 +186,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
 
     def release(self) -> bool:
         if self._can_settle_message() and self._settler:
-            self._settler.settle_messages(self.delivery_no, "released")
+            self._settler.settle_messages(self.delivery_no, self.delivery_tag, "released")
             self.state = MessageState.ReceivedSettled
             return True
         return False
@@ -198,6 +200,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         if self._can_settle_message() and self._settler:
             self._settler.settle_messages(
                 self.delivery_no,
+                self.delivery_tag,
                 "modified",
                 delivery_failed=failed,
                 undeliverable_here=deliverable,
