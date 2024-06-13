@@ -83,7 +83,6 @@
                 "name": "S"
             },
             "kind": "TextAnalytics",
-            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
             "properties": {
                 "customSubDomainName": "[variables('textAnalyticsName')]"
             }
