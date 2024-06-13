@@ -12,7 +12,7 @@ from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
 )
 
 
-@dataclass
+@dataclass(kw_only=True)
 @experimental
 class ModelConfiguration:
     """Configuration for a embedding model.
