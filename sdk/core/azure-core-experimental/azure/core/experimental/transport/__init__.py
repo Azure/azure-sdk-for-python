@@ -29,13 +29,9 @@ from typing import List
 
 __all__ = [
     "PyodideTransport",
-    "PyodideTransportResponse",
     "HttpXTransport",
-    "HttpXTransportResponse",
     "AsyncHttpXTransport",
-    "AsyncHttpXTransportResponse",
     "Urllib3Transport",
-    "Urllib3TransportResponse",
 ]
 
 
@@ -43,19 +39,12 @@ def __dir__() -> List[str]:
     return __all__
 
 
-def __getattr__(name: str):  # pylint:disable=too-many-return-statements
+def __getattr__(name: str):
     if name == "PyodideTransport":
         try:
             from ._pyodide import PyodideTransport
 
             return PyodideTransport
-        except ImportError as err:
-            raise ImportError("pyodide package is not installed") from err
-    if name == "PyodideTransportResponse":
-        try:
-            from ._pyodide import PyodideTransportResponse
-
-            return PyodideTransportResponse
         except ImportError as err:
             raise ImportError("pyodide package is not installed") from err
     if name == "HttpXTransport":
@@ -65,13 +54,6 @@ def __getattr__(name: str):  # pylint:disable=too-many-return-statements
             return HttpXTransport
         except ImportError as err:
             raise ImportError("httpx package is not installed") from err
-    if name == "HttpXTransportResponse":
-        try:
-            from ._httpx import HttpXTransportResponse
-
-            return HttpXTransportResponse
-        except ImportError as err:
-            raise ImportError("httpx package is not installed") from err
     if name == "AsyncHttpXTransport":
         try:
             from ._httpx_async import AsyncHttpXTransport
@@ -79,25 +61,11 @@ def __getattr__(name: str):  # pylint:disable=too-many-return-statements
             return AsyncHttpXTransport
         except ImportError as err:
             raise ImportError("httpx package is not installed") from err
-    if name == "AsyncHttpXTransportResponse":
-        try:
-            from ._httpx_async import AsyncHttpXTransportResponse
-
-            return AsyncHttpXTransportResponse
-        except ImportError as err:
-            raise ImportError("httpx package is not installed") from err
     if name == "Urllib3Transport":
         try:
             from ._urllib3 import Urllib3Transport
 
             return Urllib3Transport
-        except ImportError as err:
-            raise ImportError("urllib3 package is not installed") from err
-    if name == "Urllib3TransportResponse":
-        try:
-            from ._urllib3 import Urllib3TransportResponse
-
-            return Urllib3TransportResponse
         except ImportError as err:
             raise ImportError("urllib3 package is not installed") from err
     raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")

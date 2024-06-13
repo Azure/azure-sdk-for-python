@@ -21,33 +21,23 @@ HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
 SYNC_TRANSPORTS = []
 ASYNC_TRANSPORTS = []
 
-SYNC_TRANSPORT_RESPONSES = []
-ASYNC_TRANSPORT_RESPONSES = []
-
-
-from azure.core.experimental.transport import Urllib3Transport, Urllib3TransportResponse
+from azure.core.experimental.transport import Urllib3Transport
 
 SYNC_TRANSPORTS.append(Urllib3Transport)
-SYNC_TRANSPORT_RESPONSES.append(Urllib3TransportResponse)
 
 
 from azure.core.experimental.transport import (
     HttpXTransport,
-    HttpXTransportResponse,
     AsyncHttpXTransport,
-    AsyncHttpXTransportResponse,
 )
 
 # SYNC_TRANSPORTS.append(HttpXTransport)
-# SYNC_TRANSPORT_RESPONSES.append(HttpXTransportResponse)
 # ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
-# ASYNC_TRANSPORT_RESPONSES.append(AsyncHttpXTransportResponse)
 
 
-from azure.core.experimental.transport import PyodideTransport, PyodideTransportResponse
+from azure.core.experimental.transport import PyodideTransport
 
 # ASYNC_TRANSPORTS.append(PyodideTransport)
-# ASYNC_TRANSPORT_RESPONSES.append(PyodideTransportResponse)
 
 
 ############################## HELPER FUNCTIONS ##############################
