@@ -13,10 +13,10 @@ The live tests were written against the AI models mentioned below. You will need
 ## Setup
 
 - Clone or download this sample repository.
-- Open a command prompt window in the folder `sdk\ai\azure-ai-inference`.
+- Open a command prompt window in the folder `sdk\ai\azure-ai-runtime-inference`.
 - If you want to run tests against the latest published client library, install it by running:
    ```bash
-   pip install azure-ai-inference
+   pip install azure-ai-runtime-inference
    ```
 - If you want to run tests against a locally built client library:
     - First build the wheel:
@@ -32,7 +32,7 @@ The live tests were written against the AI models mentioned below. You will need
 
 ## Set environment variables
 
-The tests read endpoints and keys from environemt variables. See the [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/README.md#set-environment-variables) section in the samples README.md file for the full list of environment variables that need to be set for all tests to pass.
+The tests read endpoints and keys from environemt variables. See the [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-runtime-inference/samples/README.md#set-environment-variables) section in the samples README.md file for the full list of environment variables that need to be set for all tests to pass.
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 

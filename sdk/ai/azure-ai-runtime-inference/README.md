@@ -10,13 +10,13 @@ Use the model inference client library to:
 * Get text embeddings
 <!-- * Get image embeddings -->
 
-With some minor adjustments, this client library can also be configured to do inference for Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples).
+With some minor adjustments, this client library can also be configured to do inference for Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples).
 
 [Product documentation](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api)
-| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples)
-| [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/python/reference)
-| [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/python/package)
-| [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/azure/ai/inference)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples)
+| [API reference documentation](https://aka.ms/azsdk/azure-ai-runtime-inference/python/reference)
+| [Package (Pypi)](https://aka.ms/azsdk/azure-ai-runtime-inference/python/package)
+| [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/azure/ai/inference)
 
 ## Getting started
 
@@ -33,13 +33,13 @@ With some minor adjustments, this client library can also be configured to do in
 To install the Azure AI Inferencing package use the following command:
 
 ```bash
-pip install azure-ai-inference
+pip install azure-ai-runtime-inference
 ```
 
 To update an existing installation of the package, use:
 
 ```bash
-pip install --upgrade azure-ai-inference
+pip install --upgrade azure-ai-runtime-inference
 ```
 
 ## Key concepts
@@ -123,7 +123,7 @@ To load an asynchronous client, import the `load_client` function from `azure.ai
 
 Entra ID authentication is also supported by the `load_client` function. Replace the key authentication above with `credential=DefaultAzureCredential()` for example.
 
-### Getting AI model information
+### Get AI model information
 
 All clients provide a `get_model_info` method to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info).
 
@@ -147,13 +147,13 @@ AI model information is displayed (if available) when you `print(client)`.
 
 The `ChatCompletionsClient` has a method named `complete`. The method makes a REST API call to the `/chat/completions` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions).
 
-See simple chat completion examples below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
+See simple chat completion examples below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples) folder.
 
 ### Text Embeddings
 
 The `EmbeddingsClient` has a method named `embedding`. The method makes a REST API call to the `/embeddings` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-embeddings).
 
-See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder.
+See simple text embedding example below. More can be found in the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples) folder.
 
 <!-- 
 ### Image Embeddings
@@ -169,7 +169,7 @@ The REST API defines common model parameters for chat completions, text embeddin
 
 ### Inference using Azure OpenAI endpoints
 
-The request and response payloads of the [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api) is mostly compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples), and the comments there.
+The request and response payloads of the [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api) is mostly compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples), and the comments there.
 
 ## Examples
 
@@ -183,7 +183,7 @@ In the following sections you will find simple examples of:
 
 The examples create a synchronous client as mentioned in [Create and authenticate a client directly, using key](#create-and-authenticate-a-client-directly-using-key). Only mandatory input settings are shown for simplicity.
 
-See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for full working samples for synchronous and asynchronous clients.
+See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples) folder for full working samples for synchronous and asynchronous clients.
 
 ### Chat completions example
 
@@ -196,7 +196,7 @@ from azure.ai.runtime.inference import ChatCompletionsClient
 from azure.ai.runtime.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
 
-client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
 
 response = client.complete(
     messages=[
@@ -212,10 +212,10 @@ print(response.choices[0].message.content)
 
 The following types or messages are supported: `SystemMessage`,`UserMessage`, `AssistantMessage`, `ToolMessage`. See also samples:
 
-* [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`. 
-* [sample_chat_completions_with_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_url.py) for usage of `UserMessage` that
+* [sample_chat_completions_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-runtime-inference/samples/sample_chat_completions_with_tools.py) for usage of `ToolMessage`. 
+* [sample_chat_completions_with_image_url.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-runtime-inference/samples/sample_chat_completions_with_image_url.py) for usage of `UserMessage` that
 includes sending an image URL.
-* [sample_chat_completions_with_image_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_data.py) for usage of `UserMessage` that
+* [sample_chat_completions_with_image_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-runtime-inference/samples/sample_chat_completions_with_image_data.py) for usage of `UserMessage` that
 includes sending image data read from a local file.
 
 Alternatively, you can provide the messages as dictionary instead of using the strongly typed classes like `SystemMessage` and `UserMessage`:
@@ -474,7 +474,7 @@ To report issues with the client library, or request additional features, please
 
 ## Next steps
 
-* Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder, containing fully runnable Python code for doing inference using synchronous and asynchronous clients.
+* Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples) folder, containing fully runnable Python code for doing inference using synchronous and asynchronous clients.
 
 ## Contributing
 

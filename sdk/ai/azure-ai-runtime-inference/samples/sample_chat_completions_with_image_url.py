@@ -61,7 +61,7 @@ def sample_chat_completions_with_image_url():
                     TextContentItem(text="What's in this image?"),
                     ImageContentItem(
                         image_url=ImageUrl(
-                            url="https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/samples/sample1.png",
+                            url="https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-runtime-inference/samples/sample1.png",
                             detail=ImageDetailLevel.HIGH,
                         ),
                     ),

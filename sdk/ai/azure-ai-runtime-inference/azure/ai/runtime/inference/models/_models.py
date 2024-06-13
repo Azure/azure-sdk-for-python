@@ -1214,7 +1214,7 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
     role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: Union[str, List["_models.ContentItem"]] = rest_field()
+    content: Union["str", List["_models.ContentItem"]] = rest_field()
     """The contents of the user message, with available input types varying by selected model.
      Required. Is either a str type or a [ContentItem] type."""
 

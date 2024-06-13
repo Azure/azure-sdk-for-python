@@ -43,6 +43,7 @@ from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
 from ._enums import ImageDetailLevel
 from ._enums import ModelType
+from ._enums import CompletionsFinishReason
 
 from ._patch import StreamingChatCompletions
 from ._patch import AsyncStreamingChatCompletions
@@ -87,6 +88,7 @@ __all__ = [
     "EmbeddingInputType",
     "ImageDetailLevel",
     "ModelType",
+    "CompletionsFinishReason",
 ]
 
 _patch_sdk()

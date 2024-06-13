@@ -243,6 +243,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
+        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes"
