@@ -7,7 +7,7 @@
 
 import ast
 import os
-import enum
+import jsondiff
 import argparse
 import importlib
 import inspect
@@ -19,14 +19,9 @@ import inspect
 import subprocess
 from enum import Enum
 from typing import Dict, Union, Type, Callable
+from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
-try:
-    # won't be able to import these in the created venv
-    from packaging_tools.venvtools import create_venv_with_package
-    import jsondiff
-except (ModuleNotFoundError, ImportError) as e:
-    pass
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -86,12 +81,20 @@ def get_parameter_default(param: inspect.Parameter) -> None:
         default_value = param.default
         if default_value is None:  # the default is actually None
             default_value = "none"
-        if inspect.isfunction(default_value):
+        elif hasattr(default_value, "value"):
+            # Get the enum value
+            if isinstance(default_value.value, object):
+                # Accounting for enum values like: default = DefaultProfile()
+                default_value = default_value.value.__class__.__name__
+            else:
+                default_value = default_value.value
+        elif inspect.isfunction(default_value):
             default_value = default_value.__name__
-        if inspect.isclass(default_value):
+        elif inspect.isclass(default_value):
             default_value = default_value.__name__
-        if hasattr(default_value, "value"):
-            default_value = default_value.value
+        elif hasattr(default_value, "__class__") and default_value.__class__ == object:
+            # Some default values are objects, e.g. _UNSET = object()
+            default_value = default_value.__class__.__name__
 
     return default_value
 
@@ -99,9 +102,12 @@ def get_parameter_default(param: inspect.Parameter) -> None:
 def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
-        assigns = [node for node in func_nodes[0].body if isinstance(node, ast.Assign)]
+        assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
         if assigns:
             for assign in assigns:
+                if hasattr(assign, "target"):
+                    attr = assign.target
+                    attribute_names.update({attr.attr: attr.attr})
                 if hasattr(assign, "targets"):
                     for attr in assign.targets:
                         if hasattr(attr, "attr") and not attr.attr.startswith("_"):
@@ -136,7 +142,7 @@ def get_properties(cls: Type) -> Dict:
     attribute_names = {}
 
     path = inspect.getsourcefile(cls)
-    with open(path, "r") as source:
+    with open(path, "r", encoding="utf-8-sig") as source:
         module = ast.parse(source.read())
 
     analyzer = ClassTreeAnalyzer(cls.__name__)
@@ -149,9 +155,7 @@ def get_properties(cls: Type) -> Dict:
         for base_class in base_classes:
             try:
                 path = inspect.getsourcefile(base_class)
-                if path.find("azure") == -1:
-                    continue
-                with open(path, "r") as source:
+                with open(path, "r", encoding="utf-8-sig") as source:
                     module = ast.parse(source.read())
             except (TypeError, SyntaxError):
                 _LOGGER.info(f"Unable to create ast of {base_class}")
@@ -160,7 +164,11 @@ def get_properties(cls: Type) -> Dict:
             analyzer = ClassTreeAnalyzer(base_class.__name__)
             analyzer.visit(module)
             cls_node = analyzer.cls_node
-            get_property_names(cls_node, attribute_names)
+            if cls_node:
+                get_property_names(cls_node, attribute_names)
+            else:
+                # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
+                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
@@ -213,7 +221,12 @@ def create_class_report(cls: Type) -> Dict:
     methods = [method for method in dir(cls) if not method.startswith("_") or method.startswith("__init__")]
     for method in methods:
         async_func = False
-        m = getattr(cls, method)
+        try:
+            # Some class level properties get picked up as methods. Try to get the method and skip if it fails.
+            m = getattr(cls, method)
+        except AttributeError:
+            _LOGGER.info(f"Skipping method check for {method} on {cls}.")
+    
         if inspect.isfunction(m) or inspect.ismethod(m):
             if inspect.iscoroutinefunction(m):
                 async_func = True
@@ -253,7 +266,7 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, version: str) -> None:
+def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
@@ -262,12 +275,16 @@ def test_compare_reports(pkg_dir: str, version: str) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, package_name)
+    bc = BreakingChangesTracker(stable, current, diff, package_name, changelog=changelog)
     bc.run_checks()
 
     remove_json_files(pkg_dir)
 
-    if bc.breaking_changes:
+    if changelog:
+        print(bc.report_changelog())
+        exit(0)
+    elif bc.breaking_changes:
+        bc.report_breaking_changes()
         print(bc)
         exit(1)
 
@@ -284,12 +301,22 @@ def remove_json_files(pkg_dir: str) -> None:
     _LOGGER.info("cleaning up")
 
 
-def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str):
+def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str, changelog: bool):
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
-        packages = [f"{package_name}=={version}", "aiohttp"]
+        packages = [f"{package_name}=={version}", "jsondiff==1.2.0"]
         with create_venv_with_package(packages) as venv:
+            subprocess.check_call(
+                [
+                    venv.env_exe,
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    os.path.join(pkg_dir, "dev_requirements.txt")
+                ]
+            )
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
             args = [
                 venv.env_exe,
@@ -321,7 +348,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare_reports(pkg_dir, version)
+        test_compare_reports(pkg_dir, version, changelog)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
@@ -365,21 +392,36 @@ if __name__ == "__main__":
         default=None
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "-c",
+        "--changelog",
+        dest="changelog",
+        help="Output changes listed in changelog format.",
+        action="store_true",
+        default=False,
+    )
+
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
+
     in_venv = args.in_venv
     stable_version = args.stable_version
-
+    target_module = args.target_module
     pkg_dir = os.path.abspath(args.target_package)
     package_name = os.path.basename(pkg_dir)
+    changelog = args.changelog
     logging.basicConfig(level=logging.INFO)
     if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
         _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
                      f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
         exit(0)
 
-    # TODO need to parse setup.py here to get the top module/namespace since not always the same.
-    #  e.g. azure-storage-file-share and azure.storage.fileshare
-    target_module = package_name.replace("-", ".")
+    if not target_module:
+        from ci_tools.parsing import ParsedSetup
+        pkg_details = ParsedSetup.from_path(pkg_dir)
+        target_module = pkg_details.namespace
+
     if not stable_version:
 
         from pypi_tools.pypi import PyPIClient
@@ -391,6 +433,4 @@ if __name__ == "__main__":
             _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
             exit(0)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir)
-
-
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog)

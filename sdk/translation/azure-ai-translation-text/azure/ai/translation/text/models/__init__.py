@@ -8,7 +8,6 @@
 
 from ._models import BackTranslation
 from ._models import BreakSentenceItem
-from ._models import CommonScriptModel
 from ._models import DetectedLanguage
 from ._models import DictionaryExample
 from ._models import DictionaryExampleItem
@@ -17,20 +16,22 @@ from ._models import DictionaryLookupItem
 from ._models import DictionaryTranslation
 from ._models import ErrorDetails
 from ._models import ErrorResponse
-from ._models import GetLanguagesResult
+from ._models import GetSupportedLanguagesResult
 from ._models import InputTextItem
-from ._models import SentenceLength
+from ._models import LanguageScript
+from ._models import SentenceBoundaries
 from ._models import SourceDictionaryLanguage
 from ._models import SourceText
 from ._models import TargetDictionaryLanguage
 from ._models import TranslatedTextAlignment
 from ._models import TranslatedTextItem
-from ._models import Translation
 from ._models import TranslationLanguage
+from ._models import TranslationText
 from ._models import TransliterableScript
 from ._models import TransliteratedText
 from ._models import TransliterationLanguage
 
+from ._enums import LanguageDirectionality
 from ._enums import ProfanityAction
 from ._enums import ProfanityMarker
 from ._enums import TextType
@@ -41,7 +42,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "BackTranslation",
     "BreakSentenceItem",
-    "CommonScriptModel",
     "DetectedLanguage",
     "DictionaryExample",
     "DictionaryExampleItem",
@@ -50,19 +50,21 @@ __all__ = [
     "DictionaryTranslation",
     "ErrorDetails",
     "ErrorResponse",
-    "GetLanguagesResult",
+    "GetSupportedLanguagesResult",
     "InputTextItem",
-    "SentenceLength",
+    "LanguageScript",
+    "SentenceBoundaries",
     "SourceDictionaryLanguage",
     "SourceText",
     "TargetDictionaryLanguage",
     "TranslatedTextAlignment",
     "TranslatedTextItem",
-    "Translation",
     "TranslationLanguage",
+    "TranslationText",
     "TransliterableScript",
     "TransliteratedText",
     "TransliterationLanguage",
+    "LanguageDirectionality",
     "ProfanityAction",
     "ProfanityMarker",
     "TextType",

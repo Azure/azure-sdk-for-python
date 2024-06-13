@@ -108,7 +108,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
         """
         mod_conditions = get_modify_conditions(kwargs)
@@ -165,7 +165,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: None
         """
         mod_conditions = get_modify_conditions(kwargs)
@@ -219,7 +219,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: None
         """
         mod_conditions = get_modify_conditions(kwargs)
@@ -272,7 +272,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: None
         """
         mod_conditions = get_modify_conditions(kwargs)
@@ -335,7 +335,7 @@ class BlobLeaseClient(object):  # pylint: disable=client-accepts-api-version-key
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """

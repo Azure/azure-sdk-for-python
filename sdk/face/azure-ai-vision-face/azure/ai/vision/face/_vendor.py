@@ -9,11 +9,7 @@ from abc import ABC
 import json
 from typing import Any, Dict, IO, List, Mapping, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
-from ._configuration import (
-    FaceAdministrationClientConfiguration,
-    FaceClientConfiguration,
-    FaceSessionClientConfiguration,
-)
+from ._configuration import FaceClientConfiguration, FaceSessionClientConfiguration
 from ._model_base import Model, SdkJSONEncoder
 
 if TYPE_CHECKING:
@@ -28,15 +24,6 @@ class FaceClientMixinABC(ABC):
 
     _client: "PipelineClient"
     _config: FaceClientConfiguration
-    _serialize: "Serializer"
-    _deserialize: "Deserializer"
-
-
-class FaceAdministrationClientMixinABC(ABC):
-    """DO NOT use this class. It is for internal typing use only."""
-
-    _client: "PipelineClient"
-    _config: FaceAdministrationClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
 

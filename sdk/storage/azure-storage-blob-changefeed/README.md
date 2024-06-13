@@ -67,7 +67,7 @@ service = ChangeFeedClient(account_url="https://<my-storage-account-name>.blob.c
 
 ## Key concepts
 
-#### Clients
+### Clients
 
 The Blob ChangeFeed SDK provides one client:
 * ChangeFeedClient: this client allows you to get change feed events by page, get all change feed events, get events in a time range, start listing events with a continuation token.

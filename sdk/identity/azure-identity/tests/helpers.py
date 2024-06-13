@@ -162,7 +162,12 @@ def get_discovery_response(endpoint="https://a/b"):
     sufficient. MSAL will send token requests to "{endpoint}/oauth2/v2.0/token_endpoint" after receiving a tenant
     discovery response created by this method.
     """
-    aad_metadata_endpoint_names = ("authorization_endpoint", "token_endpoint", "tenant_discovery_endpoint")
+    aad_metadata_endpoint_names = (
+        "authorization_endpoint",
+        "token_endpoint",
+        "tenant_discovery_endpoint",
+        "device_authorization_endpoint",
+    )
     payload = {name: endpoint + "/oauth2/v2.0/" + name for name in aad_metadata_endpoint_names}
     payload["metadata"] = ""
     return mock_response(json_payload=payload)
