@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, Callable, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -55,26 +55,27 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import ContentSettings, NTFSAttributes
+    from ._shared.base_client import StorageConfiguration
 
 
 def _upload_file_helper(
-    client,
-    stream,
-    size,
-    metadata,
-    content_settings,
-    validate_content,
-    timeout,
-    max_concurrency,
-    file_settings,
-    file_attributes="none",
-    file_creation_time="now",
-    file_last_write_time="now",
-    file_permission=None,
-    file_permission_key=None,
-    progress_hook=None,
-    **kwargs
-):  # TODO: Type this
+    client: "ShareFileClient",
+    stream: Any,
+    validate_content: bool,
+    max_concurrency: int,
+    file_settings: "StorageConfiguration",
+    content_settings: Optional["ContentSettings"] = None,
+    file_attributes: Union[str, "NTFSAttributes"] = "none",
+    file_creation_time: Optional[Union[str, datetime]] = "now",
+    file_last_write_time: Optional[Union[str, datetime]] = "now",
+    file_permission: Optional[str] = None,
+    file_permission_key: Optional[str] = None,
+    metadata: Optional[Dict[str, str]] = None,
+    progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
+    size: Optional[int] = None,
+    timeout: Optional[int] = None,
+    **kwargs: Any
+) -> Dict[str, Any]:
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
@@ -105,7 +106,7 @@ def _upload_file_helper(
             timeout=timeout,
             **kwargs
         )
-        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
+        return cast(Dict[str, Any], sorted(responses, key=lambda r: r.get('last_modified'))[-1])
     except HttpResponseError as error:
         process_storage_error(error)
 
@@ -586,23 +587,23 @@ class ShareFileClient(StorageAccountHostsMixin):
             stream = IterStreamer(data, encoding=encoding)
         else:
             raise TypeError(f"Unsupported data type: {type(data)}")
-        return cast(Dict[str, Any], _upload_file_helper(
+        return _upload_file_helper(
             self,
             stream,
-            length,
-            metadata,
-            content_settings,
             validate_content,
-            timeout,
             max_concurrency,
             self._config,
+            content_settings=content_settings,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             file_permission_key=permission_key,
+            metadata=metadata,
             progress_hook=progress_hook,
-            **kwargs))
+            size=length,
+            timeout=timeout,
+            **kwargs)
 
     @distributed_trace
     def start_copy_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
