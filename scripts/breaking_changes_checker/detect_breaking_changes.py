@@ -292,7 +292,7 @@ def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, package_name)
+    bc = BreakingChangesTracker(stable, current, diff, package_name, changelog=changelog)
     bc.run_checks()
 
     remove_json_files(pkg_dir)
@@ -418,7 +418,10 @@ if __name__ == "__main__":
         default=False,
     )
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
+
     in_venv = args.in_venv
     stable_version = args.stable_version
     target_module = args.target_module

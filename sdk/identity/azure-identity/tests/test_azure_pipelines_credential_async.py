@@ -2,36 +2,52 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore teamprojectid, planid, jobid, oidctoken
+# cspell:ignore oidcrequesturi
 import os
 from unittest.mock import AsyncMock, patch
 
 import pytest
 from azure.identity import CredentialUnavailableError
+from azure.identity._credentials.azure_pipelines import SYSTEM_OIDCREQUESTURI
 from azure.identity.aio import AzurePipelinesCredential, ChainedTokenCredential, ClientAssertionCredential
-from azure.identity._constants import EnvironmentVariables
 
 
 def test_azure_pipelines_credential_initialize():
+    system_access_token = "token"
     service_connection_id = "connection-id"
     tenant_id = "tenant-id"
     client_id = "client-id"
 
     credential = AzurePipelinesCredential(
+        system_access_token=system_access_token,
         tenant_id=tenant_id,
         client_id=client_id,
         service_connection_id=service_connection_id,
     )
 
     assert credential._service_connection_id == service_connection_id
+    assert credential._system_access_token == system_access_token
     assert isinstance(credential._client_assertion_credential, ClientAssertionCredential)
+
+
+@pytest.mark.asyncio
+async def test_azure_pipelines_credential_initialize_empty_kwarg():
+    with patch.dict("os.environ", {}, clear=True):
+        with pytest.raises(ValueError):
+            AzurePipelinesCredential(
+                system_access_token="token", client_id="client-id", tenant_id="tenant-id", service_connection_id=""
+            )
 
 
 @pytest.mark.asyncio
 async def test_azure_pipelines_credential_context_manager():
     transport = AsyncMock()
     credential = AzurePipelinesCredential(
-        client_id="client-id", tenant_id="tenant-id", service_connection_id="connection-id", transport=transport
+        system_access_token="token",
+        client_id="client-id",
+        tenant_id="tenant-id",
+        service_connection_id="connection-id",
+        transport=transport,
     )
 
     async with credential:
@@ -41,23 +57,18 @@ async def test_azure_pipelines_credential_context_manager():
 
 
 @pytest.mark.asyncio
-async def test_azure_pipelines_credential_missing_env_var():
+async def test_azure_pipelines_credential_missing_system_env_var():
     credential = AzurePipelinesCredential(
+        system_access_token="token",
         client_id="client-id",
         tenant_id="tenant-id",
         service_connection_id="connection-id",
     )
-    environment = {
-        EnvironmentVariables.SYSTEM_TEAMFOUNDATIONCOLLECTIONURI: "foo",
-        EnvironmentVariables.SYSTEM_TEAMPROJECTID: "foo",
-        EnvironmentVariables.SYSTEM_PLANID: "foo",
-        EnvironmentVariables.SYSTEM_JOBID: "foo",
-    }
 
-    with patch.dict("os.environ", environment, clear=True):
+    with patch.dict("os.environ", {}, clear=True):
         with pytest.raises(CredentialUnavailableError) as ex:
             await credential.get_token("scope")
-        assert f"Missing values for environment variables: {EnvironmentVariables.SYSTEM_ACCESSTOKEN}" in str(ex.value)
+        assert f"Missing value for the {SYSTEM_OIDCREQUESTURI} environment variable" in str(ex.value)
 
 
 @pytest.mark.asyncio
@@ -67,7 +78,10 @@ async def test_azure_pipelines_credential_in_chain():
     with patch.dict("os.environ", {}, clear=True):
         chain_credential = ChainedTokenCredential(
             AzurePipelinesCredential(
-                tenant_id="tenant-id", client_id="client-id", service_connection_id="connection-id"
+                system_access_token="token",
+                tenant_id="tenant-id",
+                client_id="client-id",
+                service_connection_id="connection-id",
             ),
             mock_credential,
         )
@@ -78,6 +92,7 @@ async def test_azure_pipelines_credential_in_chain():
 @pytest.mark.asyncio
 @pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
 async def test_azure_pipelines_credential_authentication():
+    system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN", "")
     service_connection_id = os.environ.get("AZURE_SERVICE_CONNECTION_ID", "")
     tenant_id = os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", "")
     client_id = os.environ.get("AZURE_SERVICE_CONNECTION_CLIENT_ID", "")
@@ -88,6 +103,7 @@ async def test_azure_pipelines_credential_authentication():
         pytest.skip("This test requires environment variables to be set")
 
     credential = AzurePipelinesCredential(
+        system_access_token=system_access_token,
         tenant_id=tenant_id,
         client_id=client_id,
         service_connection_id=service_connection_id,

@@ -29,7 +29,8 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
 
-    # ----------------- General Changes -----------------
+# General non-breaking changes
+class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
     ADDED_CLIENT_METHOD = "AddedClientMethod"
     ADDED_CLASS = "AddedClass"
@@ -125,6 +126,7 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
+        self.changelog = kwargs.get("changelog", False)
 
     def __str__(self):
         formatted = "\n"
@@ -137,7 +139,8 @@ class BreakingChangesTracker:
         return formatted
 
     def run_checks(self) -> None:
-        self.run_non_breaking_change_diff_checks()
+        if self.changelog:
+            self.run_non_breaking_change_diff_checks()
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
 
@@ -172,7 +175,7 @@ class BreakingChangesTracker:
                         # This is a new client
                         fa = (
                             self.ADDED_CLIENT_MSG,
-                            BreakingChangeType.ADDED_CLIENT,
+                            ChangeType.ADDED_CLIENT,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)
@@ -180,7 +183,7 @@ class BreakingChangesTracker:
                         # This is a new class
                         fa = (
                             self.ADDED_CLASS_MSG,
-                            BreakingChangeType.ADDED_CLASS,
+                            ChangeType.ADDED_CLASS,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)
@@ -195,7 +198,7 @@ class BreakingChangesTracker:
                                 # This is a new client method
                                 fa = (
                                     self.ADDED_CLIENT_METHOD_MSG,
-                                    BreakingChangeType.ADDED_CLIENT_METHOD,
+                                    ChangeType.ADDED_CLIENT_METHOD,
                                     self.module_name, self.class_name, method_name
                                 )
                                 self.features_added.append(fa)
@@ -203,7 +206,7 @@ class BreakingChangesTracker:
                                 # This is a new class method
                                 fa = (
                                     self.ADDED_CLASS_METHOD_MSG,
-                                    BreakingChangeType.ADDED_CLASS_METHOD,
+                                    ChangeType.ADDED_CLASS_METHOD,
                                     self.module_name, class_name, method_name
                                 )
                                 self.features_added.append(fa)

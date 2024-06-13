@@ -3392,6 +3392,10 @@
         "enableDataIsolation": {
           "type": "boolean"
         },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
+          "type": "boolean"
+        },
         "encryption": {
           "$ref": "#/definitions/EncryptionProperty"
         },
@@ -3571,6 +3575,10 @@
       "description": "The parameters for updating a machine learning workspace.",
       "type": "object",
       "properties": {
+        "systemDatastoresAuthMode": {
+          "description": "The auth mode used for accessing the system datastores of the workspace.",
+          "type": "string"
+        },
         "applicationInsights": {
           "description": "ARM id of the application insights associated with this workspace.",
           "type": "string"
@@ -3584,6 +3592,10 @@
           "type": "string"
         },
         "enableDataIsolation": {
+          "type": "boolean"
+        },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
           "type": "boolean"
         },
         "encryption": {
