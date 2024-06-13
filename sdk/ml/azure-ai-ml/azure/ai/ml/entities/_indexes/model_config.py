@@ -12,8 +12,8 @@ from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
 )
 
 
-@dataclass
 @experimental
+@dataclass
 class ModelConfiguration:
     """Configuration for a embedding model.
 
