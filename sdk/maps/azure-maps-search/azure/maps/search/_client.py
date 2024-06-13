@@ -13,7 +13,6 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models as _models
 from ._configuration import MapsSearchClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import SearchOperations
@@ -78,9 +77,8 @@ class MapsSearchClient:  # pylint: disable=client-accepts-api-version-keyword
             ]
         self._client: PipelineClient = PipelineClient(base_url=endpoint, policies=_policies, **kwargs)
 
-        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.search = SearchOperations(self._client, self._config, self._serialize, self._deserialize)
 

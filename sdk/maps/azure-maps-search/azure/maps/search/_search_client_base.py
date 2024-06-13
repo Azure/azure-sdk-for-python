@@ -7,7 +7,8 @@
 from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from ._generated import MapsSearchClient as _MapsSearchClient
+from azure.maps.search import MapsSearchClient
+
 
 # To check the credential is either AzureKeyCredential or TokenCredential
 def _authentication_policy(credential):
@@ -25,14 +26,14 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class MapsSearchClientBase:
+class MapsSearchClient:
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any
     ) -> None:
 
-        self._maps_client = _MapsSearchClient(
+        self._maps_client = MapsSearchClient(
             credential=credential,  # type: ignore
             endpoint=kwargs.pop("endpoint", "https://atlas.microsoft.com"),
             client_id=kwargs.pop("client_id", None),

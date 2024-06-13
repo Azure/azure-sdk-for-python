@@ -9,8 +9,7 @@ from typing import Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-
-from .._generated.aio import MapsSearchClient as _MapsSearchClient
+from azure.maps.search.aio import MapsSearchClient
 
 
 def _authentication_policy(credential):
@@ -28,14 +27,14 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class AsyncMapsSearchClientBase:
+class AsyncMapsSearchClient:
     def __init__(
         self,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
 
-        self._maps_client = _MapsSearchClient(
+        self._maps_client = MapsSearchClient(
             credential=credential,  # type: ignore
             endpoint=kwargs.pop("base_url", "https://atlas.microsoft.com"),
             client_id=kwargs.pop("client_id", None),

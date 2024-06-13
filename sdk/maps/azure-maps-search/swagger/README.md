@@ -41,7 +41,6 @@ clear-output-folder: true
 python: true
 no-async: false
 add-credential: false
-models-mode: msrest
 title: MapsSearchClient
 disable-async-iterators: true
 python-sdks-folder: $(python-sdks-folder)
