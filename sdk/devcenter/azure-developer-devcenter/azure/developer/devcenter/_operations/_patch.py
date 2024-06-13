@@ -18,25 +18,25 @@ class DevCenterClientOperationsMixin(DevCenterClientOperationsMixinGenerated):
     def begin_delete_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        return super.begin_delete_dev_box(project_name, user_id, dev_box_name, **kwargs)
+        return super().begin_delete_dev_box(project_name, user_id, dev_box_name, **kwargs)
 
     @distributed_trace
     def begin_start_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        return super.begin_start_dev_box(project_name, user_id, dev_box_name, **kwargs)
+        return super().begin_start_dev_box(project_name, user_id, dev_box_name, **kwargs)
 
     @distributed_trace
     def begin_stop_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, *, hibernate: Optional[bool] = None, **kwargs: Any
     ) -> LROPoller[None]:
-        return super.begin_stop_dev_box(project_name, user_id, dev_box_name, hibernate, **kwargs)
+        return super().begin_stop_dev_box(project_name, user_id, dev_box_name, hibernate, **kwargs)
 
     @distributed_trace
     def begin_restart_dev_box(
         self, project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        return super.begin_restart_dev_box(project_name, user_id, dev_box_name, **kwargs)
+        return super().begin_restart_dev_box(project_name, user_id, dev_box_name, **kwargs)
 
     @distributed_trace
     def begin_delete_environment(
