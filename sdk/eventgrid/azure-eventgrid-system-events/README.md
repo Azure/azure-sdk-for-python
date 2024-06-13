@@ -1,7 +1,7 @@
 
 
 # Azure Event Grid System Events client library for Python
-<!-- write necessary description of service -->
+This is the Azure Event Grid System Events library, it contains all the models related to Azure Event Grid System Events.
 
 ## Getting started
 
@@ -16,11 +16,6 @@ python -m pip install azure-eventgrid-system-events
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Event Grid System Events instance.
-
-## Key concepts
-## Examples
-## Troubleshooting
-## Next steps
 
 ## Contributing
 
