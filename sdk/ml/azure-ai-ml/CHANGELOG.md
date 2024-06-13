@@ -5,15 +5,13 @@
 ### Features Added
 
 ### Bugs Fixed
+- InputTypes exported in constants module
 
 ### Breaking Changes
 
 ### Other Changes
 
 ## 1.17.0 (2024-06-13)
-
-### Bugs Fixed
-- InputTypes exported in constants module
 
 ## 1.16.0 (2024-05-14)
 
