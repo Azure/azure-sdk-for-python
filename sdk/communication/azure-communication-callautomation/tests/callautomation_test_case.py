@@ -37,12 +37,16 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             cls.servicebus_connection_str = os.environ.get('SERVICEBUS_STRING')
             cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT')
             cls.file_source_url = os.environ.get('FILE_SOURCE_URL')
+            cls.cognitive_service_endpoint = os.environ.get('COGNITIVE_SERVICE_ENDPOINT')
+            cls.transport_url = os.environ.get('TRANSPORT_URL')
         else:
             print("Recorded Test")
             cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
             cls.servicebus_connection_str =  "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
             cls.file_source_url = "https://REDACTED/prompt.wav"
+            cls.cognitive_service_endpoint = "https://REDACTED.cognitiveservices.azure.com"
+            cls.transport_url ="wss://REDACTED"
 
         cls.dispatcher_callback = cls.dispatcher_endpoint + '/api/servicebuscallback/events'
         cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)
@@ -291,7 +295,8 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             target_participant=target, 
             callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
             media_streaming=options if not is_transcription else None,
-            transcription=options if is_transcription else None
+            transcription=options if is_transcription else None,
+            cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
             )
 
         if create_call_result is None:

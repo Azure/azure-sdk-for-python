@@ -194,7 +194,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         target = self.identity_client.create_user()
 
         media_streaming_options=MediaStreamingOptions(
-            transport_url="wss://localhost",
+            transport_url=self.transport_url,
             transport_type=MediaStreamingTransportType.WEBSOCKET,
             content_type=MediaStreamingContentType.AUDIO,
             audio_channel_type=MediaStreamingAudioChannelType.MIXED,
@@ -222,6 +222,15 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         time.sleep(3)
         
+        # check for media streaming subscription from call connection properties for media streaming started event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.media_streaming_subscription is None:
+            raise ValueError("call_connection_properties.media_streaming_subscription is None")
+        if call_connection_properties.media_streaming_subscription.state!='active':
+            raise ValueError("media streaming state is invalid for MediaStreamingStarted event")
+
         # stop media streaming.
         call_connection.stop_media_streaming()
 
@@ -230,6 +239,15 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if media_streaming_stopped is None:
             raise ValueError("MediaStreamingStopped event is None")
         
+        # check for media streaming subscription from call connection properties for media streaming stopped event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.media_streaming_subscription is None:
+            raise ValueError("call_connection_properties.media_streaming_subscription is None")
+        if call_connection_properties.media_streaming_subscription.state!='inactive':
+            raise ValueError("media streaming state is invalid for MediaStreamingStopped event")
+
         self.terminate_call(unique_id)
         return
     
@@ -240,7 +258,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         target = self.identity_client.create_user()
 
         transcription_options=TranscriptionOptions(
-            transport_url="",
+            transport_url=self.transport_url,
             transport_type=TranscriptionTransportType.WEBSOCKET,
             locale="en-US",
             start_transcription=False)
@@ -257,15 +275,32 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("Caller ParticipantsUpdated event is None")
         
         # start transcription
-        call_connection.start_transcription()
+        call_connection.start_transcription(locale="en-ca")
         
         # check for TranscriptionStarted event
         transcription_started = self.check_for_event('TranscriptionStarted', call_connection._call_connection_id, timedelta(seconds=30))
         if transcription_started is None:
             raise ValueError("TranscriptionStarted event is None")
 
+        # check for transcription subscription from call connection properties for transcription started event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.transcription_subscription is None:
+            raise ValueError("call_connection_properties.transcription_subscription is None")
+        if call_connection_properties.transcription_subscription.state!='active':
+            raise ValueError("transcription subscription state is invalid for TranscriptionStarted event")
+
         time.sleep(3)
+        call_connection.update_transcription(locale="en-gb")
         
+        # check for TranscriptionUpdated event
+        transcription_updated = self.check_for_event('TranscriptionUpdated', call_connection._call_connection_id, timedelta(seconds=30))
+        if transcription_updated is None:
+            raise ValueError("TranscriptionUpdated event is None")
+        
+        time.sleep(3)
+
         # stop transcription
         call_connection.stop_transcription()
         
@@ -273,6 +308,15 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         transcription_stopped = self.check_for_event('TranscriptionStopped', call_connection._call_connection_id, timedelta(seconds=30))
         if transcription_stopped is None:
             raise ValueError("TranscriptionStopped event is None")
+        
+        # check for transcription subscription from call connection properties for transcription stopped event
+        call_connection_properties=call_connection.get_call_properties()
+        if call_connection_properties is None:
+            raise ValueError("call_connection_properties is None")
+        if call_connection_properties.transcription_subscription is None:
+            raise ValueError("call_connection_properties.transcription_subscription is None")
+        if call_connection_properties.transcription_subscription.state!='inactive':
+            raise ValueError("transcription subscription state is invalid for TranscriptionStopped event")
         
         self.terminate_call(unique_id)
         return
