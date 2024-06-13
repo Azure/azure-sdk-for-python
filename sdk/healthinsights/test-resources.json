@@ -4,7 +4,7 @@
   "parameters": {
     "baseName": {
       "type": "string",
-      "defaultValue": "[resourceGroup().name]",
+      "defaultValue": "[toLower(resourceGroup().name)]",
       "metadata": {
         "description": "The base resource name."
       }
@@ -51,7 +51,7 @@
         "type": "string"
     },
     "textAnalyticsResourceGroupName": {
-      "defaultValue": "[resourceGroup().name]",
+      "defaultValue": "[toLower(resourceGroup().name)]",
       "type": "string"
     },
     "identity": {
