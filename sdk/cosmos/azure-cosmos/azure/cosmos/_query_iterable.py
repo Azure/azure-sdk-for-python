@@ -81,7 +81,10 @@ class QueryIterable(PageIterator):
 
     def _unpack(self, block):
         continuation = None
-        self._last_response_headers = block.response_headers
+        try:
+            self._last_response_headers = block.response_headers
+        except AttributeError:
+            self._last_response_headers = self._client.last_response_headers
         if self._last_response_headers:
             continuation = self._last_response_headers.get("x-ms-continuation") or \
                 self._last_response_headers.get('etag')
