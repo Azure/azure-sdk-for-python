@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 from typing import Union
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import IndexInputType
 
@@ -13,7 +12,6 @@ from azure.ai.ml.constants._common import IndexInputType
 
 
 # Defines stuff related to supplying inputs for an index AKA the base data.
-@experimental
 class IndexDataSource:
     """Base class for configs that define data that will be processed into an ML index.
     This class should not be instantiated directly. Use one of its child classes instead.
@@ -30,7 +28,6 @@ class IndexDataSource:
 # Field bundle for creating an index from files located in a Git repo.
 # TODO Does git_url need to specifically be an SSH or HTTPS style link?
 # TODO What is git connection id?
-@experimental
 class GitSource(IndexDataSource):
     """Config class for creating an ML index from files located in a git repository.
 
@@ -49,7 +46,6 @@ class GitSource(IndexDataSource):
         super().__init__(input_type=IndexInputType.GIT)
 
 
-@experimental
 class LocalSource(IndexDataSource):
     """Config class for creating an ML index from a collection of local files.
 
