@@ -83,9 +83,6 @@
             "properties": {
                 "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
             },
-          "dependsOn": [
-                "[concat('Microsoft.CognitiveServices/accounts/', variables('uniqueSubDomainName'))]"
-            ],
         },
         {
             "type": "Microsoft.CognitiveServices/accounts",
