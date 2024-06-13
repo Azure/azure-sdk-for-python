@@ -84,7 +84,7 @@ def build_get_request(location: str, dnsprivateviewocid: str, subscription_id: s
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
         "dnsprivateviewocid": _SERIALIZER.url(
-            "dnsprivateviewocid", dnsprivateviewocid, "str", max_length=255, min_length=1
+            "dnsprivateviewocid", dnsprivateviewocid, "str", max_length=255, min_length=1, pattern=r".*"
         ),
     }
 
