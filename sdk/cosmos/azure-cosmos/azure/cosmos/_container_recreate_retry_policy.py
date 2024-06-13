@@ -56,7 +56,7 @@ class ContainerRecreateRetryPolicy(object):
             if not hasattr(self, 'container_rid'):
                 return False
             container_caches = self.client._container_properties_cache
-            container_link: Optional[str] = self.__find_container_link_with_RID(container_caches, self.container_rid)
+            container_link = self.__find_container_link_with_RID(container_caches, self.container_rid)
             if not container_link:
                 return False
             self.client._refresh_container_properties_cache(container_link)
@@ -84,7 +84,7 @@ class ContainerRecreateRetryPolicy(object):
             if not hasattr(self, 'container_rid'):
                 return False
             container_caches = self.client._container_properties_cache
-            container_link: Optional[str] = self.__find_container_link_with_RID(container_caches, self.container_rid)
+            container_link = self.__find_container_link_with_RID(container_caches, self.container_rid)
             if not container_link:
                 return False
             # async client needs to await to refresh cache
