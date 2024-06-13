@@ -1,0 +1,90 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""
+DESCRIPTION:
+    This sample demonstrates how to get a chat completions response from
+    the service using a synchronous client. The sample shows how to load
+    an image from a file and include it in the input chat messages.
+    This sample will only work on AI models that support image input.
+
+USAGE:
+    python sample_chat_completions_with_image_data.py
+
+    Set these two or three environment variables before running the sample:
+    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+        https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
+        where `your-deployment-name` is your unique AI Model deployment name, and
+        `your-azure-region` is the Azure region where your model is deployed.
+    2) CHAT_COMPLETIONS_KEY - Your model key (a 32-character string). Keep it secret.
+    3) CHAT_COMPLETIONS_DEPLOYMENT_NAME - Optional. The value for the HTTP
+        request header `azureml-model-deployment`.
+"""
+
+
+def sample_chat_completions_with_image_data():
+    import os
+    from azure.ai.runtime.inference import ChatCompletionsClient
+    from azure.ai.runtime.inference.models import (
+        SystemMessage, UserMessage, TextContentItem,
+        ImageContentItem, ImageUrl, ImageDetailLevel
+    )
+    from azure.core.credentials import AzureKeyCredential
+
+    try:
+        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
+        key = os.environ["CHAT_COMPLETIONS_KEY"]
+    except KeyError:
+        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT' or 'CHAT_COMPLETIONS_KEY'")
+        print("Set them before running this sample.")
+        exit()
+
+    try:
+        model_deployment = os.environ["CHAT_COMPLETIONS_DEPLOYMENT_NAME"]
+    except KeyError:
+        print("Could not read optional environment variable `CHAT_COMPLETIONS_DEPLOYMENT_NAME`.")
+        print("HTTP request header `azureml-model-deployment` will not be set.")
+        model_deployment = None
+
+    client = ChatCompletionsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key),
+        headers={"azureml-model-deployment": model_deployment},
+    )
+
+    response = client.complete(
+        messages=[
+            SystemMessage(content="You are an AI assistant that describes images in details."),
+            UserMessage(
+                content=[
+                    TextContentItem(text="What's in this image?"),
+                    ImageContentItem(
+                        image_url=ImageUrl.load(
+                            image_file="sample1.png",
+                            image_format="png",
+                            detail=ImageDetailLevel.HIGH,
+                        ),
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    print(response.choices[0].message.content)
+
+
+def get_image_data_url(image_file: str, image_format: str) -> str:
+    import base64
+    try:
+        with open(image_file, "rb") as f:
+            image_data = base64.b64encode(f.read()).decode("utf-8")
+    except FileNotFoundError:
+        print(f"Could not read '{image_file}'.")
+        print("Set the correct path to the image file before running this sample.")
+        exit()
+    return f"data:image/{image_format};base64,{image_data}"
+
+
+if __name__ == "__main__":
+    sample_chat_completions_with_image_data()

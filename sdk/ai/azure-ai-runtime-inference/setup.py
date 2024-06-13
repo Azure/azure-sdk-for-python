@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-runtime-inference"
-PACKAGE_PPRINT_NAME = "Azure Ai Runtime Inference"
+PACKAGE_PPRINT_NAME = "Azure AI Runtime Inference"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
