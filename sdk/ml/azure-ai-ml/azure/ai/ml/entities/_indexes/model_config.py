@@ -12,7 +12,7 @@ from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
 )
 
 
-@dataclass(kw_only=True)
+@dataclass
 @experimental
 class ModelConfiguration:
     """Configuration for a embedding model.
@@ -43,6 +43,26 @@ class ModelConfiguration:
     model_name: Optional[str]
     deployment_name: Optional[str]
     model_kwargs: Dict[str, Any]
+
+    def __init__(
+            self,
+            *,
+            api_base: Optional[str],
+            api_key: Optional[str],
+            api_version: Optional[str],
+            connection_name: Optional[str],
+            connection_type: Optional[str],
+            model_name: Optional[str],
+            deployment_name: Optional[str],
+            model_kwargs: Dict[str, Any]):
+        self.api_base = api_base
+        self.api_key = api_key
+        self.api_version = api_version
+        self.connection_name = connection_name
+        self.connection_type = connection_type
+        self.model_name = model_name
+        self.deployment_name = deployment_name
+        self.model_kwargs = model_kwargs
 
     @staticmethod
     def from_connection(
