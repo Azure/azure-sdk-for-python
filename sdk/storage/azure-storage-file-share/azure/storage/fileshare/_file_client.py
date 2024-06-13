@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, cast, Dict, IO, Iterable, List, Never, Optional, Tuple, Union,
+    Any, AnyStr, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -577,12 +577,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         if isinstance(data, bytes):
             data = data[:length]
 
+        stream: Optional[Any] = None
         if isinstance(data, bytes):
             stream = BytesIO(data)
         elif hasattr(data, 'read'):
-            stream = data  # TODO: Fix
+            stream = data
         elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding)  # TODO: Fix
+            stream = IterStreamer(data, encoding=encoding)
         else:
             raise TypeError(f"Unsupported data type: {type(data)}")
         return cast(Dict[str, Any], _upload_file_helper(
@@ -737,11 +738,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         This will leave a destination file with zero length and full metadata.
         This will raise an error if the copy operation has already ended.
 
-        TODO -> add Dict[str, Any] OR Dict[str, str], personally leaning towards Dict[str, str]
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.fileshare.FileProperties
+        :type copy_id: str or ~azure.storage.fileshare.FileProperties or dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -762,7 +762,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         if isinstance(copy_id, FileProperties):
             copy_id = copy_id.copy.id
-        elif isinstance(copy_id, Dict):  # TODO: Is it Dict or Dict[str, str]
+        elif isinstance(copy_id, Dict):
             copy_id = copy_id['copy_id']
         try:
             self._client.file.abort_copy(copy_id=copy_id,

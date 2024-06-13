@@ -47,7 +47,7 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
     """
     def __init__(
         self, client: Union["ShareFileClient", "ShareClient"],
-        lease_id: Optional[str] =None
+        lease_id: Optional[str] = None
     ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
@@ -64,12 +64,11 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
     def __enter__(self):
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any):
         self.release()
 
     @distributed_trace
-    def acquire(self, **kwargs):
-        # type: (**Any) -> None
+    def acquire(self, **kwargs: Any) -> None:
         """Requests a new lease. This operation establishes and manages a lock on a
         file or share for write and delete operations. If the file or share does not have an active lease,
         the File or Share service creates a lease on the file or share. If the file has an active lease,
@@ -105,13 +104,12 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
+        self.etag = response.get('etag')
 
     @distributed_trace
-    def renew(self, **kwargs):
-        # type: (Any) -> None
+    def renew(self, **kwargs: Any) -> None:
         """Renews the share lease.
 
         The share lease can be renewed if the lease ID specified in the
@@ -141,13 +139,12 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def release(self, **kwargs):
-        # type: (Any) -> None
+    def release(self, **kwargs: Any) -> None:
         """Releases the lease. The lease may be released if the lease ID specified on the request matches
         that associated with the share or file. Releasing the lease allows another client to immediately acquire
         the lease for the share or file as soon as the release is complete.
@@ -170,13 +167,12 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """ Changes the lease ID of an active lease. A change must include the current lease ID in x-ms-lease-id and
         a new lease ID in x-ms-proposed-lease-id.
 
@@ -202,13 +198,12 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def break_lease(self, **kwargs):
-        # type: (Any) -> int
+    def break_lease(self, **kwargs: Any) -> int:
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 

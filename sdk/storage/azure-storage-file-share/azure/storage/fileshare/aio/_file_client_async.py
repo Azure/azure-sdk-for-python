@@ -13,7 +13,8 @@ import warnings
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
+    Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -583,14 +584,15 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         if isinstance(data, bytes):
             data = data[:length]
 
+        stream: Optional[Any] = None
         if isinstance(data, bytes):
             stream = BytesIO(data)
         elif hasattr(data, "read"):
-            stream = data  # TODO: Fix
+            stream = data
         elif hasattr(data, "__iter__"):
-            stream = IterStreamer(data, encoding=encoding)  # TODO: Fix
+            stream = IterStreamer(data, encoding=encoding)
         elif hasattr(data, '__aiter__'):
-            stream = AsyncIterStreamer(data, encoding=encoding)  # TODO: Fix
+            stream = AsyncIterStreamer(cast(AsyncGenerator, data), encoding=encoding)
         else:
             raise TypeError(f"Unsupported data type: {type(data)}")
         return cast(Dict[str, Any], await _upload_file_helper(
@@ -741,17 +743,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def abort_copy(self, copy_id: Union[str, FileProperties], **kwargs: Any) -> None:
+    async def abort_copy(self, copy_id: Union[str, FileProperties, Dict[str, str]], **kwargs: Any) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
         This will raise an error if the copy operation has already ended.
 
-        TODO -> add Dict[str, Any] OR Dict[str, str], personally leaning towards Dict[str, str]
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.fileshare.FileProperties
+        :type copy_id: str or ~azure.storage.fileshare.FileProperties or dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -771,7 +772,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout = kwargs.pop('timeout', None)
         if isinstance(copy_id, FileProperties):
             copy_id = copy_id.copy.id
-        elif isinstance(copy_id, Dict):  # TODO: Is it Dict or Dict[str, str]
+        elif isinstance(copy_id, Dict):
             copy_id = copy_id['copy_id']
         try:
             await self._client.file.abort_copy(copy_id=copy_id,
