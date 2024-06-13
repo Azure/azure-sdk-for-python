@@ -43,7 +43,7 @@
       }
     },
    "endpointPrefix": {
-        "defaultValue": "healthinsights2",
+        "defaultValue": "healthinsights",
         "type": "string"
     },
     "cognitiveServicesEndpointSuffix": {
@@ -58,7 +58,7 @@
       }
   },
     "variables": {
-        "textAnalyticsName":  "[format('textanalytics2-{0}', parameters('baseName'))]",
+        "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
         "textAnalyticsResourceId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",        
         "cognitiveApiVersion": "2022-03-01",
         "roleDefinitionId": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
@@ -78,10 +78,14 @@
             "sku": {
                 "name": "S"
             },
+            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
             "kind": "TextAnalytics",
             "properties": {
-                "customSubDomainName": "[variables('textAnalyticsName')]"
-            }
+                "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
+            },
+          "dependsOn": [
+                "[concat('Microsoft.CognitiveServices/accounts/', variables('uniqueSubDomainName'))]"
+            ],
         },
         {
             "type": "Microsoft.CognitiveServices/accounts",
@@ -97,7 +101,7 @@
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
                 },
-                "customSubDomainName": "[variables('uniqueSubDomainName')]"
+                "customSubDomainName": "[toLower(variables('uniqueSubDomainName'))]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
