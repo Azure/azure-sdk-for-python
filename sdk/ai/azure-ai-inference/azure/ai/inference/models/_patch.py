@@ -7,16 +7,71 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import asyncio
+import base64
 import json
 import logging
 import queue
 import re
 
-from typing import List, AsyncIterator, Iterator
+from typing import List, AsyncIterator, Iterator, Optional, Union, Any, overload, Mapping
 from azure.core.rest import HttpResponse, AsyncHttpResponse
+from ._models import ImageUrl as ImageUrlGenerated
 from .. import models as _models
 
 logger = logging.getLogger(__name__)
+
+
+class ImageUrl(ImageUrlGenerated):
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ):
+        """An internet location from which the model may retrieve an image.
+
+        :ivar url: The URL of the image. Required.
+        :vartype url: str
+        :ivar detail: The evaluation quality setting to use, which controls relative prioritization of speed, token consumption, and accuracy. Known values are: "auto", "low", and "high".
+        :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
+        """
+    ...
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_file: str,
+        image_format: str,
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ): 
+        """A local file from which the model may retrieve an image.
+
+        :ivar image_file: The local file name of the image. Required.
+        :vartype image_file: str
+        :ivar image_format: The format of image, such as "jpeg" or "png". Must be specified together with `image_file` Required.
+        :vartype image_format: str
+        :ivar detail: The evaluation quality setting to use, which controls relative prioritization of speed, token consumption, and accuracy. Known values are: "auto", "low", and "high".
+        :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
+        """
+    ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        image_file = kwargs.pop("image_file", None)
+        image_format = kwargs.pop("image_format", None)
+        if image_file and image_format:
+            with open(image_file, "rb") as f:
+                image_data = base64.b64encode(f.read()).decode("utf-8")
+            kwargs["url"] = f"data:image/{image_format};base64,{image_data}"
+        super().__init__(*args, **kwargs)
 
 
 class BaseStreamingChatCompletions:
@@ -106,7 +161,7 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
     def __iter__(self):
         return self
 
-    def __next__(self) -> _models.StreamingChatCompletionsUpdate:
+    def __next__(self) -> "_models.StreamingChatCompletionsUpdate":
         while self._queue.empty() and not self._done:
             self._done = self._read_next_block()
         if self._queue.empty():
@@ -145,7 +200,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
     def __aiter__(self):
         return self
 
-    async def __anext__(self) -> _models.StreamingChatCompletionsUpdate:
+    async def __anext__(self) -> "_models.StreamingChatCompletionsUpdate":
         while self._queue.empty() and not self._done:
             self._done = await self._read_next_block_async()
         if self._queue.empty():
@@ -170,6 +225,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
 
 
 __all__: List[str] = [
+    "ImageUrl",
     "StreamingChatCompletions",
     "AsyncStreamingChatCompletions",
 ]  # Add all objects you want publicly available to users at this package level

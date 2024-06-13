@@ -47,8 +47,6 @@ def sample_chat_completions_with_image_data():
         print("HTTP request header `azureml-model-deployment` will not be set.")
         model_deployment = None
 
-    image_data_url = get_image_data_url("sample1.png", "png")
-
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
@@ -63,8 +61,9 @@ def sample_chat_completions_with_image_data():
                     TextContentItem(text="What's in this image?"),
                     ImageContentItem(
                         image_url=ImageUrl(
-                            url=image_data_url,
-                            detail=ImageDetailLevel.HIGH,
+                            image_file="sample1.png",
+                            image_format="png",
+                            detail=ImageDetailLevel.HIGH
                         ),
                     ),
                 ],
