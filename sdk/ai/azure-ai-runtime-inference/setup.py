@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-ai-inference"
-PACKAGE_PPRINT_NAME = "Azure Ai Inference"
+PACKAGE_NAME = "azure-ai-runtime-inference"
+PACKAGE_PPRINT_NAME = "Azure Ai Runtime Inference"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -38,7 +38,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 7 - Inactive",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -56,11 +56,12 @@ setup(
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.ai",
+            "azure.ai.runtime",
         ]
     ),
     include_package_data=True,
     package_data={
-        "azure.ai.inference": ["py.typed"],
+        "azure.ai.runtime.inference": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",
