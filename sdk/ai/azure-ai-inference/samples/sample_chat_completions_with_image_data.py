@@ -60,10 +60,10 @@ def sample_chat_completions_with_image_data():
                 content=[
                     TextContentItem(text="What's in this image?"),
                     ImageContentItem(
-                        image_url=ImageUrl(
+                        image_url=ImageUrl.load(
                             image_file="sample1.png",
                             image_format="png",
-                            detail=ImageDetailLevel.HIGH
+                            detail=ImageDetailLevel.HIGH,
                         ),
                     ),
                 ],

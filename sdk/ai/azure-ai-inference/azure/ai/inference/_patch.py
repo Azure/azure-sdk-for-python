@@ -16,8 +16,7 @@ Why do we patch auto-generated code?
    https://github.com/Azure/autorest.python/issues/2619 (all clients).
    Otherwise intellisense did not show the patched public methods on the client object,
    when the client is defined using context manager ("with" statement).
-6. ImageUrl class is patched in /models/_patch.py, in order to support a constructor
-   that accepts image file and image format directly.
+6. Add support for load() method in ImageUrl class (see /models/_patch.py).
 
 """
 import json

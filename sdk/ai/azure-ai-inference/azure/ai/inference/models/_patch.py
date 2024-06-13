@@ -12,66 +12,51 @@ import json
 import logging
 import queue
 import re
+import sys
 
-from typing import List, AsyncIterator, Iterator, Optional, Union, Any, overload, Mapping
+from typing import List, AsyncIterator, Iterator, Optional, Union
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from ._models import ImageUrl as ImageUrlGenerated
 from .. import models as _models
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 logger = logging.getLogger(__name__)
 
 
 class ImageUrl(ImageUrlGenerated):
-    @overload
-    def __init__(
-        self,
-        *,
-        url: str,
-        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
-    ):
-        """An internet location from which the model may retrieve an image.
 
-        :ivar url: The URL of the image. Required.
-        :vartype url: str
-        :ivar detail: The evaluation quality setting to use, which controls relative prioritization of speed, token consumption, and accuracy. Known values are: "auto", "low", and "high".
-        :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
-        """
-    ...
-
-    @overload
-    def __init__(
-        self,
+    @classmethod
+    def load(
+        cls,
         *,
         image_file: str,
         image_format: str,
-        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
-    ): 
-        """A local file from which the model may retrieve an image.
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None
+    ) -> Self:
+        """
+        Create an ImageUrl object from a local image file. The method reads the image
+        file and encodes it as a base64 string, which together with the image format
+        is then used to format the JSON `url` value passed in the request payload.
 
-        :ivar image_file: The local file name of the image. Required.
+        :ivar image_file: The name of the local image file to load. Required.
         :vartype image_file: str
-        :ivar image_format: The format of image, such as "jpeg" or "png". Must be specified together with `image_file` Required.
+        :ivar image_format: The MIME type format of the image. For example: "jpeg", "png". Required.
         :vartype image_format: str
-        :ivar detail: The evaluation quality setting to use, which controls relative prioritization of speed, token consumption, and accuracy. Known values are: "auto", "low", and "high".
+        :ivar detail: The evaluation quality setting to use, which controls relative prioritization of
+         speed, token consumption, and accuracy. Known values are: "auto", "low", and "high".
         :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
+        :return: An ImageUrl object with the image data encoded as a base64 string.
+        :rtype: ~azure.ai.inference.models.ImageUrl
+        :raises FileNotFoundError when the image file could not be opened.
         """
-    ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        image_file = kwargs.pop("image_file", None)
-        image_format = kwargs.pop("image_format", None)
-        if image_file and image_format:
-            with open(image_file, "rb") as f:
-                image_data = base64.b64encode(f.read()).decode("utf-8")
-            kwargs["url"] = f"data:image/{image_format};base64,{image_data}"
-        super().__init__(*args, **kwargs)
+        with open(image_file, "rb") as f:
+            image_data = base64.b64encode(f.read()).decode("utf-8")
+        url = f"data:image/{image_format};base64,{image_data}"
+        return cls(url=url, detail=detail)
 
 
 class BaseStreamingChatCompletions:
