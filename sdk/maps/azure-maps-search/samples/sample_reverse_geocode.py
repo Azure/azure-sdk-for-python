@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_search_point_of_interest.py
+FILE: sample_reverse_geocode.py
 DESCRIPTION:
-    This sample demonstrates how to perform search POI by given target such as `juice bars`.
+    This sample demonstrates how to perform reverse search by given coordinates.
 USAGE:
-    python sample_search_point_of_interest.py
+    python sample_reverse_geocode.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -19,17 +19,25 @@ USAGE:
 
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+from azure.maps.search.models import LatLon
 
-def search_point_of_interest():
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.search_point_of_interest("juice bars")
-    print("Get Search POI:")
-    print(result)
+    result = maps_search_client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
+    if result.features:
+        props = result.features[0].properties
+        if props and props.address:
+            print(props.address.formatted_address)
+        else:
+            print("Address is None")
+    else:
+        print("No features available")
 
 if __name__ == '__main__':
-    search_point_of_interest()
+   reverse_geocode()

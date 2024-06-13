@@ -7,38 +7,34 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_search_structured_address.py
+FILE: sample_geocode.py
 DESCRIPTION:
-    This sample demonstrates how to perform search structured address.
+    This sample demonstrates how to perform search address
 USAGE:
-    python sample_search_structured_address.py
+    python sample_geocode.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
-
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-# cSpell:disable
-def search_structured_address():
+def geocode():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
-    from azure.maps.search.models import StructuredAddress
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    addr = StructuredAddress(
-        street_number="221",
-        street_name="Sec. 2, Zhishan Rd.",
-        municipality_subdivision="Shilin Dist.",
-        municipality="Taipei City",
-        country_code="TW")
-    result = maps_search_client.search_structured_address(addr)
+    result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
+    if result.features:
+        coordinates = result.features[0].geometry.coordinates
+        longitude = coordinates[0]
+        latitude = coordinates[1]
 
-    print("Get Search Address Structured:")
-    print(result)
+        print(longitude, latitude)
+    else:
+        print("No results")
 
 if __name__ == '__main__':
-    search_structured_address()
+    geocode()
