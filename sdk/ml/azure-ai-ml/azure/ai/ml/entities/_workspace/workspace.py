@@ -235,8 +235,8 @@ class Workspace(Resource):
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         """
-        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
+        path = kwargs.pop("path", None)
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
