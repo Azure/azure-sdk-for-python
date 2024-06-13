@@ -770,13 +770,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         # pylint: disable=protected-access
         if drain:
-            link_credit_needed = handler._link.current_link_credit
+            link_credit_needed = 0
         elif handler._link.current_link_credit <= 0:
             link_credit_needed = link_credit
         else:
             link_credit_needed = link_credit - handler._link.current_link_credit
-        if link_credit_needed > 0:
-            handler._link.flow(link_credit=link_credit_needed, drain=drain)
+        # if link_credit_needed > 0:
+        handler._link.flow(link_credit=link_credit_needed, drain=drain)
 
     @staticmethod
     def settle_message_via_receiver_link(
@@ -1090,10 +1090,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         timeout,
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
-        receive_drain_timeout = .20 # 200 ms
+        receive_drain_timeout = 2 # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
+        print("IN RECEIVE")
         # If we have sent a drain, but have not yet received the drain response, we should continue to receive
         while receiving and not expired and (sent_drain == receiver._handler._link._drain_state) and len(batch) < max_message_count:
             while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
@@ -1104,9 +1105,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 ):
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
                     if not sent_drain:
+                        print("SENDING DRAIN")
                         receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
                         sent_drain = True
                         time_sent = time.time()
+                        break
                     if sent_drain != receiver._handler._link._drain_state and time.time() - time_sent > receive_drain_timeout:
                         print("BREAKING OUT")
                         break
