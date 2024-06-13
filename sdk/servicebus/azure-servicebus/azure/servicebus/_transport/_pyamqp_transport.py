@@ -780,9 +780,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         # pylint: disable=protected-access
         try:
-            # if message._receiver._handler._link != handler._link:  # pylint: disable=protected-access
-                # raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
-                                    # description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -817,12 +814,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
-        
+
         except AMQPLinkError as le:
             # Remove all Dispositions sent because we have lost the link sent on
             if le.condition == ErrorCondition.InternalError and le.description.startswith("Delivery tag"):
                 raise RuntimeError("Link error occurred during settle operation.") from le
-            
+
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
 
         except AMQPConnectionError as e:
