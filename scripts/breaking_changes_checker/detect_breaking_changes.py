@@ -369,7 +369,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
-        # remove_json_files(pkg_dir)
+        remove_json_files(pkg_dir)
         raise err
 
 
@@ -429,10 +429,10 @@ if __name__ == "__main__":
     package_name = os.path.basename(pkg_dir)
     changelog = args.changelog
     logging.basicConfig(level=logging.INFO)
-    # if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
-    #     _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
-    #                  f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
-    #     exit(0)
+    if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
+        _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
+                     f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
+        exit(0)
 
     if not target_module:
         from ci_tools.parsing import ParsedSetup

@@ -130,7 +130,6 @@ class BreakingChangesTracker:
 
     def __str__(self):
         formatted = "\n"
-
         for bc in self.breaking_changes:
             formatted += bc + "\n"
 
