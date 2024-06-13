@@ -24,7 +24,6 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_base_urls_from_discovery_service
@@ -253,7 +252,6 @@ class IndexOperations(_ScopeDependentOperations):
         return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls, **kwargs)
 
     # pylint: disable=too-many-locals
-    @experimental
     def build_index(
         self,
         *,
@@ -272,7 +270,7 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-    ) -> "Job":  # type: ignore[name-defined]
+    ) -> Union["Index", "Job"]:  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
 
         :keyword name: The name of the index to be created.
@@ -297,7 +295,7 @@ class IndexOperations(_ScopeDependentOperations):
         :paramtype input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
         :return: If the `source_input` is a GitSource, returns a created DataIndex Job object.
-        :rtype: ~azure.ai.ml.entities.Job
+        :rtype: Union[~azure.ai.ml.entities.Index, ~azure.ai.ml.entities.Job]
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
