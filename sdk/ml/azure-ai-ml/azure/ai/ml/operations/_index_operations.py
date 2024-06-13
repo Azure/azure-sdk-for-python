@@ -272,7 +272,7 @@ class IndexOperations(_ScopeDependentOperations):
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         input_source_credential: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
-    ) -> Union["Index", "Job"]:  # type: ignore[name-defined]
+    ) -> "Job":  # type: ignore[name-defined]
         """Builds an index on the cloud using the Azure AI Resources service.
 
         :keyword name: The name of the index to be created.
@@ -297,7 +297,7 @@ class IndexOperations(_ScopeDependentOperations):
         :paramtype input_source_credential: Optional[Union[~azure.ai.ml.entities.ManagedIdentityConfiguration,
             ~azure.ai.ml.entities.UserIdentityConfiguration]]
         :return: If the `source_input` is a GitSource, returns a created DataIndex Job object.
-        :rtype: Union[~azure.ai.ml.entities._indexes.MLIndex, ~azure.ai.ml.entities.Job]
+        :rtype: ~azure.ai.ml.entities.Job
         :raises ValueError: If the `source_input` is not type ~typing.Str or
             ~azure.ai.ml.entities._indexes.LocalSource.
         """
