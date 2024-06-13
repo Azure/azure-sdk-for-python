@@ -124,6 +124,7 @@ class BreakingChangesTracker:
         for bc in self.breaking_changes:
             formatted += bc + "\n"
 
+        formatted += f"\nFound {len(self.breaking_changes)} breaking changes.\n"
         formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
                      "any reported breaking changes or false positives.\n"
         return formatted
