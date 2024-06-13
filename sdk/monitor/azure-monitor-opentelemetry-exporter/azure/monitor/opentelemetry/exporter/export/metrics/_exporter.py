@@ -235,7 +235,7 @@ def _handle_std_metric_envelope(
         properties["Dependency.Type"] = "http"
         properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400)) # type: ignore
         target = None
-        if "peer.service" in attributes:
+        if attributes.get("peer.service"):
             target = attributes["peer.service"] # type: ignore
         elif "net.peer.name" in attributes:
             if attributes["net.peer.name"] is None: # type: ignore
@@ -249,14 +249,16 @@ def _handle_std_metric_envelope(
             else:
                 target = attributes["net.peer.name"] # type: ignore
         properties["dependency/target"] = target # type: ignore
-        properties["dependency/resultCode"] = str(status_code)
+        if status_code:
+            properties["dependency/resultCode"] = str(status_code)
         # TODO: operation/synthetic
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
     elif name == "http.server.duration":
         properties["_MS.MetricId"] = "requests/duration"
         properties["_MS.IsAutocollected"] = "True"
-        properties["request/resultCode"] = str(status_code)
+        if status_code:
+            properties["request/resultCode"] = str(status_code)
         # TODO: operation/synthetic
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
