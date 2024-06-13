@@ -32,4 +32,3 @@ class CosmosListResponse(list):
         :rtype: ~azure.core.CaseInsensitiveDict
         """
         return self._response_headers
-
