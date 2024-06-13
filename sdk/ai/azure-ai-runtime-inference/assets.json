@@ -1,6 +1,6 @@
 {
   "AssetsRepo": "Azure/azure-sdk-assets",
   "AssetsRepoPrefixPath": "python",
-  "TagPrefix": "python/ai/azure-ai-inference",
-  "Tag": "python/ai/azure-ai-inference_a50981dab0"
+  "TagPrefix": "python/ai/azure-ai-runtime-inference",
+  "Tag": "python/ai/azure-ai-runtime-inference_b3ade0448a"
 }
