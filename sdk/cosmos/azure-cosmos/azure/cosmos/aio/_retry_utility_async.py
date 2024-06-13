@@ -40,7 +40,7 @@ from .. import _timeout_failover_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, disable=too-many-lines
 
 
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs):
@@ -141,7 +141,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
-            elif isinstance(retry_policy, ContainerRecreateRetryPolicy):
+            if isinstance(retry_policy, ContainerRecreateRetryPolicy):
                 args[3].headers[retry_policy.intendedHeaders] = retry_policy.container_rid
 
             # Wait for retry_after_in_milliseconds time before the next retry

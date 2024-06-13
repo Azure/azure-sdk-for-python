@@ -306,8 +306,8 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if self.container_link in self.client_connection._container_properties_cache:
-            request_options["containerRID"] = self.client_connection._container_properties_cache[self.container_link]["_rid"]
+        if self.container_link in self.__get_client_container_caches():
+            request_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
 
         return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
@@ -832,10 +832,9 @@ class ContainerProxy:
                 # Try one more time after refreshing the container properties cache
                 if attempt < 1:
                     continue
-                else:
-                    raise CosmosResourceNotFoundError(
-                        status_code=StatusCodes.NOT_FOUND,
-                        message="Could not find ThroughputProperties for container " + self.container_link)
+                raise CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find ThroughputProperties for container " + self.container_link)
             else:
                 break
 
@@ -880,10 +879,9 @@ class ContainerProxy:
             if len(throughput_properties) == 0:
                 if attempt < 1:
                     continue
-                else:
-                    raise CosmosResourceNotFoundError(
-                        status_code=StatusCodes.NOT_FOUND,
-                        message="Could not find Offer for container " + self.container_link)
+                raise CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find Offer for container " + self.container_link)
             else:
                 break
 
