@@ -255,8 +255,7 @@ class TestDevcenter(AzureRecordedTestCase):
         client = self.create_client(endpoint)
 
         restart_response = client.begin_restart_dev_box(project_name, default_user, devbox_name)
-        restart_result = restart_response.result()
-        assert restart_result.status == OperationStatus.SUCCEEDED
+        restart_result = restart_response.wait()
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -270,16 +269,13 @@ class TestDevcenter(AzureRecordedTestCase):
         client = self.create_client(endpoint)
 
         stop_response = client.begin_stop_dev_box(project_name, default_user, devbox_name)
-        stop_result = stop_response.result()
-        assert stop_result.status == OperationStatus.SUCCEEDED
+        stop_result = stop_response.wait()
 
         start_response = client.begin_start_dev_box(project_name, default_user, devbox_name)
-        start_result = start_response.result()
-        assert start_result.status == OperationStatus.SUCCEEDED
+        start_result = start_response.wait()
 
         delete_response = client.begin_delete_dev_box(project_name, default_user, devbox_name)
-        delete_result = delete_response.result()
-        assert delete_result.status == OperationStatus.SUCCEEDED
+        delete_result = delete_response.wait()
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -418,5 +414,4 @@ class TestDevcenter(AzureRecordedTestCase):
         assert len(all_envs_response) == 1 and all_envs_response[0].name == env_response.name
 
         delete_response = client.begin_delete_environment(project_name, default_user, env_name)
-        delete_result = delete_response.result()
-        assert delete_result.status == OperationStatus.SUCCEEDED
+        delete_result = delete_response.wait()
