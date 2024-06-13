@@ -229,6 +229,13 @@ def _handle_std_metric_envelope(
         attributes = {}
     # TODO: switch to semconv constants
     status_code = attributes.get("http.status_code")
+    if status_code:
+        try:
+            status_code = int(status_code) # type: ignore
+        except ValueError:
+            status_code = 0
+    else:
+        status_code = 0
     if name == "http.client.duration":
         properties["_MS.MetricId"] = "dependencies/duration"
         properties["_MS.IsAutocollected"] = "True"
@@ -249,16 +256,14 @@ def _handle_std_metric_envelope(
             else:
                 target = attributes["net.peer.name"] # type: ignore
         properties["dependency/target"] = target # type: ignore
-        if status_code:
-            properties["dependency/resultCode"] = str(status_code)
+        properties["dependency/resultCode"] = str(status_code)
         # TODO: operation/synthetic
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
     elif name == "http.server.duration":
         properties["_MS.MetricId"] = "requests/duration"
         properties["_MS.IsAutocollected"] = "True"
-        if status_code:
-            properties["request/resultCode"] = str(status_code)
+        properties["request/resultCode"] = str(status_code)
         # TODO: operation/synthetic
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
@@ -276,7 +281,7 @@ def _handle_std_metric_envelope(
 
 
 def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
-    if status_code is None:
+    if status_code is None or status_code == 0:
         return False
     try:
         return int(status_code) < threshold

@@ -347,12 +347,12 @@ class TestAzureMetricExporter(unittest.TestCase):
         point.attributes["http.status_code"] = None
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
-        self.assertIsNone(envelope.data.base_data.properties.get('dependency/resultCode'))
+        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
 
         point.attributes["http.status_code"] = "None"
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
-        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "None")
+        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
 
 
     def test_point_to_envelope_std_metric_server_duration(self):
@@ -395,12 +395,12 @@ class TestAzureMetricExporter(unittest.TestCase):
         point.attributes["http.status_code"] = None
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
-        self.assertIsNone(envelope.data.base_data.properties.get('request/resultCode'))
+        self.assertEqual(envelope.data.base_data.properties.get('request/resultCode'), "0")
 
         point.attributes["http.status_code"] = "None"
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
-        self.assertEqual(envelope.data.base_data.properties['request/resultCode'], "None")
+        self.assertEqual(envelope.data.base_data.properties.get('request/resultCode'), "0")
 
 
     def test_point_to_envelope_std_metric_unsupported(self):

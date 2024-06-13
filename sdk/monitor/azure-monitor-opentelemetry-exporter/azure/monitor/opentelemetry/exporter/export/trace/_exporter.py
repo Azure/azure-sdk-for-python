@@ -275,14 +275,16 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
-                status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
-                data.response_code = str(status_code)
+            status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            if status_code:
                 try:
                     status_code = int(status_code) # type: ignore
                 except ValueError:
                     status_code = 0
-                data.success = span.status.is_ok and status_code not in range(400, 500)
+            else:
+                status_code = 0
+            data.response_code = str(status_code)
+            data.success = span.status.is_ok and status_code and status_code not in range(400, 500)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
             if SpanAttributes.NET_PEER_IP in span.attributes:
                 envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
@@ -423,9 +425,15 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # data is url
                 if url:
                     data.data = url
-                if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
-                    status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
-                    data.result_code = str(status_code)
+                status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+                if status_code:
+                    try:
+                        status_code = int(status_code) # type: ignore
+                    except ValueError:
+                        status_code = 0
+                else:
+                    status_code = 0
+                data.result_code = str(status_code)
             elif SpanAttributes.DB_SYSTEM in span.attributes:  # Database
                 db_system = span.attributes[SpanAttributes.DB_SYSTEM]
                 if db_system == DbSystemValues.MYSQL.value:
