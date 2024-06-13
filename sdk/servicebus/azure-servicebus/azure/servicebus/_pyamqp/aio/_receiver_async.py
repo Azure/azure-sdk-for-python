@@ -16,6 +16,7 @@ from ..performatives import (
     DispositionFrame,
 )
 from ..outcomes import Received, Accepted, Rejected, Released, Modified
+from ..error import AMQPLinkError, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
+        self._received_messages = set()
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -75,6 +77,8 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
             delivery_state = await self._process_incoming_message(self._first_frame, message)
+            if not delivery_state:
+                self._received_messages.add(frame[2])
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
@@ -100,6 +104,7 @@ class ReceiverLink(Link):
         self,
         first: int,
         last: Optional[int],
+        delivery_tag: bytes,
         settled: Optional[bool],
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
@@ -107,9 +112,13 @@ class ReceiverLink(Link):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
+        if delivery_tag not in self._received_messages:
+            raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
+        
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        self._received_messages.remove(delivery_tag)
 
     async def attach(self):
         await super().attach()
@@ -121,12 +130,13 @@ class ReceiverLink(Link):
         wait: Union[bool, float] = False,
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
+        delivery_tag: bytes,
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        await self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
+        await self._outgoing_disposition(first_delivery_id, last_delivery_id, delivery_tag, settled, delivery_state, batchable)
         if not settled:
             await self._wait_for_response(wait)
