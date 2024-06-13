@@ -7,8 +7,9 @@
 
 # Defines stuff related to the resulting created index, like the index type.
 
-from azure.ai.ml._utils._experimental import experimental
 from typing import Optional
+from azure.ai.ml._utils._experimental import experimental
+
 
 @experimental
 class AzureAISearchConfig:
