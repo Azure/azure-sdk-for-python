@@ -235,7 +235,7 @@ def _handle_std_metric_envelope(
         properties["Dependency.Type"] = "http"
         properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400)) # type: ignore
         target = None
-        if attributes.get("peer.service"):
+        if "peer.service" in attributes:
             target = attributes["peer.service"] # type: ignore
         elif "net.peer.name" in attributes:
             if attributes["net.peer.name"] is None: # type: ignore

@@ -12,7 +12,7 @@
 ### Bugs Fixed
 
 - Ignore missing status codes for standard metric payloads
-    ([#35910](https://github.com/Azure/azure-sdk-for-python/pull/35910))
+    ([#36079](https://github.com/Azure/azure-sdk-for-python/pull/36079))
 
 ### Other Changes
 
