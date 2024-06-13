@@ -73,6 +73,7 @@
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %App Configuration
 # ServiceOwners: @albertofori @avanigupta @mrm9084
+
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @YalinLi0312
 
@@ -135,6 +136,7 @@
 
 # ServiceLabel: %Confidential Ledger
 # ServiceOwners: @PallabPaul
+
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi
 
@@ -243,6 +245,7 @@
 
 # ServiceLabel: %Machine Learning
 # ServiceOwners: @azureml-github @Azure/azure-ml-sdk
+
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
 
@@ -358,12 +361,14 @@
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Schema Registry
 # ServiceOwners: @arerlend @alzimmermsft
+
 # PRLabel: %Schema Registry
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
@@ -379,6 +384,7 @@
 
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
+
 # PRLabel: %SQL
 /sdk/sql/                                                            @jaredmoo
 
@@ -405,6 +411,7 @@
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @ctstone @vkurpad
+
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @YalinLi0312
 
@@ -441,6 +448,7 @@
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Tables
 # ServiceOwners: @klaaslanghout
+
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
 
@@ -450,6 +458,7 @@
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
 # ServiceOwners: @toddysm @northtyphoon
+
 # PRLabel: %Container Registry
 /sdk/containerregistry/                                              @YalinLi0312
 
