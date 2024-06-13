@@ -74,13 +74,14 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
             delivery_state = self._process_incoming_message(self._first_frame, message)
-            
+
             if not delivery_state:
                 self._received_messages.add(frame[2])
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
+                    delivery_tag=frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None
@@ -135,6 +136,13 @@ class ReceiverLink(Link):
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._outgoing_disposition(first_delivery_id, last_delivery_id, delivery_tag, settled, delivery_state, batchable)
+        self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            delivery_tag,
+            settled,
+            delivery_state,
+            batchable
+        )
         if not settled:
             self._wait_for_response(wait)

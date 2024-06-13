@@ -83,6 +83,7 @@ class ReceiverLink(Link):
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
+                    delivery_tag=frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None
@@ -114,7 +115,7 @@ class ReceiverLink(Link):
         )
         if delivery_tag not in self._received_messages:
             raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
-        
+
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
@@ -137,6 +138,13 @@ class ReceiverLink(Link):
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        await self._outgoing_disposition(first_delivery_id, last_delivery_id, delivery_tag, settled, delivery_state, batchable)
+        await self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            delivery_tag,
+            settled,
+            delivery_state,
+            batchable
+        )
         if not settled:
             await self._wait_for_response(wait)
