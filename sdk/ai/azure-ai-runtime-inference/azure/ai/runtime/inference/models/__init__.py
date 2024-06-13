@@ -27,7 +27,7 @@ from ._models import EmbeddingsUsage
 from ._models import FunctionCall
 from ._models import FunctionDefinition
 from ._models import ImageContentItem
-from ._models import ImageUrl
+from ._patch import ImageUrl
 from ._models import ModelInfo
 from ._models import StreamingChatChoiceUpdate
 from ._models import StreamingChatCompletionsUpdate
@@ -43,11 +43,14 @@ from ._enums import EmbeddingEncodingFormat
 from ._enums import EmbeddingInputType
 from ._enums import ImageDetailLevel
 from ._enums import ModelType
-from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
+
+from ._patch import StreamingChatCompletions
+from ._patch import AsyncStreamingChatCompletions
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "StreamingChatCompletions",
+    "AsyncStreamingChatCompletions",
     "AssistantMessage",
     "ChatChoice",
     "ChatCompletions",
@@ -85,5 +88,5 @@ __all__ = [
     "ImageDetailLevel",
     "ModelType",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+
 _patch_sdk()
