@@ -218,7 +218,10 @@ class BreakingChangesTracker:
                                     self.parameter_name = param_name
                                     if self.parameter_name not in stable_parameters_node and \
                                             not isinstance(self.parameter_name, jsondiff.Symbol):
-                                        # TODO: Skip init parameters that will be reported as new class properties
+                                        if self.function_name == "__init__":
+                                            # If this is a new class property skip reporting it here and let the class properties check handle it
+                                            if self.parameter_name in class_components.get("properties", {}).keys():
+                                                continue  # this is a class property, not a parameter
                                         self.check_non_positional_parameter_added(
                                             current_parameters_node[param_name]
                                         )
@@ -538,12 +541,20 @@ class BreakingChangesTracker:
     def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
         if current_parameters_node["param_type"] != "positional_or_keyword":
             if self.class_name:
-                self.features_added.append(
-                    (
-                        self.ADDED_CLASS_METHOD_PROPERTY_MSG, ChangeType.ADDED_CLASS_METHOD_PROPERTY,
-                        self.module_name, self.class_name, self.parameter_name, self.function_name
+                if self.function_name == "__init__":
+                    self.features_added.append(
+                        (
+                            self.ADDED_CLASS_PROPERTY_MSG, ChangeType.ADDED_CLASS_PROPERTY,
+                            self.module_name, self.class_name, self.parameter_name
+                        )
                     )
-                )
+                else:
+                    self.features_added.append(
+                        (
+                            self.ADDED_CLASS_METHOD_PROPERTY_MSG, ChangeType.ADDED_CLASS_METHOD_PROPERTY,
+                            self.module_name, self.class_name, self.parameter_name, self.function_name
+                        )
+                    )
             else:
                 self.features_added.append(
                     (
