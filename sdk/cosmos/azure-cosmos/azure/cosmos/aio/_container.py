@@ -835,8 +835,7 @@ class ContainerProxy:
                 raise CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + self.container_link)
-            else:
-                break
+            break
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, throughput_properties)
@@ -882,8 +881,7 @@ class ContainerProxy:
                 raise CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find Offer for container " + self.container_link)
-            else:
-                break
+            break
 
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
