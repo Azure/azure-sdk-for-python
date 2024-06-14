@@ -1286,7 +1286,7 @@
       ]
     },
     {
-      "filename": "sdk/ai/azure-ai-inference/**",
+      "filename": "sdk/ai/azure-ai-runtime-inference/**",
       "words": [
         "ubinary",
         "mros",
