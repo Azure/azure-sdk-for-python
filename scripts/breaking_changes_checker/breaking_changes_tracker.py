@@ -542,6 +542,7 @@ class BreakingChangesTracker:
         if current_parameters_node["param_type"] != "positional_or_keyword":
             if self.class_name:
                 if self.function_name == "__init__":
+                    # This is a new class property defined only through the init and not at the class level
                     self.features_added.append(
                         (
                             self.ADDED_CLASS_PROPERTY_MSG, ChangeType.ADDED_CLASS_PROPERTY,
