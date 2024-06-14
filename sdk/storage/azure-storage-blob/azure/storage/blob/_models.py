@@ -1266,7 +1266,7 @@ class ContainerEncryptionScope(object):
 class DelimitedJsonDialect(DictMixin):
     """Defines the input or output JSON serialization for a blob data query.
 
-    :keyword str delimiter: The line separator character, default value is '\n'
+    :keyword str delimiter: The line separator character, default value is '\\\\n'.
     """
 
     def __init__(self, **kwargs: Any) -> None:

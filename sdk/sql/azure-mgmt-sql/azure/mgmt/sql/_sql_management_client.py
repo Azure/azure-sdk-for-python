@@ -9,8 +9,10 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from ._configuration import SqlManagementClientConfiguration
@@ -409,8 +411,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      azure.mgmt.sql.operations.BackupShortTermRetentionPoliciesOperations
     :ivar database_extensions: DatabaseExtensionsOperations operations
     :vartype database_extensions: azure.mgmt.sql.operations.DatabaseExtensionsOperations
-    :ivar database_operations: DatabaseOperationsOperations operations
-    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperationsOperations
     :ivar database_usages: DatabaseUsagesOperations operations
     :vartype database_usages: azure.mgmt.sql.operations.DatabaseUsagesOperations
     :ivar ledger_digest_uploads: LedgerDigestUploadsOperations operations
@@ -522,6 +522,8 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
     :vartype transparent_data_encryptions:
      azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
+    :ivar database_operations: DatabaseOperationsOperations operations
+    :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperationsOperations
     :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
     :vartype ipv6_firewall_rules: azure.mgmt.sql.operations.IPv6FirewallRulesOperations
     :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
@@ -616,7 +618,25 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self._config = SqlManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -847,9 +867,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.database_extensions = DatabaseExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.database_operations = DatabaseOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.database_usages = DatabaseUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ledger_digest_uploads = LedgerDigestUploadsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -964,6 +981,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.database_operations = DatabaseOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1029,7 +1049,7 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -1049,7 +1069,7 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()

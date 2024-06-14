@@ -30,7 +30,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -71,10 +71,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -125,10 +125,10 @@ class AmlFilesystem(TrackedResource):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -401,7 +401,7 @@ class AmlFilesystemCheckSubnetError(_serialization.Model):
         self.filesystem_subnet = filesystem_subnet
 
 
-class AmlFilesystemCheckSubnetErrorFilesystemSubnet(_serialization.Model):
+class AmlFilesystemCheckSubnetErrorFilesystemSubnet(_serialization.Model):  # pylint: disable=name-too-long
     """The error details for the AML file system's subnet.
 
     :ivar status: The status of the AML file system subnet check. Known values are: "Ok" and
@@ -579,7 +579,7 @@ class AmlFilesystemHealth(_serialization.Model):
 class AmlFilesystemHsmSettings(_serialization.Model):
     """AML file system HSM settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar container: Resource ID of storage container used for hydrating the namespace and
      archiving from the namespace. The resource provider must have permission to create SAS tokens
@@ -591,8 +591,14 @@ class AmlFilesystemHsmSettings(_serialization.Model):
      account. Required.
     :vartype logging_container: str
     :ivar import_prefix: Only blobs in the non-logging container that start with this path/prefix
-     get hydrated into the cluster namespace.
+     get imported into the cluster namespace. This is only used during initial creation of the AML
+     file system. It automatically creates an import job resource that can be deleted.
     :vartype import_prefix: str
+    :ivar import_prefixes_initial: Only blobs in the non-logging container that start with one of
+     the paths/prefixes in this array get imported into the cluster namespace. This is only used
+     during initial creation of the AML file system and has '/' as the default value. It
+     automatically creates an import job resource that can be deleted.
+    :vartype import_prefixes_initial: list[str]
     """
 
     _validation = {
@@ -604,9 +610,18 @@ class AmlFilesystemHsmSettings(_serialization.Model):
         "container": {"key": "container", "type": "str"},
         "logging_container": {"key": "loggingContainer", "type": "str"},
         "import_prefix": {"key": "importPrefix", "type": "str"},
+        "import_prefixes_initial": {"key": "importPrefixesInitial", "type": "[str]"},
     }
 
-    def __init__(self, *, container: str, logging_container: str, import_prefix: str = "/", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        container: str,
+        logging_container: str,
+        import_prefix: str = "/",
+        import_prefixes_initial: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container: Resource ID of storage container used for hydrating the namespace and
          archiving from the namespace. The resource provider must have permission to create SAS tokens
@@ -618,13 +633,20 @@ class AmlFilesystemHsmSettings(_serialization.Model):
          account. Required.
         :paramtype logging_container: str
         :keyword import_prefix: Only blobs in the non-logging container that start with this
-         path/prefix get hydrated into the cluster namespace.
+         path/prefix get imported into the cluster namespace. This is only used during initial creation
+         of the AML file system. It automatically creates an import job resource that can be deleted.
         :paramtype import_prefix: str
+        :keyword import_prefixes_initial: Only blobs in the non-logging container that start with one
+         of the paths/prefixes in this array get imported into the cluster namespace. This is only used
+         during initial creation of the AML file system and has '/' as the default value. It
+         automatically creates an import job resource that can be deleted.
+        :paramtype import_prefixes_initial: list[str]
         """
         super().__init__(**kwargs)
         self.container = container
         self.logging_container = logging_container
         self.import_prefix = import_prefix
+        self.import_prefixes_initial = import_prefixes_initial
 
 
 class AmlFilesystemIdentity(_serialization.Model):
@@ -943,7 +965,7 @@ class AmlFilesystemUpdate(_serialization.Model):
         self.root_squash_settings = root_squash_settings
 
 
-class AmlFilesystemUpdatePropertiesMaintenanceWindow(_serialization.Model):
+class AmlFilesystemUpdatePropertiesMaintenanceWindow(_serialization.Model):  # pylint: disable=name-too-long
     """Start time of a 30-minute weekly maintenance window.
 
     :ivar day_of_week: Day of the week on which the maintenance window will occur. Known values
@@ -1118,7 +1140,7 @@ class ApiOperationListResult(_serialization.Model):
         self.value = value
 
 
-class ApiOperationPropertiesServiceSpecification(_serialization.Model):
+class ApiOperationPropertiesServiceSpecification(_serialization.Model):  # pylint: disable=name-too-long
     """Specification of the all the metrics provided for a resource type.
 
     :ivar metric_specifications: Details about operations related to metrics.
@@ -1164,7 +1186,7 @@ class AscOperation(_serialization.Model):
     :ivar status: The status of the operation.
     :vartype status: str
     :ivar error: The error detail of the operation if any.
-    :vartype error: ~azure.mgmt.storagecache.models.ErrorResponse
+    :vartype error: ~azure.mgmt.storagecache.models.AscOperationErrorResponse
     :ivar output: Additional operation-specific output.
     :vartype output: dict[str, JSON]
     """
@@ -1175,7 +1197,7 @@ class AscOperation(_serialization.Model):
         "start_time": {"key": "startTime", "type": "str"},
         "end_time": {"key": "endTime", "type": "str"},
         "status": {"key": "status", "type": "str"},
-        "error": {"key": "error", "type": "ErrorResponse"},
+        "error": {"key": "error", "type": "AscOperationErrorResponse"},
         "output": {"key": "properties.output", "type": "{object}"},
     }
 
@@ -1187,7 +1209,7 @@ class AscOperation(_serialization.Model):
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         status: Optional[str] = None,
-        error: Optional["_models.ErrorResponse"] = None,
+        error: Optional["_models.AscOperationErrorResponse"] = None,
         output: Optional[Dict[str, JSON]] = None,
         **kwargs: Any
     ) -> None:
@@ -1203,7 +1225,7 @@ class AscOperation(_serialization.Model):
         :keyword status: The status of the operation.
         :paramtype status: str
         :keyword error: The error detail of the operation if any.
-        :paramtype error: ~azure.mgmt.storagecache.models.ErrorResponse
+        :paramtype error: ~azure.mgmt.storagecache.models.AscOperationErrorResponse
         :keyword output: Additional operation-specific output.
         :paramtype output: dict[str, JSON]
         """
@@ -1215,6 +1237,32 @@ class AscOperation(_serialization.Model):
         self.status = status
         self.error = error
         self.output = output
+
+
+class AscOperationErrorResponse(_serialization.Model):
+    """Describes the format of Error response.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
 
 
 class BlobNfsTarget(_serialization.Model):
@@ -1439,7 +1487,7 @@ class CacheActiveDirectorySettings(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar primary_dns_ip_address: Primary DNS IP address used to resolve the Active Directory
      domain controller's fully qualified domain name. Required.
@@ -1525,7 +1573,7 @@ class CacheActiveDirectorySettings(_serialization.Model):
 class CacheActiveDirectorySettingsCredentials(_serialization.Model):
     """Active Directory admin credentials used to join the HPC Cache to a domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar username: Username of the Active Directory domain administrator. This value is stored
      encrypted and not returned on response. Required.
@@ -2206,36 +2254,318 @@ class Condition(_serialization.Model):
         self.message = None
 
 
-class ErrorResponse(_serialization.Model):
-    """Describes the format of Error response.
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
     """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.storagecache.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.storagecache.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
 
     _attribute_map = {
         "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.storagecache.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
-        :keyword code: Error code.
-        :paramtype code: str
-        :keyword message: Error message indicating why the operation failed.
-        :paramtype message: str
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.storagecache.models.ErrorDetail
         """
         super().__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.error = error
+
+
+class ImportJob(TrackedResource):  # pylint: disable=too-many-instance-attributes
+    """An import job instance. Follows Azure Resource Manager standards:
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
+     "Creating", "Deleting", "Updating", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storagecache.models.ImportJobProvisioningStateType
+    :ivar import_prefixes: An array of blob paths/prefixes that get imported into the cluster
+     namespace. It has '/' as the default value.
+    :vartype import_prefixes: list[str]
+    :ivar conflict_resolution_mode: How the import job will handle conflicts. For example, if the
+     import job is trying to bring in a directory, but a file is at that path, how it handles it.
+     Fail indicates that the import job should stop immediately and not do anything with the
+     conflict. Skip indicates that it should pass over the conflict. OverwriteIfDirty causes the
+     import job to delete and re-import the file or directory if it is a conflicting type, is dirty,
+     or was not previously imported. OverwriteAlways extends OverwriteIfDirty to include releasing
+     files that had been restored but were not dirty. Please reference
+     https://learn.microsoft.com/en-us/azure/azure-managed-lustre/ for a thorough explanation of
+     these resolution modes. Known values are: "Fail", "Skip", "OverwriteIfDirty", and
+     "OverwriteAlways".
+    :vartype conflict_resolution_mode: str or
+     ~azure.mgmt.storagecache.models.ConflictResolutionMode
+    :ivar maximum_errors: Total non-conflict oriented errors the import job will tolerate before
+     exiting with failure. -1 means infinite. 0 means exit immediately and is the default.
+    :vartype maximum_errors: int
+    :ivar state: The state of the import job. InProgress indicates the import is still running.
+     Canceled indicates it has been canceled by the user. Completed indicates import finished,
+     successfully importing all discovered blobs into the Lustre namespace. CompletedPartial
+     indicates the import finished but some blobs either were found to be conflicting and could not
+     be imported or other errors were encountered. Failed means the import was unable to complete
+     due to a fatal error. Known values are: "InProgress", "Cancelling", "Canceled", "Completed",
+     "CompletedPartial", and "Failed".
+    :vartype state: str or ~azure.mgmt.storagecache.models.ImportStatusType
+    :ivar status_message: The status message of the import job.
+    :vartype status_message: str
+    :ivar total_blobs_walked: The total blob objects walked.
+    :vartype total_blobs_walked: int
+    :ivar blobs_walked_per_second: A recent and frequently updated rate of blobs walked per second.
+    :vartype blobs_walked_per_second: int
+    :ivar total_blobs_imported: The total blobs that have been imported since import began.
+    :vartype total_blobs_imported: int
+    :ivar blobs_imported_per_second: A recent and frequently updated rate of total files,
+     directories, and symlinks imported per second.
+    :vartype blobs_imported_per_second: int
+    :ivar last_completion_time: The time of the last completed archive operation.
+    :vartype last_completion_time: ~datetime.datetime
+    :ivar last_started_time: The time the latest archive operation started.
+    :vartype last_started_time: ~datetime.datetime
+    :ivar total_errors: Number of errors in the import job.
+    :vartype total_errors: int
+    :ivar total_conflicts: Number of conflicts in the import job.
+    :vartype total_conflicts: int
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "status_message": {"readonly": True},
+        "total_blobs_walked": {"readonly": True},
+        "blobs_walked_per_second": {"readonly": True},
+        "total_blobs_imported": {"readonly": True},
+        "blobs_imported_per_second": {"readonly": True},
+        "last_completion_time": {"readonly": True},
+        "last_started_time": {"readonly": True},
+        "total_errors": {"readonly": True},
+        "total_conflicts": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "import_prefixes": {"key": "properties.importPrefixes", "type": "[str]"},
+        "conflict_resolution_mode": {"key": "properties.conflictResolutionMode", "type": "str"},
+        "maximum_errors": {"key": "properties.maximumErrors", "type": "int"},
+        "state": {"key": "properties.status.state", "type": "str"},
+        "status_message": {"key": "properties.status.statusMessage", "type": "str"},
+        "total_blobs_walked": {"key": "properties.status.totalBlobsWalked", "type": "int"},
+        "blobs_walked_per_second": {"key": "properties.status.blobsWalkedPerSecond", "type": "int"},
+        "total_blobs_imported": {"key": "properties.status.totalBlobsImported", "type": "int"},
+        "blobs_imported_per_second": {"key": "properties.status.blobsImportedPerSecond", "type": "int"},
+        "last_completion_time": {"key": "properties.status.lastCompletionTime", "type": "iso-8601"},
+        "last_started_time": {"key": "properties.status.lastStartedTime", "type": "iso-8601"},
+        "total_errors": {"key": "properties.status.totalErrors", "type": "int"},
+        "total_conflicts": {"key": "properties.status.totalConflicts", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        import_prefixes: Optional[List[str]] = None,
+        conflict_resolution_mode: Union[str, "_models.ConflictResolutionMode"] = "Fail",
+        maximum_errors: int = 0,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword import_prefixes: An array of blob paths/prefixes that get imported into the cluster
+         namespace. It has '/' as the default value.
+        :paramtype import_prefixes: list[str]
+        :keyword conflict_resolution_mode: How the import job will handle conflicts. For example, if
+         the import job is trying to bring in a directory, but a file is at that path, how it handles
+         it. Fail indicates that the import job should stop immediately and not do anything with the
+         conflict. Skip indicates that it should pass over the conflict. OverwriteIfDirty causes the
+         import job to delete and re-import the file or directory if it is a conflicting type, is dirty,
+         or was not previously imported. OverwriteAlways extends OverwriteIfDirty to include releasing
+         files that had been restored but were not dirty. Please reference
+         https://learn.microsoft.com/en-us/azure/azure-managed-lustre/ for a thorough explanation of
+         these resolution modes. Known values are: "Fail", "Skip", "OverwriteIfDirty", and
+         "OverwriteAlways".
+        :paramtype conflict_resolution_mode: str or
+         ~azure.mgmt.storagecache.models.ConflictResolutionMode
+        :keyword maximum_errors: Total non-conflict oriented errors the import job will tolerate before
+         exiting with failure. -1 means infinite. 0 means exit immediately and is the default.
+        :paramtype maximum_errors: int
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state = None
+        self.import_prefixes = import_prefixes
+        self.conflict_resolution_mode = conflict_resolution_mode
+        self.maximum_errors = maximum_errors
+        self.state = None
+        self.status_message = None
+        self.total_blobs_walked = None
+        self.blobs_walked_per_second = None
+        self.total_blobs_imported = None
+        self.blobs_imported_per_second = None
+        self.last_completion_time = None
+        self.last_started_time = None
+        self.total_errors = None
+        self.total_conflicts = None
+
+
+class ImportJobsListResult(_serialization.Model):
+    """Result of the request to list import jobs. It contains a list of import jobs and a URL link to
+    get the next set of results.
+
+    :ivar next_link: URL to get the next set of import job list results, if there are any.
+    :vartype next_link: str
+    :ivar value: List of import jobs.
+    :vartype value: list[~azure.mgmt.storagecache.models.ImportJob]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ImportJob]"},
+    }
+
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ImportJob"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword next_link: URL to get the next set of import job list results, if there are any.
+        :paramtype next_link: str
+        :keyword value: List of import jobs.
+        :paramtype value: list[~azure.mgmt.storagecache.models.ImportJob]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class ImportJobUpdate(_serialization.Model):
+    """An import job update instance.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
 
 
 class KeyVaultKeyReference(_serialization.Model):
     """Describes a reference to key vault key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_url: The URL referencing a key encryption key in key vault. Required.
     :vartype key_url: str
@@ -2537,7 +2867,7 @@ class Nfs3Target(_serialization.Model):
 class NfsAccessPolicy(_serialization.Model):
     """A set of rules describing access policies applied to NFSv3 clients of the cache.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name identifying this policy. Access Policy names are not case sensitive. Required.
     :vartype name: str
@@ -2573,7 +2903,7 @@ class NfsAccessPolicy(_serialization.Model):
 class NfsAccessRule(_serialization.Model):
     """Rule to place restrictions on portions of the cache namespace being presented to clients.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scope: Scope for this rule. The scope and filter determine which clients match the rule.
      Required. Known values are: "default", "network", and "host".
@@ -2674,7 +3004,7 @@ class PrimingJob(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar priming_job_name: The priming job name. Required.
     :vartype priming_job_name: str
@@ -2737,7 +3067,7 @@ class PrimingJob(_serialization.Model):
 class PrimingJobIdParameter(_serialization.Model):
     """Object containing the priming job ID.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar priming_job_id: The unique identifier of the priming job. Required.
     :vartype priming_job_id: str

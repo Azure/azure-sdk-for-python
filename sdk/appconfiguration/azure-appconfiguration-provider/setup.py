@@ -72,9 +72,8 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.6",
     install_requires=[
-        "msrest>=0.6.21",
         "azure-core>=1.28.0",
-        "azure-appconfiguration>=1.5.0",
+        "azure-appconfiguration>=1.6.0",
         "azure-keyvault-secrets>=4.3.0",
     ],
 )

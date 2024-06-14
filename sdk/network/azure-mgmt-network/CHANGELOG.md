@@ -1,5 +1,44 @@
 # Release History
 
+## 25.4.0 (2024-05-27)
+
+### Features Added
+
+  - Added operation NetworkVirtualAppliancesOperations.begin_restart
+  - Added operation group FirewallPolicyDeploymentsOperations
+  - Added operation group FirewallPolicyDraftsOperations
+  - Added operation group FirewallPolicyRuleCollectionGroupDraftsOperations
+  - Model ApplicationGatewayHeaderConfiguration has a new parameter header_value_matcher
+  - Model ApplicationGatewaySku has a new parameter family
+  - Model ConnectionMonitorEndpoint has a new parameter location_details
+  - Model ConnectionMonitorEndpoint has a new parameter subscription_id
+  - Model ExpressRouteCircuit has a new parameter enable_direct_port_rate_limit
+  - Model InboundSecurityRule has a new parameter rule_type
+  - Model InboundSecurityRules has a new parameter applies_on
+  - Model InboundSecurityRules has a new parameter destination_port_ranges
+  - Model InboundSecurityRules has a new parameter name
+  - Model NetworkInterfaceIPConfiguration has a new parameter private_ip_address_prefix_length
+  - Model NetworkVirtualAppliance has a new parameter network_profile
+  - Model PacketCapture has a new parameter capture_settings
+  - Model PacketCapture has a new parameter continuous_capture
+  - Model PacketCaptureParameters has a new parameter capture_settings
+  - Model PacketCaptureParameters has a new parameter continuous_capture
+  - Model PacketCaptureResult has a new parameter capture_settings
+  - Model PacketCaptureResult has a new parameter continuous_capture
+  - Model PacketCaptureResultProperties has a new parameter capture_settings
+  - Model PacketCaptureResultProperties has a new parameter continuous_capture
+  - Model PacketCaptureStorageLocation has a new parameter local_path
+  - Model PolicySettings has a new parameter js_challenge_cookie_expiration_in_mins
+  - Model Subnet has a new parameter sharing_scope
+  - Model VirtualApplianceNicProperties has a new parameter nic_type
+  - Model VirtualNetworkPeering has a new parameter enable_only_i_pv6_peering
+  - Model VirtualNetworkPeering has a new parameter local_address_space
+  - Model VirtualNetworkPeering has a new parameter local_subnet_names
+  - Model VirtualNetworkPeering has a new parameter local_virtual_network_address_space
+  - Model VirtualNetworkPeering has a new parameter peer_complete_vnets
+  - Model VirtualNetworkPeering has a new parameter remote_subnet_names
+  - Model VpnSiteLinkConnection has a new parameter dpd_timeout_seconds
+
 ## 25.3.0 (2024-02-22)
 
 ### Features Added

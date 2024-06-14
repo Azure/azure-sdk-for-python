@@ -1,6 +1,17 @@
 # Release History
 
-## 1.16.0 (unreleased)
+## 1.17.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- InputTypes exported in constants module
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.16.0 (2024-05-14)
 
 ### Features Added
 - Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
@@ -141,7 +152,7 @@
 
 ### Other Changes
 
-- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance.
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 - Removed references to deprecated "feature_store" workspace connection type.
 

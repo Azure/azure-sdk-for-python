@@ -61,7 +61,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     For more optional configuration, please click
     `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-    #optional-configuration>`_.
+    #optional-configuration>`__.
 
     :param str account_url:
         The URL to the blob storage account. Any other entities included
@@ -205,7 +205,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: The user delegation key.
         :rtype: ~azure.storage.blob.UserDelegationKey
         """
@@ -269,7 +269,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: The blob service stats.
         :rtype: Dict[str, Any]
 
@@ -300,7 +300,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An object containing blob service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
@@ -370,7 +370,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -434,7 +434,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An iterable (auto-paging) of ContainerProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.ContainerProperties]
 
@@ -488,7 +488,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.FilteredBlob]
         """
@@ -537,7 +537,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A container client to interact with the newly created container.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -599,7 +599,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
 
         .. admonition:: Example:
 
@@ -637,7 +637,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A container client for the renamed container.
         :rtype: ~azure.storage.blob.ContainerClient
         """
@@ -676,7 +676,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: The undeleted ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
         """

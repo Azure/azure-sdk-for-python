@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -70,7 +70,6 @@ class LinkConnectionOperations:
     def list_by_workspace(self, **kwargs: Any) -> AsyncIterable["_models.LinkConnectionResource"]:
         """List link connections.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LinkConnectionResource or the result of
          cls(response)
         :rtype:
@@ -161,7 +160,6 @@ class LinkConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -169,18 +167,22 @@ class LinkConnectionOperations:
 
     @overload
     async def create_or_update(
-        self, link_connection_name: str, link_connection: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        link_connection_name: str,
+        link_connection: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.LinkConnectionResource:
         """Creates or updates a link connection.
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param link_connection: Link connection resource definition. Required.
-        :type link_connection: IO
+        :type link_connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -188,19 +190,18 @@ class LinkConnectionOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, link_connection_name: str, link_connection: Union[_models.LinkConnectionResource, IO], **kwargs: Any
+        self,
+        link_connection_name: str,
+        link_connection: Union[_models.LinkConnectionResource, IO[bytes]],
+        **kwargs: Any
     ) -> _models.LinkConnectionResource:
         """Creates or updates a link connection.
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param link_connection: Link connection resource definition. Is either a LinkConnectionResource
-         type or a IO type. Required.
-        :type link_connection: ~azure.synapse.artifacts.models.LinkConnectionResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type link_connection: ~azure.synapse.artifacts.models.LinkConnectionResource or IO[bytes]
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -267,7 +268,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -324,7 +324,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -379,7 +378,6 @@ class LinkConnectionOperations:
         :type link_connection_name: str
         :param link_tables: Edit link tables request. Default value is None.
         :type link_tables: list[~azure.synapse.artifacts.models.LinkTableRequest]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -439,7 +437,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -493,7 +490,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -546,7 +542,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionDetailedStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionDetailedStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -601,7 +596,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkTableListResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkTableListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -668,7 +662,6 @@ class LinkConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionQueryTableStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -678,7 +671,7 @@ class LinkConnectionOperations:
     async def query_table_status(
         self,
         link_connection_name: str,
-        query_table_status_request: IO,
+        query_table_status_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -688,11 +681,10 @@ class LinkConnectionOperations:
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param query_table_status_request: Query table status request. Required.
-        :type query_table_status_request: IO
+        :type query_table_status_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionQueryTableStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -702,7 +694,7 @@ class LinkConnectionOperations:
     async def query_table_status(
         self,
         link_connection_name: str,
-        query_table_status_request: Union[_models.QueryTableStatusRequest, IO],
+        query_table_status_request: Union[_models.QueryTableStatusRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.LinkConnectionQueryTableStatus:
         """Query the link table status of a link connection.
@@ -710,12 +702,9 @@ class LinkConnectionOperations:
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param query_table_status_request: Query table status request. Is either a
-         QueryTableStatusRequest type or a IO type. Required.
-        :type query_table_status_request: ~azure.synapse.artifacts.models.QueryTableStatusRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         QueryTableStatusRequest type or a IO[bytes] type. Required.
+        :type query_table_status_request: ~azure.synapse.artifacts.models.QueryTableStatusRequest or
+         IO[bytes]
         :return: LinkConnectionQueryTableStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -786,7 +775,6 @@ class LinkConnectionOperations:
         :type link_connection_name: str
         :param sas_token: Landing zone's sas token. Default value is None.
         :type sas_token: ~azure.synapse.artifacts.models.SecureString
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -846,7 +834,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -900,7 +887,6 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

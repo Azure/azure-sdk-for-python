@@ -87,7 +87,7 @@ setup(
         "msrest>=0.6.10",
         "opentelemetry-api~=1.21",
         "opentelemetry-sdk~=1.21",
-        "psutil>=5.9.8",
+        "psutil~=5.9",
     ],
     entry_points={
         "opentelemetry_traces_exporter": [

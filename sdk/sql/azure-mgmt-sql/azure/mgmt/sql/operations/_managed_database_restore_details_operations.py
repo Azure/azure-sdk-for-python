@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -111,7 +111,6 @@ class ManagedDatabaseRestoreDetailsOperations:
         :type database_name: str
         :param restore_details_name: The name of the restore details to retrieve. "Default" Required.
         :type restore_details_name: str or ~azure.mgmt.sql.models.RestoreDetailsName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedDatabaseRestoreDetailsResult or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseRestoreDetailsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -130,23 +129,22 @@ class ManagedDatabaseRestoreDetailsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[_models.ManagedDatabaseRestoreDetailsResult] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             managed_instance_name=managed_instance_name,
             database_name=database_name,
             restore_details_name=restore_details_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,10 +156,6 @@ class ManagedDatabaseRestoreDetailsOperations:
         deserialized = self._deserialize("ManagedDatabaseRestoreDetailsResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/restoreDetails/{restoreDetailsName}"
-    }
+        return deserialized  # type: ignore
