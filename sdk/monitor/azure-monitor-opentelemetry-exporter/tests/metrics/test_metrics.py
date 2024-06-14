@@ -388,7 +388,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
         # Success/Failure
-        point.attributes["http.status_code"] = 600
+        point.attributes["http.status_code"] = 500
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
 

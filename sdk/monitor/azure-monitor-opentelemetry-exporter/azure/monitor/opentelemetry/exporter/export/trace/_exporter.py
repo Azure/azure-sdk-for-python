@@ -284,6 +284,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             else:
                 status_code = 0
             data.response_code = str(status_code)
+            # Success criteria for server spans depends on span.success and the actual status code
             data.success = span.status.is_ok and status_code and status_code not in range(400, 500)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
             if SpanAttributes.NET_PEER_IP in span.attributes:
@@ -322,7 +323,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             id="{:016x}".format(span.context.span_id),
             result_code="0",
             duration=_utils.ns_to_duration(time),
-            success=span.status.is_ok,
+            success=span.status.is_ok, # Success depends only on span status
             properties={},
         )
         envelope.data = MonitorBase(
