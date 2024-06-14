@@ -176,7 +176,8 @@ class ReplicaClient:
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
             configuration_settings, sentinel_keys = self.load_configuration_settings(selects, refresh_on, **kwargs)
-        return need_refresh, sentinel_keys, configuration_settings
+            return True, sentinel_keys, configuration_settings
+        return False, refresh_on, []
 
     def refresh_feature_flags(self, refresh_on, feature_flag_selectors, headers, **kwargs) -> bool:
         """
@@ -221,14 +222,15 @@ class ReplicaClientManager:
     def get_active_clients(self):
         active_clients = []
         for client in self._replica_clients:
-            if client.backoff_end_time <= time.time():
+            if client.backoff_end_time <= (time.time() * 1000):
                 active_clients.append(client)
         return active_clients
 
     def backoff(self, client: ReplicaClient):
+        breakpoint()
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
-        client.backoff_end_time = time.time() + backoff_time
+        client.backoff_end_time = (time.time() * 1000) + backoff_time
 
     def _calculate_backoff(self, attempts: int) -> float:
         max_attempts = 63

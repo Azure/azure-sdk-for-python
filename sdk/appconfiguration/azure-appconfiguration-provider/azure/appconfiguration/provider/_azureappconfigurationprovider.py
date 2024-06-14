@@ -549,7 +549,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[
                                 FEATURE_MANAGEMENT_KEY
                             ]
-                        self._dict = configuration_settings_processed
+                        elif need_refresh:
+                            self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
                         headers = _get_headers(
                             "Watch",
@@ -571,8 +572,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._refresh_timer.reset()
                     success = True
                     break
-                except Exception as e:
-                    exception = e
+                except Exception:
                     self._replica_client_manager.backoff(client)
 
             if not success:
