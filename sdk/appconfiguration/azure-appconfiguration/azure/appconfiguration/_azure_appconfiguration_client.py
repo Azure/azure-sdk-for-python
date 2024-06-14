@@ -24,7 +24,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._generated import AzureAppConfiguration
-from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
+from ._generated.models import SnapshotUpdateParameters, SnapshotStatus, LabelFields, Label
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,
@@ -591,6 +591,44 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value)
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
+
+    @distributed_trace
+    def list_labels(
+        self,
+        *,
+        name: Optional[str] = None,
+        after: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        fields: Optional[List[Union[str, LabelFields]]] = None,
+        **kwargs,
+    ) -> ItemPaged[str]:
+        """Gets a list of labels.
+
+        :param name: A filter for the name of the returned labels. Default value is None.
+        :type name: str
+        :param after: Instructs the server to return elements that appear after the element referred to
+            by the specified token. Default value is None.
+        :type after: str
+        :param accept_datetime: Requests the server to respond with the state of the resource at the
+            specified time. Default value is None.
+        :type accept_datetime: str
+        :param fields: Used to select what fields are present in the returned resource(s). Default
+            value is None.
+        :type fields: list[str or ~azure.appconfiguration.models.LabelFields]
+        :return: An iterator of labels.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Label]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        try:
+            return self._impl.get_labels(
+                name=name,
+                after=after,
+                accept_datetime=accept_datetime,
+                select=fields,
+                **kwargs,
+            )
+        except binascii.Error:
+            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
     def begin_create_snapshot(
