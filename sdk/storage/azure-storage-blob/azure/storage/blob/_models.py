@@ -222,10 +222,15 @@ class BlobAnalyticsLogging(GeneratedLogging):
     """
 
     version: str = '1.0'
+    """The version of Storage Analytics to configure."""
     delete: bool = False
+    """Indicates whether all delete requests should be logged."""
     read: bool = False
+    """Indicates whether all read requests should be logged."""
     write: bool = False
+    """Indicates whether all write requests should be logged."""
     retention_policy: RetentionPolicy = RetentionPolicy()
+    """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
@@ -264,9 +269,13 @@ class Metrics(GeneratedMetrics):
     """
 
     version: str = '1.0'
+    """The version of Storage Analytics to configure."""
     enabled: bool = False
+    """Indicates whether metrics are enabled for the Blob service."""
     include_apis: Optional[bool]
+    """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
+    """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
@@ -301,9 +310,13 @@ class StaticWebsite(GeneratedStaticWebsite):
     """
 
     enabled: bool = False
+    """Indicates whether this account is hosting a static website."""
     index_document: Optional[str]
+    """The default name of the index page under each directory."""
     error_document404_path: Optional[str]
+    """The absolute path of the custom 404 page."""
     default_index_document_path: Optional[str]
+    """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get('enabled', False)
@@ -428,11 +441,7 @@ class ContainerProperties(DictMixin):
     has_legal_hold: bool
     """Represents whether the container has a legal hold."""
     immutable_storage_with_versioning_enabled: bool
-    """Represents whether immutable storage with versioning enabled on the container.
-
-        .. versionadded:: 12.10.0
-            This was introduced in API version '2020-10-02'.
-    """
+    """Represents whether immutable storage with versioning enabled on the container."""
     metadata: Dict[str, Any]
     """A dict with name-value pairs to associate with the container as metadata."""
     encryption_scope: Optional["ContainerEncryptionScope"]
@@ -501,8 +510,7 @@ class ContainerPropertiesPaged(PageIterator):
     continuation_token: Optional[str]
     """The continuation token to retrieve the next page of results."""
     location_mode: Optional[str]
-    """The location mode being used to list results. The available
-        options include "primary" and "secondary"."""
+    """The location mode being used to list results."""
     current_page: List["ContainerProperties"]
     """The current page of listed results."""
 
@@ -563,8 +571,11 @@ class ImmutabilityPolicy(DictMixin):
         Possible values to set include: "Locked", "Unlocked".
         "Mutable" can only be returned by service, don't set to "Mutable".
     """
+
     expiry_time: Optional["datetime"] = None
+    """Specifies the date time when the blobs immutability policy is set to expire."""
     policy_mode: Optional[str] = None
+    """Specifies the immutability policy mode to set on the blob."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.expiry_time = kwargs.pop('expiry_time', None)
@@ -643,13 +654,19 @@ class ContentSettings(DictMixin):
         header is stored so that the client can check for message content
         integrity.
     """
-    content_type: Optional[str] = None
-    content_encoding: Optional[str] = None
-    content_language: Optional[str] = None
-    content_disposition: Optional[str] = None
-    cache_control: Optional[str] = None
-    content_md5: Optional[bytearray] = None
 
+    content_type: Optional[str] = None
+    """The content type specified for the blob."""
+    content_encoding: Optional[str] = None
+    """The content encoding specified for the blob."""
+    content_language: Optional[str] = None
+    """The content language specified for the blob."""
+    content_disposition: Optional[str] = None
+    """The content disposition specified for the blob."""
+    cache_control: Optional[str] = None
+    """The cache control specified for the blob."""
+    content_md5: Optional[bytearray] = None
+    """The content md5 specified for the blob."""
 
     def __init__(
         self, content_type: Optional[str] = None,
@@ -757,9 +774,13 @@ class BlobBlock(DictMixin):
     :param BlockState state:
         Block state. Possible values: BlockState.COMMITTED | BlockState.UNCOMMITTED
     """
+
     block_id: str
+    """Block id."""
     state: BlockState
+    """Block state."""
     size: Optional[int]
+    """Block size."""
 
     def __init__(self, block_id: str, state: BlockState = BlockState.LATEST) -> None:
         self.id = block_id
@@ -791,7 +812,9 @@ class PageRange(DictMixin):
     """
 
     start: Optional[int] = None
+    """Start of page range in bytes."""
     end: Optional[int] = None
+    """End of page range in bytes."""
     cleared: bool
     """Whether the range has been cleared."""
 
@@ -881,17 +904,31 @@ class ContainerSasPermissions(object):
     """
 
     read: bool = False
+    """The read permission for container SAS."""
     write: bool = False
+    """The write permission for container SAS."""
     delete: bool = False
+    """The delete permission for container SAS."""
     delete_previous_version: bool = False
+    """Permission to delete previous blob version for versioning enabled
+        storage accounts."""
     list: bool = False
+    """The list permission for container SAS."""
     tag: bool = False
+    """Set or get tags on the blobs in the container."""
     add: Optional[bool]
+    """Add a block to an append blob."""
     create: Optional[bool]
+    """Write a new blob, snapshot a blob, or copy a blob to a new blob."""
     permanent_delete: Optional[bool]
+    """To enable permanent delete on the blob is permitted."""
     move: Optional[bool]
+    """Move a blob or a directory and its contents to a new location."""
     execute: Optional[bool]
+    """Get the system properties and, if the hierarchical namespace is enabled for the storage account,
+        get the POSIX ACL of a blob."""
     set_immutability_policy: Optional[bool]
+    """To get immutability policy, you just need read permission."""
 
     def __init__(
         self, read: bool = False,
@@ -1009,6 +1046,7 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     :paramtype start: Optional[Union[str, datetime]]
     """
+
     permission: Optional[Union[ContainerSasPermissions, str]]  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
@@ -1016,6 +1054,7 @@ class AccessPolicy(GenAccessPolicy):
     """The time at which the shared access signature becomes invalid."""
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
+
     def __init__(
         self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
         expiry: Optional[Union[str, "datetime"]] = None,
@@ -1058,6 +1097,32 @@ class BlobSasPermissions(object):
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
     """
+
+    read: bool = False
+    """The read permission for Blob SAS."""
+    add: Optional[bool]
+    """The add permission for Blob SAS."""
+    create: Optional[bool]
+    """Write a new blob, snapshot a blob, or copy a blob to a new blob."""
+    write: bool = False
+    """The write permission for Blob SAS."""
+    delete: bool = False
+    """The delete permission for Blob SAS."""
+    delete_previous_version: bool = False
+    """Permission to delete previous blob version for versioning enabled
+        storage accounts."""
+    tag: bool = False
+    """Set or get tags on the blobs in the Blob."""
+    permanent_delete: Optional[bool]
+    """To enable permanent delete on the blob is permitted."""
+    move: Optional[bool]
+    """Move a blob or a directory and its contents to a new location."""
+    execute: Optional[bool]
+    """Get the system properties and, if the hierarchical namespace is enabled for the storage account,
+        get the POSIX ACL of a blob."""
+    set_immutability_policy: Optional[bool]
+    """To get immutability policy, you just need read permission."""
+
     def __init__(
         self, read: bool = False,
         add: bool = False,
@@ -1147,6 +1212,10 @@ class CustomerProvidedEncryptionKey(object):
         Base64-encoded SHA256 of the encryption key.
     """
 
+    key_value: str
+    """Base64-encoded AES-256 encryption key value."""
+    key_hash: str
+    """Base64-encoded SHA256 of the encryption key."""
     algorithm: str
     """Specifies the algorithm to use when encrypting data using the given key. Must be AES256."""
 
@@ -1171,6 +1240,13 @@ class ContainerEncryptionScope(object):
         If true, prevents any request from specifying a different encryption scope than the scope
         set on the container. Default value is false.
     """
+
+    default_encryption_scope: str
+    """Specifies the default encryption scope to set on the container and use for
+        all future writes."""
+    prevent_encryption_scope_override: bool
+    """If true, prevents any request from specifying a different encryption scope than the scope
+        set on the container."""
 
     def __init__(self, default_encryption_scope: str, **kwargs: Any) -> None:
         self.default_encryption_scope = default_encryption_scope
@@ -1213,6 +1289,7 @@ class DelimitedTextDialect(DictMixin):
         data will be returned inclusive of the first line. If set to True, the data will be returned exclusive
         of the first line.
     """
+
     def __init__(self, **kwargs: Any) -> None:
         self.delimiter = kwargs.pop('delimiter', ',')
         self.quotechar = kwargs.pop('quotechar', '"')
@@ -1231,6 +1308,7 @@ class ArrowDialect(ArrowField):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
+
     def __init__(self, type, **kwargs: Any) -> None:   # pylint: disable=redefined-builtin
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
