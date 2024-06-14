@@ -221,7 +221,7 @@ class BreakingChangesTracker:
                                         if self.function_name == "__init__":
                                             # If this is a new class property skip reporting it here and let the class properties check handle it
                                             if self.parameter_name in class_components.get("properties", {}).keys():
-                                                continue  # this is a class property, not a parameter
+                                                continue
                                         self.check_non_positional_parameter_added(
                                             current_parameters_node[param_name]
                                         )
