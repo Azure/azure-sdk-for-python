@@ -13,7 +13,6 @@ from azure.communication.sms._generated.models import (
     SmsSendOptions,
 )
 from azure.communication.sms._models import SmsSendResult
-from azure.core.credentials import AzureKeyCredential
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.auth_policy_utils import get_authentication_policy
