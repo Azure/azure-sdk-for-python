@@ -5,13 +5,12 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client, and directly providing the
-    JSON request body (containing input chat messages). The sample
-    shows how to include an image in the input chat messages.
+    the service using a synchronous client. The sample shows how to load
+    an image from a file and include it in the input chat messages.
     This sample will only work on AI models that support image input.
 
 USAGE:
-    python sample_chat_completions_from_input_json_with_image.py
+    python sample_chat_completions_with_image_data.py
 
     Set these two or three environment variables before running the sample:
     1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
@@ -22,13 +21,15 @@ USAGE:
     3) CHAT_COMPLETIONS_DEPLOYMENT_NAME - Optional. The value for the HTTP
         request header `azureml-model-deployment`.
 """
-# mypy: disable-error-code="union-attr"
-# pyright: reportAttributeAccessIssue=false
 
 
-def sample_chat_completions_from_input_json_with_image():
+def sample_chat_completions_with_image_data():
     import os
     from azure.ai.inference import ChatCompletionsClient
+    from azure.ai.inference.models import (
+        SystemMessage, UserMessage, TextContentItem,
+        ImageContentItem, ImageUrl, ImageDetailLevel
+    )
     from azure.core.credentials import AzureKeyCredential
 
     try:
@@ -49,38 +50,41 @@ def sample_chat_completions_from_input_json_with_image():
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
-        headers={"azureml-model-deployment": model_deployment}
+        headers={"azureml-model-deployment": model_deployment},
     )
 
     response = client.complete(
-        {
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are an AI assistant that describes images in details",
-                },
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "What's in this image?"
-                        },
-                        {
-                            "type": "image_url", 
-                            "image_url": {
-                                "url" : "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/samples/sample1.png",
-                                "detail": "high",
-                            }
-                        },
-                    ],
-                },
-            ]
-        }
+        messages=[
+            SystemMessage(content="You are an AI assistant that describes images in details."),
+            UserMessage(
+                content=[
+                    TextContentItem(text="What's in this image?"),
+                    ImageContentItem(
+                        image_url=ImageUrl.load(
+                            image_file="sample1.png",
+                            image_format="png",
+                            detail=ImageDetailLevel.HIGH,
+                        ),
+                    ),
+                ],
+            ),
+        ],
     )
-    
+
     print(response.choices[0].message.content)
 
 
+def get_image_data_url(image_file: str, image_format: str) -> str:
+    import base64
+    try:
+        with open(image_file, "rb") as f:
+            image_data = base64.b64encode(f.read()).decode("utf-8")
+    except FileNotFoundError:
+        print(f"Could not read '{image_file}'.")
+        print("Set the correct path to the image file before running this sample.")
+        exit()
+    return f"data:image/{image_format};base64,{image_data}"
+
+
 if __name__ == "__main__":
-    sample_chat_completions_from_input_json_with_image()
+    sample_chat_completions_with_image_data()
