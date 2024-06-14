@@ -3,6 +3,8 @@
 ## 1.6.1 (Unreleased)
 
 ### Features Added
+- Added operation `list_labels()` for listing configuration setting labels.
+- Supported to filter by configuration setting tags in `list_configuration_settings()` and `list_revisions()` via an optional keyword argument `tags_filter`.
 
 ### Breaking Changes
 
