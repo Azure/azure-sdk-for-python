@@ -45,16 +45,17 @@ class ModelConfiguration:
     model_kwargs: Dict[str, Any]
 
     def __init__(
-            self,
-            *,
-            api_base: Optional[str],
-            api_key: Optional[str],
-            api_version: Optional[str],
-            connection_name: Optional[str],
-            connection_type: Optional[str],
-            model_name: Optional[str],
-            deployment_name: Optional[str],
-            model_kwargs: Dict[str, Any]):
+        self,
+        *,
+        api_base: Optional[str],
+        api_key: Optional[str],
+        api_version: Optional[str],
+        connection_name: Optional[str],
+        connection_type: Optional[str],
+        model_name: Optional[str],
+        deployment_name: Optional[str],
+        model_kwargs: Dict[str, Any]
+    ):
         self.api_base = api_base
         self.api_key = api_key
         self.api_version = api_version
