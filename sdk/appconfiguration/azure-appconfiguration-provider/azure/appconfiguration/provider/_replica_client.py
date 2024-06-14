@@ -227,10 +227,12 @@ class ReplicaClientManager:
         return active_clients
 
     def backoff(self, client: ReplicaClient):
-        breakpoint()
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
+
+    def _get_client_count(self):
+        return len(self._replica_clients)
 
     def _calculate_backoff(self, attempts: int) -> float:
         max_attempts = 63
