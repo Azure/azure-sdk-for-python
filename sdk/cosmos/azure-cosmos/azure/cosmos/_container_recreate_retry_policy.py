@@ -60,7 +60,7 @@ class ContainerRecreateRetryPolicy(object):
             if not container_link:
                 return False
             self.client._refresh_container_properties_cache(container_link)
-            if self.__check_if_rid_differentself(container_link,
+            if self.__check_if_rid_different(container_link,
                                                  self.client._container_properties_cache, self.container_rid):
                 return False
             self.container_rid = self.client._container_properties_cache[container_link]["_rid"]
@@ -90,7 +90,7 @@ class ContainerRecreateRetryPolicy(object):
                 return False
             # async client needs to await to refresh cache
             await self.client._refresh_container_properties_cache(container_link)
-            if self.__check_if_rid_differentself(container_link,
+            if self.__check_if_rid_different(container_link,
                                                  self.client._container_properties_cache, self.container_rid):
                 return False
             self.container_rid = self.client._container_properties_cache[container_link]["_rid"]
