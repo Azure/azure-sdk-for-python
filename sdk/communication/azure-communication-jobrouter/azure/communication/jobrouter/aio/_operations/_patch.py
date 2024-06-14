@@ -204,6 +204,9 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
+        
+        :param Union[_models.ExceptionPolicy, JSON, IO[bytes] args: Exception policy
+        :paramtype args: Union[_models.ExceptionPolicy, JSON, IO[bytes]
 
         :keyword exception_rules: (Optional) A collection of exception rules on the exception
           policy.
@@ -466,6 +469,9 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
+
+        :param Union[_models.DistributionPolicy, JSON, IO[bytes] args: Distribution Policy
+        :paramtype args: Union[_models.DistributionPolicy, JSON, IO[bytes]
 
         :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
           will be governed by the offer time to live.
@@ -737,6 +743,9 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a job queue
 
         :param str queue_id: Id of the queue.
+
+        :param Union[_models.RouterQueue, JSON, IO[bytes] args: Router Queue
+        :paramtype args: Union[_models.RouterQueue, JSON, IO[bytes]
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -1053,6 +1062,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         :param str classification_policy_id: Id of the classification policy.
 
+        :param Union[_models.ClassificationPolicy, JSON, IO[bytes] args: Classification Policy
+        :paramtype args: Union[_models.ClassificationPolicy, JSON, IO[bytes]
+        
         :keyword Optional[str] name: Friendly name of this policy.
 
         :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
@@ -1390,6 +1402,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """Update a router worker.
 
         :param str worker_id: Id of the worker.
+
+        :param Union[_models.RouterWorker, JSON, IO[bytes] args: Router Worker
+        :paramtype args: Union[_models.RouterWorker, JSON, IO[bytes]
 
         :keyword queues: The queue(s) that this worker can receive work from.
         :paramtype queues: Optional[List[str]]
@@ -1758,6 +1773,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """Update a job.
 
         :param str job_id: Id of the job.
+
+        :param Union[_models.RouterJob, JSON, IO[bytes] args: Router Job
+        :paramtype args: Union[_models.RouterJob, JSON, IO[bytes]
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]
