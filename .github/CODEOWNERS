@@ -144,6 +144,10 @@
 # PRLabel: %Content Safety
 /sdk/contentsafety/                                                  @mengaims @JieZhou000
 
+# ServiceLabel: %DevCenter
+# PRLabel: %DevCenter
+/sdk/devcenter/                                                      @drielenr @leti367 @sebrenna
+
 # ServiceLabel: %Cognitive - Health Insights
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft
