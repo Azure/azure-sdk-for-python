@@ -224,8 +224,8 @@ class CallAutomationClient:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
             targets = [serialize_identifier(target_participant)]
-        media_config = media_streaming.to_generated() if media_streaming else None
-        transcription_config = transcription.to_generated() if transcription else None
+        media_config = media_streaming._to_generated() if media_streaming else None # pylint:disable=protected-access
+        transcription_config = transcription._to_generated() if transcription else None # pylint:disable=protected-access
         create_call_request = CreateCallRequest(
             targets=targets,
             callback_uri=callback_url,
@@ -337,9 +337,9 @@ class CallAutomationClient:
             call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
-            media_streaming_options=media_streaming._to_generated(
-            ) if media_streaming else None,
-            transcription_options=transcription._to_generated()
+            media_streaming_options=media_streaming._to_generated() # pylint:disable=protected-access
+            if media_streaming else None,
+            transcription_options=transcription._to_generated() # pylint:disable=protected-access
             if transcription else None,
             operation_context=operation_context
         )
