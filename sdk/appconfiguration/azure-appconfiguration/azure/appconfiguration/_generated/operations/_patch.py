@@ -40,6 +40,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
         select: Optional[List[Union[str, _models.KeyValueFields]]] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        tags: Optional[List[str]] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable["_models.KeyValue"]:
@@ -69,6 +70,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
         :param if_none_match: Used to perform an operation only if the targeted resource's etag does
          not match the value provided. Default value is None.
         :type if_none_match: str
+        :param tags: A filter used to query by tags. Default value is None.
+        :type tags: list[str]
         :param str continuation_token: An opaque continuation token.
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValue or the result of cls(response)
@@ -100,6 +103,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigOpGenerated):
                     select=select,
                     if_match=if_match,
                     if_none_match=if_none_match,
+                    tags=tags,
                     sync_token=self._config.sync_token,
                     api_version=api_version,
                     headers=_headers,

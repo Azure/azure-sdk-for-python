@@ -145,6 +145,7 @@ class AzureAppConfigurationClient:
         *,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[str]] = None,
         **kwargs: Any,
@@ -158,6 +159,8 @@ class AzureAppConfigurationClient:
         :keyword label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :paramtype label_filter: str or None
+        :param tags_filter: A filter used to query by tags. Default value is None.
+        :type tags: list[str]
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
@@ -187,7 +190,7 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, snapshot_name: str, fields: Optional[List[str]] = None, **kwargs: Any
+        self, *, snapshot_name: str, fields: Optional[List[str]] = None, tags_filter: Optional[List[str]] = None, **kwargs: Any
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
@@ -195,6 +198,8 @@ class AzureAppConfigurationClient:
         :keyword str snapshot_name: The snapshot name.
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
         :type fields: list[str] or None
+        :param tags_filter: A filter used to query by tags. Default value is None.
+        :type tags: list[str]
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -210,6 +215,7 @@ class AzureAppConfigurationClient:
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
         snapshot_name = kwargs.pop("snapshot_name", None)
+        tags = kwargs.pop("tags_filter", None)
 
         try:
             if snapshot_name is not None:
@@ -217,6 +223,7 @@ class AzureAppConfigurationClient:
                     snapshot=snapshot_name,
                     accept_datetime=accept_datetime,
                     select=select,
+                    tags=tags,
                     cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                     **kwargs,
                 )
@@ -229,6 +236,7 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
+                tags=tags,
                 page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
             )
         except binascii.Error as exc:
@@ -482,6 +490,7 @@ class AzureAppConfigurationClient:
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
         *,
+        tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[str]] = None,
         **kwargs,
@@ -495,6 +504,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str or None
+        :param tags_filter: A filter used to query by tags. Default value is None.
+        :type tags: list[str]
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields.
@@ -533,6 +544,7 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 accept_datetime=accept_datetime,
                 select=fields,
+                tags=tags_filter,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs,
             )
@@ -629,7 +641,7 @@ class AzureAppConfigurationClient:
         :param fields: Used to select what fields are present in the returned resource(s). Default
             value is None.
         :type fields: list[str or ~azure.appconfiguration.models.LabelFields]
-        :return: An iterator of labels.
+        :return: An async iterator of labels.
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.models.Label]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
