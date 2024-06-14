@@ -76,19 +76,6 @@
     "resources": [
         {
             "type": "Microsoft.CognitiveServices/accounts",
-            "apiVersion": "2017-04-18",
-            "name": "[variables('textAnalyticsName')]",
-            "location": "[parameters('location')]",
-            "sku": {
-                "name": "S"
-            },
-            "kind": "TextAnalytics",
-            "properties": {
-                "customSubDomainName": "[variables('textAnalyticsName')]"
-            }
-        },
-        {
-            "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "[variables('cognitiveApiVersion')]",
             "name": "[variables('uniqueSubDomainName')]",
             "location":"[parameters('location')]",
@@ -115,7 +102,33 @@
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[parameters('testApplicationOid')]"
             }
-        }
+        },
+        {
+          "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
+          "apiVersion": "2018-09-01-preview",
+          "name": "[format('{0}/Microsoft.Authorization/{1}', variables('textAnalyticsName'), guid(variables('textAnalyticsName')))]",
+          "dependsOn": [
+            "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
+          ],
+          "properties": {
+            "roleDefinitionId": "[variables('roleDefinitionId')]",
+            "principalId": "[parameters('testApplicationOid')]"
+          }
+        },
+        {
+          "type": "Microsoft.CognitiveServices/accounts",
+          "apiVersion": "2017-04-18",
+          "name": "[variables('textAnalyticsName')]",
+          "location": "[parameters('location')]",
+          "sku": {
+              "name": "S"
+          },
+          "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
+          "kind": "TextAnalytics",
+          "properties": {
+              "customSubDomainName": "[variables('textAnalyticsName')]"
+          }
+      }
     ],
     "outputs": {
       "LANGUAGE_API_KEY": {
