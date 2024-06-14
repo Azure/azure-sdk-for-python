@@ -5,7 +5,6 @@
 ### Features Added
 
 ### Breaking Changes
-  - When using the Cognitive Services token, the audience is now required.
 
 ### Bugs Fixed
   - Fixed a bug where Entra Id authentication couldn't be used with custom endpoint.
