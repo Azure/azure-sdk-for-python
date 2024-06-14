@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -193,7 +193,6 @@ class DatabaseAdvisorsOperations:
         :type database_name: str
         :param expand: The child resources to include in the response. Default value is None.
         :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of Advisor or the result of cls(response)
         :rtype: list[~azure.mgmt.sql.models.Advisor]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -212,23 +211,22 @@ class DatabaseAdvisorsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[List[_models.Advisor]] = kwargs.pop("cls", None)
 
-        request = build_list_by_database_request(
+        _request = build_list_by_database_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             expand=expand,
             api_version=api_version,
-            template_url=self.list_by_database.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -240,13 +238,9 @@ class DatabaseAdvisorsOperations:
         deserialized = self._deserialize("[Advisor]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_by_database.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advisors"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(
@@ -263,7 +257,6 @@ class DatabaseAdvisorsOperations:
         :type database_name: str
         :param advisor_name: The name of the Database Advisor. Required.
         :type advisor_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Advisor or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.Advisor
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -282,23 +275,22 @@ class DatabaseAdvisorsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.Advisor] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             advisor_name=advisor_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -310,13 +302,9 @@ class DatabaseAdvisorsOperations:
         deserialized = self._deserialize("Advisor", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advisors/{advisorName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def update(
@@ -346,7 +334,6 @@ class DatabaseAdvisorsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Advisor or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.Advisor
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -359,7 +346,7 @@ class DatabaseAdvisorsOperations:
         server_name: str,
         database_name: str,
         advisor_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -376,11 +363,10 @@ class DatabaseAdvisorsOperations:
         :param advisor_name: The name of the Database Advisor. Required.
         :type advisor_name: str
         :param parameters: The requested advisor resource state. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Advisor or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.Advisor
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -393,7 +379,7 @@ class DatabaseAdvisorsOperations:
         server_name: str,
         database_name: str,
         advisor_name: str,
-        parameters: Union[_models.Advisor, IO],
+        parameters: Union[_models.Advisor, IO[bytes]],
         **kwargs: Any
     ) -> _models.Advisor:
         """Updates a database advisor.
@@ -407,13 +393,9 @@ class DatabaseAdvisorsOperations:
         :type database_name: str
         :param advisor_name: The name of the Database Advisor. Required.
         :type advisor_name: str
-        :param parameters: The requested advisor resource state. Is either a Advisor type or a IO type.
-         Required.
-        :type parameters: ~azure.mgmt.sql.models.Advisor or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: The requested advisor resource state. Is either a Advisor type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Advisor or IO[bytes]
         :return: Advisor or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.Advisor
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -441,7 +423,7 @@ class DatabaseAdvisorsOperations:
         else:
             _json = self._serialize.body(parameters, "Advisor")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -451,16 +433,15 @@ class DatabaseAdvisorsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -472,10 +453,6 @@ class DatabaseAdvisorsOperations:
         deserialized = self._deserialize("Advisor", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/advisors/{advisorName}"
-    }
+        return deserialized  # type: ignore

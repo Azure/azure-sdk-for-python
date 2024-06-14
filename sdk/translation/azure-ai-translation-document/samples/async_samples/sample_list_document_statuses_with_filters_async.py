@@ -25,6 +25,7 @@ USAGE:
 import os
 import asyncio
 
+
 async def sample_list_document_statuses_with_filters_async():
     # import libraries
     from azure.core.credentials import AzureKeyCredential
@@ -36,17 +37,19 @@ async def sample_list_document_statuses_with_filters_async():
     # obtain client secrets
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
-    translation_id = os.environ["TRANSLATION_ID"]  # this should be the id for the translation operation you'd like to list docs for!
+    translation_id = os.environ[
+        "TRANSLATION_ID"
+    ]  # this should be the id for the translation operation you'd like to list docs for!
 
     # authorize client
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
     # set your filters
-    '''
+    """
         Note:
             these are just sample values for the filters!
             please comment/uncomment/change what you are interested in using.
-    '''
+    """
     start = datetime(2021, 4, 12)
     end = datetime(2021, 4, 14)
     statuses = ["Canceled", "Failed"]
@@ -71,6 +74,7 @@ async def sample_list_document_statuses_with_filters_async():
             async for doc in page:
                 display_doc_info(doc)
 
+
 def display_doc_info(document):
     print(f"Document ID: {document.id}")
     print(f"Document status: {document.status}")
@@ -83,5 +87,6 @@ def display_doc_info(document):
 async def main():
     await sample_list_document_statuses_with_filters_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

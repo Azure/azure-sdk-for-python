@@ -3,14 +3,16 @@
 # ---------------------------------------------------------
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.connections.connection import Connection
+from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
     AzureOpenAIConnection,
     AadCredentialConfiguration,
 )
 
 
+@experimental
 @dataclass
 class ModelConfiguration:
     """Configuration for a embedding model.
@@ -42,20 +44,44 @@ class ModelConfiguration:
     deployment_name: Optional[str]
     model_kwargs: Dict[str, Any]
 
+    def __init__(
+        self,
+        *,
+        api_base: Optional[str],
+        api_key: Optional[str],
+        api_version: Optional[str],
+        connection_name: Optional[str],
+        connection_type: Optional[str],
+        model_name: Optional[str],
+        deployment_name: Optional[str],
+        model_kwargs: Dict[str, Any]
+    ):
+        self.api_base = api_base
+        self.api_key = api_key
+        self.api_version = api_version
+        self.connection_name = connection_name
+        self.connection_type = connection_type
+        self.model_name = model_name
+        self.deployment_name = deployment_name
+        self.model_kwargs = model_kwargs
+
     @staticmethod
     def from_connection(
-        connection: Connection, model_name: Optional[str] = None, deployment_name: Optional[str] = None, **model_kwargs
+        connection: WorkspaceConnection,
+        model_name: Optional[str] = None,
+        deployment_name: Optional[str] = None,
+        **kwargs
     ) -> "ModelConfiguration":
         """Create an model configuration from a Connection.
 
-        :param connection: The Connection object.
-        :type connection: ~azure.ai.ml.entities.Connection
+        :param connection: The WorkspaceConnection object.
+        :type connection: ~azure.ai.ml.entities.WorkspaceConnection
         :param model_name: The name of the model.
         :type model_name: Optional[str]
         :param deployment_name: The name of the deployment.
         :type deployment_name: Optional[str]
-        :keyword model_kwargs: Additional keyword arguments for the model.
-        :paramtype model_kwargs: Dict[str, Any]
+        :keyword kwargs: Additional keyword arguments for the model.
+        :paramtype kwargs: Dict[str, Any]
         :return: The model configuration.
         :rtype: ~azure.ai.ml.entities._indexes.entities.ModelConfiguration
         :raises TypeError: If the connection is not an AzureOpenAIConnection.
@@ -94,5 +120,5 @@ class ModelConfiguration:
             connection_type=connection_type,
             model_name=model_name,
             deployment_name=deployment_name,
-            model_kwargs=model_kwargs,
+            model_kwargs=kwargs,
         )

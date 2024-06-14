@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -122,12 +127,11 @@ class DefenderForStorageOperations:
         :type resource_id: str
         :param setting_name: Defender for Storage setting name. "current" Required.
         :type setting_name: str or ~azure.mgmt.security.v2022_12_01_preview.models.SettingName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DefenderForStorageSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_12_01_preview.models.DefenderForStorageSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -143,20 +147,19 @@ class DefenderForStorageOperations:
         )
         cls: ClsType[_models.DefenderForStorageSetting] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_id=resource_id,
             setting_name=setting_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -168,11 +171,9 @@ class DefenderForStorageOperations:
         deserialized = self._deserialize("DefenderForStorageSetting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/defenderForStorageSettings/{settingName}"}
+        return deserialized  # type: ignore
 
     @overload
     def create(
@@ -196,7 +197,6 @@ class DefenderForStorageOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DefenderForStorageSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_12_01_preview.models.DefenderForStorageSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -207,7 +207,7 @@ class DefenderForStorageOperations:
         self,
         resource_id: str,
         setting_name: Union[str, _models.SettingName],
-        defender_for_storage_setting: IO,
+        defender_for_storage_setting: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -219,11 +219,10 @@ class DefenderForStorageOperations:
         :param setting_name: Defender for Storage setting name. "current" Required.
         :type setting_name: str or ~azure.mgmt.security.v2022_12_01_preview.models.SettingName
         :param defender_for_storage_setting: Defender for Storage Settings. Required.
-        :type defender_for_storage_setting: IO
+        :type defender_for_storage_setting: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DefenderForStorageSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_12_01_preview.models.DefenderForStorageSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -234,7 +233,7 @@ class DefenderForStorageOperations:
         self,
         resource_id: str,
         setting_name: Union[str, _models.SettingName],
-        defender_for_storage_setting: Union[_models.DefenderForStorageSetting, IO],
+        defender_for_storage_setting: Union[_models.DefenderForStorageSetting, IO[bytes]],
         **kwargs: Any
     ) -> _models.DefenderForStorageSetting:
         """Creates or updates the Defender for Storage settings on a specified storage account.
@@ -244,18 +243,14 @@ class DefenderForStorageOperations:
         :param setting_name: Defender for Storage setting name. "current" Required.
         :type setting_name: str or ~azure.mgmt.security.v2022_12_01_preview.models.SettingName
         :param defender_for_storage_setting: Defender for Storage Settings. Is either a
-         DefenderForStorageSetting type or a IO type. Required.
+         DefenderForStorageSetting type or a IO[bytes] type. Required.
         :type defender_for_storage_setting:
-         ~azure.mgmt.security.v2022_12_01_preview.models.DefenderForStorageSetting or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.security.v2022_12_01_preview.models.DefenderForStorageSetting or IO[bytes]
         :return: DefenderForStorageSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2022_12_01_preview.models.DefenderForStorageSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -280,23 +275,22 @@ class DefenderForStorageOperations:
         else:
             _json = self._serialize.body(defender_for_storage_setting, "DefenderForStorageSetting")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_id=resource_id,
             setting_name=setting_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -315,5 +309,3 @@ class DefenderForStorageOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/defenderForStorageSettings/{settingName}"}

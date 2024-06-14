@@ -8,7 +8,7 @@ import pytest
 import pathlib
 import uuid
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, ASST_AZURE, OPENAI, AZURE, AZURE_AD, PREVIEW, GA
+from conftest import configure, ASST_AZURE, OPENAI, AZURE, PREVIEW, GA
 
 
 class TestModels(AzureRecordedTestCase):
@@ -16,7 +16,7 @@ class TestModels(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_models_list(self, client, api_type, api_version, **kwargs):
 
@@ -27,7 +27,7 @@ class TestModels(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, GA), (AZURE, PREVIEW), (AZURE_AD, GA), (AZURE_AD, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, GA), (AZURE, PREVIEW), (OPENAI, "v1")]
     )
     def test_models_retrieve(self, client, api_type, api_version, **kwargs):
 

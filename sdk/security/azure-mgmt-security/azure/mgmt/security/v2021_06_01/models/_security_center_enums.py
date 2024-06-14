@@ -30,10 +30,10 @@ class AssessmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft Defender for Cloud managed assessments"""
     CUSTOM_POLICY = "CustomPolicy"
     """User defined policies that are automatically ingested from Azure Policy to Microsoft Defender
-    #: for Cloud"""
+    for Cloud"""
     CUSTOMER_MANAGED = "CustomerManaged"
     """User assessments pushed directly by the user or other third party to Microsoft Defender for
-    #: Cloud"""
+    Cloud"""
     VERIFIED_PARTNER = "VerifiedPartner"
     """An assessment that was created by a verified 3rd party if the user connected it to ASC"""
 

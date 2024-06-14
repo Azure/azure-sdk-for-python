@@ -15,7 +15,7 @@ DESCRIPTION:
 """
 
 import os
-from azure.identity import AzureAuthorityHosts, ClientSecretCredential
+from azure.identity import AzureAuthorityHosts, ClientSecretCredential, InteractiveBrowserCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 
@@ -27,6 +27,8 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_CHINA
     if ".azconfig.azure.us" in endpoint:
         return AzureAuthorityHosts.AZURE_GOVERNMENT
+    if ".azconfig-test.io" in endpoint:
+        return "login.azure-test.net"
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
 
@@ -37,6 +39,8 @@ def get_audience(authority):
         return "https://management.chinacloudapi.cn"
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         return "https://management.usgovcloudapi.net"
+    if authority == "login.azure-test.net":
+        return "https://management.azure-test.net"
 
 
 def get_credential(authority, **kwargs):
@@ -46,12 +50,11 @@ def get_credential(authority, **kwargs):
             client_id=os.environ["APPCONFIGURATION_CLIENT_ID"],
             client_secret=os.environ["APPCONFIGURATION_CLIENT_SECRET"],
             authority=authority,
+            validate_authority=False,
         )
-    return ClientSecretCredential(
-        tenant_id=os.environ["APPCONFIGURATION_TENANT_ID"],
-        client_id=os.environ["APPCONFIGURATION_CLIENT_ID"],
-        client_secret=os.environ["APPCONFIGURATION_CLIENT_SECRET"],
+    return InteractiveBrowserCredential(
         authority=authority,
+        validate_authority=False,
     )
 
 
