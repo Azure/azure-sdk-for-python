@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 
+
 - Default missing/invalid status codes to "0" for standard metrics/trace payloads, change
     success criteria to `False` for those invalid cases
     ([#36079](https://github.com/Azure/azure-sdk-for-python/pull/36079))
