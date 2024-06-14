@@ -35,7 +35,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             label=LABEL,
             value=TEST_VALUE,
             content_type=TEST_CONTENT_TYPE,
-            tags={"tag1": "tag1", "tag2": "tag2"},
+            tags={"tag1": "value1", "tag2": "value2"},
         )
 
     def create_config_setting_no_label(self):
@@ -44,7 +44,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             label=None,
             value=TEST_VALUE,
             content_type=TEST_CONTENT_TYPE,
-            tags={"tag1": "tag1", "tag2": "tag2"},
+            tags={"tag3": "value3", "tag4": "value4"},
         )
 
     def add_for_test(self, client, config_setting):
