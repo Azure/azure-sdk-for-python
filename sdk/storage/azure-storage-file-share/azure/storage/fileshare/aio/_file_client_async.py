@@ -68,19 +68,19 @@ if TYPE_CHECKING:
 async def _upload_file_helper(
     client: "ShareFileClient",
     stream: Any,
+    size: Optional[int],
+    metadata: Optional[Dict[str, str]],
+    content_settings: Optional["ContentSettings"],
     validate_content: bool,
+    timeout: Optional[int],
     max_concurrency: int,
     file_settings: "StorageConfiguration",
-    content_settings: Optional["ContentSettings"] = None,
     file_attributes: Union[str, "NTFSAttributes"] = "none",
     file_creation_time: Optional[Union[str, datetime]] = "now",
     file_last_write_time: Optional[Union[str, datetime]] = "now",
     file_permission: Optional[str] = None,
     file_permission_key: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
     progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
-    size: Optional[int] = None,
-    timeout: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
     try:
@@ -599,19 +599,19 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         return await _upload_file_helper(
             self,
             stream,
+            length,
+            metadata,
+            content_settings,
             validate_content,
+            timeout,
             max_concurrency,
             self._config,
-            content_settings=content_settings,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
             file_permission=file_permission,
             file_permission_key=permission_key,
-            metadata=metadata,
             progress_hook=progress_hook,
-            size=length,
-            timeout=timeout,
             **kwargs)
 
     @distributed_trace_async
@@ -743,7 +743,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def abort_copy(self, copy_id: Union[str, FileProperties, Dict[str, str]], **kwargs: Any) -> None:
+    async def abort_copy(self, copy_id: Union[str, FileProperties], **kwargs: Any) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -752,7 +752,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :param copy_id:
             The copy operation to abort. This can be either an ID, or an
             instance of FileProperties.
-        :type copy_id: str or ~azure.storage.fileshare.FileProperties or dict[str, str]
+        :type copy_id: str or ~azure.storage.fileshare.FileProperties
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -842,8 +842,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         if length is not None:
             if offset is None:
                 raise ValueError("Offset value must not be None if length is set.")
-            else:
-                range_end = offset + length - 1  # Service actually uses an end-range inclusive index
+            range_end = offset + length - 1  # Service actually uses an end-range inclusive index
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
 

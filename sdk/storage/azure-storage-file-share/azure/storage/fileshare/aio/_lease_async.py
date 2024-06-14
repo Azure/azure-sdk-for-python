@@ -17,14 +17,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.aio.operations import FileOperations, ShareOperations
-from .._lease import ShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.storage.fileshare.aio import ShareClient, ShareFileClient
 
 
-class ShareLeaseClient(LeaseClientBase):
+class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareClient or ShareFileClient.
@@ -47,10 +46,10 @@ class ShareLeaseClient(LeaseClientBase):
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self, client: Union["ShareFileClient", "ShareClient"],
         lease_id: Optional[str] = None
-    ) -> None:  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+    ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
