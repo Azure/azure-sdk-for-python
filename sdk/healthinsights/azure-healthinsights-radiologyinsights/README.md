@@ -55,7 +55,7 @@ radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credentia
 
 #### Get the API Key
 
-Another wway to authenticate is using the API Key:
+Another way to authenticate is using the API Key:
 
 You can also get the **API Key** from the Health Insights service resource in the Azure Portal.
 Alternatively, you can use **Azure CLI** snippet below to get the API key of your resource.
