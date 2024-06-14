@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import re
 import ast
 import os
 import jsondiff
@@ -412,7 +413,7 @@ if __name__ == "__main__":
     package_name = os.path.basename(pkg_dir)
     changelog = args.changelog
     logging.basicConfig(level=logging.INFO)
-    if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
+    if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES):
         _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
                      f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
         exit(0)
