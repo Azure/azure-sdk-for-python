@@ -32,7 +32,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
@@ -214,10 +214,17 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    uses_key_vault  = "keyvault_credential" in kwargs  or "keyvault_client_configs" in kwargs  or "secret_resolver" in kwargs or kwargs.get("uses_key_vault", False)
+    uses_key_vault = (
+        "keyvault_credential" in kwargs
+        or "keyvault_client_configs" in kwargs
+        or "secret_resolver" in kwargs
+        or kwargs.get("uses_key_vault", False)
+    )
 
     provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
-    headers = _get_headers("Startup", provider._replica_client_manager._get_client_count() - 1, **kwargs)
+    headers = _get_headers(
+        "Startup", provider._replica_client_manager.get_client_count() - 1, **kwargs  # pylint:disable=protected-access
+    )
 
     try:
         provider._load_all(headers=headers)  # pylint:disable=protected-access
@@ -242,7 +249,7 @@ def _get_headers(request_type, replica_count, **kwargs) -> str:
         return headers
     correlation_context = "RequestType=" + request_type
 
-    if "feature_filters_used" in kwargs and len(kwargs["feature_filters_used"]) > 0: 
+    if "feature_filters_used" in kwargs and len(kwargs["feature_filters_used"]) > 0:
         filters_used = ""
         feature_filters_used = kwargs.pop("feature_filters_used", {})
         if CUSTOM_FILTER_KEY in feature_filters_used:
@@ -535,7 +542,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     if self._refresh_on:
                         headers = _get_headers(
                             "Watch",
-                            self._replica_client_manager._get_client_count() - 1,
+                            self._replica_client_manager.get_client_count() - 1,
                             uses_key_vault=self._uses_key_vault,
                             feature_filters_used=self._feature_filter_usage,
                             uses_feature_flags=self._feature_flag_enabled,
@@ -558,7 +565,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     if self._feature_flag_refresh_enabled:
                         headers = _get_headers(
                             "Watch",
-                            self._replica_client_manager._get_client_count() - 1,
+                            self._replica_client_manager.get_client_count() - 1,
                             uses_key_vault=self._uses_key_vault,
                             feature_filters_used=self._feature_filter_usage,
                             uses_feature_flags=self._feature_flag_enabled,
@@ -577,7 +584,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._refresh_timer.reset()
                     success = True
                     break
-                except Exception:
+                except AzureError:
                     self._replica_client_manager.backoff(client)
 
             if not success:
@@ -639,7 +646,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     self._refresh_on = sentinel_keys
                     self._dict = configuration_settings_processed
                 return
-            except Exception as e:
+            except AzureError:
                 self._replica_client_manager.backoff(client)
         raise RuntimeError(
             "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
@@ -748,7 +755,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return False
         if len(self._replica_client_manager._replica_clients) != len(other._replica_client_manager._replica_clients):
             return False
-        for i in range(len(self._replica_client_manager._replica_clients)):
+        for i in range(len(self._replica_client_manager._replica_clients)):  # pylint:disable=consider-using-enumerate
             if self._replica_client_manager._replica_clients[i] != other._replica_client_manager._replica_clients[i]:
                 return False
         return True

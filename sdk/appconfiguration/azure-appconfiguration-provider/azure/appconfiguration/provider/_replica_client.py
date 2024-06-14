@@ -8,14 +8,16 @@ import json
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict
+from typing import Tuple, Union, Dict, List
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import TokenCredential
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
 )
+from ._models import SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
 
 
@@ -27,7 +29,15 @@ class ReplicaClient:
     failed_attempts: int = 0
 
     @classmethod
-    def from_credential(cls, endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs):
+    def from_credential(
+        cls,
+        endpoint: str,
+        credential: TokenCredential,
+        user_agent: str,
+        retry_total: int,
+        retry_backoff_max: int,
+        **kwargs
+    ) -> "ReplicaClient":
         """
         Creates a new instance of the ReplicaClient class, using the provided credential to authenticate requests.
 
@@ -52,7 +62,9 @@ class ReplicaClient:
         )
 
     @classmethod
-    def from_connection_string(cls, endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs):
+    def from_connection_string(
+        cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
+    ) -> "ReplicaClient":
         """
         Creates a new instance of the ReplicaClient class, using the provided connection string to authenticate
         requests.
@@ -77,19 +89,15 @@ class ReplicaClient:
         )
 
     def _check_configuration_setting(
-        self, key, label, etag, headers, **kwargs
+        self, key: str, label: str, etag: str, headers: Dict[str, str], **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
 
-        :keyword key: key to check for chances
-        :paramtype key: str
-        :keyword label: label to check for changes
-        :paramtype label: str
-        :keyword etag: etag to check for changes
-        :paramtype etag: str
-        :keyword headers: headers to use for the request
-        :paramtype headers: Mapping[str, str]
+        :param str key: key to check for chances
+        :param str label: label to check for changes
+        :param str etag: etag to check for changes
+        :param Mapping[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
@@ -115,7 +123,9 @@ class ReplicaClient:
                 raise e
         return False, None
 
-    def load_configuration_settings(self, selects, refresh_on, **kwargs):
+    def load_configuration_settings(
+        self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], **kwargs
+    ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
         configuration_settings = []
         sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
         for select in selects:
@@ -135,7 +145,9 @@ class ReplicaClient:
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
-    def load_feature_flags(self, feature_flag_selectors, feature_flag_refresh_enabled, **kwargs):
+    def load_feature_flags(
+        self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
+    ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str]]:
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
@@ -151,7 +163,9 @@ class ReplicaClient:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return loaded_feature_flags, feature_flag_sentinel_keys
 
-    def refresh_configuration_settings(self, selects, refresh_on, headers, **kwargs) -> bool:
+    def refresh_configuration_settings(
+        self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], headers: Dict[str, str], **kwargs
+    ) -> bool:
         """
         Gets the refreshed configuration settings if they have changed.
 
@@ -179,7 +193,13 @@ class ReplicaClient:
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
 
-    def refresh_feature_flags(self, refresh_on, feature_flag_selectors, headers, **kwargs) -> bool:
+    def refresh_feature_flags(
+        self,
+        refresh_on: List[SettingSelector],
+        feature_flag_selectors: List[SettingSelector],
+        headers: Dict[str, str],
+        **kwargs
+    ) -> bool:
         """
         Gets the refreshed feature flags if they have changed.
 
@@ -201,7 +221,7 @@ class ReplicaClient:
                 return True, feature_flag_sentinel_keys, feature_flags
         return False, None, None
 
-    def get_configuration_setting(self, key, label, **kwargs):
+    def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
         """
         Gets a configuration setting from the replica client.
 
@@ -211,6 +231,19 @@ class ReplicaClient:
         :rtype: ConfigurationSetting
         """
         return self._client.get_configuration_setting(key=key, label=label, **kwargs)
+
+    def close(self) -> None:
+        """
+        Closes the connection to Azure App Configuration.
+        """
+        self._client.close()
+
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
 
 
 class ReplicaClientManager:
@@ -231,7 +264,7 @@ class ReplicaClientManager:
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
 
-    def _get_client_count(self):
+    def get_client_count(self):
         return len(self._replica_clients)
 
     def _calculate_backoff(self, attempts: int) -> float:
@@ -255,13 +288,13 @@ class ReplicaClientManager:
 
     def close(self):
         for client in self._replica_clients:
-            client._client.close()
+            client.close()
 
     def __enter__(self):
         for client in self._replica_clients:
-            client._client.__enter__()
+            client.__enter__()
         return self
 
     def __exit__(self, *args):
         for client in self._replica_clients:
-            client._client.__exit__(*args)
+            client.__exit__(*args)
