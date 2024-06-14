@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,7 +37,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConfigurationAssignmentsForResourceGroupOperations:
+class ConfigurationAssignmentsForResourceGroupOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68,7 +68,6 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :type resource_group_name: str
         :param configuration_assignment_name: Configuration assignment name. Required.
         :type configuration_assignment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -87,21 +86,20 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ConfigurationAssignment] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -114,13 +112,9 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -145,7 +139,6 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -156,7 +149,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: IO,
+        configuration_assignment: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -170,11 +163,10 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :param configuration_assignment_name: Configuration assignment name. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: IO
+        :type configuration_assignment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -185,7 +177,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, IO],
+        configuration_assignment: Union[_models.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Create configuration assignment.
@@ -197,12 +189,9 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :param configuration_assignment_name: Configuration assignment name. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Is either a
-         ConfigurationAssignment type or a IO type. Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         IO[bytes]
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -230,7 +219,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         else:
             _json = self._serialize.body(configuration_assignment, "ConfigurationAssignment")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
@@ -238,16 +227,15 @@ class ConfigurationAssignmentsForResourceGroupOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -268,10 +256,6 @@ class ConfigurationAssignmentsForResourceGroupOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
-    }
-
     @overload
     async def update(
         self,
@@ -295,7 +279,6 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -306,7 +289,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: IO,
+        configuration_assignment: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -320,11 +303,10 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :param configuration_assignment_name: Configuration assignment name. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Required.
-        :type configuration_assignment: IO
+        :type configuration_assignment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -335,7 +317,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         self,
         resource_group_name: str,
         configuration_assignment_name: str,
-        configuration_assignment: Union[_models.ConfigurationAssignment, IO],
+        configuration_assignment: Union[_models.ConfigurationAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConfigurationAssignment:
         """Create configuration assignment.
@@ -347,12 +329,9 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :param configuration_assignment_name: Configuration assignment name. Required.
         :type configuration_assignment_name: str
         :param configuration_assignment: The configurationAssignment. Is either a
-         ConfigurationAssignment type or a IO type. Required.
-        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ConfigurationAssignment type or a IO[bytes] type. Required.
+        :type configuration_assignment: ~azure.mgmt.maintenance.models.ConfigurationAssignment or
+         IO[bytes]
         :return: ConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -380,7 +359,7 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         else:
             _json = self._serialize.body(configuration_assignment, "ConfigurationAssignment")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
@@ -388,16 +367,15 @@ class ConfigurationAssignmentsForResourceGroupOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -410,13 +388,9 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(
@@ -430,7 +404,6 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         :type resource_group_name: str
         :param configuration_assignment_name: Unique configuration assignment name. Required.
         :type configuration_assignment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConfigurationAssignment or None or the result of cls(response)
         :rtype: ~azure.mgmt.maintenance.models.ConfigurationAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -449,21 +422,20 @@ class ConfigurationAssignmentsForResourceGroupOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.ConfigurationAssignment]] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             configuration_assignment_name=configuration_assignment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -478,10 +450,6 @@ class ConfigurationAssignmentsForResourceGroupOperations:
             deserialized = self._deserialize("ConfigurationAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}"
-    }
+        return deserialized  # type: ignore

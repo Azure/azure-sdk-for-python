@@ -56,7 +56,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
 
     For more optional configuration, please click
     `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-    #optional-configuration>`_.
+    #optional-configuration>`__.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the share,
@@ -289,7 +289,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A ShareLeaseClient object.
         :rtype: ~azure.storage.fileshare.ShareLeaseClient
 
@@ -330,7 +330,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword protocols:
             Protocols to enable on the share. Only one protocol can be enabled on the share.
         :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
@@ -338,6 +338,9 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :keyword bool enable_snapshot_virtual_directory_access:
+            Specifies whether the snapshot virtual directory should be accessible at the root of the share
+            mount point when NFS is enabled. Default value is True.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 
@@ -397,7 +400,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Share-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
@@ -442,6 +445,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :keyword int timeout:
@@ -449,7 +453,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
 
         .. admonition:: Example:
 
@@ -491,12 +495,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: The share properties.
@@ -538,12 +543,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: Share-updated property dict (Etag and last modified).
@@ -589,7 +595,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
@@ -644,12 +650,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: Share-updated property dict (Etag and last modified).
@@ -688,12 +695,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: Access policy information in a dict.
@@ -730,12 +738,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :returns: Share-updated property dict (Etag and last modified).
@@ -775,12 +784,13 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
 
             .. versionadded:: 12.5.0
+
             This keyword argument was introduced in API version '2020-08-04'.
 
         :return: The approximate size of the data (in bytes) stored on the share.
@@ -820,12 +830,14 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
 
             .. versionadded:: 12.6.0
+
             This keyword argument was introduced in API version '2020-10-02'.
 
         :keyword bool include_extended_info:
             If this is set to true, file id will be returned in listed results.
 
             .. versionadded:: 12.6.0
+
             This keyword argument was introduced in API version '2020-10-02'.
 
         :keyword int timeout:
@@ -833,7 +845,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         :rtype: ~azure.core.paging.ItemPaged[DirectoryProperties and FileProperties]
 
@@ -867,7 +879,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A file permission key
         :rtype: str or None
         """
@@ -891,7 +903,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A file permission (a portable SDDL)
         :rtype: str
         """
@@ -920,7 +932,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: ShareDirectoryClient
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -941,7 +953,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
         """
         directory = self.get_directory_client(directory_name)

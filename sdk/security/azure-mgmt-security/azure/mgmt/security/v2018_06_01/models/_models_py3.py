@@ -174,7 +174,7 @@ class Pricing(Resource):
 class PricingList(_serialization.Model):
     """List of pricing configurations response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of pricing configurations. Required.
     :vartype value: list[~azure.mgmt.security.v2018_06_01.models.Pricing]

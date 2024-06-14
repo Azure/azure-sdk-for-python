@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2023-10-03-preview/examples/machine/Machines_Delete.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-03-31-preview/examples/machine/Machines_Delete.json
 if __name__ == "__main__":
     main()

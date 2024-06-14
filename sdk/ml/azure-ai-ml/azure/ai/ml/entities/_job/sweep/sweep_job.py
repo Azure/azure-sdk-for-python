@@ -268,6 +268,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
                 self.resources._to_rest_object() if self.resources and not isinstance(self.resources, dict) else None
             ),
         )
+
+        if not sweep_job.resources and sweep_job.trial.resources:
+            sweep_job.resources = sweep_job.trial.resources
+
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
         return sweep_job_resource
@@ -323,7 +327,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             search_space=_search_space,  # type: ignore[arg-type]
             limits=SweepJobLimits._from_rest_object(properties.limits),
             early_termination=early_termination,
-            objective=properties.objective,
+            objective=Objective._from_rest_object(properties.objective) if properties.objective else None,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
             identity=(

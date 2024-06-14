@@ -74,6 +74,16 @@ def create_package_and_install(
 
     target_package = ParsedSetup.from_path(setup_py_path)
 
+    # ensure that discovered packages are always copied to the distribution directory regardless of other factors
+    for built_package in discovered_packages:
+        if os.getenv("PREBUILT_WHEEL_DIR") is not None:
+            package_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], built_package)
+            if os.path.isfile(package_path):
+                built_pkg_path = package_path
+
+                # copy this file to the distribution directory just in case we need it later
+                shutil.copy(built_pkg_path, distribution_directory)
+
     if skip_install:
         logging.info("Flag to skip install whl is passed. Skipping package installation")
     else:
@@ -83,6 +93,7 @@ def create_package_and_install(
                 package_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], built_package)
                 if os.path.isfile(package_path):
                     built_pkg_path = package_path
+
                     logging.info("Installing {w} from directory".format(w=built_package))
                 # it does't exist, so we need to error out
                 else:
