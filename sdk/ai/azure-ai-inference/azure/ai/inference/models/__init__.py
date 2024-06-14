@@ -18,7 +18,7 @@ from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
 from ._models import ContentItem
 from ._models import ImageContentItem
-from ._models import ImageUrl
+from ._patch import ImageUrl
 from ._models import TextContentItem
 from ._models import ChatRequestMessage
 from ._models import ChatResponseMessage
