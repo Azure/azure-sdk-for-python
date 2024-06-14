@@ -1195,6 +1195,22 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             async for config_setting in config_settings:
                 await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
 
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+
+        rep = await self.convert_to_list(self.client.list_labels(name=LABEL))
+        assert len(list(rep)) == 1
+
+        rep = await self.convert_to_list(self.client.list_labels(name="test*"))
+        assert len(list(rep)) == 1
+
+        rep = await self.convert_to_list(self.client.list_labels())
+        assert len(list(rep)) == 2
+
+        await self.tear_down()
+
 
 class TestAppConfigurationClientUnitTest:
     @pytest.mark.asyncio

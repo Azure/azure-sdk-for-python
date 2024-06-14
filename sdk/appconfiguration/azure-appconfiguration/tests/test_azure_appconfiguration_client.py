@@ -1168,6 +1168,22 @@ class TestAppConfigurationClient(AppConfigTestCase):
             for config_setting in config_settings:
                 client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
 
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        self.set_up(appconfiguration_connection_string)
+
+        rep = self.client.list_labels(name=LABEL)
+        assert len(list(rep)) == 1
+
+        rep = self.client.list_labels(name="test*")
+        assert len(list(rep)) == 1
+
+        rep = self.client.list_labels()
+        assert len(list(rep)) == 2
+
+        self.tear_down()
+
 
 class TestAppConfigurationClientUnitTest:
     def test_type_error(self):
