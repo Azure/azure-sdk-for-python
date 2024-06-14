@@ -20,6 +20,8 @@ from ..._pyamqp.error import (
     AMQPConnectionError,
     AMQPError,
     MessageException,
+    AMQPLinkError,
+    ErrorCondition,
 )
 
 from ._base_async import AmqpTransportAsync
@@ -42,7 +44,8 @@ from ..._common.constants import (
 )
 from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
-    OperationTimeoutError
+    OperationTimeoutError,
+    ServiceBusConnectionError,
 )
 
 if TYPE_CHECKING:
@@ -283,7 +286,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
-            await receiver._handler.settle_messages_async(frame[1], 'released')
+            await receiver._handler.settle_messages_async(frame[1], frame[2], 'released')
 
     @staticmethod
     def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
@@ -317,10 +320,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         try:
             if settle_operation == MESSAGE_COMPLETE:
-                return await handler.settle_messages_async(message._delivery_id, 'accepted')
+                return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
                 return await handler.settle_messages_async(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=False
@@ -328,6 +332,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return await handler.settle_messages_async(
                     message._delivery_id,
+                    message._delivery_tag,
                     'rejected',
                     error=AMQPError(
                         condition=DEADLETTERNAME,
@@ -341,12 +346,24 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             if settle_operation == MESSAGE_DEFER:
                 return await handler.settle_messages_async(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=True
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPLinkError as le:
+            # Remove all Dispositions sent because we have lost the link sent on
+            if (
+                le.condition == ErrorCondition.InternalError
+                and isinstance(le.description, str)
+                and le.description.startswith("Delivery tag")
+            ):
+                raise RuntimeError("Link error occurred during settle operation.") from le
+
+            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e

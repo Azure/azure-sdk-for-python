@@ -719,7 +719,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._handler._received_messages.put((frame, message))
         else:
             # If receive_message or receive iterator is not being called, release message passed to callback.
-            receiver._handler.settle_messages(frame[1], 'released')
+            receiver._handler.settle_messages(frame[1], frame[2], 'released')
 
     @staticmethod
     def build_received_message(
@@ -817,7 +817,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
         except AMQPLinkError as le:
             # Remove all Dispositions sent because we have lost the link sent on
-            if le.condition == ErrorCondition.InternalError and le.description.startswith("Delivery tag"):
+            if (
+                le.condition == ErrorCondition.InternalError
+                and isinstance(le.description, str)
+                and le.description.startswith("Delivery tag")
+            ):
                 raise RuntimeError("Link error occurred during settle operation.") from le
 
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
