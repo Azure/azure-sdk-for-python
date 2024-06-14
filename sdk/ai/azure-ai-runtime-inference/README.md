@@ -16,7 +16,7 @@ With some minor adjustments, this client library can also be configured to do in
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/samples)
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-runtime-inference/python/reference)
 | [Package (Pypi)](https://aka.ms/azsdk/azure-ai-runtime-inference/python/package)
-| [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/azure/ai/inference)
+| [SDK source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-runtime-inference/azure/ai/runtime/inference)
 
 ## Getting started
 
