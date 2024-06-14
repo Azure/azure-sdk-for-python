@@ -40,7 +40,7 @@ from .. import _timeout_failover_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
-# pylint: disable=protected-access, disable=too-many-lines
+# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements
 
 
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs):

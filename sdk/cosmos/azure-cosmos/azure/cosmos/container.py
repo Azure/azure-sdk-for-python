@@ -958,10 +958,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 # Try one more time after refreshing the container properties cache
                 if attempt < 1:
                     continue
-                else:
-                    raise CosmosResourceNotFoundError(
-                        status_code=StatusCodes.NOT_FOUND,
-                        message="Could not find ThroughputProperties for container " + self.container_link)
+                raise CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find ThroughputProperties for container " + self.container_link)
             else:
                 break
 
