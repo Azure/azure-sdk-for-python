@@ -31,7 +31,7 @@ if TYPE_CHECKING:
         def settle_messages(
             self,
             delivery_id: Optional[int],
-            delivery_tag: bytes,
+            delivery_tag: Optional[str],
             outcome: str,
             *,
             error: Optional[AMQPError] = None,
