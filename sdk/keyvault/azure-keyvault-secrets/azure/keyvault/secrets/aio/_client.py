@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional
+from typing import Any, cast, Optional
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -246,7 +246,7 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         backup_result = await self._client.backup_secret(self.vault_url, name, **kwargs)
-        return backup_result.value
+        return cast(bytes, backup_result.value)
 
     @distributed_trace_async
     async def restore_secret_backup(self, backup: bytes, **kwargs: Any) -> SecretProperties:
@@ -300,7 +300,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        pipeline_response, deleted_secret_bundle = await self._client.delete_secret(
+        # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
+        pipeline_response, deleted_secret_bundle = await self._client.delete_secret(  # pyright: ignore[reportGeneralTypeIssues]
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
@@ -420,7 +421,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
-        pipeline_response, recovered_secret_bundle = await self._client.recover_deleted_secret(
+        # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
+        pipeline_response, recovered_secret_bundle = await self._client.recover_deleted_secret(  # pyright: ignore[reportGeneralTypeIssues]
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
