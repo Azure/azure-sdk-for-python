@@ -278,7 +278,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         await self.tear_down()
-    
+
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_configuration_settings_with_tags_filter(self, appconfiguration_connection_string):
@@ -454,7 +454,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
         await self.tear_down()
-    
+
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_list_revisions_with_tags_filter(self, appconfiguration_connection_string):

@@ -277,7 +277,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         self.tear_down()
-    
+
     @app_config_decorator
     @recorded_by_proxy
     def test_list_configuration_settings_with_tags_filter(self, appconfiguration_connection_string):

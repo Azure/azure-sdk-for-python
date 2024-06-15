@@ -184,7 +184,12 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, snapshot_name: str, fields: Optional[List[str]] = None, tags_filter: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        snapshot_name: str,
+        fields: Optional[List[str]] = None,
+        tags_filter: Optional[List[str]] = None,
+        **kwargs: Any,
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         fields to present in return.

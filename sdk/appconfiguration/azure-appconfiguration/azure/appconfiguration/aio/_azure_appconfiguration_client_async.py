@@ -190,7 +190,12 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, snapshot_name: str, fields: Optional[List[str]] = None, tags_filter: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        snapshot_name: str,
+        fields: Optional[List[str]] = None,
+        tags_filter: Optional[List[str]] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
@@ -655,7 +660,7 @@ class AzureAppConfigurationClient:
             )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
-    
+
     @distributed_trace_async
     async def begin_create_snapshot(
         self,
