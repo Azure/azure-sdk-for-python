@@ -1,0 +1,7 @@
+{
+  "reportMissingImports": false,
+  "pythonVersion": "3.10",
+  "exclude": [
+    "**/_generated/**"
+  ]
+}
