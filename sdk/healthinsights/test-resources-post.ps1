@@ -3,4 +3,4 @@
 
 # Allow time for the resource to be created
 
-Start-Sleep -s 150
+Start-Sleep -s 60
