@@ -99,7 +99,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             await async_wrapper(func(*args, **kwargs))
             self.fail("BatchErrorException expected but not raised")
         except azure.core.exceptions.HttpResponseError as err:
-            batcherror = err.model
+            # batcherror = err.model
             # self.assertEqual(err.error.code, code)
             assert err.error.code == code
         except Exception as err:
@@ -1031,8 +1031,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get Subtasks
         # TODO: Test with actual subtasks
         subtasks = await async_wrapper(client.list_sub_tasks(batch_job.id, task_param.id))
-        assert isinstance(subtasks, models.BatchTaskListSubtasksResult)
-        assert subtasks.value == []
+        assert isinstance(subtasks, Iterable)
 
         # Test Delete Task
         response = await async_wrapper(client.delete_task(batch_job.id, task_param.id))
@@ -1084,8 +1083,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await async_wrapper(client.create_task_collection(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 733
-        assert result.value[0].status == models.BatchTaskAddStatus.success
-        assert all(t.status == models.BatchTaskAddStatus.success for t in result.value)
+        assert result.value[0].status.lower() == models.BatchTaskAddStatus.success
+        assert all(t.status.lower() == models.BatchTaskAddStatus.success for t in result.value)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)

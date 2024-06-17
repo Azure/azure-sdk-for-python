@@ -36,7 +36,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         concurrencies: Optional[int] = 0,
         *,
         time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchTaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -67,10 +67,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
+        :paramtype ocpdate: ~datetime.datetime
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -81,7 +81,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.batch.custom.CreateTasksErrorException
         """
 
-        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocp_date": ocp_date})
+        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocpdate": ocpdate})
 
         results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
