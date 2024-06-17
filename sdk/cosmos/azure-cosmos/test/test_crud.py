@@ -948,7 +948,7 @@ class TestCRUDOperations(unittest.TestCase):
             before_create_documents_count,
             'number of documents should remain same')
 
-    def _test_spatial_index(self):
+    def test_geospatial_index(self):
         db = self.databaseForTest
         # partial policy specified
         collection = db.create_container(

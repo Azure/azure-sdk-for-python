@@ -187,7 +187,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         created_properties = await created_collection.read()
         assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
-        assert PartitionKey(path='/pk', kind='Hash') == created_collection._properties['partitionKey']
+        assert PartitionKey(path='/pk', kind='Hash') == created_properties['partitionKey']
 
         # read collections after creation
         collections = [collection async for collection in created_db.list_containers()]
@@ -881,8 +881,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         document_list = [document async for document in created_collection.read_all_items()]
         assert len(document_list) == before_create_documents_count
 
-    async def _test_spatial_index(self):
-
+    async def test_geospatial_index_async(self):
         db = self.database_for_test
         # partial policy specified
         collection = await db.create_container(

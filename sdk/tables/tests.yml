@@ -24,10 +24,9 @@ extends:
         BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
         OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
         OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
-        ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
-        ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
-        ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        CONNECTION_STRING: $(python-storage-blob-connection-string)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

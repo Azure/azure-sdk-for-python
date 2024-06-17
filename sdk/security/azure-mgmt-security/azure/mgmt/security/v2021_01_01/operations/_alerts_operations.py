@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -97,7 +102,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_subscription_level_by_region_request(
+def build_list_subscription_level_by_region_request(  # pylint: disable=name-too-long
     asc_location: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -128,7 +133,7 @@ def build_list_subscription_level_by_region_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_resource_group_level_by_region_request(
+def build_list_resource_group_level_by_region_request(  # pylint: disable=name-too-long
     asc_location: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -232,7 +237,7 @@ def build_get_resource_group_level_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_subscription_level_state_to_dismiss_request(
+def build_update_subscription_level_state_to_dismiss_request(  # pylint: disable=name-too-long
     asc_location: str, alert_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -265,7 +270,7 @@ def build_update_subscription_level_state_to_dismiss_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_subscription_level_state_to_resolve_request(
+def build_update_subscription_level_state_to_resolve_request(  # pylint: disable=name-too-long
     asc_location: str, alert_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -298,7 +303,7 @@ def build_update_subscription_level_state_to_resolve_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_subscription_level_state_to_activate_request(
+def build_update_subscription_level_state_to_activate_request(  # pylint: disable=name-too-long
     asc_location: str, alert_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -331,7 +336,7 @@ def build_update_subscription_level_state_to_activate_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_resource_group_level_state_to_resolve_request(
+def build_update_resource_group_level_state_to_resolve_request(  # pylint: disable=name-too-long
     asc_location: str, alert_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -367,7 +372,7 @@ def build_update_resource_group_level_state_to_resolve_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_resource_group_level_state_to_dismiss_request(
+def build_update_resource_group_level_state_to_dismiss_request(  # pylint: disable=name-too-long
     asc_location: str, alert_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -403,7 +408,7 @@ def build_update_resource_group_level_state_to_dismiss_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_resource_group_level_state_to_activate_request(
+def build_update_resource_group_level_state_to_activate_request(  # pylint: disable=name-too-long
     asc_location: str, alert_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -496,7 +501,6 @@ class AlertsOperations:
     def list(self, **kwargs: Any) -> Iterable["_models.Alert"]:
         """List all the alerts that are associated with the subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Alert or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2021_01_01.models.Alert]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -507,7 +511,7 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.AlertList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -518,15 +522,14 @@ class AlertsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -537,14 +540,14 @@ class AlertsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AlertList", pipeline_response)
@@ -554,11 +557,11 @@ class AlertsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -569,8 +572,6 @@ class AlertsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/alerts"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Alert"]:
@@ -579,7 +580,6 @@ class AlertsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Alert or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2021_01_01.models.Alert]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -590,7 +590,7 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.AlertList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -601,16 +601,15 @@ class AlertsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -621,14 +620,14 @@ class AlertsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AlertList", pipeline_response)
@@ -638,11 +637,11 @@ class AlertsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -653,10 +652,6 @@ class AlertsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/alerts"
-    }
 
     @distributed_trace
     def list_subscription_level_by_region(self, asc_location: str, **kwargs: Any) -> Iterable["_models.Alert"]:
@@ -666,7 +661,6 @@ class AlertsOperations:
         :param asc_location: The location where ASC stores the data of the subscription. can be
          retrieved from Get locations. Required.
         :type asc_location: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Alert or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2021_01_01.models.Alert]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -677,7 +671,7 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.AlertList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -688,16 +682,15 @@ class AlertsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_subscription_level_by_region_request(
+                _request = build_list_subscription_level_by_region_request(
                     asc_location=asc_location,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_subscription_level_by_region.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -708,14 +701,14 @@ class AlertsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AlertList", pipeline_response)
@@ -725,11 +718,11 @@ class AlertsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -740,10 +733,6 @@ class AlertsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_subscription_level_by_region.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts"
-    }
 
     @distributed_trace
     def list_resource_group_level_by_region(
@@ -758,7 +747,6 @@ class AlertsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Alert or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.v2021_01_01.models.Alert]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -769,7 +757,7 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.AlertList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -780,17 +768,16 @@ class AlertsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_resource_group_level_by_region_request(
+                _request = build_list_resource_group_level_by_region_request(
                     asc_location=asc_location,
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_resource_group_level_by_region.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -801,14 +788,14 @@ class AlertsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("AlertList", pipeline_response)
@@ -818,11 +805,11 @@ class AlertsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -834,10 +821,6 @@ class AlertsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_resource_group_level_by_region.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts"
-    }
-
     @distributed_trace
     def get_subscription_level(self, asc_location: str, alert_name: str, **kwargs: Any) -> _models.Alert:
         """Get an alert that is associated with a subscription.
@@ -847,12 +830,11 @@ class AlertsOperations:
         :type asc_location: str
         :param alert_name: Name of the alert object. Required.
         :type alert_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Alert or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2021_01_01.models.Alert
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -866,21 +848,20 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.Alert] = kwargs.pop("cls", None)
 
-        request = build_get_subscription_level_request(
+        _request = build_get_subscription_level_request(
             asc_location=asc_location,
             alert_name=alert_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_subscription_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -892,13 +873,9 @@ class AlertsOperations:
         deserialized = self._deserialize("Alert", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_subscription_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_resource_group_level(
@@ -914,12 +891,11 @@ class AlertsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Alert or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2021_01_01.models.Alert
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -933,22 +909,21 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[_models.Alert] = kwargs.pop("cls", None)
 
-        request = build_get_resource_group_level_request(
+        _request = build_get_resource_group_level_request(
             asc_location=asc_location,
             alert_name=alert_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_resource_group_level.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -960,16 +935,12 @@ class AlertsOperations:
         deserialized = self._deserialize("Alert", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_resource_group_level.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def update_subscription_level_state_to_dismiss(  # pylint: disable=inconsistent-return-statements
+    def update_subscription_level_state_to_dismiss(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, asc_location: str, alert_name: str, **kwargs: Any
     ) -> None:
         """Update the alert's state.
@@ -979,12 +950,11 @@ class AlertsOperations:
         :type asc_location: str
         :param alert_name: Name of the alert object. Required.
         :type alert_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -998,21 +968,20 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_update_subscription_level_state_to_dismiss_request(
+        _request = build_update_subscription_level_state_to_dismiss_request(
             asc_location=asc_location,
             alert_name=alert_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.update_subscription_level_state_to_dismiss.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1022,14 +991,10 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_subscription_level_state_to_dismiss.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def update_subscription_level_state_to_resolve(  # pylint: disable=inconsistent-return-statements
+    def update_subscription_level_state_to_resolve(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, asc_location: str, alert_name: str, **kwargs: Any
     ) -> None:
         """Update the alert's state.
@@ -1039,12 +1004,11 @@ class AlertsOperations:
         :type asc_location: str
         :param alert_name: Name of the alert object. Required.
         :type alert_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1058,21 +1022,20 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_update_subscription_level_state_to_resolve_request(
+        _request = build_update_subscription_level_state_to_resolve_request(
             asc_location=asc_location,
             alert_name=alert_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.update_subscription_level_state_to_resolve.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1082,14 +1045,10 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_subscription_level_state_to_resolve.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/resolve"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def update_subscription_level_state_to_activate(  # pylint: disable=inconsistent-return-statements
+    def update_subscription_level_state_to_activate(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, asc_location: str, alert_name: str, **kwargs: Any
     ) -> None:
         """Update the alert's state.
@@ -1099,12 +1058,11 @@ class AlertsOperations:
         :type asc_location: str
         :param alert_name: Name of the alert object. Required.
         :type alert_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1118,21 +1076,20 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_update_subscription_level_state_to_activate_request(
+        _request = build_update_subscription_level_state_to_activate_request(
             asc_location=asc_location,
             alert_name=alert_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.update_subscription_level_state_to_activate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1142,14 +1099,10 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_subscription_level_state_to_activate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/activate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def update_resource_group_level_state_to_resolve(  # pylint: disable=inconsistent-return-statements
+    def update_resource_group_level_state_to_resolve(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, asc_location: str, alert_name: str, resource_group_name: str, **kwargs: Any
     ) -> None:
         """Update the alert's state.
@@ -1162,12 +1115,11 @@ class AlertsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1181,22 +1133,21 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_update_resource_group_level_state_to_resolve_request(
+        _request = build_update_resource_group_level_state_to_resolve_request(
             asc_location=asc_location,
             alert_name=alert_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.update_resource_group_level_state_to_resolve.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1206,14 +1157,10 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_resource_group_level_state_to_resolve.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/resolve"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def update_resource_group_level_state_to_dismiss(  # pylint: disable=inconsistent-return-statements
+    def update_resource_group_level_state_to_dismiss(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, asc_location: str, alert_name: str, resource_group_name: str, **kwargs: Any
     ) -> None:
         """Update the alert's state.
@@ -1226,12 +1173,11 @@ class AlertsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1245,22 +1191,21 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_update_resource_group_level_state_to_dismiss_request(
+        _request = build_update_resource_group_level_state_to_dismiss_request(
             asc_location=asc_location,
             alert_name=alert_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.update_resource_group_level_state_to_dismiss.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1270,14 +1215,10 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_resource_group_level_state_to_dismiss.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/dismiss"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def update_resource_group_level_state_to_activate(  # pylint: disable=inconsistent-return-statements
+    def update_resource_group_level_state_to_activate(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, asc_location: str, alert_name: str, resource_group_name: str, **kwargs: Any
     ) -> None:
         """Update the alert's state.
@@ -1290,12 +1231,11 @@ class AlertsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1309,22 +1249,21 @@ class AlertsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_update_resource_group_level_state_to_activate_request(
+        _request = build_update_resource_group_level_state_to_activate_request(
             asc_location=asc_location,
             alert_name=alert_name,
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.update_resource_group_level_state_to_activate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1334,19 +1273,15 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_resource_group_level_state_to_activate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/alerts/{alertName}/activate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     def _simulate_initial(  # pylint: disable=inconsistent-return-statements
         self,
         asc_location: str,
-        alert_simulator_request_body: Union[_models.AlertSimulatorRequestBody, IO],
+        alert_simulator_request_body: Union[_models.AlertSimulatorRequestBody, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1369,23 +1304,22 @@ class AlertsOperations:
         else:
             _json = self._serialize.body(alert_simulator_request_body, "AlertSimulatorRequestBody")
 
-        request = build_simulate_request(
+        _request = build_simulate_request(
             asc_location=asc_location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._simulate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1395,11 +1329,7 @@ class AlertsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _simulate_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/default/simulate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def begin_simulate(
@@ -1421,14 +1351,6 @@ class AlertsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1438,7 +1360,7 @@ class AlertsOperations:
     def begin_simulate(
         self,
         asc_location: str,
-        alert_simulator_request_body: IO,
+        alert_simulator_request_body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1449,18 +1371,10 @@ class AlertsOperations:
          retrieved from Get locations. Required.
         :type asc_location: str
         :param alert_simulator_request_body: Alert Simulator Request Properties. Required.
-        :type alert_simulator_request_body: IO
+        :type alert_simulator_request_body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1470,7 +1384,7 @@ class AlertsOperations:
     def begin_simulate(
         self,
         asc_location: str,
-        alert_simulator_request_body: Union[_models.AlertSimulatorRequestBody, IO],
+        alert_simulator_request_body: Union[_models.AlertSimulatorRequestBody, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Simulate security alerts.
@@ -1479,20 +1393,9 @@ class AlertsOperations:
          retrieved from Get locations. Required.
         :type asc_location: str
         :param alert_simulator_request_body: Alert Simulator Request Properties. Is either a
-         AlertSimulatorRequestBody type or a IO type. Required.
+         AlertSimulatorRequestBody type or a IO[bytes] type. Required.
         :type alert_simulator_request_body:
-         ~azure.mgmt.security.v2021_01_01.models.AlertSimulatorRequestBody or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.security.v2021_01_01.models.AlertSimulatorRequestBody or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1521,7 +1424,7 @@ class AlertsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1532,14 +1435,10 @@ class AlertsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_simulate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/alerts/default/simulate"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
