@@ -348,8 +348,12 @@ class IssueProcess:
             try:
                 self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
             except Exception:
-                self.target_date = [re.compile(r"\d{1,2}/\d{1,2}/\d{4}").findall(l)[0] for l in body if 'Target release date' in l][0]
-                self.target_date = datetime.strptime(self.target_date, "%m/%d/%Y").strftime('%Y-%m-%d')
+                try:
+                    self.target_date = [re.compile(r"\d{1,2}/\d{1,2}/\d{4}").findall(l)[0] for l in body if 'Target release date' in l][0]
+                    self.target_date = datetime.strptime(self.target_date, "%m/%d/%Y").strftime('%Y-%m-%d')
+                except Exception:
+                    self.target_date = [re.compile(r"\d{1,2}/\d{1,2}/\d{4}").findall(l)[0] for l in body if 'Target release date' in l][0]
+                    self.target_date = datetime.strptime(self.target_date, "%d/%m/%Y").strftime('%Y-%m-%d')
 
             self.date_from_target = int((time.mktime(time.strptime(self.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
         except Exception:

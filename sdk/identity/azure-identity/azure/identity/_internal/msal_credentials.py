@@ -25,7 +25,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         client_id: str,
-        client_credential: Optional[Union[str, Dict[str, str]]] = None,
+        client_credential: Optional[Union[str, Dict[str, Any]]] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
         authority: Optional[str] = None,

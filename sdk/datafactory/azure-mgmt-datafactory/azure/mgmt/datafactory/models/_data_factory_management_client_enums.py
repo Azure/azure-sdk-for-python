@@ -312,6 +312,7 @@ class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FIELD = "Field"
     UNARY = "Unary"
     BINARY = "Binary"
+    N_ARY = "NAry"
 
 
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
