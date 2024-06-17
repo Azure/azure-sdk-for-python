@@ -124,6 +124,50 @@ def load_client(
 
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
+from azure.core.pipeline.policies import DistributedTracingPolicy
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+
+def _set_attribute(span, key, value):
+    if value:
+        span.set_attribute(key, value)
+
+
+class AIDistributedTracingPolicy(DistributedTracingPolicy):
+    def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
+        super().on_request(request)
+        span = request.context[self.TRACING_CONTEXT]
+        current_span = span.get_current_span()
+        current_span.add_event(
+            name="gen_ai.prompt",
+            attributes={"event.body": request.http_request.content}
+        )
+        body = json.loads(request.http_request.content)
+        _set_attribute(current_span, "gen_ai.request.max_tokens", body.get("max_tokens"))
+        _set_attribute(current_span, "gen_ai.request.model", body.get("model"))
+        _set_attribute(current_span, "gen_ai.request.temperature", body.get("temperature"))
+        _set_attribute(current_span, "gen_ai.request.top_p", body.get("top_p"))
+        _set_attribute(current_span, "gen_ai.request.stream", body.get("stream"))
+
+    def on_response(
+        self,
+        request: PipelineRequest[HttpRequest],
+        response: PipelineResponse[HttpRequest, HttpResponse],
+    ) -> None:
+        span = request.context[self.TRACING_CONTEXT]
+        current_span = span.get_current_span()
+        current_span.add_event(
+            name="gen_ai.completion",
+            attributes={"event.body": response.http_response.text()}
+        )
+        result = response.http_response.json()
+        _set_attribute(current_span, "gen_ai.response.model", result["model"])
+        _set_attribute(current_span, "gen_ai.usage.completion_tokens", result["usage"]["completion_tokens"])
+        _set_attribute(current_span, "gen_ai.usage.prompt_tokens", result["usage"]["prompt_tokens"])
+        _set_attribute(current_span, "gen_ai.response.id", result["id"])
+        _set_attribute(current_span, "gen_ai.response.finish_reasons", result["choices"][0]["finish_reason"])
+        super().on_response(request, response)
+
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
     """ChatCompletionsClient.
@@ -142,7 +186,25 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         self._model_info: Optional[_models.ModelInfo] = None
-        super().__init__(endpoint, credential, **kwargs)
+        from azure.core.pipeline import policies
+        _policies = [
+            policies.RequestIdPolicy(**kwargs),
+            policies.HeadersPolicy(**kwargs),
+            policies.UserAgentPolicy(**kwargs),
+            policies.ProxyPolicy(**kwargs),
+            policies.ContentDecodePolicy(**kwargs),
+            policies.RedirectPolicy(**kwargs),
+            policies.RetryPolicy(**kwargs),
+            policies.AzureKeyCredentialPolicy(
+                credential, "Authorization", prefix="Bearer", **kwargs
+            ),
+            policies.CustomHookPolicy(**kwargs),
+            policies.NetworkTraceLoggingPolicy(**kwargs),
+            AIDistributedTracingPolicy(**kwargs),
+            policies.SensitiveHeaderCleanupPolicy(**kwargs),
+            policies.HttpLoggingPolicy(**kwargs),
+        ]
+        super().__init__(endpoint, credential, policies=_policies, **kwargs)
 
     @overload
     def complete(
