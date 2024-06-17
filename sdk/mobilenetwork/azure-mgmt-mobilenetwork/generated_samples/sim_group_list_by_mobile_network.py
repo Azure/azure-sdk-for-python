@@ -15,7 +15,7 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-mobilenetwork
 # USAGE
-    python data_network_get.py
+    python sim_group_list_by_mobile_network.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.data_networks.get(
+    response = client.mobile_networks.list_sim_groups(
         resource_group_name="rg1",
         mobile_network_name="testMobileNetwork",
-        data_network_name="testDataNetwork",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-04-01/examples/DataNetworkGet.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-04-01/examples/SimGroupListByMobileNetwork.json
 if __name__ == "__main__":
     main()
