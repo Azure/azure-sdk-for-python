@@ -70,7 +70,6 @@ Once you have the value for the API key, you can pass it as a string into an ins
 
 <!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_client-->
 ```Python 
-import os
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 
