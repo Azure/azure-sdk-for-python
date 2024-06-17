@@ -639,7 +639,7 @@ class WorkspaceOperationsBase(ABC):
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
 
-        if not workspace.allow_roleassignment_on_rg:
+        if workspace.allow_roleassignment_on_rg == False:
             _set_val(param["allowRoleAssignmentOnRG"], "false")
 
         if workspace.image_build_compute:
