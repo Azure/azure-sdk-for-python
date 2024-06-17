@@ -110,14 +110,16 @@ async def radiology_insights_async() -> None:
     # Construct the request with the patient and configuration
     patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
     # [END create_radiology_insights_request]
+
     try:
-        poller = await radiology_insights_client.begin_infer_radiology_insights(
-            id=job_id,
-            resource=patient_data,
-        )
-        inference_result = await poller.result()
-        radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
-        display_age_mismatch(radiology_insights_result, doc_content1)
+        async with radiology_insights_client:
+            poller = await radiology_insights_client.begin_infer_radiology_insights(
+                id=job_id,
+                resource=patient_data,
+            )
+            inference_result = await poller.result()
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
+            display_age_mismatch(radiology_insights_result, doc_content1)
     except Exception as ex:
         print(str(ex))
         return
