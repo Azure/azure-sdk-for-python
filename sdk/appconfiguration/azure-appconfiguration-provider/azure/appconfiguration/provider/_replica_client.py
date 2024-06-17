@@ -10,6 +10,7 @@ import random
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List
 from azure.core import MatchConditions
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import TokenCredential
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
@@ -123,6 +124,7 @@ class ReplicaClient:
                 raise e
         return False, None
 
+    @distributed_trace
     def load_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], **kwargs
     ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
@@ -145,6 +147,7 @@ class ReplicaClient:
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
+    @distributed_trace
     def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
     ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str]]:
@@ -163,6 +166,7 @@ class ReplicaClient:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return loaded_feature_flags, feature_flag_sentinel_keys
 
+    @distributed_trace
     def refresh_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], headers: Dict[str, str], **kwargs
     ) -> bool:
@@ -193,6 +197,7 @@ class ReplicaClient:
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
 
+    @distributed_trace
     def refresh_feature_flags(
         self,
         refresh_on: List[SettingSelector],
@@ -221,6 +226,7 @@ class ReplicaClient:
                 return True, feature_flag_sentinel_keys, feature_flags
         return False, None, None
 
+    @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
         """
         Gets a configuration setting from the replica client.
