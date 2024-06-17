@@ -1520,6 +1520,7 @@ class WorkflowTasksOperations:
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "type":
 
@@ -1752,6 +1753,7 @@ class WorkflowTaskOperations:
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "type":
 
