@@ -8,7 +8,12 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import LoadTestAdministrationClientConfiguration, LoadTestRunClientConfiguration
+from ._configuration import (
+    LoadTestAdministrationClientConfiguration,
+    LoadTestRunClientConfiguration,
+    TestProfileAdministrationClientConfiguration,
+    TestProfileRunClientConfiguration,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,5 +36,23 @@ class LoadTestRunClientMixinABC(ABC):
 
     _client: "PipelineClient"
     _config: LoadTestRunClientConfiguration
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
+
+
+class TestProfileAdministrationClientMixinABC(ABC):
+    """DO NOT use this class. It is for internal typing use only."""
+
+    _client: "PipelineClient"
+    _config: TestProfileAdministrationClientConfiguration
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
+
+
+class TestProfileRunClientMixinABC(ABC):
+    """DO NOT use this class. It is for internal typing use only."""
+
+    _client: "PipelineClient"
+    _config: TestProfileRunClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

@@ -14,6 +14,8 @@ from ._models import DimensionFilter
 from ._models import DimensionValue
 from ._models import DimensionValueList
 from ._models import ErrorDetails
+from ._models import FunctionFlexConsumptionResourceConfiguration
+from ._models import FunctionFlexConsumptionTargetResourceConfigurations
 from ._models import GetTestFileResponse
 from ._models import GetTestRunFileResponse
 from ._models import LoadTestConfiguration
@@ -31,13 +33,18 @@ from ._models import PassFailMetric
 from ._models import RegionalConfiguration
 from ._models import ResourceMetric
 from ._models import Secret
+from ._models import TargetResourceConfigurations
 from ._models import Test
 from ._models import TestAppComponents
 from ._models import TestFileInfo
 from ._models import TestInputArtifacts
+from ._models import TestProfile
+from ._models import TestProfileRun
+from ._models import TestProfileRunRecommendation
 from ._models import TestRun
 from ._models import TestRunAppComponents
 from ._models import TestRunArtifacts
+from ._models import TestRunDetail
 from ._models import TestRunFileInfo
 from ._models import TestRunInputArtifacts
 from ._models import TestRunOutputArtifacts
@@ -57,9 +64,13 @@ from ._enums import PFAgFunc
 from ._enums import PFMetrics
 from ._enums import PFResult
 from ._enums import PFTestResult
+from ._enums import RecommendationCategory
+from ._enums import RequestDataLevel
+from ._enums import ResourceKind
 from ._enums import SecretType
 from ._enums import Status
 from ._enums import TestKind
+from ._enums import TestProfileRunStatus
 from ._enums import TimeGrain
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -74,6 +85,8 @@ __all__ = [
     "DimensionValue",
     "DimensionValueList",
     "ErrorDetails",
+    "FunctionFlexConsumptionResourceConfiguration",
+    "FunctionFlexConsumptionTargetResourceConfigurations",
     "GetTestFileResponse",
     "GetTestRunFileResponse",
     "LoadTestConfiguration",
@@ -91,13 +104,18 @@ __all__ = [
     "RegionalConfiguration",
     "ResourceMetric",
     "Secret",
+    "TargetResourceConfigurations",
     "Test",
     "TestAppComponents",
     "TestFileInfo",
     "TestInputArtifacts",
+    "TestProfile",
+    "TestProfileRun",
+    "TestProfileRunRecommendation",
     "TestRun",
     "TestRunAppComponents",
     "TestRunArtifacts",
+    "TestRunDetail",
     "TestRunFileInfo",
     "TestRunInputArtifacts",
     "TestRunOutputArtifacts",
@@ -116,9 +134,13 @@ __all__ = [
     "PFMetrics",
     "PFResult",
     "PFTestResult",
+    "RecommendationCategory",
+    "RequestDataLevel",
+    "ResourceKind",
     "SecretType",
     "Status",
     "TestKind",
+    "TestProfileRunStatus",
     "TimeGrain",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

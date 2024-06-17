@@ -57,8 +57,23 @@ from ..._operations._operations import (
     build_load_test_run_list_metrics_request,
     build_load_test_run_list_test_runs_request,
     build_load_test_run_stop_test_run_request,
+    build_test_profile_administration_create_or_update_test_profile_request,
+    build_test_profile_administration_delete_test_profile_request,
+    build_test_profile_administration_get_test_profile_request,
+    build_test_profile_administration_list_test_profiles_request,
+    build_test_profile_run_create_or_update_test_profile_run_request,
+    build_test_profile_run_delete_test_profile_run_request,
+    build_test_profile_run_get_test_profile_run_request,
+    build_test_profile_run_list_test_profile_runs_request,
+    build_test_profile_run_stop_test_profile_run_request,
 )
-from .._vendor import LoadTestAdministrationClientMixinABC, LoadTestRunClientMixinABC
+from ..._validation import api_version_validation
+from .._vendor import (
+    LoadTestAdministrationClientMixinABC,
+    LoadTestRunClientMixinABC,
+    TestProfileAdministrationClientMixinABC,
+    TestProfileRunClientMixinABC,
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -281,11 +296,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -500,11 +516,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -744,11 +761,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -988,11 +1006,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -1230,11 +1249,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -1449,11 +1469,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -2575,11 +2596,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -3067,11 +3089,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -3459,6 +3482,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -3532,11 +3557,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -3567,6 +3593,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -3575,6 +3613,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -3711,6 +3751,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -3742,6 +3797,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -3777,6 +3844,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -3850,11 +3919,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -3885,6 +3955,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -3893,6 +3975,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -4029,6 +4113,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -4060,6 +4159,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -4132,6 +4243,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -4205,11 +4318,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -4240,6 +4354,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -4248,6 +4374,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -4384,6 +4512,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -4415,6 +4558,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -4487,6 +4642,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -4560,11 +4717,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -4595,6 +4753,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -4603,6 +4773,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -4739,6 +4911,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -4770,6 +4957,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -4839,6 +5038,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -4912,11 +5113,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -4947,6 +5149,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -4955,6 +5169,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -5091,6 +5307,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -5122,6 +5353,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -5157,6 +5400,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -5230,11 +5475,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -5265,6 +5511,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -5273,6 +5531,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -5409,6 +5669,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -5440,6 +5715,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -6445,6 +6732,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -6518,11 +6807,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -6553,6 +6843,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -6561,6 +6863,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -6697,6 +7001,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -6728,6 +7047,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -7018,8 +7349,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                               belongs to.
                             "primaryAggregationType": "str",  # Optional. The primary
                               aggregation type value defining how to use the values for display. Known
-                              values are: "Average", "Count", "None", "Total", "Percentile90",
-                              "Percentile95", and "Percentile99".
+                              values are: "Average", "Count", "None", "Total", "Percentile75",
+                              "Percentile90", "Percentile95", "Percentile96", "Percentile97",
+                              "Percentile98", "Percentile99", "Percentile999", and "Percentile9999".
                             "supportedAggregationTypes": [
                                 "str"  # Optional. The collection of what all
                                   aggregation types are supported.
@@ -7585,6 +7917,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -7658,11 +7992,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -7693,6 +8028,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -7701,6 +8048,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -7837,6 +8186,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -7868,6 +8232,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -8000,6 +8376,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "createdBy": "str",  # Optional. The user that created.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
                       datetime(RFC 3339 literal format).
+                    "debugLogsEnabled": bool,  # Optional. Enable or disable debug level logging.
+                      True if debug logs are enabled for the test run. False otherwise.
                     "description": "str",  # Optional. The test run description.
                     "displayName": "str",  # Optional. Display name of a testRun.
                     "duration": 0,  # Optional. Test run duration in milliseconds.
@@ -8073,11 +8451,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                 "aggregate": "str",  # Optional. The aggregation
                                   function to be applied on the client metric. Allowed functions   *
                                   "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
+                                  percentiles like "u2018p50"u2019, "u2018p90"u2019, & so on,
                                   "u2018min"u2019,   "u2018max"u2019 - for response_time_ms and latency
                                   metric, "u2018avg"u2019 - for requests_per_sec,   "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
+                                  "p75", "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99",
+                                  "min", and "max".
                                 "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
@@ -8108,6 +8487,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -8116,6 +8507,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
+                    "requestDataLevel": "str",  # Optional. Request data collection level for
+                      test run. Known values are: "NONE" and "ERRORS".
                     "secrets": {
                         "str": {
                             "type": "str",  # Optional. Type of secret. Known values are:
@@ -8252,6 +8645,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
+                            "reportFileInfo": {
+                                "fileName": "str",  # Name of the file. Required.
+                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
+                                  Expiry time of the file (RFC 3339 literal format).
+                                "fileType": "str",  # Optional. File type. Known
+                                  values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
+                                "validationStatus": "str"  # Optional. Validation
+                                  status of the file. Known values are: "NOT_VALIDATED",
+                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
+                                  and "VALIDATION_NOT_REQUIRED".
+                            },
                             "resultFileInfo": {
                                 "fileName": "str",  # Name of the file. Required.
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
@@ -8283,6 +8691,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                             "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
                             "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
                             "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
+                            "pct75ResTime": 0.0,  # Optional. 75 percentile response
+                              time.
+                            "pct96ResTime": 0.0,  # Optional. 96 percentile response
+                              time.
+                            "pct97ResTime": 0.0,  # Optional. 97 percentile response
+                              time.
+                            "pct98ResTime": 0.0,  # Optional. 98 percentile response
+                              time.
+                            "pct9999ResTime": 0.0,  # Optional. 99.99 percentile response
+                              time.
+                            "pct999ResTime": 0.0,  # Optional. 99.9 percentile response
+                              time.
                             "receivedKBytesPerSec": 0.0,  # Optional. Received network
                               bytes.
                             "sampleCount": 0.0,  # Optional. Sampler count.
@@ -8336,6 +8756,2110 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.TestRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class TestProfileAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
+    TestProfileAdministrationClientMixinABC
+):
+
+    @overload
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile(
+        self,
+        test_profile_id: str,
+        body: _models.TestProfile,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TestProfile:
+        # pylint: disable=line-too-long
+        """Create a new test profile or update an existing test profile.
+
+        Create a new test profile or update an existing test profile by providing the test profile Id.
+
+        :param test_profile_id: Unique identifier for the test profile, must contain only lower-case
+         alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_id: str
+        :param body: The resource instance. Required.
+        :type body: ~azure.developer.loadtesting.models.TestProfile
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TestProfile. The TestProfile is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+        """
+
+    @overload
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile(
+        self, test_profile_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.TestProfile:
+        # pylint: disable=line-too-long
+        """Create a new test profile or update an existing test profile.
+
+        Create a new test profile or update an existing test profile by providing the test profile Id.
+
+        :param test_profile_id: Unique identifier for the test profile, must contain only lower-case
+         alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_id: str
+        :param body: The resource instance. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TestProfile. The TestProfile is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+        """
+
+    @overload
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile(
+        self,
+        test_profile_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TestProfile:
+        # pylint: disable=line-too-long
+        """Create a new test profile or update an existing test profile.
+
+        Create a new test profile or update an existing test profile by providing the test profile Id.
+
+        :param test_profile_id: Unique identifier for the test profile, must contain only lower-case
+         alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_id: str
+        :param body: The resource instance. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TestProfile. The TestProfile is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile(
+        self, test_profile_id: str, body: Union[_models.TestProfile, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TestProfile:
+        # pylint: disable=line-too-long
+        """Create a new test profile or update an existing test profile.
+
+        Create a new test profile or update an existing test profile by providing the test profile Id.
+
+        :param test_profile_id: Unique identifier for the test profile, must contain only lower-case
+         alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_id: str
+        :param body: The resource instance. Is one of the following types: TestProfile, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.developer.loadtesting.models.TestProfile or JSON or IO[bytes]
+        :return: TestProfile. The TestProfile is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_test_profile_administration_create_or_update_test_profile_request(
+            test_profile_id=test_profile_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.TestProfile, response.json())
+
+        if response.status_code == 201:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.TestProfile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+    )  # pylint: disable=inconsistent-return-statements
+    async def delete_test_profile(  # pylint: disable=inconsistent-return-statements
+        self, test_profile_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a test profile.
+
+        Delete a test profile by its test profile Id.
+
+        :param test_profile_id: Unique identifier for the test profile, must contain only lower-case
+         alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_test_profile_administration_delete_test_profile_request(
+            test_profile_id=test_profile_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+    )
+    async def get_test_profile(self, test_profile_id: str, **kwargs: Any) -> _models.TestProfile:
+        # pylint: disable=line-too-long
+        """Get load test profile details.
+
+        Get load test profile details by test profile Id.
+
+        :param test_profile_id: Unique identifier for the test profile, must contain only lower-case
+         alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_id: str
+        :return: TestProfile. The TestProfile is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
+
+        _request = build_test_profile_administration_get_test_profile_request(
+            test_profile_id=test_profile_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TestProfile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "maxpagesize",
+                "last_modified_start_time",
+                "last_modified_end_time",
+                "test_profile_ids",
+                "test_ids",
+                "accept",
+            ]
+        },
+    )
+    def list_test_profiles(
+        self,
+        *,
+        last_modified_start_time: Optional[datetime.datetime] = None,
+        last_modified_end_time: Optional[datetime.datetime] = None,
+        test_profile_ids: Optional[str] = None,
+        test_ids: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TestProfile"]:
+        # pylint: disable=line-too-long
+        """List test profiles.
+
+        Get all test profiles for the given filters.
+
+        :keyword last_modified_start_time: Start DateTime(RFC 3339 literal format) of the last updated
+         time range to filter test profiles. Default value is None.
+        :paramtype last_modified_start_time: ~datetime.datetime
+        :keyword last_modified_end_time: End DateTime(RFC 3339 literal format) of the last updated time
+         range to filter test profiles. Default value is None.
+        :paramtype last_modified_end_time: ~datetime.datetime
+        :keyword test_profile_ids: Comma separated list of IDs of the test profiles to filter. Default
+         value is None.
+        :paramtype test_profile_ids: str
+        :keyword test_ids: Comma separated list IDs of the tests which should be associated with the
+         test profiles to fetch. Default value is None.
+        :paramtype test_ids: str
+        :return: An iterator like instance of TestProfile
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.developer.loadtesting.models.TestProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "testProfileId": "str",  # Unique identifier for the test profile, must
+                      contain only lower-case alphabetic, numeric, underscore or hyphen characters.
+                      Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. Description for the test profile.
+                    "displayName": "str",  # Optional. Display name of the test profile.
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile is created. This property is required for creating a Test Profile and
+                      it's not allowed to be updated.
+                    "testId": "str"  # Optional. Associated test ID for the test profile. This
+                      property is required for creating a Test Profile and it's not allowed to be
+                      updated.
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.TestProfile]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_test_profile_administration_list_test_profiles_request(
+                    maxpagesize=maxpagesize,
+                    last_modified_start_time=last_modified_start_time,
+                    last_modified_end_time=last_modified_end_time,
+                    test_profile_ids=test_profile_ids,
+                    test_ids=test_ids,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.TestProfile], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class TestProfileRunClientOperationsMixin(TestProfileRunClientMixinABC):
+
+    @overload
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile_run(
+        self,
+        test_profile_run_id: str,
+        body: _models.TestProfileRun,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TestProfileRun:
+        # pylint: disable=line-too-long
+        """Create and start a new test profile run.
+
+        Create and start a new test profile run with the given test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :param body: The resource instance. Required.
+        :type body: ~azure.developer.loadtesting.models.TestProfileRun
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+
+    @overload
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile_run(
+        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.TestProfileRun:
+        # pylint: disable=line-too-long
+        """Create and start a new test profile run.
+
+        Create and start a new test profile run with the given test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :param body: The resource instance. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+
+    @overload
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile_run(
+        self,
+        test_profile_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.TestProfileRun:
+        # pylint: disable=line-too-long
+        """Create and start a new test profile run.
+
+        Create and start a new test profile run with the given test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :param body: The resource instance. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+    )
+    async def create_or_update_test_profile_run(
+        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TestProfileRun:
+        # pylint: disable=line-too-long
+        """Create and start a new test profile run.
+
+        Create and start a new test profile run with the given test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :param body: The resource instance. Is one of the following types: TestProfileRun, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.developer.loadtesting.models.TestProfileRun or JSON or IO[bytes]
+        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 201, 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_test_profile_run_create_or_update_test_profile_run_request(
+            test_profile_run_id=test_profile_run_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.TestProfileRun, response.json())
+
+        if response.status_code == 201:
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
+                deserialized = _deserialize(_models.TestProfileRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+    )  # pylint: disable=inconsistent-return-statements
+    async def delete_test_profile_run(  # pylint: disable=inconsistent-return-statements
+        self, test_profile_run_id: str, **kwargs: Any
+    ) -> None:
+        """Delete an existing load test profile run.
+
+        Delete an existing load test profile run by providing the test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_test_profile_run_delete_test_profile_run_request(
+            test_profile_run_id=test_profile_run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+    )
+    async def get_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+        # pylint: disable=line-too-long
+        """Get test profile run details.
+
+        Get test profile run details by test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
+
+        _request = build_test_profile_run_get_test_profile_run_request(
+            test_profile_run_id=test_profile_run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TestProfileRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "maxpagesize",
+                "min_start_date_time",
+                "max_start_date_time",
+                "min_end_date_time",
+                "max_end_date_time",
+                "created_date_start_time",
+                "created_date_end_time",
+                "test_profile_run_ids",
+                "test_profile_ids",
+                "statuses",
+                "accept",
+            ]
+        },
+    )
+    def list_test_profile_runs(
+        self,
+        *,
+        min_start_date_time: Optional[datetime.datetime] = None,
+        max_start_date_time: Optional[datetime.datetime] = None,
+        min_end_date_time: Optional[datetime.datetime] = None,
+        max_end_date_time: Optional[datetime.datetime] = None,
+        created_date_start_time: Optional[datetime.datetime] = None,
+        created_date_end_time: Optional[datetime.datetime] = None,
+        test_profile_run_ids: Optional[str] = None,
+        test_profile_ids: Optional[str] = None,
+        statuses: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.TestProfileRun"]:
+        # pylint: disable=line-too-long
+        """List test profile runs.
+
+        Get all test profile runs for the given filters.
+
+        :keyword min_start_date_time: Minimum Start DateTime(RFC 3339 literal format) of the test
+         profile runs to filter on. Default value is None.
+        :paramtype min_start_date_time: ~datetime.datetime
+        :keyword max_start_date_time: Maximum Start DateTime(RFC 3339 literal format) of the test
+         profile runs to filter on. Default value is None.
+        :paramtype max_start_date_time: ~datetime.datetime
+        :keyword min_end_date_time: Minimum End DateTime(RFC 3339 literal format) of the test profile
+         runs to filter on. Default value is None.
+        :paramtype min_end_date_time: ~datetime.datetime
+        :keyword max_end_date_time: Maximum End DateTime(RFC 3339 literal format) of the test profile
+         runs to filter on. Default value is None.
+        :paramtype max_end_date_time: ~datetime.datetime
+        :keyword created_date_start_time: Start DateTime(RFC 3339 literal format) of the created time
+         range to filter test profile runs. Default value is None.
+        :paramtype created_date_start_time: ~datetime.datetime
+        :keyword created_date_end_time: End DateTime(RFC 3339 literal format) of the created time range
+         to filter test profile runs. Default value is None.
+        :paramtype created_date_end_time: ~datetime.datetime
+        :keyword test_profile_run_ids: Comma separated list of IDs of the test profile runs to filter.
+         Default value is None.
+        :paramtype test_profile_run_ids: str
+        :keyword test_profile_ids: Comma separated IDs of the test profiles which should be associated
+         with the test profile runs to fetch. Default value is None.
+        :paramtype test_profile_ids: str
+        :keyword statuses: Comma separated list of Statuses of the test profile runs to filter. Default
+         value is None.
+        :paramtype statuses: str
+        :return: An iterator like instance of TestProfileRun
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.developer.loadtesting.models.TestProfileRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.TestProfileRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_test_profile_run_list_test_profile_runs_request(
+                    maxpagesize=maxpagesize,
+                    min_start_date_time=min_start_date_time,
+                    max_start_date_time=max_start_date_time,
+                    min_end_date_time=min_end_date_time,
+                    max_end_date_time=max_end_date_time,
+                    created_date_start_time=created_date_start_time,
+                    created_date_end_time=created_date_end_time,
+                    test_profile_run_ids=test_profile_run_ids,
+                    test_profile_ids=test_profile_ids,
+                    statuses=statuses,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2024-05-01-preview",
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+    )
+    async def stop_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+        # pylint: disable=line-too-long
+        """Stop test profile run.
+
+        Stop test profile run for the given test profile run Id.
+
+        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
+         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+        :type test_profile_run_id: str
+        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The response is polymorphic. The following are possible polymorphic responses based
+                  off discriminator "kind":
+
+                # JSON input template for discriminator value "FunctionsFlexConsumption":
+                target_resource_configurations = {
+                    "kind": "FunctionsFlexConsumption",
+                    "configurations": {
+                        "str": {
+                            "httpConcurrency": 0,  # HTTP Concurrency for the function
+                              app. Required.
+                            "instanceMemoryMB": 0  # Memory size of the instance.
+                              Supported values are 512, 2048, 2096. Required.
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "testProfileRunId": "str",  # Unique identifier for the test profile run,
+                      must contain only lower-case alphabetic, numeric, underscore or hyphen
+                      characters. Required.
+                    "createdBy": "str",  # Optional. The user that created.
+                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
+                      datetime(RFC 3339 literal format).
+                    "description": "str",  # Optional. The test profile run description.
+                    "displayName": "str",  # Optional. Display name for the test profile run.
+                    "durationInSeconds": 0,  # Optional. Test profile run duration in seconds.
+                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run end
+                      DateTime(RFC 3339 literal format).
+                    "errorDetails": [
+                        {
+                            "message": "str"  # Optional. Error details in case test run
+                              was not successfully run.
+                        }
+                    ],
+                    "lastModifiedBy": "str",  # Optional. The user that last modified.
+                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
+                      datetime(RFC 3339 literal format).
+                    "recommendations": [
+                        {
+                            "category": "str",  # Category of the recommendation.
+                              Required. Known values are: "ThroughputOptimized" and "CostOptimized".
+                            "configurations": [
+                                "str"  # Optional. List of configurations IDs for
+                                  which the recommendation is applicable. These are a subset of the
+                                  provided target resource configurations.
+                            ]
+                        }
+                    ],
+                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test profile run
+                      start DateTime(RFC 3339 literal format).
+                    "status": "str",  # Optional. The test profile run status. Known values are:
+                      "ACCEPTED", "NOTSTARTED", "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and
+                      "FAILED".
+                    "targetResourceConfigurations": target_resource_configurations,
+                    "targetResourceId": "str",  # Optional. Target resource ID on which the test
+                      profile run is created.
+                    "testProfileId": "str",  # Optional. Associated test profile ID for the test
+                      profile run. This is required to create a test profile run and can't be updated.
+                    "testRunDetails": {
+                        "str": {
+                            "configurationId": "str",  # ID of the configuration on which
+                              the test ran. Required.
+                            "properties": {
+                                "str": "str"  # Key value pair of extra properties
+                                  associated with the test run. Required.
+                            },
+                            "status": "str"  # Status of the test run. Required. Known
+                              values are: "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED",
+                              "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
+                              "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+                              "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+                        }
+                    }
+                }
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
+
+        _request = build_test_profile_run_stop_test_profile_run_request(
+            test_profile_run_id=test_profile_run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TestProfileRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

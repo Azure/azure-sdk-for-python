@@ -21,12 +21,24 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation will be average in this case."""
     TOTAL = "Total"
     """Total sum."""
+    PERCENTILE75 = "Percentile75"
+    """75th percentile."""
     PERCENTILE90 = "Percentile90"
     """90th percentile."""
     PERCENTILE95 = "Percentile95"
     """95th percentile."""
+    PERCENTILE96 = "Percentile96"
+    """96th percentile."""
+    PERCENTILE97 = "Percentile97"
+    """97th percentile."""
+    PERCENTILE98 = "Percentile98"
+    """98th percentile."""
     PERCENTILE99 = "Percentile99"
     """99th percentile."""
+    PERCENTILE999 = "Percentile999"
+    """99.9th percentile."""
+    PERCENTILE9999 = "Percentile9999"
+    """99.99th percentile."""
 
 
 class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -109,12 +121,24 @@ class PFAgFunc(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Criteria applies for avg value."""
     P50 = "p50"
     """Criteria applies for 50th percentile value."""
+    P75 = "p75"
+    """Criteria applies for 75th percentile value."""
     P90 = "p90"
     """Criteria applies for 90th percentile value."""
     P95 = "p95"
     """Criteria applies for 95th percentile value."""
+    P96 = "p96"
+    """Criteria applies for 96th percentile value."""
+    P97 = "p97"
+    """Criteria applies for 97th percentile value."""
+    P98 = "p98"
+    """Criteria applies for 98th percentile value."""
     P99 = "p99"
     """Criteria applies for 99th percentile value."""
+    P99_9 = "p99.9"
+    """Criteria applies for 99.9th percentile value."""
+    P99_99 = "p99.99"
+    """Criteria applies for 99.99th percentile value."""
     MIN = "min"
     """Criteria applies for minimum value."""
     MAX = "max"
@@ -156,6 +180,32 @@ class PFTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Pass/fail criteria is not applicable."""
     FAILED = "FAILED"
     """Pass/fail criteria has failed."""
+
+
+class RecommendationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of Recommendation."""
+
+    THROUGHPUT_OPTIMIZED = "ThroughputOptimized"
+    """The recommendation for this category optimizes the throughput/RPS (Requests per Second) of the
+    app."""
+    COST_OPTIMIZED = "CostOptimized"
+    """The recommendation for this category optimizes the cost of the app."""
+
+
+class RequestDataLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Request data collection level for test run."""
+
+    NONE = "NONE"
+    """No request data will be collected"""
+    ERRORS = "ERRORS"
+    """Request data will be collected in case of failed requests"""
+
+
+class ResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the resource on which test profile is created."""
+
+    FUNCTIONS_FLEX_CONSUMPTION = "FunctionsFlexConsumption"
+    """Resource is a Azure FunctionApp on Flex Consumption Plan."""
 
 
 class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -213,6 +263,25 @@ class TestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """JMX Test"""
     LOCUST = "Locust"
     """Locust Test"""
+
+
+class TestProfileRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Test profile run status."""
+
+    ACCEPTED = "ACCEPTED"
+    """Test profile run request is accepted."""
+    NOTSTARTED = "NOTSTARTED"
+    """Test profile run is not yet started."""
+    EXECUTING = "EXECUTING"
+    """Test profile run has started executing."""
+    DONE = "DONE"
+    """Test profile run has completed successfully."""
+    CANCELLING = "CANCELLING"
+    """Test profile run is being cancelled."""
+    CANCELLED = "CANCELLED"
+    """Test profile run is cancelled."""
+    FAILED = "FAILED"
+    """Test profile run has failed."""
 
 
 class TimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):

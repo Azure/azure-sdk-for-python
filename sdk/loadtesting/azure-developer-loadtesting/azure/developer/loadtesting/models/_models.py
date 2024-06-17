@@ -8,10 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
-from .._model_base import rest_field
+from .._model_base import rest_discriminator, rest_field
+from ._enums import ResourceKind
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -314,6 +315,118 @@ class ErrorDetails(_model_base.Model):
     """Error details in case test run was not successfully run."""
 
 
+class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint: disable=name-too-long
+    """Resource configuration instance for a Flex Consumption based Azure Function App.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar instance_memory_m_b: Memory size of the instance. Supported values are 512, 2048, 2096.
+     Required.
+    :vartype instance_memory_m_b: int
+    :ivar http_concurrency: HTTP Concurrency for the function app. Required.
+    :vartype http_concurrency: int
+    """
+
+    instance_memory_m_b: int = rest_field(name="instanceMemoryMB")
+    """Memory size of the instance. Supported values are 512, 2048, 2096. Required."""
+    http_concurrency: int = rest_field(name="httpConcurrency")
+    """HTTP Concurrency for the function app. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instance_memory_m_b: int,
+        http_concurrency: int,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TargetResourceConfigurations(_model_base.Model):
+    """Configurations of a target resource. This varies with the kind of resource.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FunctionFlexConsumptionTargetResourceConfigurations
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: Kind of the resource for which the configurations apply. Required.
+     "FunctionsFlexConsumption"
+    :vartype kind: str or ~azure.developer.loadtesting.models.ResourceKind
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create"])
+    """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class FunctionFlexConsumptionTargetResourceConfigurations(
+    TargetResourceConfigurations, discriminator="FunctionsFlexConsumption"
+):  # pylint: disable=name-too-long
+    """Configurations for a Function App using Flex Consumption Plan.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar kind: The kind value to use when providing configuration.
+     This should typically be not changed from its value. Required. Resource is a Azure FunctionApp
+     on Flex Consumption Plan.
+    :vartype kind: str or ~azure.developer.loadtesting.models.FUNCTIONS_FLEX_CONSUMPTION
+    :ivar configurations: A map of configurations for a Function app using Flex Consumption Plan.
+    :vartype configurations: dict[str,
+     ~azure.developer.loadtesting.models.FunctionFlexConsumptionResourceConfiguration]
+    """
+
+    kind: Literal[ResourceKind.FUNCTIONS_FLEX_CONSUMPTION] = rest_discriminator(name="kind")  # type: ignore
+    """The kind value to use when providing configuration.
+     This should typically be not changed from its value. Required. Resource is a Azure FunctionApp
+     on Flex Consumption Plan."""
+    configurations: Optional[Dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = rest_field()
+    """A map of configurations for a Function app using Flex Consumption Plan."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configurations: Optional[Dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ResourceKind.FUNCTIONS_FLEX_CONSUMPTION, **kwargs)
+
+
 class GetTestFileResponse(_model_base.Model):
     """GetTestFileResponse.
 
@@ -497,8 +610,9 @@ class MetricDefinition(_model_base.Model):
     :ivar namespace: The namespace the metric belongs to.
     :vartype namespace: str
     :ivar primary_aggregation_type: The primary aggregation type value defining how to use the
-     values for display. Known values are: "Average", "Count", "None", "Total", "Percentile90",
-     "Percentile95", and "Percentile99".
+     values for display. Known values are: "Average", "Count", "None", "Total", "Percentile75",
+     "Percentile90", "Percentile95", "Percentile96", "Percentile97", "Percentile98", "Percentile99",
+     "Percentile999", and "Percentile9999".
     :vartype primary_aggregation_type: str or ~azure.developer.loadtesting.models.AggregationType
     :ivar supported_aggregation_types: The collection of what all aggregation types are supported.
     :vartype supported_aggregation_types: list[str]
@@ -523,8 +637,9 @@ class MetricDefinition(_model_base.Model):
         name="primaryAggregationType"
     )
     """The primary aggregation type value defining how to use the values for display. Known values
-     are: \"Average\", \"Count\", \"None\", \"Total\", \"Percentile90\", \"Percentile95\", and
-     \"Percentile99\"."""
+     are: \"Average\", \"Count\", \"None\", \"Total\", \"Percentile75\", \"Percentile90\",
+     \"Percentile95\", \"Percentile96\", \"Percentile97\", \"Percentile98\", \"Percentile99\",
+     \"Percentile999\", and \"Percentile9999\"."""
     supported_aggregation_types: Optional[List[str]] = rest_field(name="supportedAggregationTypes")
     """The collection of what all aggregation types are supported."""
     unit: Optional[Union[str, "_models.MetricUnit"]] = rest_field()
@@ -848,10 +963,10 @@ class PassFailMetric(_model_base.Model):
     :ivar aggregate: The aggregation function to be applied on the client metric. Allowed functions
 
 
-     * ‘percentage’ - for error metric , ‘avg’, ‘p50’, ‘p90’, ‘p95’, ‘p99’, ‘min’,
+     * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
        ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-       ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p90", "p95",
-     "p99", "min", and "max".
+       ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
+     "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99", "min", and "max".
     :vartype aggregate: str or ~azure.developer.loadtesting.models.PFAgFunc
     :ivar condition: The comparison operator. Supported types ‘>’, ‘<’.
     :vartype condition: str
@@ -877,10 +992,11 @@ class PassFailMetric(_model_base.Model):
     """The aggregation function to be applied on the client metric. Allowed functions
      
      
-     * ‘percentage’ - for error metric , ‘avg’, ‘p50’, ‘p90’, ‘p95’, ‘p99’, ‘min’,
+     * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
        ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
        ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\",
-     \"p90\", \"p95\", \"p99\", \"min\", and \"max\"."""
+     \"p75\", \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\",
+     and \"max\"."""
     condition: Optional[str] = rest_field()
     """The comparison operator. Supported types ‘>’, ‘<’."""
     request_name: Optional[str] = rest_field(name="requestName")
@@ -1384,6 +1500,252 @@ class TestInputArtifacts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class TestProfile(_model_base.Model):
+    """Test Profile Model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar test_profile_id: Unique identifier for the test profile, must contain only lower-case
+     alphabetic, numeric, underscore or hyphen characters. Required.
+    :vartype test_profile_id: str
+    :ivar display_name: Display name of the test profile.
+    :vartype display_name: str
+    :ivar description: Description for the test profile.
+    :vartype description: str
+    :ivar test_id: Associated test ID for the test profile. This property is required for creating
+     a Test Profile and it's not allowed to be updated.
+    :vartype test_id: str
+    :ivar target_resource_id: Target resource ID on which the test profile is created. This
+     property is required for creating a Test Profile and it's not allowed to be updated.
+    :vartype target_resource_id: str
+    :ivar target_resource_configurations: Configurations of the target resource on which testing
+     would be done.
+    :vartype target_resource_configurations:
+     ~azure.developer.loadtesting.models.TargetResourceConfigurations
+    :ivar created_date_time: The creation datetime(RFC 3339 literal format).
+    :vartype created_date_time: ~datetime.datetime
+    :ivar created_by: The user that created.
+    :vartype created_by: str
+    :ivar last_modified_date_time: The last Modified datetime(RFC 3339 literal format).
+    :vartype last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified.
+    :vartype last_modified_by: str
+    """
+
+    test_profile_id: str = rest_field(name="testProfileId", visibility=["read"])
+    """Unique identifier for the test profile, must contain only lower-case alphabetic, numeric,
+     underscore or hyphen characters. Required."""
+    display_name: Optional[str] = rest_field(name="displayName")
+    """Display name of the test profile."""
+    description: Optional[str] = rest_field()
+    """Description for the test profile."""
+    test_id: Optional[str] = rest_field(name="testId", visibility=["read", "create"])
+    """Associated test ID for the test profile. This property is required for creating a Test Profile
+     and it's not allowed to be updated."""
+    target_resource_id: Optional[str] = rest_field(name="targetResourceId", visibility=["read", "create"])
+    """Target resource ID on which the test profile is created. This property is required for creating
+     a Test Profile and it's not allowed to be updated."""
+    target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = rest_field(
+        name="targetResourceConfigurations"
+    )
+    """Configurations of the target resource on which testing would be done."""
+    created_date_time: Optional[datetime.datetime] = rest_field(
+        name="createdDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The creation datetime(RFC 3339 literal format)."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The user that created."""
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The last Modified datetime(RFC 3339 literal format)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The user that last modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        test_id: Optional[str] = None,
+        target_resource_id: Optional[str] = None,
+        target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TestProfileRun(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """Test Profile Run model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar test_profile_run_id: Unique identifier for the test profile run, must contain only
+     lower-case alphabetic, numeric, underscore or hyphen characters. Required.
+    :vartype test_profile_run_id: str
+    :ivar display_name: Display name for the test profile run.
+    :vartype display_name: str
+    :ivar description: The test profile run description.
+    :vartype description: str
+    :ivar test_profile_id: Associated test profile ID for the test profile run. This is required to
+     create a test profile run and can't be updated.
+    :vartype test_profile_id: str
+    :ivar target_resource_id: Target resource ID on which the test profile run is created.
+    :vartype target_resource_id: str
+    :ivar target_resource_configurations: Configurations of the target resource on which the test
+     profile ran.
+    :vartype target_resource_configurations:
+     ~azure.developer.loadtesting.models.TargetResourceConfigurations
+    :ivar status: The test profile run status. Known values are: "ACCEPTED", "NOTSTARTED",
+     "EXECUTING", "DONE", "CANCELLING", "CANCELLED", and "FAILED".
+    :vartype status: str or ~azure.developer.loadtesting.models.TestProfileRunStatus
+    :ivar error_details: Error details if there is any failure in test profile run. These errors
+     are specific to the Test Profile Run.
+    :vartype error_details: list[~azure.developer.loadtesting.models.ErrorDetails]
+    :ivar start_date_time: The test profile run start DateTime(RFC 3339 literal format).
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time: The test profile run end DateTime(RFC 3339 literal format).
+    :vartype end_date_time: ~datetime.datetime
+    :ivar duration_in_seconds: Test profile run duration in seconds.
+    :vartype duration_in_seconds: int
+    :ivar test_run_details: Details of the test runs ran as part of the test profile run.
+     Key is the testRunId of the corresponding testRun.
+    :vartype test_run_details: dict[str, ~azure.developer.loadtesting.models.TestRunDetail]
+    :ivar recommendations: Recommendations provided based on a successful test profile run.
+    :vartype recommendations:
+     list[~azure.developer.loadtesting.models.TestProfileRunRecommendation]
+    :ivar created_date_time: The creation datetime(RFC 3339 literal format).
+    :vartype created_date_time: ~datetime.datetime
+    :ivar created_by: The user that created.
+    :vartype created_by: str
+    :ivar last_modified_date_time: The last Modified datetime(RFC 3339 literal format).
+    :vartype last_modified_date_time: ~datetime.datetime
+    :ivar last_modified_by: The user that last modified.
+    :vartype last_modified_by: str
+    """
+
+    test_profile_run_id: str = rest_field(name="testProfileRunId", visibility=["read"])
+    """Unique identifier for the test profile run, must contain only lower-case alphabetic, numeric,
+     underscore or hyphen characters. Required."""
+    display_name: Optional[str] = rest_field(name="displayName")
+    """Display name for the test profile run."""
+    description: Optional[str] = rest_field()
+    """The test profile run description."""
+    test_profile_id: Optional[str] = rest_field(name="testProfileId", visibility=["read", "create"])
+    """Associated test profile ID for the test profile run. This is required to create a test profile
+     run and can't be updated."""
+    target_resource_id: Optional[str] = rest_field(name="targetResourceId", visibility=["read"])
+    """Target resource ID on which the test profile run is created."""
+    target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = rest_field(
+        name="targetResourceConfigurations", visibility=["read"]
+    )
+    """Configurations of the target resource on which the test profile ran."""
+    status: Optional[Union[str, "_models.TestProfileRunStatus"]] = rest_field(visibility=["read"])
+    """The test profile run status. Known values are: \"ACCEPTED\", \"NOTSTARTED\", \"EXECUTING\",
+     \"DONE\", \"CANCELLING\", \"CANCELLED\", and \"FAILED\"."""
+    error_details: Optional[List["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
+    """Error details if there is any failure in test profile run. These errors are specific to the
+     Test Profile Run."""
+    start_date_time: Optional[datetime.datetime] = rest_field(
+        name="startDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The test profile run start DateTime(RFC 3339 literal format)."""
+    end_date_time: Optional[datetime.datetime] = rest_field(name="endDateTime", visibility=["read"], format="rfc3339")
+    """The test profile run end DateTime(RFC 3339 literal format)."""
+    duration_in_seconds: Optional[int] = rest_field(name="durationInSeconds", visibility=["read"])
+    """Test profile run duration in seconds."""
+    test_run_details: Optional[Dict[str, "_models.TestRunDetail"]] = rest_field(
+        name="testRunDetails", visibility=["read"]
+    )
+    """Details of the test runs ran as part of the test profile run.
+     Key is the testRunId of the corresponding testRun."""
+    recommendations: Optional[List["_models.TestProfileRunRecommendation"]] = rest_field(visibility=["read"])
+    """Recommendations provided based on a successful test profile run."""
+    created_date_time: Optional[datetime.datetime] = rest_field(
+        name="createdDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The creation datetime(RFC 3339 literal format)."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The user that created."""
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
+    )
+    """The last Modified datetime(RFC 3339 literal format)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The user that last modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        test_profile_id: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TestProfileRunRecommendation(_model_base.Model):
+    """A recommendation object that provides a list of configuration that optimizes its category.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar category: Category of the recommendation. Required. Known values are:
+     "ThroughputOptimized" and "CostOptimized".
+    :vartype category: str or ~azure.developer.loadtesting.models.RecommendationCategory
+    :ivar configurations: List of configurations IDs for which the recommendation is applicable.
+     These are a subset of the provided target resource configurations.
+    :vartype configurations: list[str]
+    """
+
+    category: Union[str, "_models.RecommendationCategory"] = rest_field()
+    """Category of the recommendation. Required. Known values are: \"ThroughputOptimized\" and
+     \"CostOptimized\"."""
+    configurations: Optional[List[str]] = rest_field()
+    """List of configurations IDs for which the recommendation is applicable. These are a subset of
+     the provided target resource configurations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.RecommendationCategory"],
+        configurations: Optional[List[str]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class TestRun(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Load test run model.
 
@@ -1458,6 +1820,12 @@ class TestRun(_model_base.Model):  # pylint: disable=too-many-instance-attribute
     :vartype subnet_id: str
     :ivar kind: Type of test. Known values are: "URL", "JMX", and "Locust".
     :vartype kind: str or ~azure.developer.loadtesting.models.TestKind
+    :ivar request_data_level: Request data collection level for test run. Known values are: "NONE"
+     and "ERRORS".
+    :vartype request_data_level: str or ~azure.developer.loadtesting.models.RequestDataLevel
+    :ivar debug_logs_enabled: Enable or disable debug level logging. True if debug logs are enabled
+     for the test run. False otherwise.
+    :vartype debug_logs_enabled: bool
     :ivar public_i_p_disabled: Inject load test engines without deploying public IP for outbound
      access.
     :vartype public_i_p_disabled: bool
@@ -1544,6 +1912,11 @@ class TestRun(_model_base.Model):  # pylint: disable=too-many-instance-attribute
     """Subnet ID on which the load test instances should run."""
     kind: Optional[Union[str, "_models.TestKind"]] = rest_field(visibility=["read"])
     """Type of test. Known values are: \"URL\", \"JMX\", and \"Locust\"."""
+    request_data_level: Optional[Union[str, "_models.RequestDataLevel"]] = rest_field(name="requestDataLevel")
+    """Request data collection level for test run. Known values are: \"NONE\" and \"ERRORS\"."""
+    debug_logs_enabled: Optional[bool] = rest_field(name="debugLogsEnabled")
+    """Enable or disable debug level logging. True if debug logs are enabled for the test run. False
+     otherwise."""
     public_i_p_disabled: Optional[bool] = rest_field(name="publicIPDisabled", visibility=["read"])
     """Inject load test engines without deploying public IP for outbound access."""
     created_date_time: Optional[datetime.datetime] = rest_field(
@@ -1572,6 +1945,8 @@ class TestRun(_model_base.Model):  # pylint: disable=too-many-instance-attribute
         display_name: Optional[str] = None,
         test_id: Optional[str] = None,
         description: Optional[str] = None,
+        request_data_level: Optional[Union[str, "_models.RequestDataLevel"]] = None,
+        debug_logs_enabled: Optional[bool] = None,
     ): ...
 
     @overload
@@ -1666,6 +2041,52 @@ class TestRunArtifacts(_model_base.Model):
         self,
         *,
         output_artifacts: Optional["_models.TestRunOutputArtifacts"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TestRunDetail(_model_base.Model):
+    """Details of a particular test run for a test profile run.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar status: Status of the test run. Required. Known values are: "ACCEPTED", "NOTSTARTED",
+     "PROVISIONING", "PROVISIONED", "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED",
+     "DEPROVISIONING", "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
+     "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
+    :vartype status: str or ~azure.developer.loadtesting.models.Status
+    :ivar configuration_id: ID of the configuration on which the test ran. Required.
+    :vartype configuration_id: str
+    :ivar properties: Key value pair of extra properties associated with the test run. Required.
+    :vartype properties: dict[str, str]
+    """
+
+    status: Union[str, "_models.Status"] = rest_field()
+    """Status of the test run. Required. Known values are: \"ACCEPTED\", \"NOTSTARTED\",
+     \"PROVISIONING\", \"PROVISIONED\", \"CONFIGURING\", \"CONFIGURED\", \"EXECUTING\",
+     \"EXECUTED\", \"DEPROVISIONING\", \"DEPROVISIONED\", \"DONE\", \"CANCELLING\", \"CANCELLED\",
+     \"FAILED\", \"VALIDATION_SUCCESS\", and \"VALIDATION_FAILURE\"."""
+    configuration_id: str = rest_field(name="configurationId")
+    """ID of the configuration on which the test ran. Required."""
+    properties: Dict[str, str] = rest_field()
+    """Key value pair of extra properties associated with the test run. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.Status"],
+        configuration_id: str,
+        properties: Dict[str, str],
     ): ...
 
     @overload
@@ -1805,6 +2226,8 @@ class TestRunOutputArtifacts(_model_base.Model):
     :vartype logs_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
     :ivar artifacts_container_info: The container for test run artifacts.
     :vartype artifacts_container_info: ~azure.developer.loadtesting.models.ArtifactsContainerInfo
+    :ivar report_file_info: The report file for the test run.
+    :vartype report_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
     """
 
     result_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="resultFileInfo")
@@ -1813,6 +2236,8 @@ class TestRunOutputArtifacts(_model_base.Model):
     """File info."""
     artifacts_container_info: Optional["_models.ArtifactsContainerInfo"] = rest_field(name="artifactsContainerInfo")
     """The container for test run artifacts."""
+    report_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="reportFileInfo")
+    """The report file for the test run."""
 
     @overload
     def __init__(
@@ -1821,6 +2246,7 @@ class TestRunOutputArtifacts(_model_base.Model):
         result_file_info: Optional["_models.TestRunFileInfo"] = None,
         logs_file_info: Optional["_models.TestRunFileInfo"] = None,
         artifacts_container_info: Optional["_models.ArtifactsContainerInfo"] = None,
+        report_file_info: Optional["_models.TestRunFileInfo"] = None,
     ): ...
 
     @overload
@@ -1919,6 +2345,18 @@ class TestRunStatistics(_model_base.Model):  # pylint: disable=too-many-instance
     :vartype pct2_res_time: float
     :ivar pct3_res_time: 99 percentile response time.
     :vartype pct3_res_time: float
+    :ivar pct75_res_time: 75 percentile response time.
+    :vartype pct75_res_time: float
+    :ivar pct96_res_time: 96 percentile response time.
+    :vartype pct96_res_time: float
+    :ivar pct97_res_time: 97 percentile response time.
+    :vartype pct97_res_time: float
+    :ivar pct98_res_time: 98 percentile response time.
+    :vartype pct98_res_time: float
+    :ivar pct999_res_time: 99.9 percentile response time.
+    :vartype pct999_res_time: float
+    :ivar pct9999_res_time: 99.99 percentile response time.
+    :vartype pct9999_res_time: float
     :ivar throughput: Throughput.
     :vartype throughput: float
     :ivar received_k_bytes_per_sec: Received network bytes.
@@ -1949,6 +2387,18 @@ class TestRunStatistics(_model_base.Model):  # pylint: disable=too-many-instance
     """95 percentile response time."""
     pct3_res_time: Optional[float] = rest_field(name="pct3ResTime", visibility=["read"])
     """99 percentile response time."""
+    pct75_res_time: Optional[float] = rest_field(name="pct75ResTime", visibility=["read"])
+    """75 percentile response time."""
+    pct96_res_time: Optional[float] = rest_field(name="pct96ResTime", visibility=["read"])
+    """96 percentile response time."""
+    pct97_res_time: Optional[float] = rest_field(name="pct97ResTime", visibility=["read"])
+    """97 percentile response time."""
+    pct98_res_time: Optional[float] = rest_field(name="pct98ResTime", visibility=["read"])
+    """98 percentile response time."""
+    pct999_res_time: Optional[float] = rest_field(name="pct999ResTime", visibility=["read"])
+    """99.9 percentile response time."""
+    pct9999_res_time: Optional[float] = rest_field(name="pct9999ResTime", visibility=["read"])
+    """99.99 percentile response time."""
     throughput: Optional[float] = rest_field(visibility=["read"])
     """Throughput."""
     received_k_bytes_per_sec: Optional[float] = rest_field(name="receivedKBytesPerSec", visibility=["read"])
