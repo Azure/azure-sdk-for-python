@@ -87,6 +87,9 @@ class ImdsCredential(GetTokenMixin):
             try:
                 self._client.request_token(*scopes, connection_timeout=1, retry_total=0)
                 self._endpoint_available = True
+            except CredentialUnavailableError:
+                # Response is not json, skip the IMDS credential
+                raise
             except HttpResponseError as ex:
                 # IMDS responded
                 _check_forbidden_response(ex)
