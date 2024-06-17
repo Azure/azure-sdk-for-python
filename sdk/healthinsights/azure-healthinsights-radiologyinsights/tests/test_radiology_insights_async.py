@@ -91,7 +91,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
         )
         data = TestRadiologyInsightsClient.create_request(self)
-        request_time = datetime.datetime(2024, 2, 26, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        request_time = datetime.datetime.now(datetime.UTC)
         poller = await radiology_insights_client.begin_infer_radiology_insights(
             data,
             headers={
