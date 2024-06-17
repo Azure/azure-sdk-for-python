@@ -524,6 +524,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         iterate over the entire download content, regardless of any data that was
         previously read.
 
+        NOTE: If the stream has been partially read, some data may be re-downloaded by the iterator.
+
         :returns: An iterator of the chunks in the download stream.
         :rtype: Iterator[bytes]
 
@@ -548,8 +550,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 start = self._download_start + len(self._current_content)
                 current_progress = len(self._current_content)
             else:
-                warnings.warn("Calling `chunks` on a partially read stream will result"
-                              "in some data being re-downloaded.")
                 start = self._download_start
                 current_progress = 0
 
