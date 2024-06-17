@@ -556,11 +556,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             key = self._process_key_name(config)
                             value = self._process_key_value(config)
                             configuration_settings_processed[key] = value
-                        if need_refresh and self._feature_flag_enabled:
+                        if self._feature_flag_enabled:
                             configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[
                                 FEATURE_MANAGEMENT_KEY
                             ]
-                        elif need_refresh:
+                        if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
                         headers = _get_headers(
