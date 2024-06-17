@@ -18,25 +18,34 @@ USAGE:
 """
 import os
 
-from azure.maps.search.models import Resolution
-from azure.maps.search.models import BoundaryResultType
-from azure.maps.search.models import LatLon
+from azure.core.exceptions import HttpResponseError
+from azure.maps.search import Resolution
+from azure.maps.search import BoundaryResultType
+
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_polygon():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_polygon(**{
+          "coordinates": [-122.204141, 47.61256],
+          "result_type": BoundaryResultType.LOCALITY,
+          "resolution": Resolution.SMALL,
+        })
 
-    result = maps_search_client.get_polygon(
-        coordinates=LatLon(47.61256, -122.204141),
-        result_type=BoundaryResultType.LOCALITY,
-        resolution=Resolution.SMALL
-    )
+        if 'geometry' not in result or not result['geometry']:
+            print("No geometry found")
+            return
 
-    print(result.geometry)
+        print(result["geometry"])
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
     get_polygon()

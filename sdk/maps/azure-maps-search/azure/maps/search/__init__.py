@@ -7,6 +7,21 @@
 # --------------------------------------------------------------------------
 
 from ._client import MapsSearchClient
+from ._search_client import AzureMapsSearchClient
+from ._enums import (
+    LocalizedMapView,
+    BoundaryResultType,
+    CalculationMethod,
+    Confidence,
+    FeatureCollection,
+    FeatureType,
+    GeoJsonObjectType,
+    MatchCodes,
+    Resolution,
+    ResultType,
+    ReverseGeocodingResultType,
+    UsageType,
+)
 
 try:
     from ._patch import __all__ as _patch_all
@@ -17,6 +32,19 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "MapsSearchClient",
+    "AzureMapsSearchClient",
+    "LocalizedMapView",
+    "BoundaryResultType",
+    "CalculationMethod",
+    "Confidence",
+    "FeatureCollection",
+    "FeatureType",
+    "GeoJsonObjectType",
+    "MatchCodes",
+    "Resolution",
+    "ResultType",
+    "ReverseGeocodingResultType",
+    "UsageType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 

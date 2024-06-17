@@ -26,7 +26,8 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class MapsSearchClient:
+
+class MapsSearchClientBase:
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],

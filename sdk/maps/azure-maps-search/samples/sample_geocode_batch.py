@@ -18,48 +18,50 @@ USAGE:
 """
 import os
 
-from azure.maps.search.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
+from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode_batch():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_geocoding_batch({
+          "batchItems": [
+            {"query": "400 Broad St, Seattle, WA 98109"},
+            {"query": "15127 NE 24th Street, Redmond, WA 98052"},
+          ],
+        },)
 
-    request_item1 = GeocodingBatchRequestItem(query="400 Broad St, Seattle, WA 98109", top=5)
-    request_item2 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
+        if 'batchItems' not in result or not result['batchItems']:
+            print("No geocoding")
+            return
 
-    batch_request_body = GeocodingBatchRequestBody(batch_items=[request_item1, request_item2])
+        item1, item2 = result['batchItems']
 
-    result = maps_search_client.get_geocoding_batch(batch_request_body)
+        if not item1.get('features'):
+            print("No geocoding1")
+            return
 
-    if not result.batch_items:
-        print("No geocoding")
-        return
+        if not item2.get('features'):
+            print("No geocoding2")
+            return
 
-    result1 = result.batch_items[0]
+        coordinates1 = item1['features'][0]['geometry']['coordinates']
+        coordinates2 = item2['features'][0]['geometry']['coordinates']
 
-    if result1.features:
-        coordinates1 = result1.features[0].geometry.coordinates
-        longitude1 = coordinates1[0]
-        latitude1 = coordinates1[1]
+        longitude1, latitude1 = coordinates1
+        longitude2, latitude2 = coordinates2
 
         print(longitude1, latitude1)
-    else:
-        print("No geocoding1")
-
-    result2 = result.batch_items[1]
-
-    if result2.features:
-        coordinates2 = result2.features[0].geometry.coordinates
-        longitude2 = coordinates2[0]
-        latitude2 = coordinates2[1]
-
         print(longitude2, latitude2)
-    else:
-        print("No geocoding2")
+
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
     geocode_batch()

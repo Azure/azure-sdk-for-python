@@ -27,7 +27,8 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class AsyncMapsSearchClient:
+
+class AsyncMapsSearchClientBase:
     def __init__(
         self,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],

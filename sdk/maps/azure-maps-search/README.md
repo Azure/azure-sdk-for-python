@@ -111,23 +111,30 @@ You can use an authenticated client to convert an address into latitude and long
 ```python
 import os
 
+from azure.core.exceptions import HttpResponseError
+
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
+        if 'features' in result and result['features']:
+            coordinates = result['features'][0]['geometry']['coordinates']
+            longitude = coordinates[0]
+            latitude = coordinates[1]
 
-    result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
-    if result.features:
-        coordinates = result.features[0].geometry.coordinates
-        longitude = coordinates[0]
-        latitude = coordinates[1]
+            print(longitude, latitude)
+        else:
+            print("No results")
 
-        print(longitude, latitude)
-    else:
-        print("No results")
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
     geocode()
@@ -140,48 +147,50 @@ This sample demonstrates how to perform batch search address.
 ```python
 import os
 
-from azure.maps.search.models import GeocodingBatchRequestItem, GeocodingBatchRequestBody
+from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def geocode_batch():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_geocoding_batch({
+          "batchItems": [
+            {"query": "400 Broad St, Seattle, WA 98109"},
+            {"query": "15127 NE 24th Street, Redmond, WA 98052"},
+          ],
+        },)
 
-    request_item1 = GeocodingBatchRequestItem(query="400 Broad St, Seattle, WA 98109", top=5)
-    request_item2 = GeocodingBatchRequestItem(query="15127 NE 24th Street, Redmond, WA 98052", top=5)
+        if 'batchItems' not in result or not result['batchItems']:
+            print("No geocoding")
+            return
 
-    batch_request_body = GeocodingBatchRequestBody(batch_items=[request_item1, request_item2])
+        item1, item2 = result['batchItems']
 
-    result = maps_search_client.get_geocoding_batch(batch_request_body)
+        if not item1.get('features'):
+            print("No geocoding1")
+            return
 
-    if not result.batch_items:
-        print("No geocoding")
-        return
+        if not item2.get('features'):
+            print("No geocoding2")
+            return
 
-    result1 = result.batch_items[0]
+        coordinates1 = item1['features'][0]['geometry']['coordinates']
+        coordinates2 = item2['features'][0]['geometry']['coordinates']
 
-    if result1.features:
-        coordinates1 = result1.features[0].geometry.coordinates
-        longitude1 = coordinates1[0]
-        latitude1 = coordinates1[1]
+        longitude1, latitude1 = coordinates1
+        longitude2, latitude2 = coordinates2
 
         print(longitude1, latitude1)
-    else:
-        print("No geocoding1")
-
-    result2 = result.batch_items[1]
-
-    if result2.features:
-        coordinates2 = result2.features[0].geometry.coordinates
-        longitude2 = coordinates2[0]
-        latitude2 = coordinates2[1]
-
         print(longitude2, latitude2)
-    else:
-        print("No geocoding2")
+
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
     geocode_batch()
@@ -194,21 +203,34 @@ This sample demonstrates how to search polygons.
 ```python
 import os
 
-from azure.maps.search.models import Resolution
-from azure.maps.search.models import BoundaryResultType
-from azure.maps.search.models import LatLon
+from azure.core.exceptions import HttpResponseError
+from azure.maps.search import Resolution
+from azure.maps.search import BoundaryResultType
+
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_polygon():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_polygon(**{
+          "coordinates": [-122.204141, 47.61256],
+          "result_type": BoundaryResultType.LOCALITY,
+          "resolution": Resolution.SMALL,
+        })
 
-    result = maps_search_client.get_polygon(coordinates=LatLon(47.61256, -122.204141), result_type=BoundaryResultType.LOCALITY, resolution=Resolution.SMALL)
+        if 'geometry' not in result or not result['geometry']:
+            print("No geometry found")
+            return
 
-    print(result.geometry)
+        print(result["geometry"])
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
     get_polygon()
@@ -221,25 +243,30 @@ You can translate coordinates into human-readable street addresses. This process
 ```python
 import os
 
-from azure.maps.search.models import LatLon
+from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import MapsSearchClient
+    from azure.maps.search import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
-    result = maps_search_client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
-    if result.features:
-        props = result.features[0].properties
-        if props and props.address:
-            print(props.address.formatted_address)
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+        if 'features' in result and result['features']:
+            props = result['features'][0].get('properties', {})
+            if props and 'address' in props and props['address']:
+                print(props['address'].get('formattedAddress', 'No formatted address found'))
+            else:
+                print("Address is None")
         else:
-            print("Address is None")
-    else:
-        print("No features available")
+            print("No features available")
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
 
 if __name__ == '__main__':
    reverse_geocode()
@@ -252,42 +279,50 @@ This sample demonstrates how to perform reverse search by given coordinates in b
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
-from azure.maps.search.models import ReverseGeocodingBatchRequestItem, ReverseGeocodingBatchRequestBody, LatLon
+from azure.core.exceptions import HttpResponseError
+from azure.maps.search import AzureMapsSearchClient
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def reverse_geocode_batch():
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = maps_search_client.get_reverse_geocoding_batch({
+              "batchItems": [
+                {"coordinates": [-122.349309, 47.620498]},
+                {"coordinates": [-122.138679, 47.630356]},
+              ],
+            },)
 
-    coordinates1 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.620498, -122.349309))
-    coordinates2 = ReverseGeocodingBatchRequestItem(coordinates=LatLon(47.630356, -122.138679))
-    reverse_geocode_batch_request = ReverseGeocodingBatchRequestBody(batch_items=[coordinates1, coordinates2])
-
-    result = maps_search_client.get_reverse_geocoding_batch(reverse_geocode_batch_request)
-
-    if result.batch_items:
-        features = result.batch_items[0].features
-        if features:
-            props = features[0].properties
-            if props and props.address:
-                print(props.address.formatted_address)
+        if 'batchItems' in result and result['batchItems']:
+            # item 1
+            features = result['batchItems'][0]['features']
+            if features:
+                props = features[0].get('properties', {})
+                if props and 'address' in props and props['address']:
+                    print(props['address'].get('formattedAddress', 'No formatted address for item 1 found'))
+                else:
+                    print("Address 1 is None")
             else:
-                print("Address 1 is None")
-        else:
-            print("No features available for item 1")
+                print("No features available for item 1")
 
-        features = result.batch_items[1].features
-        if features:
-            props = features[0].properties
-            if props and props.address:
-                print(props.address.formatted_address)
+            # item 2
+            features = result['batchItems'][1]['features']
+            if features:
+                props = features[0].get('properties', {})
+                if props and 'address' in props and props['address']:
+                    print(props['address'].get('formattedAddress', 'No formatted address for item 2 found'))
+                else:
+                    print("Address 2 is None")
             else:
-                print("Address 2 is None")
+                print("No features available for item 2")
         else:
-            print("No features available for item 2")
-    else:
-        print("No batch items found")
+            print("No batch items found")
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
+
 
 if __name__ == '__main__':
    reverse_geocode_batch()

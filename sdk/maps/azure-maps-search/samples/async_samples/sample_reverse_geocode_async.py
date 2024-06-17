@@ -19,28 +19,32 @@ USAGE:
 import asyncio
 import os
 
-from azure.maps.search.models import LatLon
+from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 
 async def reverse_geocode_async():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search.aio import MapsSearchClient
+    from azure.maps.search.aio import AzureMapsSearchClient
 
-    maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        result = await maps_search_client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
-
-    if result.features:
-        props = result.features[0].properties
-        if props and props.address:
-            print(props.address.formatted_address)
-        else:
-            print("Address is None")
-    else:
-        print("No features available")
+        try:
+            result = await maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
+            if 'features' in result and result['features']:
+                props = result['features'][0].get('properties', {})
+                if props and 'address' in props and props['address']:
+                    print(props['address'].get('formattedAddress', 'No formatted address found'))
+                else:
+                    print("Address is None")
+            else:
+                print("No features available")
+        except HttpResponseError as exception:
+            if exception.error is not None:
+                print(f"Error Code: {exception.error.code}")
+                print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
     asyncio.run(reverse_geocode_async())
