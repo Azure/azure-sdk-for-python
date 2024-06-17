@@ -82,7 +82,7 @@
             "kind": "TextAnalytics",
             "properties": {
                 "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
-            },
+            }
         },
         {
             "type": "Microsoft.CognitiveServices/accounts",
@@ -111,7 +111,7 @@
             "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[parameters('testApplicationOid')]"
-            },
+            }
         }
     ],
     "outputs": {
