@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
@@ -15,7 +17,7 @@ from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
     pip install azure-identity
     pip install azure-mgmt-mobilenetwork
 # USAGE
-    python data_network_get.py
+    python sim_move.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +32,19 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.data_networks.get(
-        resource_group_name="rg1",
-        mobile_network_name="testMobileNetwork",
-        data_network_name="testDataNetwork",
-    )
+    response = client.sims.begin_move(
+        resource_group_name="testResourceGroupName",
+        sim_group_name="testSimGroup",
+        parameters={
+            "sims": ["testSim", "testSim2"],
+            "targetSimGroupId": {
+                "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg2/providers/Microsoft.MobileNetwork/simGroups/testSimGroup1"
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-04-01/examples/DataNetworkGet.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-04-01/examples/SimMove.json
 if __name__ == "__main__":
     main()
