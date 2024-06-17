@@ -91,12 +91,10 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
         )
         data = TestRadiologyInsightsClient.create_request(self)
-        request_time = datetime.datetime.now(datetime.timezone.utc)
         poller = await radiology_insights_client.begin_infer_radiology_insights(
             data,
             headers={
-                "Repeatability-First-Sent": request_time.strftime("%a, %d %b %Y %H:%M:%S GMT"),
-                "Repeatability-Request-ID": "5189b7f2-a13a-4cac-bebf-407c4ffc3a7c",
+                "Repeatability-Request-ID": "5189b7f2-a13a-4cac-bebf-407c4ffc3a7d",
             },
         )
         radiology_insights_result = await poller.result()
