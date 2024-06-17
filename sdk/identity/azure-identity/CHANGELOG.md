@@ -1,8 +1,6 @@
 # Release History
 
-## 1.17.0 (Unreleased)
-
-### Features Added
+## 1.17.0 (2024-06-18)
 
 ### Breaking Changes
 
@@ -13,8 +11,6 @@
 ### Bugs Fixed
 
 - Allow credential chains to continue when an IMDS probe request returns a non-JSON response in `ManagedIdentityCredential`. ([#36016](https://github.com/Azure/azure-sdk-for-python/pull/36016))
-
-### Other Changes
 
 ## 1.17.0b2 (2024-06-11)
 
