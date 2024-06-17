@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
     pip install azure-identity
     pip install azure-mgmt-storagemover
 # USAGE
-    python agents_get.py
+    python agents_get_minimum_set.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-10-01/examples/Agents_Get.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2024-07-01/examples/Agents_Get_MinimumSet.json
 if __name__ == "__main__":
     main()

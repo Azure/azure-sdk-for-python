@@ -17,7 +17,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
     pip install azure-identity
     pip install azure-mgmt-storagemover
 # USAGE
-    python endpoints_create_or_update_azure_storage_smb_file_share.py
+    python agents_create_or_update_upload_limit_schedule_overnight.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,22 +32,36 @@ def main():
         subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
-    response = client.endpoints.create_or_update(
+    response = client.agents.create_or_update(
         resource_group_name="examples-rg",
         storage_mover_name="examples-storageMoverName",
-        endpoint_name="examples-endpointName",
-        endpoint={
+        agent_name="examples-agentName",
+        agent={
             "properties": {
-                "description": "Example Storage File Share Endpoint Description",
-                "endpointType": "AzureStorageSmbFileShare",
-                "fileShareName": "examples-fileshare",
-                "storageAccountResourceId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.Storage/storageAccounts/examplesa",
+                "arcResourceId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.HybridCompute/machines/examples-hybridComputeName",
+                "arcVmUuid": "3bb2c024-eba9-4d18-9e7a-1d772fcc5fe9",
+                "uploadLimitSchedule": {
+                    "weeklyRecurrences": [
+                        {
+                            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                            "endTime": {"hour": 24, "minute": 0},
+                            "limitInMbps": 2000,
+                            "startTime": {"hour": 18, "minute": 0},
+                        },
+                        {
+                            "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                            "endTime": {"hour": 9, "minute": 0},
+                            "limitInMbps": 2000,
+                            "startTime": {"hour": 0, "minute": 0},
+                        },
+                    ]
+                },
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2024-07-01/examples/Endpoints_CreateOrUpdate_AzureStorageSmbFileShare.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2024-07-01/examples/Agents_CreateOrUpdate_UploadLimitSchedule_Overnight.json
 if __name__ == "__main__":
     main()
