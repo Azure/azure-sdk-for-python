@@ -301,12 +301,12 @@ class SecretClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
-        pipeline_response, deleted_secret_bundle = await self._client.delete_secret(  # pyright: ignore[reportGeneralTypeIssues]
+        pipeline_response, deleted_secret_bundle = await self._client.delete_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
-        )
+        )  # pyright: ignore[reportGeneralTypeIssues]
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
 
         polling_method = AsyncDeleteRecoverPollingMethod(
@@ -422,12 +422,12 @@ class SecretClient(AsyncKeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
-        pipeline_response, recovered_secret_bundle = await self._client.recover_deleted_secret(  # pyright: ignore[reportGeneralTypeIssues]
+        pipeline_response, recovered_secret_bundle = await self._client.recover_deleted_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
-        )
+        )  # pyright: ignore[reportGeneralTypeIssues]
         recovered_secret = SecretProperties._from_secret_bundle(recovered_secret_bundle)
 
         command = partial(self.get_secret, name=name, **kwargs)

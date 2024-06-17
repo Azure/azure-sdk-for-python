@@ -1,6 +1,6 @@
 {
   "reportMissingImports": false,
-  "pythonVersion": "3.10",
+  "pythonVersion": "3.8",
   "exclude": [
     "**/_generated/**"
   ]
