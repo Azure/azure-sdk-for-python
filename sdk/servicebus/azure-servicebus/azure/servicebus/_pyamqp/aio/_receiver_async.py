@@ -59,6 +59,7 @@ class ReceiverLink(Link):
     async def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
+        self._received_messages.add(frame[2])
         self.delivery_count += 1
         self.received_delivery_id = frame[1] # delivery_id
         # If more is false --> this is the last frame of the message
@@ -77,8 +78,6 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
             delivery_state = await self._process_incoming_message(self._first_frame, message)
-            if not delivery_state:
-                self._received_messages.add(frame[2])
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
