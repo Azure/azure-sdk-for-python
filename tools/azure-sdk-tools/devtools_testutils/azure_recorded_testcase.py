@@ -154,10 +154,26 @@ class AzureRecordedTestCase(object):
                     return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
 
             # Use DefaultAzureCredential for live tests
-            from azure.identity import DefaultAzureCredential
+            from azure.identity import DefaultAzureCredential, ChainedTokenCredential
             if is_async:
-                from azure.identity.aio import DefaultAzureCredential
-            return DefaultAzureCredential(exclude_managed_identity_credential=True)
+                from azure.identity.aio import DefaultAzureCredential, ChainedTokenCredential
+            service_connection_id = os.environ.get("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
+            client_id = os.environ.get("AZURESUBSCRIPTION_CLIENT_ID")
+            tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
+            system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN")
+            if service_connection_id and client_id and tenant_id and system_access_token:
+                from azure.identity import AzurePipelinesCredential
+                if is_async:
+                    from azure.identity.aio import AzurePipelinesCredential
+                return AzurePipelinesCredential(
+                    tenant_id=tenant_id,
+                    client_id=client_id,
+                    service_connection_id=service_connection_id,
+                    system_access_token=system_access_token)
+            # from azure.identity import DefaultAzureCredential
+            # if is_async:
+            #     from azure.identity.aio import DefaultAzureCredential
+            # return DefaultAzureCredential(exclude_managed_identity_credential=True)
 
         # For playback tests, return credentials that will accept playback `get_token` calls
         else:
