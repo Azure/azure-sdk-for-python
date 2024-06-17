@@ -15,7 +15,7 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
     pip install azure-identity
     pip install azure-mgmt-storagemover
 # USAGE
-    python job_definitions_get.py
+    python agents_get_maximum_set.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,14 @@ def main():
         subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
     )
 
-    response = client.job_definitions.get(
+    response = client.agents.get(
         resource_group_name="examples-rg",
         storage_mover_name="examples-storageMoverName",
-        project_name="examples-projectName",
-        job_definition_name="examples-jobDefinitionName",
+        agent_name="examples-agentName",
     )
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2024-07-01/examples/JobDefinitions_Get.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2024-07-01/examples/Agents_Get_MaximumSet.json
 if __name__ == "__main__":
     main()
