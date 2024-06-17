@@ -35,6 +35,8 @@ def _get_client_args(**kwargs) -> Optional[Dict]:
 
     if kwargs.get("client_id"):
         identity_config["clientid"] = kwargs.pop("client_id")
+    elif os.environ.get(EnvironmentVariables.DEFAULT_IDENTITY_CLIENT_ID):
+        identity_config["clientid"] = os.environ[EnvironmentVariables.DEFAULT_IDENTITY_CLIENT_ID]
 
     return dict(
         kwargs,

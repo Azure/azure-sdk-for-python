@@ -309,6 +309,43 @@ def test_azure_ml_tenant_id():
         assert token.expires_on == expected_token.expires_on
 
 
+def test_azure_ml_client_id():
+    expected_access_token = "****"
+    url = "http://localhost:42/token"
+    secret = "expected-secret"
+    expected_client_id = "expected-client-id"
+    scope = "scope"
+
+    def send(request, **kwargs):
+        assert "clientid" in request.query
+        assert request.query["clientid"] == expected_client_id
+        print(request)
+        return mock_response(
+            json_payload=(build_aad_response(access_token=expected_access_token, expires_on="42", resource=scope))
+        )
+
+    environ = {
+        EnvironmentVariables.MSI_ENDPOINT: url,
+        EnvironmentVariables.MSI_SECRET: secret,
+        EnvironmentVariables.DEFAULT_IDENTITY_CLIENT_ID: "different-client-id",
+    }
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        # Client ID passed to the credential should override the environment.
+        credential = ManagedIdentityCredential(client_id=expected_client_id, transport=mock.Mock(send=send))
+        token = credential.get_token(scope)
+        assert token.token == expected_access_token
+
+    environ = {
+        EnvironmentVariables.MSI_ENDPOINT: url,
+        EnvironmentVariables.MSI_SECRET: secret,
+        EnvironmentVariables.DEFAULT_IDENTITY_CLIENT_ID: expected_client_id,
+    }
+    with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+        credential = ManagedIdentityCredential(transport=mock.Mock(send=send))
+        token = credential.get_token(scope)
+        assert token.token == expected_access_token
+
+
 def test_cloud_shell_user_assigned_identity():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
