@@ -64,8 +64,8 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
     ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
         """Send events to the Event Grid Service.
 
-        :param events: The event(s) to send. If sending to an Event Grid Namespace, the dict or list of dicts
-         should be in the format of a CloudEvent.
+        :param events: The event(s) to send. If sending to an Event Grid Namespace, the dict, list of dicts,
+         or event(s) should be in the format of a CloudEvent.
         :type events: CloudEvent or List[CloudEvent] or Dict[str, Any] or List[Dict[str, Any]]
          or CNCFCloudEvent or List[CNCFCloudEvent] or EventGridEvent or List[EventGridEvent]
         :keyword channel_name: The name of the channel to send the event to. Event Grid Basic Resource only.
@@ -114,8 +114,6 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
 
     def _http_response_error_handler(self, exception):
         if isinstance(exception, HttpResponseError):
-            if exception.status_code == 400:
-                raise HttpResponseError("Invalid event data. Please check the data and try again.") from exception
             if exception.status_code == 404:
                 raise ResourceNotFoundError(
                     "Resource not found. "
@@ -138,15 +136,15 @@ class EventGridConsumerClientOperationsMixin(ConsumerOperationsMixin):
         """Receive Batch of Cloud Events from the Event Subscription.
 
         :keyword max_events: Max Events count to be received. Minimum value is 1, while maximum value
-         is 100 events. If not specified, the default value is 1. Default value is None.
+         is 100 events. The default is None, meaning it will receive one event if available.
         :paramtype max_events: int
         :keyword max_wait_time: Max wait time value for receive operation in Seconds. It is the time in
          seconds that the server approximately waits for the availability of an event and responds to
          the request. If an event is available, the broker responds immediately to the client. Minimum
-         value is 10 seconds, while maximum value is 120 seconds. If not specified, the default value is
-         60 seconds. Default value is None.
+         value is 10 seconds, while maximum value is 120 seconds. The default value is None, meaning it
+         will wait for 60 seconds.
         :paramtype max_wait_time: int
-        :return: ReceiveDetails
+        :return: ReceiveDetails list of received events and their broker properties.
         :rtype: list[~azure.eventgrid.models.ReceiveDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """

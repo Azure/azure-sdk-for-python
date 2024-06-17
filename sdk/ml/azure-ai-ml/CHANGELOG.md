@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
+- InputTypes exported in constants module
 
 ### Breaking Changes
 
