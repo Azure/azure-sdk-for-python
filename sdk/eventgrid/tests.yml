@@ -5,6 +5,7 @@ extends:
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
+      Location: eastus
       UseFederatedAuth: true
       MatrixReplace:
         - TestSamples=.*/true
