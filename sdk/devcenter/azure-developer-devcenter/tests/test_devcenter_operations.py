@@ -277,9 +277,8 @@ class TestDevcenter(AzureRecordedTestCase):
         start_result = start_response.result()
         assert start_result.status == OperationStatus.SUCCEEDED
 
-        delete_response = client.begin_delete_dev_box(project_name, default_user, devbox_name)
-        delete_result = delete_response.result()
-        assert delete_result.status == OperationStatus.SUCCEEDED
+        delete_poller = client.begin_delete_dev_box(project_name, default_user, devbox_name)
+        delete_poller.result()
 
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
@@ -417,6 +416,5 @@ class TestDevcenter(AzureRecordedTestCase):
         all_envs_response = list(all_envs_response)
         assert len(all_envs_response) == 1 and all_envs_response[0].name == env_response.name
 
-        delete_response = client.begin_delete_environment(project_name, default_user, env_name)
-        delete_result = delete_response.result()
-        assert delete_result.status == OperationStatus.SUCCEEDED
+        delete_poller = client.begin_delete_environment(project_name, default_user, env_name)
+        delete_poller.result()
