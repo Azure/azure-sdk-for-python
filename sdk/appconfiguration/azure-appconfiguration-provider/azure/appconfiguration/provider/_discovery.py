@@ -8,7 +8,7 @@ import os
 import time
 from dataclasses import dataclass
 import dns.resolver
-from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers
+from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
 
@@ -74,7 +74,7 @@ def _request_record(request):
     while time.time() - now < 5:
         try:
             return dns.resolver.resolve(request, "SRV")
-        except NXDOMAIN:
+        except NXDOMAIN:  # cspell:disable-line
             break
         except (LifetimeTimeout, NoNameservers):
             continue
@@ -90,7 +90,7 @@ def _validate(known_domain, endpoint):
 
 
 def _get_known_domains(known_host):
-    trusted_domain_labels = ["appconfig", "azconfig"]
+    trusted_domain_labels = ["appconfig", "azconfig"]  # cspell:disable-line
 
     for label in trusted_domain_labels:
         index = known_host.lower().find(f".{label}.")
