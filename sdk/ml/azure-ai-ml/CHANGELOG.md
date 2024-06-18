@@ -2,6 +2,9 @@
 
 ## 1.17.0 (2024-06-18)
 
+### Bugs Fixed
+- Issues with workspace connections fixed.
+
 ## 1.16.0 (2024-05-14)
 
 ### Features Added
