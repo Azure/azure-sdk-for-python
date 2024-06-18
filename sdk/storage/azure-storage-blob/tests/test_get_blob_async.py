@@ -9,7 +9,6 @@ import tempfile
 import uuid
 from io import BytesIO
 from math import ceil
-from os import path, remove
 
 import pytest
 from azure.core.exceptions import HttpResponseError
@@ -19,17 +18,16 @@ from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import ProgressTracker
+from test_helpers_async import ProgressTracker, NonSeekableStream
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
 
+
 class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
-
     # --Helpers-----------------------------------------------------------------
-
-    async def _setup(self, storage_account_name, key):
+    async def _setup(self, storage_account_name, key, upload_blob=True):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=key,
@@ -46,27 +44,14 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             except:
                 pass
 
-            blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
-            await blob.upload_blob(self.byte_data, overwrite=True)
+            if upload_blob:
+                blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+                await blob.upload_blob(self.byte_data, overwrite=True)
 
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    class NonSeekableFile(object):
-        def __init__(self, wrapped_file):
-            self.wrapped_file = wrapped_file
-
-        def write(self, data):
-            self.wrapped_file.write(data)
-
-        def read(self, count):
-            return self.wrapped_file.read(count)
-
-        def seekable(self):
-            return False
-
     # -- Get test cases for blobs ----------------------------------------------
-
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_unicode_get_blob_unicode_data(self, **kwargs):
@@ -583,7 +568,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             read_bytes = await downloader.readinto(temp_file)
 
             # Assert
-            assert read_bytes == blob_size
+            assert read_bytes == blob_size - 1
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data[1:blob_size] == actual
@@ -611,7 +596,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             read_bytes = await downloader.readinto(temp_file)
 
             # Assert
-            assert read_bytes == blob_size
+            assert read_bytes == blob_size - 1
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data[1:blob_size] == actual
@@ -806,7 +791,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            non_seekable_stream = TestStorageGetBlobTest.NonSeekableFile(temp_file)
+            non_seekable_stream = NonSeekableStream(temp_file)
             downloader = await blob.download_blob(max_concurrency=1)
             read_bytes = await downloader.readinto(non_seekable_stream)
 
@@ -830,7 +815,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            non_seekable_stream = TestStorageGetBlobTest.NonSeekableFile(temp_file)
+            non_seekable_stream = NonSeekableStream(temp_file)
 
             with pytest.raises(ValueError):
                 downloader = await blob.download_blob(max_concurrency=2)
@@ -1265,7 +1250,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1294,7 +1279,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
         data = b'12345' * 205 * 5  # 5125 bytes
@@ -1458,7 +1443,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1536,7 +1521,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1575,7 +1560,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1616,7 +1601,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        await self._setup(storage_account_name, storage_account_key)
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
         self.bsc._config.max_single_get_size = 1024
         self.bsc._config.max_chunk_get_size = 1024
 
@@ -1624,12 +1609,11 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         await blob.upload_blob(data, overwrite=True)
 
-        # Custom progress tracker for 4 read calls then readall
         class CustomProgressTracker:
             def __init__(self):
                 self.num_read = 0
-                self.totals = [5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125, 5125]
-                self.currents = [500, 1000, 1024, 1500, 2000, 3024, 4048, 5072, 5125]
+                self.currents = [1024, 2048, 3072, 4096, 5120, 5125]
+                self.totals = [5125] * len(self.currents)
 
             async def assert_progress(self, current, total):
                 assert total == self.totals[self.num_read]
@@ -1643,5 +1627,192 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         for _ in range(4):
             await stream.read(500)
         await stream.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_progress_chars(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 260  # 3120 bytes
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, overwrite=True)
+
+        class CustomProgressTracker:
+            def __init__(self):
+                self.num_read = 0
+                self.currents = [1024, 2048, 3072, 3120]
+                self.totals = [3120] * len(self.currents)
+
+            async def assert_progress(self, current, total):
+                assert total == self.totals[self.num_read]
+                assert current == self.currents[self.num_read]
+                self.num_read += 1
+
+        progress = CustomProgressTracker()
+        stream = await blob.download_blob(encoding='utf-8', progress_hook=progress.assert_progress)
+
+        # Act / Assert
+        for _ in range(4):
+            await stream.read(chars=50)
+        await stream.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_chars_single(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 5
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = await blob.download_blob(encoding='utf-8')
+        assert await stream.read() == data
+
+        stream = await blob.download_blob(encoding='utf-8')
+        assert await stream.read(chars=100000) == data
+
+        result = ''
+        stream = await blob.download_blob(encoding='utf-8')
+        for _ in range(4):
+            chunk = await stream.read(chars=5)
+            result += chunk
+            assert len(chunk) == 5
+
+        result += await stream.readall()
+        assert result == data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_chars_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 256  # 3 KiB
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = await blob.download_blob(encoding='utf-8')
+        assert await stream.read() == data
+
+        stream = await blob.download_blob(encoding='utf-8')
+        assert await stream.read(chars=100000) == data
+
+        result = ''
+        stream = await blob.download_blob(encoding='utf-8')
+        for _ in range(4):
+            chunk = await stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += await stream.readall()
+        assert result == data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_chars_ranged(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 256  # 3 KiB
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        # Offset and length need to be multiple of 3 to meet unicode boundaries
+        offset, length = 9, 1500
+        expected = data[offset // 3: offset // 3 + length // 3]
+        stream = await blob.download_blob(offset=offset, length=length, encoding='utf-8')
+        assert await stream.read() == expected
+
+        stream = await blob.download_blob(offset=offset, length=length, encoding='utf-8')
+        assert await stream.read(chars=100000) == expected
+
+        result = ''
+        stream = await blob.download_blob(offset=offset, length=length, encoding='utf-8')
+        for _ in range(4):
+            chunk = await stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += await stream.readall()
+        assert result == expected
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_chars_mixed(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 2
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = await blob.download_blob(encoding='utf-8')
+
+        # Read some data as chars, this should prevent any reading as bytes
+        assert await stream.read(chars=4) == '你好世界'
+
+        # readinto, chunks, and read(size=x) should now be blocked
+        with pytest.raises(ValueError) as e:
+            await stream.readinto(BytesIO())
+        assert 'Stream has been partially read in text mode.' in str(e.value)
+        with pytest.raises(ValueError) as e:
+            stream.chunks()
+        assert 'Stream has been partially read in text mode.' in str(e.value)
+        with pytest.raises(ValueError) as e:
+            await stream.read(size=12)
+        assert 'Stream has been partially read in text mode.' in str(e.value)
+
+        # read() should still work to get remaining chars
+        assert await stream.read() == '你好世界'
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_read_chars_utf32(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key, upload_blob=False)
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
+
+        data = '你好世界' * 256
+        encoding = 'utf-32'
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, encoding=encoding, overwrite=True)
+
+        stream = await blob.download_blob(encoding=encoding)
+        assert await stream.read() == data
+
+        result = ''
+        stream = await blob.download_blob(encoding=encoding)
+        for _ in range(4):
+            chunk = await stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += await stream.readall()
+        assert result == data
 
 # ------------------------------------------------------------------------------
