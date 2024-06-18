@@ -263,7 +263,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         # leaving the extra credits on the wire
                         for msg in receiver.receive_messages(max_message_count=10, max_wait_time=5):
                             receiver.complete_message(msg)
-                            received_msgs.append(received_msgs)
+                            received_msgs.append(msg)
                     assert len(received_msgs) == 5
 
                     # send 5 more messages, those messages would arrive at the client while the program is sleeping
@@ -3372,3 +3372,35 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         )
                 for message in received_deferred_msg:
                     assert message.state == ServiceBusMessageState.DEFERRED
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_complete_message_on_different_receiver(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
+            receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
+            
+            sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
+            received_msgs = []
+            # the amount of messages returned by receive call is not stable, especially in live tests
+            # of different os platforms, this is why a while loop is used here to receive the specific
+            # amount of message we want to receive
+            while len(received_msgs) < 5:
+                # issue link credits more than 5, client should consume 5 msgs from the service in total,
+                # leaving the extra credits on the wire
+                for msg in receiver2.receive_messages(max_message_count=10, max_wait_time=5):
+                    receiver2.complete_message(msg)
+                    received_msgs.append(msg)
+            
+            assert len(received_msgs) == 5
+            
+            messages_in_queue = receiver1.peek_messages()
+
+            assert len(messages_in_queue) == 0

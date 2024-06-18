@@ -2955,3 +2955,36 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         )                
                 for message in received_deferred_msg:
                     assert message.state == ServiceBusMessageState.DEFERRED
+    
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_queue_complete_message_on_different_receiver_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
+            receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
+            
+            await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
+            received_msgs = []
+            # the amount of messages returned by receive call is not stable, especially in live tests
+            # of different os platforms, this is why a while loop is used here to receive the specific
+            # amount of message we want to receive
+            while len(received_msgs) < 5:
+                # issue link credits more than 5, client should consume 5 msgs from the service in total,
+                # leaving the extra credits on the wire
+                for msg in await receiver2.receive_messages(max_message_count=10, max_wait_time=5):
+                    await receiver2.complete_message(msg)
+                    received_msgs.append(msg)
+            
+            assert len(received_msgs) == 5
+            
+            messages_in_queue = await receiver1.peek_messages()
+
+            assert len(messages_in_queue) == 0
