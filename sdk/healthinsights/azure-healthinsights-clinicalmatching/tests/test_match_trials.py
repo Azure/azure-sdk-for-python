@@ -13,7 +13,7 @@ from devtools_testutils import (
 HealthInsightsEnvPreparer = functools.partial(
     PowerShellPreparer,
     "healthinsights",
-    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
+    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
     healthinsights_key="00000000000000000000000000000000",
 )
 
