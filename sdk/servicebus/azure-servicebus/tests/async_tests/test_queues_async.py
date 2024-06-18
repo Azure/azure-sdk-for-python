@@ -2979,7 +2979,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             while len(received_msgs) < 5:
                 # issue link credits more than 5, client should consume 5 msgs from the service in total,
                 # leaving the extra credits on the wire
-                for msg in await receiver2.receive_messages(max_message_count=10, max_wait_time=5):
+                for msg in await receiver1.receive_messages(max_message_count=10, max_wait_time=5):
                     await receiver2.complete_message(msg)
                     received_msgs.append(msg)
             
