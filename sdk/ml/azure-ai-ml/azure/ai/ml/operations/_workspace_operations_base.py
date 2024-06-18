@@ -33,7 +33,7 @@ from azure.ai.ml._utils._workspace_utils import (
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceKind, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceKind, WorkspaceResourceConstants, WORKSPACE_PATCH_REJECTED_KEYS
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -124,6 +124,9 @@ class WorkspaceOperationsBase(ABC):
                 workspace.tags.pop("createdByToolkit")
             if existing_workspace.tags is not None:
                 existing_workspace.tags.update(workspace.tags)  # type: ignore
+                # Remove deprecated keys from older workspaces that might still have them before we try to update.
+                for bad_key in WORKSPACE_PATCH_REJECTED_KEYS:
+                    _ = existing_workspace.tags.pop(bad_key, None)
             workspace.tags = existing_workspace.tags
             # TODO do we want projects to do this?
             if workspace._kind != WorkspaceKind.PROJECT:

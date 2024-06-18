@@ -6,6 +6,7 @@
 
 ### Bugs Fixed
 - InputTypes exported in constants module
+- Workspace update no longer broken for older workspaces due to deprecated tags.
 
 ### Breaking Changes
 
