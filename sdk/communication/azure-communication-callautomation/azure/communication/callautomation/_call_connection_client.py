@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional, List, Union, Dict
+from typing import TYPE_CHECKING, Optional, List, Union, Dict, overload
 from urllib.parse import urlparse
 import warnings
 
@@ -411,7 +411,45 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         return RemoveParticipantResult._from_generated(response) # pylint:disable=protected-access
 
-    @distributed_trace
+    @overload
+    def play_media(
+        self,
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Play media to specific participant(s) in this call.
+
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource] or
+         list[~azure.communication.callautomation.TextSource] or
+         list[~azure.communication.callautomation.SsmlSource]
+        :param play_to: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
+        :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword loop: Whether the media should be repeated until cancelled.
+        :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
     def play_media(
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
@@ -452,13 +490,23 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+    @distributed_trace
+    def play_media(
+        self,
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        **kwargs
+    ) -> None:
+
         self._play_media(
             play_source=play_source,
             play_to=play_to,
-            loop=loop,
-            operation_context=operation_context,
-            operation_callback_url=operation_callback_url,
-            interrupt_call_media_operation=interrupt_call_media_operation,
+            loop=kwargs.pop("loop", False),
+            operation_context=kwargs.pop("operation_context", None),
+            operation_callback_url=kwargs.pop("operation_callback_url", None),
+            interrupt_call_media_operation=kwargs.pop("interrupt_call_media_operation", None),
             **kwargs
         )
 
@@ -1001,7 +1049,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         hold_request=HoldRequest(
             target_participant=serialize_identifier(target_participant),
-            play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
+            play_source_info=play_source_single._to_generated() # pylint:disable=protected-access
+            if play_source_single else None,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             kwargs=kwargs

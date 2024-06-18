@@ -21,7 +21,9 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MediaStreamingOptions,
+    MediaStreamingSubscription,
     TranscriptionOptions,
+    TranscriptionSubscription,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -30,7 +32,11 @@ from ._models import (
     ServerCallLocator,
     GroupCallLocator,
     AzureBlobContainerRecordingStorage,
-    AzureCommunicationsRecordingStorage
+    AzureCommunicationsRecordingStorage,
+    AudioMetadata,
+    AudioData,
+    TranscriptionMetadata,
+    TranscriptionData
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -75,9 +81,15 @@ __all__ = [
     "RecognitionChoice",
     "ChannelAffinity",
     "MediaStreamingOptions",
+    "MediaStreamingSubscription",
     "TranscriptionOptions",
-    'AzureBlobContainerRecordingStorage',
-    'AzureCommunicationsRecordingStorage',
+    "TranscriptionSubscription",
+    "AzureBlobContainerRecordingStorage",
+    "AzureCommunicationsRecordingStorage",
+    "AudioMetadata",
+    "AudioData",
+    "TranscriptionMetadata",
+    "TranscriptionData",
 
     # models for output
     "CallConnectionProperties",
