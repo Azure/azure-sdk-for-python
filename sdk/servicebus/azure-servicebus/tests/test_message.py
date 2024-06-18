@@ -374,12 +374,11 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_message_backcompat_receive_and_delete_databody(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_backcompat_receive_and_delete_databody(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string = None, servicebus_queue, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = ServiceBusMessage(
             body="hello",
@@ -396,8 +395,6 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             reply_to_session_id="reply to session"
         )
 
-        sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -519,12 +516,11 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_message_backcompat_peek_lock_databody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    def test_message_backcompat_peek_lock_databody(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = ServiceBusMessage(
             body="hello",
@@ -541,8 +537,6 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             reply_to_session_id="reply to session"
         )
 
-        sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -667,20 +661,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_message_backcompat_receive_and_delete_valuebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    def test_message_backcompat_receive_and_delete_valuebody(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(value_body={b"key": b"value"})
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -708,20 +699,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_message_backcompat_peek_lock_valuebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    def test_message_backcompat_peek_lock_valuebody(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(value_body={b"key": b"value"})
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -751,20 +739,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_message_backcompat_receive_and_delete_sequencebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    def test_message_backcompat_receive_and_delete_sequencebody(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -792,20 +777,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_message_batch_backcompat(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    def test_message_batch_backcompat(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
         with pytest.raises(AttributeError):
             outgoing_message.message
 
-        sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 

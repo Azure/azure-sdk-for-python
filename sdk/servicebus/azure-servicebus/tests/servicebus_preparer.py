@@ -3,12 +3,15 @@ import os
 import time
 import datetime
 import logging
+import uuid
 
 from azure.core.exceptions import HttpResponseError
 from azure.mgmt.resource import ResourceManagementClient
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
 from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights, SBAuthorizationRule
+
+from azure.identity import DefaultAzureCredential
 
 from devtools_testutils import (
     AzureMgmtPreparer,
@@ -194,6 +197,7 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             f'{self.parameter_name}_connection_string': self.connection_string,
             f'{self.parameter_name}_key_name': self.key_name,
             f'{self.parameter_name}_primary_key': self.primary_key,
+            f'{self.parameter_name}_fully_qualified_namespace': f"{name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         }
 
     def remove_resource(self, name, **kwargs):
@@ -267,14 +271,14 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=BASE_URL, credential_scopes=CREDENTIAL_SCOPES)
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             retries = 4
             for i in range(retries):
                 try:
                     self.resource = self.client.topics.create_or_update(
-                        group.name,
-                        namespace.name,
+                        group,
+                        namespace,
                         name,
                         {}
                     )
@@ -285,18 +289,25 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
                     if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
                         raise
                     time.sleep(3)
+            key = self.client.namespaces.list_keys(group, namespace, SERVICEBUS_DEFAULT_AUTH_RULE_NAME)
+            self.connection_string = key.primary_connection_string
+            self.key_name = key.key_name
+            self.primary_key = key.primary_key
 
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
             self.parameter_name: self.resource,
+            'servicebus_fully_qualified_namespace': os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE'),
+            'servicebus_namespace_key_name': self.key_name,
+            'servicebus_namespace_primary_key': self.primary_key,
         }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
-            self.client.topics.delete(group.name, namespace.name, name)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
+            self.client.topics.delete(group, namespace, name)
 
 
 class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
@@ -331,15 +342,15 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=BASE_URL, credential_scopes=CREDENTIAL_SCOPES)
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             topic = self._get_topic(**kwargs)
             retries = 4
             for i in range(retries):
                 try:
                     self.resource = self.client.subscriptions.create_or_update(
-                        group.name,
-                        namespace.name,
+                        group,
+                        namespace,
                         topic.name,
                         name,
                         SBSubscription(
@@ -354,19 +365,26 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                     if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
                         raise
                     time.sleep(3)
+            
+            key = self.client.namespaces.list_keys(group, namespace, SERVICEBUS_DEFAULT_AUTH_RULE_NAME)
+            self.connection_string = key.primary_connection_string
+            self.key_name = key.key_name
+            self.primary_key = key.primary_key
 
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
             self.parameter_name: self.resource,
+            'servicebus_namespace_key_name': self.key_name,
+            'servicebus_namespace_primary_key': self.primary_key,
         }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             topic = self._get_topic(**kwargs)
-            self.client.subscriptions.delete(group.name, namespace.name, topic.name, name)
+            self.client.subscriptions.delete(group, namespace, topic.name, name)
 
     def _get_topic(self, **kwargs):
         try:
@@ -411,14 +429,14 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=BASE_URL, credential_scopes=CREDENTIAL_SCOPES)
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             retries = 4
             for i in range(retries):
                 try:
                     self.resource = self.client.queues.create_or_update(
-                        group.name,
-                        namespace.name,
+                        group,
+                        namespace,
                         name,
                         SBQueue(
                             lock_duration=self.lock_duration,
@@ -433,18 +451,26 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                     if (error not in str(ex) and not_found_error not in str(ex)) or i == retries - 1:
                         raise
                     time.sleep(3)
+            key = self.client.namespaces.list_keys(group, namespace, SERVICEBUS_DEFAULT_AUTH_RULE_NAME)
+            self.connection_string = key.primary_connection_string
+            self.key_name = key.key_name
+            self.primary_key = key.primary_key
 
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
             self.parameter_name: self.resource,
+            'servicebus_fully_qualified_namespace': os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE'),
+            'servicebus_namespace_key_name': self.key_name,
+            'servicebus_namespace_primary_key': self.primary_key,
+            
         }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
-            self.client.queues.delete(group.name, namespace.name, name)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
+            self.client.queues.delete(group, namespace, name)
 
 
 class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePreparer):
@@ -473,14 +499,14 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=BASE_URL, credential_scopes=CREDENTIAL_SCOPES)
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             retries = 4
             for i in range(retries):
                 try:
                     self.resource = self.client.namespaces.create_or_update_authorization_rule(
-                        group.name,
-                        namespace.name,
+                        group,
+                        namespace,
                         name,
                         SBAuthorizationRule(rights=self.access_rights)
                     )
@@ -492,7 +518,7 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
                         raise
                     time.sleep(3)
 
-            key = self.client.namespaces.list_keys(group.name, namespace.name, name)
+            key = self.client.namespaces.list_keys(group, namespace, name)
             connection_string = key.primary_connection_string
 
         else:
@@ -505,9 +531,9 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
-            self.client.namespaces.delete_authorization_rule(group.name, namespace.name, name)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
+            self.client.namespaces.delete_authorization_rule(group, namespace, name)
 
 
 class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer):
@@ -538,15 +564,15 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
     def create_resource(self, name, **kwargs):
         if self.is_live:
             self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=BASE_URL, credential_scopes=CREDENTIAL_SCOPES)
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             queue = self._get_queue(**kwargs)
             retries = 4
             for i in range(retries):
                 try:
                     self.resource = self.client.queues.create_or_update_authorization_rule(
-                        group.name,
-                        namespace.name,
+                        group,
+                        namespace,
                         queue.name,
                         name,
                         SBAuthorizationRule(rights=self.access_rights)
@@ -559,7 +585,7 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
                         raise
                     time.sleep(3)
 
-            key = self.client.queues.list_keys(group.name, namespace.name, queue.name, name)
+            key = self.client.queues.list_keys(group, namespace, queue.name, name)
             connection_string = key.primary_connection_string
 
         else:
@@ -572,10 +598,10 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            group = self._get_resource_group(**kwargs)
-            namespace = self._get_namespace(**kwargs)
+            group = os.environ.get('SERVICEBUS_RESOURCE_GROUP')
+            namespace = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE').split('.', 1)[0]
             queue = self._get_queue(**kwargs)
-            self.client.queues.delete_authorization_rule(group.name, namespace.name, queue.name, name)
+            self.client.queues.delete_authorization_rule(group, namespace, queue.name, name)
 
     def _get_queue(self, **kwargs):
         try:

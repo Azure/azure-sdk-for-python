@@ -36,32 +36,24 @@ class TestServiceBusTopicsAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client_async", uamqp_transport_params, indirect=True)
     @ArgPasserAsync()
-    async def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, **kwargs):
-
-        async with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string,
-            logging_enable=False,
-            uamqp_transport=uamqp_transport
-        ) as sb_client:
-            async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
-                message = ServiceBusMessage(b"Sample topic message")
-                await sender.send_messages(message)
+    async def test_topic_by_servicebus_client_conn_str_send_basic(self, sb_client_async, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, **kwargs):
+            
+        async with sb_client_async.get_topic_sender(servicebus_topic.name) as sender:
+            message = ServiceBusMessage(b"Sample topic message")
+            await sender.send_messages(message)
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+    async def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_fully_qualified_namespace, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
+        fully_qualified_namespace = servicebus_fully_qualified_namespace
         async with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(

@@ -38,19 +38,12 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_subscription_by_subscription_client_conn_str_receive_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-
-        with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                logging_enable=False,
-                uamqp_transport=uamqp_transport
-        ) as sb_client:
+    def test_subscription_by_subscription_client_conn_str_receive_basic(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = ServiceBusMessage(b"Sample topic message")
                 sender.send_messages(message)
@@ -80,23 +73,13 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_subscription_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        with ServiceBusClient(
-            fully_qualified_namespace=fully_qualified_namespace,
-            credential=ServiceBusSharedKeyCredential(
-                policy=servicebus_namespace_key_name,
-                key=servicebus_namespace_primary_key
-            ),
-            logging_enable=False,
-            uamqp_transport=uamqp_transport
-        ) as sb_client:
+    def test_subscription_by_sas_token_credential_conn_str_send_basic(self, sb_client, uamqp_transport, *, servicebus_fully_qualified_namespace, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+            fully_qualified_namespace = servicebus_fully_qualified_namespace,
 
             with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = ServiceBusMessage(b"Sample topic message")
@@ -117,7 +100,6 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer()
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -141,19 +123,12 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_subscription_by_servicebus_client_receive_batch_with_deadletter(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-
-        with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                logging_enable=False,
-                uamqp_transport=uamqp_transport
-        ) as sb_client:
+    def test_subscription_by_servicebus_client_receive_batch_with_deadletter(self, sb_client, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
 
             with sb_client.get_subscription_receiver(
                 topic_name=servicebus_topic.name,
@@ -211,14 +186,13 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', lock_duration='PT5S')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_subscription_message_expiry(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+    def test_subscription_message_expiry(self, sb_client, uamqp_transport, *, servicebus_fully_qualified_namespace, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+        fully_qualified_namespace = servicebus_fully_qualified_namespace
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(
@@ -256,14 +230,13 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', lock_duration='PT5S')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @pytest.mark.parametrize("sb_client", uamqp_transport_params, indirect=True)
     @ArgPasser()
-    def test_subscription_receive_and_delete_with_send_and_wait(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+    def test_subscription_receive_and_delete_with_send_and_wait(self, sb_client, uamqp_transport, *, servicebus_fully_qualified_namespace, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+        fully_qualified_namespace = servicebus_fully_qualified_namespace
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(

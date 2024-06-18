@@ -4,8 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
+import os
 
 import pytest
+import pytest_asyncio
 from devtools_testutils import test_proxy
 from devtools_testutils.sanitizers import (
     add_remove_header_sanitizer,
@@ -13,6 +15,12 @@ from devtools_testutils.sanitizers import (
     add_oauth_response_sanitizer,
     set_custom_default_matcher
 )
+
+from azure.servicebus import ServiceBusClient
+from azure.servicebus.aio import ServiceBusClient as ServiceBusClientAsync
+from azure.identity import AzureCliCredential, AzurePowerShellCredential, ManagedIdentityCredential
+from azure.identity.aio import AzureCliCredential as AzureCliCredentialAsync , AzurePowerShellCredential as AzurePowerShellCredentialAsync , ManagedIdentityCredential as ManagedIdentityCredentialAsync
+
 collect_ignore = []
 
 @pytest.fixture(scope="session", autouse=True)
@@ -26,6 +34,39 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z-]+(?=\\.servicebus\\.windows\\.net)"
     )
     add_oauth_response_sanitizer()
+
+@pytest.fixture(scope="session", autouse=True)
+def sb_client(request):
+    if hasattr(request, "param"):
+        uamqp_transport = request.param
+        if 'AZURE_TEST_USE_CLI_AUTH' in os.environ and os.environ['AZURE_TEST_USE_CLI_AUTH'].lower() == 'true':
+            credential = AzureCliCredential()
+        elif 'AZURE_TEST_USE_POWERSHELL_AUTH' in os.environ and os.environ['AZURE_TEST_USE_POWERSHELL_AUTH'].lower() == 'true':
+            credential = AzurePowerShellCredential()
+        else:
+            credential = ManagedIdentityCredential(client_id=os.environ.get('SERVICEBUS_CLIENT_ID'))
+                                                   
+        fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
+        with ServiceBusClient(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
+            yield client
+    else:
+        yield None
+
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def sb_client_async(request):
+    if hasattr(request, "param"):
+        uamqp_transport = request.param
+        if 'AZURE_TEST_USE_CLI_AUTH' in os.environ and os.environ['AZURE_TEST_USE_CLI_AUTH'].lower() == 'true':
+            credential = AzureCliCredentialAsync()
+        elif 'AZURE_TEST_USE_POWERSHELL_AUTH' in os.environ and os.environ['AZURE_TEST_USE_POWERSHELL_AUTH'].lower() == 'true':
+            credential = AzurePowerShellCredentialAsync()
+        else:
+            credential = ManagedIdentityCredentialAsync(client_id=os.environ.get('SERVICEBUS_CLIENT_ID'))
+        fqn = os.environ.get('SERVICEBUS_FULLY_QUALIFIED_NAMESPACE')
+        async with ServiceBusClientAsync(fqn, credential, uamqp_transport=uamqp_transport, logging_enable=False) as client:
+            yield client
+    else:
+        yield None
 
 # Only run stress tests on request.
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):
