@@ -25,12 +25,15 @@ from .operations import (
     CollectionPartitionOperations,
     CollectionPartitionRegionOperations,
     CollectionRegionOperations,
+    DataTransferJobsOperations,
     DatabaseAccountRegionOperations,
     DatabaseAccountsOperations,
     DatabaseOperations,
+    GraphResourcesOperations,
     GremlinResourcesOperations,
     LocationsOperations,
     MongoDBResourcesOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     NotebookWorkspacesOperations,
     Operations,
     PartitionKeyRangeIdOperations,
@@ -55,6 +58,10 @@ from .operations import (
     ServiceOperations,
     SqlResourcesOperations,
     TableResourcesOperations,
+    ThroughputPoolAccountOperations,
+    ThroughputPoolAccountsOperations,
+    ThroughputPoolOperations,
+    ThroughputPoolsOperations,
 )
 
 if TYPE_CHECKING:
@@ -65,6 +72,10 @@ if TYPE_CHECKING:
 class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Cosmos DB Database Service Resource Provider REST API.
 
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.cosmosdb.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar database_accounts: DatabaseAccountsOperations operations
     :vartype database_accounts: azure.mgmt.cosmosdb.operations.DatabaseAccountsOperations
     :ivar operations: Operations operations
@@ -95,6 +106,8 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegionOperations operations
     :vartype partition_key_range_id_region:
      azure.mgmt.cosmosdb.operations.PartitionKeyRangeIdRegionOperations
+    :ivar graph_resources: GraphResourcesOperations operations
+    :vartype graph_resources: azure.mgmt.cosmosdb.operations.GraphResourcesOperations
     :ivar sql_resources: SqlResourcesOperations operations
     :vartype sql_resources: azure.mgmt.cosmosdb.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
@@ -107,6 +120,8 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :vartype gremlin_resources: azure.mgmt.cosmosdb.operations.GremlinResourcesOperations
     :ivar locations: LocationsOperations operations
     :vartype locations: azure.mgmt.cosmosdb.operations.LocationsOperations
+    :ivar data_transfer_jobs: DataTransferJobsOperations operations
+    :vartype data_transfer_jobs: azure.mgmt.cosmosdb.operations.DataTransferJobsOperations
     :ivar cassandra_clusters: CassandraClustersOperations operations
     :vartype cassandra_clusters: azure.mgmt.cosmosdb.operations.CassandraClustersOperations
     :ivar cassandra_data_centers: CassandraDataCentersOperations operations
@@ -155,14 +170,24 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
      azure.mgmt.cosmosdb.operations.RestorableTableResourcesOperations
     :ivar service: ServiceOperations operations
     :vartype service: azure.mgmt.cosmosdb.operations.ServiceOperations
+    :ivar throughput_pools: ThroughputPoolsOperations operations
+    :vartype throughput_pools: azure.mgmt.cosmosdb.operations.ThroughputPoolsOperations
+    :ivar throughput_pool: ThroughputPoolOperations operations
+    :vartype throughput_pool: azure.mgmt.cosmosdb.operations.ThroughputPoolOperations
+    :ivar throughput_pool_accounts: ThroughputPoolAccountsOperations operations
+    :vartype throughput_pool_accounts:
+     azure.mgmt.cosmosdb.operations.ThroughputPoolAccountsOperations
+    :ivar throughput_pool_account: ThroughputPoolAccountOperations operations
+    :vartype throughput_pool_account:
+     azure.mgmt.cosmosdb.operations.ThroughputPoolAccountOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-05-15". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-05-15-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -202,6 +227,9 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.database_accounts = DatabaseAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -233,6 +261,7 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mongo_db_resources = MongoDBResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -245,6 +274,9 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_transfer_jobs = DataTransferJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.cassandra_clusters = CassandraClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -297,6 +329,16 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.throughput_pools = ThroughputPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.throughput_pool = ThroughputPoolOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.throughput_pool_accounts = ThroughputPoolAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.throughput_pool_account = ThroughputPoolAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
