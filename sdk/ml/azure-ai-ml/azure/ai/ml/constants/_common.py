@@ -198,10 +198,7 @@ CONNECTION_RESOURCE_ID_KEY = "ResourceId"
 # Patch operations are used by the workspace begin_upcate operation,
 # but not begin_create_or_update. Once the former is replaced with the
 # latter, we can remove this list.
-WORKSPACE_PATCH_REJECTED_KEYS = [
-    "AttachKeyVaultToWorkspace",
-    "AttachAppInsightsToWorkspace"
-]
+WORKSPACE_PATCH_REJECTED_KEYS = ["AttachKeyVaultToWorkspace", "AttachAppInsightsToWorkspace"]
 
 
 class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
