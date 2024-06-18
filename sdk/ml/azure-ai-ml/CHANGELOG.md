@@ -2,14 +2,6 @@
 
 ## 1.17.0 (2024-06-18)
 
-### Features Added
-
-### Bugs Fixed
-
-### Breaking Changes
-
-### Other Changes
-
 ## 1.16.0 (2024-05-14)
 
 ### Features Added
