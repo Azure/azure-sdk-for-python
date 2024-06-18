@@ -173,8 +173,8 @@ class RemoteRenderingClient(object):
 
     @distributed_trace_async
     async def get_asset_conversion_poller(self, **kwargs) -> AsyncLROPoller[AssetConversion]: # pylint:disable=docstring-keyword-should-match-keyword-only
-        """Returns a poller for an existing conversion by conversion id or a continuation token retrieved from a previous
-        poller.
+        """Returns a poller for an existing conversion by conversion id or a continuation
+        token retrieved from a previous poller.
 
         :keyword str conversion_id: The conversion id of a previously created conversion.
         :keyword str continuation_token: A continuation token retrieved from a poller of a conversion.
