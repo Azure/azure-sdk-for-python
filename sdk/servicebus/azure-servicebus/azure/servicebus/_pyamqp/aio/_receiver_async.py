@@ -59,7 +59,6 @@ class ReceiverLink(Link):
     async def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
-        self._received_messages.add(frame[2])
         self.delivery_count += 1
         self.received_delivery_id = frame[1] # delivery_id
         # If more is false --> this is the last frame of the message
@@ -72,6 +71,7 @@ class ReceiverLink(Link):
         if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
+            self._received_messages.add(frame[2])
             if self._received_payload:
                 message = decode_payload(memoryview(self._received_payload))
                 self._received_payload = bytearray()
