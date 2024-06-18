@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._fetch_cross_region_restore_job_operations import build_get_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -73,7 +78,6 @@ class FetchCrossRegionRestoreJobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureBackupJobResource or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -84,7 +88,7 @@ class FetchCrossRegionRestoreJobOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -97,11 +101,10 @@ class FetchCrossRegionRestoreJobOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureBackupJobResource or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -112,7 +115,7 @@ class FetchCrossRegionRestoreJobOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreJobRequest, IO],
+        parameters: Union[_models.CrossRegionRestoreJobRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.AzureBackupJobResource:
         """Fetches the Cross Region Restore Job.
@@ -123,17 +126,13 @@ class FetchCrossRegionRestoreJobOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Is either a CrossRegionRestoreJobRequest type or
-         a IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest or IO[bytes]
         :return: AzureBackupJobResource or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -156,7 +155,7 @@ class FetchCrossRegionRestoreJobOperations:
         else:
             _json = self._serialize.body(parameters, "CrossRegionRestoreJobRequest")
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             location=location,
             subscription_id=self._config.subscription_id,
@@ -164,16 +163,15 @@ class FetchCrossRegionRestoreJobOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -185,10 +183,6 @@ class FetchCrossRegionRestoreJobOperations:
         deserialized = self._deserialize("AzureBackupJobResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/fetchCrossRegionRestoreJob"
-    }
+        return deserialized  # type: ignore

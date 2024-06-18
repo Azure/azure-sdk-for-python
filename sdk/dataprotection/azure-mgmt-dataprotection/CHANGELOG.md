@@ -1,5 +1,33 @@
 # Release History
 
+## 1.4.0 (2024-07-22)
+
+### Features Added
+
+  - Added operation group BackupInstancesExtensionRoutingOperations
+  - Model AzureBackupRecoveryPointBasedRestoreRequest has a new parameter resource_guard_operation_requests
+  - Model AzureBackupRecoveryTimeBasedRestoreRequest has a new parameter resource_guard_operation_requests
+  - Model AzureBackupRestoreRequest has a new parameter resource_guard_operation_requests
+  - Model AzureBackupRestoreWithRehydrationRequest has a new parameter resource_guard_operation_requests
+  - Model BackupInstance has a new parameter resource_guard_operation_requests
+  - Model BackupVault has a new parameter bcdr_security_level
+  - Model BackupVault has a new parameter resource_guard_operation_requests
+  - Model DeletedBackupInstance has a new parameter resource_guard_operation_requests
+  - Model KubernetesClusterRestoreCriteria has a new parameter resource_modifier_reference
+  - Model KubernetesClusterVaultTierRestoreCriteria has a new parameter resource_modifier_reference
+  - Model PatchBackupVaultInput has a new parameter resource_guard_operation_requests
+  - Model SecuritySettings has a new parameter encryption_settings
+  - Operation BackupInstancesOperations.begin_create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupInstancesOperations.begin_delete has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupInstancesOperations.begin_stop_protection has a new optional parameter parameters
+  - Operation BackupInstancesOperations.begin_stop_protection has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupInstancesOperations.begin_suspend_backups has a new optional parameter parameters
+  - Operation BackupInstancesOperations.begin_suspend_backups has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupInstancesOperations.begin_trigger_restore has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupVaultsOperations.begin_create_or_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation BackupVaultsOperations.begin_update has a new optional parameter x_ms_authorization_auxiliary
+  - Operation DppResourceGuardProxyOperations.unlock_delete has a new optional parameter x_ms_authorization_auxiliary
+
 ## 1.3.0 (2023-12-18)
 
 ### Features Added
