@@ -48,6 +48,13 @@ def directory_sample(filesystem_client):
     # populate the directory with some child files
     create_child_files(directory_client, 35)
 
+    # list paths in a directory
+    paths = directory_client.get_paths()
+    # [START get_paths_in_directory]
+    for path in paths:
+        print(path)
+    # [END get_paths_in_directory]
+
     # rename the directory
     # [START rename_directory]
     new_dir_name = "testdir2"

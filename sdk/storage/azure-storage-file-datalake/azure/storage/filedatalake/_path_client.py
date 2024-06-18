@@ -135,6 +135,14 @@ class PathClient(StorageAccountHostsMixin):
             pipeline=self._pipeline)
         self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
 
+        from ._file_system_client import FileSystemClient
+        self._file_system_client = FileSystemClient(
+            account_url=account_url,
+            file_system_name=file_system_name,
+            credential=credential,
+            **kwargs
+        )
+
     def __exit__(self, *args):
         self._blob_client.close()
         self._datalake_client_for_blob_operation.close()

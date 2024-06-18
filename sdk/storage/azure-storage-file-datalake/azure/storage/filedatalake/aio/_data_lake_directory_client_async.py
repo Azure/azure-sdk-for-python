@@ -5,15 +5,18 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
-from typing import ( # pylint: disable=unused-import
+from typing import (  # pylint: disable=unused-import
     Any, Dict, Optional, Union,
     TYPE_CHECKING)
 
 try:
     from urllib.parse import quote, unquote
 except ImportError:
-    from urllib2 import quote, unquote # type: ignore
+    from urllib2 import quote, unquote  # type: ignore
+
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
@@ -26,6 +29,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
+    from .._models import PathProperties
 
 
 class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
@@ -610,6 +614,56 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         file_client = self.get_file_client(file)
         await file_client.create_file(**kwargs)
         return file_client
+
+    @distributed_trace
+    def get_paths(
+        self, *,
+        recursive: bool = True,
+        max_results: Optional[int] = None,
+        upn: Optional[bool] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["PathProperties"]:
+        """Returns an async generator to list the paths under specified file system and directory.
+        The generator will lazily follow the continuation tokens returned by the service.
+
+        :keyword bool recursive: Set True for recursive, False for iterative. The default value is True.
+        :keyword Optional[int] max_results: An optional value that specifies the maximum
+            number of items to return per page. If omitted or greater than 5,000, the
+            response will include up to 5,000 items per page.
+        :keyword Optional[bool] upn:
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
+            Principal Names in the owner, group, and acl fields of
+            :class:`~azure.storage.filedatalake.PathProperties`. If False, the values will be returned
+            as Azure Active Directory Object IDs. The default value is None. Note that group and application
+            Object IDs are not translate because they do not have unique friendly names.
+        :keyword Optional[int] timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. The default value is None.
+        :returns: An iterable (auto-paging) response of PathProperties.
+        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_directory.py
+                :start-after: [START get_paths_in_directory]
+                :end-before: [END get_paths_in_directory]
+                :language: python
+                :dedent: 4
+                :caption: List the paths in the directory.
+        """
+        return self._file_system_client_async.get_paths(
+            path=self.path_name,
+            recursive=recursive,
+            max_results=max_results,
+            upn=upn,
+            timeout=timeout,
+            **kwargs
+        )
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):

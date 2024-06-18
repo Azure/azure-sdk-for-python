@@ -1557,6 +1557,30 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.exists()
         await directory_client.create_sub_directory('testsubdir')
 
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_directory_get_paths(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        file_name = "file"
+        await directory_client.create_file(file_name)
+
+        # Act
+        paths = []
+        async for path in directory_client.get_paths():
+            paths.append(path)
+
+        # Assert
+        assert len(paths) == 1
+        assert paths[0]['name'] == directory_name + '/' + file_name
+        assert paths[0]['content_length'] == 0
+        assert paths[0]['expiry_time'] is None
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
