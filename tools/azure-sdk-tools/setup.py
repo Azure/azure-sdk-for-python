@@ -22,7 +22,7 @@ DEPENDENCIES = [
     "tomli-w==1.0.0",
     # Perf/Build
     "ConfigArgParse>=0.12.0",
-    "azure-identity>=1.17.0b2",
+    "azure-identity>=1.17.0",
 ]
 
 setup(
