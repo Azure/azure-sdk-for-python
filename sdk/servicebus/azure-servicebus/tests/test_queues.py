@@ -3387,20 +3387,21 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
             receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
             
-            sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-            received_msgs = []
-            # the amount of messages returned by receive call is not stable, especially in live tests
-            # of different os platforms, this is why a while loop is used here to receive the specific
-            # amount of message we want to receive
-            while len(received_msgs) < 5:
-                # issue link credits more than 5, client should consume 5 msgs from the service in total,
-                # leaving the extra credits on the wire
-                for msg in receiver1.receive_messages(max_message_count=10, max_wait_time=5):
-                    receiver2.complete_message(msg)
-                    received_msgs.append(msg)
-            
-            assert len(received_msgs) == 5
-            
-            messages_in_queue = receiver1.peek_messages()
-
-            assert len(messages_in_queue) == 0
+            with sender, receiver1, receiver2:
+                sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
+                received_msgs = []
+                # the amount of messages returned by receive call is not stable, especially in live tests
+                # of different os platforms, this is why a while loop is used here to receive the specific
+                # amount of message we want to receive
+                while len(received_msgs) < 5:
+                    # issue link credits more than 5, client should consume 5 msgs from the service in total,
+                    # leaving the extra credits on the wire
+                    for msg in receiver1.receive_messages(max_message_count=10, max_wait_time=5):
+                        receiver2.complete_message(msg)
+                        received_msgs.append(msg)
+                
+                assert len(received_msgs) == 5
+                
+                messages_in_queue = receiver1.peek_messages()
+    
+                assert len(messages_in_queue) == 0
