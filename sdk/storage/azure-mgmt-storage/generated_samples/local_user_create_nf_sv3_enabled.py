@@ -6,15 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.storagemover import StorageMoverMgmtClient
+
+from azure.mgmt.storage import StorageManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-storagemover
+    pip install azure-mgmt-storage
 # USAGE
-    python agents_create_or_update.py
+    python local_user_create_nf_sv3_enabled.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,26 +27,20 @@ from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 
 def main():
-    client = StorageMoverMgmtClient(
+    client = StorageManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="60bcfc77-6589-4da2-b7fd-f9ec9322cf95",
+        subscription_id="{subscription-id}",
     )
 
-    response = client.agents.create_or_update(
-        resource_group_name="examples-rg",
-        storage_mover_name="examples-storageMoverName",
-        agent_name="examples-agentName",
-        agent={
-            "properties": {
-                "arcResourceId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.HybridCompute/machines/examples-hybridComputeName",
-                "arcVmUuid": "3bb2c024-eba9-4d18-9e7a-1d772fcc5fe9",
-                "description": "Example Agent Description",
-            }
-        },
+    response = client.local_users.create_or_update(
+        resource_group_name="res6977",
+        account_name="sto2527",
+        username="user1",
+        properties={"properties": {"extendedGroups": [1001, 1005, 2005], "isNFSv3Enabled": True}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-10-01/examples/Agents_CreateOrUpdate.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-05-01/examples/LocalUserCreateNFSv3Enabled.json
 if __name__ == "__main__":
     main()
