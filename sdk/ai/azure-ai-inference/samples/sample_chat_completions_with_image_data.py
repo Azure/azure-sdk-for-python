@@ -74,17 +74,5 @@ def sample_chat_completions_with_image_data():
     print(response.choices[0].message.content)
 
 
-def get_image_data_url(image_file: str, image_format: str) -> str:
-    import base64
-    try:
-        with open(image_file, "rb") as f:
-            image_data = base64.b64encode(f.read()).decode("utf-8")
-    except FileNotFoundError:
-        print(f"Could not read '{image_file}'.")
-        print("Set the correct path to the image file before running this sample.")
-        exit()
-    return f"data:image/{image_format};base64,{image_data}"
-
-
 if __name__ == "__main__":
     sample_chat_completions_with_image_data()
