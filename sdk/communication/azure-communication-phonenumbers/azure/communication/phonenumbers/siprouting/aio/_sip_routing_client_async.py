@@ -4,13 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING  # pylint: disable=unused-import
+from typing import TYPE_CHECKING, List, Any  # pylint: disable=unused-import
 from urllib.parse import urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+
+from azure.core.credentials_async import AsyncTokenCredential
 
 from .._models import SipTrunk, SipTrunkRoute
 from .._generated.models import (
@@ -24,9 +26,7 @@ from ..._shared.utils import parse_connection_str
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import List, Any
-    from azure.core.credentials_async import AsyncTokenCredential
-
+    pass
 
 class SipRoutingClient(object):
     """A client to interact with the SIP routing gateway asynchronously.
