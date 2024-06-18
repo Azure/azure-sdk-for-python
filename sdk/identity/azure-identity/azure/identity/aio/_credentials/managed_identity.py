@@ -26,8 +26,8 @@ class ManagedIdentityCredential(AsyncContextManager):
     <https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview>`__ for more
     information about configuring managed identity for applications.
 
-    :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
-        AD app registration. This argument is supported in all hosting environments.
+    :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of a
+        Microsoft Entra app registration. This argument is supported in all hosting environments.
     :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
         learn what values it expects.

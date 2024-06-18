@@ -469,6 +469,153 @@ class ChatCompletionsNamedFunctionToolSelection(
         super().__init__(*args, type="function", **kwargs)
 
 
+class ContentItem(_model_base.Model):
+    """An abstract representation of a structured content item within a chat message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageContentItem, TextContentItem
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The discriminated object type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ImageContentItem(ContentItem, discriminator="image_url"):
+    """A structured chat content item containing an image reference.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type: always 'image_url' for this type. Required. Default
+     value is "image_url".
+    :vartype type: str
+    :ivar image_url: An internet location, which must be accessible to the model,from which the
+     image may be retrieved. Required.
+    :vartype image_url: ~azure.ai.inference.models.ImageUrl
+    """
+
+    type: Literal["image_url"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'image_url' for this type. Required. Default value is
+     \"image_url\"."""
+    image_url: "_models.ImageUrl" = rest_field()
+    """An internet location, which must be accessible to the model,from which the image may be
+     retrieved. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_url: "_models.ImageUrl",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="image_url", **kwargs)
+
+
+class ImageUrl(_model_base.Model):
+    """An internet location from which the model may retrieve an image.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar url: The URL of the image. Required.
+    :vartype url: str
+    :ivar detail: The evaluation quality setting to use, which controls relative prioritization of
+     speed, token consumption, and
+     accuracy. Known values are: "auto", "low", and "high".
+    :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
+    """
+
+    url: str = rest_field()
+    """The URL of the image. Required."""
+    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field()
+    """The evaluation quality setting to use, which controls relative prioritization of speed, token
+     consumption, and
+     accuracy. Known values are: \"auto\", \"low\", and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TextContentItem(ContentItem, discriminator="text"):
+    """A structured chat content item containing plain text.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type: always 'text' for this type. Required. Default value
+     is "text".
+    :vartype type: str
+    :ivar text: The content of the message. Required.
+    :vartype text: str
+    """
+
+    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'text' for this type. Required. Default value is
+     \"text\"."""
+    text: str = rest_field()
+    """The content of the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="text", **kwargs)
+
+
 class ChatResponseMessage(_model_base.Model):
     """A representation of a chat message as received in a response.
 
@@ -834,7 +981,7 @@ class ModelInfo(_model_base.Model):
 
     model_name: str = rest_field()
     """The name of the AI model. For example: ``Phi21``. Required."""
-    model_type: Union[str, "_models._enums.ModelType"] = rest_field()
+    model_type: Union[str, "_models.ModelType"] = rest_field()
     """The type of the AI model. A Unique identifier for the profile. Required. Known values are:
      \"embeddings\", \"image_generation\", \"text_generation\", \"image_embeddings\",
      \"audio_generation\", and \"chat\"."""
@@ -846,7 +993,7 @@ class ModelInfo(_model_base.Model):
         self,
         *,
         model_name: str,
-        model_type: Union[str, "_models._enums.ModelType"],
+        model_type: Union[str, "_models.ModelType"],
         model_provider_name: str,
     ): ...
 
@@ -1060,22 +1207,22 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
      messages. Required. The role that provides input for chat completions.
     :vartype role: str or ~azure.ai.inference.models.USER
     :ivar content: The contents of the user message, with available input types varying by selected
-     model. Required.
-    :vartype content: str
+     model. Required. Is either a str type or a [ContentItem] type.
+    :vartype content: str or list[~azure.ai.inference.models.ContentItem]
     """
 
     role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: str = rest_field()
+    content: Union["str", List["_models.ContentItem"]] = rest_field()
     """The contents of the user message, with available input types varying by selected model.
-     Required."""
+     Required. Is either a str type or a [ContentItem] type."""
 
     @overload
     def __init__(
         self,
         *,
-        content: str,
+        content: Union[str, List["_models.ContentItem"]],
     ): ...
 
     @overload

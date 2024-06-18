@@ -834,7 +834,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     async def test_chat_completion_json_response(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -868,8 +868,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         err = e.value.body
         assert err["code"] == "content_filter"
         content_filter_result = err["innererror"]["content_filter_result"]
-        assert content_filter_result["custom_blocklists"][0]["filtered"] is True
-        assert content_filter_result["custom_blocklists"][0]["id"].startswith("CustomBlockList")
+        assert content_filter_result["custom_blocklists"]["filtered"] is True
+        assert content_filter_result["custom_blocklists"]["details"][0]["id"].startswith("CustomBlockList")
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False
