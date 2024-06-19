@@ -82,7 +82,7 @@ class ReceiverLink(Link):
                 await self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
-                    delivery_tag=frame[2],
+                    delivery_tag=self._first_frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None
