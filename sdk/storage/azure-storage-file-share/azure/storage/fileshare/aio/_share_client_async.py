@@ -217,7 +217,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/file_samples_share_async.py
+            .. literalinclude:: ../samples/file_samples_share.py
                 :start-after: [START create_share_client_from_conn_string]
                 :end-before: [END create_share_client_from_conn_string]
                 :language: python
