@@ -14,8 +14,8 @@ from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable,
     Generator, Callable, cast, Dict,
-    Generic, IO, List, Optional,
-    overload, Tuple, TypeVar, Union, TYPE_CHECKING
+    Generic, IO, Optional, overload,
+    Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
 from azure.core.exceptions import HttpResponseError
