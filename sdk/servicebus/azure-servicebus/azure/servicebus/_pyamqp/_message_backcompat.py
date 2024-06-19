@@ -31,7 +31,7 @@ if TYPE_CHECKING:
         def settle_messages(
             self,
             delivery_id: Optional[int],
-            delivery_tag: Optional[str],
+            delivery_tag: Optional[bytes],
             outcome: str,
             *,
             error: Optional[AMQPError] = None,
@@ -86,7 +86,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self._settler: Optional["Settler"] = kwargs.pop("settler", None)
         self._encoding = kwargs.get("encoding")
         self.delivery_no: Optional[int] = kwargs.get("delivery_no")
-        self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
+        self.delivery_tag: Optional[bytes] = kwargs.get("delivery_tag") or None
         self.on_send_complete: Optional[Callable] = None
         self.properties: Optional[LegacyMessageProperties] = (
             LegacyMessageProperties(self._message.properties)
