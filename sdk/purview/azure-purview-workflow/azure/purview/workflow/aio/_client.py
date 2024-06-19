@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -102,7 +103,9 @@ class PurviewWorkflowClient:  # pylint: disable=client-accepts-api-version-keywo
         self.approval = ApprovalOperations(self._client, self._config, self._serialize, self._deserialize)
         self.task_status = TaskStatusOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -126,12 +129,12 @@ class PurviewWorkflowClient:  # pylint: disable=client-accepts-api-version-keywo
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "PurviewWorkflowClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

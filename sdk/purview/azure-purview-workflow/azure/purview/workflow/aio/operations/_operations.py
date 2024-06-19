@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -72,6 +72,7 @@ class WorkflowsOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """List all workflows.
 
         :return: An iterator like instance of JSON object
@@ -112,7 +113,7 @@ class WorkflowsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -123,7 +124,7 @@ class WorkflowsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_workflows_list_request(
+                _request = build_workflows_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -133,7 +134,7 @@ class WorkflowsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -145,7 +146,7 @@ class WorkflowsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -153,9 +154,9 @@ class WorkflowsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -165,17 +166,15 @@ class WorkflowsOperations:
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -203,6 +202,7 @@ class WorkflowOperations:
 
     @distributed_trace_async
     async def get(self, workflow_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Get a specific workflow.
 
         :param workflow_id: The workflow id. Required.
@@ -242,7 +242,7 @@ class WorkflowOperations:
                     "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -255,7 +255,7 @@ class WorkflowOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_workflow_get_request(
+        _request = build_workflow_get_request(
             workflow_id=workflow_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -264,18 +264,16 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -285,9 +283,9 @@ class WorkflowOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def create_or_replace(
@@ -298,6 +296,7 @@ class WorkflowOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Create or replace a workflow.
 
         :param workflow_id: The workflow id. Required.
@@ -369,17 +368,18 @@ class WorkflowOperations:
     async def create_or_replace(
         self,
         workflow_id: str,
-        workflow_create_or_update_command: IO,
+        workflow_create_or_update_command: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Create or replace a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
         :param workflow_create_or_update_command: Create or update workflow payload. Required.
-        :type workflow_create_or_update_command: IO
+        :type workflow_create_or_update_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -421,18 +421,16 @@ class WorkflowOperations:
 
     @distributed_trace_async
     async def create_or_replace(
-        self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO], **kwargs: Any
+        self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Create or replace a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
         :param workflow_create_or_update_command: Create or update workflow payload. Is either a JSON
-         type or a IO type. Required.
-        :type workflow_create_or_update_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         type or a IO[bytes] type. Required.
+        :type workflow_create_or_update_command: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -490,7 +488,7 @@ class WorkflowOperations:
                     "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -512,7 +510,7 @@ class WorkflowOperations:
         else:
             _json = workflow_create_or_update_command
 
-        request = build_workflow_create_or_replace_request(
+        _request = build_workflow_create_or_replace_request(
             workflow_id=workflow_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -524,18 +522,16 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -545,9 +541,9 @@ class WorkflowOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def delete(self, workflow_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -559,7 +555,7 @@ class WorkflowOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -572,7 +568,7 @@ class WorkflowOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_workflow_delete_request(
+        _request = build_workflow_delete_request(
             workflow_id=workflow_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -581,28 +577,27 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def validate(
         self, workflow_id: str, workflow_validate_query: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Validate a workflow.
 
         :param workflow_id: The workflow id. Required.
@@ -665,14 +660,20 @@ class WorkflowOperations:
 
     @overload
     async def validate(
-        self, workflow_id: str, workflow_validate_query: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        workflow_id: str,
+        workflow_validate_query: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Validate a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
         :param workflow_validate_query: Check workflow payload. Required.
-        :type workflow_validate_query: IO
+        :type workflow_validate_query: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -706,17 +707,15 @@ class WorkflowOperations:
         """
 
     @distributed_trace_async
-    async def validate(self, workflow_id: str, workflow_validate_query: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def validate(self, workflow_id: str, workflow_validate_query: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Validate a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
-        :param workflow_validate_query: Check workflow payload. Is either a JSON type or a IO type.
-         Required.
-        :type workflow_validate_query: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param workflow_validate_query: Check workflow payload. Is either a JSON type or a IO[bytes]
+         type. Required.
+        :type workflow_validate_query: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -767,7 +766,7 @@ class WorkflowOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -789,7 +788,7 @@ class WorkflowOperations:
         else:
             _json = workflow_validate_query
 
-        request = build_workflow_validate_request(
+        _request = build_workflow_validate_request(
             workflow_id=workflow_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -801,18 +800,16 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -822,9 +819,9 @@ class WorkflowOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class UserRequestsOperations:
@@ -848,6 +845,7 @@ class UserRequestsOperations:
     async def submit(
         self, user_requests_payload: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
         is created.
@@ -904,13 +902,16 @@ class UserRequestsOperations:
         """
 
     @overload
-    async def submit(self, user_requests_payload: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def submit(
+        self, user_requests_payload: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
+        # pylint: disable=line-too-long
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
         is created.
 
         :param user_requests_payload: The payload of submitting a user request. Required.
-        :type user_requests_payload: IO
+        :type user_requests_payload: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -947,17 +948,15 @@ class UserRequestsOperations:
         """
 
     @distributed_trace_async
-    async def submit(self, user_requests_payload: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def submit(self, user_requests_payload: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
         is created.
 
         :param user_requests_payload: The payload of submitting a user request. Is either a JSON type
-         or a IO type. Required.
-        :type user_requests_payload: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         or a IO[bytes] type. Required.
+        :type user_requests_payload: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1003,7 +1002,7 @@ class UserRequestsOperations:
                     "comment": "str"  # Optional. The comment when submit a user request.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1025,7 +1024,7 @@ class UserRequestsOperations:
         else:
             _json = user_requests_payload
 
-        request = build_user_requests_submit_request(
+        _request = build_user_requests_submit_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1036,18 +1035,16 @@ class UserRequestsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1057,9 +1054,9 @@ class UserRequestsOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class WorkflowRunsOperations:
@@ -1091,6 +1088,7 @@ class WorkflowRunsOperations:
         requestors: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """List workflow runs.
 
         :keyword view_mode: To filter user's workflow runs or view as admin. Default value is None.
@@ -1145,7 +1143,7 @@ class WorkflowRunsOperations:
         maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1156,7 +1154,7 @@ class WorkflowRunsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_workflow_runs_list_request(
+                _request = build_workflow_runs_list_request(
                     view_mode=view_mode,
                     time_window=time_window,
                     orderby=orderby,
@@ -1173,7 +1171,7 @@ class WorkflowRunsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1185,7 +1183,7 @@ class WorkflowRunsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1193,9 +1191,9 @@ class WorkflowRunsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1205,17 +1203,15 @@ class WorkflowRunsOperations:
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1243,6 +1239,7 @@ class WorkflowRunOperations:
 
     @distributed_trace_async
     async def get(self, workflow_run_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Get a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
@@ -1287,7 +1284,7 @@ class WorkflowRunOperations:
                     "workflowId": "str"  # Optional. The workflow id.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1300,7 +1297,7 @@ class WorkflowRunOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_workflow_run_get_request(
+        _request = build_workflow_run_get_request(
             workflow_run_id=workflow_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1309,18 +1306,16 @@ class WorkflowRunOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1330,9 +1325,9 @@ class WorkflowRunOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def cancel(  # pylint: disable=inconsistent-return-statements
@@ -1362,14 +1357,19 @@ class WorkflowRunOperations:
 
     @overload
     async def cancel(  # pylint: disable=inconsistent-return-statements
-        self, workflow_run_id: str, run_cancel_reply: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        workflow_run_id: str,
+        run_cancel_reply: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Cancel a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
         :type workflow_run_id: str
         :param run_cancel_reply: Reply of canceling a workflow run. Required.
-        :type run_cancel_reply: IO
+        :type run_cancel_reply: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1380,18 +1380,15 @@ class WorkflowRunOperations:
 
     @distributed_trace_async
     async def cancel(  # pylint: disable=inconsistent-return-statements
-        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO], **kwargs: Any
+        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Cancel a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
         :type workflow_run_id: str
-        :param run_cancel_reply: Reply of canceling a workflow run. Is either a JSON type or a IO type.
-         Required.
-        :type run_cancel_reply: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param run_cancel_reply: Reply of canceling a workflow run. Is either a JSON type or a
+         IO[bytes] type. Required.
+        :type run_cancel_reply: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1404,7 +1401,7 @@ class WorkflowRunOperations:
                     "comment": "str"  # Optional. The comment of canceling a workflow run.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1426,7 +1423,7 @@ class WorkflowRunOperations:
         else:
             _json = run_cancel_reply
 
-        request = build_workflow_run_cancel_request(
+        _request = build_workflow_run_cancel_request(
             workflow_run_id=workflow_run_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1438,23 +1435,21 @@ class WorkflowRunOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class WorkflowTasksOperations:
@@ -1489,6 +1484,7 @@ class WorkflowTasksOperations:
         workflow_name_keyword: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
+        # pylint: disable=line-too-long
         """Get all workflow tasks.
 
         :keyword view_mode: To filter user's sent, received or history workflow tasks. Default value is
@@ -1642,7 +1638,7 @@ class WorkflowTasksOperations:
         maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1653,7 +1649,7 @@ class WorkflowTasksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_workflow_tasks_list_request(
+                _request = build_workflow_tasks_list_request(
                     view_mode=view_mode,
                     workflow_ids=workflow_ids,
                     time_window=time_window,
@@ -1673,7 +1669,7 @@ class WorkflowTasksOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1685,7 +1681,7 @@ class WorkflowTasksOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1693,9 +1689,9 @@ class WorkflowTasksOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1705,17 +1701,15 @@ class WorkflowTasksOperations:
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1743,6 +1737,7 @@ class WorkflowTaskOperations:
 
     @distributed_trace_async
     async def get(self, task_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Get a workflow task.
 
         :param task_id: The task id. Required.
@@ -1869,7 +1864,7 @@ class WorkflowTaskOperations:
                 # response body for status code(s): 200
                 response == workflow_task
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1882,7 +1877,7 @@ class WorkflowTaskOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_workflow_task_get_request(
+        _request = build_workflow_task_get_request(
             task_id=task_id,
             headers=_headers,
             params=_params,
@@ -1890,18 +1885,16 @@ class WorkflowTaskOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1911,9 +1904,9 @@ class WorkflowTaskOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def reassign(  # pylint: disable=inconsistent-return-statements
@@ -1950,14 +1943,14 @@ class WorkflowTaskOperations:
 
     @overload
     async def reassign(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, reassign_command: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, task_id: str, reassign_command: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param reassign_command: The request body of reassigning a workflow task. Required.
-        :type reassign_command: IO
+        :type reassign_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1968,18 +1961,15 @@ class WorkflowTaskOperations:
 
     @distributed_trace_async
     async def reassign(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, reassign_command: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, reassign_command: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param reassign_command: The request body of reassigning a workflow task. Is either a JSON type
-         or a IO type. Required.
-        :type reassign_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         or a IO[bytes] type. Required.
+        :type reassign_command: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1999,7 +1989,7 @@ class WorkflowTaskOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2021,7 +2011,7 @@ class WorkflowTaskOperations:
         else:
             _json = reassign_command
 
-        request = build_workflow_task_reassign_request(
+        _request = build_workflow_task_reassign_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2033,23 +2023,21 @@ class WorkflowTaskOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class ApprovalOperations:
@@ -2099,7 +2087,12 @@ class ApprovalOperations:
 
     @overload
     async def approve(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        task_id: str,
+        approval_response_comment: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Approve an approval.
 
@@ -2107,7 +2100,7 @@ class ApprovalOperations:
         :type task_id: str
         :param approval_response_comment: The request body of approving an approval type of workflow
          task. Required.
-        :type approval_response_comment: IO
+        :type approval_response_comment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2118,18 +2111,15 @@ class ApprovalOperations:
 
     @distributed_trace_async
     async def approve(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, approval_response_comment: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Approve an approval.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param approval_response_comment: The request body of approving an approval type of workflow
-         task. Is either a JSON type or a IO type. Required.
-        :type approval_response_comment: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         task. Is either a JSON type or a IO[bytes] type. Required.
+        :type approval_response_comment: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2143,7 +2133,7 @@ class ApprovalOperations:
                       approval type of workflow task.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2165,7 +2155,7 @@ class ApprovalOperations:
         else:
             _json = approval_response_comment
 
-        request = build_approval_approve_request(
+        _request = build_approval_approve_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2177,23 +2167,21 @@ class ApprovalOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def reject(  # pylint: disable=inconsistent-return-statements
@@ -2225,7 +2213,12 @@ class ApprovalOperations:
 
     @overload
     async def reject(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        task_id: str,
+        approval_response_comment: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Reject an approval.
 
@@ -2233,7 +2226,7 @@ class ApprovalOperations:
         :type task_id: str
         :param approval_response_comment: The request body of rejecting an approval type of workflow
          task. Required.
-        :type approval_response_comment: IO
+        :type approval_response_comment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2244,18 +2237,15 @@ class ApprovalOperations:
 
     @distributed_trace_async
     async def reject(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, approval_response_comment: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reject an approval.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param approval_response_comment: The request body of rejecting an approval type of workflow
-         task. Is either a JSON type or a IO type. Required.
-        :type approval_response_comment: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         task. Is either a JSON type or a IO[bytes] type. Required.
+        :type approval_response_comment: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2269,7 +2259,7 @@ class ApprovalOperations:
                       approval type of workflow task.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2291,7 +2281,7 @@ class ApprovalOperations:
         else:
             _json = approval_response_comment
 
-        request = build_approval_reject_request(
+        _request = build_approval_reject_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2303,23 +2293,21 @@ class ApprovalOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class TaskStatusOperations:
@@ -2343,6 +2331,7 @@ class TaskStatusOperations:
     async def update(  # pylint: disable=inconsistent-return-statements
         self, task_id: str, task_update_command: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
@@ -2370,14 +2359,14 @@ class TaskStatusOperations:
 
     @overload
     async def update(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, task_update_command: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, task_id: str, task_update_command: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param task_update_command: Request body of updating workflow task request. Required.
-        :type task_update_command: IO
+        :type task_update_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2388,18 +2377,16 @@ class TaskStatusOperations:
 
     @distributed_trace_async
     async def update(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, task_update_command: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, task_update_command: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param task_update_command: Request body of updating workflow task request. Is either a JSON
-         type or a IO type. Required.
-        :type task_update_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         type or a IO[bytes] type. Required.
+        :type task_update_command: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2415,7 +2402,7 @@ class TaskStatusOperations:
                     "comment": "str"  # Optional. The comment when update a task.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2437,7 +2424,7 @@ class TaskStatusOperations:
         else:
             _json = task_update_command
 
-        request = build_task_status_update_request(
+        _request = build_task_status_update_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2449,20 +2436,18 @@ class TaskStatusOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
