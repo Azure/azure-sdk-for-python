@@ -27,9 +27,6 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="POLICY_DEFINITION_NAME",
-        policy_definition_version="POLICY_DEFINITION_VERSION",
-        policy_set_definition_name="CostManagement",
         subscription_id="ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
     )
 

@@ -29,13 +29,12 @@ from azure.mgmt.resource import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        policy_definition_name="ResourceNaming",
-        policy_definition_version="1.2.1",
-        policy_set_definition_name="POLICY_SET_DEFINITION_NAME",
         subscription_id="ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
     )
 
     response = client.policy_definition_versions.create_or_update(
+        policy_definition_name="ResourceNaming",
+        policy_definition_version="1.2.1",
         parameters={
             "properties": {
                 "description": "Force resource names to begin with given 'prefix' and/or end with given 'suffix'",
