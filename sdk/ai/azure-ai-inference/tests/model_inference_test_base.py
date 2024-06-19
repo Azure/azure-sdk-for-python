@@ -113,6 +113,9 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
+    def request_callback(self, pipeline_request) -> None:
+        self.pipeline_request = pipeline_request
+
     @staticmethod
     def read_text_file(file_name: str) -> io.BytesIO:
         """
@@ -140,6 +143,29 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert len(model_info.model_provider_name) > 0
         assert model_info.model_type is not None
         assert model_info.model_type == expected_model_type
+
+    @staticmethod
+    def _validate_model_extras(body: str, headers: dict[str,str]):
+        assert headers is not None
+        assert headers["unknown-parameters"] == "pass_through"
+        assert body is not None
+        try:
+            body_json = json.loads(body)
+        except json.JSONDecodeError:
+            print("Invalid JSON format")
+        assert body_json["key1"] == 1
+        assert body_json["key2"] == True
+        assert body_json["key3"] == "Some value"
+        assert body_json["key4"][0] == 1
+        assert body_json["key4"][1] == 2
+        assert body_json["key4"][2] == 3
+        assert body_json["key5"]["key6"] == 2
+        assert body_json["key5"]["key7"] == False
+        assert body_json["key5"]["key8"] == "Some other value"
+        assert body_json["key5"]["key9"][0] == 4
+        assert body_json["key5"]["key9"][1] == 5
+        assert body_json["key5"]["key9"][2] == 6
+        assert body_json["key5"]["key9"][3] == 7
 
     @staticmethod
     def _validate_chat_completions_result(response: sdk.models.ChatCompletions, contains: List[str]):
