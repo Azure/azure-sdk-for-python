@@ -102,6 +102,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
         self._drain_state = False
+        self._received_drain_response = False
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -212,6 +213,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
+        self._received_drain_response = False
         # If we aren't still in a drain - for prefetch purposes, we were sending out a flow before receiving a drain
         if not self._drain_state:
             await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access

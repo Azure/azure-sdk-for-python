@@ -88,6 +88,7 @@ class ReceiverLink(Link):
         # If we have sent an outgoing flow frame with drain, wait for the response
         if self._drain_state and drain:
             self._drain_state = False
+            self._received_drain_response = True
             self.current_link_credit = frame[6]  # link_credit
 
     async def _incoming_transfer(self, frame):
@@ -205,9 +206,7 @@ class ReceiverLink(Link):
         batchable: Optional[bool] = None,
         on_disposition: Optional[Callable] = None,
     ):
-        print(f"Dropping message with delivery tag: {delivery_tag}")
-        if self._is_closed:
-            raise ValueError("Link already closed.")
+        self._check_if_closed()
         await self._outgoing_disposition(
             first_delivery_id,
             last_delivery_id,
@@ -217,3 +216,4 @@ class ReceiverLink(Link):
             batchable,
             on_disposition=on_disposition
         )
+        
