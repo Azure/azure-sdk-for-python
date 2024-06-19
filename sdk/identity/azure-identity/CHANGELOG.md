@@ -1,6 +1,6 @@
 # Release History
 
-## 1.17.0 (2024-06-11)
+## 1.17.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,34 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.17.0 (2024-06-18)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.16.0.
+> Only code written against a beta version such as 1.17.0b1 is affected.
+- `AzurePipelinesCredential` now has a required keyword argument `system_access_token`.  ([#35858](https://github.com/Azure/azure-sdk-for-python/pull/35858))
+
+### Bugs Fixed
+
+- Allow credential chains to continue when an IMDS probe request returns a non-JSON response in `ManagedIdentityCredential`. ([#36016](https://github.com/Azure/azure-sdk-for-python/pull/36016))
+
+## 1.17.0b2 (2024-06-11)
+
+### Features Added
+
+- `OnBehalfOfCredential` now supports client assertion callbacks through the `client_assertion_func` keyword argument. This enables authenticating with client assertions such as federated credentials.  ([#35812](https://github.com/Azure/azure-sdk-for-python/pull/35812))
+
+### Bugs Fixed
+
+- Managed identity bug fixes
+
+## 1.16.1 (2024-06-11)
+
+### Bugs Fixed
+
+- Managed identity bug fixes
 
 ## 1.17.0b1 (2024-05-13)
 

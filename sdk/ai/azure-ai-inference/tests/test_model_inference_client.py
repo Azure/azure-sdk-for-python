@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import inspect
+import os
 import azure.ai.inference as sdk
 
 from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
@@ -64,6 +65,18 @@ class TestModelClient(ModelClientTestBase):
         self._print_embeddings_result(response)
         self._validate_embeddings_result(response)
         client.close()
+
+    def test_image_url_load(self, **kwargs):
+        local_folder = os.path.dirname(os.path.abspath(__file__))
+        image_file = os.path.join(local_folder, "../samples/sample1.png")
+        image_url = sdk.models._patch.ImageUrl.load(
+            image_file=image_file,
+            image_format="png",
+            detail=sdk.models.ImageDetailLevel.AUTO,
+        )
+        assert image_url
+        assert image_url.url.startswith("data:image/png;base64,iVBORw")
+        assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
 
     # **********************************************************************************
     #

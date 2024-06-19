@@ -405,9 +405,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                       response. Required.
                     "model": "str",  # The model used for the chat completion. Required.
                     "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
                         "completion_tokens": 0,  # The number of tokens generated across all
                           completions emissions. Required.
                         "prompt_tokens": 0,  # The number of tokens in the provided prompts
@@ -678,9 +675,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                     "id": "str",  # Unique identifier for the embeddings result. Required.
                     "model": "str",  # The model ID used to generate this result. Required.
                     "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
                         "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
                         "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
@@ -953,9 +947,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
                     "id": "str",  # Unique identifier for the embeddings result. Required.
                     "model": "str",  # The model ID used to generate this result. Required.
                     "usage": {
-                        "capacity_type": "str",  # Indicates whether your capacity has been
-                          affected by the usage amount (token count) reported here. Required. Known
-                          values are: "usage" and "fixed".
                         "input_tokens": 0,  # Number of tokens in the request prompt.
                           Required.
                         "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
