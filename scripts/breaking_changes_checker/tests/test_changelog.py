@@ -212,12 +212,12 @@ def test_new_class_property_added_init_only():
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == BreakingChangesTracker.ADDED_CLASS_PROPERTY_MSG
-    assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
+    assert msg == BreakingChangesTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
+    assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att', '__init__']
 
 
-def test_new_class_method_property_added():
-    # Testing if we get a report on a new class property added only in the init
+def test_new_class_method_parameter_added():
+    # Testing if we get a report on a new class method parameter added
     current = {
         "azure.ai.contentsafety": {
             "class_nodes": {
