@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import math
 import sys
+from collections.abc import Iterable
 from enum import auto, Enum, IntFlag
 from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
 from typing import IO, Optional
@@ -15,6 +16,49 @@ from .validation import calculate_crc64
 
 DEFAULT_MESSAGE_VERSION = 1
 DEFAULT_SEGMENT_SIZE = 4 * 1024 * 1024
+
+
+class IterStreamer(IOBase):
+    """A file-like wrapper over an iterable."""
+    def __init__(self, iterable: Iterable[bytes], encoding: str = "UTF-8"):
+        self.iterable = iterable
+        self.iterator = iter(iterable)
+        self.leftover = b""
+        self.encoding = encoding
+
+    def __len__(self):
+        # Not part of the ABC, but here in case the iterable also has a len
+        return len(self.iterable)  # type: ignore
+
+    def __iter__(self):
+        return self.iterator
+
+    def __next__(self):
+        return next(self.iterator)
+
+    def readable(self):
+        return True
+
+    def read(self, size: int = -1) -> bytes:
+        if size < 0:
+            size = sys.maxsize
+        data = self.leftover
+        count = len(self.leftover)
+        try:
+            while count < size:
+                chunk = self.__next__()
+                if isinstance(chunk, str):
+                    chunk = chunk.encode(self.encoding)
+                data += chunk
+                count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
+        except StopIteration:
+            self.leftover = b""
+
+        if count >= size:
+            self.leftover = data[size:]
+
+        return data[:size]
 
 
 class StructuredMessageError(Exception):
