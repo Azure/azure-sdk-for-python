@@ -1,5 +1,16 @@
 # Release History
 
+## 32.0.0 (2024-06-19)
+
+### Features Added
+
+  - Model SecurityPostureReference has a new parameter is_overridable
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter security_posture_reference
+
+### Breaking Changes
+
+  - Parameter id of model SecurityPostureReference is now required
+
 ## 31.0.0 (2024-04-22)
 
 ### Features Added
