@@ -74,7 +74,7 @@ class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If the file is not among any of the other supported file types."""
     ZIPPED_ARTIFACTS = "ZIPPED_ARTIFACTS"
     """If the file is a compressed archive containing a collection of various artifacts or resources."""
-    URL_TEST_CONFIG_JSON = "URL_TEST_CONFIG_JSON"
+    URL_TEST_CONFIG = "URL_TEST_CONFIG"
     """If the file is a JSON config file to define the requests for a URL test."""
     TEST_SCRIPT = "TEST_SCRIPT"
     """If the file is a test script."""

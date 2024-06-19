@@ -1160,7 +1160,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -1176,7 +1176,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1191,7 +1191,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1206,7 +1206,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1221,7 +1221,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1236,7 +1236,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1380,7 +1380,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -1396,7 +1396,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1411,7 +1411,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1426,7 +1426,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1441,7 +1441,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1456,7 +1456,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1625,7 +1625,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -1641,7 +1641,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1656,7 +1656,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1671,7 +1671,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1686,7 +1686,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1701,7 +1701,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1870,7 +1870,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -1886,7 +1886,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1901,7 +1901,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1916,7 +1916,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1931,7 +1931,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -1946,7 +1946,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2113,7 +2113,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -2129,7 +2129,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2144,7 +2144,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2159,7 +2159,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2174,7 +2174,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2189,7 +2189,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2333,7 +2333,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -2349,7 +2349,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2364,7 +2364,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2379,7 +2379,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2394,7 +2394,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -2409,7 +2409,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3460,7 +3460,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -3476,7 +3476,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3491,7 +3491,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3506,7 +3506,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3521,7 +3521,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3536,7 +3536,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3713,8 +3713,8 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (RFC 3339 literal format).
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
-                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                      and "TEST_SCRIPT".
                     "url": "str",  # Optional. File URL.
                     "validationFailureDetails": "str",  # Optional. Validation failure error
                       details.
@@ -3794,8 +3794,8 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (RFC 3339 literal format).
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
-                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                      and "TEST_SCRIPT".
                     "url": "str",  # Optional. File URL.
                     "validationFailureDetails": "str",  # Optional. Validation failure error
                       details.
@@ -3952,7 +3952,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -3968,7 +3968,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3983,7 +3983,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -3998,7 +3998,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -4013,7 +4013,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -4028,7 +4028,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                               time of the file (RFC 3339 literal format).
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                              "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                             "url": "str",  # Optional. File URL.
                             "validationFailureDetails": "str",  # Optional. Validation
                               failure error details.
@@ -4239,8 +4239,8 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :param body: The file content as application/octet-stream. Required.
         :type body: bytes
         :keyword file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-         "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT". Default
-         value is None.
+         "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT". Default value
+         is None.
         :paramtype file_type: str or ~azure.developer.loadtesting.models.FileType
         :return: UploadTestFileResponse. The UploadTestFileResponse is compatible with MutableMapping
         :rtype: ~azure.developer.loadtesting.models.UploadTestFileResponse
@@ -4254,8 +4254,8 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (RFC 3339 literal format).
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
-                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                      and "TEST_SCRIPT".
                     "url": "str",  # Optional. File URL.
                     "validationFailureDetails": "str",  # Optional. Validation failure error
                       details.
@@ -4651,8 +4651,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -4668,7 +4668,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4683,7 +4683,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4698,7 +4698,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4713,7 +4713,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4728,7 +4728,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4751,7 +4751,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4766,7 +4766,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -4781,7 +4781,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5013,8 +5013,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -5030,7 +5030,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5045,7 +5045,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5060,7 +5060,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5075,7 +5075,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5090,7 +5090,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5113,7 +5113,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5128,7 +5128,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5143,7 +5143,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5412,8 +5412,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -5429,7 +5429,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5444,7 +5444,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5459,7 +5459,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5474,7 +5474,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5489,7 +5489,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5512,7 +5512,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5527,7 +5527,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5542,7 +5542,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5811,8 +5811,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -5828,7 +5828,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5843,7 +5843,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5858,7 +5858,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5873,7 +5873,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5888,7 +5888,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5911,7 +5911,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5926,7 +5926,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -5941,7 +5941,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6207,8 +6207,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -6224,7 +6224,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6239,7 +6239,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6254,7 +6254,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6269,7 +6269,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6284,7 +6284,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6307,7 +6307,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6322,7 +6322,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6337,7 +6337,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6569,8 +6569,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -6586,7 +6586,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6601,7 +6601,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6616,7 +6616,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6631,7 +6631,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6646,7 +6646,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6669,7 +6669,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6684,7 +6684,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -6699,7 +6699,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -7901,8 +7901,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -7918,7 +7918,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -7933,7 +7933,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -7948,7 +7948,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -7963,7 +7963,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -7978,7 +7978,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -8001,7 +8001,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -8016,7 +8016,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -8031,7 +8031,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -8151,8 +8151,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (RFC 3339 literal format).
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
-                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                      "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                      and "TEST_SCRIPT".
                     "url": "str",  # Optional. File URL.
                     "validationFailureDetails": "str",  # Optional. Validation failure error
                       details.
@@ -9080,8 +9080,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -9097,7 +9097,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9112,7 +9112,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9127,7 +9127,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9142,7 +9142,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9157,7 +9157,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9180,7 +9180,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9195,7 +9195,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9210,7 +9210,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9539,8 +9539,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                       Optional. Expiry time of the file (RFC 3339 literal format).
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES",
-                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS",
-                                      "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                      "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG",
+                                      and "TEST_SCRIPT".
                                     "url": "str",  # Optional. File URL.
                                     "validationFailureDetails": "str",  #
                                       Optional. Validation failure error details.
@@ -9556,7 +9556,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9571,7 +9571,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9586,7 +9586,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9601,7 +9601,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9616,7 +9616,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9639,7 +9639,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9654,7 +9654,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.
@@ -9669,7 +9669,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                                   Expiry time of the file (RFC 3339 literal format).
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", "ADDITIONAL_ARTIFACTS",
-                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+                                  "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
                                 "url": "str",  # Optional. File URL.
                                 "validationFailureDetails": "str",  # Optional.
                                   Validation failure error details.

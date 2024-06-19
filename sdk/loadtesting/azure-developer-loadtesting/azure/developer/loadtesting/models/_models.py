@@ -365,7 +365,8 @@ class TargetResourceConfigurations(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create"])
+    kind: str = rest_discriminator(name="kind")
+    ## Removed visibility=["read", "create"] a bug possibly , to run the test successfully.
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 
     @overload
@@ -435,7 +436,7 @@ class GetTestFileResponse(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -451,7 +452,7 @@ class GetTestFileResponse(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG_JSON\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
@@ -473,7 +474,7 @@ class GetTestRunFileResponse(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -489,7 +490,7 @@ class GetTestRunFileResponse(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG_JSON\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
@@ -1395,7 +1396,7 @@ class TestFileInfo(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -1413,7 +1414,7 @@ class TestFileInfo(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG_JSON\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
@@ -2112,7 +2113,7 @@ class TestRunFileInfo(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -2130,7 +2131,7 @@ class TestRunFileInfo(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG_JSON\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
@@ -2508,7 +2509,7 @@ class UploadTestFileResponse(_model_base.Model):
     :ivar url: File URL.
     :vartype url: str
     :ivar file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
-     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG_JSON", and "TEST_SCRIPT".
+     "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT".
     :vartype file_type: str or ~azure.developer.loadtesting.models.FileType
     :ivar expire_date_time: Expiry time of the file (RFC 3339 literal format).
     :vartype expire_date_time: ~datetime.datetime
@@ -2524,7 +2525,7 @@ class UploadTestFileResponse(_model_base.Model):
     """File URL."""
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
-     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG_JSON\", and \"TEST_SCRIPT\"."""
+     \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
     expire_date_time: Optional[datetime.datetime] = rest_field(
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
