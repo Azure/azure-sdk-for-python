@@ -42,7 +42,7 @@
         "description": "The location of the resources. By default, this is the same as the resource group."
       }
     },
-  "endpointPrefix": {
+   "endpointPrefix": {
         "defaultValue": "healthinsights",
         "type": "string"
     },
@@ -50,20 +50,16 @@
         "defaultValue": ".cognitiveservices.azure.com",
         "type": "string"
     },
-    "textAnalyticsResourceGroupName": {
-      "defaultValue": "[resourceGroup().name]",
-      "type": "string"
-    },
     "identity": {
-      "defaultValue": {
-        "type": "SystemAssigned"
-      },
-      "type": "object"
-    }
+          "defaultValue": {
+              "type": "SystemAssigned"
+          },
+          "type": "object"
+      }
   },
     "variables": {
         "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
-        "textAnalyticsResourceId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",        
+        "textAnalyticsResourceId": "[concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",        
         "cognitiveApiVersion": "2022-03-01",
         "roleDefinitionId": "[concat('/subscriptions/', parameters('subscriptionId'), '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
@@ -74,6 +70,20 @@
         }
     },
     "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2017-04-18",
+            "name": "[variables('textAnalyticsName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "S"
+            },
+            "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
+            "kind": "TextAnalytics",
+            "properties": {
+                "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
+            }
+        },
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "[variables('cognitiveApiVersion')]",
@@ -88,7 +98,7 @@
                 "apiProperties": {
                     "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
                 },
-                "customSubDomainName": "[variables('uniqueSubDomainName')]"
+                "customSubDomainName": "[toLower(variables('uniqueSubDomainName'))]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
@@ -102,54 +112,29 @@
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
                 "principalId": "[parameters('testApplicationOid')]"
             }
-        },
-        {
-          "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
-          "apiVersion": "2018-09-01-preview",
-          "name": "[format('{0}/Microsoft.Authorization/{1}', variables('textAnalyticsName'), guid(variables('textAnalyticsName')))]",
-          "dependsOn": [
-            "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
-          ],
-          "properties": {
-            "roleDefinitionId": "[variables('roleDefinitionId')]",
-            "principalId": "[parameters('testApplicationOid')]"
-          }
-        },
-        {
-          "type": "Microsoft.CognitiveServices/accounts",
-          "apiVersion": "2017-04-18",
-          "name": "[variables('textAnalyticsName')]",
-          "location": "[parameters('location')]",
-          "sku": {
-              "name": "S"
-          },
-          "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
-          "kind": "TextAnalytics",
-          "properties": {
-              "customSubDomainName": "[variables('textAnalyticsName')]"
-          }
-      }
+        }
     ],
     "outputs": {
-      "LANGUAGE_API_KEY": {
-        "type": "string",
-        "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
-      },
-      "LANGUAGE_API_KEY_ALT": {
-          "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
-      },
-      "ENDPOINT": {
-          "type": "string",
-          "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
-      },
-      "HEALTHINSIGHTS_KEY": {
-          "type": "string",
-          "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')),'2017-04-18').key1]"
-      },
-      "HEALTHINSIGHTS_ENDPOINT": {
-          "type": "string",
-          "value": "[variables('endpointValue')]"
-      }
-  }
+        "LANGUAGE_API_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
+        },
+        "LANGUAGE_API_KEY_ALT": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
+        },
+        "ENDPOINT": {
+            "type": "string",
+            "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
+        },
+
+        "HEALTHINSIGHTS_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')),'2017-04-18').key1]"
+        },
+        "HEALTHINSIGHTS_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('endpointValue')]"
+        }
+    }
 }
