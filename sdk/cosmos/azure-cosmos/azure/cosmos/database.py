@@ -206,6 +206,7 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/examples.py
@@ -214,7 +215,6 @@ class DatabaseProxy(object):
                 :language: python
                 :dedent: 0
                 :caption: Create a container with default settings:
-                :name: create_container
 
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container_with_settings]
@@ -222,7 +222,6 @@ class DatabaseProxy(object):
                 :language: python
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
-                :name: create_container_with_settings
         """
         definition: Dict[str, Any] = {"id": id}
         if partition_key is not None:
@@ -416,7 +415,6 @@ class DatabaseProxy(object):
                 :language: python
                 :dedent: 0
                 :caption: Get an existing container, handling a failure if encountered:
-                :name: get_container
         """
         if isinstance(container, ContainerProxy):
             id_value = container.id
@@ -453,7 +451,6 @@ class DatabaseProxy(object):
                 :language: python
                 :dedent: 0
                 :caption: List all containers in the database:
-                :name: list_containers
         """
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -569,6 +566,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.ContainerProxy
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/examples.py
@@ -577,7 +575,6 @@ class DatabaseProxy(object):
                 :language: python
                 :dedent: 0
                 :caption: Reset the TTL property on a container, and display the updated properties:
-                :name: reset_container_properties
         """
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -709,7 +706,6 @@ class DatabaseProxy(object):
                 :language: python
                 :dedent: 0
                 :caption: Create a database user:
-                :name: create_user
         """
         request_options = build_options(kwargs)
 
