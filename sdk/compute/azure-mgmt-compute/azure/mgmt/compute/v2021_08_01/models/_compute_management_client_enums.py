@@ -91,6 +91,8 @@ class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONFIDENTIAL_VM_DISK_ENCRYPTED_WITH_CUSTOMER_KEY = "ConfidentialVM_DiskEncryptedWithCustomerKey"
     """Indicates Confidential VM disk with both OS disk and VM guest state encrypted with a customer
     managed key"""
+    CONFIDENTIAL_VM_NON_PERSISTED_TPM = "ConfidentialVM_NonPersistedTPM"
+    """Indicates Confidential VM disk with no encryption"""
 
 
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
