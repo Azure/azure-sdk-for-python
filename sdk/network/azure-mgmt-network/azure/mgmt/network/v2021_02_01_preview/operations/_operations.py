@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -21,9 +21,8 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -31,7 +30,6 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -2923,7 +2921,6 @@ class NetworkManagersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2937,7 +2934,7 @@ class NetworkManagersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkManager", pipeline_response)
+        deserialized = self._deserialize("NetworkManager", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3053,7 +3050,6 @@ class NetworkManagersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3068,10 +3064,10 @@ class NetworkManagersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("NetworkManager", pipeline_response)
+            deserialized = self._deserialize("NetworkManager", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("NetworkManager", pipeline_response)
+            deserialized = self._deserialize("NetworkManager", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3116,7 +3112,6 @@ class NetworkManagersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3242,7 +3237,6 @@ class NetworkManagersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3256,7 +3250,7 @@ class NetworkManagersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkManager", pipeline_response)
+        deserialized = self._deserialize("NetworkManager", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3309,7 +3303,6 @@ class NetworkManagersOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3325,7 +3318,6 @@ class NetworkManagersOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3403,7 +3395,6 @@ class NetworkManagersOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3419,7 +3410,6 @@ class NetworkManagersOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3579,7 +3569,6 @@ class NetworkManagerCommitsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3593,7 +3582,7 @@ class NetworkManagerCommitsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkManagerCommit", pipeline_response)
+        deserialized = self._deserialize("NetworkManagerCommit", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3735,7 +3724,6 @@ class NetworkManagerDeploymentStatusOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3749,7 +3737,7 @@ class NetworkManagerDeploymentStatusOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkManagerDeploymentStatusListResult", pipeline_response)
+        deserialized = self._deserialize("NetworkManagerDeploymentStatusListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3921,7 +3909,6 @@ class EffectiveVirtualNetworksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3935,7 +3922,7 @@ class EffectiveVirtualNetworksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("EffectiveVirtualNetworksListResult", pipeline_response)
+        deserialized = self._deserialize("EffectiveVirtualNetworksListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4062,7 +4049,6 @@ class EffectiveVirtualNetworksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4076,7 +4062,7 @@ class EffectiveVirtualNetworksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("EffectiveVirtualNetworksListResult", pipeline_response)
+        deserialized = self._deserialize("EffectiveVirtualNetworksListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4217,7 +4203,6 @@ class ActiveConnectivityConfigurationsOperations:  # pylint: disable=name-too-lo
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4231,7 +4216,7 @@ class ActiveConnectivityConfigurationsOperations:  # pylint: disable=name-too-lo
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ActiveConnectivityConfigurationsListResult", pipeline_response)
+        deserialized = self._deserialize("ActiveConnectivityConfigurationsListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4369,7 +4354,6 @@ class ActiveSecurityAdminRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4383,7 +4367,7 @@ class ActiveSecurityAdminRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ActiveSecurityAdminRulesListResult", pipeline_response)
+        deserialized = self._deserialize("ActiveSecurityAdminRulesListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4521,7 +4505,6 @@ class ActiveSecurityUserRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4535,7 +4518,7 @@ class ActiveSecurityUserRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ActiveSecurityUserRulesListResult", pipeline_response)
+        deserialized = self._deserialize("ActiveSecurityUserRulesListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4606,7 +4589,6 @@ class ConnectivityConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4620,7 +4602,7 @@ class ConnectivityConfigurationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ConnectivityConfiguration", pipeline_response)
+        deserialized = self._deserialize("ConnectivityConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4754,7 +4736,6 @@ class ConnectivityConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4769,10 +4750,10 @@ class ConnectivityConfigurationsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("ConnectivityConfiguration", pipeline_response)
+            deserialized = self._deserialize("ConnectivityConfiguration", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("ConnectivityConfiguration", pipeline_response)
+            deserialized = self._deserialize("ConnectivityConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4822,7 +4803,6 @@ class ConnectivityConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4898,7 +4878,6 @@ class ConnectivityConfigurationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4914,7 +4893,6 @@ class ConnectivityConfigurationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5080,7 +5058,6 @@ class EffectiveConnectivityConfigurationsOperations:  # pylint: disable=name-too
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5095,7 +5072,7 @@ class EffectiveConnectivityConfigurationsOperations:  # pylint: disable=name-too
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize(
-            "NetworkManagerEffectiveConnectivityConfigurationListResult", pipeline_response
+            "NetworkManagerEffectiveConnectivityConfigurationListResult", pipeline_response.http_response
         )
 
         if cls:
@@ -5237,7 +5214,6 @@ class NetworkManagerEffectiveSecurityAdminRulesOperations:  # pylint: disable=na
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5251,7 +5227,9 @@ class NetworkManagerEffectiveSecurityAdminRulesOperations:  # pylint: disable=na
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkManagerEffectiveSecurityAdminRulesListResult", pipeline_response)
+        deserialized = self._deserialize(
+            "NetworkManagerEffectiveSecurityAdminRulesListResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5320,7 +5298,6 @@ class NetworkGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5334,7 +5311,7 @@ class NetworkGroupsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkGroup", pipeline_response)
+        deserialized = self._deserialize("NetworkGroup", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5479,7 +5456,6 @@ class NetworkGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5497,12 +5473,12 @@ class NetworkGroupsOperations:
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-            deserialized = self._deserialize("NetworkGroup", pipeline_response)
+            deserialized = self._deserialize("NetworkGroup", pipeline_response.http_response)
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-            deserialized = self._deserialize("NetworkGroup", pipeline_response)
+            deserialized = self._deserialize("NetworkGroup", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5550,7 +5526,6 @@ class NetworkGroupsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5625,7 +5600,6 @@ class NetworkGroupsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5641,7 +5615,6 @@ class NetworkGroupsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5751,7 +5724,6 @@ class SecurityUserConfigurationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5767,7 +5739,6 @@ class SecurityUserConfigurationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5837,7 +5808,6 @@ class SecurityUserConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5851,7 +5821,7 @@ class SecurityUserConfigurationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SecurityConfiguration", pipeline_response)
+        deserialized = self._deserialize("SecurityConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5981,7 +5951,6 @@ class SecurityUserConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5996,10 +5965,10 @@ class SecurityUserConfigurationsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("SecurityConfiguration", pipeline_response)
+            deserialized = self._deserialize("SecurityConfiguration", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("SecurityConfiguration", pipeline_response)
+            deserialized = self._deserialize("SecurityConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6047,7 +6016,6 @@ class SecurityUserConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6147,7 +6115,6 @@ class UserRuleCollectionsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6163,7 +6130,6 @@ class UserRuleCollectionsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6242,7 +6208,6 @@ class UserRuleCollectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6256,7 +6221,7 @@ class UserRuleCollectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RuleCollection", pipeline_response)
+        deserialized = self._deserialize("RuleCollection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6396,7 +6361,6 @@ class UserRuleCollectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6411,10 +6375,10 @@ class UserRuleCollectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("RuleCollection", pipeline_response)
+            deserialized = self._deserialize("RuleCollection", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("RuleCollection", pipeline_response)
+            deserialized = self._deserialize("RuleCollection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6471,7 +6435,6 @@ class UserRuleCollectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6576,7 +6539,6 @@ class UserRulesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6592,7 +6554,6 @@ class UserRulesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6675,7 +6636,6 @@ class UserRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6689,7 +6649,7 @@ class UserRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BaseUserRule", pipeline_response)
+        deserialized = self._deserialize("BaseUserRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6838,7 +6798,6 @@ class UserRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6853,10 +6812,10 @@ class UserRulesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("BaseUserRule", pipeline_response)
+            deserialized = self._deserialize("BaseUserRule", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("BaseUserRule", pipeline_response)
+            deserialized = self._deserialize("BaseUserRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6917,7 +6876,6 @@ class UserRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7015,7 +6973,6 @@ class SecurityAdminConfigurationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -7031,7 +6988,6 @@ class SecurityAdminConfigurationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -7101,7 +7057,6 @@ class SecurityAdminConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7115,7 +7070,7 @@ class SecurityAdminConfigurationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SecurityConfiguration", pipeline_response)
+        deserialized = self._deserialize("SecurityConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7245,7 +7200,6 @@ class SecurityAdminConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7260,10 +7214,10 @@ class SecurityAdminConfigurationsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("SecurityConfiguration", pipeline_response)
+            deserialized = self._deserialize("SecurityConfiguration", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("SecurityConfiguration", pipeline_response)
+            deserialized = self._deserialize("SecurityConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7311,7 +7265,6 @@ class SecurityAdminConfigurationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7411,7 +7364,6 @@ class AdminRuleCollectionsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -7427,7 +7379,6 @@ class AdminRuleCollectionsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -7506,7 +7457,6 @@ class AdminRuleCollectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7520,7 +7470,7 @@ class AdminRuleCollectionsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RuleCollection", pipeline_response)
+        deserialized = self._deserialize("RuleCollection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7660,7 +7610,6 @@ class AdminRuleCollectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7675,10 +7624,10 @@ class AdminRuleCollectionsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("RuleCollection", pipeline_response)
+            deserialized = self._deserialize("RuleCollection", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("RuleCollection", pipeline_response)
+            deserialized = self._deserialize("RuleCollection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7735,7 +7684,6 @@ class AdminRuleCollectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7840,7 +7788,6 @@ class AdminRulesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -7856,7 +7803,6 @@ class AdminRulesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -7939,7 +7885,6 @@ class AdminRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7953,7 +7898,7 @@ class AdminRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BaseAdminRule", pipeline_response)
+        deserialized = self._deserialize("BaseAdminRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8102,7 +8047,6 @@ class AdminRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8117,10 +8061,10 @@ class AdminRulesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("BaseAdminRule", pipeline_response)
+            deserialized = self._deserialize("BaseAdminRule", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("BaseAdminRule", pipeline_response)
+            deserialized = self._deserialize("BaseAdminRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8181,7 +8125,6 @@ class AdminRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8257,7 +8200,6 @@ class NetworkSecurityPerimetersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8271,7 +8213,7 @@ class NetworkSecurityPerimetersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response)
+        deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8390,7 +8332,6 @@ class NetworkSecurityPerimetersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8405,10 +8346,10 @@ class NetworkSecurityPerimetersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response)
+            deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response)
+            deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8453,7 +8394,6 @@ class NetworkSecurityPerimetersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8579,7 +8519,6 @@ class NetworkSecurityPerimetersOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8593,7 +8532,7 @@ class NetworkSecurityPerimetersOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response)
+        deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8647,7 +8586,6 @@ class NetworkSecurityPerimetersOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -8663,7 +8601,6 @@ class NetworkSecurityPerimetersOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -8742,7 +8679,6 @@ class NetworkSecurityPerimetersOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -8758,7 +8694,6 @@ class NetworkSecurityPerimetersOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -8849,7 +8784,6 @@ class NspProfilesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8863,7 +8797,7 @@ class NspProfilesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NspProfile", pipeline_response)
+        deserialized = self._deserialize("NspProfile", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8991,7 +8925,6 @@ class NspProfilesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9006,10 +8939,10 @@ class NspProfilesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("NspProfile", pipeline_response)
+            deserialized = self._deserialize("NspProfile", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("NspProfile", pipeline_response)
+            deserialized = self._deserialize("NspProfile", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9057,7 +8990,6 @@ class NspProfilesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9131,7 +9063,6 @@ class NspProfilesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -9147,7 +9078,6 @@ class NspProfilesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -9246,7 +9176,6 @@ class NspAccessRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9260,7 +9189,7 @@ class NspAccessRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NspAccessRule", pipeline_response)
+        deserialized = self._deserialize("NspAccessRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9398,7 +9327,6 @@ class NspAccessRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9413,10 +9341,10 @@ class NspAccessRulesOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("NspAccessRule", pipeline_response)
+            deserialized = self._deserialize("NspAccessRule", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("NspAccessRule", pipeline_response)
+            deserialized = self._deserialize("NspAccessRule", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9472,7 +9400,6 @@ class NspAccessRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9551,7 +9478,6 @@ class NspAccessRulesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -9567,7 +9493,6 @@ class NspAccessRulesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -9658,7 +9583,6 @@ class NspAssociationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9672,7 +9596,7 @@ class NspAssociationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NspAssociation", pipeline_response)
+        deserialized = self._deserialize("NspAssociation", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9800,7 +9724,6 @@ class NspAssociationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9815,19 +9738,19 @@ class NspAssociationsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("NspAssociation", pipeline_response)
+            deserialized = self._deserialize("NspAssociation", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("NspAssociation", pipeline_response)
+            deserialized = self._deserialize("NspAssociation", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_initial(
         self, resource_group_name: str, network_security_perimeter_name: str, association_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -9842,7 +9765,7 @@ class NspAssociationsOperations:
         api_version: str = kwargs.pop(
             "api_version", _params.pop("api-version", self._api_version or "2021-02-01-preview")
         )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_nsp_associations_delete_request(
             resource_group_name=resource_group_name,
@@ -9853,10 +9776,9 @@ class NspAssociationsOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9864,15 +9786,26 @@ class NspAssociationsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = response.stream_download(self._client._pipeline)
+
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
+            deserialized = response.stream_download(self._client._pipeline)
+
+        if response.status_code == 204:
+            deserialized = response.stream_download(self._client._pipeline)
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -9901,7 +9834,7 @@ class NspAssociationsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_initial(  # type: ignore
+            raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 network_security_perimeter_name=network_security_perimeter_name,
                 association_name=association_name,
@@ -9911,6 +9844,7 @@ class NspAssociationsOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -9990,7 +9924,6 @@ class NspAssociationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10006,7 +9939,6 @@ class NspAssociationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10109,7 +10041,6 @@ class NspAssociationReconcileOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10123,7 +10054,7 @@ class NspAssociationReconcileOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10190,7 +10121,6 @@ class PerimeterAssociableResourceTypesOperations:  # pylint: disable=name-too-lo
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10206,7 +10136,6 @@ class PerimeterAssociableResourceTypesOperations:  # pylint: disable=name-too-lo
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10313,7 +10242,6 @@ class NspAccessRulesReconcileOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10327,7 +10255,7 @@ class NspAccessRulesReconcileOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10396,7 +10324,6 @@ class NspLinksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10410,7 +10337,7 @@ class NspLinksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NspLink", pipeline_response)
+        deserialized = self._deserialize("NspLink", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10536,7 +10463,6 @@ class NspLinksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10551,19 +10477,19 @@ class NspLinksOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("NspLink", pipeline_response)
+            deserialized = self._deserialize("NspLink", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("NspLink", pipeline_response)
+            deserialized = self._deserialize("NspLink", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_initial(
         self, resource_group_name: str, network_security_perimeter_name: str, link_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -10578,7 +10504,7 @@ class NspLinksOperations:
         api_version: str = kwargs.pop(
             "api_version", _params.pop("api-version", self._api_version or "2021-02-01-preview")
         )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_nsp_links_delete_request(
             resource_group_name=resource_group_name,
@@ -10589,10 +10515,9 @@ class NspLinksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10600,15 +10525,26 @@ class NspLinksOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = response.stream_download(self._client._pipeline)
+
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
+            deserialized = response.stream_download(self._client._pipeline)
+
+        if response.status_code == 204:
+            deserialized = response.stream_download(self._client._pipeline)
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -10637,7 +10573,7 @@ class NspLinksOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_initial(  # type: ignore
+            raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 network_security_perimeter_name=network_security_perimeter_name,
                 link_name=link_name,
@@ -10647,6 +10583,7 @@ class NspLinksOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -10727,7 +10664,6 @@ class NspLinksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10743,7 +10679,6 @@ class NspLinksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10834,7 +10769,6 @@ class NspLinkReferencesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10848,16 +10782,16 @@ class NspLinkReferencesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NspLinkReference", pipeline_response)
+        deserialized = self._deserialize("NspLinkReference", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_initial(
         self, resource_group_name: str, network_security_perimeter_name: str, link_reference_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -10872,7 +10806,7 @@ class NspLinkReferencesOperations:
         api_version: str = kwargs.pop(
             "api_version", _params.pop("api-version", self._api_version or "2021-02-01-preview")
         )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_nsp_link_references_delete_request(
             resource_group_name=resource_group_name,
@@ -10883,10 +10817,9 @@ class NspLinkReferencesOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10894,15 +10827,26 @@ class NspLinkReferencesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = response.stream_download(self._client._pipeline)
+
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
+            deserialized = response.stream_download(self._client._pipeline)
+
+        if response.status_code == 204:
+            deserialized = response.stream_download(self._client._pipeline)
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -10931,7 +10875,7 @@ class NspLinkReferencesOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_initial(  # type: ignore
+            raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 network_security_perimeter_name=network_security_perimeter_name,
                 link_reference_name=link_reference_name,
@@ -10941,6 +10885,7 @@ class NspLinkReferencesOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -11022,7 +10967,6 @@ class NspLinkReferencesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -11038,7 +10982,6 @@ class NspLinkReferencesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request

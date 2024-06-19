@@ -16554,7 +16554,7 @@ class LoadBalancerSku(_serialization.Model):
 
     :ivar name: Name of a load balancer SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.v2020_07_01.models.LoadBalancerSkuName
-    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.network.v2020_07_01.models.LoadBalancerSkuTier
     """
 
@@ -16573,7 +16573,8 @@ class LoadBalancerSku(_serialization.Model):
         """
         :keyword name: Name of a load balancer SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.v2020_07_01.models.LoadBalancerSkuName
-        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2020_07_01.models.LoadBalancerSkuTier
         """
         super().__init__(**kwargs)
@@ -22519,7 +22520,8 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPAddressSkuName
-    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
+     "Global".
     :vartype tier: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPAddressSkuTier
     """
 
@@ -22538,7 +22540,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPAddressSkuName
-        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -22725,7 +22728,8 @@ class PublicIPPrefixSku(_serialization.Model):
 
     :ivar name: Name of a public IP prefix SKU. "Standard"
     :vartype name: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPPrefixSkuName
-    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
+     "Global".
     :vartype tier: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPPrefixSkuTier
     """
 
@@ -22744,7 +22748,8 @@ class PublicIPPrefixSku(_serialization.Model):
         """
         :keyword name: Name of a public IP prefix SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPPrefixSkuName
-        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2020_07_01.models.PublicIPPrefixSkuTier
         """
         super().__init__(**kwargs)

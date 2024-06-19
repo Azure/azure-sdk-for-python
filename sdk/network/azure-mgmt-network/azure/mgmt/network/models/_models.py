@@ -11282,7 +11282,7 @@ class LoadBalancerSku(_serialization.Model):
 
     :ivar name: Name of a load balancer SKU. Known values are: "Basic", "Standard", and "Gateway".
     :vartype name: str or ~azure.mgmt.network.models.LoadBalancerSkuName
-    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.network.models.LoadBalancerSkuTier
     """
 
@@ -11302,7 +11302,8 @@ class LoadBalancerSku(_serialization.Model):
         :keyword name: Name of a load balancer SKU. Known values are: "Basic", "Standard", and
          "Gateway".
         :paramtype name: str or ~azure.mgmt.network.models.LoadBalancerSkuName
-        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.models.LoadBalancerSkuTier
         """
         super().__init__(**kwargs)
@@ -12731,7 +12732,8 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.models.PublicIPAddressSkuName
-    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
+     "Global".
     :vartype tier: str or ~azure.mgmt.network.models.PublicIPAddressSkuTier
     """
 
@@ -12750,7 +12752,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.models.PublicIPAddressSkuName
-        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -21150,7 +21153,8 @@ class PublicIPPrefixSku(_serialization.Model):
 
     :ivar name: Name of a public IP prefix SKU. "Standard"
     :vartype name: str or ~azure.mgmt.network.models.PublicIPPrefixSkuName
-    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
+     "Global".
     :vartype tier: str or ~azure.mgmt.network.models.PublicIPPrefixSkuTier
     """
 
@@ -21169,7 +21173,8 @@ class PublicIPPrefixSku(_serialization.Model):
         """
         :keyword name: Name of a public IP prefix SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.network.models.PublicIPPrefixSkuName
-        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.models.PublicIPPrefixSkuTier
         """
         super().__init__(**kwargs)
@@ -31746,7 +31751,7 @@ class CustomIpPrefix(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar express_route_advertise: Whether to do express route advertise.
     :vartype express_route_advertise: bool
     :ivar geo: The Geo for CIDR advertising. Should be an Geo code. Known values are: "GLOBAL",
-     "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", and "AQ".
+     "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", "AQ", and "GLOBAL".
     :vartype geo: str or ~azure.mgmt.network.models.Geo
     :ivar no_internet_advertise: Whether to Advertise the range to Internet.
     :vartype no_internet_advertise: bool
@@ -31851,7 +31856,7 @@ class CustomIpPrefix(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword express_route_advertise: Whether to do express route advertise.
         :paramtype express_route_advertise: bool
         :keyword geo: The Geo for CIDR advertising. Should be an Geo code. Known values are: "GLOBAL",
-         "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", and "AQ".
+         "AFRI", "APAC", "EURO", "LATAM", "NAM", "ME", "OCEANIA", "AQ", and "GLOBAL".
         :paramtype geo: str or ~azure.mgmt.network.models.Geo
         :keyword no_internet_advertise: Whether to Advertise the range to Internet.
         :paramtype no_internet_advertise: bool
@@ -40511,8 +40516,8 @@ class RouteMapRule(_serialization.Model):
     :ivar actions: List of actions which will be applied on a match.
     :vartype actions: list[~azure.mgmt.network.models.Action]
     :ivar next_step_if_matched: Next step after rule is evaluated. Current supported behaviors are
-     'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue", and
-     "Terminate".
+     'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue", "Terminate",
+     and "Continue".
     :vartype next_step_if_matched: str or ~azure.mgmt.network.models.NextStep
     """
 
@@ -40540,8 +40545,8 @@ class RouteMapRule(_serialization.Model):
         :keyword actions: List of actions which will be applied on a match.
         :paramtype actions: list[~azure.mgmt.network.models.Action]
         :keyword next_step_if_matched: Next step after rule is evaluated. Current supported behaviors
-         are 'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue", and
-         "Terminate".
+         are 'Continue'(to next rule) and 'Terminate'. Known values are: "Unknown", "Continue",
+         "Terminate", and "Continue".
         :paramtype next_step_if_matched: str or ~azure.mgmt.network.models.NextStep
         """
         super().__init__(**kwargs)
