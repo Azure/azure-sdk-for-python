@@ -931,7 +931,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
-        delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
@@ -942,7 +941,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
-        delivery_tag: bytes,
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
@@ -953,7 +951,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
-        delivery_tag: bytes,
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
@@ -965,7 +962,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
-        delivery_tag: bytes,
         outcome: Literal["modified"],
         *,
         delivery_failed: Optional[bool] = None,
@@ -979,7 +975,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
-        delivery_tag: bytes,
         outcome: Literal["received"],
         *,
         section_number: int,
@@ -988,13 +983,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     ):
         ...
 
-    async def settle_messages_async(
-            self,
-            delivery_id: Union[int, Tuple[int, int]],
-            delivery_tag: bytes,
-            outcome: str,
-            **kwargs
-    ):
+    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
         batchable = kwargs.pop('batchable', None)
         if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
@@ -1016,7 +1005,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
-            delivery_tag=delivery_tag,
             settled=True,
             delivery_state=state,
             batchable=batchable,
