@@ -1094,9 +1094,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         first_message_received = expired = False
         receiving = True
         sent_drain = False
-        print("IN RECEIVE")
+        time_sent = time.time()
         # If we have sent a drain, but have not yet received the drain response, we should continue to receive
-        while receiving and not expired and (sent_drain == receiver._handler._link._drain_state) and len(batch) < max_message_count:
+        while receiving and not expired and len(batch) < max_message_count:
             while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
                 if (
                     abs_timeout
@@ -1105,15 +1105,22 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 ):
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
                     if not sent_drain:
-                        print("SENDING DRAIN")
                         receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
                         sent_drain = True
                         time_sent = time.time()
                         break
-                    if sent_drain != receiver._handler._link._drain_state and time.time() - time_sent > receive_drain_timeout:
-                        print("BREAKING OUT")
+
+                    # If we have sent a drain and we havent received messages in X time or gotten back the responding flow, lets close the link
+                    if (not receiver._handler._link._received_drain_response and sent_drain) and (time.time() - time_sent > receive_drain_timeout):
+                        expired = True
+                        receiver._handler._link.detach(close=True, error="Have not received back drain response in time")
                         break
 
+                    # if you have received the drain -> break out of the loop
+                    if receiver._handler._link._received_drain_response:
+                        expired = True
+                        break
+        
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = amqp_receive_client.do_work()
                 received = amqp_receive_client._received_messages.qsize() - before
