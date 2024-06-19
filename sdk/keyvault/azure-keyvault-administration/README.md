@@ -302,7 +302,7 @@ the operation is complete without returning an object.
 ### Perform a full key restore
 The `KeyVaultBackupClient` can be used to restore your entire collection of keys from a backup. The data source for a
 full key restore is a storage blob accessed using either Managed Identity (which is preferred) or Shared Access
-Signature authentication. You will also need the URL of the backup (`KeyVaultBackupResult.folder_url`) from the
+Signature (SAS) authentication. You will also need the URL of the backup (`KeyVaultBackupResult.folder_url`) from the
 [above snippet](#perform-a-full-key-backup).
 
 If using Managed Identity, first make sure your user-assigned managed identity has the correct access to your Storage
