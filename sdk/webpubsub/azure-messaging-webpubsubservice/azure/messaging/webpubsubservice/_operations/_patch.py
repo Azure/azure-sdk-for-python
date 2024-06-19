@@ -82,6 +82,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     @distributed_trace
     def get_client_access_token(self, **kwargs: Any) -> JSON:
         """Build an authentication token.
+
         :keyword user_id: User Id.
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
@@ -93,13 +94,15 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :paramtype groups: list[str]
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSON
+
         Example:
-        >>> get_client_access_token()
-        {
-            'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-            'token': '<access-token>...',
-            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=<access-token>...'
-        }
+
+            >>> get_client_access_token()
+            {
+                'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
+                'token': '<access-token>...',
+                'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=<access-token>...'
+            }
         """
         endpoint = self._config.endpoint.lower()
         if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
