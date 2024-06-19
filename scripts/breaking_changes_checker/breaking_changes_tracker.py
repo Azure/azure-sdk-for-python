@@ -541,21 +541,12 @@ class BreakingChangesTracker:
     def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
         if current_parameters_node["param_type"] != "positional_or_keyword":
             if self.class_name:
-                if self.function_name == "__init__":
-                    # This is a new class property defined only through the init and not at the class level
-                    self.features_added.append(
-                        (
-                            self.ADDED_CLASS_PROPERTY_MSG, ChangeType.ADDED_CLASS_PROPERTY,
-                            self.module_name, self.class_name, self.parameter_name
-                        )
+                self.features_added.append(
+                    (
+                        self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
+                        self.module_name, self.class_name, self.parameter_name, self.function_name
                     )
-                else:
-                    self.features_added.append(
-                        (
-                            self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
-                            self.module_name, self.class_name, self.parameter_name, self.function_name
-                        )
-                    )
+                )
             else:
                 self.features_added.append(
                     (
