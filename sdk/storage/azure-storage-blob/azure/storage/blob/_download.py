@@ -7,7 +7,6 @@ import codecs
 import sys
 import threading
 import time
-from typing_extensions import Buffer
 import warnings
 from io import BytesIO, StringIO
 from typing import (
@@ -650,7 +649,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._text_mode = True
             self._decoder = codecs.getincrementaldecoder(self._encoding)('strict')
             self._current_content = self._decoder.decode(
-                cast(Buffer, self._current_content), final=self._download_complete)
+                cast(bytes, self._current_content), final=self._download_complete)
         elif self._text_mode is None:
             self._text_mode = False
 
