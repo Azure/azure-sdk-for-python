@@ -564,26 +564,6 @@ class BreakingChangesTracker:
                     )
                 )
 
-    def check_positional_parameter_added(self, current_parameters_node: Dict) -> None:
-        if current_parameters_node["param_type"] == "positional_or_keyword" and \
-                current_parameters_node["default"] != "none":
-            if self.class_name:
-                self.breaking_changes.append(
-                    (
-                        self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.class_name, self.function_name,
-                        current_parameters_node["param_type"], self.parameter_name
-                    )
-                )
-            else:
-                self.breaking_changes.append(
-                    (
-                        self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.function_name,
-                        current_parameters_node["param_type"], self.parameter_name
-                    )
-                )
-
     def check_positional_parameter_removed_or_renamed(
         self, param_type: str,
         deleted: str,
