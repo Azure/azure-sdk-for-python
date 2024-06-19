@@ -219,7 +219,9 @@ class BreakingChangesTracker:
                                     if self.parameter_name not in stable_parameters_node and \
                                             not isinstance(self.parameter_name, jsondiff.Symbol):
                                         if self.function_name == "__init__":
-                                            # If this is a new class property skip reporting it here and let the class properties check handle it
+                                            # If this is a new class property skip reporting it here and let the class properties check handle it.
+                                            # This is because we'll get multiple reports for the same new property if it's a parameter in __init__
+                                            # and a class level attribute.
                                             if self.parameter_name in class_components.get("properties", {}).keys():
                                                 continue
                                         self.check_non_positional_parameter_added(
