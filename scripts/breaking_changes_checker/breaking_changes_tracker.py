@@ -35,7 +35,7 @@ class ChangeType(str, Enum):
     ADDED_CLIENT_METHOD = "AddedClientMethod"
     ADDED_CLASS = "AddedClass"
     ADDED_CLASS_METHOD = "AddedClassMethod"
-    ADDED_CLASS_METHOD_PROPERTY = "AddedClassMethodProperty"
+    ADDED_CLASS_METHOD_PARAMETER = "AddedClassMethodParameter"
     ADDED_CLASS_PROPERTY = "AddedClassProperty"
     ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
 
@@ -106,7 +106,7 @@ class BreakingChangesTracker:
         "The model or publicly exposed class '{}.{}' was added in the current version"
     ADDED_CLASS_METHOD_MSG = \
         "The '{}.{}' method '{}' was added in the current version"
-    ADDED_CLASS_METHOD_PROPERTY_MSG = \
+    ADDED_CLASS_METHOD_PARAMETER_MSG = \
         "The model or publicly exposed class '{}.{}' had property '{}' added in the {} method in the current version"
     ADDED_FUNCTION_PARAMETER_MSG = \
         "The function '{}.{}' had parameter '{}' added in the current version"
@@ -552,7 +552,7 @@ class BreakingChangesTracker:
                 else:
                     self.features_added.append(
                         (
-                            self.ADDED_CLASS_METHOD_PROPERTY_MSG, ChangeType.ADDED_CLASS_METHOD_PROPERTY,
+                            self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
                             self.module_name, self.class_name, self.parameter_name, self.function_name
                         )
                     )

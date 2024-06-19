@@ -301,5 +301,5 @@ def test_new_class_method_property_added():
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == BreakingChangesTracker.ADDED_CLASS_METHOD_PROPERTY_MSG
+    assert msg == BreakingChangesTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'bar', 'foo']
