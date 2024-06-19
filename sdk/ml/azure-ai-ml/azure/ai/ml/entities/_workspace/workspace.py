@@ -87,7 +87,7 @@ class Workspace(Resource):
         The flag can only be set at the creation phase, it can't be updated.
     :type enable_data_isolation: bool
     :param allow_roleassignment_on_rg: Determine whether allow workspace role assignment on resource group level.
-    :type allow_roleassignment_on_rg: bool
+    :type allow_roleassignment_on_rg: Optional[bool]
     :param serverless_compute: The serverless compute settings for the workspace.
     :type: ~azure.ai.ml.entities.ServerlessComputeSettings
     :param workspace_hub: Deprecated resource ID of an existing workspace hub to help create project workspace.
@@ -126,7 +126,7 @@ class Workspace(Resource):
         managed_network: Optional[ManagedNetwork] = None,
         system_datastores_auth_mode: Optional[str] = None,
         enable_data_isolation: bool = False,
-        allow_roleassignment_on_rg: bool = True,
+        allow_roleassignment_on_rg: Optional[bool] = None,
         hub_id: Optional[str] = None,  # Hidden input, surfaced by Project
         workspace_hub: Optional[str] = None,  # Deprecated input maintained for backwards compat.
         serverless_compute: Optional[ServerlessComputeSettings] = None,
