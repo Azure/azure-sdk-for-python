@@ -53,6 +53,7 @@ from .. import documents
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDictResponse, CosmosListResponse
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
@@ -735,7 +736,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return result
+        return CosmosDictResponse(original_dict=result,
+                                  response_headers=last_response_headers)
 
     async def UpsertUser(
         self,
@@ -872,7 +874,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return result
+        return CosmosDictResponse(original_dict=result,
+                                  response_headers=last_response_headers)
 
     async def __Post(
         self,
@@ -1169,7 +1172,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, result)
-        return result
+        return CosmosDictResponse(original_dict=result,
+                                  response_headers=last_response_headers)
 
     async def __Get(
         self,
@@ -1432,7 +1436,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return result
+        return CosmosDictResponse(original_dict=result,
+                                  response_headers=last_response_headers)
 
     async def ReplaceOffer(
         self,
@@ -1530,7 +1535,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return result
+        return CosmosDictResponse(original_dict=result,
+                                  response_headers=last_response_headers)
 
     async def __Put(
         self,
@@ -1941,7 +1947,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
         if response_hook:
             response_hook(last_response_headers, final_responses)
-        return final_responses
+        return CosmosListResponse(original_list=final_responses,
+                                  response_headers=last_response_headers)
 
     async def _Batch(
         self,
