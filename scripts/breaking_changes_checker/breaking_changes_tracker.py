@@ -8,6 +8,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Union
 import jsondiff
+import re
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 
@@ -644,14 +645,17 @@ class BreakingChangesTracker:
                 )
             return True
 
-    # ----------------------------------- Report methods -----------------------------------
     def get_reportable_breaking_changes(self, ignore_changes: Dict) -> List:
         reportable_changes = []
-        ignored = ignore_changes[self.package_name]
+        ignored = []
+        for ignored_package, ignore_rules in ignore_changes.items():
+            if re.match(ignored_package, self.package_name):
+                ignored.extend(ignore_rules)
         for bc in self.breaking_changes:
             msg, bc_type, module_name, *args = bc
             class_name = args[0] if args else None
             function_name = args[1] if len(args) > 1 else None
+            compare_ignored()
             if (bc_type, module_name) in ignored or \
                     (bc_type, module_name, class_name) in ignored or \
                     (bc_type, module_name, class_name, function_name) in ignored:
@@ -689,3 +693,24 @@ class BreakingChangesTracker:
             # For simple breaking changes reporting, prepend the change code to the message
             msg = "({}): " + msg
             self.breaking_changes[idx] = msg.format(*args)
+
+    def _compare_ignored(self, ignored: List, bc: tuple) -> bool:
+        bc_type, module_name, *args = bc
+        class_name = args[0] if args else None
+        function_name = args[1] if len(args) > 1 else None
+        for ignore_bc_type, *args in ignored:
+            ignore_module_name = args[0] if args else None
+            ignore_class_name = args[1] if len(args) > 1 else None
+            ignore_function_name = args[2] if len(args) > 2 else None
+            if ignore_module_name == "*":
+            if bc_type == ignore_bc_type:
+                if module_name == ignore_module_name:
+                    if class_name == ignore_class_name:
+                        if function_name == ignore_function_name:
+                            return True
+                    if ignore_class_name == "*":
+                        if function_name == ignore_function_name or ignore_function_name == "*":
+                            return True
+                        return True
+                    
+            return False
