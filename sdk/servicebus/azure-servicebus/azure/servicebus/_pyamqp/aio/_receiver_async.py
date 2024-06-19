@@ -205,6 +205,7 @@ class ReceiverLink(Link):
         batchable: Optional[bool] = None,
         on_disposition: Optional[Callable] = None,
     ):
+        print(f"Dropping message with delivery tag: {delivery_tag}")
         if self._is_closed:
             raise ValueError("Link already closed.")
         await self._outgoing_disposition(
