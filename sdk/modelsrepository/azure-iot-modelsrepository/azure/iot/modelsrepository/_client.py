@@ -45,7 +45,9 @@ class ModelsRepositoryClient(object):
 
     def __init__(self, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
         # type: (Any) -> None
-        """For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
+        """Create a client for working with the Azure IoT Models Repository.
+
+        For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
 
         :keyword str repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
