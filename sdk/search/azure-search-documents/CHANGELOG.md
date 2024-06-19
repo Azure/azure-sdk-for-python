@@ -33,7 +33,6 @@
   - `azure.search.documents.indexes.models.IndexingMode`
   - `azure.search.documents.indexes.models.LexicalNormalizer`
   - `azure.search.documents.indexes.models.LexicalNormalizerName`
-  - `azure.search.documents.indexes.models.LineEnding`
   - `azure.search.documents.indexes.models.NativeBlobSoftDeleteDeletionDetectionPolicy`
   - `azure.search.documents.indexes.models.SearchIndexerCache`
   - `azure.search.documents.indexes.models.SkillNames`
