@@ -8,8 +8,8 @@ import azure.ai.inference as sdk
 
 from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
 from devtools_testutils import recorded_by_proxy
-from azure.core.exceptions import AzureError
-
+from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.credentials import AzureKeyCredential
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelClient(ModelClientTestBase):
@@ -83,6 +83,56 @@ class TestModelClient(ModelClientTestBase):
     #                      HAPPY PATH TESTS - CHAT COMPLETIONS
     #
     # **********************************************************************************
+
+    # Send a request that includes all supported types of input objects. Make sure the resulting
+    # JSON payload that goes up to the service (including headers) is the correct one.
+    def test_chat_completions_request_payload(self, **kwargs):
+        client = sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+        )
+        try:
+            response = client.complete(
+                messages=[
+                    sdk.models.SystemMessage(content="system prompt"),
+                    sdk.models.UserMessage(content="user prompt 1"),
+                    sdk.models.AssistantMessage(content="assistant prompt"),
+                    sdk.models.UserMessage(
+                        content=[
+                            sdk.models.TextContentItem(text="user prompt 2"),
+                            sdk.models.ImageContentItem(
+                                image_url=sdk.models.ImageUrl(
+                                    url="https://does.not.exit/image.png",
+                                    detail=sdk.models.ImageDetailLevel.HIGH,
+                                ),
+                            ),
+                        ],
+                    ),
+                ],
+                model_extras={
+                    "key1": 1,
+                    "key2": True,
+                    "key3": "Some value",
+                    "key4": [1, 2, 3],
+                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                },
+                raw_request_hook=self.request_callback,
+            )
+        except ServiceRequestError as e:
+            headers = self.pipeline_request.http_request.headers
+            print(self.pipeline_request.http_request.headers)
+            assert(headers["Content-Type"] == "application/json")
+            assert(headers["Content-Length"] == "486")
+            assert(headers["unknown-parameters"] == "pass_through")
+            assert(headers["Accept"] == "application/json")
+            assert(headers["some_header"] == "some_header_value")
+            assert("azsdk-python-ai-inference/" in headers["User-Agent"])
+            assert(headers["Authorization"] == "Bearer key-value")
+            print(self.pipeline_request.http_request.data)
+            assert(self.pipeline_request.http_request.data == "{\"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}")
+            return
+        assert(False)
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
