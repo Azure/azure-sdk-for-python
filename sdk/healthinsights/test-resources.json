@@ -133,7 +133,7 @@
               },
               "parameters": {}
           },
-          "resourceGroup": "[parameters('resourceGroupName')]"
+          "resourceGroup": "[parameters('baseName')]"
         }
     ],
     "outputs": {
