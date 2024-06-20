@@ -42,7 +42,7 @@
         "description": "The location of the resources. By default, this is the same as the resource group."
       }
     },
-   "endpointPrefix": {
+  "endpointPrefix": {
         "defaultValue": "healthinsights",
         "type": "string"
     },
@@ -105,12 +105,13 @@
             ]
         },
         {
-            "type": "Microsoft.Authorization/roleAssignments",
+            "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
             "name": "[guid(resourceGroup().id)]",
             "properties": {
                 "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "principalId": "[parameters('testApplicationOid')]"
+                "principalId": "[parameters('testApplicationOid')]",
+                "principalType": "ServicePrincipal"
             }
         }
     ],
