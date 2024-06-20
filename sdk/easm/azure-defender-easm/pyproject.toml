@@ -1,4 +1,2 @@
 [tool.azure-sdk-build]
-pylint = false
-pyright = false
 strict_sphinx = true
