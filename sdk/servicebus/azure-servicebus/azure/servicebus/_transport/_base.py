@@ -272,7 +272,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def reset_link_credit(
-        handler, link_credit
+        handler, link_credit, *, drain=False
     ):
         """
         Resets the link credit on the link.
