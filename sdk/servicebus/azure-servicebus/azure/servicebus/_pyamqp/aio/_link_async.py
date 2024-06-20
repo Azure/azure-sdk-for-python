@@ -217,7 +217,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         # If we aren't still in a drain - for prefetch purposes, we were sending out a flow before receiving a drain
         if not self._drain_state:
             await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
-        self._drain_state = kwargs.get("drain", False)
+            self._drain_state = kwargs.get("drain", False)
 
     async def _incoming_flow(self, frame):
         pass
