@@ -78,7 +78,7 @@ def get_translation_endpoint(endpoint, api_version):
 
     return translator_endpoint
 
-def is_cognitive_services_scope(audience: str):
+def is_cognitive_services_scope(audience: str) -> bool:
     if "microsofttranslator" in audience:
         return True
 
