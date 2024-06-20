@@ -32,11 +32,11 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._cloud_links_operations import (
+from ...operations._iscsi_paths_operations import (
     build_create_or_update_request,
     build_delete_request,
     build_get_request,
-    build_list_request,
+    build_list_by_private_cloud_request,
 )
 
 if sys.version_info >= (3, 9):
@@ -47,14 +47,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class CloudLinksOperations:
+class IscsiPathsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.avs.aio.AVSClient`'s
-        :attr:`cloud_links` attribute.
+        :attr:`iscsi_paths` attribute.
     """
 
     models = _models
@@ -67,25 +67,25 @@ class CloudLinksOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(
+    def list_by_private_cloud(
         self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.CloudLink"]:
-        """List CloudLink resources by PrivateCloud.
+    ) -> AsyncIterable["_models.IscsiPath"]:
+        """List IscsiPath resources by PrivateCloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :return: An iterator like instance of either CloudLink or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.avs.models.CloudLink]
+        :return: An iterator like instance of either IscsiPath or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CloudLinkList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPathListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -98,7 +98,7 @@ class CloudLinksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_request(
+                _request = build_list_by_private_cloud_request(
                     resource_group_name=resource_group_name,
                     private_cloud_name=private_cloud_name,
                     subscription_id=self._config.subscription_id,
@@ -128,7 +128,7 @@ class CloudLinksOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CloudLinkList", pipeline_response)
+            deserialized = self._deserialize("IscsiPathListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -153,20 +153,16 @@ class CloudLinksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(
-        self, resource_group_name: str, private_cloud_name: str, cloud_link_name: str, **kwargs: Any
-    ) -> _models.CloudLink:
-        """Get a CloudLink.
+    async def get(self, resource_group_name: str, private_cloud_name: str, **kwargs: Any) -> _models.IscsiPath:
+        """Get a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cloud_link_name: Name of the cloud link. Required.
-        :type cloud_link_name: str
-        :return: CloudLink or the result of cls(response)
-        :rtype: ~azure.mgmt.avs.models.CloudLink
+        :return: IscsiPath or the result of cls(response)
+        :rtype: ~azure.mgmt.avs.models.IscsiPath
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -181,12 +177,11 @@ class CloudLinksOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CloudLink] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPath] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            cloud_link_name=cloud_link_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -207,7 +202,7 @@ class CloudLinksOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CloudLink", pipeline_response)
+        deserialized = self._deserialize("IscsiPath", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -218,10 +213,9 @@ class CloudLinksOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cloud_link_name: str,
-        cloud_link: Union[_models.CloudLink, IO[bytes]],
+        resource: Union[_models.IscsiPath, IO[bytes]],
         **kwargs: Any
-    ) -> _models.CloudLink:
+    ) -> _models.IscsiPath:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -235,20 +229,19 @@ class CloudLinksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CloudLink] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPath] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(cloud_link, (IOBase, bytes)):
-            _content = cloud_link
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
         else:
-            _json = self._serialize.body(cloud_link, "CloudLink")
+            _json = self._serialize.body(resource, "IscsiPath")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            cloud_link_name=cloud_link_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -274,12 +267,12 @@ class CloudLinksOperations:
 
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("CloudLink", pipeline_response)
+            deserialized = self._deserialize("IscsiPath", pipeline_response)
 
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = self._deserialize("CloudLink", pipeline_response)
+            deserialized = self._deserialize("IscsiPath", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -291,29 +284,26 @@ class CloudLinksOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cloud_link_name: str,
-        cloud_link: _models.CloudLink,
+        resource: _models.IscsiPath,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.CloudLink]:
-        """Create a CloudLink.
+    ) -> AsyncLROPoller[_models.IscsiPath]:
+        """Create a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cloud_link_name: Name of the cloud link. Required.
-        :type cloud_link_name: str
-        :param cloud_link: Resource create parameters. Required.
-        :type cloud_link: ~azure.mgmt.avs.models.CloudLink
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.avs.models.IscsiPath
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either CloudLink or the result of
+        :return: An instance of AsyncLROPoller that returns either IscsiPath or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.CloudLink]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -322,29 +312,26 @@ class CloudLinksOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cloud_link_name: str,
-        cloud_link: IO[bytes],
+        resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.CloudLink]:
-        """Create a CloudLink.
+    ) -> AsyncLROPoller[_models.IscsiPath]:
+        """Create a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cloud_link_name: Name of the cloud link. Required.
-        :type cloud_link_name: str
-        :param cloud_link: Resource create parameters. Required.
-        :type cloud_link: IO[bytes]
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either CloudLink or the result of
+        :return: An instance of AsyncLROPoller that returns either IscsiPath or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.CloudLink]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -353,25 +340,22 @@ class CloudLinksOperations:
         self,
         resource_group_name: str,
         private_cloud_name: str,
-        cloud_link_name: str,
-        cloud_link: Union[_models.CloudLink, IO[bytes]],
+        resource: Union[_models.IscsiPath, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.CloudLink]:
-        """Create a CloudLink.
+    ) -> AsyncLROPoller[_models.IscsiPath]:
+        """Create a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cloud_link_name: Name of the cloud link. Required.
-        :type cloud_link_name: str
-        :param cloud_link: Resource create parameters. Is either a CloudLink type or a IO[bytes] type.
+        :param resource: Resource create parameters. Is either a IscsiPath type or a IO[bytes] type.
          Required.
-        :type cloud_link: ~azure.mgmt.avs.models.CloudLink or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either CloudLink or the result of
+        :type resource: ~azure.mgmt.avs.models.IscsiPath or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either IscsiPath or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.CloudLink]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.avs.models.IscsiPath]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -379,7 +363,7 @@ class CloudLinksOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CloudLink] = kwargs.pop("cls", None)
+        cls: ClsType[_models.IscsiPath] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -387,8 +371,7 @@ class CloudLinksOperations:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
-                cloud_link_name=cloud_link_name,
-                cloud_link=cloud_link,
+                resource=resource,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -399,7 +382,7 @@ class CloudLinksOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("CloudLink", pipeline_response)
+            deserialized = self._deserialize("IscsiPath", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -414,18 +397,18 @@ class CloudLinksOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.CloudLink].from_continuation_token(
+            return AsyncLROPoller[_models.IscsiPath].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.CloudLink](
+        return AsyncLROPoller[_models.IscsiPath](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, private_cloud_name: str, cloud_link_name: str, **kwargs: Any
+        self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
     ) -> None:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -444,7 +427,6 @@ class CloudLinksOperations:
         _request = build_delete_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
-            cloud_link_name=cloud_link_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -475,17 +457,15 @@ class CloudLinksOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, private_cloud_name: str, cloud_link_name: str, **kwargs: Any
+        self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a CloudLink.
+        """Delete a IscsiPath.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param cloud_link_name: Name of the cloud link. Required.
-        :type cloud_link_name: str
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -502,7 +482,6 @@ class CloudLinksOperations:
             raw_result = await self._delete_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 private_cloud_name=private_cloud_name,
-                cloud_link_name=cloud_link_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
