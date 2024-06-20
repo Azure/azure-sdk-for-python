@@ -19,7 +19,7 @@ def main(generate_input, generate_output):
     result = {"packages": []}
     for package in data.values():
         package_name = package["packageName"]
-        prefolder = package["path"]
+        prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
         if "azure-mgmt-" in package_name:
