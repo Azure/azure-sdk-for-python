@@ -23,7 +23,7 @@
 """
 from datetime import datetime, timezone
 import warnings
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -304,55 +304,86 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    @distributed_trace
+    @overload
     def query_items_change_feed(
         self,
-        partition_key_range_id: Optional[str] = None,
-        is_start_from_beginning: bool = False,
-        continuation: Optional[str] = None,
-        max_item_count: Optional[int] = None,
         *,
-        start_time: Optional[datetime] = None,
+        feed_ranges: Optional[Dict[str, Any]] = None,
+        max_item_count: Optional[int] = None,
+        start_time: Union[datetime, Literal["Now", "Beginning"]] = "Now",
         partition_key: Optional[PartitionKeyType] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
-        """Get a sorted list of items that were changed, in the order in which they were modified.
+    ...
 
-        :param str partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
-            This is used to process the change feed in parallel across multiple consumers.
-        :param bool is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default, it's start from current (false).
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param str continuation: e_tag value to be used as continuation for reading change feed.
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword ~datetime.datetime start_time: Specifies a point of time to start change feed. Provided value will be
-            converted to UTC. This value will be ignored if `is_start_from_beginning` is set to true.
-        :keyword partition_key: partition key at which ChangeFeed requests are targeted.
-        :paramtype partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
-        :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
-            request. Once the user has reached their provisioned throughput, low priority requests are throttled
-            before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
-        """
-        if priority is not None:
-            kwargs['priority'] = priority
-        feed_options = build_options(kwargs)
+    @overload
+    def query_items_change_feed(
+        self,
+        *,
+        continuation: str,
+        # I'm not sure if any of the other parameters can be used in the continuation
+        # scenario, so feel free to add any of them here.
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+    ...
+
+    @distributed_trace
+    def query_items_change_feed(
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         response_hook = kwargs.pop('response_hook', None)
-        if partition_key_range_id is not None:
-            feed_options["partitionKeyRangeId"] = partition_key_range_id
-        if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if is_start_from_beginning is not None:
-            feed_options["isStartFromBeginning"] = is_start_from_beginning
-        if start_time is not None and is_start_from_beginning is False:
-            feed_options["startTime"] = start_time.astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-        if continuation is not None:
-            feed_options["continuation"] = continuation
+
+        # We would need to see if the build_options function is already extracting some of these
+        # parameters, such as priority, or partition_key.
+        feed_options = build_options(kwargs)
+
+        # Back compatibility with deprecation warnings
+        if (args and args[0] is not None) or 'partition_key_range_id' in kwargs:
+            warnings.warn(
+                "partition_key_range_id is deprecated. Please pass in feed_ranges instead.",
+                DeprecationWarning
+            )
+            try:
+                feed_options["partitionKeyRangeId"] = kwargs.pop('partition_key_range_id')
+            except KeyError:
+                feed_options["partitionKeyRangeId"] = args[0]
+        if (len(args) >= 2 and args[1] is not None) or 'is_start_from_beginning' in kwargs:
+            warnings.warn(
+                "is_start_from_beginning is deprecated. Please pass in start_time instead.",
+                DeprecationWarning
+            )
+            try:
+                feed_options["isStartFromBeginning"] = kwargs.pop('is_start_from_beginning')
+            except KeyError:
+                feed_options["isStartFromBeginning"] = args[1]
+        if 'start_time' in kwargs and kwargs['start_time'] is not None:
+            start_time = kwargs.pop('start_time')
+            if not isinstance(start_time, (datetime, str)):
+                raise TypeError("'start_time' must be either a datetime object, or either the values 'now' or 'beginning'.")
+            if isinstance(start_time, datetime):
+                feed_options["startTime"] = start_time.astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
+            elif start_time.lower() == 'now':
+                # I made this up, because I'm not sure what the actual format is supposed to be.
+                feed_options["isStartFromNow"] = datetime.now().astimezone(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT')
+            elif start_time.lower() == 'beginning':
+                feed_options["isStartFromBeginning"] = True
+            
+        if 'partition_key' in kwargs and kwargs['partition_key'] is not None:
+            feed_options["partitionKey"] = self._set_partition_key(kwargs['partition_key'])
+        if (len(args) >= 4 and args[3] is not None) or ('max_item_count' in kwargs and kwargs['max_item_count'] is not None):
+            try:
+                feed_options["maxItemCount"] = kwargs.pop('max_item_count')
+            except KeyError:
+                feed_options["maxItemCount"] = args[3]
+        if (len(args) >= 3 and args[2] is not None) or ('continuation' in kwargs and kwargs['continuation'] is not None:
+            # Need to run check on the format of the continuation token here.
+            try:
+                feed_options["continuation"] = kwargs.pop('continuation')
+            except KeyError:
+                feed_options["continuation"] = args[2]
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
