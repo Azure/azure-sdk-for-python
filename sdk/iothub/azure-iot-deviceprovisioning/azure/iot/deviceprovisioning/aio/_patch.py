@@ -51,13 +51,13 @@ class DeviceProvisioningClient(
     :paramtype api_version: str or ApiVersion
     :ivar enrollment: EnrollmentOperations operations
     :vartype enrollment:
-    azure.iot.deviceprovisioningservice.aio.operations.EnrollmentOperations
+        ~azure.iot.deviceprovisioningservice.aio.operations.EnrollmentOperations
     :ivar enrollment_group: EnrollmentGroupOperations operations
     :vartype enrollment_group:
-    azure.iot.deviceprovisioningservice.aio.operations.EnrollmentGroupOperations
+        ~azure.iot.deviceprovisioningservice.aio.operations.EnrollmentGroupOperations
     :ivar device_registration_state: DeviceRegistrationStateOperations operations
     :vartype device_registration_state:
-    azure.iot.deviceprovisioningservice.aio.operations.DeviceRegistrationStateOperations
+        ~azure.iot.deviceprovisioningservice.aio.operations.DeviceRegistrationStateOperations
     """
 
     def __init__(
