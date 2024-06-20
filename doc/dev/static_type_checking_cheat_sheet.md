@@ -85,8 +85,8 @@ class Tree:
 - Do use the latest typing features available. If not supported by older versions of Python, consider taking a dependency and importing from `typing-extensions`.
 
 ```python
-# from typing import TypedDict Python >3.8
-from typing_extensions import TypedDict
+# from typing import ParamSpec Python >=3.10
+from typing_extensions import ParamSpec
 ```
 
 ### Importing types
@@ -128,7 +128,8 @@ class Foo(Any): # type: ignore
 - Do leave a comment with a link or explanation for the ignore so that it may be fixed later.
 - If you need to ignore type checking all files under a directory for your library, use a `mypy.ini` and `pyrightconfig.json` at the package-level.
 - If you must opt-out of all type checking temporarily, open an issue to re-enable type checking for your library.
-- Try not to use `typing.Any` if it is possible to be more specific. `Any` essentially turns off type checking.
+- Try not to use `typing.Any` if it is possible to be more specific. `Any` essentially turns off type checking. Use `object` where you want to allow any type, but still want to retain type checking.
+
 
 ### Unions
 
