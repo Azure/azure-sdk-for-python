@@ -108,7 +108,7 @@ class ReceiverLink(Link):
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
     ):
-        if delivery_tag not in self._received_messages:
+        if delivery_tag not in self._received_delivery_tags:
             raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
 
         disposition_frame = DispositionFrame(
