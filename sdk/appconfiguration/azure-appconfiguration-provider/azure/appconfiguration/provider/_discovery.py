@@ -29,14 +29,14 @@ class SRVRecord:
 
 def find_auto_failover_endpoints(endpoint):
     if os.environ.get(DISABLE_APPCONFIGURATION_DISCOVERY, "").lower() == "true":
-        return [endpoint]
+        return []
     known_domain = _get_known_domains(endpoint)
     if known_domain is None:
-        return [endpoint]
+        return []
 
     origin = _find_origin(endpoint)
     if origin is None or not _validate(known_domain, origin.target):
-        return [endpoint]
+        return []
 
     srv_records = [origin] + _find_replicas(origin.target)
     endpoints = []
