@@ -115,16 +115,7 @@
             "principalId": "[parameters('testApplicationOid')]",
             "roleDefinitionId": "[variables('roleDefinitionId')]"
           }
-        },
-        {
-          "type": "Microsoft.Authorization/roleAssignments",
-          "apiVersion": "2018-09-01-preview",
-          "name": "[guid(resourceGroup().id)]",
-          "properties": {
-              "roleDefinitionId": "[variables('roleDefinitionId')]",
-              "principalId": "[parameters('testApplicationOid')]"
-          }
-      }
+        }
     ],
     "outputs": {
         "LANGUAGE_API_KEY": {
