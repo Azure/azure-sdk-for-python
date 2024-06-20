@@ -486,7 +486,7 @@ class CallAutomationClient:
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str or None
         :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageKind is set to 'azureBlobStorage'.
+         when RecordingStorageKind is set to 'AzureBlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
@@ -539,7 +539,7 @@ class CallAutomationClient:
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str or None
         :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageKind is set to 'azureBlobStorage'.
+         when RecordingStorageKind is set to 'AzureBlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None

@@ -2533,7 +2533,7 @@ class ExternalStorage(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar recording_storage_kind: Defines the kind of external storage. Required. Known values are:
-     "azureCommunicationServices" and "azureBlobStorage".
+     "azureCommunicationServices" and "AzureBlobStorage".
     :vartype recording_storage_kind: str or
      ~azure.communication.callautomation.models.RecordingStorageKind
     :ivar recording_destination_container_url: Uri of a container or a location within a container.
@@ -2558,7 +2558,7 @@ class ExternalStorage(_serialization.Model):
     ) -> None:
         """
         :keyword recording_storage_kind: Defines the kind of external storage. Required. Known values
-         are: "azureCommunicationServices" and "azureBlobStorage".
+         are: "azureCommunicationServices" and "AzureBlobStorage".
         :paramtype recording_storage_kind: str or
          ~azure.communication.callautomation.models.RecordingStorageKind
         :keyword recording_destination_container_url: Uri of a container or a location within a
