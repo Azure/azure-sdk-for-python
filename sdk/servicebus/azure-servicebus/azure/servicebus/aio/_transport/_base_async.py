@@ -4,14 +4,17 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable
+from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable, List
 from typing_extensions import Literal
 
 if TYPE_CHECKING:
     try:
         from uamqp import types as uamqp_types
+        from uamqp import Message as uamqp_Message
     except ImportError:
         uamqp_types = None
+
+    from ..._pyamqp.message import Message as pyamqp_message
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
@@ -238,7 +241,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     async def reset_link_credit_async(
-        handler, link_credit
+        handler, link_credit, *, drain=False
     ):
         """
         Resets the link credit on the link.
