@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import datetime
-from typing import List, Any, Optional, Dict, Union, overload, IO
+from typing import List, Any, Optional, Dict, Union, overload, IO, Literal
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -20,26 +20,23 @@ from ._operations import (
     JobRouterClientOperationsMixin as JobRouterClientOperationsMixinGenerated,
     JobRouterAdministrationClientOperationsMixin as JobRouterAdministrationClientOperationsMixinGenerated,
 )
-from ..._model_base import _deserialize_datetime as _convert_str_to_datetime  # pylint:disable=protected-access
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+from ..._model_base import _deserialize_datetime as _convert_str_to_datetime
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
+
+
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class JobRouterAdministrationClientOperationsMixin(
     JobRouterAdministrationClientOperationsMixinGenerated
-):  # pylint:disable=too-many-lines,line-too-long,name-too-long,arguments-differ,unused-argument
+):  # pylint:disable=too-many-lines,line-too-long,name-too-long,arguments-differ
     # region ExceptionPolicy
     @overload
-    async def upsert_exception_policy(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_exception_policy(  # pylint: disable=arguments-differ
         self,
         exception_policy_id: str,
         *,
@@ -53,26 +50,19 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
-
-        :keyword exception_rules: (Optional) A collection of exception rules on the exception
-          policy.
+        :keyword exception_rules: (Optional) A collection of exception rules on the exception policy.
         :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
-
         :keyword Optional[str] name: The name of this policy.
-
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-
         :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
@@ -148,8 +138,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -198,7 +187,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_exception_policy(
+    async def upsert_exception_policy(  # pylint: disable=docstring-missing-param
         self, exception_policy_id: str, *args: Union[_models.ExceptionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
@@ -297,7 +286,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region DistributionPolicy
     @overload
-    async def upsert_distribution_policy(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_distribution_policy(  # pylint: disable=arguments-differ
         self,
         distribution_policy_id: str,
         *,
@@ -460,7 +449,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_distribution_policy(
+    async def upsert_distribution_policy(  # pylint: disable=docstring-missing-param
         self, distribution_policy_id: str, *args: Union[_models.DistributionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
@@ -565,7 +554,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region Queue
     @overload
-    async def upsert_queue(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_queue(  # pylint: disable=arguments-differ
         self,
         queue_id: str,
         *,
@@ -731,7 +720,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_queue(
+    async def upsert_queue(  # pylint: disable=docstring-missing-param
         self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
@@ -838,7 +827,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region ClassificationPolicy
     @overload
-    async def upsert_classification_policy(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_classification_policy(  # pylint: disable=arguments-differ
         self,
         classification_policy_id: str,
         *,
@@ -1046,7 +1035,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_classification_policy(
+    async def upsert_classification_policy(  # pylint: disable=docstring-missing-param
         self, classification_policy_id: str, *args: Union[_models.ClassificationPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
@@ -1174,7 +1163,7 @@ class JobRouterAdministrationClientOperationsMixin(
 class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Worker
     @overload
-    async def upsert_worker(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_worker(  # pylint: disable=arguments-differ
         self,
         worker_id: str,
         *,
@@ -1384,7 +1373,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_worker(
+    async def upsert_worker(  # pylint: disable=docstring-missing-param
         self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
@@ -1554,7 +1543,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     # region Job
     @overload
-    async def upsert_job(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_job(  # pylint: disable=arguments-differ
         self,
         job_id: str,
         *,
@@ -1752,7 +1741,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_job(
+    async def upsert_job(  # pylint: disable=docstring-missing-param
         self, job_id: str, *args: Union[_models.RouterJob, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
