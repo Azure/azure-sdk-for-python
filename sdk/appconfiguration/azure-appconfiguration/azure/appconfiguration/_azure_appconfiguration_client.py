@@ -24,7 +24,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._generated import AzureAppConfiguration
-from ._generated.models import SnapshotUpdateParameters, SnapshotStatus, LabelFields, Label
+from ._generated.models import SnapshotUpdateParameters, SnapshotStatus, LabelFields
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingsFilter,
@@ -147,17 +147,18 @@ class AzureAppConfigurationClient:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
 
-        :keyword key_filter: filter results based on their keys. '*' can be
+        :keyword key_filter: Filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
         :paramtype key_filter: str or None
-        :keyword label_filter: filter results based on their label. '*' can be
+        :keyword label_filter: Filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :paramtype label_filter: str or None
-        :param tags_filter: A filter used to query by tags. Default value is None.
-        :type tags: list[str]
-        :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword tags_filter: A filter used to query by tags. Default value is None.
+        :paramtype tags_filter: list[str] or None
+        :keyword accept_datetime: Retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields
+        :paramtype fields: list[str] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -196,9 +197,9 @@ class AzureAppConfigurationClient:
 
         :keyword str snapshot_name: The snapshot name.
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
-        :type fields: list[str] or None
-        :param tags_filter: A filter used to query by tags. Default value is None.
-        :type tags: list[str]
+        :paramtype fields: list[str] or None
+        :keyword tags_filter: A filter used to query by tags. Default value is None.
+        :paramtype tags_filter: list[str] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -253,15 +254,15 @@ class AzureAppConfigurationClient:
     ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
-        :param key: key of the ConfigurationSetting
+        :param key: Key of the ConfigurationSetting
         :type key: str
-        :param label: label used to identify the ConfigurationSetting. Default is `None`.
+        :param label: Label used to identify the ConfigurationSetting. Default is `None`.
         :type label: str or None
-        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :param etag: Check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword accept_datetime: Retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :return: The matched ConfigurationSetting object
         :rtype: ~azure.appconfiguration.ConfigurationSetting or None
@@ -310,7 +311,7 @@ class AzureAppConfigurationClient:
     def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs) -> ConfigurationSetting:
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
-        :param configuration_setting: the ConfigurationSetting object to be added
+        :param configuration_setting: The ConfigurationSetting object to be added
         :type configuration_setting: ~azure.appconfiguration.ConfigurationSetting
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: ~azure.appconfiguration.ConfigurationSetting
@@ -359,13 +360,14 @@ class AzureAppConfigurationClient:
         If the configuration setting identified by key and label does not exist, this is a create.
         Otherwise this is an update.
 
-        :param configuration_setting: the ConfigurationSetting to be added (if not exists) \
+        :param configuration_setting: The ConfigurationSetting to be added (if not exists) \
             or updated (if exists) to the service
         :type configuration_setting: ~azure.appconfiguration.ConfigurationSetting
         :param match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str etag: check if the ConfigurationSetting is changed. \
+        :keyword etag: Check if the ConfigurationSetting is changed. \
             Will use the value from param configuration_setting if not set.
+        :paramtype etag: str or None
         :return: The ConfigurationSetting returned from the service
         :rtype: ~azure.appconfiguration.ConfigurationSetting
         :raises: :class:`~azure.appconfiguration.ResourceReadOnlyError`, \
@@ -426,11 +428,12 @@ class AzureAppConfigurationClient:
     ) -> Union[None, ConfigurationSetting]:
         """Delete a ConfigurationSetting if it exists
 
-        :param key: key used to identify the ConfigurationSetting
+        :param key: Key used to identify the ConfigurationSetting
         :type key: str
-        :param label: label used to identify the ConfigurationSetting. Default is `None`.
-        :type label: str
-        :keyword str etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :param label: Label used to identify the ConfigurationSetting. Default is `None`.
+        :type label: str or None
+        :keyword etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :paramtype etag: str or None
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
@@ -495,11 +498,12 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str or None
-        :param tags_filter: A filter used to query by tags. Default value is None.
-        :type tags: list[str]
+        :keyword tags_filter: A filter used to query by tags. Default value is None.
+        :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword fields: specify which fields to include in the results. Leave None to include all fields
+        :paramtype fields: list[str] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -620,19 +624,19 @@ class AzureAppConfigurationClient:
     ) -> ItemPaged[str]:
         """Gets a list of labels.
 
-        :param name: A filter for the name of the returned labels. Default value is None.
-        :type name: str
-        :param after: Instructs the server to return elements that appear after the element referred to
+        :keyword name: A filter for the name of the returned labels. Default value is None.
+        :paramtype name: str or None
+        :keyword after: Instructs the server to return elements that appear after the element referred to
             by the specified token. Default value is None.
-        :type after: str
-        :param accept_datetime: Requests the server to respond with the state of the resource at the
+        :paramtype after: str or None
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
             specified time. Default value is None.
-        :type accept_datetime: str
-        :param fields: Used to select what fields are present in the returned resource(s). Default
+        :paramtype accept_datetime: str or None
+        :keyword fields: Used to select what fields are present in the returned resource(s). Default
             value is None.
-        :type fields: list[str or ~azure.appconfiguration.models.LabelFields]
+        :paramtype fields: list[str or ~azure.appconfiguration.models.LabelFields] or None
         :return: An iterator of labels.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Label]
+        :rtype: ~azure.core.paging.ItemPaged[str]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
@@ -641,6 +645,7 @@ class AzureAppConfigurationClient:
                 after=after,
                 accept_datetime=accept_datetime,
                 select=fields,
+                cls=lambda objs: [x.name for x in objs],
                 **kwargs,
             )
         except binascii.Error:
@@ -668,14 +673,14 @@ class AzureAppConfigurationClient:
             snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
             there are no two key-values containing the same key and label.
-        :type composition_type: str or None
+        :paramtype composition_type: str or None
         :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a configuration
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
             in range 3600(1 hour) to 7776000(90 days).
-        :type retention_period: int or None
+        :paramtype retention_period: int or None
         :keyword tags: The tags of the configuration snapshot.
-        :type tags: dict[str, str] or None
+        :paramtype tags: dict[str, str] or None
         :return: A poller for create configuration snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
@@ -709,9 +714,9 @@ class AzureAppConfigurationClient:
         :param name: The name of the configuration setting snapshot to archive.
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword etag: Check if the ConfigurationSnapshot is changed. Set None to skip checking etag.
-        :type etag: str or None
+        :paramtype etag: str or None
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -752,9 +757,9 @@ class AzureAppConfigurationClient:
         :param name: The name of the configuration setting snapshot to recover.
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
-        :type match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword etag: Check if the ConfigurationSnapshot is changed. Set None to skip checking etag.
-        :type etag: str or None
+        :paramtype etag: str or None
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -788,7 +793,7 @@ class AzureAppConfigurationClient:
         :param name: The name of the configuration setting snapshot to retrieve.
         :type name: str
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
-        :type fields: list[str] or None
+        :paramtype fields: list[str] or None
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -814,11 +819,11 @@ class AzureAppConfigurationClient:
         snapshot name, snapshot status and fields to present in return.
 
         :keyword name: Filter results based on snapshot name.
-        :type name: str or None
+        :paramtype name: str or None
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
-        :type fields: list[str] or None
+        :paramtype fields: list[str] or None
         :keyword status: Filter results based on snapshot keys.
-        :type status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
+        :paramtype status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSnapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
