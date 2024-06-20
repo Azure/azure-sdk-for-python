@@ -27,12 +27,17 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
+from .model_batch_deployment_settings import ModelBatchDeploymentSettings as BatchDeploymentSettings
 
 module_logger = logging.getLogger(__name__)
 
 
 class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
+
+    **Warning** This object should not be used directly.
+    Please use of the child implementations, :class:`~azure.ai.ml.entities.ModelBatchDeployment` or
+    :class:`azure.ai.ml.entities.PipelineComponentBatchDeployment`.
 
     :param name: the name of the batch deployment
     :type name: str
@@ -84,7 +89,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         Details will be provided in the error message.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
@@ -97,25 +102,27 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         environment: Optional[Union[str, Environment]] = None,
         compute: Optional[str] = None,
         resources: Optional[ResourceConfiguration] = None,
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
         output_file_name: Optional[str] = None,
-        output_action: Optional[Union[BatchDeploymentOutputAction, str]] = None,
+        output_action: Optional[str] = None,
         error_threshold: Optional[int] = None,
         retry_settings: Optional[BatchRetrySettings] = None,
         logging_level: Optional[str] = None,
         mini_batch_size: Optional[int] = None,
         max_concurrency_per_instance: Optional[int] = None,
         environment_variables: Optional[Dict[str, str]] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script: Optional[
-            Union[str, PathLike]
-        ] = None,  # promoted property from code_configuration.scoring_script
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs: Any,
     ) -> None:
+        # When ready, we should add some kind of deprecation warning if type=None.
+        _type = kwargs.pop("_type", None)
         self._provisioning_state: Optional[str] = kwargs.pop("provisioning_state", None)
-
         super(BatchDeployment, self).__init__(
             name=name,
+            type=_type,
             endpoint_name=endpoint_name,
             properties=properties,
             tags=tags,
@@ -123,7 +130,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             model=model,
             code_configuration=code_configuration,
             environment=environment,
-            environment_variables=environment_variables,
             code_path=code_path,
             scoring_script=scoring_script,
             **kwargs,
@@ -131,26 +137,77 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
         self.compute = compute
         self.resources = resources
-        self.output_action = output_action
-        self.output_file_name = output_file_name
-        self.error_threshold = error_threshold
-        self.retry_settings = retry_settings
-        self.logging_level = logging_level
-        self.mini_batch_size = mini_batch_size
-        self.max_concurrency_per_instance = max_concurrency_per_instance
+        settings = kwargs.pop("settings", None)
+        self._settings = settings if settings else BatchDeploymentSettings(
+                mini_batch_size=mini_batch_size,
+                instance_count=instance_count,
+                max_concurrency_per_instance=max_concurrency_per_instance,
+                output_action=output_action,
+                output_file_name=output_file_name,
+                retry_settings=retry_settings,
+                environment_variables=environment_variables,
+                error_threshold=error_threshold,
+                logging_level=logging_level,
+        )
 
-        if self.resources and instance_count:
-            msg = "Can't set instance_count when resources is provided."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.BATCH_DEPLOYMENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
+        if self.resources is not None:
+            if self.resources.instance_count is None and self._settings.instance_count is not None:
+                self.resources.instance_count = self._settings.instance_count
+            elif self.resources.instance_count is not None and self._settings.instance_count is not None:
+                msg = "Can't set instance_count when resources.instance_count is provided."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.BATCH_DEPLOYMENT,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
 
-        if not self.resources and instance_count:
-            self.resources = ResourceConfiguration(instance_count=instance_count)
+        if not self.resources and self._settings.instance_count:
+            self.resources = ResourceConfiguration(instance_count=self._settings.instance_count)
+
+    def __getattr__(self, name: str) -> Optional[Any]:
+        # Support backwards compatibility with old BatchDeployment properties.
+        # We may want to overwrite this on a per-child class basis.
+        if name in [
+            "output_action",
+            "output_file_name",
+            "error_threshold",
+            "retry_settings",
+            "logging_level",
+            "mini_batch_size",
+            "max_concurrency_per_instance"
+            "environment_variables"
+        ]:
+            try:
+                return getattr(self._settings, name)
+            except AttributeError:
+                try:
+                    return super().__getattribute__(name)
+                except AttributeError:
+                    return None
+        return super().__getattribute__(name)
+
+    def __setattr__(self, name, value):
+        # Support backwards compatibility with old BatchDeployment properties.
+        # We may want to overwrite this on a per-child class basis.
+        if name in [
+            "output_action",
+            "output_file_name",
+            "error_threshold",
+            "retry_settings",
+            "logging_level",
+            "mini_batch_size",
+            "max_concurrency_per_instance"
+            "environment_variables"
+        ]:
+            try:
+                # First confirm that this object has a compatible attr
+                getattr(self._settings, name)
+                setattr(self._settings, name)
+            except AttributeError:
+                pass
+        super().__setattr__(name, value)
 
     @property
     def instance_count(self) -> Optional[int]:
@@ -195,7 +252,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
     # pylint: disable=arguments-differ
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore[override]
         self._validate()
         code_config = (
             RestCodeConfiguration(
@@ -341,9 +398,9 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
     def _validate_output_action(self) -> None:
         if (
-            self.output_action
-            and self.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
-            and self.output_file_name
+            self._settings.output_action
+            and self._settings.output_action == BatchDeploymentOutputAction.SUMMARY_ONLY
+            and self._settings.output_file_name
         ):
             msg = "When output_action is set to {}, the output_file_name need not to be specified."
             msg = msg.format(BatchDeploymentOutputAction.SUMMARY_ONLY)
