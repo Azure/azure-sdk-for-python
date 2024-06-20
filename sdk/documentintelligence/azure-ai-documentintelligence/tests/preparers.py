@@ -17,11 +17,11 @@ REGION = os.getenv("DOCUMENTINTELLIGENCE_LOCATION", None)
 DocumentIntelligencePreparer = functools.partial(
     PowerShellPreparer,
     "documentintelligence",
-    documentintelligence_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
+    documentintelligence_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
     documentintelligence_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     documentintelligence_storage_container_sas_url="https://blob_sas_url",
+    documentintelligence_storage_advance_container_sas_url="https://blob_sas_url",
     documentintelligence_testing_data_container_sas_url="https://blob_sas_url",
-    documentintelligence_multipage_storage_container_sas_url="https://blob_sas_url",
     documentintelligence_training_data_classifier_sas_url="https://blob_sas_url",
     documentintelligence_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/documentintelligencename",
     documentintelligence_region="region",
