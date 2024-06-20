@@ -294,18 +294,16 @@ def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    checker = BreakingChangesTracker(stable, current, diff, package_name)
+    checker = BreakingChangesTracker(stable, current, diff, package_name, previous_version=version)
     if changelog:
         checker = ChangelogTracker(stable, current, diff, package_name)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
 
-    if checker.breaking_changes or (hasattr(checker, "features_added") and checker.features_added):
-        print(checker.report_changes())
-        exit(0)
-
-    print(f"\nNo breaking changes found for {package_name} between stable version {version} and current version.")
+    print(checker.report_changes())
+    if not changelog and checker.breaking_changes:
+        exit(1)
 
 
 def remove_json_files(pkg_dir: str) -> None:
