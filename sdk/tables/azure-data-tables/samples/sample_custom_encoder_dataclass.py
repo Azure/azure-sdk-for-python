@@ -11,7 +11,7 @@ FILE: sample_custom_encoder_dataclass.py
 
 DESCRIPTION:
     These samples demonstrate the following: inserting entities into a table
-    and deleting tables from a table.
+    and deleting entities from a table.
 
 USAGE:
     python sample_custom_encoder_dataclass.py

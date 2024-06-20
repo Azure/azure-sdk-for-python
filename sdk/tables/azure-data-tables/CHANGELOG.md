@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.1b1 (Unreleased)
+## 12.6.0b1 (Unreleased)
 
 ### Features Added
 * Added to support custom encoder in entity CRUD operations.
