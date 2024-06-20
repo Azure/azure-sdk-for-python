@@ -470,11 +470,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
         return callback(status, response, description, amqp_transport=PyamqpTransportAsync)
 
+    @staticmethod
     async def receive_loop_async(
         receiver: "ServiceBusReceiver",
         amqp_receive_client: "ReceiveClientAsync",
         max_message_count: int,
-        batch: int,
+        batch: List["Message"],
         abs_timeout,
         timeout,
         **kwargs: Any
