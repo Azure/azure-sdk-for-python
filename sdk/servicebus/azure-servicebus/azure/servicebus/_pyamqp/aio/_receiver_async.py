@@ -112,7 +112,7 @@ class ReceiverLink(Link):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
-        if delivery_tag not in self._received_messages:
+        if delivery_tag not in self._received_delivery_tags:
             raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
 
         if self.network_trace:
