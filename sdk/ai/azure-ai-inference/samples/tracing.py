@@ -46,6 +46,8 @@ client = ChatCompletionsClient(
     api_version=os.environ["OPENAI_API_VERSION"]
 )
 response = client.complete(
-    messages=[{"role": "user", "content": "hello world!"}]
+    messages=[{"role": "user", "content": "hello world!"}],
+    stream=True,
 )
-print(response)
+for result in response:
+    print(result)

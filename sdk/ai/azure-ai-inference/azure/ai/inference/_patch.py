@@ -18,9 +18,12 @@ Why do we patch auto-generated code?
    when the client is defined using context manager ("with" statement).
 
 """
+from __future__ import annotations
+
 import json
 import logging
 import sys
+import functools
 
 from io import IOBase
 from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING
@@ -37,6 +40,9 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceNotModifiedError,
 )
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
+from azure.core.tracing.common import change_context
 from . import models as _models
 from ._model_base import SdkJSONEncoder, _deserialize
 from ._serialization import Serializer
@@ -70,6 +76,184 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 _LOGGER = logging.getLogger(__name__)
+
+import os
+import json
+from typing import Any, Iterator, Union, AsyncIterator
+
+import wrapt
+from opentelemetry import trace
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai.types.completion import Completion
+from openai import Stream, AsyncStream
+
+TracedModels = Union[ChatCompletion, Completion]
+
+import json
+from typing import TypeVar, Callable, Any, Generator, Iterator, Union
+from typing_extensions import ParamSpec
+
+
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+def has_tracing_enabled() -> bool:
+    tracing = os.getenv("OPENAI_TRACE_ENABLED", "")
+    if tracing.lower() == "true":
+        return True
+    return False
+
+def _set_attribute(span: trace.Span, key: str, value: Any) -> None:
+    if value is not None:
+        span.add_attribute(key, value)
+
+
+def _add_request_chat_message_event(span: trace.Span, **kwargs: Any) -> None:
+    for message in kwargs.get("messages", []):
+        try:
+            message = message.to_dict()
+        except AttributeError:
+            pass
+
+        if message.get("role"):
+            name = f"gen_ai.{message.get('role')}.message"
+            span.span_instance.add_event(
+                name=name,
+                attributes={"event.data": json.dumps(message)}
+            )
+
+
+def _add_request_chat_attributes(span: trace.Span, **kwargs: Any) -> None:
+    _set_attribute(span, "gen_ai.system", "openai")
+    _set_attribute(span, "gen_ai.request.model", kwargs.get("model"))
+    _set_attribute(span, "gen_ai.request.max_tokens", kwargs.get("max_tokens"))
+    _set_attribute(span, "gen_ai.request.temperature", kwargs.get("temperature"))
+    _set_attribute(span, "gen_ai.request.top_p", kwargs.get("top_p"))
+
+
+def _add_response_chat_message_event(span: trace.Span, result: ChatCompletion) -> None:
+    for choice in result.choices:
+        response: dict[str, Any] = {
+            "message.role": choice.message.role,
+            "message.content": choice.message.content,
+            "finish_reason": str(choice.finish_reason),
+            "index": choice.index,
+        }
+        if choice.message.tool_calls:
+            response["message.tool_calls"] = [tool.to_dict() for tool in choice.message.tool_calls]
+        span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(response)})
+
+
+def _add_response_chat_attributes(span: trace.Span, result: ChatCompletion) -> None:
+    _set_attribute(span, "gen_ai.response.id", result.id)
+    _set_attribute(span, "gen_ai.response.model", result.model)
+    _set_attribute(span, "gen_ai.response.finish_reason", str(result.choices[0].finish_reason))
+    if hasattr(result, "usage"):
+        _set_attribute(span, "gen_ai.usage.completion_tokens", result.usage.completion_tokens if result.usage else None)
+        _set_attribute(span, "gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if result.usage else None)
+
+def _add_request_span_attributes(span: trace.Span, span_name: str, kwargs: Any) -> None:
+    if span_name.startswith("ChatCompletionsClient.complete"):
+        _add_request_chat_attributes(span, **kwargs)
+        _add_request_chat_message_event(span, **kwargs)
+    # TODO add more models here
+
+
+def _add_response_span_attributes(span: trace.Span, result: TracedModels) -> None:
+    # if result.object == "chat.completion":
+    _add_response_chat_attributes(span, result)
+    _add_response_chat_message_event(span, result)
+    # TODO add more models here
+
+
+def accumulate_response(item, accumulate: dict[str, Any]) -> None:
+    if item.finish_reason:
+        accumulate["finish_reason"] = item.finish_reason
+    if item.index:
+        accumulate["index"] = item.index
+    if item.delta.role:
+        accumulate["role"] = item.delta.role
+    if item.delta.content:
+        accumulate.setdefault("content", "")
+        accumulate["content"] += item.delta.content
+    if item.delta.tool_calls:
+        accumulate.setdefault("tool_calls", [])
+        for tool_call in item.delta.tool_calls:
+            if tool_call.id:
+                accumulate["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
+            if tool_call.type:
+                accumulate["tool_calls"][-1]["type"] = tool_call.type
+            if tool_call.function and tool_call.function.name:
+                accumulate["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+            if tool_call.function and tool_call.function.arguments:
+                accumulate["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+
+
+def _wrapped_stream(stream_obj: Stream[ChatCompletionChunk], span: trace.Span) -> Stream[ChatCompletionChunk]:
+    class StreamWrapper(wrapt.ObjectProxy):
+        def __iter__(self) -> Iterator[ChatCompletionChunk]:
+            try:
+                accumulate: dict[str, Any] = {"role": ""}
+                for chunk in stream_obj:
+                    for item in chunk.choices:
+                        accumulate_response(item, accumulate)
+                    yield chunk
+
+                span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(accumulate)})
+                _add_response_chat_attributes(span, chunk)
+
+            except Exception as exc:
+                _set_attribute(span, "error.type", exc.__class__.__name__)
+                raise
+
+            finally:
+                if stream_obj._done is False:
+                    span.set_status(trace.Status(trace.StatusCode.ERROR, "Stream was not fully consumed"))
+                    # TODO should we add whatever we have for event / response attributes here?
+                span.finish()
+
+    return StreamWrapper(stream_obj)
+
+
+def llm_trace(
+    *, span_name: str
+) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
+    if has_tracing_enabled():
+        tracer = trace.get_tracer(__name__)
+    
+    def wrapper(func: Callable[_P, _R]) -> Callable[_P, _R]:
+        @functools.wraps(func)
+        def inner(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+            if not has_tracing_enabled():
+                return func(*args, **kwargs)
+
+            # Not using because span events not supported
+            span_impl_type = settings.tracing_implementation()
+            span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
+            # span.start()
+            # span = tracer.start_span(span_name, kind=trace.SpanKind.CLIENT)
+            try:
+                _add_request_span_attributes(span, span_name, kwargs)
+
+                result = func(*args, **kwargs)
+
+                if kwargs.get("stream", True):
+                    return _wrapped_stream(result, span)
+
+                _add_response_span_attributes(span, result)
+
+            except Exception as exc:
+                _set_attribute(span, "error.type", exc.__class__.__name__)
+                span.finish()
+                raise
+
+            span.finish()
+            return result
+
+        return inner
+
+    return wrapper
 
 
 def load_client(
@@ -124,49 +308,46 @@ def load_client(
 
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
-from azure.core.pipeline.policies import DistributedTracingPolicy
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.pipeline import PipelineRequest, PipelineResponse
 
-def _set_attribute(span, key, value):
-    if value:
-        span.set_attribute(key, value)
+# from azure.core.pipeline.policies import DistributedTracingPolicy
+# from azure.core.rest import HttpRequest, HttpResponse
+# from azure.core.pipeline import PipelineRequest
 
 
-class AIDistributedTracingPolicy(DistributedTracingPolicy):
-    def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
-        super().on_request(request)
-        span = request.context[self.TRACING_CONTEXT]
-        current_span = span.get_current_span()
-        current_span.add_event(
-            name="gen_ai.prompt",
-            attributes={"event.body": request.http_request.content}
-        )
-        body = json.loads(request.http_request.content)
-        _set_attribute(current_span, "gen_ai.request.max_tokens", body.get("max_tokens"))
-        _set_attribute(current_span, "gen_ai.request.model", body.get("model"))
-        _set_attribute(current_span, "gen_ai.request.temperature", body.get("temperature"))
-        _set_attribute(current_span, "gen_ai.request.top_p", body.get("top_p"))
-        _set_attribute(current_span, "gen_ai.request.stream", body.get("stream"))
+# class AIDistributedTracingPolicy(DistributedTracingPolicy):
 
-    def on_response(
-        self,
-        request: PipelineRequest[HttpRequest],
-        response: PipelineResponse[HttpRequest, HttpResponse],
-    ) -> None:
-        span = request.context[self.TRACING_CONTEXT]
-        current_span = span.get_current_span()
-        current_span.add_event(
-            name="gen_ai.completion",
-            attributes={"event.body": response.http_response.text()}
-        )
-        result = response.http_response.json()
-        _set_attribute(current_span, "gen_ai.response.model", result["model"])
-        _set_attribute(current_span, "gen_ai.usage.completion_tokens", result["usage"]["completion_tokens"])
-        _set_attribute(current_span, "gen_ai.usage.prompt_tokens", result["usage"]["prompt_tokens"])
-        _set_attribute(current_span, "gen_ai.response.id", result["id"])
-        _set_attribute(current_span, "gen_ai.response.finish_reasons", result["choices"][0]["finish_reason"])
-        super().on_response(request, response)
+#     def end_span(
+#         self,
+#         request: PipelineRequest[HTTPRequestType],
+#         response: Optional[HTTPResponseType] = None,
+#         exc_info: Optional[OptExcInfo] = None,
+#     ) -> None:
+#         """Ends the span that is tracing the network and updates its status.
+
+#         :param request: The PipelineRequest object
+#         :type request: ~azure.core.pipeline.PipelineRequest
+#         :param response: The HttpResponse object
+#         :type response: ~azure.core.rest.HTTPResponse or ~azure.core.pipeline.transport.HttpResponse
+#         :param exc_info: The exception information
+#         :type exc_info: tuple
+#         """
+#         if self.TRACING_CONTEXT not in request.context:
+#             return
+
+#         span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
+#         http_request: Union[HttpRequest, LegacyHttpRequest] = request.http_request
+#         if span is not None:
+#             span.set_http_attributes(http_request, response=response)
+#             if request.context.get("retry_count"):
+#                 span.add_attribute(self._HTTP_RESEND_COUNT, request.context["retry_count"])
+#             request_id = http_request.headers.get(self._REQUEST_ID)
+#             if request_id is not None:
+#                 span.add_attribute(self._REQUEST_ID, request_id)
+#             if response and self._RESPONSE_ID in response.headers:
+#                 span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
+#             if exc_info:
+#                 span.__exit__(*exc_info)
+
 
 
 class ChatCompletionsClient(ChatCompletionsClientGenerated):
@@ -186,25 +367,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         self._model_info: Optional[_models.ModelInfo] = None
-        from azure.core.pipeline import policies
-        _policies = [
-            policies.RequestIdPolicy(**kwargs),
-            policies.HeadersPolicy(**kwargs),
-            policies.UserAgentPolicy(**kwargs),
-            policies.ProxyPolicy(**kwargs),
-            policies.ContentDecodePolicy(**kwargs),
-            policies.RedirectPolicy(**kwargs),
-            policies.RetryPolicy(**kwargs),
-            policies.AzureKeyCredentialPolicy(
-                credential, "Authorization", prefix="Bearer", **kwargs
-            ),
-            policies.CustomHookPolicy(**kwargs),
-            policies.NetworkTraceLoggingPolicy(**kwargs),
-            AIDistributedTracingPolicy(**kwargs),
-            policies.SensitiveHeaderCleanupPolicy(**kwargs),
-            policies.HttpLoggingPolicy(**kwargs),
-        ]
-        super().__init__(endpoint, credential, policies=_policies, **kwargs)
+        super().__init__(endpoint, credential, **kwargs)
 
     @overload
     def complete(
@@ -411,7 +574,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError
         """
 
-    @distributed_trace
+    @llm_trace(span_name="ChatCompletionsClient.complete")
     def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
