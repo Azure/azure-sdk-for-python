@@ -414,7 +414,7 @@
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
-# ServiceOwners: @ctstone @vkurpad
+# ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @YalinLi0312
