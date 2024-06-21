@@ -58,7 +58,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def load_client(
     endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
-) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
+) -> Union["ChatCompletionsClient", "EmbeddingsClient", "ImageEmbeddingsClient"]:
     # pylint: disable=line-too-long
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route

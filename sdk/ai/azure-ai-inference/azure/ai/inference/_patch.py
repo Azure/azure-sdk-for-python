@@ -75,7 +75,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def load_client(
     endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
-) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
+) -> Union["ChatCompletionsClient", "EmbeddingsClient", "ImageEmbeddingsClient"]:
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
