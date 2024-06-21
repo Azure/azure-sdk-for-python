@@ -218,7 +218,7 @@ class AzureAppConfigurationClient:
 
         try:
             if snapshot_name is not None:
-                return self._impl.get_key_values(  # type: ignore
+                return self._impl.get_key_values(  # type: ignore[return-value]
                     snapshot=snapshot_name,
                     accept_datetime=accept_datetime,
                     select=select,
@@ -533,7 +533,7 @@ class AzureAppConfigurationClient:
             fields = ["locked" if x == "read_only" else x for x in fields]
 
         try:
-            return self._impl.get_revisions(  # type: ignore
+            return self._impl.get_revisions(  # type: ignore[return-value]
                 label=label_filter,
                 key=key_filter,
                 accept_datetime=accept_datetime,
@@ -640,7 +640,7 @@ class AzureAppConfigurationClient:
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
-            return self._impl.get_labels(
+            return self._impl.get_labels(  # type: ignore[return-value]
                 name=name,
                 after=after,
                 accept_datetime=accept_datetime,
@@ -829,7 +829,7 @@ class AzureAppConfigurationClient:
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
-            return self._impl.get_snapshots(  # type: ignore
+            return self._impl.get_snapshots(  # type: ignore[return-value]
                 name=name,
                 select=fields,
                 status=status,
