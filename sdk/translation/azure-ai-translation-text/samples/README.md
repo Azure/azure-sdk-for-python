@@ -49,7 +49,8 @@ text_translator = TextTranslationClient(credential=credential, region=region)
 ### Using the Cognitive Services Token
 
 For the Cognitive Services Token authentication, there is currently no implementation provided in the SDK. You can implement the solution
-according to the [Token Authentication documentation][TranslatorReference]. When the token is created, you can create the `TextTranslationClient`:
+according to the [Token Authentication documentation][TranslatorReference]. For a simple example implementation, you can refer: [StaticAccessTokenCredential][static_access_token_credential].
+When the token is created, you can create the `TextTranslationClient`:
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_cognitive_services_token -->
 
@@ -870,6 +871,7 @@ raise
 [breaksentence_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_break_sentence.py
 [dictionarylookup_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_dictionary_lookup.py
 [dictionaryexamples_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_dictionary_examples.py
+[static_access_token_credential]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/tests/static_access_token_credential.py
 
 [Container]: https://learn.microsoft.com/azure/ai-services/translator/containers/overview
 [TranslatorReference]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
