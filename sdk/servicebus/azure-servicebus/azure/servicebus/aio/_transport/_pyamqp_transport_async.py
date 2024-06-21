@@ -252,7 +252,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
             if receiver._handler._link.current_link_credit <= 0:
-                await receiver._amqp_transport.reset_link_credit_async(receiver._handler, link_credit=1)
+                await receiver._amqp_transport.reset_link_credit_async(receiver._handler, link_credit=receiver._handler._link_credit)
             pyamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
             message = receiver._build_received_message(pyamqp_message)
             if (
