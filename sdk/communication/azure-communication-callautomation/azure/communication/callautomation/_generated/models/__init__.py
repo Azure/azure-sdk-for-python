@@ -30,6 +30,8 @@ from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import CommunicationIdentifierModel
 from ._models import CommunicationUserIdentifierModel
+from ._models import ConnectFailed
+from ._models import ConnectRequest
 from ._models import ContinuousDtmfRecognitionRequest
 from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
@@ -156,6 +158,8 @@ __all__ = [
     "CommunicationErrorResponse",
     "CommunicationIdentifierModel",
     "CommunicationUserIdentifierModel",
+    "ConnectFailed",
+    "ConnectRequest",
     "ContinuousDtmfRecognitionRequest",
     "ContinuousDtmfRecognitionStopped",
     "ContinuousDtmfRecognitionToneFailed",
