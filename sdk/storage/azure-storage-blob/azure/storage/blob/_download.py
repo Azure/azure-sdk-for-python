@@ -643,7 +643,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Empty blob or already read to the end
         if (size == 0 or chars == 0 or
                 (self._download_complete and self._current_content_offset >= len(self._current_content))):
-            return b'' if not self._encoding else ''
+            return b'' if not self._encoding else ''  # type: ignore [return-value]
 
         if not self._text_mode and chars is not None and self._encoding is not None:
             self._text_mode = True
@@ -665,8 +665,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Start by reading from current_content
         start = self._current_content_offset
-        length = min(len(self._current_content) - self._current_content_offset,
-                     size - count)
+        length = min(len(self._current_content) - self._current_content_offset, size - count)
         read = output_stream.write(self._current_content[start:start + length])  # type: ignore [arg-type]
 
         count += read
@@ -720,13 +719,12 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._complete_read()
 
             else:
-                while (chunk := next(chunks_iter, None)) is not None and remaining > 0:  # type: ignore [arg-type]
-                    chunk_data, content_length = downloader.yield_chunk(chunk)
+                while (next_chunk := next(chunks_iter, None)) is not None and remaining > 0:
+                    chunk_data, content_length = downloader.yield_chunk(next_chunk)
                     self._download_offset += len(chunk_data)
                     self._raw_download_offset += content_length
                     if self._text_mode and self._decoder is not None:
-                        self._current_content = self._decoder.decode(
-                        chunk_data, final=self._download_complete)
+                        self._current_content = self._decoder.decode(chunk_data, final=self._download_complete)
                     else:
                         self._current_content = chunk_data
 
@@ -752,7 +750,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 )
                 raise
 
-        return data
+        return data  # type: ignore [return-value]
 
     def readall(self) -> T:
         """
