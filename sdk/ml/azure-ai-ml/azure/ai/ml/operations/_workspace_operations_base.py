@@ -639,7 +639,7 @@ class WorkspaceOperationsBase(ABC):
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
 
-        if not workspace.allow_roleassignment_on_rg:
+        if workspace.allow_roleassignment_on_rg is False:
             _set_val(param["allowRoleAssignmentOnRG"], "false")
 
         if workspace.image_build_compute:
@@ -685,7 +685,7 @@ class WorkspaceOperationsBase(ABC):
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId, AzureStorageContainerResourceId
 
             # set workspace storage account access auth type to identity-based
-            _set_val(param["system_datastore_auth_mode"], "identity")
+            _set_val(param["systemDatastoresAuthMode"], "identity")
 
             if offline_store_target:
                 arm_id = AzureStorageContainerResourceId(offline_store_target)
