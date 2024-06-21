@@ -103,18 +103,14 @@
             }
         },
         {
-          "type": "Microsoft.Resources/deployments",
-          "apiVersion": "2017-05-10",
-          "name": "roleAssignmentsForTextAnalytics",
-          "dependsOn": [
-              "[concat('Microsoft.CognitiveServices/accounts/', parameters('HealthInsightsName'))]",
-              "[concat('Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]"
-          ],
+          "type": "Microsoft.Authorization/roleAssignments",
+          "apiVersion": "2018-09-01-preview",
+          "name": "[guid(resourceGroup().id)]",
           "properties": {
-            "principalId": "[parameters('testApplicationOid')]",
-            "roleDefinitionId": "[variables('roleDefinitionId')]"
+              "roleDefinitionId": "[variables('roleDefinitionId')]",
+              "principalId": "[parameters('testApplicationOid')]"
           }
-        }
+      }
     ],
     "outputs": {
         "LANGUAGE_API_KEY": {
