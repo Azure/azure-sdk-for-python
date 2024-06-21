@@ -244,7 +244,7 @@ class Urllib3Transport(HttpTransport[RestHttpRequest, RestHttpResponse]):
         elif isinstance(verify, str):
             cert_kwargs["ca_certs"] = verify
 
-        cert: Optional[str] = kwargs.pop("connection_cert", self._config.cert)
+        cert: Optional[Union[str, Tuple[str, str]]] = kwargs.pop("connection_cert", self._config.cert)
         if cert:
             if not isinstance(cert, str):
                 cert_kwargs["cert_file"] = cert[0]
