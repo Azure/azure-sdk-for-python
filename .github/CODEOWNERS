@@ -414,6 +414,7 @@
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
+# PRLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @bojunehsu @vkurpad
 
 # PRLabel: %Cognitive - Form Recognizer
@@ -422,6 +423,7 @@
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Document Intelligence
 # PRLabel: %Document Intelligence
+# ServiceOwners: @bojunehsu @vkurpad
 /sdk/documentintelligence/                                           @YalinLi0312
 
 # AzureSdkOwners: @xiangyan99
