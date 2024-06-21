@@ -13,7 +13,7 @@ import sys
 
 from os import path
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import AzureError
@@ -145,7 +145,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert model_info.model_type == expected_model_type
 
     @staticmethod
-    def _validate_model_extras(body: str, headers: dict[str, str]):
+    def _validate_model_extras(body: str, headers: Dict[str, str]):
         assert headers is not None
         assert headers["unknown-parameters"] == "pass_through"
         assert body is not None
