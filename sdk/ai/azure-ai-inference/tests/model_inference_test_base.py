@@ -145,7 +145,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert model_info.model_type == expected_model_type
 
     @staticmethod
-    def _validate_model_extras(body: str, headers: dict[str,str]):
+    def _validate_model_extras(body: str, headers: dict[str, str]):
         assert headers is not None
         assert headers["unknown-parameters"] == "pass_through"
         assert body is not None

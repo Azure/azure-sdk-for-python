@@ -8,6 +8,8 @@ DESCRIPTION:
     the service using a synchronous client. The sample
     shows how to include an image URL in the input chat messages.
     This sample will only work on AI models that support image input.
+    Only these AI models accept the array form of `content` in the
+    `UserMessage`, as shown here.
 
 USAGE:
     python sample_chat_completions_with_image_url.py

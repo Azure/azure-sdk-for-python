@@ -9,6 +9,8 @@ DESCRIPTION:
     JSON request body (containing input chat messages). The sample
     shows how to include an image URL in the input chat messages.
     This sample will only work on AI models that support image input.
+    Only these AI models accept the array form of `content` in the
+    `UserMessage`, as shown here.
 
 USAGE:
     python sample_chat_completions_from_input_json_with_image_url.py
@@ -71,14 +73,14 @@ def sample_chat_completions_from_input_json_with_image_url():
                             "image_url": {
                                 "url" : "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/samples/sample1.png",
                                 "detail": "high",
-                            }
+                            },
                         },
                     ],
                 },
             ]
         }
     )
-    
+
     print(response.choices[0].message.content)
 
 
