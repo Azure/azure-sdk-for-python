@@ -401,7 +401,7 @@ class PhoneNumbersClient:
         :paramtype locality: str
         :keyword administrative_division: The name of the state or province in which to search for the
          area code. e.g. California. Default value is None.
-        :type administrative_division: str
+        :paramtype administrative_division: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
