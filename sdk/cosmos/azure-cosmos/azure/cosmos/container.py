@@ -947,7 +947,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If no ThroughputProperties already exist for the container, an exception is raised.
 
         :param throughput: The throughput to be set.
-        :type throughput: Union[int, ThroughputProperties]
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container

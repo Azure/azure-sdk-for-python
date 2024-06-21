@@ -367,9 +367,9 @@ class DatabaseProxy(object):
         """Delete a container.
 
         :param container: The ID (name) of the container to delete. You can either
-            pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
+            pass in the ID of the container to delete, a :class:`~azure.cosmos.ContainerProxy` instance or
             a dict representing the properties of the container.
-        :type container: Union[str, ContainerProxy, Dict[str, Any]]
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -401,9 +401,9 @@ class DatabaseProxy(object):
     def get_container_client(self, container: Union[str, ContainerProxy, Mapping[str, Any]]) -> ContainerProxy:
         """Get a `ContainerProxy` for a container with specified ID (name).
 
-        :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
+        :param container: The ID (name) of the container, a :class:`~azure.cosmos.ContainerProxy` instance,
             or a dict representing the properties of the container to be retrieved.
-        :type container: Union[str, ContainerProxy, Dict[str, Any]]
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
         :returns: A `ContainerProxy` instance representing the retrieved database.
         :rtype: ~azure.cosmos.ContainerProxy
 
@@ -546,8 +546,8 @@ class DatabaseProxy(object):
         will be reset to their default values.
 
         :param container: The ID (name), dict representing the properties or
-            :class:`ContainerProxy` instance of the container to be replaced.
-        :type container: Union[str, ContainerProxy, Dict[str, Any]]
+            :class:`~azure.cosmos.ContainerProxy` instance of the container to be replaced.
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
         :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :param int default_ttl: Default time to live (TTL) for items in the container.
@@ -670,9 +670,9 @@ class DatabaseProxy(object):
     def get_user_client(self, user: Union[str, UserProxy, Mapping[str, Any]]) -> UserProxy:
         """Get a `UserProxy` for a user with specified ID.
 
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+        :param user: The ID (name), dict representing the properties or :class:`~azure.cosmos.UserProxy`
             instance of the user to be retrieved.
-        :type user: Union[str, UserProxy, Dict[str, Any]]
+        :type user: Union[str, ~azure.cosmos.UserProxy, Dict[str, Any]]
         :returns: A `UserProxy` instance representing the retrieved user.
         :rtype: ~azure.cosmos.UserProxy
         """
@@ -747,9 +747,9 @@ class DatabaseProxy(object):
     ) -> UserProxy:
         """Replaces the specified user if it exists in the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+        :param user: The ID (name), dict representing the properties or :class:`~azure.cosmos.UserProxy`
             instance of the user to be replaced.
-        :type user: Union[str, UserProxy, Dict[str, Any]]
+        :type user: Union[str, ~azure.cosmos.UserProxy, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the user to replace.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the user after replace went through.
@@ -774,9 +774,9 @@ class DatabaseProxy(object):
     def delete_user(self, user: Union[str, UserProxy, Mapping[str, Any]], **kwargs: Any) -> None:
         """Delete the specified user from the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
+        :param user: The ID (name), dict representing the properties or :class:`~azure.cosmos.UserProxy`
             instance of the user to be deleted.
-        :type user: Union[str, UserProxy, Dict[str, Any]]
+        :type user: Union[str, ~azure.cosmos.UserProxy, Dict[str, Any]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
@@ -843,7 +843,7 @@ class DatabaseProxy(object):
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
-        :type throughput: Union[int, ThroughputProperties]
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
