@@ -16,6 +16,7 @@ from typing import (
     Union,
     overload,
     IO,
+    Literal,
 )
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
@@ -26,11 +27,6 @@ from ._operations import (
     JobRouterAdministrationClientOperationsMixin as JobRouterAdministrationClientOperationsMixinGenerated,
 )
 from .._model_base import _deserialize_datetime as _convert_str_to_datetime  # pylint:disable=protected-access
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -44,7 +40,7 @@ class JobRouterAdministrationClientOperationsMixin(
 ):  # pylint:disable=too-many-lines,line-too-long,name-too-long
     # region ExceptionPolicy
     @overload
-    def upsert_exception_policy(  # pylint: disable=arguments-differ,unused-argument
+    def upsert_exception_policy(  # pylint: disable=arguments-differ
         self,
         exception_policy_id: str,
         *,
@@ -203,7 +199,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_exception_policy(
+    def upsert_exception_policy(  # pylint: disable=docstring-missing-param
         self, exception_policy_id: str, *args: Union[_models.ExceptionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
@@ -302,7 +298,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region DistributionPolicy
     @overload
-    def upsert_distribution_policy(  # pylint: disable=arguments-differ,unused-argument
+    def upsert_distribution_policy(  # pylint: disable=arguments-differ
         self,
         distribution_policy_id: str,
         *,
@@ -465,16 +461,12 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_distribution_policy(
+    def upsert_distribution_policy(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
         self, distribution_policy_id: str, *args: Union[_models.DistributionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
-
-        :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
-        :type distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
 
         :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
           will be governed by the offer time to live.
@@ -574,7 +566,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region Queue
     @overload
-    def upsert_queue(  # pylint: disable=arguments-differ,unused-argument
+    def upsert_queue(  # pylint: disable=arguments-differ
         self,
         queue_id: str,
         *,
@@ -590,10 +582,6 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a job queue
 
         :param str queue_id: Id of the queue.
-
-        :param queue: An instance of JobQueue. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -744,16 +732,12 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_queue(
+    def upsert_queue(  # pylint: disable=docstring-missing-param
         self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
 
         :param str queue_id: Id of the queue.
-
-        :param queue: An instance of JobQueue. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -852,7 +836,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region ClassificationPolicy
     @overload
-    def upsert_classification_policy(  # pylint: disable=arguments-differ,unused-argument
+    def upsert_classification_policy(  # pylint: disable=arguments-differ
         self,
         classification_policy_id: str,
         *,
@@ -1061,7 +1045,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_classification_policy(
+    def upsert_classification_policy(  # pylint: disable=docstring-missing-param
         self, classification_policy_id: str, *args: Union[_models.ClassificationPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
@@ -1189,7 +1173,7 @@ class JobRouterAdministrationClientOperationsMixin(
 class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Worker
     @overload
-    def upsert_worker(  # pylint: disable=arguments-differ,unused-argument
+    def upsert_worker(  # pylint: disable=arguments-differ
         self,
         worker_id: str,
         *,
@@ -1390,7 +1374,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_worker(
+    def upsert_worker(  # pylint: disable=docstring-missing-param
         self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
@@ -1570,7 +1554,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     # region Job
     @overload
-    def upsert_job(  # pylint: disable=arguments-differ,unused-argument
+    def upsert_job(  # pylint: disable=arguments-differ
         self,
         job_id: str,
         *,
@@ -1768,7 +1752,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    def upsert_job(
+    def upsert_job(  # pylint: disable=docstring-missing-param
             self,
             job_id: str,
             *args: Union[_models.RouterJob, JSON, IO[bytes]],
