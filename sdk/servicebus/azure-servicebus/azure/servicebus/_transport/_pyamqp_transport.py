@@ -680,7 +680,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.set()
             receiver._open()
             if receiver._handler._link.current_link_credit <= 0:
-                receiver._amqp_transport.reset_link_credit(receiver._handler, link_credit=1)
+                receiver._amqp_transport.reset_link_credit(receiver._handler, link_credit=receiver._handler._link_credit)
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(
