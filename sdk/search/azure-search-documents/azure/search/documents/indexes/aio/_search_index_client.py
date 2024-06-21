@@ -90,7 +90,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: SearchClient
         :rtype: ~azure.search.documents.aio.SearchClient
         """
-        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
+        return SearchClient(self._endpoint, index_name, self._credential, api_version=self._api_version, **kwargs)
 
     @distributed_trace
     def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs) -> AsyncItemPaged[SearchIndex]:
