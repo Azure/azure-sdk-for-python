@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._generated._client import PhoneNumbersClient as PhoneNumbersClientGen
@@ -13,9 +13,6 @@ from ._generated.models import (
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
-    OperatorInformationRequest,
-    OperatorInformationOptions,
-    OperatorInformationResult,
 )
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
@@ -38,6 +35,7 @@ if TYPE_CHECKING:
         PhoneNumberSearchResult,
         PurchasedPhoneNumber,
     )
+
 
 class PhoneNumbersClient(object):
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
@@ -115,7 +113,6 @@ class PhoneNumbersClient(object):
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
-        :return: phone numbers.
         """
         purchase_request = PhoneNumberPurchaseRequest(search_id=search_id)
 
@@ -145,7 +142,6 @@ class PhoneNumbersClient(object):
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
-        :return: phone numbers.
         """
         polling_interval = kwargs.pop(
             "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
@@ -189,7 +185,6 @@ class PhoneNumbersClient(object):
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PhoneNumberSearchResult]
-        :return: phone numbers.
         """
         search_request = PhoneNumberSearchRequest(
             phone_number_type=phone_number_type,
@@ -231,7 +226,6 @@ class PhoneNumbersClient(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
-        :return: phone number.
         :rtype: ~azure.core.polling.LROPoller[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
         """
 
@@ -293,7 +287,6 @@ class PhoneNumbersClient(object):
          The default value is 100. Default value is 100.
         :paramtype top: int
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
-        :return: phone number.
         """
         return self._phone_number_client.phone_numbers.list_phone_numbers(
             **kwargs
@@ -335,7 +328,7 @@ class PhoneNumbersClient(object):
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :keyword administrative_division: An optional parameter for the name of the state or province
+        :param administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :type administrative_division: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
@@ -367,11 +360,12 @@ class PhoneNumbersClient(object):
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
+        :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
          are: "geographic" and "tollFree". Default value is None.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -402,10 +396,12 @@ class PhoneNumbersClient(object):
         :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
         "geographic" and "tollFree". Required.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
         "person" and "application". Default value is None.
-        :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :param locality: The name of locality in which to search for the area code. e.g. Seattle.
         This is required if the phone number type is Geographic. Default value is None.
+        :type locality: str
         :keyword administrative_division: The name of the state or province in which to search for the
         area code. e.g. California. Default value is None.
         :type administrative_division: str
@@ -425,31 +421,5 @@ class PhoneNumbersClient(object):
                 "locality", None),
             administrative_division=kwargs.pop(
                 "administrative_division", None),
-            **kwargs
-        )
-
-    @distributed_trace
-    def search_operator_information(
-            self,
-            phone_numbers,  # type: Union[ str, list[str] ]
-            options:Optional[OperatorInformationOptions]=None, #type: OperatorInformationOptions
-            **kwargs  # type: Any
-    ) -> OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
-
-        :param phone_numbers: The phone number(s) whose operator information should be searched
-        :type phone_numbers: str or list[str]
-        :param options: Options to modify the search.  Please note: use of options can affect the cost of the search.
-        :type options: OperatorInformationOptions
-        :return: A search result containing operator information associated with the requested phone numbers
-        :rtype: ~azure.communication.phonenumbers.models.OperatorInformationResult
-        """
-        if not isinstance(phone_numbers, list):
-            phone_numbers = [ phone_numbers ]
-        if options is None:
-            options = OperatorInformationOptions(include_additional_operator_details=False)
-        request = OperatorInformationRequest(phone_numbers = phone_numbers, options=options)
-        return self._phone_number_client.phone_numbers.operator_information_search(
-            request,
             **kwargs
         )
