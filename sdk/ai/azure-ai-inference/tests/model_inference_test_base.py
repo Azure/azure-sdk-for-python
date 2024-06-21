@@ -286,10 +286,8 @@ class ModelClientTestBase(AzureRecordedTestCase):
             assert response.data[i].embedding[1023] != 0.0
         assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
         # assert len(response.model) > 0  # At the time of writing this test, this JSON field existed but was empty
-        # At the time of writing this test, input_tokens did not exist (I see completion tokens instead)
-        # assert response.usage.input_tokens > 0
-        # assert response.usage.prompt_tokens > 0
-        # assert response.total_tokens == response.usage.input_tokens + response.usage.prompt_tokens
+        assert response.usage.prompt_tokens > 0
+        assert response.usage.total_tokens == response.usage.prompt_tokens
 
     @staticmethod
     def _print_embeddings_result(response: sdk.models.EmbeddingsResult):
@@ -302,6 +300,5 @@ class ModelClientTestBase(AzureRecordedTestCase):
                 )
             print(f"\tid: {response.id}")
             print(f"\tmodel: {response.model}")
-            # print(f"\tusage.input_tokens: {response.usage.input_tokens}") # At the time of writing this test, this JSON field does not exist
             print(f"\tusage.prompt_tokens: {response.usage.prompt_tokens}")
             print(f"\tusage.total_tokens: {response.usage.total_tokens}")

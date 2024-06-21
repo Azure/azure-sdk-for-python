@@ -715,32 +715,23 @@ class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
 
-    :ivar input_tokens: Number of tokens in the request prompt. Required.
-    :vartype input_tokens: int
-    :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
-     identical to ``input_tokens``.
-     However, certain AI models may add extra tokens to the input hence the number can be higher.
-     (for example when input_type="query"). Required.
+    :ivar prompt_tokens: Number of tokens in the request. Required.
     :vartype prompt_tokens: int
-    :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
+    :ivar total_tokens: Total number of tokens transacted in this request/response.
+     Should equal the number of tokens in the request. Required.
     :vartype total_tokens: int
     """
 
-    input_tokens: int = rest_field()
-    """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
-    """Number of tokens used for the prompt sent to the AI model. Typically identical to
-     ``input_tokens``.
-     However, certain AI models may add extra tokens to the input hence the number can be higher.
-     (for example when input_type=\"query\"). Required."""
+    """Number of tokens in the request. Required."""
     total_tokens: int = rest_field()
-    """Total number of tokens transacted in this request/response. Required."""
+    """Total number of tokens transacted in this request/response.
+    Should equal the number of tokens in the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
     ): ...
