@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Continue to attempt requesting token if the probing request receives non-json response. ([#36184](https://github.com/Azure/azure-sdk-for-python/pull/36184))
+
 ### Other Changes
 
 ## 1.17.0 (2024-06-18)
