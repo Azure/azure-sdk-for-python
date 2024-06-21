@@ -57,9 +57,9 @@ def test_multiple_checkers():
 
     changes = bc.report_changes()
 
-    EXPECTED_MSG = format_breaking_changes(EXPECTED)
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    assert changes == EXPECTED_MSG
+    assert changes == expected_msg
 
 
 def test_ignore_checks():
@@ -81,9 +81,9 @@ def test_ignore_checks():
 
     changes = bc.report_changes()
 
-    EXPECTED_MSG = format_breaking_changes(EXPECTED[:-2])
+    expected_msg = format_breaking_changes(EXPECTED[:-2])
     assert len(bc.breaking_changes)+2 == len(EXPECTED)
-    assert changes == EXPECTED_MSG
+    assert changes == expected_msg
 
 
 def test_replace_all_params():
@@ -169,9 +169,9 @@ def test_replace_all_params():
 
     changes = bc.report_changes()
 
-    EXPECTED_MSG = format_breaking_changes(EXPECTED)
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    assert changes == EXPECTED_MSG
+    assert changes == expected_msg
 
 
 def test_replace_all_functions():
@@ -257,9 +257,9 @@ def test_replace_all_functions():
 
     changes = bc.report_changes()
 
-    EXPECTED_MSG = format_breaking_changes(EXPECTED)
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    assert changes == EXPECTED_MSG
+    assert changes == expected_msg
 
 
 def test_replace_all_classes():
@@ -331,9 +331,9 @@ def test_replace_all_classes():
 
     changes = bc.report_changes()
 
-    EXPECTED_MSG = format_breaking_changes(EXPECTED)
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    assert changes == EXPECTED_MSG
+    assert changes == expected_msg
 
 
 def test_replace_all_modules():
@@ -359,6 +359,6 @@ def test_replace_all_modules():
 
     changes = bc.report_changes()
 
-    EXPECTED_MSG = format_breaking_changes(EXPECTED)
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    assert changes == EXPECTED_MSG
+    assert changes == expected_msg
