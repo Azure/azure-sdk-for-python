@@ -1,13 +1,11 @@
 # Release History
 
-## 1.0.0b27 (Unreleased)
+## 1.0.0b27 (2024-06-21)
 
 ### Features Added
 
 - Implement redirect for live metrics
     ([#35910](https://github.com/Azure/azure-sdk-for-python/pull/35910))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -15,8 +13,6 @@
     success criteria to `False` for those invalid cases, change success criteria to status_code < 400 for
     both client and server standard metrics
     ([#36079](https://github.com/Azure/azure-sdk-for-python/pull/36079))
-
-### Other Changes
 
 ## 1.0.0b26 (2024-05-29)
 
