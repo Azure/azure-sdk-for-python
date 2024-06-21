@@ -34,7 +34,6 @@ from ._models_py3 import EndpointRangeDescription
 from ._models_py3 import ErrorModel
 from ._models_py3 import ErrorModelError
 from ._models_py3 import FrontendConfiguration
-from ._models_py3 import IPTag
 from ._models_py3 import IpConfiguration
 from ._models_py3 import IpConfigurationPublicIPAddressConfiguration
 from ._models_py3 import IpTag
@@ -57,6 +56,7 @@ from ._models_py3 import NodeTypeActionParameters
 from ._models_py3 import NodeTypeAvailableSku
 from ._models_py3 import NodeTypeListResult
 from ._models_py3 import NodeTypeListSkuResult
+from ._models_py3 import NodeTypeNatConfig
 from ._models_py3 import NodeTypeSku
 from ._models_py3 import NodeTypeSkuCapacity
 from ._models_py3 import NodeTypeSupportedSku
@@ -179,7 +179,6 @@ __all__ = [
     "ErrorModel",
     "ErrorModelError",
     "FrontendConfiguration",
-    "IPTag",
     "IpConfiguration",
     "IpConfigurationPublicIPAddressConfiguration",
     "IpTag",
@@ -202,6 +201,7 @@ __all__ = [
     "NodeTypeAvailableSku",
     "NodeTypeListResult",
     "NodeTypeListSkuResult",
+    "NodeTypeNatConfig",
     "NodeTypeSku",
     "NodeTypeSkuCapacity",
     "NodeTypeSupportedSku",

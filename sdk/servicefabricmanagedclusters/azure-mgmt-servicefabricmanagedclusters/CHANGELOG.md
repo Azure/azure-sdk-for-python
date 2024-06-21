@@ -1,5 +1,84 @@
 # Release History
 
+## 2.0.0 (2024-07-22)
+
+### Features Added
+
+  - Added operation ApplicationsOperations.begin_read_upgrade
+  - Added operation ApplicationsOperations.begin_resume_upgrade
+  - Added operation ApplicationsOperations.begin_start_rollback
+  - Added operation group ManagedApplyMaintenanceWindowOperations
+  - Added operation group ManagedAzResiliencyStatusOperations
+  - Added operation group ManagedMaintenanceWindowStatusOperations
+  - Added operation group ManagedUnsupportedVMSizesOperations
+  - Added operation group NodeTypeSkusOperations
+  - Added operation group OperationResultsOperations
+  - Added operation group OperationStatusOperations
+  - Model LoadBalancingRule has a new parameter load_distribution
+  - Model ManagedCluster has a new parameter auxiliary_subnets
+  - Model ManagedCluster has a new parameter ddos_protection_plan_id
+  - Model ManagedCluster has a new parameter enable_http_gateway_exclusive_auth_mode
+  - Model ManagedCluster has a new parameter enable_ipv6
+  - Model ManagedCluster has a new parameter enable_service_public_ip
+  - Model ManagedCluster has a new parameter http_gateway_token_auth_connection_port
+  - Model ManagedCluster has a new parameter ip_tags
+  - Model ManagedCluster has a new parameter ipv6_address
+  - Model ManagedCluster has a new parameter public_i_pv6_prefix_id
+  - Model ManagedCluster has a new parameter public_ip_prefix_id
+  - Model ManagedCluster has a new parameter service_endpoints
+  - Model ManagedCluster has a new parameter subnet_id
+  - Model ManagedCluster has a new parameter upgrade_description
+  - Model ManagedCluster has a new parameter use_custom_vnet
+  - Model ManagedCluster has a new parameter zonal_update_mode
+  - Model NetworkSecurityRule has a new parameter destination_address_prefix
+  - Model NetworkSecurityRule has a new parameter destination_port_range
+  - Model NetworkSecurityRule has a new parameter source_address_prefix
+  - Model NetworkSecurityRule has a new parameter source_port_range
+  - Model NodeType has a new parameter additional_data_disks
+  - Model NodeType has a new parameter additional_network_interface_configurations
+  - Model NodeType has a new parameter computer_name_prefix
+  - Model NodeType has a new parameter data_disk_letter
+  - Model NodeType has a new parameter dscp_configuration_id
+  - Model NodeType has a new parameter enable_accelerated_networking
+  - Model NodeType has a new parameter enable_encryption_at_host
+  - Model NodeType has a new parameter enable_node_public_i_pv6
+  - Model NodeType has a new parameter enable_node_public_ip
+  - Model NodeType has a new parameter enable_over_provisioning
+  - Model NodeType has a new parameter eviction_policy
+  - Model NodeType has a new parameter frontend_configurations
+  - Model NodeType has a new parameter host_group_id
+  - Model NodeType has a new parameter is_spot_vm
+  - Model NodeType has a new parameter nat_configurations
+  - Model NodeType has a new parameter nat_gateway_id
+  - Model NodeType has a new parameter network_security_rules
+  - Model NodeType has a new parameter secure_boot_enabled
+  - Model NodeType has a new parameter security_type
+  - Model NodeType has a new parameter service_artifact_reference_id
+  - Model NodeType has a new parameter sku
+  - Model NodeType has a new parameter spot_restore_timeout
+  - Model NodeType has a new parameter subnet_id
+  - Model NodeType has a new parameter use_default_public_load_balancer
+  - Model NodeType has a new parameter use_ephemeral_os_disk
+  - Model NodeType has a new parameter use_temp_data_disk
+  - Model NodeType has a new parameter vm_image_plan
+  - Model NodeType has a new parameter vm_image_resource_id
+  - Model NodeType has a new parameter vm_setup_actions
+  - Model NodeType has a new parameter vm_shared_gallery_image_id
+  - Model NodeType has a new parameter zones
+  - Model NodeTypeActionParameters has a new parameter update_type
+  - Model NodeTypeUpdateParameters has a new parameter sku
+  - Model ServiceResourceProperties has a new parameter service_dns_name
+  - Model StatefulServiceProperties has a new parameter service_dns_name
+  - Model StatelessServiceProperties has a new parameter service_dns_name
+  - Model VMSSExtension has a new parameter enable_automatic_upgrade
+  - Model VMSSExtension has a new parameter setup_order
+
+### Breaking Changes
+
+  - Operation ManagedClusterVersionOperations.get_by_environment has a new required parameter environment
+  - Operation ManagedClusterVersionOperations.list_by_environment has a new required parameter environment
+  - Parameter sku of model ManagedCluster is now required
+
 ## 2.0.0b6 (2024-02-22)
 
 ### Features Added
