@@ -111,30 +111,19 @@
               "[concat('Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]"
           ],
           "properties": {
-              "mode": "Incremental",
-              "template": {
-                  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                  "contentVersion": "1.0.0.0",
-                  "parameters": {},
-                  "variables": {},
-                  "resources": [
-                      {
-                          "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
-                          "apiVersion": "2018-09-01-preview",
-                          "name": "[concat(parameters('textAnalyticsName'), '/Microsoft.Authorization/', variables('ContributorRoleGuid'))]",
-                          "properties": {
-                              "roleDefinitionId": "[variables('roleDefinitionId')]",
-                              "principalId": "[if(not(empty(parameters('umiId'))),reference(parameters('umiId'), '2018-11-30', 'Full').properties.principalId,reference(concat('Microsoft.CognitiveServices/accounts/', parameters('HealthInsightsName')), '2022-03-01', 'Full').identity.principalId)]",
-                              "principalType": "ServicePrincipal",
-                              "scope": "[concat(subscription().id,'/resourcegroups/', parameters('baseName'), '/providers/Microsoft.CognitiveServices/accounts/', parameters('textAnalyticsName'))]"
-                          }
-                      }
-                  ]
-              },
-              "parameters": {}
-          },
-          "resourceGroup": "[parameters('baseName')]"
-        }
+            "principalId": "[parameters('testApplicationOid')]",
+            "roleDefinitionId": "[variables('roleDefinitionId')]"
+          }
+        },
+        {
+          "type": "Microsoft.Authorization/roleAssignments",
+          "apiVersion": "2018-09-01-preview",
+          "name": "[guid(resourceGroup().id)]",
+          "properties": {
+              "roleDefinitionId": "[variables('roleDefinitionId')]",
+              "principalId": "[parameters('testApplicationOid')]"
+          }
+      }
     ],
     "outputs": {
         "LANGUAGE_API_KEY": {
