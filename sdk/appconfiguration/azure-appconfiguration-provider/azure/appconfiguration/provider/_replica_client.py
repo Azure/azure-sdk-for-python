@@ -254,12 +254,13 @@ class ReplicaClient:
 
 class ReplicaClientManager:
     def __init__(self, min_backoff_sec: int, max_backoff_sec: int):
-        self._replica_clients: Dict[str, ReplicaClient] = {}
+        self._replica_clients: List[ReplicaClient] = []
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
 
-    def set_clients(self, replica_clients: Dict[str, ReplicaClient]):
-        self._replica_clients.update(replica_clients)
+    def set_clients(self, replica_clients: List[ReplicaClient]):
+        self._replica_clients.clear()
+        self._replica_clients.extend(replica_clients)
 
     def get_active_clients(self):
         active_clients = []

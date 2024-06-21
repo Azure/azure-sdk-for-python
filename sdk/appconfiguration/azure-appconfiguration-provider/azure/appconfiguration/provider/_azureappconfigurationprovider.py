@@ -321,7 +321,7 @@ def _buildprovider(
         user_agent = USER_AGENT
 
     clients = []
-    if connection_string:
+    if connection_string and endpoint:
         clients.append(
             ReplicaClient.from_connection_string(
                 endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
@@ -490,7 +490,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
         max_backoff: int = 600 if 600 <= interval else interval
         self._replica_client_manager = ReplicaClientManager(min_backoff, max_backoff)
-        self._dict: Dict[str, Union[str, Any]] = {}
+        self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
             "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
@@ -588,14 +588,21 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
             if not success:
                 self._refresh_timer.backoff()
+                if not exception:
+                    if self._on_refresh_error:
+                        self._on_refresh_error(
+                            RuntimeError(
+                                "Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed."
+                            )
+                        )
+                        return
+                    raise RuntimeError(
+                        "Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed."
+                    )
                 if self._on_refresh_error:
                     self._on_refresh_error(exception)
                     return
-                raise RuntimeError(
-                    """
-                    Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed.
-                    """
-                )
+                raise exception
             if self._on_refresh_success:
                 self._on_refresh_success()
         finally:
