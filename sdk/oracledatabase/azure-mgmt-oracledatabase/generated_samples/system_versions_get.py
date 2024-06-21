@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.oracledatabase import OracleDatabaseMgmtClient
@@ -17,7 +15,7 @@ from azure.mgmt.oracledatabase import OracleDatabaseMgmtClient
     pip install azure-identity
     pip install azure-mgmt-oracledatabase
 # USAGE
-    python autonomous_database_create.py
+    python system_versions_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,30 +30,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.autonomous_databases.begin_create_or_update(
-        resource_group_name="rg000",
-        autonomousdatabasename="databasedb1",
-        resource={
-            "location": "eastus",
-            "properties": {
-                "adminPassword": "********",
-                "characterSet": "AL32UTF8",
-                "computeCount": 2,
-                "computeModel": "ECPU",
-                "dataBaseType": "Regular",
-                "dataStorageSizeInTbs": 1,
-                "dbVersion": "18.4.0.0",
-                "displayName": "example_autonomous_databasedb1",
-                "ncharacterSet": "AL16UTF16",
-                "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
-                "vnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Microsoft.Network/virtualNetworks/vnet1",
-            },
-            "tags": {"tagK1": "tagV1"},
-        },
-    ).result()
+    response = client.system_versions.get(
+        location="eastus",
+        systemversionname="22.x",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/oracle/resource-manager/Oracle.Database/preview/2023-09-01-preview/examples/autonomousDatabase_create.json
+# x-ms-original-file: specification/oracle/resource-manager/Oracle.Database/preview/2023-09-01-preview/examples/systemVersions_get.json
 if __name__ == "__main__":
     main()
