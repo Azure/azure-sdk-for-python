@@ -153,10 +153,7 @@ class AzureRecordedTestCase(object):
 
                     return ServicePrincipalCredentials(tenant=tenant_id, client_id=client_id, secret=secret)
 
-            # Use DefaultAzureCredential for live tests
-            from azure.identity import DefaultAzureCredential, ChainedTokenCredential
-            if is_async:
-                from azure.identity.aio import DefaultAzureCredential, ChainedTokenCredential
+            # If AzurePipelinesCredential is detected, use it.
             service_connection_id = os.environ.get("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
             client_id = os.environ.get("AZURESUBSCRIPTION_CLIENT_ID")
             tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
@@ -170,11 +167,13 @@ class AzureRecordedTestCase(object):
                     client_id=client_id,
                     service_connection_id=service_connection_id,
                     system_access_token=system_access_token)
+            # This is for testing purposes only, to ensure that the AzurePipelinesCredential is used when available
             # else:
             #     raise ValueError(
             #         "Environment variables not set for service principal authentication. "
             #         f"service_connection_id: {service_connection_id}, client_id: {client_id}, tenant_id: {tenant_id}, system_access_token: {system_access_token}"
             #     )
+            # Fall back to DefaultAzureCredential
             from azure.identity import DefaultAzureCredential
             if is_async:
                 from azure.identity.aio import DefaultAzureCredential
