@@ -83,7 +83,7 @@ def build_get_request(location: str, giversionname: str, subscription_id: str, *
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "giversionname": _SERIALIZER.url("giversionname", giversionname, "str"),
+        "giversionname": _SERIALIZER.url("giversionname", giversionname, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

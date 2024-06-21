@@ -63,7 +63,7 @@ def build_list_by_cloud_vm_cluster_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -96,8 +96,8 @@ def build_get_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
-        "dbnodeocid": _SERIALIZER.url("dbnodeocid", dbnodeocid, "str", max_length=255, min_length=1),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
+        "dbnodeocid": _SERIALIZER.url("dbnodeocid", dbnodeocid, "str", max_length=255, min_length=1, pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -131,8 +131,8 @@ def build_action_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
-        "dbnodeocid": _SERIALIZER.url("dbnodeocid", dbnodeocid, "str", max_length=255, min_length=1),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
+        "dbnodeocid": _SERIALIZER.url("dbnodeocid", dbnodeocid, "str", max_length=255, min_length=1, pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -377,8 +377,8 @@ class DbNodesOperations:
             deserialized = self._deserialize("DbNode", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
