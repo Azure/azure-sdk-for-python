@@ -434,7 +434,7 @@ class PhoneNumbersClient(object):
             **kwargs  # type: Any
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
-        
+
         :param phone_numbers: The phone number(s) whose operator information should be searched
         :type phone_numbers: str or list[str]
         :param options: Options to modify the search.  Please note: use of options can affect the cost of the search.
