@@ -253,10 +253,10 @@ class ReplicaClient:
 
 
 class ReplicaClientManager:
-    def __init__(self, replica_clients: Dict[str, ReplicaClient], min_backoff: int, max_backoff: int):
+    def __init__(self, replica_clients: Dict[str, ReplicaClient], min_backoff_sec: int, max_backoff_sec: int):
         self._replica_clients = replica_clients
-        self._min_backoff = min_backoff
-        self._max_backoff = max_backoff
+        self._min_backoff_sec = min_backoff_sec
+        self._max_backoff_sec = max_backoff_sec
 
     def get_active_clients(self):
         active_clients = []
@@ -277,10 +277,10 @@ class ReplicaClientManager:
         max_attempts = 63
         ms_per_second = 1000  # 1 Second in milliseconds
 
-        min_backoff_milliseconds = self._min_backoff * ms_per_second
-        max_backoff_milliseconds = self._max_backoff * ms_per_second
+        min_backoff_milliseconds = self._min_backoff_sec * ms_per_second
+        max_backoff_milliseconds = self._max_backoff_sec * ms_per_second
 
-        if self._max_backoff <= self._min_backoff:
+        if self._max_backoff_sec <= self._min_backoff_sec:
             return min_backoff_milliseconds
 
         calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(attempts, max_attempts))

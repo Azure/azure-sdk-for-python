@@ -41,7 +41,7 @@ def find_auto_failover_endpoints(endpoint):
     srv_records = [origin] + _find_replicas(origin.target)
     endpoints = []
     for srv_record in srv_records:
-        if _validate(known_domain, srv_record.target) and not srv_record.target == endpoint.removeprefix(HTTPS_PREFIX):
+        if _validate(known_domain, srv_record.target) and srv_record.target != endpoint.removeprefix(HTTPS_PREFIX):
             endpoints.append(HTTPS_PREFIX + srv_record.target)
     return endpoints
 

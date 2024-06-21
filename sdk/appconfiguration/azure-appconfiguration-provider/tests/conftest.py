@@ -26,7 +26,9 @@ def add_sanitizers(test_proxy):
     add_uri_string_sanitizer()
     add_general_string_sanitizer(
         value="https://Sanitized.vault.azure.net/secrets/fake-secret/",
-        target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://Sanitized.vault.azure.net/secrets/fake-secret/"),
+        target=os.environ.get(
+            "APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://Sanitized.vault.azure.net/secrets/fake-secret/"
+        ),
     )
     add_remove_header_sanitizer(headers="Correlation-Context")
 
