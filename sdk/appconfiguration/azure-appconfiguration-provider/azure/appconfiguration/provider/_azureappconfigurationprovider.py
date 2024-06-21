@@ -124,6 +124,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_refresh_enabled: bool
+    :keyword lazy_load_secrets: Optional flag to enable or disable the lazy loading of Key Vault secrets. Default is
+     False.
+    :paramtype lazy_load_secrets: bool
     """
 
 
@@ -179,6 +182,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_refresh_enabled: bool
+    :keyword lazy_load_secrets: Optional flag to enable or disable the lazy loading of Key Vault secrets. Default is
+     False.
+    :paramtype lazy_load_secrets: bool
     """
 
 
@@ -480,6 +486,21 @@ class _RefreshTimer:
         )
 
 
+class LazySecretProxy:
+    def __init__(self, config: SecretReferenceConfigurationSetting, provider: "AzureAppConfigurationProvider") -> None:
+        self._config = config
+        self._provider = provider
+
+    def __str__(self) -> str:
+        return _resolve_keyvault_reference(self._config, self._provider)
+
+    def __repr__(self) -> str:
+        return f"LazySecret<{self._config.key}, {self._config.label}>"
+    
+    def __call__(self) -> str:
+        return str(self)
+
+
 class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -519,6 +540,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._feature_filter_usage: Mapping[str, bool] = {}
         self._update_lock = Lock()
         self._refresh_lock = Lock()
+        self._lazy_load_secrets = kwargs.pop("lazy_load_secrets", False)
 
     def refresh(self, **kwargs) -> None:
         if not self._refresh_on and not self._feature_flag_refresh_enabled:
@@ -712,6 +734,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
+            if self._lazy_load_secrets:
+                return LazySecretProxy(config, self)
             return _resolve_keyvault_reference(config, self)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
@@ -727,7 +751,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Returns the value of the specified key.
         """
-        return self._dict[key]
+        value = self._dict[key]
+        if not isinstance(value, LazySecretProxy):
+            return value
+        _value = value()
+        self._dict[key] = _value
+        return _value
 
     def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()

@@ -11,7 +11,7 @@ import datetime
 from unittest.mock import patch
 from test_constants import FEATURE_MANAGEMENT_KEY
 
-from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure
+from azure.appconfiguration.provider._azureappconfigurationprovider import _delay_failure, LazySecretProxy
 
 
 def sleep(seconds):
@@ -77,7 +77,25 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
+        assert isinstance(client._dict["secret"], str)
         assert client["secret"] == "Very secret value"
+        
+    # method: provider_selectors
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_provider_key_vault_reference_lazy_load(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
+        selects = {SettingSelector(key_filter="*", label_filter="prod")}
+        client = self.create_client(
+            appconfiguration_connection_string,
+            selects=selects,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            lazy_load_secrets=True,
+        )
+        assert isinstance(client._dict["secret"], LazySecretProxy)
+        assert client["secret"] == "Very secret and lazy value"
+        assert isinstance(client._dict["secret"], str)
 
     # method: provider_selectors
     @recorded_by_proxy

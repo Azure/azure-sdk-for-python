@@ -87,6 +87,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         on_refresh_success=None,
         feature_flag_enabled=False,
         feature_flag_refresh_enabled=False,
+        lazy_load_secrets=False,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
@@ -103,6 +104,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 on_refresh_success=on_refresh_success,
                 feature_flag_enabled=feature_flag_enabled,
                 feature_flag_refresh_enabled=feature_flag_refresh_enabled,
+                lazy_load_secrets=lazy_load_secrets,
             )
         if key_vault_options:
             if not key_vault_options.secret_resolver:
@@ -120,6 +122,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 on_refresh_success=on_refresh_success,
                 feature_flag_enabled=feature_flag_enabled,
                 feature_flag_refresh_enabled=feature_flag_refresh_enabled,
+                lazy_load_secrets=lazy_load_secrets,
             )
         return load(
             connection_string=appconfiguration_connection_string,
@@ -132,6 +135,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             on_refresh_success=on_refresh_success,
             feature_flag_enabled=feature_flag_enabled,
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
+            lazy_load_secrets=lazy_load_secrets,
         )
 
 
