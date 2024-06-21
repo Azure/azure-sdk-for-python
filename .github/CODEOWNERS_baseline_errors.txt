@@ -118,7 +118,7 @@ filizt is an invalid user. Ensure the user exists, is public member of Azure and
 sgellock is not a public member of Azure.
 maertendMSFT is not a public member of Azure.
 mikaelsitruk is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
-ctstone is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
+bojunehsu is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 vkurpad is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 bowgong is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
 areddish is an invalid user. Ensure the user exists, is public member of Azure and has write permissions.
