@@ -30,11 +30,11 @@ import os
 import uuid
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
 
     from azure.core.credentials import AzureKeyCredential
     from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
-    
 
     # [START create_radiology_insights_client]
     KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
@@ -44,7 +44,7 @@ async def radiology_insights_async() -> None:
 
     radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
     # [END create_radiology_insights_client]
-    
+
     # [START create_radiology_insights_request]
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -108,7 +108,9 @@ async def radiology_insights_async() -> None:
     configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
     # Construct the request with the patient and configuration
-    patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+    patient_data = models.RadiologyInsightsJob(
+        job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+    )
     # [END create_radiology_insights_request]
 
     try:
@@ -123,6 +125,7 @@ async def radiology_insights_async() -> None:
     except Exception as ex:
         print(str(ex))
         return
+
 
 def display_age_mismatch(radiology_insights_result, doc_content1):
     # [START display_age_mismatch]
@@ -151,6 +154,7 @@ def display_age_mismatch(radiology_insights_result, doc_content1):
                                         if not evidence in Tokens:
                                             Tokens = Tokens + " " + evidence
                 print(f"Age Mismatch: Evidence: {Tokens}")
+
 
 # [END display_age_mismatch]
 

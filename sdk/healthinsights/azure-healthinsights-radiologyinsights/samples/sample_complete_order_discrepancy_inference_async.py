@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 
-
 """
 FILE: sample_complete_order_discrepancy_inference_async.py
 
@@ -32,8 +31,9 @@ import uuid
 
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
-    
+
     from azure.core.credentials import AzureKeyCredential
     from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 
@@ -43,7 +43,7 @@ async def radiology_insights_async() -> None:
     job_id = str(uuid.uuid4())
 
     radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
- 
+
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
     COMPARISON:   
@@ -106,7 +106,9 @@ async def radiology_insights_async() -> None:
     configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
     # Construct the request with the patient and configuration
-    patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+    patient_data = models.RadiologyInsightsJob(
+        job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+    )
 
     try:
         async with radiology_insights_client:
@@ -120,6 +122,7 @@ async def radiology_insights_async() -> None:
     except Exception as ex:
         print(str(ex))
         return
+
 
 def display_complete_order_discrepancy(radiology_insights_result):
     # [START display_complete_order_discrepancy]

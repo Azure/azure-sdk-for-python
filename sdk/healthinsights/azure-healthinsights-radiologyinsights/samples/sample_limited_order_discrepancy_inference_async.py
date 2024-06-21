@@ -28,6 +28,7 @@ import uuid
 
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
 
     from azure.core.credentials import AzureKeyCredential
@@ -102,7 +103,9 @@ async def radiology_insights_async() -> None:
     configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
     # Construct the request with the patient and configuration
-    patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+    patient_data = models.RadiologyInsightsJob(
+        job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+    )
 
     try:
         async with radiology_insights_client:
@@ -116,6 +119,7 @@ async def radiology_insights_async() -> None:
     except Exception as ex:
         print(str(ex))
         return
+
 
 def display_limited_order_discrepancy(radiology_insights_result):
     # [START display_limited_order_discrepancy]

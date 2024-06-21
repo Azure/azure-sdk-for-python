@@ -31,8 +31,6 @@ USAGE:
 """
 
 
-
-
 async def radiology_insights_async() -> None:
 
     KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
@@ -98,7 +96,9 @@ async def radiology_insights_async() -> None:
     configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
     # Construct the request with the patient and configuration
-    patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+    patient_data = models.RadiologyInsightsJob(
+        job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+    )
 
     try:
         async with radiology_insights_client:
@@ -113,6 +113,7 @@ async def radiology_insights_async() -> None:
         print(str(ex))
         return
 
+
 def display_laterality_discrepancy(radiology_insights_result):
     # [START display_laterality_discrepancy]
     for patient_result in radiology_insights_result.patient_results:
@@ -121,9 +122,7 @@ def display_laterality_discrepancy(radiology_insights_result):
                 print(f"Laterality Discrepancy Inference found")
                 indication = ri_inference.laterality_indication
                 for code in indication.coding:
-                    print(
-                        f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}"
-                    )
+                    print(f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}")
                 print(f"Laterality Discrepancy: Discrepancy Type: {ri_inference.discrepancy_type}")
 
     # [END display_laterality_discrepancy]

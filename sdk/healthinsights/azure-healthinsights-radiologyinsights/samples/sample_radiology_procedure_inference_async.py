@@ -39,7 +39,7 @@ class HealthInsightsSamples:
         print("Opening connection...")
         # Open connection here
         return self
-    
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         print("Closing connection...")
         # Close connection here
@@ -112,7 +112,9 @@ class HealthInsightsSamples:
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+        patient_data = models.RadiologyInsightsJob(
+            job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+        )
 
         try:
             poller = await radiology_insights_client.begin_infer_radiology_insights(

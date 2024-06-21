@@ -31,7 +31,6 @@ from ._models import FollowupRecommendationInference
 from ._models import FollowupRecommendationOptions
 from ._models import GenericProcedureRecommendation
 from ._models import HealthInsightsErrorResponse
-from ._models import HealthInsightsErrorResponseRequestId
 from ._models import Identifier
 from ._models import ImagingProcedure
 from ._models import ImagingProcedureRecommendation
@@ -64,7 +63,6 @@ from ._models import Range
 from ._models import Ratio
 from ._models import RecommendationFinding
 from ._models import Reference
-from ._models import RequestIdResponseHeader
 from ._models import ResearchStudy
 from ._models import ResearchStudyArm
 from ._models import ResearchStudyObjective
@@ -118,7 +116,6 @@ __all__ = [
     "FollowupRecommendationOptions",
     "GenericProcedureRecommendation",
     "HealthInsightsErrorResponse",
-    "HealthInsightsErrorResponseRequestId",
     "Identifier",
     "ImagingProcedure",
     "ImagingProcedureRecommendation",
@@ -151,7 +148,6 @@ __all__ = [
     "Ratio",
     "RecommendationFinding",
     "Reference",
-    "RequestIdResponseHeader",
     "ResearchStudy",
     "ResearchStudyArm",
     "ResearchStudyObjective",

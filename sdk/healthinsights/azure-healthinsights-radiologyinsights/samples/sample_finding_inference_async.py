@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 
-
 """
 FILE: sample_finding_inference_async.py
 
@@ -45,6 +44,7 @@ import uuid
 
 
 from azure.healthinsights.radiologyinsights import models
+
 
 async def radiology_insights_async() -> None:
 
@@ -113,7 +113,9 @@ async def radiology_insights_async() -> None:
     configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
     # Construct the request with the patient and configuration
-    patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+    patient_data = models.RadiologyInsightsJob(
+        job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+    )
 
     try:
         async with radiology_insights_client:
@@ -127,6 +129,7 @@ async def radiology_insights_async() -> None:
     except Exception as ex:
         print(str(ex))
         return
+
 
 def display_finding(radiology_insights_result):
     # [START display_finding]
@@ -193,9 +196,7 @@ def display_finding(radiology_insights_result):
                                                 f"Finding {counter}: COMPONENTS: Value Coding: {code.system} {code.code} {code.display}"
                                             )
                                 elif attribute == "value_boolean" and component.value_boolean is not None:
-                                    print(
-                                        f"Finding {counter}: COMPONENTS: Value Boolean: {component.value_boolean}"
-                                    )
+                                    print(f"Finding {counter}: COMPONENTS: Value Boolean: {component.value_boolean}")
                                 elif attribute == "value_quantity" and component.value_quantity is not None:
                                     for attribute in dir(component.value_quantity):
                                         if (
@@ -230,10 +231,7 @@ def display_finding(radiology_insights_result):
                                                 print(
                                                     f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.url}"
                                                 )
-                                        elif (
-                                            sub_attribute == "value_string"
-                                            and sub_extension.value_string is not None
-                                        ):
+                                        elif sub_attribute == "value_string" and sub_extension.value_string is not None:
                                             print(
                                                 f"Finding {counter}: INFERENCE EXTENSIONS: EXTENSION: {sub_attribute.capitalize()}: {sub_extension.value_string}"
                                             )

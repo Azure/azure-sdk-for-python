@@ -1416,53 +1416,16 @@ class HealthInsightsErrorResponse(_model_base.Model):
 
     :ivar error: The error object. Required.
     :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
-    :ivar request_id: An opaque, globally-unique, server-generated string identifier for the
-     request. Required.
-    :vartype request_id:
-     ~azure.healthinsights.radiologyinsights.models.HealthInsightsErrorResponseRequestId
     """
 
     error: "_models.Error" = rest_field()
     """The error object. Required."""
-    request_id: "_models.HealthInsightsErrorResponseRequestId" = rest_field(name="requestId")
-    """An opaque, globally-unique, server-generated string identifier for the request. Required."""
 
     @overload
     def __init__(
         self,
         *,
         error: "_models.Error",
-        request_id: "_models.HealthInsightsErrorResponseRequestId",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class HealthInsightsErrorResponseRequestId(_model_base.Model):
-    """HealthInsightsErrorResponseRequestId.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar response: Required.
-    :vartype response: ~azure.healthinsights.radiologyinsights.models.RequestIdResponseHeader
-    """
-
-    response: "_models.RequestIdResponseHeader" = rest_field()
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        response: "_models.RequestIdResponseHeader",
     ): ...
 
     @overload
@@ -3119,10 +3082,6 @@ class Reference(Element):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class RequestIdResponseHeader(_model_base.Model):
-    """Provides the 'x-ms-request-id' header to enable request correlation in responses."""
 
 
 class ResearchStudy(DomainResource, discriminator="ResearchStudy"):  # pylint: disable=too-many-instance-attributes

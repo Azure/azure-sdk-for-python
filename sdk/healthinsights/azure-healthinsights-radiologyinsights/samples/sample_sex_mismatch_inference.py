@@ -100,7 +100,9 @@ class HealthInsightsSyncSamples:
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
+        patient_data = models.RadiologyInsightsJob(
+            job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+        )
 
         # Health Insights Radiology Insights
         try:
