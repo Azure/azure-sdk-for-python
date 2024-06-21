@@ -32,4 +32,3 @@ extends:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'true'
         AZURE_TEST_RUN_LIVE: 'true'
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)

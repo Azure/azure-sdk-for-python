@@ -170,15 +170,15 @@ class AzureRecordedTestCase(object):
                     client_id=client_id,
                     service_connection_id=service_connection_id,
                     system_access_token=system_access_token)
-            # else:
-            #     raise ValueError(
-            #         "Environment variables not set for service principal authentication. "
-            #         f"service_connection_id: {service_connection_id}, client_id: {client_id}, tenant_id: {tenant_id}, system_access_token: {system_access_token}"
-            #     )
-            from azure.identity import DefaultAzureCredential
-            if is_async:
-                from azure.identity.aio import DefaultAzureCredential
-            return DefaultAzureCredential(exclude_managed_identity_credential=True)
+            else:
+                raise ValueError(
+                    "Environment variables not set for service principal authentication. "
+                    f"service_connection_id: {service_connection_id}, client_id: {client_id}, tenant_id: {tenant_id}, system_access_token: {system_access_token}"
+                )
+            # from azure.identity import DefaultAzureCredential
+            # if is_async:
+            #     from azure.identity.aio import DefaultAzureCredential
+            # return DefaultAzureCredential(exclude_managed_identity_credential=True)
 
         # For playback tests, return credentials that will accept playback `get_token` calls
         else:
