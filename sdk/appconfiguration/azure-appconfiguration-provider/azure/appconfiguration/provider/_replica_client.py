@@ -8,7 +8,7 @@ import json
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List
+from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
@@ -26,7 +26,7 @@ from ._constants import FEATURE_FLAG_PREFIX
 class ReplicaClient:
     endpoint: str
     _client: AzureAppConfigurationClient
-    backoff_end_time: int = 0
+    backoff_end_time: float = 0
     failed_attempts: int = 0
 
     @classmethod
@@ -90,7 +90,7 @@ class ReplicaClient:
         )
 
     def _check_configuration_setting(
-        self, key: str, label: str, etag: str, headers: Dict[str, str], **kwargs
+        self, key: str, label: str, etag: Optional[str], headers: Dict[str, str], **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
@@ -169,7 +169,7 @@ class ReplicaClient:
     @distributed_trace
     def refresh_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], headers: Dict[str, str], **kwargs
-    ) -> bool:
+    ) -> Tuple[bool, Dict[Tuple[str, str], str], List[Any]]:
         """
         Gets the refreshed configuration settings if they have changed.
 
@@ -200,15 +200,15 @@ class ReplicaClient:
     @distributed_trace
     def refresh_feature_flags(
         self,
-        refresh_on: List[SettingSelector],
+        refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
         **kwargs
-    ) -> bool:
+    ) -> Tuple[bool, Optional[Dict[Tuple[str, str], str]], Optional[List[Any]]]:
         """
         Gets the refreshed feature flags if they have changed.
 
-        :param List[SettingSelector] refresh_on: The feature flags to check for changes
+        :param Mapping[Tuple[str, str], Optional[str]] refresh_on: The feature flags to check for changes
         :param List[SettingSelector] feature_flag_selectors: The selectors to use to load feature flags
         :param Mapping[str, str] headers: The headers to use for the request
 
@@ -216,7 +216,7 @@ class ReplicaClient:
         value of the feature flag sentinel keys. The third item is the updated feature flags.
         :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[Dict[str, str]], None]]
         """
-        feature_flag_sentinel_keys = dict(refresh_on)
+        feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
@@ -253,10 +253,13 @@ class ReplicaClient:
 
 
 class ReplicaClientManager:
-    def __init__(self, replica_clients: Dict[str, ReplicaClient], min_backoff_sec: int, max_backoff_sec: int):
-        self._replica_clients = replica_clients
+    def __init__(self, min_backoff_sec: int, max_backoff_sec: int):
+        self._replica_clients: Dict[str, ReplicaClient] = {}
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
+
+    def set_clients(self, replica_clients: Dict[str, ReplicaClient]):
+        self._replica_clients.update(replica_clients)
 
     def get_active_clients(self):
         active_clients = []

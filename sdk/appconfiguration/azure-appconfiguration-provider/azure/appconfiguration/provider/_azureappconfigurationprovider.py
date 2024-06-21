@@ -321,19 +321,12 @@ def _buildprovider(
         user_agent = USER_AGENT
 
     clients = []
-    interval: int = kwargs.pop("refresh_interval", 30)
-    if interval < 1:
-        raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-    min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
-    max_backoff: int = 600 if 600 <= interval else interval
-
     if connection_string:
         clients.append(
             ReplicaClient.from_connection_string(
                 endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
             )
         )
-        endpoint = connection_string.split(";")[0].split("=")[1]
         failover_endpoints = find_auto_failover_endpoints(endpoint)
         for failover_endpoint in failover_endpoints:
             failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
@@ -342,7 +335,7 @@ def _buildprovider(
                     failover_endpoint, failover_connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
                 )
             )
-        provider._replica_client_manager = ReplicaClientManager(clients, min_backoff, max_backoff)
+        provider._replica_client_manager.set_clients(clients)
         return provider
     if endpoint is not None and credential is not None:
         clients.append(
@@ -355,7 +348,7 @@ def _buildprovider(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
                 )
             )
-        provider._replica_client_manager = ReplicaClientManager(clients, min_backoff, max_backoff)
+        provider._replica_client_manager.set_clients(clients)
         return provider
     raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
@@ -489,8 +482,15 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def __init__(self, endpoint, **kwargs) -> None:
         self._origin_endpoint = endpoint
-        self._replica_client_manager = None
-        self._dict: Dict[str, str] = {}
+
+        interval: int = kwargs.pop("refresh_interval", 30)
+        if interval < 1:
+            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
+
+        min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
+        max_backoff: int = 600 if 600 <= interval else interval
+        self._replica_client_manager = ReplicaClientManager(min_backoff, max_backoff)
+        self._dict: Dict[str, Union[str, Any]] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
             "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
@@ -571,20 +571,19 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             uses_feature_flags=self._feature_flag_enabled,
                             **kwargs
                         )
-                        need_refresh, self._refresh_on_feature_flags, feature_flags = (
-                            client.refresh_feature_flags(
-                                self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
-                            )
-                            or need_refresh
+                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags = client.refresh_feature_flags(
+                            self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
                         )
-                        if need_refresh:
+
+                        if need_refresh or need_ff_refresh:
                             self._dict[FEATURE_MANAGEMENT_KEY] = {}
                             self._dict[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags
                     # Even if we don't need to refresh, we should reset the timer
                     self._refresh_timer.reset()
                     success = True
                     break
-                except AzureError:
+                except AzureError as e:
+                    exception = e
                     self._replica_client_manager.backoff(client)
 
             if not success:
