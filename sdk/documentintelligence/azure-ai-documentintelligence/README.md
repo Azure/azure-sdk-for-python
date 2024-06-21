@@ -253,6 +253,9 @@ for page in result.pages:
 
 if result.paragraphs:
     print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+    # Sort all paragraphs by span's offset to read in the right order.
+    result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+    print("-----Print sorted paragraphs-----")
     for paragraph in result.paragraphs:
         print(
             f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"

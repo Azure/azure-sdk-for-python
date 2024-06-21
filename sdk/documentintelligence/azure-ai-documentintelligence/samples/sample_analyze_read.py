@@ -117,15 +117,16 @@ def analyze_read():
 
     if result.paragraphs:
         print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+        # Sort all paragraphs by span's offset to read in the right order.
+        result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+        print("-----Print sorted paragraphs-----")
         for paragraph in result.paragraphs:
             print(
                 f"Found paragraph with role: '{paragraph.role}' within "
                 f"{format_bounding_region(paragraph.bounding_regions)} bounding regions"
             )
             print(f"...with content: '{paragraph.content}'")
-            print(
-                f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}"
-            )
+            print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
     print("----------------------------------------")
 
