@@ -87,9 +87,6 @@ class ImdsCredential(GetTokenMixin):
             try:
                 self._client.request_token(*scopes, connection_timeout=1, retry_total=0)
                 self._endpoint_available = True
-            except CredentialUnavailableError:
-                # Response is not json, skip the IMDS credential
-                raise
             except HttpResponseError as ex:
                 # IMDS responded
                 _check_forbidden_response(ex)
@@ -102,6 +99,9 @@ class ImdsCredential(GetTokenMixin):
 
         try:
             token = self._client.request_token(*scopes, headers={"Metadata": "true"})
+        except CredentialUnavailableError:
+            # Response is not json, skip the IMDS credential
+            raise
         except HttpResponseError as ex:
             # 400 in response to a token request indicates managed identity is disabled,
             # or the identity with the specified client_id is not available
