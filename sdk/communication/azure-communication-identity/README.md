@@ -13,11 +13,11 @@ Azure Communication Identity client package is intended to be used to setup the 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 # Getting started
-### Prerequisites
+## Prerequisites
 - Python 3.8 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
-### Install the package
+## Install the package
 Install the Azure Communication Identity client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
