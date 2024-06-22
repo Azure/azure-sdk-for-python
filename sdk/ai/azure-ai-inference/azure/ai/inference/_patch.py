@@ -24,7 +24,7 @@ import logging
 import sys
 
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING
+from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING, Iterable
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
@@ -75,7 +75,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def load_client(
     endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
-) -> Union[ChatCompletionsClientGenerated, EmbeddingsClientGenerated, ImageEmbeddingsClientGenerated]:
+) -> Union["ChatCompletionsClient", "EmbeddingsClient", "ImageEmbeddingsClient"]:
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
@@ -90,7 +90,7 @@ def load_client(
      "2024-05-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
-    :return: The appropriate client associated with the given endpoint
+    :return: The appropriate synchronous client associated with the given endpoint
     :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
      or ~azure.ai.inference.ImageEmbeddingsClient
     :raises ~azure.core.exceptions.HttpResponseError
@@ -110,7 +110,9 @@ def load_client(
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
-        chat_completion_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
+        chat_completion_client._model_info = ( # pylint: disable=protected-access,attribute-defined-outside-init
+            model_info
+        )
         return chat_completion_client
 
     if model_info.model_type in (_models.ModelType.EMBEDDINGS, "embedding"):
@@ -120,7 +122,9 @@ def load_client(
 
     if model_info.model_type == _models.ModelType.IMAGE_EMBEDDINGS:
         image_embedding_client = ImageEmbeddingsClient(endpoint, credential, **kwargs)
-        image_embedding_client._model_info = model_info  # pylint: disable=protected-access,attribute-defined-outside-init
+        image_embedding_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
+            model_info
+        )
         return image_embedding_client
 
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
@@ -165,6 +169,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.ChatCompletions: ...
 
@@ -188,8 +193,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.StreamingChatCompletions: ...
+    ) -> Iterable[_models.StreamingChatCompletionsUpdate]: ...
 
     @overload
     def complete(
@@ -211,8 +217,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
-    ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
+    ) -> Union[Iterable[_models.StreamingChatCompletionsUpdate], _models.ChatCompletions]:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
@@ -294,10 +301,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         same seed and parameters should return the same result. Determinism is not guaranteed.
          Default value is None.
         :paramtype seed: int
-        :return: ChatCompletions for non-streaming, or StreamingChatCompletions for streaming.
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
+        :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError
         """
@@ -309,7 +319,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
+    ) -> Union[Iterable[_models.StreamingChatCompletionsUpdate], _models.ChatCompletions]:
         # pylint: disable=line-too-long
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
@@ -321,7 +331,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ChatCompletions for non-streaming, or StreamingChatCompletions for streaming.
+        :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError
         """
@@ -333,7 +343,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
+    ) -> Union[Iterable[_models.StreamingChatCompletionsUpdate], _models.ChatCompletions]:
         # pylint: disable=line-too-long
         # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
@@ -345,7 +355,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ChatCompletions for non-streaming, or StreamingChatCompletions for streaming.
+        :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError
         """
@@ -370,8 +380,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
-    ) -> Union[_models.StreamingChatCompletions, _models.ChatCompletions]:
+    ) -> Union[Iterable[_models.StreamingChatCompletionsUpdate], _models.ChatCompletions]:
         # pylint: disable=line-too-long
         # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
@@ -451,10 +462,13 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
          ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
+         same seed and parameters should return the same result. Determinism is not guaranteed.
          Default value is None.
         :paramtype seed: int
-        :return: ChatCompletions for non-streaming, or StreamingChatCompletions for streaming.
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
+        :return: ChatCompletions for non-streaming, or Iterable[StreamingChatCompletionsUpdate] for streaming.
         :rtype: ~azure.ai.inference.models.ChatCompletions or ~azure.ai.inference.models.StreamingChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError
         """
@@ -479,6 +493,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
                 "frequency_penalty": frequency_penalty,
                 "max_tokens": max_tokens,
                 "messages": messages,
+                "model": model,
                 "presence_penalty": presence_penalty,
                 "response_format": response_format,
                 "seed": seed,
@@ -603,13 +618,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
@@ -855,13 +863,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword extras: Extra parameters (in the form of string key-value pairs) that are not in the
-         standard request payload.
-         They will be passed to the service as-is in the root of the JSON request payload.
-         How the service handles these extra parameters depends on the value of the
-         ``extra-parameters``
-         HTTP request header. Default value is None.
-        :paramtype extras: dict[str, str]
         :keyword dimensions: Optional. The number of dimensions the resulting output embeddings should
          have.
          Passing null causes the model to use its default value.
