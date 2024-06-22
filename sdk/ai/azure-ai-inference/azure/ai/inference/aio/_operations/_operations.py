@@ -77,6 +77,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
     @overload
@@ -109,6 +110,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
         ] = None,
         seed: Optional[int] = None,
+        model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions:
         # pylint: disable=line-too-long
@@ -186,9 +188,12 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
-         same seed and parameters should return the same result. Determinism is not guaranteed.".
-         Default value is None.
+         same seed and parameters should return the same result. Determinism is not guaranteed. Default
+         value is None.
         :paramtype seed: int
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -207,6 +212,8 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                       frequency increases and decrease the likelihood of the model repeating the same
                       statements verbatim. Supported range is [-2, 2].
                     "max_tokens": 0,  # Optional. The maximum number of tokens to generate.
+                    "model": "str",  # Optional. ID of the specific AI model to use, if more than
+                      one model is available on the endpoint.
                     "presence_penalty": 0.0,  # Optional. A value that influences the probability
                       of generated tokens appearing based on their existing presence in generated text.
                       Positive values will make tokens less likely to appear when they already exist
@@ -217,7 +224,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                       "json_object".
                     "seed": 0,  # Optional. If specified, the system will make a best effort to
                       sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed.".
+                      parameters should return the same result. Determinism is not guaranteed.
                     "stop": [
                         "str"  # Optional. A collection of textual sequences that will end
                           completions generation.
@@ -304,6 +311,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                 "frequency_penalty": frequency_penalty,
                 "max_tokens": max_tokens,
                 "messages": messages,
+                "model": model,
                 "presence_penalty": presence_penalty,
                 "response_format": response_format,
                 "seed": seed,
