@@ -589,20 +589,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             if not success:
                 self._refresh_timer.backoff()
                 if not exception:
+                    error_message = """
+                                    Failed to refresh configuration settings. No Azure App Configuration stores
+                                    successfully refreshed.
+                                    """
                     if self._on_refresh_error:
-                        self._on_refresh_error(
-                            RuntimeError(
-                                """
-                                Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed.
-                                """
-                            )
-                        )
+                        self._on_refresh_error(RuntimeError(error_message))
                         return
-                    raise RuntimeError(
-                        """
-                        Failed to refresh configuration settings. No Azure App Configuration stores successfully refreshed.
-                        """
-                    )
+                    raise RuntimeError(error_message)
                 if self._on_refresh_error:
                     self._on_refresh_error(exception)
                     return
