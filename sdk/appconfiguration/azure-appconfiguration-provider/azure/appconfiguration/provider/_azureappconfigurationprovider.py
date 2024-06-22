@@ -533,7 +533,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return
         success = False
         need_refresh = False
-        exception = None
+        error_message = """
+                        Failed to refresh configuration settings. No Azure App Configuration stores successfully
+                        refreshed.
+                        """
+        exception: Exception = RuntimeError(error_message)
         try:
             active_clients = self._replica_client_manager.get_active_clients()
 
@@ -588,15 +592,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
             if not success:
                 self._refresh_timer.backoff()
-                if not exception:
-                    error_message = """
-                                    Failed to refresh configuration settings. No Azure App Configuration stores
-                                    successfully refreshed.
-                                    """
-                    if self._on_refresh_error:
-                        self._on_refresh_error(RuntimeError(error_message))
-                        return
-                    raise RuntimeError(error_message)
                 if self._on_refresh_error:
                     self._on_refresh_error(exception)
                     return
