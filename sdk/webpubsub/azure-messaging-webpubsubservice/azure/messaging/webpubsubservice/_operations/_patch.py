@@ -92,6 +92,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword dict[str, any] jwt_headers: Any headers you want to pass to jwt encoding.
         :keyword groups: Groups that the connection will join when it connects. Default value is None.
         :paramtype groups: list[str]
+        :keyword client_endpoint_type: The client endpoint type. Default value is "default".
+        :paramtype client_endpoint_type: str
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSON
 

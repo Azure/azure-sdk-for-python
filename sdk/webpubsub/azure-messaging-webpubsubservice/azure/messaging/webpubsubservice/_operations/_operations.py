@@ -692,6 +692,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         roles: Optional[List[str]] = None,
         minutes_to_expire: int = 60,
         groups: Optional[List[str]] = None,
+        client_endpoint_type: Optional[str] = "default",
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -707,6 +708,8 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         :paramtype minutes_to_expire: int
         :keyword groups: Groups that the connection will join when it connects. Default value is None.
         :paramtype groups: list[str]
+        :keyword client_endpoint_type: The client endpoint type. Default value is "default".
+        :paramtype client_endpoint_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
