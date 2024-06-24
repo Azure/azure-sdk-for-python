@@ -66,7 +66,7 @@ def set_up(file_path, is_diagnostics_enabled=True):
     ).start()
 
 
-def check_file_for_messages(agent_initialized_successfully, file_path, reason=None):
+def check_file_for_messages(agent_initialized_successfully, file_path, reason=None, sdk_present=None):
     with open(file_path, "r") as f:
         f.seek(0)
         json = loads(f.readline())
@@ -81,6 +81,10 @@ def check_file_for_messages(agent_initialized_successfully, file_path, reason=No
             assert json["Reason"] == reason
         else:
             assert "Reason" not in json
+        if sdk_present:
+            assert json["SDKPresent"] == sdk_present
+        else:
+            assert "SDKPresent" not in json
         assert not f.read()
 
 
@@ -110,6 +114,12 @@ class TestStatusLogger:
         AzureStatusLogger.log_status(True)
         check_file_for_messages(True, temp_file_path)
 
+    def test_log_status_sdk_present(self, temp_file_path):
+        set_up(temp_file_path, is_diagnostics_enabled=True)
+        AzureStatusLogger.log_status(True, reason=MESSAGE1)
+        AzureStatusLogger.log_status(False, reason=MESSAGE2, sdk_present=True)
+        check_file_for_messages(agent_initialized_successfully=False, file_path=temp_file_path, reason=MESSAGE2, sdk_present=True)
+
     def test_disabled_log_status_success(self, temp_file_path):
         set_up(temp_file_path, is_diagnostics_enabled=False)
         AzureStatusLogger.log_status(False, MESSAGE1)
@@ -126,6 +136,12 @@ class TestStatusLogger:
         set_up(temp_file_path, is_diagnostics_enabled=False)
         AzureStatusLogger.log_status(False, MESSAGE1)
         AzureStatusLogger.log_status(True)
+        check_file_is_empty(temp_file_path)
+
+    def test_disabled_log_status_sdk_present(self, temp_file_path):
+        set_up(temp_file_path, is_diagnostics_enabled=False)
+        AzureStatusLogger.log_status(True, reason=MESSAGE1)
+        AzureStatusLogger.log_status(False, reason=MESSAGE2, sdk_present=True)
         check_file_is_empty(temp_file_path)
 
     @patch(

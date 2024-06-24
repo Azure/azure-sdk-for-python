@@ -78,7 +78,7 @@ from azure.ai.ml.operations import (
     BatchEndpointOperations,
     ComponentOperations,
     ComputeOperations,
-    ConnectionsOperations,
+    WorkspaceConnectionsOperations,
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
@@ -493,7 +493,7 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
-        self._connections = ConnectionsOperations(
+        self._connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_04_2024_preview,
@@ -934,11 +934,11 @@ class MLClient:
 
     @property
     @experimental
-    def connections(self) -> ConnectionsOperations:
+    def connections(self) -> WorkspaceConnectionsOperations:
         """A collection of connection related operations.
 
         :return: Connections operations
-        :rtype: ~azure.ai.ml.operations.ConnectionsOperations
+        :rtype: ~azure.ai.ml.operations.WorkspaceConnectionsOperations
         """
         return self._connections
 

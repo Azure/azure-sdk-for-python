@@ -4,7 +4,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from .connection import ConnectionSchema
+from .workspace_connection import WorkspaceConnectionSchema
 from .connection_subtypes import (
     AzureBlobStoreConnectionSchema,
     MicrosoftOneLakeConnectionSchema,
@@ -21,7 +21,7 @@ from .connection_subtypes import (
 )
 
 __all__ = [
-    "ConnectionSchema",
+    "WorkspaceConnectionSchema",
     "AzureBlobStoreConnectionSchema",
     "MicrosoftOneLakeConnectionSchema",
     "AzureOpenAIConnectionSchema",

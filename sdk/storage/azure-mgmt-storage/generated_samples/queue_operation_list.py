@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storage import StorageManagementClient
 
 """
@@ -37,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/QueueOperationList.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-05-01/examples/QueueOperationList.json
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -40,6 +41,10 @@ from ...operations._storage_movers_operations import (
     build_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -67,7 +72,6 @@ class StorageMoversOperations:
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.StorageMover"]:
         """Lists all Storage Movers in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageMover or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storagemover.models.StorageMover]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -78,7 +82,7 @@ class StorageMoversOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.StorageMoverList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -89,15 +93,14 @@ class StorageMoversOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -109,13 +112,13 @@ class StorageMoversOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StorageMoverList", pipeline_response)
@@ -125,11 +128,11 @@ class StorageMoversOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -141,10 +144,6 @@ class StorageMoversOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.StorageMover/storageMovers"
-    }
 
     @distributed_trace
     def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.StorageMover"]:
@@ -153,7 +152,6 @@ class StorageMoversOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StorageMover or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.storagemover.models.StorageMover]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -164,7 +162,7 @@ class StorageMoversOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.StorageMoverList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -175,16 +173,15 @@ class StorageMoversOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -196,13 +193,13 @@ class StorageMoversOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("StorageMoverList", pipeline_response)
@@ -212,11 +209,11 @@ class StorageMoversOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -228,10 +225,6 @@ class StorageMoversOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageMover/storageMovers"
-    }
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, storage_mover_name: str, **kwargs: Any) -> _models.StorageMover:
@@ -242,12 +235,11 @@ class StorageMoversOperations:
         :type resource_group_name: str
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -261,21 +253,20 @@ class StorageMoversOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.StorageMover] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             storage_mover_name=storage_mover_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -288,13 +279,9 @@ class StorageMoversOperations:
         deserialized = self._deserialize("StorageMover", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageMover/storageMovers/{storageMoverName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -318,7 +305,6 @@ class StorageMoversOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -329,7 +315,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: IO,
+        storage_mover: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -342,11 +328,10 @@ class StorageMoversOperations:
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
         :param storage_mover: Required.
-        :type storage_mover: IO
+        :type storage_mover: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -357,7 +342,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: Union[_models.StorageMover, IO],
+        storage_mover: Union[_models.StorageMover, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageMover:
         """Creates or updates a top-level Storage Mover resource.
@@ -367,17 +352,13 @@ class StorageMoversOperations:
         :type resource_group_name: str
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
-        :param storage_mover: Is either a StorageMover type or a IO type. Required.
-        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMover or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param storage_mover: Is either a StorageMover type or a IO[bytes] type. Required.
+        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMover or IO[bytes]
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -400,7 +381,7 @@ class StorageMoversOperations:
         else:
             _json = self._serialize.body(storage_mover, "StorageMover")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             storage_mover_name=storage_mover_name,
             subscription_id=self._config.subscription_id,
@@ -408,16 +389,15 @@ class StorageMoversOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -430,13 +410,9 @@ class StorageMoversOperations:
         deserialized = self._deserialize("StorageMover", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageMover/storageMovers/{storageMoverName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -461,7 +437,6 @@ class StorageMoversOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -472,7 +447,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: IO,
+        storage_mover: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -486,11 +461,10 @@ class StorageMoversOperations:
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
         :param storage_mover: Required.
-        :type storage_mover: IO
+        :type storage_mover: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -501,7 +475,7 @@ class StorageMoversOperations:
         self,
         resource_group_name: str,
         storage_mover_name: str,
-        storage_mover: Union[_models.StorageMoverUpdateParameters, IO],
+        storage_mover: Union[_models.StorageMoverUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageMover:
         """Updates properties for a Storage Mover resource. Properties not specified in the request body
@@ -512,17 +486,14 @@ class StorageMoversOperations:
         :type resource_group_name: str
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
-        :param storage_mover: Is either a StorageMoverUpdateParameters type or a IO type. Required.
-        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMoverUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param storage_mover: Is either a StorageMoverUpdateParameters type or a IO[bytes] type.
+         Required.
+        :type storage_mover: ~azure.mgmt.storagemover.models.StorageMoverUpdateParameters or IO[bytes]
         :return: StorageMover or the result of cls(response)
         :rtype: ~azure.mgmt.storagemover.models.StorageMover
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -545,7 +516,7 @@ class StorageMoversOperations:
         else:
             _json = self._serialize.body(storage_mover, "StorageMoverUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             storage_mover_name=storage_mover_name,
             subscription_id=self._config.subscription_id,
@@ -553,16 +524,15 @@ class StorageMoversOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -575,18 +545,14 @@ class StorageMoversOperations:
         deserialized = self._deserialize("StorageMover", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageMover/storageMovers/{storageMoverName}"
-    }
+        return deserialized  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, storage_mover_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -600,21 +566,20 @@ class StorageMoversOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             storage_mover_name=storage_mover_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -625,11 +590,7 @@ class StorageMoversOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageMover/storageMovers/{storageMoverName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -642,14 +603,6 @@ class StorageMoversOperations:
         :type resource_group_name: str
         :param storage_mover_name: The name of the Storage Mover resource. Required.
         :type storage_mover_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -676,7 +629,7 @@ class StorageMoversOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -687,14 +640,10 @@ class StorageMoversOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageMover/storageMovers/{storageMoverName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

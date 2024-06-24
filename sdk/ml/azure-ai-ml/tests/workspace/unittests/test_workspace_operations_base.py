@@ -152,11 +152,16 @@ class TestWorkspaceOperation:
                     ),
                 ],
             )
+            ws.system_datastores_auth_mode = "identity"
+            ws.allow_roleassignment_on_rg = True
             return ws._to_rest_object()
 
         mock_workspace_operation_base._operation.get.side_effect = outgoing_get_call
         ws = mock_workspace_operation_base.get(name="random_name", resource_group="rg")
         mock_workspace_operation_base._operation.get.assert_called_once()
+
+        assert ws.system_datastores_auth_mode == "identity"
+        assert ws.allow_roleassignment_on_rg == True
 
         assert ws.managed_network is not None
         assert ws.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
@@ -217,6 +222,8 @@ class TestWorkspaceOperation:
                 ],
             ),
             managed_network=ManagedNetwork(),
+            system_datastores_auth_mode="identity",
+            allow_roleassignment_on_rg=True,
             primary_user_assigned_identity="resource2",
             customer_managed_key=CustomerManagedKey(key_uri="new_cmk_uri"),
         )
@@ -240,6 +247,8 @@ class TestWorkspaceOperation:
                 )
             )
             assert params.managed_network.isolation_mode == "Disabled"
+            assert params.system_datastores_auth_mode == "identity"
+            assert params.allow_roleassignment_on_rg == True
             assert params.managed_network.outbound_rules == {}
             assert polling is True
             assert callable(cls)
@@ -371,6 +380,7 @@ class TestWorkspaceOperation:
         assert param["online_store_resource_group_name"]["value"] is None
         assert param["online_store_subscription_id"]["value"] is None
         assert param["online_store_connection_name"]["value"] is None
+        assert param["systemDatastoresAuthMode"]["value"] == "identity"
 
         # test create feature store with materialization identity
         mock_materialization_identity_resource_id = (
@@ -500,13 +510,14 @@ class TestWorkspaceOperation:
             return_value=("random_id", True),
         )
         template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
-            workspace=FeatureStore(name="name", location="eastus2euap"),
+            workspace=FeatureStore(name="name"),
             materialization_identity_id="/subscriptions/sub/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity",
             offline_store_target="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore",
             online_store_target="/subscriptions/sub1/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/onlinestore",
             update_workspace_role_assignment=True,
             update_offline_store_role_assignment=True,
             update_online_store_role_assignment=True,
+            location="eastus2euap",
         )
 
         assert template is not None

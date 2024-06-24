@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class Address(_serialization.Model):
     """Address information for domain registration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar address1: First line of an Address. Required.
     :vartype address1: str
@@ -92,7 +92,7 @@ class Contact(_serialization.Model):
     the contact information is made publicly available through the Whois
     directories as per ICANN requirements.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar address_mailing: Mailing address.
     :vartype address_mailing: ~azure.mgmt.web.v2015_04_01.models.Address
@@ -184,7 +184,7 @@ class CsmOperationCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_04_01.models.CsmOperationDescription]
@@ -380,7 +380,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -437,7 +437,7 @@ class Domain(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -676,7 +676,7 @@ class DomainCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_04_01.models.Domain]
@@ -825,7 +825,7 @@ class DomainOwnershipIdentifierCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_04_01.models.DomainOwnershipIdentifier]
@@ -1373,7 +1373,7 @@ class NameIdentifierCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_04_01.models.NameIdentifier]
@@ -1426,7 +1426,7 @@ class ServiceSpecification(_serialization.Model):
 class TldLegalAgreement(_serialization.Model):
     """Legal agreement for a top level domain.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar agreement_key: Unique identifier for the agreement. Required.
     :vartype agreement_key: str
@@ -1476,7 +1476,7 @@ class TldLegalAgreementCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_04_01.models.TldLegalAgreement]
@@ -1590,7 +1590,7 @@ class TopLevelDomainCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2015_04_01.models.TopLevelDomain]

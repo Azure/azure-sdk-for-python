@@ -19,9 +19,6 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        pytest.skip(
-            "This test is failing in ci pipeline, fixing in https://github.com/Azure/azure-sdk-for-python/pull/35126"
-        )
         mock_callback = Mock()
         client = self.create_aad_client(
             appconfiguration_endpoint_string,
