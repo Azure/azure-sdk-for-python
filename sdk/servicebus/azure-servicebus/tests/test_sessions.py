@@ -1029,7 +1029,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
             credential=credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             session_id = str(uuid.uuid4())
-            enqueue_time = (utc_now() + timedelta(seconds=30)).replace(microsecond=0)
+            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     content = str(uuid.uuid4())
@@ -1039,11 +1039,12 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                     message.scheduled_enqueue_time_utc = enqueue_time
                     sender.send_messages(message)
 
-                # Sleep until message is sent
-                time.sleep(30)
-
                 messages = []
-                messages = receiver.receive_messages(max_wait_time=10)
+                count = 0
+                while not messages and count < 12:
+                    messages = receiver.receive_messages(max_wait_time=10)
+                    receiver.session.renew_lock(timeout=None)
+                    count += 1
 
                 data = str(messages[0])
                 assert data == content
