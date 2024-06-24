@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._version import VERSION
 from ._client import MapsSearchClient
 from ._search_client import AzureMapsSearchClient
 from ._enums import (
@@ -49,3 +50,5 @@ __all__ = [
 __all__.extend([p for p in _patch_all if p not in __all__])
 
 _patch_sdk()
+
+__version__ = VERSION

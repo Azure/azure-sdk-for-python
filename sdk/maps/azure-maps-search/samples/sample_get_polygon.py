@@ -31,11 +31,11 @@ def get_polygon():
 
     maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_polygon(**{
-          "coordinates": [-122.204141, 47.61256],
-          "result_type": BoundaryResultType.LOCALITY,
-          "resolution": Resolution.SMALL,
-        })
+        result = maps_search_client.get_polygon(
+          coordinates=[-122.204141, 47.61256],
+          result_type=BoundaryResultType.LOCALITY,
+          resolution=Resolution.SMALL,
+        )
 
         if 'geometry' not in result or not result['geometry']:
             print("No geometry found")

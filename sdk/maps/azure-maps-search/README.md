@@ -201,6 +201,24 @@ if __name__ == '__main__':
 This sample demonstrates how to search polygons.
 
 ```python
+# coding: utf-8
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: sample_get_polygon.py
+DESCRIPTION:
+    This sample demonstrates how to search polygons.
+USAGE:
+    python sample_get_polygon.py
+
+    Set the environment variables with your own values before running the sample:
+    - AZURE_SUBSCRIPTION_KEY - your subscription key
+"""
 import os
 
 from azure.core.exceptions import HttpResponseError
@@ -216,11 +234,11 @@ def get_polygon():
 
     maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_polygon(**{
-          "coordinates": [-122.204141, 47.61256],
-          "result_type": BoundaryResultType.LOCALITY,
-          "resolution": Resolution.SMALL,
-        })
+        result = maps_search_client.get_polygon(
+          coordinates=[-122.204141, 47.61256],
+          result_type=BoundaryResultType.LOCALITY,
+          resolution=Resolution.SMALL,
+        )
 
         if 'geometry' not in result or not result['geometry']:
             print("No geometry found")
