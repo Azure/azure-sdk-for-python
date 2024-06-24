@@ -40,7 +40,7 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
-        result = self._msal_client.acquire_token_for_client(resource)
+        result = self._msal_client.acquire_token_for_client(resource=resource)
         now = int(time.time())
         if result and "access_token" in result and "expires_in" in result:
             return AccessToken(result["access_token"], now + int(result["expires_in"]))
