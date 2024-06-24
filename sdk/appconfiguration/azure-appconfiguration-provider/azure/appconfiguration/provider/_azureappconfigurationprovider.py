@@ -483,7 +483,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def __init__(self, endpoint, **kwargs) -> None:
         self._origin_endpoint = endpoint
 
-        interval: int = kwargs.pop("refresh_interval", 30)
+        interval: int = kwargs.get("refresh_interval", 30)
         if interval < 1:
             raise ValueError("Refresh interval must be greater than or equal to 1 second.")
 
