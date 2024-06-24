@@ -201,10 +201,8 @@ def get_credential(**kwargs):
     use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false")
     is_async = kwargs.pop("is_async", False)
 
-    is_live = is_live()
-
     # Return live credentials only in live mode
-    if is_live:
+    if is_live():
         # User-based authentication through Azure PowerShell, if requested
         if use_pwsh.lower() == "true":
             _LOGGER.info(
@@ -285,13 +283,12 @@ def get_credential(**kwargs):
         return DefaultAzureCredential(exclude_managed_identity_credential=True, **kwargs)
 
     # For playback tests, return credentials that will accept playback `get_token` calls
+    if is_async:
+        if is_live:
+            raise ValueError(
+                "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, "
+                "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
+            )
+        return AsyncFakeCredential()
     else:
-        if is_async:
-            if is_live:
-                raise ValueError(
-                    "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, "
-                    "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
-                )
-            return AsyncFakeCredential()
-        else:
-            return fake_settings.get_azure_core_credentials()
+        return fake_settings.get_azure_core_credentials()
