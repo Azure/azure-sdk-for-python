@@ -809,7 +809,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 await sender.send_messages(message)
 
             # Wait for message to send
-            asyncio.sleep(30)
+            await asyncio.sleep(30)
 
             messages = []
             
@@ -849,7 +849,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 assert len(tokens) == 2
 
             # Wait for messages to send 
-            asyncio.sleep(30)
+            await asyncio.sleep(30)
 
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, prefetch_count=20) as receiver:
