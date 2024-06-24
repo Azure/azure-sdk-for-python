@@ -1,5 +1,38 @@
 # Release History
 
+## 3.0.0 (2024-06-24)
+
+### Features Added
+
+  - Added operation group PowerBIEmbeddedManagementClientOperationsMixin
+
+### Breaking Changes
+
+  - Operation WorkspaceCollectionsOperations.check_name_availability has a new required parameter body
+  - Operation WorkspaceCollectionsOperations.check_name_availability has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.check_name_availability no longer has parameter name
+  - Operation WorkspaceCollectionsOperations.check_name_availability no longer has parameter type
+  - Operation WorkspaceCollectionsOperations.create has a new required parameter body
+  - Operation WorkspaceCollectionsOperations.create has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.create no longer has parameter location
+  - Operation WorkspaceCollectionsOperations.create no longer has parameter tags
+  - Operation WorkspaceCollectionsOperations.get_access_keys has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.get_by_name has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.list_by_resource_group has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.list_by_subscription has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.migrate has a new required parameter body
+  - Operation WorkspaceCollectionsOperations.migrate has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.migrate no longer has parameter resources
+  - Operation WorkspaceCollectionsOperations.migrate no longer has parameter target_resource_group
+  - Operation WorkspaceCollectionsOperations.regenerate_key has a new required parameter body
+  - Operation WorkspaceCollectionsOperations.regenerate_key has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.regenerate_key no longer has parameter key_name
+  - Operation WorkspaceCollectionsOperations.update has a new required parameter body
+  - Operation WorkspaceCollectionsOperations.update has a new required parameter kwargs
+  - Operation WorkspaceCollectionsOperations.update no longer has parameter tags
+  - Operation WorkspacesOperations.list has a new required parameter kwargs
+  - Renamed operation WorkspaceCollectionsOperations.delete to WorkspaceCollectionsOperations.begin_delete
+
 ## 2.0.0 (2018-05-25)
 
 **Features**
