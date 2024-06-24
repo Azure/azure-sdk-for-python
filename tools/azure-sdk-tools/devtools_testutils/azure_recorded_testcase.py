@@ -82,7 +82,7 @@ class AzureRecordedTestCase(object):
 
     def get_credential(self, client_class, **kwargs):
         if _is_autorest_v3(client_class):
-            return get_credential(is_live=self.is_live, **kwargs)
+            return get_credential(**kwargs)
         tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
         client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
         secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
@@ -190,7 +190,7 @@ class AzureRecordedTestCase(object):
         token = sas_func(*sas_func_pos_args, **kwargs)
         return token
 
-def get_credential(is_live=True, **kwargs):
+def get_credential(**kwargs):
     tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
     client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
     secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
@@ -200,6 +200,8 @@ def get_credential(is_live=True, **kwargs):
     use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
     use_azd = os.environ.get("AZURE_TEST_USE_AZD_AUTH", "false")
     is_async = kwargs.pop("is_async", False)
+
+    is_live = is_live()
 
     # Return live credentials only in live mode
     if is_live:
