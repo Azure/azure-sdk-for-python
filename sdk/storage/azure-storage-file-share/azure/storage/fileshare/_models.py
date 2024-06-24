@@ -7,7 +7,7 @@
 
 from enum import Enum
 from typing import (
-    Any, Dict,
+    Any, Dict, List, Optional
 )
 from urllib.parse import unquote
 
@@ -35,22 +35,67 @@ def _wrap_item(item):
     return {'name': item.name, 'size': item.properties.content_length, 'is_directory': False}
 
 
+class RetentionPolicy(GeneratedRetentionPolicy):
+    """The retention policy which determines how long the associated data should
+    persist.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param bool enabled:
+        Required. Indicates whether a retention policy is enabled for the storage service.
+    :param Optional[int] days:
+        Indicates the number of days that metrics or logging or soft-deleted data should be retained.
+        All data older than this value will be deleted.
+    """
+
+    enabled: bool = False
+    """Indicates whether a retention policy is enabled for the storage service."""
+    days: Optional[int] = None
+    """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
+        All data older than this value will be deleted."""
+
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated):
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
+
+
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates
     for files.
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword str version: The version of Storage Analytics to configure.
-    :keyword bool enabled: Required. Indicates whether metrics are enabled for the
-        File service.
-    :keyword bool include_ap_is: Indicates whether metrics should generate summary
-        statistics for called API operations.
-    :keyword ~azure.storage.fileshare.RetentionPolicy retention_policy: Determines how long the associated data should
-        persist.
+    :keyword str version:
+        The version of Storage Analytics to configure. The default value is 1.0.
+    :keyword bool enabled:
+        Required. Indicates whether metrics are enabled for the File service.
+    :keyword Optional[bool] include_apis:
+        Indicates whether metrics should generate summary statistics for called API operations.
+    :keyword ~azure.storage.fileshare.RetentionPolicy retention_policy:
+        Determines how long the associated data should persist.
     """
 
-    def __init__(self, **kwargs):
+    version: str = '1.0'
+    """The version of Storage Analytics to configure."""
+    enabled: bool = False
+    """Indicates whether metrics are enabled for the File service."""
+    include_apis: Optional[bool] = None
+    """Indicates whether metrics should generate summary statistics for called API operations."""
+    retention_policy: RetentionPolicy = RetentionPolicy()
+    """Determines how long the associated data should persist."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
@@ -68,35 +113,6 @@ class Metrics(GeneratedMetrics):
         )
 
 
-class RetentionPolicy(GeneratedRetentionPolicy):
-    """The retention policy which determines how long the associated data should
-    persist.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param bool enabled: Required. Indicates whether a retention policy is enabled
-        for the storage service.
-    :param int days: Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted.
-    """
-
-    def __init__(self, enabled=False, days=None):
-        self.enabled = enabled
-        self.days = days
-        if self.enabled and (self.days is None):
-            raise ValueError("If policy is enabled, 'days' must be specified.")
-
-    @classmethod
-    def _from_generated(cls, generated):
-        if not generated:
-            return cls()
-        return cls(
-            enabled=generated.enabled,
-            days=generated.days,
-        )
-
-
 class CorsRule(GeneratedCorsRule):
     """CORS is an HTTP feature that enables a web application running under one
     domain to access resources in another domain. Web browsers implement a
@@ -106,19 +122,19 @@ class CorsRule(GeneratedCorsRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param list(str) allowed_origins:
+    :param list[str] allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
         all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
-    :param list(str) allowed_methods:
+    :param list[str] allowed_methods:
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :keyword list(str) allowed_headers:
+    :keyword list[str] allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
-    :keyword list(str) exposed_headers:
+    :keyword list[str] exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
@@ -127,7 +143,22 @@ class CorsRule(GeneratedCorsRule):
         preflight response.
     """
 
-    def __init__(self, allowed_origins, allowed_methods, **kwargs):
+    allowed_origins: str
+    """The comma-delimited string representation of the list of origin domains
+        that will be allowed via CORS, or "*" to allow all domains."""
+    allowed_methods: str
+    """The comma-delimited string representation of the list of HTTP methods
+        that are allowed to be executed by the origin."""
+    allowed_headers: str
+    """The comma-delimited string representation of the list of headers
+        allowed to be a part of the cross-origin request."""
+    exposed_headers: str
+    """The comma-delimited string representation of the list of response
+        headers to expose to CORS clients."""
+    max_age_in_seconds: int
+    """The number of seconds that the client/browser should cache a pre-flight response."""
+
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -145,26 +176,34 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
-class ShareSmbSettings(GeneratedShareSmbSettings):
-    """ Settings for the SMB protocol.
-
-    :keyword SmbMultichannel multichannel: Sets the multichannel settings.
-    """
-    def __init__(self, **kwargs):
-        self.multichannel = kwargs.get('multichannel')
-        if self.multichannel is None:
-            raise ValueError("The value 'multichannel' must be specified.")
-
-
 class SmbMultichannel(GeneratedSmbMultichannel):
-    """ Settings for Multichannel.
+    """Settings for Multichannel.
 
     :keyword bool enabled: If SMB Multichannel is enabled.
     """
-    def __init__(self, **kwargs):
+
+    enabled: Optional[bool]
+    """If SMB Multichannel is enabled."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.enabled = kwargs.get('enabled')
         if self.enabled is None:
             raise ValueError("The value 'enabled' must be specified.")
+
+
+class ShareSmbSettings(GeneratedShareSmbSettings):
+    """Settings for the SMB protocol.
+
+    :keyword SmbMultichannel multichannel: Sets the multichannel settings.
+    """
+
+    mutichannel: Optional[SmbMultichannel]
+    """Sets the multichannel settings."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.multichannel = kwargs.get('multichannel')
+        if self.multichannel is None:
+            raise ValueError("The value 'multichannel' must be specified.")
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
@@ -172,9 +211,13 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
 
     Contains protocol properties of the share service such as the SMB setting of the share service.
 
-    :keyword SmbSettings smb: Sets SMB settings.
+    :keyword ShareSmbSettings smb: Sets SMB settings.
     """
-    def __init__(self, **kwargs):
+
+    smb: Optional[ShareSmbSettings]
+    """Sets the SMB settings."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.smb = kwargs.get('smb')
         if self.smb is None:
             raise ValueError("The value 'smb' must be specified.")
