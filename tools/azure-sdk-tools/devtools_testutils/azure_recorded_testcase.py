@@ -268,7 +268,8 @@ def get_credential(is_live=True, **kwargs):
                 client_id=client_id,
                 service_connection_id=service_connection_id,
                 system_access_token=system_access_token,
-                **kwargs)
+                **kwargs
+            )
         # This is for testing purposes only, to ensure that the AzurePipelinesCredential is used when available
         # else:
         #     raise ValueError(
