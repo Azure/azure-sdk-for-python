@@ -8,7 +8,8 @@ import azure.ai.inference as sdk
 
 from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
 from devtools_testutils import recorded_by_proxy
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.credentials import AzureKeyCredential
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -69,7 +70,7 @@ class TestModelClient(ModelClientTestBase):
     def test_image_url_load(self, **kwargs):
         local_folder = os.path.dirname(os.path.abspath(__file__))
         image_file = os.path.join(local_folder, "../samples/sample1.png")
-        image_url = sdk.models._patch.ImageUrl.load(
+        image_url = sdk.models.ImageUrl.load(
             image_file=image_file,
             image_format="png",
             detail=sdk.models.ImageDetailLevel.AUTO,
@@ -83,6 +84,118 @@ class TestModelClient(ModelClientTestBase):
     #                      HAPPY PATH TESTS - CHAT COMPLETIONS
     #
     # **********************************************************************************
+
+    # Regression test. Send a request that includes almost all supported types of input objects. Make sure the resulting
+    # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
+    def test_chat_completions_request_payload(self, **kwargs):
+
+        client = sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+        )
+
+        tool1 = sdk.models.ChatCompletionsFunctionToolDefinition(
+            function=sdk.models.FunctionDefinition(
+                name="my-first-function-name",
+                description="My first function description",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "first_argument": {
+                            "type": "string",
+                            "description": "First argument description",
+                        },
+                        "second_argument": {
+                            "type": "string",
+                            "description": "Second argument description",
+                        },
+                    },
+                    "required": ["first_argument", "second_argument"],
+                },
+            )
+        )
+
+        tool2 = sdk.models.ChatCompletionsFunctionToolDefinition(
+            function=sdk.models.FunctionDefinition(
+                name="my-second-function-name",
+                description="My second function description",
+                parameters={
+                    "type": "object",
+                    "properties": {
+                        "first_argument": {
+                            "type": "int",
+                            "description": "First argument description",
+                        },
+                    },
+                    "required": ["first_argument"],
+                },
+            )
+        )
+
+        try:
+            response = client.complete(
+                messages=[
+                    sdk.models.SystemMessage(content="system prompt"),
+                    sdk.models.UserMessage(content="user prompt 1"),
+                    sdk.models.AssistantMessage(
+                        tool_calls=[
+                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                        ]
+                    ),
+                    sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                    sdk.models.AssistantMessage(content="assistant prompt"),
+                    sdk.models.UserMessage(
+                        content=[
+                            sdk.models.TextContentItem(text="user prompt 2"),
+                            sdk.models.ImageContentItem(
+                                image_url=sdk.models.ImageUrl(
+                                    url="https://does.not.exit/image.png",
+                                    detail=sdk.models.ImageDetailLevel.HIGH,
+                                ),
+                            ),
+                        ],
+                    ),
+                ],
+                model_extras={
+                    "key1": 1,
+                    "key2": True,
+                    "key3": "Some value",
+                    "key4": [1, 2, 3],
+                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                },
+                frequency_penalty=0.123,
+                max_tokens=321,
+                model="some-model-id",
+                presence_penalty=4.567,
+                response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                seed=654,
+                stop=["stop1", "stop2"],
+                stream=True,
+                temperature=8.976,
+                tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                tools=[tool1, tool2],
+                top_p=9.876,
+                raw_request_hook=self.request_callback,
+            )
+        except ServiceRequestError as e:
+            headers = self.pipeline_request.http_request.headers
+            print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
+            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
+            assert headers["Content-Type"] == "application/json"
+            assert headers["Content-Length"] == "1790"
+            assert headers["unknown-parameters"] == "pass_through"
+            assert headers["Accept"] == "application/json"
+            assert headers["some_header"] == "some_header_value"
+            assert "azsdk-python-ai-inference/" in headers["User-Agent"]
+            assert headers["Authorization"] == "Bearer key-value"
+            assert (
+                self.pipeline_request.http_request.data
+                == '{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}'
+            )
+            return
+        assert False
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
@@ -153,9 +266,12 @@ class TestModelClient(ModelClientTestBase):
                 "key4": [1, 2, 3],
                 "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
             },
+            raw_request_hook=self.request_callback,
         )
+
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
+        self._validate_model_extras(self.pipeline_request.http_request.data, self.pipeline_request.http_request.headers)
         client.close()
 
     @ServicePreparerChatCompletions()

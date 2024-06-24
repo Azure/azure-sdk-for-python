@@ -120,7 +120,7 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
     }
 
@@ -156,7 +156,7 @@ def build_create_or_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
     }
 
@@ -194,7 +194,7 @@ def build_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
     }
 
@@ -231,7 +231,7 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
     }
 
@@ -266,7 +266,7 @@ def build_add_storage_capacity_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
     }
 
@@ -785,8 +785,8 @@ class CloudExadataInfrastructuresOperations:
             deserialized = self._deserialize("CloudExadataInfrastructure", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -966,8 +966,8 @@ class CloudExadataInfrastructuresOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1074,8 +1074,8 @@ class CloudExadataInfrastructuresOperations:
             deserialized = self._deserialize("CloudExadataInfrastructure", pipeline_response)
 
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

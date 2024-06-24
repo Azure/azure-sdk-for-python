@@ -63,7 +63,7 @@ def build_list_by_cloud_vm_cluster_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -100,9 +100,9 @@ def build_get_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
         "virtualnetworkaddressname": _SERIALIZER.url(
-            "virtualnetworkaddressname", virtualnetworkaddressname, "str", max_length=63, min_length=1
+            "virtualnetworkaddressname", virtualnetworkaddressname, "str", max_length=63, min_length=1, pattern=r".*"
         ),
     }
 
@@ -141,9 +141,9 @@ def build_create_or_update_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
         "virtualnetworkaddressname": _SERIALIZER.url(
-            "virtualnetworkaddressname", virtualnetworkaddressname, "str", max_length=63, min_length=1
+            "virtualnetworkaddressname", virtualnetworkaddressname, "str", max_length=63, min_length=1, pattern=r".*"
         ),
     }
 
@@ -183,9 +183,9 @@ def build_delete_request(
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str"),
+        "cloudvmclustername": _SERIALIZER.url("cloudvmclustername", cloudvmclustername, "str", pattern=r".*"),
         "virtualnetworkaddressname": _SERIALIZER.url(
-            "virtualnetworkaddressname", virtualnetworkaddressname, "str", max_length=63, min_length=1
+            "virtualnetworkaddressname", virtualnetworkaddressname, "str", max_length=63, min_length=1, pattern=r".*"
         ),
     }
 
@@ -620,8 +620,8 @@ class VirtualNetworkAddressesOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore

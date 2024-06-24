@@ -36,9 +36,8 @@ class CommunicationIdentityClient:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/identity_samples_async.py
+        .. literalinclude:: ../samples/identity_samples_async.py
             :language: python
-            :dedent: 8
     """
 
     def __init__(
@@ -78,15 +77,6 @@ class CommunicationIdentityClient:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of CommunicationIdentityClient.
         :rtype: ~azure.communication.identity.aio.CommunicationIdentityClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/identity_samples.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the CommunicationIdentityClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -113,7 +103,8 @@ class CommunicationIdentityClient:
     async def create_user_and_token(
         self, scopes: List[Union[str, "CommunicationTokenScope"]], **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
-        """create a single Communication user with an identity token.
+        """Create a single Communication user with an identity token.
+
         :param scopes:
             List of scopes to be added to the token.
         :type scopes: list[str or ~azure.communication.identity.CommunicationTokenScope]

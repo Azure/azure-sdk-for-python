@@ -416,13 +416,6 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
-        "systemDatastoresAuthMode": {
-            "type": "string",
-            "defaultValue": "accesskey",
-            "metadata": {
-                "description": "The authentication mode for system datastores"
-            }
-        },
         "allowRoleAssignmentOnRG": {
             "type": "string",
             "defaultValue": "true",
@@ -599,11 +592,11 @@
                 "description": "Serverless compute settings to be used for the workspace."
             }
         },
-        "system_datastore_auth_mode": {
+        "systemDatastoresAuthMode": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Settings to control workspace storage account access auth type"
+                "description": "The authentication mode for system datastores"
             }
         },
         "endpoint_resource_id": {
@@ -838,7 +831,8 @@
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                "systemDatastoresAuthMode": "[parameters('system_datastore_auth_mode')]",
+                "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
+                "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                 "managedNetwork": "[parameters('managedNetwork')]",
                 "featureStoreSettings": {
                     "computeruntime": {
@@ -953,7 +947,8 @@
                                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                                 },
                                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                                "systemDatastoresAuthMode": "[parameters('system_datastore_auth_mode')]",
+                                "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
+                                "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                                 "managedNetwork": "[parameters('managedNetwork')]",
                                 "featureStoreSettings": {
                                     "computeruntime": {
