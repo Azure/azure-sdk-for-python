@@ -613,7 +613,7 @@ def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable
     test_run_id: str,
     name: str,
     *,
-    metricname: str,
+    metric_name: str,
     metric_namespace: str,
     time_interval: str,
     interval: Optional[Union[str, _models.TimeGrain]] = None,
@@ -636,7 +636,7 @@ def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
+    _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
     if interval is not None:
         _params["interval"] = _SERIALIZER.query("interval", interval, "str")
     _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
@@ -704,7 +704,7 @@ def build_load_test_run_get_metric_namespaces_request(  # pylint: disable=name-t
 def build_load_test_run_list_metrics_request(
     test_run_id: str,
     *,
-    metricname: str,
+    metric_name: str,
     metric_namespace: str,
     time_interval: str,
     aggregation: Optional[str] = None,
@@ -730,7 +730,7 @@ def build_load_test_run_list_metrics_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if aggregation is not None:
         _params["aggregation"] = _SERIALIZER.query("aggregation", aggregation, "str")
-    _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
+    _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
     if interval is not None:
         _params["interval"] = _SERIALIZER.query("interval", interval, "str")
     _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
@@ -8215,7 +8215,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         test_run_id: str,
         name: str,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
         time_interval: str,
         interval: Optional[Union[str, _models.TimeGrain]] = None,
@@ -8230,8 +8230,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :type test_run_id: str
         :param name: Dimension name. Required.
         :type name: str
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
         :keyword time_interval: The timespan of the query. It is a string with the following format
@@ -8273,7 +8273,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _request = build_load_test_run_list_metric_dimension_values_request(
             test_run_id=test_run_id,
             name=name,
-            metricname=metricname,
+            metric_name=metric_name,
             metric_namespace=metric_namespace,
             time_interval=time_interval,
             interval=interval,
@@ -8498,7 +8498,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         test_run_id: str,
         body: Optional[_models.MetricRequestPayload] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
         time_interval: str,
         aggregation: Optional[str] = None,
@@ -8515,8 +8515,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: ~azure.developer.loadtesting.models.MetricRequestPayload
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
         :keyword time_interval: The timespan of the query. It is a string with the following format
@@ -8574,7 +8574,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         test_run_id: str,
         body: Optional[JSON] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
         time_interval: str,
         aggregation: Optional[str] = None,
@@ -8591,8 +8591,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: JSON
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
         :keyword time_interval: The timespan of the query. It is a string with the following format
@@ -8637,7 +8637,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         test_run_id: str,
         body: Optional[IO[bytes]] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
         time_interval: str,
         aggregation: Optional[str] = None,
@@ -8654,8 +8654,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: IO[bytes]
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
         :keyword time_interval: The timespan of the query. It is a string with the following format
@@ -8700,7 +8700,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         test_run_id: str,
         body: Optional[Union[_models.MetricRequestPayload, JSON, IO[bytes]]] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
         time_interval: str,
         aggregation: Optional[str] = None,
@@ -8717,8 +8717,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :param body: Metric dimension filter. Is one of the following types: MetricRequestPayload,
          JSON, IO[bytes] Default value is None.
         :type body: ~azure.developer.loadtesting.models.MetricRequestPayload or JSON or IO[bytes]
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
         :keyword time_interval: The timespan of the query. It is a string with the following format
@@ -8794,7 +8794,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
                 _request = build_load_test_run_list_metrics_request(
                     test_run_id=test_run_id,
-                    metricname=metricname,
+                    metric_name=metric_name,
                     metric_namespace=metric_namespace,
                     time_interval=time_interval,
                     aggregation=aggregation,

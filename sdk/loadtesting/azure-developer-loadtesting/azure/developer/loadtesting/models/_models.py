@@ -365,8 +365,7 @@ class TargetResourceConfigurations(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind")
-    ## Removed visibility=["read", "create"] a bug possibly , to run the test successfully.
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create"])
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 
     @overload

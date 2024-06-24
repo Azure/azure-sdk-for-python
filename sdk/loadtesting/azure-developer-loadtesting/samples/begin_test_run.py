@@ -31,8 +31,8 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = "3ffefeb0-eb60-4fdd-a1d5-e086a9519cba.centralindia.cnt-prod.loadtesting.azure.com"
 
-TEST_RUN_ID = "some-test-run-id"
-TEST_ID = "my-sdk-test-id"
+TEST_RUN_ID = "test-runid-sample"
+TEST_ID = "8d062284-eeb1-474f-ae8f-46a63731a033"
 
 # Build a client through AAD and resource endpoint
 client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
@@ -44,7 +44,6 @@ testRunPoller = client.begin_test_run(
         "displayName": "My New Load Test Run",
     },
 )
-
 # waiting for test run status to be completed with timeout = 3600 seconds
 result = testRunPoller.result(3600)
 
