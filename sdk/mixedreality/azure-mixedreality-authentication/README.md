@@ -31,7 +31,7 @@ Install the Azure Mixed Reality Authentication SDK.
 pip install --pre azure-mixedreality-authentication
 ```
 
-## Create and authenticate a `MixedRealityStsClient`
+## Create and authenticate the client
 
 To create a client object to request an access token for a Mixed Reality service, you will need the `account identifier`
 and `account domain` of your Mixed Reality service resource and a `credential`.
@@ -105,7 +105,7 @@ Tokens obtained from the Mixed Reality STS have a lifetime of **24 hours**.
 
 The return value for a successful call to `get_token` is an `azure.core.credentials.AccessToken`.
 
-See the authentication examples [above](#authenticate-the-client) or [Azure Identity][azure_identity] for more complex
+See the authentication examples [above](#create-and-authenticate-the-client) or [Azure Identity][azure_identity] for more complex
 authentication scenarios.
 
 ## Retrieve an access token synchronously

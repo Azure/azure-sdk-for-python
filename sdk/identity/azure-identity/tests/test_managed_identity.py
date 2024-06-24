@@ -3,19 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import sys
 import time
-
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
+from unittest import mock
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import ManagedIdentityCredential
+from azure.identity import ManagedIdentityCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
 from azure.identity._internal.user_agent import USER_AGENT
+from azure.identity._internal import within_credential_chain
 import pytest
 
 from helpers import build_aad_response, validating_transport, mock_response, Request
@@ -625,6 +623,21 @@ def test_imds_tenant_id():
     assert token.token == expected_token.token
 
 
+def test_imds_text_response():
+    within_credential_chain.set(True)
+    response = mock.Mock(
+        text=lambda encoding=None: b"{This is a text response}",
+        headers={"content-type": "text/html; charset=UTF-8"},
+        content_type="text/html; charset=UTF-8",
+        status_code=200,
+    )
+    mock_send = mock.Mock(return_value=response)
+    credential = ManagedIdentityCredential(transport=mock.Mock(send=mock_send))
+    with pytest.raises(CredentialUnavailableError):
+        token = credential.get_token("")
+    within_credential_chain.set(False)
+
+
 def test_client_id_none():
     """the credential should ignore client_id=None"""
 
@@ -827,7 +840,6 @@ def test_azure_arc(tmpdir):
         assert token.token == access_token
 
 
-
 def test_azure_arc_tenant_id(tmpdir):
     """Azure Arc 2020-06-01"""
     access_token = "****"
@@ -889,10 +901,123 @@ def test_azure_arc_client_id():
             EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
         },
     ):
-        credential = ManagedIdentityCredential(client_id="some-guid")
+        with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
+            credential = ManagedIdentityCredential(client_id="some-guid")
 
-    with pytest.raises(ClientAuthenticationError):
+    with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
+    assert "not supported" in str(ex.value)
+
+
+def test_azure_arc_key_too_large(tmp_path):
+
+    api_version = "2019-11-01"
+    identity_endpoint = "http://localhost:42/token"
+    imds_endpoint = "http://localhost:42"
+    scope = "scope"
+    secret_key = "X" * 4097
+
+    key_file = tmp_path / "key_file.key"
+    key_file.write_text(secret_key)
+    assert key_file.read_text() == secret_key
+
+    transport = validating_transport(
+        requests=[
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"api-version": api_version, "resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
+        ],
+    )
+
+    with mock.patch(
+        "os.environ",
+        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
+    ):
+        with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: str(tmp_path)):
+            with pytest.raises(ClientAuthenticationError) as ex:
+                ManagedIdentityCredential(transport=transport).get_token(scope)
+            assert "file size" in str(ex.value)
+
+
+def test_azure_arc_key_not_exist(tmp_path):
+
+    api_version = "2019-11-01"
+    identity_endpoint = "http://localhost:42/token"
+    imds_endpoint = "http://localhost:42"
+    scope = "scope"
+
+    transport = validating_transport(
+        requests=[
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"api-version": api_version, "resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm=/path/to/key_file"}),
+        ],
+    )
+
+    with mock.patch(
+        "os.environ",
+        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
+    ):
+        with pytest.raises(ClientAuthenticationError) as ex:
+            ManagedIdentityCredential(transport=transport).get_token(scope)
+        assert "not exist" in str(ex.value)
+
+
+def test_azure_arc_key_invalid(tmp_path):
+
+    api_version = "2019-11-01"
+    identity_endpoint = "http://localhost:42/token"
+    imds_endpoint = "http://localhost:42"
+    scope = "scope"
+    key_file = tmp_path / "key_file.txt"
+    key_file.write_text("secret")
+
+    transport = validating_transport(
+        requests=[
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"api-version": api_version, "resource": scope},
+            ),
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params={"api-version": api_version, "resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
+        ],
+    )
+
+    with mock.patch(
+        "os.environ",
+        {EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint, EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint},
+    ):
+        with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: "/foo"):
+            with pytest.raises(ClientAuthenticationError) as ex:
+                ManagedIdentityCredential(transport=transport).get_token(scope)
+            assert "Unexpected file path" in str(ex.value)
+
+        with mock.patch("azure.identity._credentials.azure_arc._get_key_file_path", lambda: str(tmp_path)):
+            with pytest.raises(ClientAuthenticationError) as ex:
+                ManagedIdentityCredential(transport=transport).get_token(scope)
+            assert "extension" in str(ex.value)
 
 
 def test_token_exchange(tmpdir):

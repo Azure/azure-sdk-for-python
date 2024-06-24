@@ -29,6 +29,7 @@ class OutboundRuleCategory:
     REQUIRED = "Required"
     RECOMMENDED = "Recommended"
     USER_DEFINED = "UserDefined"
+    DEPENDENCY = "Dependency"
 
 
 class OutboundRuleType:

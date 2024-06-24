@@ -3,22 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
 
+from typing import Any
+
+from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.mixedreality.authentication.aio import MixedRealityStsClient
+
 from .static_access_token_credential import StaticAccessTokenCredential
-
-if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials import AccessToken
-    from azure.core.credentials_async import AsyncTokenCredential
-
 
 def get_mixedreality_credential(
         account_id: str,
         account_domain: str,
         endpoint_url: str,
-        credential: "AsyncTokenCredential",
+        credential: AsyncTokenCredential,
         **kwargs):
     if isinstance(credential, StaticAccessTokenCredential):
         return credential
@@ -45,7 +43,7 @@ class MixedRealityTokenCredential(object):
             account_id: str,
             account_domain: str,
             endpoint_url: str,
-            credential: "AsyncTokenCredential",
+            credential: AsyncTokenCredential,
             **kwargs):
         self.stsClient = MixedRealityStsClient(
             account_id=account_id,
@@ -54,7 +52,7 @@ class MixedRealityTokenCredential(object):
             credential=credential,
             **kwargs)
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint: disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint: disable=unused-argument
         return await self.stsClient.get_token(**kwargs)
 
     async def close(self) -> None:

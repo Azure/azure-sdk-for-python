@@ -32,9 +32,7 @@ async def sample_translation_with_glossaries_async():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document.aio import DocumentTranslationClient
-    from azure.ai.translation.document import (
-        TranslationGlossary
-    )
+    from azure.ai.translation.document import TranslationGlossary
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -49,7 +47,7 @@ async def sample_translation_with_glossaries_async():
             source_container_url,
             target_container_url,
             "es",
-            glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")]
+            glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")],
         )
 
         result = await poller.result()
@@ -77,5 +75,6 @@ async def sample_translation_with_glossaries_async():
 async def main():
     await sample_translation_with_glossaries_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

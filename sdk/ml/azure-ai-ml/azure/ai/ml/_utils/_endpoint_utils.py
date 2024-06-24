@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,E0401,E0611
 
 import ast
 import concurrent.futures
@@ -218,7 +218,12 @@ def validate_scoring_script(deployment):
 
 
 def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
-    v2_dataset = UriFileJobOutput(
-        uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
-    ).serialize()
+    if file_name:
+        v2_dataset = UriFileJobOutput(
+            uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
+        ).serialize()
+    else:
+        v2_dataset = UriFileJobOutput(
+            uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}"
+        ).serialize()
     return {"output_name": v2_dataset}

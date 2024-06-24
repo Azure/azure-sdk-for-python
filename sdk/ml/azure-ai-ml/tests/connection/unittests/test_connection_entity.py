@@ -7,7 +7,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import load_connection
 from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import Connection, AzureOpenAIConnection
+from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIConnection
 from azure.ai.ml.constants._common import ConnectionTypes, CognitiveServiceKinds
 
 from azure.ai.ml.entities._credentials import (
@@ -40,15 +40,15 @@ from azure.ai.ml.entities import (
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestWorkspaceConnectionEntity:
-    def assert_connections_are_similar(self, conn1: Connection, conn2: Connection):
+    def assert_connections_are_similar(self, conn1: WorkspaceConnection, conn2: WorkspaceConnection):
         """Helper functiom which runs a bunch of assertions to check that the two
         inputted connections are roughly equivalent. Does not check certain features
         that are specific to some connection subclasses.
 
         :param conn1: The first connection to compare.
-        :type conn1: ~azure.ai.ml.entities.Connection
+        :type conn1: ~azure.ai.ml.entities.WorkspaceConnection
         :param conn2: The second connection to compare.
-        :type conn2: ~azure.ai.ml.entities.Connection
+        :type conn2: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         # Check them individually to simplify debugging.
@@ -61,45 +61,45 @@ class TestWorkspaceConnectionEntity:
         assert conn1.tags == conn2.tags  # This helpfully compares hidden metadata for subclasses.
         assert conn1.credentials == conn2.credentials
 
-    def check_rest_conversion_stable(self, conn: Connection):
+    def check_rest_conversion_stable(self, conn: WorkspaceConnection):
         """Helper function which converts an inputted connection to its rest
         equivalent and back again, then checks that they're still the same.
 
         :param conn: The connection to check
-        :type conn: ~azure.ai.ml.entities.Connection
+        :type conn: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         rest_conn = conn._to_rest_object()
-        new_conn = Connection._from_rest_object(rest_obj=rest_conn)
+        new_conn = WorkspaceConnection._from_rest_object(rest_obj=rest_conn)
         # equalize names since rest conversions don't keep it.
         new_conn.name = conn.name
         self.assert_connections_are_similar(conn, new_conn)
 
-    def check_dict_conversion_stable(self, conn: Connection):
+    def check_dict_conversion_stable(self, conn: WorkspaceConnection):
         """Helper function which converts and inputted connection to its dictionary
         equivalent and back again, then checks that they're still the same.
 
         :param conn: The connection to check
-        :type conn: ~azure.ai.ml.entities.Connection
+        :type conn: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         conn_dictionary = conn._to_dict()
-        new_conn = Connection._load(conn_dictionary)
+        new_conn = WorkspaceConnection._load(conn_dictionary)
         self.assert_connections_are_similar(conn, new_conn)
 
-    def check_all_conversions_stable(self, conn: Connection):
+    def check_all_conversions_stable(self, conn: WorkspaceConnection):
         """Helper function which checks that a connection is stable when converting
         to and from rest and dictionary representations.
 
         :param conn: The connection to check
-        :type conn: ~azure.ai.ml.entities.Connection
+        :type conn: ~azure.ai.ml.entities.WorkspaceConnection
         """
 
         self.check_rest_conversion_stable(conn)
         self.check_dict_conversion_stable(conn)
 
     def test_workspace_connection_constructor(self):
-        ws_connection = Connection(
+        ws_connection = WorkspaceConnection(
             target="dummy_target",
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
             credentials=PatTokenConfiguration(pat="dummy_pat"),
@@ -161,7 +161,7 @@ class TestWorkspaceConnectionEntity:
 
     def test_alds_gen2(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/alds_gen2_sp.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
         assert ws_connection.credentials.tenant_id == "1234"
@@ -178,7 +178,7 @@ class TestWorkspaceConnectionEntity:
         self.check_rest_conversion_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/alds_gen2_entra.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.AAD)
         assert ws_connection.name == "test_gen2_conn2"
@@ -324,7 +324,7 @@ class TestWorkspaceConnectionEntity:
 
     def test_custom(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/custom.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionTypes.CUSTOM)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert ws_connection.credentials.key == "4444"
@@ -354,7 +354,7 @@ class TestWorkspaceConnectionEntity:
     def test_git(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/git_pat.yaml")
 
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.GIT)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert ws_connection.credentials.pat == "dummy_pat"
@@ -363,7 +363,7 @@ class TestWorkspaceConnectionEntity:
         self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/git_no_cred.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.GIT)
         assert ws_connection.credentials.type == ConnectionAuthType.NONE
         assert ws_connection.name == "git_no_cred_conn"
@@ -372,7 +372,7 @@ class TestWorkspaceConnectionEntity:
 
     def test_python_feed(self):
         ws_connection = load_connection(source="./tests/test_configs/connection/python_feed_pat.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert ws_connection.credentials.pat == "dummy_pat"
@@ -381,7 +381,7 @@ class TestWorkspaceConnectionEntity:
         self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/python_feed_user_pass.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
         assert ws_connection.credentials.username == "john"
@@ -391,7 +391,7 @@ class TestWorkspaceConnectionEntity:
         self.check_all_conversions_stable(ws_connection)
 
         ws_connection = load_connection(source="./tests/test_configs/connection/python_feed_no_cred.yaml")
-        assert type(ws_connection) == Connection
+        assert type(ws_connection) == WorkspaceConnection
         assert ws_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
         assert ws_connection.credentials.type == ConnectionAuthType.NONE
         assert ws_connection.name == "test_ws_conn_python_no_cred"
@@ -498,7 +498,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags == {}
 
     def empty_credentials_rest_conversion(self):
-        ws_connection = Connection(
+        ws_connection = WorkspaceConnection(
             target="dummy_target",
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
             credentials=None,
@@ -511,7 +511,7 @@ class TestWorkspaceConnectionEntity:
 
     def test_ws_conn_subtype_restriction(self):
         with pytest.raises(ValueError):
-            _ = Connection(
+            _ = WorkspaceConnection(
                 target="dummy_target",
                 type=ConnectionCategory.AZURE_OPEN_AI,
                 name="dummy_connection",
@@ -530,7 +530,7 @@ class TestWorkspaceConnectionEntity:
             _ = load_connection(source="./tests/test_configs/connection/blob_store_bad_cred.yaml")
 
         with pytest.raises(ValueError):
-            _ = Connection(
+            _ = WorkspaceConnection(
                 name="bad",
                 target="bad",
                 type=ConnectionTypes.AZURE_DATA_LAKE_GEN_2,

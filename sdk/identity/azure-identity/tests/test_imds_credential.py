@@ -135,3 +135,40 @@ class TestImds(RecordedTestCase):
         token = credential.get_token(self.scope, tenant_id="tenant_id")
         assert token.token
         assert isinstance(token.expires_on, int)
+
+    def test_managed_identity_aci_probe(self):
+        access_token = "****"
+        expires_on = 42
+        expected_token = AccessToken(access_token, expires_on)
+        scope = "scope"
+        transport = validating_transport(
+            requests=[
+                Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
+                Request(
+                    base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
+                    method="GET",
+                    required_headers={"Metadata": "true"},
+                    required_params={"resource": scope},
+                ),
+            ],
+            responses=[
+                # probe receives error response
+                mock_response(status_code=400),
+                mock_response(
+                    json_payload={
+                        "access_token": access_token,
+                        "expires_in": 42,
+                        "expires_on": expires_on,
+                        "ext_expires_in": 42,
+                        "not_before": int(time.time()),
+                        "resource": scope,
+                        "token_type": "Bearer",
+                    }
+                ),
+            ],
+        )
+        within_credential_chain.set(True)
+        cred = ImdsCredential(transport=transport)
+        token = cred.get_token(scope)
+        assert token == expected_token
+        within_credential_chain.set(False)
