@@ -14,12 +14,12 @@ USAGE:
        Entra ID authentication.
     2. Update `api_version` (the AOAI REST API version) as needed.
     3. Set one or two environment variables, depending on your authentication method:
-        * AOAI_EMBEDDINGS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
+        * AZURE_OPENAI_EMBEDDINGS_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form 
             https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
             where `your-unique-resource-name` is your globally unique AOAI resource name,
             and `your-deployment-name` is your AI Model deployment name.
             For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4-turbo
-        * AOAI_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret. This
+        * AZURE_OPENAI_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret. This
             is only required for key authentication.
     4. Run the sample:
        python sample_embeddings_azure_openai.py
@@ -31,9 +31,9 @@ def sample_embeddings_azure_openai():
     from azure.ai.inference import EmbeddingsClient
 
     try:
-        endpoint = os.environ["AOAI_EMBEDDINGS_ENDPOINT"]
+        endpoint = os.environ["AZURE_OPENAI_EMBEDDINGS_ENDPOINT"]
     except KeyError:
-        print("Missing environment variable 'AOAI_EMBEDDINGS_ENDPOINT'")
+        print("Missing environment variable 'AZURE_OPENAI_EMBEDDINGS_ENDPOINT'")
         print("Set it before running this sample.")
         exit()
 
@@ -43,9 +43,9 @@ def sample_embeddings_azure_openai():
         from azure.core.credentials import AzureKeyCredential
 
         try:
-            key = os.environ["AOAI_EMBEDDINGS_KEY"]
+            key = os.environ["AZURE_OPENAI_EMBEDDINGS_KEY"]
         except KeyError:
-            print("Missing environment variable 'AOAI_EMBEDDINGS_KEY'")
+            print("Missing environment variable 'AZURE_OPENAI_EMBEDDINGS_KEY'")
             print("Set it before running this sample.")
             exit()
 

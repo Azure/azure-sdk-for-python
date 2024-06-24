@@ -42,9 +42,11 @@ sys.path.append("..")
 class RoomsSample(object):
 
     def setUp(self):
+        # [START auth_from_connection_string_async]
         self.connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_ROOMS")
 
         self.rooms_client = RoomsClient.from_connection_string(self.connection_string)
+        # [END auth_from_connection_string_async]
         self.identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_string)
         self.rooms = []
