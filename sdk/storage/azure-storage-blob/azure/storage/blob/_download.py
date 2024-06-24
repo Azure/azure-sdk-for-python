@@ -286,8 +286,8 @@ class _ChunkIterator(object):
             return self._get_chunk_data()
 
         try:
-            chunk = next(self._iter_chunks)
-            self._current_content += self._iter_downloader.yield_chunk(chunk)[0]
+            next_chunk = next(self._iter_chunks)
+            self._current_content += self._iter_downloader.yield_chunk(next_chunk)[0]
         except StopIteration as e:
             self._complete = True
             if self._current_content:
@@ -713,14 +713,14 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                             downloader.get_chunk_offsets()
                         ))
                 else:
-                    for chunk in chunks_iter:
-                        downloader.process_chunk(chunk)
+                    for next_chunk in chunks_iter:
+                        downloader.process_chunk(next_chunk)
 
                 self._complete_read()
 
             else:
-                while (next_chunk := next(chunks_iter, None)) is not None and remaining > 0:
-                    chunk_data, content_length = downloader.yield_chunk(next_chunk)
+                while (chunk := next(chunks_iter, None)) is not None and remaining > 0:
+                    chunk_data, content_length = downloader.yield_chunk(chunk)
                     self._download_offset += len(chunk_data)
                     self._raw_download_offset += content_length
                     if self._text_mode and self._decoder is not None:
