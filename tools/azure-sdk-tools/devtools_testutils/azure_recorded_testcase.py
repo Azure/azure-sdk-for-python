@@ -212,7 +212,7 @@ def get_credential(is_live=True, **kwargs):
 
             if is_async:
                 from azure.identity.aio import AzurePowerShellCredential
-            return AzurePowerShellCredential()
+            return AzurePowerShellCredential(**kwargs)
         # User-based authentication through Azure CLI (az), if requested
         if use_cli.lower() == "true":
             _LOGGER.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
@@ -230,7 +230,7 @@ def get_credential(is_live=True, **kwargs):
 
             if is_async:
                 from azure.identity.aio import VisualStudioCodeCredential
-            return VisualStudioCodeCredential()
+            return VisualStudioCodeCredential(**kwargs)
         # User-based authentication through Azure Developer CLI (azd), if requested
         if use_azd.lower() == "true":
             _LOGGER.info(
@@ -240,7 +240,7 @@ def get_credential(is_live=True, **kwargs):
 
             if is_async:
                 from azure.identity.aio import AzureDeveloperCliCredential
-            return AzureDeveloperCliCredential()
+            return AzureDeveloperCliCredential(**kwargs)
 
         # Service principal authentication
         if tenant_id and client_id and secret:
@@ -252,7 +252,7 @@ def get_credential(is_live=True, **kwargs):
 
             if is_async:
                 from azure.identity.aio import ClientSecretCredential
-            return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret)
+            return ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=secret, **kwargs)
 
         # If AzurePipelinesCredential is detected, use it.
         service_connection_id = os.environ.get("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID")
@@ -267,7 +267,8 @@ def get_credential(is_live=True, **kwargs):
                 tenant_id=tenant_id,
                 client_id=client_id,
                 service_connection_id=service_connection_id,
-                system_access_token=system_access_token)
+                system_access_token=system_access_token,
+                **kwargs)
         # This is for testing purposes only, to ensure that the AzurePipelinesCredential is used when available
         # else:
         #     raise ValueError(
@@ -278,7 +279,7 @@ def get_credential(is_live=True, **kwargs):
         from azure.identity import DefaultAzureCredential
         if is_async:
             from azure.identity.aio import DefaultAzureCredential
-        return DefaultAzureCredential(exclude_managed_identity_credential=True)
+        return DefaultAzureCredential(exclude_managed_identity_credential=True, **kwargs)
 
     # For playback tests, return credentials that will accept playback `get_token` calls
     else:
