@@ -49,11 +49,11 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
         "The publicly exposed function '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "The '{}.{} method '{}' had its '{}' parameter '{}' deleted or renamed in the current version"
+        "The '{}.{}' method '{}' had its parameter '{}' of type '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had its '{}' parameter '{}' deleted or renamed in the current version"
+        "The function '{}.{}' had parameter '{}' of type '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "The '{}.{} method '{}' had a '{}' parameter '{}' inserted in the current version"
+        "The '{}.{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
         "The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
@@ -530,7 +530,7 @@ class BreakingChangesTracker:
                         (
                             self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
-                            self.module_name, self.class_name, self.function_name, param_type, deleted
+                            self.module_name, self.class_name, self.function_name, deleted, param_type
                         )
                     )
                 else:
@@ -538,7 +538,7 @@ class BreakingChangesTracker:
                         (
                             self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
-                            self.module_name, self.function_name, param_type, deleted
+                            self.module_name, self.function_name, deleted, param_type
                         )
                     )
 
@@ -646,22 +646,38 @@ class BreakingChangesTracker:
             return True
 
     def get_reportable_breaking_changes(self, ignore_changes: Dict) -> List:
-        reportable_changes = []
         ignored = []
+        # Match all ignore rules that should apply to this package
         for ignored_package, ignore_rules in ignore_changes.items():
-            if re.match(ignored_package, self.package_name):
+            if re.findall(ignored_package, self.package_name):
                 ignored.extend(ignore_rules)
-        for bc in self.breaking_changes:
-            msg, bc_type, module_name, *args = bc
-            class_name = args[0] if args else None
-            function_name = args[1] if len(args) > 1 else None
-            compare_ignored()
-            if (bc_type, module_name) in ignored or \
-                    (bc_type, module_name, class_name) in ignored or \
-                    (bc_type, module_name, class_name, function_name) in ignored:
-                continue
-            reportable_changes.append(bc)
-        return reportable_changes
+        # Remove ignored breaking changes from list of reportable changes
+        for ignored_bc, *ignored_args in ignored:
+            ignored_module_name = ignored_args[0] if ignored_args else None
+            ignored_class_name = ignored_args[1] if len(ignored_args) > 1 else None
+            ignored_function_name = ignored_args[2] if len(ignored_args) > 2 else None
+            ignored_parameter_name = ignored_args[3] if len(ignored_args) > 3 else None
+            for bc in self.breaking_changes:
+                _, bc_type, module_name, *args = bc
+                class_name = args[0] if args else None
+                function_name = args[1] if len(args) > 1 else None
+                parameter_name = args[2] if len(args) > 2 else None
+            
+                # If the ignore item is a wildcard, it should match all values
+                if ignored_module_name == "*":
+                    module_name = "*"
+                if ignored_class_name == "*":
+                    class_name = "*"
+                if ignored_function_name == "*":
+                    function_name = "*"
+                if ignored_parameter_name is not None:
+                    # If the ignore rule is for a parameter, we should check parameters on the original breaking change
+                    if (bc_type, module_name, class_name, function_name, parameter_name) == (
+                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name, ignored_parameter_name):
+                        self.breaking_changes.remove(bc)
+                elif (bc_type, module_name, class_name, function_name) == (
+                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name):
+                    self.breaking_changes.remove(bc)
 
     def report_changelog(self) -> None:
         # Code borrowed and modified from the previous change log tool
@@ -685,32 +701,10 @@ class BreakingChangesTracker:
 
     def report_breaking_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
-        if self.package_name in ignore_changes:
-            self.breaking_changes = self.get_reportable_breaking_changes(ignore_changes)
+        self.get_reportable_breaking_changes(ignore_changes)
 
         for idx, bc in enumerate(self.breaking_changes):
             msg, *args = bc
             # For simple breaking changes reporting, prepend the change code to the message
             msg = "({}): " + msg
             self.breaking_changes[idx] = msg.format(*args)
-
-    def _compare_ignored(self, ignored: List, bc: tuple) -> bool:
-        bc_type, module_name, *args = bc
-        class_name = args[0] if args else None
-        function_name = args[1] if len(args) > 1 else None
-        for ignore_bc_type, *args in ignored:
-            ignore_module_name = args[0] if args else None
-            ignore_class_name = args[1] if len(args) > 1 else None
-            ignore_function_name = args[2] if len(args) > 2 else None
-            if ignore_module_name == "*":
-            if bc_type == ignore_bc_type:
-                if module_name == ignore_module_name:
-                    if class_name == ignore_class_name:
-                        if function_name == ignore_function_name:
-                            return True
-                    if ignore_class_name == "*":
-                        if function_name == ignore_function_name or ignore_function_name == "*":
-                            return True
-                        return True
-                    
-            return False
