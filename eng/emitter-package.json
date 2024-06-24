@@ -1,7 +1,7 @@
 {
   "main": "dist/src/index.js",
   "dependencies": {
-    "@azure-tools/typespec-python": "0.24.2"
+    "@azure-tools/typespec-python": "0.24.3"
   },
   "devDependencies": {
     "@azure-tools/typespec-autorest": "~0.43.0",

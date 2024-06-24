@@ -43,6 +43,7 @@ class PhoneNumbersClient:
     """A client to interact with the AzureCommunicationService Phone Numbers gateway.
 
     This client provides operations to interact with the phone numbers service
+
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
@@ -86,6 +87,7 @@ class PhoneNumbersClient:
             **kwargs: Any
     ) -> "PhoneNumbersClient":
         """Create PhoneNumbersClient from a Connection String.
+
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of PhoneNumbersClient.
@@ -389,19 +391,19 @@ class PhoneNumbersClient:
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
         :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
-        "geographic" and "tollFree". Required.
+         "geographic" and "tollFree". Required.
         :type phone_number_type: ~azure.communication.phonenumbers.PhoneNumberType
         :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
-        "person" and "application". Default value is None.
+         "person" and "application". Default value is None.
         :paramtype assignment_type: ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
-        This is required if the phone number type is Geographic. Default value is None.
+         This is required if the phone number type is Geographic. Default value is None.
         :paramtype locality: str
         :keyword administrative_division: The name of the state or province in which to search for the
-        area code. e.g. California. Default value is None.
+         area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-        default value is 0. Default value is 0.
+         default value is 0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of PhoneNumberAreaCode
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberAreaCode]
