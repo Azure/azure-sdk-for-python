@@ -190,7 +190,7 @@ class AzureRecordedTestCase(object):
         token = sas_func(*sas_func_pos_args, **kwargs)
         return token
 
-def get_credential(self, **kwargs):
+def get_credential(is_live=True, **kwargs):
     tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
     client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
     secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
@@ -202,7 +202,7 @@ def get_credential(self, **kwargs):
     is_async = kwargs.pop("is_async", False)
 
     # Return live credentials only in live mode
-    if self.is_live:
+    if is_live:
         # User-based authentication through Azure PowerShell, if requested
         if use_pwsh.lower() == "true":
             _LOGGER.info(
@@ -283,11 +283,11 @@ def get_credential(self, **kwargs):
     # For playback tests, return credentials that will accept playback `get_token` calls
     else:
         if is_async:
-            if self.is_live:
+            if is_live:
                 raise ValueError(
                     "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, "
                     "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
                 )
             return AsyncFakeCredential()
         else:
-            return self.settings.get_azure_core_credentials()
+            return fake_settings.get_azure_core_credentials()
