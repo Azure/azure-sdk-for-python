@@ -95,6 +95,17 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # Latest dependency will find latest released package that satisfies requires of given package name
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
 
+
+    # we have an edge case case scenario when
+    #   - package B depends on package A version 12.0.0
+    #   - Package A has 12.0.0b1 available on PyPI
+    # In this case, during a nightly build, we will replace the req with 12.0.0a1. However, due to the presence of 12.0.0b1 on PyPI,
+    # pip will resolve 12.0.0b1 from pypi as the "newer" version. This will _always_ be true as alpha releases are considered "older" than
+    # beta releases. I think the only alternative is to swap our `nightly alpha` builds to `nightly rc` builds. Doing so will cause
+    # our nightly builds to resolve the nightly produced version, rather than a beta version from pypi.
+    # changing from alpha to rc is policy change, so for now we're going to make nightly builds take the dev req if they
+    # are running latestdependency. This will ensure that we always resolve the nightly build version, rather than a beta version from pypi.
+
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
 
     override_added_packages = []
