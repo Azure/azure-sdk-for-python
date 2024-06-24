@@ -82,7 +82,7 @@ class AzureRecordedTestCase(object):
 
     def get_credential(self, client_class, **kwargs):
         if _is_autorest_v3(client_class):
-            return get_credential(**kwargs)
+            return get_credential(is_live=self.is_live, **kwargs)
         tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
         client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
         secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
