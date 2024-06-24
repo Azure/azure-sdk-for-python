@@ -220,7 +220,7 @@ def get_credential(**kwargs):
 
             if is_async:
                 from azure.identity.aio import AzureCliCredential
-            return AzureCliCredential()
+            return AzureCliCredential(**kwargs)
         # User-based authentication through Visual Studio Code, if requested
         if use_vscode.lower() == "true":
             _LOGGER.info(
