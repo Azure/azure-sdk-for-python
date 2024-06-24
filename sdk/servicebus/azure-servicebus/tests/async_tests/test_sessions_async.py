@@ -864,13 +864,15 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 message.scheduled_enqueue_time_utc = enqueue_time
                 await sender.send_messages(message)
 
-            # Wait for message to send
-            await asyncio.sleep(30)
+            renewer = AutoLockRenewer()
 
             messages = []
             
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
-                messages = await receiver.receive_messages(max_wait_time=10)
+                renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
+                messages.extend(await receiver.receive_messages(max_wait_time=120))
+                messages.extend(await receiver.receive_messages(max_wait_time=5))
+
                 data = str(messages[0])
                 assert data == content
                 assert messages[0].message_id == message_id
