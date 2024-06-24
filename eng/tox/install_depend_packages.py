@@ -20,7 +20,7 @@ from packaging.version import Version, parse
 import pdb
 
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import compare_python_version
+from ci_tools.functions import compare_python_version, find_whl
 
 
 from typing import List
@@ -97,17 +97,37 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
 
 
     # we have an edge case case scenario when
-    #   - package B depends on package A version 12.0.0
-    #   - Package A has 12.0.0b1 available on PyPI
-    # In this case, during a nightly build, we will replace the req with 12.0.0a1. However, due to the presence of 12.0.0b1 on PyPI,
-    # pip will resolve 12.0.0b1 from pypi as the "newer" version. This will _always_ be true as alpha releases are considered "older" than
+    #   - package B depends on package A version 1.0.0
+    #   - Package A has 1.0.0b1 available on PyPI
+    # In this case, during a nightly build, we will replace the req with 1.0.0a1. However, due to the presence of 1.0.0b1 on PyPI,
+    # pip will resolve 1.0.0b1 from pypi as the "newer" version. This will _always_ be true as alpha releases are considered "older" than
     # beta releases. I think the only alternative is to swap our `nightly alpha` builds to `nightly rc` builds. Doing so will cause
     # our nightly builds to resolve the nightly produced version, rather than a beta version from pypi.
-    # changing from alpha to rc is policy change, so for now we're going to make nightly builds take the dev req if they
+    # Changing from alpha to rc is policy change, so for now we're going to make nightly builds take the dev req if they
     # are running latestdependency. This will ensure that we always resolve the nightly build version, rather than a beta version from pypi.
 
+    # if running latest nightly then we simply must attempt to find the nightly versions of the package in our prebuilt wheel directory
+    
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
 
+    if os.environ.get("SetDevVersion") == "true" and dependency_type == "Latest":
+        logging.info("Retrieving azure dependencies from prebuilt wheel dir for nightly build.")
+
+        pkg_info = ParsedSetup.from_path(setup_py_file_path)
+
+        # parse setup.py and find install requires
+        azure_requirements = [r for r in pkg_info.requires if "-nspkg" not in r and "azure-" in r]
+        
+        for req in azure_requirements:
+            pkg_name, pkg_spec = parse_require(req)
+
+            breakpoint()
+            # attempt to find the wheel. if we do, remove the requirement from the list of released packages
+            find_whl(os.environ.get("PREBUILT_WHEEL_DIR"), pkg_name, pkg_spec)
+        
+
+
+    breakpoint()
     override_added_packages = []
 
     # new section added to account for difficulties with msrest
@@ -252,6 +272,9 @@ def process_requirement(req, dependency_type, orig_pkg_name):
 
     # think of the various versions that come back from pypi as the top of a funnel
     # We apply generic overrides -> platform specific overrides -> package specific overrides
+
+    # def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
+    # lookin PREBUILT_WHEEL_DIR for a wheel that matches the package name and version
 
     versions = process_bounded_versions(orig_pkg_name, pkg_name, versions)
 
