@@ -284,11 +284,6 @@ def get_credential(**kwargs):
 
     # For playback tests, return credentials that will accept playback `get_token` calls
     if is_async:
-        if is_live:
-            raise ValueError(
-                "Async live doesn't support mgmt_setting_real, please set AZURE_TENANT_ID, "
-                "AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
-            )
         return AsyncFakeCredential()
     else:
         return fake_settings.get_azure_core_credentials()
