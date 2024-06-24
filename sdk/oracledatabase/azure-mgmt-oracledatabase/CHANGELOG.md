@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0(it should be stable) (2024-07-21)
+## 1.0.0 (2024-07-21)
 
+### Other Changes
 
+  - First GA
 
 ## 1.0.0b2 (2024-06-21)
 
