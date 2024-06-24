@@ -29,15 +29,6 @@ class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
 
-# General non-breaking changes
-class ChangeType(str, Enum):
-    ADDED_CLIENT = "AddedClient"
-    ADDED_CLIENT_METHOD = "AddedClientMethod"
-    ADDED_CLASS = "AddedClass"
-    ADDED_CLASS_METHOD = "AddedClassMethod"
-    ADDED_CLASS_METHOD_PARAMETER = "AddedClassMethodParameter"
-    ADDED_CLASS_PROPERTY = "AddedClassProperty"
-    ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
@@ -97,50 +88,20 @@ class BreakingChangesTracker:
         "The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
 
-    # ----------------- General Changes -----------------
-    ADDED_CLIENT_MSG = \
-        "The client '{}.{}' was added in the current version"
-    ADDED_CLIENT_METHOD_MSG = \
-        "The '{}.{}' client method '{}' was added in the current version"
-    ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}.{}' was added in the current version"
-    ADDED_CLASS_METHOD_MSG = \
-        "The '{}.{}' method '{}' was added in the current version"
-    ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}.{}' had property '{}' added in the {} method in the current version"
-    ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}.{}' had parameter '{}' added in the current version"
-    ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}.{}' had property '{}' added in the current version"
-
-
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
         self.current = current
         self.diff = diff
         self.breaking_changes = []
-        self.features_added = []
         self.package_name = package_name
         self.module_name = None
         self.class_name = None
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
-        self.changelog = kwargs.get("changelog", False)
-
-    def __str__(self):
-        formatted = "\n"
-        for bc in self.breaking_changes:
-            formatted += bc + "\n"
-
-        formatted += f"\nFound {len(self.breaking_changes)} breaking changes.\n"
-        formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
-                     "any reported breaking changes or false positives.\n"
-        return formatted
+        self.previous_version = kwargs.get("previous_version", None)
 
     def run_checks(self) -> None:
-        if self.changelog:
-            self.run_non_breaking_change_diff_checks()
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
 
@@ -156,88 +117,6 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
-
-    def run_non_breaking_change_diff_checks(self) -> None:
-        for module_name, module in self.diff.items():
-            self.module_name = module_name
-            if self.module_name not in self.stable and not isinstance(self.module_name, jsondiff.Symbol):
-                continue  # TODO add this to reported changes
-
-            self.run_non_breaking_class_level_diff_checks(module)
-        
-    def run_non_breaking_class_level_diff_checks(self, module: Dict) -> None:
-        for class_name, class_components in module.get("class_nodes", {}).items():
-            self.class_name = class_name
-            stable_class_nodes = self.stable[self.module_name]["class_nodes"]
-            if not isinstance(class_name, jsondiff.Symbol):
-                if self.class_name not in stable_class_nodes:
-                    if self.class_name.endswith("Client"):
-                        # This is a new client
-                        fa = (
-                            self.ADDED_CLIENT_MSG,
-                            ChangeType.ADDED_CLIENT,
-                            self.module_name, class_name
-                        )
-                        self.features_added.append(fa)
-                    else:
-                        # This is a new class
-                        fa = (
-                            self.ADDED_CLASS_MSG,
-                            ChangeType.ADDED_CLASS,
-                            self.module_name, class_name
-                        )
-                        self.features_added.append(fa)
-                else:
-                    # Check existing class for new methods
-                    stable_methods_node = stable_class_nodes[self.class_name]["methods"]
-                    for method_name, method_components in class_components.get("methods", {}).items():
-                        self.function_name = method_name
-                        if not isinstance(self.function_name, jsondiff.Symbol):
-                            if self.function_name not in stable_methods_node:
-                                if self.class_name.endswith("Client"):
-                                    # This is a new client method
-                                    fa = (
-                                        self.ADDED_CLIENT_METHOD_MSG,
-                                        ChangeType.ADDED_CLIENT_METHOD,
-                                        self.module_name, self.class_name, method_name
-                                    )
-                                    self.features_added.append(fa)
-                                else:
-                                    # This is a new class method
-                                    fa = (
-                                        self.ADDED_CLASS_METHOD_MSG,
-                                        ChangeType.ADDED_CLASS_METHOD,
-                                        self.module_name, class_name, method_name
-                                    )
-                                    self.features_added.append(fa)
-                            else:
-                                # Check existing methods for new parameters
-                                stable_parameters_node = stable_methods_node[self.function_name]["parameters"]
-                                current_parameters_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"][self.function_name]["parameters"]
-                                for param_name, param_components in method_components.get("parameters", {}).items():
-                                    self.parameter_name = param_name
-                                    if self.parameter_name not in stable_parameters_node and \
-                                            not isinstance(self.parameter_name, jsondiff.Symbol):
-                                        if self.function_name == "__init__":
-                                            # If this is a new class property skip reporting it here and let the class properties check handle it.
-                                            # This is because we'll get multiple reports for the same new property if it's a parameter in __init__
-                                            # and a class level attribute.
-                                            if self.parameter_name in class_components.get("properties", {}).keys():
-                                                continue
-                                        self.check_non_positional_parameter_added(
-                                            current_parameters_node[param_name]
-                                        )
-                    stable_property_node = stable_class_nodes[self.class_name]["properties"]
-                    for property_name, property_components in class_components.get("properties", {}).items():
-                        if property_name not in stable_property_node and \
-                                not isinstance(property_name, jsondiff.Symbol):
-                            fa = (
-                                self.ADDED_CLASS_PROPERTY_MSG,
-                                ChangeType.ADDED_CLASS_PROPERTY,
-                                self.module_name, class_name, property_name
-                            )
-                            self.features_added.append(fa)
-
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
@@ -540,23 +419,6 @@ class BreakingChangesTracker:
                     )
                 )
 
-    def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
-        if current_parameters_node["param_type"] != "positional_or_keyword":
-            if self.class_name:
-                self.features_added.append(
-                    (
-                        self.ADDED_CLASS_METHOD_PARAMETER_MSG, ChangeType.ADDED_CLASS_METHOD_PARAMETER,
-                        self.module_name, self.class_name, self.parameter_name, self.function_name
-                    )
-                )
-            else:
-                self.features_added.append(
-                    (
-                        self.ADDED_FUNCTION_PARAMETER_MSG, ChangeType.ADDED_FUNCTION_PARAMETER,
-                        self.module_name, self.function_name, self.parameter_name
-                    )
-                )
-
     def check_positional_parameter_removed_or_renamed(
         self, param_type: str,
         deleted: str,
@@ -712,33 +574,23 @@ class BreakingChangesTracker:
             reportable_changes.append(bc)
         return reportable_changes
 
-    def report_changelog(self) -> None:
-        # Code borrowed and modified from the previous change log tool
-        def _build_md(content: list, title: str, buffer: list):
-            buffer.append(title)
-            buffer.append("")
-            for _, bc in enumerate(content):
-                msg, _, *args = bc
-                buffer.append(msg.format(*args))
-            buffer.append("")
-            return buffer
-
-        buffer = []
-
-        if self.breaking_changes:
-            _build_md(self.breaking_changes, "### Breaking Changes", buffer)
-        if self.features_added:
-            _build_md(self.features_added, "### Features Added", buffer)
-        content =  "\n".join(buffer).strip()
-        return content
-
-    def report_breaking_changes(self) -> None:
+    def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
         if self.package_name in ignore_changes:
             self.breaking_changes = self.get_reportable_breaking_changes(ignore_changes)
 
+        # If there are no breaking changes after the ignore check, return early
+        if not self.breaking_changes:
+            return f"\nNo breaking changes found for {self.package_name} between stable version {self.previous_version} and current version."
+
+        formatted = "\n"
         for idx, bc in enumerate(self.breaking_changes):
             msg, *args = bc
             # For simple breaking changes reporting, prepend the change code to the message
-            msg = "({}): " + msg
-            self.breaking_changes[idx] = msg.format(*args)
+            msg = "({}): " + msg + "\n"
+            formatted += msg.format(*args)
+        
+        formatted += f"\nFound {len(self.breaking_changes)} breaking changes.\n"
+        formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
+                     "any reported breaking changes or false positives.\n"
+        return formatted
