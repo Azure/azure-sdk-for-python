@@ -18,6 +18,7 @@ class ChangeType(str, Enum):
     ADDED_CLASS_METHOD_PARAMETER = "AddedClassMethodParameter"
     ADDED_CLASS_PROPERTY = "AddedClassProperty"
     ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
+    ADDED_OPERATION_GROUP = "AddedOperationGroup"
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
@@ -34,6 +35,8 @@ class ChangelogTracker(BreakingChangesTracker):
         "The function '{}.{}' had parameter '{}' added in the current version"
     ADDED_CLASS_PROPERTY_MSG = \
         "The model or publicly exposed class '{}.{}' had property '{}' added in the current version"
+    ADDED_OPERATION_GROUP_MSG = \
+        "The '{}.{}' client had operation group '{}' added in the current version"
 
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
@@ -118,12 +121,29 @@ class ChangelogTracker(BreakingChangesTracker):
                     for property_name, property_components in class_components.get("properties", {}).items():
                         if property_name not in stable_property_node and \
                                 not isinstance(property_name, jsondiff.Symbol):
-                            fa = (
-                                self.ADDED_CLASS_PROPERTY_MSG,
-                                ChangeType.ADDED_CLASS_PROPERTY,
-                                self.module_name, class_name, property_name
-                            )
-                            self.features_added.append(fa)
+                            new_operation_group = False
+                            if self.class_name.endswith("Client"):
+                                new_operation_group = self.check_operation_groups_added(property_name, property_components)
+                            if not new_operation_group:
+                                fa = (
+                                    self.ADDED_CLASS_PROPERTY_MSG,
+                                    ChangeType.ADDED_CLASS_PROPERTY,
+                                    self.module_name, class_name, property_name
+                                )
+                                self.features_added.append(fa)
+
+
+    def check_operation_groups_added(self, property_name: str, property_components: Dict) -> bool:
+        if property_components["attr_type"] is not None and property_components["attr_type"].lower().endswith("operations"):
+            fa = (
+                self.ADDED_OPERATION_GROUP_MSG,
+                ChangeType.ADDED_OPERATION_GROUP,
+                self.module_name, self.class_name, property_name
+            )
+            self.features_added.append(fa)
+            return True
+        return False
+
 
     def check_non_positional_parameter_added(self, current_parameters_node: Dict) -> None:
         if current_parameters_node["param_type"] != "positional_or_keyword":
