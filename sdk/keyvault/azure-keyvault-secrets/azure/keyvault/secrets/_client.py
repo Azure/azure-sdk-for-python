@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from functools import partial
-from typing import Any, Optional
+from typing import Any, cast, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -258,7 +258,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         backup_result = self._client.backup_secret(self.vault_url, name, **kwargs)
-        return backup_result.value
+        return cast(bytes, backup_result.value)
 
     @distributed_trace
     def restore_secret_backup(self, backup: bytes, **kwargs: Any) -> SecretProperties:
@@ -319,12 +319,13 @@ class SecretClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
+        # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
         pipeline_response, deleted_secret_bundle = self._client.delete_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
-        )
+        )  # pyright: ignore[reportGeneralTypeIssues]
         deleted_secret = DeletedSecret._from_deleted_secret_bundle(deleted_secret_bundle)
 
         command = partial(self.get_deleted_secret, name=name, **kwargs)
@@ -447,12 +448,13 @@ class SecretClient(KeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 2
+        # Ignore pyright warning about return type not being iterable because we use `cls` to return a tuple
         pipeline_response, recovered_secret_bundle = self._client.recover_deleted_secret(
             vault_base_url=self.vault_url,
             secret_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
-        )
+        )  # pyright: ignore[reportGeneralTypeIssues]
         recovered_secret = SecretProperties._from_secret_bundle(recovered_secret_bundle)
 
         command = partial(self.get_secret, name=name, **kwargs)

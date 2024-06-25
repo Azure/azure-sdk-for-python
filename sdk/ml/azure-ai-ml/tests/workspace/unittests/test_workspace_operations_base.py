@@ -380,7 +380,7 @@ class TestWorkspaceOperation:
         assert param["online_store_resource_group_name"]["value"] is None
         assert param["online_store_subscription_id"]["value"] is None
         assert param["online_store_connection_name"]["value"] is None
-        assert param["system_datastore_auth_mode"]["value"] == "identity"
+        assert param["systemDatastoresAuthMode"]["value"] == "identity"
 
         # test create feature store with materialization identity
         mock_materialization_identity_resource_id = (

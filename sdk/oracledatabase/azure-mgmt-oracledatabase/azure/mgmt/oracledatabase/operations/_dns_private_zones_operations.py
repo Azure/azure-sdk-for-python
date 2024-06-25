@@ -83,7 +83,7 @@ def build_get_request(location: str, dnsprivatezonename: str, subscription_id: s
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "dnsprivatezonename": _SERIALIZER.url("dnsprivatezonename", dnsprivatezonename, "str"),
+        "dnsprivatezonename": _SERIALIZER.url("dnsprivatezonename", dnsprivatezonename, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

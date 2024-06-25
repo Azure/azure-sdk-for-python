@@ -10,11 +10,11 @@
 # Both the files should always be identical.
 # ==========================================================================
 
-
+from typing import Any
 import json
 
 
-def _get_json_content(obj):  # pylint: disable=inconsistent-return-statements
+def _get_json_content(obj: Any) -> Any:  # pylint: disable=inconsistent-return-statements
     """Event mixin to have methods that are common to different Event types
     like CloudEvent, EventGridEvent etc.
 

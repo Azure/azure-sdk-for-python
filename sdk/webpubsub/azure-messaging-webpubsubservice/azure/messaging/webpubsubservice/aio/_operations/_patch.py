@@ -42,7 +42,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
-        Generate token for the client to connect Azure Web PubSub service.
+
         :keyword user_id: User Id.
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
@@ -58,8 +58,9 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
+
         Example:
-            .. code-block:: python
+
                 >>> get_client_access_token()
                 {
                     'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',

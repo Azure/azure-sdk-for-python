@@ -1,5 +1,20 @@
 # Release History
 
+## 3.3.0 (2024-06-17)
+
+### Features Added
+
+  - Added operation MobileNetworksOperations.list_sim_groups
+  - Added operation SimsOperations.begin_clone
+  - Added operation SimsOperations.begin_move
+  - Added operation group RoutingInfoOperations
+  - Model InterfaceProperties has a new parameter bfd_ipv4_endpoints
+  - Model InterfaceProperties has a new parameter ipv4_address_list
+  - Model InterfaceProperties has a new parameter vlan_id
+  - Model PacketCoreControlPlane has a new parameter user_consent
+  - Model Platform has a new parameter ha_upgrades_available
+  - Model SignalingConfiguration has a new parameter nas_encryption
+
 ## 3.2.0 (2024-03-18)
 
 ### Features Added
