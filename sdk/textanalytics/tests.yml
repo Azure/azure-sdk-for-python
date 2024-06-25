@@ -11,7 +11,6 @@ extends:
           Location: eastus
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
           MatrixReplace:
             - TestSamples=.*/true
         UsGov:
