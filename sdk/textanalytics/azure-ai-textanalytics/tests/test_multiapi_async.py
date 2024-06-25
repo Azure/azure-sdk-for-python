@@ -6,7 +6,7 @@ import functools
 from azure.ai.textanalytics import TextAnalyticsApiVersion
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
 from azure.ai.textanalytics._version import DEFAULT_API_VERSION
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below

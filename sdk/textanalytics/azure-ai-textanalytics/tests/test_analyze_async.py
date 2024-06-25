@@ -16,7 +16,7 @@ from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer, is_public_cloud
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
@@ -53,7 +53,6 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 TextAnalyticsCustomPreparer = functools.partial(
     TextAnalyticsPreparer,
     textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     textanalytics_single_label_classify_project_name="single_label_classify_project_name",
     textanalytics_single_label_classify_deployment_name="single_label_classify_deployment_name",
     textanalytics_multi_label_classify_project_name="multi_label_classify_project_name",

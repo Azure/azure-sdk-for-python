@@ -18,7 +18,7 @@ from azure.ai.textanalytics import (
 )
 
 from testcase import TextAnalyticsPreparer
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
 
