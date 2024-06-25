@@ -9,7 +9,7 @@ import time
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchIndexingBufferedSender, SearchClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 TIME_TO_SLEEP = 3
@@ -20,8 +20,8 @@ class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_search_client_index_buffered_sender(self, endpoint, index_name):
-        client = SearchClient(endpoint, index_name, self.get_credential(SearchClient), retry_backoff_factor=60)
-        batch_client = SearchIndexingBufferedSender(endpoint, index_name, self.get_credential(SearchIndexingBufferedSender), retry_backoff_factor=60)
+        client = SearchClient(endpoint, index_name, get_credential(), retry_backoff_factor=60)
+        batch_client = SearchIndexingBufferedSender(endpoint, index_name, get_credential(), retry_backoff_factor=60)
         try:
             doc_count = 10
             doc_count = self._test_upload_documents_new(client, batch_client, doc_count)

@@ -11,10 +11,8 @@ import inspect
 import json
 import requests
 
-from devtools_testutils import AzureTestError, EnvironmentVariableLoader
+from devtools_testutils import AzureTestError, EnvironmentVariableLoader, get_credential
 
-# from azure.core.credentials import AzureKeyCredential
-from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 SERVICE_URL_FMT = "https://{}.{}/indexes?api-version=2023-11-01"
@@ -147,7 +145,7 @@ def search_decorator(*, schema, index_batch):
             endpoint = kwargs.get("search_service_endpoint")
             service_name = kwargs.get("search_service_name")
             if test.is_live:
-                cred = DefaultAzureCredential(exclude_managed_identity_credential=True)
+                cred = get_credential()
                 _clean_up_indexes(endpoint, cred)
                 _set_up_index(service_name, endpoint, cred, schema, index_batch)
                 _clean_up_indexers(endpoint, cred)

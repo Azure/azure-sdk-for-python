@@ -8,7 +8,7 @@ import pytest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 from azure.search.documents.indexes.models import (
@@ -31,7 +31,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_data_source(self, endpoint, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
-        client = SearchIndexerClient(endpoint, self.get_credential(SearchIndexerClient), retry_backoff_factor=60)
+        client = SearchIndexerClient(endpoint, get_credential(), retry_backoff_factor=60)
         self._test_create_datasource(client, storage_cs)
         self._test_delete_datasource(client, storage_cs)
         self._test_get_datasource(client, storage_cs)

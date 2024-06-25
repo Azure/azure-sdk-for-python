@@ -16,7 +16,7 @@ from azure.search.documents.indexes.models import (
     SearchFieldDataType,
 )
 from azure.search.documents.indexes import SearchIndexClient
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
@@ -25,7 +25,7 @@ class TestSearchIndexClient(AzureRecordedTestCase):
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy
     def test_search_index_client(self, endpoint, index_name):
-        client = SearchIndexClient(endpoint, self.get_credential(SearchIndexClient), retry_backoff_factor=60)
+        client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
         index_name = "hotels"
         self._test_get_service_statistics(client)
         self._test_list_indexes_empty(client)

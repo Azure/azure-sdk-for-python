@@ -15,7 +15,7 @@ from azure.search.documents.indexes.models import (
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
 )
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
@@ -27,8 +27,8 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
     def test_search_indexers(self, endpoint, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
         container_name = kwargs.get("search_storage_container_name")
-        client = SearchIndexerClient(endpoint, self.get_credential(SearchIndexerClient), retry_backoff_factor=60)
-        index_client = SearchIndexClient(endpoint, self.get_credential(SearchIndexClient), retry_backoff_factor=60)
+        client = SearchIndexerClient(endpoint, get_credential(), retry_backoff_factor=60)
+        index_client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
         self._test_create_indexer(client, index_client, storage_cs, container_name)
         self._test_delete_indexer(client, index_client, storage_cs, container_name)
         self._test_get_indexer(client, index_client, storage_cs, container_name)
