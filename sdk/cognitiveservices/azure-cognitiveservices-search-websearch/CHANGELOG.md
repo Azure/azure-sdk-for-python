@@ -2,7 +2,7 @@
 
 ## 2.0.1 (2024-06-26)
 
-This package is no longer being maintained. Please refer to the [Bing Web Search REST API](https://learn.microsoft.com/bing/search-apis/bing-web-search/quickstarts/rest/python) instead.
+This package is no longer being maintained. Please refer to the  [Bing Search SDK for Python repo](https://github.com/microsoft/bing-search-sdk-for-python/tree/main) instead.
 
 For additional support, please open a new issue in the [Issues](https://github.com/microsoft/bing-search-sdk-for-python/issues) section of the Microsoft Bing Search SDK for Python repo.
 
