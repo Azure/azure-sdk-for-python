@@ -40,6 +40,7 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 @pytest.mark.core_sdk_test
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_secret_population(
         self,
         client: MLClient,
