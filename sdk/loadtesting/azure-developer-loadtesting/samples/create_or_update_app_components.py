@@ -31,8 +31,8 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-LOADTESTSERVICE_ENDPOINT = "3ffefeb0-eb60-4fdd-a1d5-e086a9519cba.centralindia.cnt-prod.loadtesting.azure.com"
-RESOURCE_ID = "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourceGroups/t-bhavya/providers/Microsoft.LoadTestService/loadtests/Bhavya"
+LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
+RESOURCE_ID =  os.environ["RESOURCE_ID"]
 
 # Build a client through AAD and resource endpoint
 client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
