@@ -13,7 +13,7 @@ from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResul
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)

@@ -13,7 +13,7 @@ from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, Async
 from azure.ai.formrecognizer import DocumentModelDetails
 from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelComposeOperationDetails, DocumentModelDetails as ModelDetails
 from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 

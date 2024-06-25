@@ -9,7 +9,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.rest import HttpRequest
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, FormTrainingClient
-from preparers import FormRecognizerPreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)

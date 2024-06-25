@@ -16,7 +16,7 @@ from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, Async
 from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)

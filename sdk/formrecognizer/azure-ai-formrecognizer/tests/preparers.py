@@ -8,8 +8,7 @@
 
 import os
 import functools
-from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer, get_credential
 
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
 REGION = os.getenv('FORMRECOGNIZER_LOCATION', None)
@@ -19,7 +18,6 @@ FormRecognizerPreparer = functools.partial(
     PowerShellPreparer,
     'formrecognizer',
     formrecognizer_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    formrecognizer_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     formrecognizer_storage_container_sas_url="https://blob_sas_url",
     formrecognizer_testing_data_container_sas_url="https://blob_sas_url",
     formrecognizer_multipage_storage_container_sas_url="https://blob_sas_url",
@@ -51,16 +49,41 @@ class GlobalClientPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
         if self.is_live:
             form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
-            form_recognizer_account_key = os.environ["FORMRECOGNIZER_TEST_API_KEY"]
             polling_interval = 5
         else:
             form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
-            form_recognizer_account_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
             polling_interval = 0
 
         client = self.client_cls(
             form_recognizer_account,
-            AzureKeyCredential(form_recognizer_account_key),
+            get_credential(),
+            polling_interval=polling_interval,
+            logging_enable=True if ENABLE_LOGGER == "True" else False,
+            **self.client_kwargs
+        )
+        kwargs.update({"client": client})
+        return kwargs
+
+class GlobalClientPreparerAsync(AzureMgmtPreparer):
+    def __init__(self, client_cls, client_kwargs={}, **kwargs):
+        super(GlobalClientPreparer, self).__init__(
+            name_prefix='',
+            random_name_length=42
+        )
+        self.client_kwargs = client_kwargs
+        self.client_cls = client_cls
+
+    def create_resource(self, name, **kwargs):
+        if self.is_live:
+            form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
+            polling_interval = 5
+        else:
+            form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
+            polling_interval = 0
+
+        client = self.client_cls(
+            form_recognizer_account,
+            get_credential(is_async=True),
             polling_interval=polling_interval,
             logging_enable=True if ENABLE_LOGGER == "True" else False,
             **self.client_kwargs

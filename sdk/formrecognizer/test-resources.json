@@ -24,24 +24,6 @@
                 "description": "The principal to assign the role to. This is application object id."
             }
         },
-        "tenantId": {
-            "type": "String",
-            "metadata": {
-                "description": "The tenant id to which the application and resources belong."
-            }
-        },
-        "testApplicationId": {
-            "type": "String",
-            "metadata": {
-                "description": "The application client id used to run tests."
-            }
-        },
-        "testApplicationSecret": {
-            "type": "String",
-            "metadata": {
-                "description": "The application client secret used to run tests."
-            }
-        },
         "formRecognizerEndpointSuffix": {
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "String"
@@ -248,18 +230,6 @@
         }
     ],
     "outputs": {
-        "AZURE_TENANT_ID": {
-            "type": "String",
-            "value": "[parameters('tenantId')]"
-        },
-        "AZURE_CLIENT_ID": {
-            "type": "String",
-            "value": "[parameters('testApplicationId')]"
-        },
-        "AZURE_CLIENT_SECRET": {
-            "type": "String",
-            "value": "[parameters('testApplicationSecret')]"
-        },
         "FORMRECOGNIZER_NAME": {
             "type": "string",
             "value": "[variables('formRecognizerBaseName')]"
@@ -375,10 +345,6 @@
         "AZURE_FORM_RECOGNIZER_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureFormRecognizerUrl')]"
-        },
-        "AZURE_FORM_RECOGNIZER_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
         },
         "AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT": {
             "type": "string",

@@ -12,7 +12,7 @@ from devtools_testutils import set_bodiless_matcher
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 from azure.ai.formrecognizer import ClassifierDocumentTypeDetails, BlobSource, BlobFileListSource, DocumentClassifierDetails
