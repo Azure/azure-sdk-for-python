@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = "3ffefeb0-eb60-4fdd-a1d5-e086a9519cba.centralindia.cnt-prod.loadtesting.azure.com"
 
-TEST_RUN_ID = "test-runid-sample"
+TEST_RUN_ID = "sample-run-sdk"
 TEST_ID = "8d062284-eeb1-474f-ae8f-46a63731a033"
 
 # Build a client through AAD and resource endpoint
