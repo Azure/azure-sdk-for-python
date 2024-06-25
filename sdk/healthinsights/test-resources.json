@@ -84,7 +84,7 @@
     },
     "resources": [
         {
-            "apiVersion": "2022-03-01",
+            "apiVersion": "2023-10-01-preview",
             "name": "[variables('HealthInsightsName')]",
             "location": "[parameters('location')]",
             "type": "Microsoft.CognitiveServices/accounts",
@@ -96,7 +96,7 @@
             "properties": "[variables('healthInsightstProperties')]"
         },
         {
-            "apiVersion": "2022-03-01",
+            "apiVersion": "2023-10-01-preview",
             "name": "[variables('textAnalyticsName')]",
             "location": "[parameters('location')]",
             "type": "Microsoft.CognitiveServices/accounts",
