@@ -94,7 +94,10 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # dependency type must either be latest or minimum
     # Latest dependency will find latest released package that satisfies requires of given package name
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
-
+    released_packages = find_released_packages(setup_py_file_path, dependency_type)
+    override_added_packages = []
+    local_install_set = []
+    whl_dir = os.environ.get("PREBUILT_WHEEL_DIR", None)
 
     # we have an edge case case scenario when
     #   - package B depends on package A version 1.0.0
@@ -107,28 +110,20 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # are running latestdependency. This will ensure that we always resolve the nightly build version, rather than a beta version from pypi.
 
     # if running latest nightly then we simply must attempt to find the nightly versions of the package in our prebuilt wheel directory
-    
-    released_packages = find_released_packages(setup_py_file_path, dependency_type)
-
     if os.environ.get("SetDevVersion") == "true" and dependency_type == "Latest":
-        logging.info("Retrieving azure dependencies from prebuilt wheel dir for nightly build.")
-
+        logging.info("Retrieving latest azure dependencies from prebuilt wheel dir for nightly build.")
         pkg_info = ParsedSetup.from_path(setup_py_file_path)
-
-        # parse setup.py and find install requires
         azure_requirements = [r for r in pkg_info.requires if "-nspkg" not in r and "azure-" in r]
         
         for req in azure_requirements:
             pkg_name, pkg_spec = parse_require(req)
 
-            breakpoint()
-            # attempt to find the wheel. if we do, remove the requirement from the list of released packages
-            find_whl(os.environ.get("PREBUILT_WHEEL_DIR"), pkg_name, pkg_spec)
-        
+            # only the very latest will be in this directory
+            located_wheel = find_whl(whl_dir, pkg_name, "*")
 
-
-    breakpoint()
-    override_added_packages = []
+            if located_wheel:
+                released_packages = [pkg for pkg in released_packages if pkg.split("==")[0] != pkg_name]
+                local_install_set.append(os.path.join(whl_dir, located_wheel))
 
     # new section added to account for difficulties with msrest
     for pkg_spec in released_packages:
@@ -141,7 +136,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
 
-    install_set = released_packages + list(set(override_added_packages))
+    install_set = released_packages + list(set(override_added_packages)) + local_install_set
 
     # install released dependent packages
     if released_packages or dev_req_file_path:
