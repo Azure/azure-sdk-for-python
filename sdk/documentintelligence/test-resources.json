@@ -24,24 +24,6 @@
                 "description": "The principal to assign the role to. This is application object id."
             }
         },
-        "tenantId": {
-            "type": "String",
-            "metadata": {
-                "description": "The tenant id to which the application and resources belong."
-            }
-        },
-        "testApplicationId": {
-            "type": "String",
-            "metadata": {
-                "description": "The application client id used to run tests."
-            }
-        },
-        "testApplicationSecret": {
-            "type": "String",
-            "metadata": {
-                "description": "The application client secret used to run tests."
-            }
-        },
         "documentIntelligenceEndpointSuffix": {
             "defaultValue": ".cognitiveservices.azure.com/",
             "type": "String"
@@ -248,33 +230,13 @@
         }
     ],
     "outputs": {
-        "AZURE_TENANT_ID": {
-            "type": "String",
-            "value": "[parameters('tenantId')]"
-        },
-        "AZURE_CLIENT_ID": {
-            "type": "String",
-            "value": "[parameters('testApplicationId')]"
-        },
-        "AZURE_CLIENT_SECRET": {
-            "type": "String",
-            "value": "[parameters('testApplicationSecret')]"
-        },
         "DOCUMENTINTELLIGENCE_NAME": {
             "type": "string",
             "value": "[variables('documentIntelligenceBaseName')]"
         },
-        "DOCUMENTINTELLIGENCE_API_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('documentIntelligenceBaseName')), variables('documentIntelligenceApiVersion')).key1]"
-        },
         "DOCUMENTINTELLIGENCE_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureDocumentIntelligenceUrl')]"
-        },
-        "DOCUMENTINTELLIGENCE_TARGET_API_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('documentIntelligenceBaseName')), variables('documentIntelligenceApiVersion')).key1]"
         },
         "DOCUMENTINTELLIGENCE_TARGET_ENDPOINT": {
             "type": "string",
