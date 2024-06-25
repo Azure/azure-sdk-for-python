@@ -60,14 +60,11 @@
         "type": "string",
         "defaultValue": "[resourceGroup().name]"
       },
-      "virtualNetworkType": {
-        "value": "None"
+      "textAnalyticsNew": {
+        "value": false
       }
   },
 "variables": {
-        "defaultVNetName": "cvCSDefaultVNet9901",
-        "defaultSubnetName": "cvCSDefaultSubnet9901",
-        "defaultAddressPrefix": "13.41.6.0/26",
         "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
         "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",
         "textAnalyticsContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
@@ -75,22 +72,18 @@
         "HealthInsightsName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "healthInsightstProperties": {
             "customSubDomainName": "[toLower(variables('HealthInsightsName'))]",
-            "publicNetworkAccess": "[if(equals(parameters('virtualNetworkType'), 'Internal'), 'Disabled', 'Enabled')]",
-            "networkAcls": {
-                "defaultAction": "[if(equals(parameters('virtualNetworkType'), 'External'), 'Deny', 'Allow')]"
-            },
             "apiProperties": {
                 "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
             }
         },
         "textAnalyticsProperties": {
-            "customSubDomainName": "[toLower(variables('textAnalyticsName'))]",
-            "publicNetworkAccess": "[if(equals(parameters('virtualNetworkType'), 'Internal'), 'Disabled', 'Enabled')]"
+            "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
         },
         "systemAndUserIdentities": {
             "type": "SystemAssigned, UserAssigned",
             "userAssignedIdentities": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), parameters('identity').userAssignedIdentities, json('{}'))]"
-        }
+        },
+        "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
     },
     "resources": [
         {
@@ -148,10 +141,9 @@
                             }
                         }
                     ]
-                },
-                "parameters": {}
+                }
             },
-            "resourceGroup": "[parameters('resourceGroupName')]"
+            "resourceGroup": "[parameters('textAnalyticsResourceGroupName')]"
         }
     ],
     "outputs": {
