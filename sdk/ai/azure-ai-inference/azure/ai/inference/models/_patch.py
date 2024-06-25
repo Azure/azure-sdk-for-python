@@ -13,12 +13,8 @@ import queue
 import re
 
 from typing import List, AsyncIterator, Iterator
-
-
 from azure.core.rest import HttpResponse, AsyncHttpResponse
-
 from .. import models as _models
-
 
 logger = logging.getLogger(__name__)
 
