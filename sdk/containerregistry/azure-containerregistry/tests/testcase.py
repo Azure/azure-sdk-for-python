@@ -27,7 +27,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            return get_credential(authority=authority)
+            return get_credential(authority=authority, **kwargs)
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):

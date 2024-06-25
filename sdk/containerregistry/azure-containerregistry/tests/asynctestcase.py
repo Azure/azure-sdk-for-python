@@ -32,7 +32,7 @@ class AsyncFakeTokenCredential(object):
 class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            return get_credential(is_async=True)
+            return get_credential(is_async=True, authority=authority, **kwargs)
         return AsyncFakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
