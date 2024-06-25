@@ -9,7 +9,9 @@ extends:
       CloudConfig:
         Public:
           Location: eastus
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            - $(sub-config-text-analytics-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
           MatrixReplace:
             - TestSamples=.*/true
