@@ -27,7 +27,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
-            return get_credential(authority)
+            return get_credential(authority=authority)
         return FakeTokenCredential()
 
     def create_registry_client(self, endpoint, **kwargs):
@@ -118,7 +118,7 @@ def get_audience(authority: str) -> str:
 def import_image(endpoint, repository, tags):
     authority = get_authority(endpoint)
     logger.warning(f"Import image authority: {authority}")
-    credential = get_credential(authority)
+    credential = get_credential(authority=authority)
 
     with ContainerRegistryClient(endpoint, credential) as client:
         # Upload a layer
