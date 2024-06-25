@@ -27,6 +27,7 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
+from ..._cosmos_responses import CosmosListResponse
 from ... import http_constants
 
 # pylint: disable=protected-access
@@ -49,6 +50,7 @@ class _QueryExecutionContextBase(object):
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
+        self._response_headers = {}
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -64,6 +66,7 @@ class _QueryExecutionContextBase(object):
 
         if not self._buffer:
             results = await self._fetch_next_block()
+            self._response_headers = results.response_headers
             self._buffer.extend(results)
 
         if not self._buffer:
@@ -76,10 +79,10 @@ class _QueryExecutionContextBase(object):
         QueryIterable has exposed fetch_next_block api).
 
         :return: List of results.
-        :rtype: list
+        :rtype: ~azure.cosmos.CosmosListResponse
         """
         await self._ensure()
-        res = list(self._buffer)
+        res = CosmosListResponse(original_list=self._buffer, response_headers=self._response_headers)
         self._buffer.clear()
         return res
 
@@ -115,6 +118,7 @@ class _QueryExecutionContextBase(object):
         :rtype: list
         """
         fetched_items = []
+        response_headers = {}
         new_options = copy.deepcopy(self._options)
         while self._continuation or not self._has_started:
             # Check if this is first fetch for read from specific time change feed.
@@ -123,8 +127,8 @@ class _QueryExecutionContextBase(object):
 
             new_options["continuation"] = self._continuation
 
-            response_headers = {}
             (fetched_items, response_headers) = await fetch_function(new_options)
+            self._response_headers = response_headers
             if not self._has_started:
                 self._has_started = True
 
@@ -141,7 +145,7 @@ class _QueryExecutionContextBase(object):
                 self._continuation = None
             if fetched_items:
                 break
-        return fetched_items
+        return CosmosListResponse(original_list=fetched_items, response_headers=response_headers)
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
         async def callback():
