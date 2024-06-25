@@ -245,7 +245,7 @@ class EventHubConsumer(
                         self._offset = self._last_received_event.offset
                     last_exception = self._handle_exception(exception, is_consumer=True)
                     retried_times += 1
-                    if retried_times > max_retries:
+                    if retried_times > max_retries or self._is_non_retryable(exception):
                         _LOGGER.info(
                             "%r operation has exhausted retry. Last exception: %r.",
                             self._name,
