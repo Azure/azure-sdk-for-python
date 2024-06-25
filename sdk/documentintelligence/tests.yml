@@ -18,7 +18,6 @@ extends:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: $(LOCATION)
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         TEST_MODE: 'RunLiveNoRecord'
