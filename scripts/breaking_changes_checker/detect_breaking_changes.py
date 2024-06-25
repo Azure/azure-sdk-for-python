@@ -23,6 +23,7 @@ from typing import Dict, Union, Type, Callable
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
+from changelog_tracker import ChangelogTracker
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -293,20 +294,16 @@ def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, package_name, changelog=changelog)
-    bc.run_checks()
+    checker = BreakingChangesTracker(stable, current, diff, package_name, previous_version=version)
+    if changelog:
+        checker = ChangelogTracker(stable, current, diff, package_name)
+    checker.run_checks()
 
     remove_json_files(pkg_dir)
 
-    if changelog:
-        print(bc.report_changelog())
-        exit(0)
-    elif bc.breaking_changes:
-        bc.report_breaking_changes()
-        print(bc)
+    print(checker.report_changes())
+    if not changelog and checker.breaking_changes:
         exit(1)
-
-    print(f"\nNo breaking changes found for {package_name} between stable version {version} and current version.")
 
 
 def remove_json_files(pkg_dir: str) -> None:

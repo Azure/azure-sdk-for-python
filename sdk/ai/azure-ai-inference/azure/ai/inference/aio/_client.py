@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -105,7 +106,7 @@ class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):  # pylint: di
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ChatCompletionsClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -187,7 +188,7 @@ class EmbeddingsClient(EmbeddingsClientOperationsMixin):  # pylint: disable=clie
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "EmbeddingsClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
@@ -269,7 +270,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientOperationsMixin):  # pylint: di
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "ImageEmbeddingsClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
