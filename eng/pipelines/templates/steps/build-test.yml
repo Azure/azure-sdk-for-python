@@ -97,12 +97,12 @@ steps:
       inputs:
         scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
         arguments: >-
-          "$(TargetingString)"
+          "azure-storage-datalake"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
           --mark_arg="${{ parameters.TestMarkArgument }}"
           --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="${{ parameters.ToxTestEnv }}"
+          --toxenv="latestdependency"
           --injected-packages="${{ parameters.InjectedPackages }}"
           ${{ parameters.ToxEnvParallel }}
       env: ${{ parameters.EnvVars }}
