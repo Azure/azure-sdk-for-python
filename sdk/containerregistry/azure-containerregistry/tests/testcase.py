@@ -12,7 +12,7 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential
+from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential, get_credential
 
 logger = logging.getLogger()
 
@@ -113,15 +113,6 @@ def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov cloud auth audience")
         return "https://management.usgovcloudapi.net"
-
-
-def get_credential(authority: str, **kwargs):
-    return ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority,
-    )
 
 
 def import_image(endpoint, repository, tags):
