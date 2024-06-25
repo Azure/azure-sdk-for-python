@@ -123,14 +123,30 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
     if func_nodes:
         assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
         if assigns:
+            attr_type = None
+            default = None
             for assign in assigns:
                 if hasattr(assign, "target"):
-                    attr = assign.target
-                    attribute_names.update({attr.attr: attr.attr})
+                    if hasattr(assign.target, "attr") and not assign.target.attr.startswith("_"):
+                        attr = assign.target
+                        attribute_names.update({attr.attr: attr.attr})
                 if hasattr(assign, "targets"):
                     for attr in assign.targets:
                         if hasattr(attr, "attr") and not attr.attr.startswith("_"):
-                            attribute_names.update({attr.attr: attr.attr})
+                            if isinstance(assign, ast.AnnAssign):
+                                if isinstance(assign.annotation, ast.Name):
+                                    attr_type = assign.annotation.value.id
+                            if isinstance(assign, ast.Assign):
+                                if isinstance(assign.value, ast.Call):
+                                    attr_type = assign.value.func.id
+                                elif isinstance(assign.value, ast.Name):
+                                    attr_type = assign.value.id
+                                elif isinstance(assign.value, ast.Constant):
+                                    default = assign.value.value 
+                            attribute_names.update({attr.attr: {
+                                "attr_type": attr_type,
+                                "default": default
+                            }})
 
 
 def check_base_classes(cls_node: ast.ClassDef) -> bool:
