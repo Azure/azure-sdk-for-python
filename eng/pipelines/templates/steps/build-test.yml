@@ -97,7 +97,7 @@ steps:
       inputs:
         scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
         arguments: >-
-          "azure-storage-datalake"
+          "azure-storage-file-datalake"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
           --mark_arg="${{ parameters.TestMarkArgument }}"
