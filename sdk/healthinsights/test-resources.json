@@ -59,9 +59,6 @@
       "textAnalyticsResourceGroupName": {
         "type": "string",
         "defaultValue": "[resourceGroup().name]"
-      },
-      "textAnalyticsNew": {
-        "value": false
       }
   },
 "variables": {
@@ -111,41 +108,9 @@
             "properties": "[variables('textAnalyticsProperties')]",
             "dependsOn": [
                 "[concat('Microsoft.CognitiveServices/accounts/', variables('HealthInsightsName'))]"
-            ],
-            "condition": "[parameters('textAnalyticsNew')]"
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
-            "name": "roleAssignmentsForTextAnalytics",
-            "dependsOn": [
-                "[concat('Microsoft.CognitiveServices/accounts/', variables('HealthInsightsName'))]",
-                "[concat('Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
-                            "apiVersion": "2018-09-01-preview",
-                            "name": "[concat(variables('textAnalyticsName'), '/Microsoft.Authorization/', variables('textAnalyticsContributorRoleGuid'))]",
-                            "properties": {
-                                "roleDefinitionId": "[variables('textAnalyticsContributorRole')]",
-                                "principalType": "ServicePrincipal",
-                                "scope": "[concat(subscription().id,'/resourcegroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]"
-                            }
-                        }
-                    ]
-                }
-            },
-            "resourceGroup": "[parameters('textAnalyticsResourceGroupName')]"
+            ]
         }
-    ],
+    ],  
     "outputs": {
         "LANGUAGE_API_KEY": {
             "type": "string",
