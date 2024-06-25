@@ -41,9 +41,7 @@ FILE_NAME = "my-file-id.jmx"
 resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
 
 # getting result of LRO poller with timeout of 600 secs
-
 ## AttributeError: 'UploadTestFileResponse' object has no attribute 'result'
 validationResponse = resultPoller.result(600)
 print(validationResponse)
-
 # print(resultPoller)

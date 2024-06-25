@@ -7,9 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
-
-
-# --------------------------------------------------- added code starts -----------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -179,7 +176,6 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         create_or_update_test_run_operation = super().begin_test_run(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
-        print(create_or_update_test_run_operation)
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
@@ -190,10 +186,6 @@ __all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRu
 
 
 # Add all objects you want publicly available to users at this package level
-
-# ------------------------------------------------------ added code ends -------------------------------------------
-
-# __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
