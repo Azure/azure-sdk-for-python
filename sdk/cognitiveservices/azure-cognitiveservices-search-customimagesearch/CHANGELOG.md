@@ -1,6 +1,6 @@
 # Release History
 
-## 0.2.1 (Unreleased)
+## 0.2.1 (2024-06-26)
 
 This package is no longer being maintained. Please refer to the [Bing Custom Image Search REST API](https://learn.microsoft.com/bing/search-apis/bing-custom-search/how-to/get-images-from-instance) instead.
 

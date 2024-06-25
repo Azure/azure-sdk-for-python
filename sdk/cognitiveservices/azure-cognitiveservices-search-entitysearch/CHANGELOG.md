@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.1 (Unreleased)
+## 2.0.1 (2024-06-26)
 
 This package is no longer being maintained. Please refer to the [Bing Entity Search REST API](https://learn.microsoft.com/bing/search-apis/bing-entity-search/quickstarts/rest/python) instead.
 
