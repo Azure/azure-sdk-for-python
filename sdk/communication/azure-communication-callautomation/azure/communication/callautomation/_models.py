@@ -95,6 +95,28 @@ class CallInvite:
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
 
+class RoomCallLocator:
+    """The locator to locate ongoing call, using room id.
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `room_id` directly.
+    :param room_id: The room id of ongoing call.
+    :type room_id: str
+    """
+    room_id: str
+    """The acs room id of ongoing call."""
+    kind: str = "roomCallLocator"
+    """This is for locating the call with acs room id."""
+
+    def __init__(  # pylint: disable=unused-argument
+        self,
+        room_id: str,
+        **kwargs
+    ):
+        self.room_id = room_id
+        self.kind = "roomCallLocator"
+
+    def _to_generated(self):
+        return CallLocator(kind=self.kind, room_id=self.room_id)
 
 class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.

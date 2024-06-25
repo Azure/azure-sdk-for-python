@@ -372,6 +372,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             add_participant_request,
             **kwargs
         )
+        print(f"Response from add participant: {response}")
         return AddParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace

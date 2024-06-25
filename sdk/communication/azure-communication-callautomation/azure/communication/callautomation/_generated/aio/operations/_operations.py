@@ -29,6 +29,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ...operations._operations import (
     build_azure_communication_call_automation_service_answer_call_request,
+    build_azure_communication_call_automation_service_connect_request,
     build_azure_communication_call_automation_service_create_call_request,
     build_azure_communication_call_automation_service_redirect_call_request,
     build_azure_communication_call_automation_service_reject_call_request,
@@ -170,13 +171,11 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("CallConnectionProperties", pipeline_response)
+        deserialized = self._deserialize("CallConnectionProperties", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -278,13 +277,11 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("CallConnectionProperties", pipeline_response)
+        deserialized = self._deserialize("CallConnectionProperties", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -390,8 +387,6 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -494,14 +489,117 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def connect(
+        self, connect_request: _models.ConnectRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CallConnectionProperties:
+        """Create a Connection to a CallLocator.
+
+        Create a connection to a CallLocator.
+
+        :param connect_request: The create connection request. Required.
+        :type connect_request: ~azure.communication.callautomation.models.ConnectRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def connect(
+        self, connect_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CallConnectionProperties:
+        """Create a Connection to a CallLocator.
+
+        Create a connection to a CallLocator.
+
+        :param connect_request: The create connection request. Required.
+        :type connect_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def connect(
+        self, connect_request: Union[_models.ConnectRequest, IO[bytes]], **kwargs: Any
+    ) -> _models.CallConnectionProperties:
+        """Create a Connection to a CallLocator.
+
+        Create a connection to a CallLocator.
+
+        :param connect_request: The create connection request. Is either a ConnectRequest type or a
+         IO[bytes] type. Required.
+        :type connect_request: ~azure.communication.callautomation.models.ConnectRequest or IO[bytes]
+        :return: CallConnectionProperties
+        :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CallConnectionProperties] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(connect_request, (IOBase, bytes)):
+            _content = connect_request
+        else:
+            _json = self._serialize.body(connect_request, "ConnectRequest")
+
+        _request = build_azure_communication_call_automation_service_connect_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("CallConnectionProperties", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class CallConnectionOperations:
@@ -567,13 +665,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("CallConnectionProperties", pipeline_response)
+        deserialized = self._deserialize("CallConnectionProperties", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -628,8 +724,6 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -683,8 +777,6 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -808,13 +900,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("TransferCallResponse", pipeline_response)
+        deserialized = self._deserialize("TransferCallResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -906,8 +996,6 @@ class CallConnectionOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error)
@@ -1031,13 +1119,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("AddParticipantResponse", pipeline_response)
+        deserialized = self._deserialize("AddParticipantResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1160,13 +1246,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RemoveParticipantResponse", pipeline_response)
+        deserialized = self._deserialize("RemoveParticipantResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1289,13 +1373,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("MuteParticipantsResult", pipeline_response)
+        deserialized = self._deserialize("MuteParticipantsResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1418,13 +1500,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("CancelAddParticipantResponse", pipeline_response)
+        deserialized = self._deserialize("CancelAddParticipantResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1480,13 +1560,11 @@ class CallConnectionOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("CallParticipant", pipeline_response)
+        deserialized = self._deserialize("CallParticipant", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1619,8 +1697,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1744,8 +1820,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1869,8 +1943,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -1994,8 +2066,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2049,8 +2119,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2170,8 +2238,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2295,8 +2361,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2420,8 +2484,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2544,13 +2606,11 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SendDtmfTonesResult", pipeline_response)
+        deserialized = self._deserialize("SendDtmfTonesResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2663,8 +2723,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2783,8 +2841,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -2908,8 +2964,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3033,8 +3087,6 @@ class CallMediaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3162,13 +3214,11 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RecordingStateResponse", pipeline_response)
+        deserialized = self._deserialize("RecordingStateResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3219,13 +3269,11 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RecordingStateResponse", pipeline_response)
+        deserialized = self._deserialize("RecordingStateResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3278,8 +3326,6 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3333,8 +3379,6 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -3388,8 +3432,6 @@ class CallRecordingOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)

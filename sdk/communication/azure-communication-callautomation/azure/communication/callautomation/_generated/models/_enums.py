@@ -27,6 +27,7 @@ class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
+    ROOM_CALL_LOCATOR = "roomCallLocator"
 
 
 class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

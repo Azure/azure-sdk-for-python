@@ -627,14 +627,17 @@ class CallLocator(_serialization.Model):
     :vartype group_call_id: str
     :ivar server_call_id: The server call id.
     :vartype server_call_id: str
-    :ivar kind: The call locator kind. Known values are: "groupCallLocator" and
-     "serverCallLocator".
+    :ivar room_id: The Acs room id.
+    :vartype room_id: str
+    :ivar kind: The call locator kind. Known values are: "groupCallLocator", "serverCallLocator",
+     and "roomCallLocator".
     :vartype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
     """
 
     _attribute_map = {
         "group_call_id": {"key": "groupCallId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
+        "room_id": {"key": "roomId", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
     }
 
@@ -643,6 +646,7 @@ class CallLocator(_serialization.Model):
         *,
         group_call_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
+        room_id: Optional[str] = None,
         kind: Optional[Union[str, "_models.CallLocatorKind"]] = None,
         **kwargs: Any
     ) -> None:
@@ -651,13 +655,16 @@ class CallLocator(_serialization.Model):
         :paramtype group_call_id: str
         :keyword server_call_id: The server call id.
         :paramtype server_call_id: str
-        :keyword kind: The call locator kind. Known values are: "groupCallLocator" and
-         "serverCallLocator".
+        :keyword room_id: The Acs room id.
+        :paramtype room_id: str
+        :keyword kind: The call locator kind. Known values are: "groupCallLocator",
+         "serverCallLocator", and "roomCallLocator".
         :paramtype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
         """
         super().__init__(**kwargs)
         self.group_call_id = group_call_id
         self.server_call_id = server_call_id
+        self.room_id = room_id
         self.kind = kind
 
 
@@ -1321,6 +1328,116 @@ class CommunicationUserIdentifierModel(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
+
+
+class ConnectFailed(_serialization.Model):
+    """The ConnectFailed event.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers to set the context for connecting to a call.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _attribute_map = {
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers to set the context for connecting to a call.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+
+
+class ConnectRequest(_serialization.Model):
+    """The request payload for creating a connection to a CallLocator.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar call_locator: The call locator. Required.
+    :vartype call_locator: ~azure.communication.callautomation.models.CallLocator
+    :ivar callback_uri: The callback URI. Required.
+    :vartype callback_uri: str
+    :ivar operation_context: Used by customers to correlate the request to the response event.
+    :vartype operation_context: str
+    :ivar call_intelligence_options: AI options for the call.
+    :vartype call_intelligence_options:
+     ~azure.communication.callautomation.models.CallIntelligenceOptions
+    """
+
+    _validation = {
+        "call_locator": {"required": True},
+        "callback_uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "call_locator": {"key": "callLocator", "type": "CallLocator"},
+        "callback_uri": {"key": "callbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_locator: "_models.CallLocator",
+        callback_uri: str,
+        operation_context: Optional[str] = None,
+        call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_locator: The call locator. Required.
+        :paramtype call_locator: ~azure.communication.callautomation.models.CallLocator
+        :keyword callback_uri: The callback URI. Required.
+        :paramtype callback_uri: str
+        :keyword operation_context: Used by customers to correlate the request to the response event.
+        :paramtype operation_context: str
+        :keyword call_intelligence_options: AI options for the call.
+        :paramtype call_intelligence_options:
+         ~azure.communication.callautomation.models.CallIntelligenceOptions
+        """
+        super().__init__(**kwargs)
+        self.call_locator = call_locator
+        self.callback_uri = callback_uri
+        self.operation_context = operation_context
+        self.call_intelligence_options = call_intelligence_options
 
 
 class ContinuousDtmfRecognitionRequest(_serialization.Model):
