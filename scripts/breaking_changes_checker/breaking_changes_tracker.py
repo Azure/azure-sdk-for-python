@@ -43,9 +43,9 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
         "The publicly exposed function '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "The '{}.{}' method '{}' had its parameter '{}' of type '{}' deleted or renamed in the current version"
+        "The '{}.{}' method '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had parameter '{}' of type '{}' deleted or renamed in the current version"
+        "The function '{}.{}' had parameter '{}' of kind '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
         "The '{}.{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
