@@ -62,10 +62,7 @@
       },
       "virtualNetworkType": {
         "value": "None"
-      },
-    "umiId": {
-            "value": ""
-        }
+      }
   },
 "variables": {
         "defaultVNetName": "cvCSDefaultVNet9901",
@@ -146,7 +143,6 @@
                             "name": "[concat(variables('textAnalyticsName'), '/Microsoft.Authorization/', variables('textAnalyticsContributorRoleGuid'))]",
                             "properties": {
                                 "roleDefinitionId": "[variables('textAnalyticsContributorRole')]",
-                                "principalId": "[if(not(empty(parameters('umiId'))),reference(parameters('umiId'), '2018-11-30', 'Full').properties.principalId,reference(concat('Microsoft.CognitiveServices/accounts/', variables('HealthInsightsName')), '2022-03-01', 'Full').identity.principalId)]",
                                 "principalType": "ServicePrincipal",
                                 "scope": "[concat(subscription().id,'/resourcegroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]"
                             }
