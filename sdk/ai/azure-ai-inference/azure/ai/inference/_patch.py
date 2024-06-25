@@ -57,7 +57,7 @@ from azure.core.exceptions import (
 )
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
-from azure.core.tracing.common import change_context
+from azure.core.tracing.common import get_function_and_class_name
 from . import models as _models
 from ._model_base import SdkJSONEncoder, _deserialize
 from ._serialization import Serializer
@@ -139,7 +139,7 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
         span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(response)})
 
 
-def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions) -> None:
+def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
     _set_attribute(span, "gen_ai.response.id", result.id)
     _set_attribute(span, "gen_ai.response.model", result.model)
     _set_attribute(span, "gen_ai.response.finish_reason", str(result.choices[0].finish_reason))
@@ -156,7 +156,7 @@ def _add_request_span_attributes(span: AbstractSpan, span_name: str, kwargs: Any
 
 
 def _add_response_span_attributes(span: AbstractSpan, result: object) -> None:
-    if isinstance(result, (_models.ChatCompletions, _models.StreamingChatCompletionsUpdate)):
+    if isinstance(result, _models.ChatCompletions):
         _add_response_chat_attributes(span, result)
         _add_response_chat_message_event(span, result)
     # TODO add more models here
@@ -214,40 +214,37 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
     return StreamWrapper(stream_obj)
 
 
-def llm_trace(
-    *, span_name: str
-) -> Callable[[Callable[_P, _R]], Callable[_P, _R]]:
-    
-    def wrapper(func: Callable[_P, _R]) -> Callable[_P, _R]:
-        @functools.wraps(func)
-        def inner(*args: _P.args, **kwargs: _P.kwargs) -> _R:
 
-            span_impl_type = settings.tracing_implementation()
-            if span_impl_type is None:
-                return func(*args, **kwargs)
+def llm_trace(func: Callable[_P, _R]) -> Callable[_P, _R]:
+    @functools.wraps(func)
+    def inner(*args: _P.args, **kwargs: _P.kwargs) -> _R:
 
-            span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
-            try:
-                # tracing events not supported in azure-core-tracing-opentelemetry
-                # so need to access the span instance directly
-                with span_impl_type.change_context(span.span_instance):
-                    _add_request_span_attributes(span, span_name, kwargs)
-                    result =  func(*args, **kwargs)
-                    if kwargs.get("stream", True):
-                        return _wrapped_stream(result, span)
-                    _add_response_span_attributes(span, result)
+        span_impl_type = settings.tracing_implementation()
+        if span_impl_type is None:
+            return func(*args, **kwargs)
 
-            except Exception as exc:
-                _set_attribute(span, "error.type", exc.__class__.__name__)
-                span.finish()
-                raise
+        span_name = get_function_and_class_name(func, *args)
+        span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
+        try:
+            # tracing events not supported in azure-core-tracing-opentelemetry
+            # so need to access the span instance directly
+            with span_impl_type.change_context(span.span_instance):
+                _add_request_span_attributes(span, span_name, kwargs)
+                result =  func(*args, **kwargs)
+                if kwargs.get("stream", True):
+                    return _wrapped_stream(result, span)
+                _add_response_span_attributes(span, result)
 
+        except Exception as exc:
+            _set_attribute(span, "error.type", exc.__class__.__name__)
             span.finish()
-            return result
+            raise
 
-        return inner
+        span.finish()
+        return result
 
-    return wrapper
+    return inner
+
 
 
 def load_client(
@@ -527,7 +524,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError
         """
 
-    @llm_trace(span_name="ChatCompletionsClient.complete")
+    @llm_trace
     def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
