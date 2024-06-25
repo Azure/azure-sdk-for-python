@@ -4,18 +4,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import division
-
 import functools
 import os.path
 
 from devtools_testutils import PowerShellPreparer
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
-
-try:
-    from cStringIO import StringIO      # Python 2
-except ImportError:
-    from io import StringIO
 
 try:
     # Running locally - use configuration in settings_real.py
@@ -38,9 +31,9 @@ os.environ['AZURE_SKIP_LIVE_RECORDING'] = os.environ.get('AZURE_SKIP_LIVE_RECORD
 os.environ['PROTOCOL'] = PROTOCOL
 os.environ['ACCOUNT_URL_SUFFIX'] = ACCOUNT_URL_SUFFIX
 
-os.environ['STORAGE_TENANT_ID'] = os.environ.get('STORAGE_TENANT_ID', None) or TENANT_ID
-os.environ['STORAGE_CLIENT_ID'] = os.environ.get('STORAGE_CLIENT_ID', None) or CLIENT_ID
-os.environ['STORAGE_CLIENT_SECRET'] = os.environ.get('STORAGE_CLIENT_SECRET', None) or CLIENT_SECRET
+# This has no effect currently in Storage as we use a different mechanism (generate_oauth_token) to get these credential types. This is set to suppress the warning for having
+# no authentication type set or client secret authentication values set.
+os.environ['AZURE_TEST_USE_CLI_AUTH'] = "true"
 
 DataLakePreparer = functools.partial(
     PowerShellPreparer, "storage",
