@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
+from enum import Enum
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, cast
 
 from azure.core.exceptions import (
@@ -627,6 +628,11 @@ def build_add_user_to_group_request(group: str, user_id: str, hub: str, **kwargs
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+class ClientEndpointType(Enum):
+    Default = "default"
+    MQTT = "mqtt"
+
+
 class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def close_all_connections(  # pylint: disable=inconsistent-return-statements
@@ -692,7 +698,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         roles: Optional[List[str]] = None,
         minutes_to_expire: int = 60,
         groups: Optional[List[str]] = None,
-        client_endpoint_type: Optional[str] = "default",
+        client_endpoint_type: Optional[ClientEndpointType] = ClientEndpointType.Default,
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
