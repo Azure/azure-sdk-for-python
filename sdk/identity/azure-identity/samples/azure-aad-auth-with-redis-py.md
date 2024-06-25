@@ -185,3 +185,10 @@ To mitigate this error, navigate to your Azure Cache for Redis resource in the A
 
 - In **Data Access Configuration**, you've assigned the appropriate role (Owner, Contributor, Reader) to your user/service principal identity.
 - In the event you're using a custom role, ensure the permissions granted under your custom role include the one required for your target action.
+
+##### Managed Identity not working from Local Development Machine
+
+Managed identity does not work from a local development machine. To use managed identity, your code must be running 
+in an Azure VM (or another type of resource in Azure). To run locally with Entra ID authentication, you'll need to 
+use a service principal or user account. This is a common source of confusion, so ensure that when developing locally,
+you configure your application to use a service principal or user credentials for authentication.
