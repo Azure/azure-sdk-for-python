@@ -25,9 +25,22 @@ import logging
 import sys
 import functools
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING, Iterator, TypeVar, Callable
+from typing import (
+    Any,
+    Dict,
+    Union,
+    IO,
+    List,
+    Literal,
+    Optional,
+    overload,
+    Type,
+    TYPE_CHECKING,
+    Iterator,
+    TypeVar,
+    Callable,
+)
 
-import wrapt
 from typing_extensions import ParamSpec
 
 from azure.core.pipeline import PipelineResponse
@@ -70,9 +83,7 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
-    from azure.core.tracing._abstract_span import (
-        AbstractSpan,
-    )
+    from azure.core.tracing import AbstractSpan
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
@@ -136,6 +147,7 @@ def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatComple
         _set_attribute(span, "gen_ai.usage.completion_tokens", result.usage.completion_tokens if result.usage else None)
         _set_attribute(span, "gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if result.usage else None)
 
+
 def _add_request_span_attributes(span: AbstractSpan, span_name: str, kwargs: Any) -> None:
     if span_name.startswith("ChatCompletionsClient.complete"):
         _add_request_chat_attributes(span, **kwargs)
@@ -174,7 +186,10 @@ def accumulate_response(item, accumulate: dict[str, Any]) -> None:
 
 
 def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: AbstractSpan) ->  _models.StreamingChatCompletions:
-    class StreamWrapper(wrapt.ObjectProxy):
+    class StreamWrapper(_models.StreamingChatCompletions):
+        def __init__(self, stream_obj):
+            super().__init__(stream_obj._response)
+
         def __iter__(self) -> Iterator[_models.StreamingChatCompletionsUpdate]:
             try:
                 accumulate: dict[str, Any] = {"role": ""}
@@ -213,15 +228,13 @@ def llm_trace(
 
             span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
             try:
-                # span events not supported in azure-core-tracing-opentelemetry
+                # tracing events not supported in azure-core-tracing-opentelemetry
                 # so need to access the span instance directly
-                with change_context(span.span_instance):
+                with span_impl_type.change_context(span.span_instance):
                     _add_request_span_attributes(span, span_name, kwargs)
                     result =  func(*args, **kwargs)
                     if kwargs.get("stream", True):
-                        result._tracing_context = span
-                        # return _wrapped_stream(result, span)
-                        return result
+                        return _wrapped_stream(result, span)
                     _add_response_span_attributes(span, result)
 
             except Exception as exc:

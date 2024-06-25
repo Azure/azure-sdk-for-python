@@ -36,6 +36,7 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 
 from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import StreamingChatCompletions
 from azure.core.credentials import AzureKeyCredential
 
 
@@ -49,5 +50,6 @@ response = client.complete(
     messages=[{"role": "user", "content": "hello world!"}],
     stream=True,
 )
+assert isinstance(response, StreamingChatCompletions)
 for result in response:
     print(result)

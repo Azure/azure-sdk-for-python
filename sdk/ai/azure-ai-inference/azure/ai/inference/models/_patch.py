@@ -11,77 +11,16 @@ import json
 import logging
 import queue
 import re
-import functools
-import opentelemetry.trace as trace
 
 from typing import List, AsyncIterator, Iterator
-from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING, Iterator, TypeVar, Callable
 
-
-from typing_extensions import ParamSpec
 
 from azure.core.rest import HttpResponse, AsyncHttpResponse
-from azure.core.settings import settings
 
 from .. import models as _models
 
 
-_P = ParamSpec("_P")
-_R = TypeVar("_R")
-
-
 logger = logging.getLogger(__name__)
-
-def accumulate_response(item, accumulate: dict[str, Any]) -> None:
-    if item.finish_reason:
-        accumulate["finish_reason"] = item.finish_reason
-    if item.index:
-        accumulate["index"] = item.index
-    if item.delta.role:
-        accumulate["role"] = item.delta.role
-    if item.delta.content:
-        accumulate.setdefault("content", "")
-        accumulate["content"] += item.delta.content
-    if item.delta.tool_calls:
-        accumulate.setdefault("tool_calls", [])
-        for tool_call in item.delta.tool_calls:
-            if tool_call.id:
-                accumulate["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
-            if tool_call.type:
-                accumulate["tool_calls"][-1]["type"] = tool_call.type
-            if tool_call.function and tool_call.function.name:
-                accumulate["tool_calls"][-1]["function"]["name"] = tool_call.function.name
-            if tool_call.function and tool_call.function.arguments:
-                accumulate["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
-
-
-def llm_stream_trace(func: Callable[_P, _R]) -> Callable[_P, _R]:
-    @functools.wraps(func)
-    def inner(*args: _P.args, **kwargs: _P.kwargs) -> _R:
-        span = args[0]._tracing_context
-        try:
-            accumulate: dict[str, Any] = {"role": ""}
-            iterator = func(*args, **kwargs).__iter__
-            for chunk in iterator():
-                for item in chunk.choices:
-                    accumulate_response(item, accumulate)
-                yield chunk
-
-            span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(accumulate)})
-            # _add_response_chat_attributes(span, chunk)
-
-        except Exception as exc:
-            # _set_attribute(span, "error.type", exc.__class__.__name__)
-            raise
-
-        finally:
-            # if stream_obj._done is False:
-                # span.set_status(trace.Status(trace.StatusCode.ERROR, "Stream was not fully consumed"))
-                # TODO should we add whatever we have for event / response attributes here?
-            span.finish()
-
-
-    return inner
 
 
 class BaseStreamingChatCompletions:
@@ -104,7 +43,6 @@ class BaseStreamingChatCompletions:
         self._queue: "queue.Queue[_models.StreamingChatCompletionsUpdate]" = queue.Queue()
         self._incomplete_json = ""
         self._done = False  # Will be set to True when reading 'data: [DONE]' line
-        self._span_context = None
 
     def _deserialize_and_add_to_queue(self, element: bytes) -> bool:
 
@@ -169,7 +107,6 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
         self._response = response
         self._bytes_iterator: Iterator[bytes] = response.iter_bytes()
 
-    @llm_stream_trace
     def __iter__(self):
         return self
 
