@@ -63,6 +63,10 @@ steps:
 
   - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
+  - pwsh: |
+      Get-ChildItem Env:
+    displayName: Dump Environment variables
+
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
