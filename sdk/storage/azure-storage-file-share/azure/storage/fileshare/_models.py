@@ -7,7 +7,8 @@
 
 from enum import Enum
 from typing import (
-    Any, Dict, List, Optional
+    Any, Dict, List, Optional, Union
+    TYPE_CHECKING
 )
 from urllib.parse import unquote
 
@@ -27,6 +28,9 @@ from ._generated.models import StorageServiceProperties as GeneratedStorageServi
 from ._parser import _parse_datetime_from_str
 from ._shared.models import DictMixin, get_enum_value
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 def _wrap_item(item):
@@ -228,6 +232,68 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
             smb=generated.smb)
 
 
+class ShareSasPermissions(object):
+    """ShareSasPermissions class to be used to be used with
+    generating shared access signature and access policy operations.
+
+    :param bool read:
+        Read the content, properties or metadata of any file in the share. Use any
+        file in the share as the source of a copy operation.
+    :param bool write:
+        For any file in the share, create or write content, properties or metadata.
+        Resize the file. Use the file as the destination of a copy operation within
+        the same account.
+        Note: You cannot grant permissions to read or write share properties or
+        metadata with a service SAS. Use an account SAS instead.
+    :param bool delete:
+        Delete any file in the share.
+        Note: You cannot grant permissions to delete a share with a service SAS. Use
+        an account SAS instead.
+    :param bool list:
+        List files and directories in the share.
+    :param bool create:
+        Create a new file in the share, or copy a file to a new file in the share.
+    """
+    def __init__(self, read=False, write=False, delete=False, list=False, create=False):  # pylint: disable=redefined-builtin
+        self.read = read
+        self.create = create
+        self.write = write
+        self.delete = delete
+        self.list = list
+        self._str = (('r' if self.read else '') +
+                     ('c' if self.create else '') +
+                     ('w' if self.write else '') +
+                     ('d' if self.delete else '') +
+                     ('l' if self.list else ''))
+
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission):
+        """Create a ShareSasPermissions from a string.
+
+        To specify read, create, write, delete, or list permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        write permissions, you would provide a string "rw".
+
+        :param str permission: The string which dictates the read, create, write,
+            delete, or list permissions
+        :return: A ShareSasPermissions object
+        :rtype: ~azure.storage.fileshare.ShareSasPermissions
+        """
+        p_read = 'r' in permission
+        p_create = 'c' in permission
+        p_write = 'w' in permission
+        p_delete = 'd' in permission
+        p_list = 'l' in permission
+
+        parsed = cls(p_read, p_write, p_delete, p_list, p_create)
+
+        return parsed
+
+
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get acl methods in each service.
 
@@ -271,7 +337,19 @@ class AccessPolicy(GenAccessPolicy):
         be interpreted as UTC.
     :type start: ~datetime.datetime or str
     """
-    def __init__(self, permission=None, expiry=None, start=None):
+    permission: Optional[Union[ShareSasPermissions, str]]  # type: ignore [assignment]
+    """The permissions associated with the shared access signature. The user is restricted to
+            operations allowed by the permissions."""
+    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    """The time at which the shared access signature becomes invalid."""
+    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    """The time at which the shared access signature becomes valid."""
+
+    def __init__(
+        self, permission: Optional[Union[ShareSasPermissions, str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None
+    ) -> None:
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -926,67 +1004,6 @@ class FileSasPermissions(object):
 
         return parsed
 
-
-class ShareSasPermissions(object):
-    """ShareSasPermissions class to be used to be used with
-    generating shared access signature and access policy operations.
-
-    :param bool read:
-        Read the content, properties or metadata of any file in the share. Use any
-        file in the share as the source of a copy operation.
-    :param bool write:
-        For any file in the share, create or write content, properties or metadata.
-        Resize the file. Use the file as the destination of a copy operation within
-        the same account.
-        Note: You cannot grant permissions to read or write share properties or
-        metadata with a service SAS. Use an account SAS instead.
-    :param bool delete:
-        Delete any file in the share.
-        Note: You cannot grant permissions to delete a share with a service SAS. Use
-        an account SAS instead.
-    :param bool list:
-        List files and directories in the share.
-    :param bool create:
-        Create a new file in the share, or copy a file to a new file in the share.
-    """
-    def __init__(self, read=False, write=False, delete=False, list=False, create=False):  # pylint: disable=redefined-builtin
-        self.read = read
-        self.create = create
-        self.write = write
-        self.delete = delete
-        self.list = list
-        self._str = (('r' if self.read else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('l' if self.list else ''))
-
-
-    def __str__(self):
-        return self._str
-
-    @classmethod
-    def from_string(cls, permission):
-        """Create a ShareSasPermissions from a string.
-
-        To specify read, create, write, delete, or list permissions you need only to
-        include the first letter of the word in the string. E.g. For read and
-        write permissions, you would provide a string "rw".
-
-        :param str permission: The string which dictates the read, create, write,
-            delete, or list permissions
-        :return: A ShareSasPermissions object
-        :rtype: ~azure.storage.fileshare.ShareSasPermissions
-        """
-        p_read = 'r' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_list = 'l' in permission
-
-        parsed = cls(p_read, p_write, p_delete, p_list, p_create)
-
-        return parsed
 
 class NTFSAttributes(object):
     """
