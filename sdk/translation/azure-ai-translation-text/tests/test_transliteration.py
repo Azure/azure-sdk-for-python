@@ -13,14 +13,17 @@ class TestTransliteration(TextTranslationTest, TestHelper):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_transliteration(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_client(endpoint, apikey, region)
 
         input_text_elements = ["这里怎么一回事?"]
         response = client.transliterate(
-            request_body=input_text_elements, language="zh-Hans", from_script="Hans", to_script="Latn"
+            body=input_text_elements,
+            language="zh-Hans",
+            from_script="Hans",
+            to_script="Latn",
         )
 
         assert response is not None
@@ -29,14 +32,17 @@ class TestTransliteration(TextTranslationTest, TestHelper):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_multiple_inputs(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_client(endpoint, apikey, region)
 
         input_text_elements = ["यहएककसौटीहैयहएककसौटीहै", "यहएककसौटीहै"]
         response = client.transliterate(
-            request_body=input_text_elements, language="hi", from_script="Deva", to_script="Latn"
+            body=input_text_elements,
+            language="hi",
+            from_script="Deva",
+            to_script="Latn",
         )
 
         assert response is not None
@@ -46,9 +52,9 @@ class TestTransliteration(TextTranslationTest, TestHelper):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_edit_distance(self, **kwargs):
-        endpoint = kwargs.get("text_translation_endpoint")
-        apikey = kwargs.get("text_translation_apikey")
-        region = kwargs.get("text_translation_region")
+        endpoint = kwargs.get("translation_text_endpoint")
+        apikey = kwargs.get("translation_text_apikey")
+        region = kwargs.get("translation_text_region")
         client = self.create_client(endpoint, apikey, region)
 
         input_text_elements = [
@@ -57,7 +63,10 @@ class TestTransliteration(TextTranslationTest, TestHelper):
             "hukkabar",
         ]
         response = client.transliterate(
-            request_body=input_text_elements, language="gu", from_script="Latn", to_script="Gujr"
+            body=input_text_elements,
+            language="gu",
+            from_script="Latn",
+            to_script="Gujr",
         )
 
         assert response is not None

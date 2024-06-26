@@ -85,7 +85,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
-    async def test_collection_crud_async(self):
+    async def test_collection_crud_subpartition_async(self):
         created_db = self.database_for_test
         collections = [collection async for collection in created_db.list_containers()]
         # create a collection
@@ -138,7 +138,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
         await created_db.delete_container(created_collection.id)
 
-    async def test_partitioned_collection_async(self):
+    async def test_partitioned_collection_subpartition_async(self):
         created_db = self.database_for_test
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
@@ -205,7 +205,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
         await created_db.delete_container(created_collection.id)
 
-    async def test_partitioned_collection_partition_key_extraction_async(self):
+    async def test_partitioned_collection_partition_key_extraction_subpartition_async(self):
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
@@ -227,7 +227,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["WA","Redmond"]'
+        assert self.last_headers[0] == '["WA","Redmond"]'
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
@@ -255,7 +255,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection.id)
         await created_db.delete_container(created_collection1.id)
 
-    async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
+    async def test_partitioned_collection_partition_key_extraction_special_chars_subpartition_async(self):
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
@@ -312,7 +312,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection1.id)
         await created_db.delete_container(created_collection2.id)
 
-    async def test_partitioned_collection_document_crud_and_query_async(self):
+    async def test_partitioned_collection_document_crud_and_query_subpartition_async(self):
         created_db = self.database_for_test
         collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
@@ -431,7 +431,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         assert doc_mixed_types.get('zipcode') == created_mixed_type_doc.get('zipcode')
         await created_db.delete_container(created_collection.id)
 
-    async def test_partitioned_collection_prefix_partition_query_async(self):
+    async def test_partitioned_collection_prefix_partition_query_subpartition_async(self):
         created_db = self.database_for_test
         collection_id = 'test_partitioned_collection_partition_key_prefix_query_async ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
@@ -551,7 +551,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
         await created_db.delete_container(created_collection.id)
 
-    async def test_partition_key_range_overlap(self):
+    async def test_partition_key_range_subpartition_overlap(self):
         Id = 'id'
         MinInclusive = 'minInclusive'
         MaxExclusive = 'maxExclusive'
@@ -649,7 +649,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         assert EPK_range_4.max < olr_4_c.max
 
     # Commenting out delete all items by pk until pipelines support it
-    # async def test_delete_all_items_by_partition_key(self):
+    # async def test_delete_all_items_by_partition_key_subpartition_async(self):
     #     # create database
     #     created_db = self.database_for_test
     #

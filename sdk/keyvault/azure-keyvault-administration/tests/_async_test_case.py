@@ -7,6 +7,7 @@ import os
 import pytest
 from azure.keyvault.administration import ApiVersion
 from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
+from azure.identity.aio import ManagedIdentityCredential
 from devtools_testutils import AzureRecordedTestCase
 
 
@@ -30,6 +31,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.container_uri = container_playback_uri
             self.sas_token = playback_sas_token
 
+        self.managed_identity_client_id = os.environ.get("MANAGED_IDENTITY_CLIENT_ID")
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
         use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
         use_vscode = os.environ.get("AZURE_TEST_USE_VSCODE_AUTH", "false")
@@ -52,6 +54,30 @@ class BaseClientPreparer(AzureRecordedTestCase):
 
 
 class KeyVaultBackupClientPreparer(BaseClientPreparer):
+    def __call__(self, fn):
+        async def _preparer(test_class, api_version, **kwargs):
+            self._skip_if_not_configured(api_version)
+            kwargs["container_uri"] = self.container_uri
+            kwargs["managed_hsm_url"] = self.managed_hsm_url
+            client = self.create_backup_client(self.managed_identity_client_id, api_version=api_version, **kwargs)
+
+            async with client:
+                await fn(test_class, client, **kwargs)
+        return _preparer
+
+    def create_backup_client(self, managed_identity_client_id, **kwargs):
+        from azure.keyvault.administration.aio import KeyVaultBackupClient
+
+        if self.is_live:
+            credential = ManagedIdentityCredential(client_id=managed_identity_client_id)
+        else:
+            credential = self.get_credential(KeyVaultBackupClient, is_async=True)
+        return self.create_client_from_credential(
+            KeyVaultBackupClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+        )
+
+
+class KeyVaultBackupClientSasPreparer(BaseClientPreparer):
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)

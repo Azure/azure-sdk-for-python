@@ -73,8 +73,7 @@ class FaceAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     sufficient quality to attempt face recognition on. The value is an informal rating of low,
     medium, or high. Only 'high' quality images are recommended for person enrollment and quality
     at or above 'medium' is recommended for identification scenarios. The attribute is only
-    available when using any combinations of detection models detection_01 or detection_03, and
-    recognition models recognition_03 or recognition_04."""
+    available when using recognition models recognition_03 or recognition_04."""
     AGE = "age"
     """Age in years."""
     SMILE = "smile"
@@ -119,19 +118,6 @@ class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm has classified the target face as real."""
     SPOOF_FACE = "spoofface"
     """The algorithm has classified the target face as a spoof."""
-
-
-class FaceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of long running operation."""
-
-    NOT_STARTED = "notStarted"
-    """The operation is not started."""
-    RUNNING = "running"
-    """The operation is still running."""
-    SUCCEEDED = "succeeded"
-    """The operation is succeeded."""
-    FAILED = "failed"
-    """The operation is failed."""
 
 
 class FaceRecognitionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -213,10 +199,21 @@ class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation mode for the liveness modal."""
+    """The liveness operation mode to drive the client’s end-user experience."""
 
     PASSIVE = "Passive"
-    """The operation mode for the liveness modal."""
+    """Utilizes a passive liveness technique that requires no additional actions from the user.
+    Requires normal indoor lighting and high screen brightness for optimal performance. And thus,
+    this mode has a narrow operational envelope and will not be suitable for scenarios that
+    requires the end-user’s to be in bright lighting conditions. Note: this is the only supported
+    mode for the Mobile (iOS and Android) solution."""
+    PASSIVE_ACTIVE = "PassiveActive"
+    """This mode utilizes a hybrid passive or active liveness technique that necessitates user
+    cooperation. It is optimized to require active motion only under suboptimal lighting
+    conditions. Unlike the passive mode, this mode has no lighting restrictions, and thus offering
+    a broader operational envelope. This mode is preferable on Web based solutions due to the lack
+    of automatic screen brightness control available on browsers which hinders the Passive mode’s
+    operational envelope on Web based solutions."""
 
 
 class MaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
