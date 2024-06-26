@@ -63,10 +63,6 @@ steps:
 
   - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
-  - pwsh: |
-      Get-ChildItem Env:
-    displayName: Dump Environment variables
-
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
@@ -101,12 +97,12 @@ steps:
       inputs:
         scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
         arguments: >-
-          "azure-storage-file-datalake"
+          "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
           --mark_arg="${{ parameters.TestMarkArgument }}"
           --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="latestdependency"
+          --toxenv="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}"
           ${{ parameters.ToxEnvParallel }}
       env: ${{ parameters.EnvVars }}
