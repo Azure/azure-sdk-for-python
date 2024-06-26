@@ -62,7 +62,7 @@
       }
   },
 "variables": {
-        "healthApiVersion": "2024-04-01",
+        "healthApiVersion": "2024-04-01-preview",
         "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
         "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",
         "textAnalyticsContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
