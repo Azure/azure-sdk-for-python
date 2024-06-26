@@ -619,7 +619,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
 
             renewer = AutoLockRenewer()
             messages = []
-            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=20) as receiver:
+            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=9) as receiver:
                 renewer.register(receiver, receiver.session, max_lock_renewal_duration=10)
                 print("Registered lock renew thread", receiver.session.locked_until_utc, utc_now())
                 with pytest.raises(SessionLockLostError):
@@ -698,7 +698,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                                                     session_id=session_id,
                                                     max_wait_time=10,
                                                     receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
-                                                    prefetch_count=20,
+                                                    prefetch_count=9,
                                                     auto_lock_renewer=renewer) as session:
                 print("Registered lock renew thread", session.session.locked_until_utc, utc_now())
                 with pytest.raises(SessionLockLostError):
