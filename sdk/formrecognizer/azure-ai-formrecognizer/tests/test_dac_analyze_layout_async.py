@@ -13,7 +13,7 @@ from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalysisFeature, AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 
@@ -26,7 +26,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_incorrect_feature_format(self, client):
+    async def test_layout_incorrect_feature_format(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
         async with client:
@@ -41,7 +42,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_stream_transform_pdf(self, client):
+    async def test_layout_stream_transform_pdf(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -82,7 +84,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_stream_transform_jpg(self, client):
+    async def test_layout_stream_transform_jpg(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.form_jpg, "rb") as fd:
             document = fd.read()
 
@@ -118,7 +121,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_multipage_transform(self, client):
+    async def test_layout_multipage_transform(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -155,7 +159,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_multipage_table_span_pdf(self, client):
+    async def test_layout_multipage_table_span_pdf(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.multipage_table_pdf, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -174,7 +179,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_url_barcodes(self, client):
+    async def test_layout_url_barcodes(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-layout", self.barcode_url_tif, features=[AnalysisFeature.BARCODES])
             layout = await poller.result()
@@ -188,7 +194,8 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_layout_specify_pages(self, client):
+    async def test_layout_specify_pages(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.multipage_invoice_pdf, "rb") as fd:
             document = fd.read()
 

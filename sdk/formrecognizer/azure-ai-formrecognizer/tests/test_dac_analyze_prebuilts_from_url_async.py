@@ -15,7 +15,7 @@ from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 
@@ -28,7 +28,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_business_card_multipage_pdf(self, client):
+    async def test_business_card_multipage_pdf(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-businessCard", self.business_card_multipage_url_pdf)
             result = await poller.result()
@@ -96,7 +97,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_jpg_passport(self, client):
+    async def test_identity_document_jpg_passport(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg_passport)
 
@@ -119,7 +121,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_jpg(self, client):
+    async def test_identity_document_jpg(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-idDocument", self.identity_document_url_jpg)
 
@@ -149,7 +152,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_invoice_tiff(self, client, **kwargs):
+    async def test_invoice_tiff(self, **kwargs):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url(model_id="prebuilt-invoice", document_url=self.invoice_url_tiff)
 
@@ -203,7 +207,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipts_encoded_url(self, client):
+    async def test_receipts_encoded_url(self):
+        client = get_async_client(DocumentAnalysisClient)
         with pytest.raises(HttpResponseError) as e:
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://fakeuri.com/blank%20space")
@@ -223,7 +228,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_bad_url(self, client):
+    async def test_receipt_bad_url(self):
+        client = get_async_client(DocumentAnalysisClient)
         with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
@@ -232,7 +238,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_receipt_url_pass_stream(self, **kwargs):
-        client = kwargs.get("client", None)
+        client = get_async_client(DocumentAnalysisClient)
         
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
@@ -246,8 +252,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_url_transform_jpg(self, client):
-        
+    async def test_receipt_url_transform_jpg(self):
+        client = get_async_client(DocumentAnalysisClient)        
         responses = []
 
         def callback(raw_response, _, headers):
@@ -285,8 +291,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_url_png(self, client):
-        
+    async def test_receipt_url_png(self):
+        client = get_async_client(DocumentAnalysisClient)        
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_png)
             result = await poller.result()
@@ -308,8 +314,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_multipage_url(self, client):
-        
+    async def test_receipt_multipage_url(self):
+        client = get_async_client(DocumentAnalysisClient)        
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.multipage_receipt_url_pdf)
             result = await poller.result()
@@ -342,8 +348,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_multipage_transform_url(self, client):
-        
+    async def test_receipt_multipage_transform_url(self):
+        client = get_async_client(DocumentAnalysisClient)        
         responses = []
 
         def callback(raw_response, _, headers):
@@ -382,7 +388,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_receipt_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(DocumentAnalysisClient)
 
         async with client:
             initial_poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
@@ -396,7 +402,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_locale_specified(self, client):
+    async def test_receipt_locale_specified(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="en-IN")
             assert 'en-IN' == poller._polling_method._initial_response.http_response.request.query['locale']
@@ -407,7 +414,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_locale_error(self, client):
+    async def test_receipt_locale_error(self):
+        client = get_async_client(DocumentAnalysisClient)
         with pytest.raises(HttpResponseError) as e:
             async with client:
                 await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
@@ -417,7 +425,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_pages_kwarg_specified(self, client):
+    async def test_pages_kwarg_specified(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, pages="1")
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']

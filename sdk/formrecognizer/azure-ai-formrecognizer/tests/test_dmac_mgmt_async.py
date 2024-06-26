@@ -18,7 +18,7 @@ from azure.ai.formrecognizer import (
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 
@@ -41,7 +41,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_model_empty_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(DocumentModelAdministrationClient)
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.get_document_model("")
@@ -50,7 +50,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_model_none_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(DocumentModelAdministrationClient)
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.get_document_model(None)
@@ -59,7 +59,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_delete_model_none_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(DocumentModelAdministrationClient)
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.delete_document_model(None)
@@ -68,7 +68,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_delete_model_empty_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(DocumentModelAdministrationClient)
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.delete_document_model("")
@@ -78,7 +78,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_account_info(self, client):
+    async def test_account_info(self):
+        client = get_async_client(DocumentModelAdministrationClient)
         async with client:
             info = await client.get_resource_details()
 
@@ -92,7 +93,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_model_prebuilt(self, client):
+    async def test_get_model_prebuilt(self):
+        client = get_async_client(DocumentModelAdministrationClient)
         async with client:
             model = await client.get_document_model("prebuilt-invoice")
             assert model.model_id == "prebuilt-invoice"
@@ -109,7 +111,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_mgmt_model(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_async_client(DocumentModelAdministrationClient)
         set_bodiless_matcher()
         
         async with client:
@@ -143,7 +146,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_list_operations(self, client):
+    async def test_get_list_operations(self):
+        client = get_async_client(DocumentModelAdministrationClient)
         async with client:
             operations = client.list_operations()
             successful_op = None
@@ -217,7 +221,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_operation_bad_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(DocumentModelAdministrationClient)
         with pytest.raises(ValueError) as e:
             await client.get_operation("")
         assert "'operation_id' cannot be None or empty." in str(e.value)

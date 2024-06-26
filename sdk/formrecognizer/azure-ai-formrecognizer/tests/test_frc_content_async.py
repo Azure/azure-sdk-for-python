@@ -15,7 +15,7 @@ from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -38,7 +38,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_enum_content_type(self, client):
+    async def test_passing_enum_content_type(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -53,7 +54,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_damaged_file_passed_as_bytes(self, client):
+    async def test_damaged_file_passed_as_bytes(self):
+        client = get_async_client(FormRecognizerClient)
         damaged_pdf = b"\x25\x50\x44\x46\x55\x55\x55"  # still has correct bytes to be recognized as PDF
         with pytest.raises(HttpResponseError):
             async with client:
@@ -65,7 +67,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_passing_bad_content_type_param_passed(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
@@ -79,7 +81,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_auto_detect_unsupported_stream_content(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         with open(self.unsupported_content_py, "rb") as fd:
             my_file = fd.read()
 
@@ -95,7 +97,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_stream_transform_pdf(self, client):
+    async def test_content_stream_transform_pdf(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.invoice_pdf, "rb") as fd:
             form = fd.read()
 
@@ -123,7 +126,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_stream_transform_jpg(self, client):
+    async def test_content_stream_transform_jpg(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.form_jpg, "rb") as fd:
             form = fd.read()
 
@@ -151,7 +155,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_stream_jpg(self, client):
+    async def test_content_stream_jpg(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.form_jpg, "rb") as fd:
             form = fd.read()
 
@@ -174,7 +179,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_multipage(self, client):
+    async def test_content_multipage(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.multipage_invoice_pdf, "rb") as fd:
             invoice = fd.read()
         async with client:
@@ -189,7 +195,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_multipage_transform(self, client):
+    async def test_content_multipage_transform(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.multipage_invoice_pdf, "rb") as fd:
             form = fd.read()
 
@@ -217,7 +224,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_content_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -234,7 +241,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_multipage_table_span_pdf(self, client):
+    async def test_content_multipage_table_span_pdf(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.multipage_table_pdf, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -263,7 +271,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_selection_marks(self, client):
+    async def test_content_selection_marks(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.selection_form_pdf, "rb") as fd:
             form = fd.read()
 
@@ -279,9 +288,10 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_selection_marks_v2(self, client):
+    async def test_content_selection_marks_v2(self):
+        client = get_async_client(FormRecognizerClient, api_version=FormRecognizerApiVersion.V2_0)
         with open(self.selection_form_pdf, "rb") as fd:
             form = fd.read()
 
@@ -298,7 +308,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_specify_pages(self, client):
+    async def test_content_specify_pages(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.multipage_invoice_pdf, "rb") as fd:
             form = fd.read()
 
@@ -324,7 +335,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_reading_order(self, client):
+    async def test_content_reading_order(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.invoice_pdf, "rb") as fd:
             form = fd.read()
 
@@ -340,7 +352,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_language_specified(self, client):
+    async def test_content_language_specified(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -350,9 +363,9 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             assert result
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer()
     async def test_content_language_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient, api_version=FormRecognizerApiVersion.V2_0)
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
         async with client:

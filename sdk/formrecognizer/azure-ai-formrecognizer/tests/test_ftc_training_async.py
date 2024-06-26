@@ -12,7 +12,7 @@ from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 
@@ -23,9 +23,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_with_labels_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_training_with_labels_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         async with client:
             poller = await client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
             model = await poller.result()
@@ -52,9 +53,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_multipage_with_labels_v2(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_training_multipage_with_labels_v2(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         async with client:
             poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
             model = await poller.result()
@@ -79,9 +81,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_without_labels_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_training_without_labels_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         async with client:
             poller = await client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
             model = await poller.result()
@@ -108,9 +111,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_multipage_without_labels_v2(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_training_multipage_without_labels_v2(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         async with client:
             poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
             model = await poller.result()
@@ -133,9 +137,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.name
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_with_files_filter_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_training_with_files_filter_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         async with client:
             poller = await client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=False, include_subfolders=True)
             model = await poller.result()
@@ -155,9 +160,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_with_labels_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_training_with_labels_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="my labeled model")
             model = await poller.result()
@@ -185,9 +191,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_multipage_with_labels_v21(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_training_multipage_with_labels_v21(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
             model = await poller.result()
@@ -211,9 +218,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_without_labels_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_training_without_labels_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="my labeled model")
             model = await poller.result()
@@ -241,9 +249,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_multipage_without_labels_v21(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_training_multipage_without_labels_v21(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
             model = await poller.result()
@@ -266,9 +275,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                 assert field.name
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_training_with_files_filter_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_training_with_files_filter_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=False, include_subfolders=True)
             model = await poller.result()
@@ -287,9 +297,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             assert e.value.error.message
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     async def test_training_with_model_name_bad_api_version(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         with pytest.raises(ValueError) as excinfo:
             async with client:
                 poller = await client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")

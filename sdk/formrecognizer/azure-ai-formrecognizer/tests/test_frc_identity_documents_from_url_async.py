@@ -14,7 +14,7 @@ from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -41,7 +41,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_url_transform_jpg(self, client):
+    async def test_identity_document_url_transform_jpg(self):
+        client = get_async_client(FormRecognizerClient)
         responses = []
 
         def callback(raw_response, _, headers):
@@ -79,7 +80,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_jpg_include_field_elements(self, client):
+    async def test_identity_document_jpg_include_field_elements(self):
+        client = get_async_client(FormRecognizerClient)
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
@@ -103,7 +105,7 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_identity_document_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         async with client:
             initial_poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
             cont_token = initial_poller.continuation_token()
@@ -113,9 +115,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
             await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer()
     async def test_identity_document_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient, api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
@@ -125,7 +127,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_pages_kwarg_specified(self, client):
+    async def test_pages_kwarg_specified(self):
+        client = get_async_client(FormRecognizerClient)
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, pages=["1"])
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']

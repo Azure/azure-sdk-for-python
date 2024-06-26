@@ -13,7 +13,7 @@ from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from preparers import FormRecognizerPreparer
 from conftest import skip_flaky_test
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
@@ -25,7 +25,8 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_enum_content_type(self, client):
+    async def test_passing_enum_content_type(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.business_card_png, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -39,7 +40,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
@@ -50,7 +51,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
@@ -62,7 +63,7 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_passing_bad_content_type_param_passed(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient)
         with open(self.business_card_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
@@ -77,7 +78,8 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_business_card_jpg_include_field_elements(self, client):
+    async def test_business_card_jpg_include_field_elements(self):
+        client = get_async_client(FormRecognizerClient)
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         async with client:
@@ -127,9 +129,9 @@ class TestBusinessCardAsync(AsyncFormRecognizerTest):
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer()
     async def test_business_card_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient, api_version=FormRecognizerApiVersion.V2_0)
         with open(self.business_card_jpg, "rb") as fd:
             business_card = fd.read()
         with pytest.raises(ValueError) as e:

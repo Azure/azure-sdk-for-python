@@ -14,7 +14,7 @@ from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -25,7 +25,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_url_transform_png(self, client):
+    async def test_receipt_url_transform_png(self):
+        client = get_async_client(FormRecognizerClient)
         responses = []
 
         def callback(raw_response, _, headers):
@@ -63,8 +64,8 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_url_include_field_elements(self, client):
-        
+    async def test_receipt_url_include_field_elements(self):
+        client = get_async_client(FormRecognizerClient)        
         async with client:
             poller = await client.begin_recognize_receipts_from_url(
                 self.receipt_url_jpg,
@@ -98,9 +99,9 @@ class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
         self.assertReceiptItemsHasValues(receipt.fields["Items"].value, receipt.page_range.first_page_number, True)
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
+    @FormRecognizerClientPreparer()
     async def test_receipt_locale_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormRecognizerClient, api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_receipts_from_url(self.receipt_url_jpg, locale="en-US")

@@ -12,7 +12,7 @@ from devtools_testutils import set_bodiless_matcher
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
 from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 from azure.ai.formrecognizer import ClassifierDocumentTypeDetails, BlobSource, BlobFileListSource, DocumentClassifierDetails
@@ -25,7 +25,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_build_classifier(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_build_classifier(self, formrecognizer_training_data_classifier, **kwargs):
+        client = get_async_client(DocumentModelAdministrationClient)
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_classifier(
@@ -77,7 +78,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_build_classifier_file_list(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_build_classifier_file_list(self, formrecognizer_training_data_classifier, **kwargs):
+        client = get_async_client(DocumentModelAdministrationClient)
         set_bodiless_matcher()
         async with client:
             classifier_id = str(uuid.uuid4())
@@ -133,7 +135,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_poller_metadata(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_poller_metadata(self, formrecognizer_training_data_classifier, **kwargs):
+        client = get_async_client(DocumentModelAdministrationClient)
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_classifier(
@@ -167,7 +170,8 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_classifiers(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_mgmt_classifiers(self, formrecognizer_training_data_classifier, **kwargs):
+        client = get_async_client(DocumentModelAdministrationClient)
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_classifier(

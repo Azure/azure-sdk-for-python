@@ -11,7 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from azure.ai.formrecognizer import CustomFormModel
 from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
@@ -23,9 +23,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_compose_model_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_compose_model_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
             model_1 = await poller.result()
@@ -42,9 +43,10 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         self.assertComposedModelV2HasValues(composed_model, model_1, model_2)
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_compose_model_invalid_unlabeled_models_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_compose_model_invalid_unlabeled_models_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model_1 = await poller.result()
@@ -59,9 +61,9 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             assert e.value.error.message
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
+    @FormTrainingClientPreparer()
     async def test_compose_model_bad_api_version(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_async_client(FormTrainingClient, api_version="2.0")
         async with client:
             with pytest.raises(ValueError) as excinfo:
                 poller = await client.begin_create_composed_model(["00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000"])

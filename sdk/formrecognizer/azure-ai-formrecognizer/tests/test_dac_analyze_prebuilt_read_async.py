@@ -12,7 +12,7 @@ from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult, AnalysisFeature
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 
@@ -26,7 +26,8 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_read_url_features_formulas(self, client):
+    async def test_document_read_url_features_formulas(self):
+        client = get_async_client(DocumentAnalysisClient)
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
             result = await poller.result()
@@ -47,7 +48,8 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_read_stream_languages(self, client):
+    async def test_document_read_stream_languages(self):
+        client = get_async_client(DocumentAnalysisClient)
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -87,7 +89,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_html(self, **kwargs):
-        client = kwargs.get("client")
+        client = get_async_client(DocumentAnalysisClient)
 
         with open(self.html_file, "rb") as fd:
             document = fd.read()
@@ -124,7 +126,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_spreadsheet(self, **kwargs):
-        client = kwargs.get("client")
+        client = get_async_client(DocumentAnalysisClient)
 
         with open(self.spreadsheet, "rb") as fd:
             document = fd.read()

@@ -14,7 +14,7 @@ from azure.ai.formrecognizer import FormTrainingClient
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparerAsync as _GlobalClientPreparer
+from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
 from conftest import skip_flaky_test
 
 
@@ -25,9 +25,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_account_properties_v2(self, client):
+    async def test_account_properties_v2(self):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             properties = await client.get_account_properties()
 
@@ -37,9 +38,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @pytest.mark.skip("Issue: https://github.com/Azure/azure-sdk-for-python/issues/31739")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_model_labeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_mgmt_model_labeled_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
             labeled_model_from_train = await poller.result()
@@ -76,9 +78,10 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @pytest.mark.skip("Issue: https://github.com/Azure/azure-sdk-for-python/issues/31739")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
+    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_model_unlabeled_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_mgmt_model_unlabeled_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_async_client(FormTrainingClient, api_version="2.1")
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             unlabeled_model_from_train = await poller.result()
