@@ -560,39 +560,48 @@ class BreakingChangesTracker:
                 )
             return True
 
+    def match(self, bc, ignored):
+        if bc == ignored:
+            return True
+        for b, i in zip(bc, ignored):
+            if i == "*":
+                continue
+            if b != i:
+                return False
+        return True
+
     def get_reportable_breaking_changes(self, ignore_changes: Dict) -> List:
         ignored = []
         # Match all ignore rules that should apply to this package
         for ignored_package, ignore_rules in ignore_changes.items():
             if re.findall(ignored_package, self.package_name):
                 ignored.extend(ignore_rules)
+
         # Remove ignored breaking changes from list of reportable changes
-        for ignored_bc, *ignored_args in ignored:
-            ignored_module_name = ignored_args[0] if ignored_args else None
-            ignored_class_name = ignored_args[1] if len(ignored_args) > 1 else None
-            ignored_function_name = ignored_args[2] if len(ignored_args) > 2 else None
-            ignored_parameter_name = ignored_args[3] if len(ignored_args) > 3 else None
-            for bc in self.breaking_changes:
-                _, bc_type, module_name, *args = bc
-                class_name = args[0] if args else None
-                function_name = args[1] if len(args) > 1 else None
-                parameter_name = args[2] if len(args) > 2 else None
-            
-                # If the ignore item is a wildcard, it should match all values
-                if ignored_module_name == "*":
-                    module_name = "*"
-                if ignored_class_name == "*":
-                    class_name = "*"
-                if ignored_function_name == "*":
-                    function_name = "*"
+        from copy import deepcopy
+        bc_copy = deepcopy(self.breaking_changes)
+        for bc in bc_copy:
+            _, bc_type, module_name, *args = bc
+            class_name = args[0] if args else None
+            function_name = args[1] if len(args) > 1 else None
+            parameter_name = args[2] if len(args) > 2 else None
+
+            for ignored_bc, *ignored_args in ignored:
+                ignored_module_name = ignored_args[0] if ignored_args else None
+                ignored_class_name = ignored_args[1] if len(ignored_args) > 1 else None
+                ignored_function_name = ignored_args[2] if len(ignored_args) > 2 else None
+                ignored_parameter_name = ignored_args[3] if len(ignored_args) > 3 else None
+
                 if ignored_parameter_name is not None:
                     # If the ignore rule is for a parameter, we should check parameters on the original breaking change
-                    if (bc_type, module_name, class_name, function_name, parameter_name) == (
-                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name, ignored_parameter_name):
+                    if self.match((bc_type, module_name, class_name, function_name, parameter_name), (
+                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name, ignored_parameter_name)):
                         self.breaking_changes.remove(bc)
-                elif (bc_type, module_name, class_name, function_name) == (
-                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name):
+                        break
+                elif self.match((bc_type, module_name, class_name, function_name), (
+                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name)):
                     self.breaking_changes.remove(bc)
+                    break
 
     def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
