@@ -7,7 +7,6 @@ extends:
       ServiceDirectory: documentintelligence
       TestTimeoutInMinutes: 200
       UseFederatedAuth: true
-      Location: westcentralus
       MatrixReplace:
         - TestSamples=.*/true
       Clouds: 'Prod'
@@ -17,8 +16,10 @@ extends:
       CloudConfig:
         Prod:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: $(LOCATION)
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
+          SubscriptionConfigurationFilePaths: 
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         TEST_MODE: 'RunLiveNoRecord'
