@@ -63,11 +63,11 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of SmsClient.
-        :rtype: ~azure.communication.SmsClient
+        :rtype: ~azure.communication.sms.SmsClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sms_sample.py
+            .. literalinclude:: ../samples/send_sms_to_single_recipient_sample.py
                 :start-after: [START auth_from_connection_string]
                 :end-before: [END auth_from_connection_string]
                 :language: python

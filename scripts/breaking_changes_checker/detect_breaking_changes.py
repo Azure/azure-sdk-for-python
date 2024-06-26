@@ -23,6 +23,7 @@ from typing import Dict, Union, Type, Callable
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
+from changelog_tracker import ChangelogTracker
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -101,6 +102,23 @@ def get_parameter_default(param: inspect.Parameter) -> None:
 
 
 def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
+    assign_nodes = [node for node in node.body if isinstance(node, ast.AnnAssign)]
+    # Check for class level attributes that follow the pattern: foo: List["_models.FooItem"] = rest_field(name="foo")
+    for assign in assign_nodes:
+        if hasattr(assign, "target"):
+            if hasattr(assign.target, "id") and not assign.target.id.startswith("_"):
+                attr = assign.target.id
+                attr_type = None
+                # FIXME: This can get the type hint for a limited set attributes. We need to address more complex
+                # type hints in the future.
+                # Build type hint for the attribute
+                if hasattr(assign.annotation, "value") and isinstance(assign.annotation.value, ast.Name):
+                    attr_type = assign.annotation.value.id
+                    if attr_type == "List" and hasattr(assign.annotation, "slice"):
+                        if isinstance(assign.annotation.slice, ast.Constant):
+                            attr_type = f"{attr_type}[{assign.annotation.slice.value}]"
+                attribute_names.update({attr: attr_type})
+
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
         assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
@@ -276,20 +294,16 @@ def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, package_name, changelog=changelog)
-    bc.run_checks()
+    checker = BreakingChangesTracker(stable, current, diff, package_name, previous_version=version)
+    if changelog:
+        checker = ChangelogTracker(stable, current, diff, package_name)
+    checker.run_checks()
 
     remove_json_files(pkg_dir)
 
-    if changelog:
-        print(bc.report_changelog())
-        exit(0)
-    elif bc.breaking_changes:
-        bc.report_breaking_changes()
-        print(bc)
+    print(checker.report_changes())
+    if not changelog and checker.breaking_changes:
         exit(1)
-
-    print(f"\nNo breaking changes found for {package_name} between stable version {version} and current version.")
 
 
 def remove_json_files(pkg_dir: str) -> None:

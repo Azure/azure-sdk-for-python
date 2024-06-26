@@ -1,5 +1,21 @@
 # Release History
 
+## 1.17.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.17.1 (2024-06-21)
+
+### Bugs Fixed
+
+- Continue to attempt requesting token if the probing request receives non-json response. ([#36184](https://github.com/Azure/azure-sdk-for-python/pull/36184))
+
 ## 1.17.0 (2024-06-18)
 
 ### Breaking Changes
