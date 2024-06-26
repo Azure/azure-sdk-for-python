@@ -103,7 +103,8 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_invoice_stream_transform_pdf(self, client):
+    async def test_invoice_stream_transform_pdf(self):
+        client = get_async_client(FormRecognizerClient)
         responses = []
 
         def callback(raw_response, _, headers):
