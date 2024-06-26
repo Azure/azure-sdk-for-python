@@ -116,9 +116,11 @@ jobs:
         parameters:
           SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
           SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
-          EnvVars: ${{ parameters.EnvVars }}
-          ${{ if parameters.UseFederatedAuth }}: 
+          ${{ if parameters.UseFederatedAuth }}:
             SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+          EnvVars:
+            Pool: $(Pool)
+            ${{ insert }}: ${{ parameters.EnvVars }}
 
       - ${{ if parameters.TestResourceDirectories }}:
         - ${{ each directory in parameters.TestResourceDirectories }}:
