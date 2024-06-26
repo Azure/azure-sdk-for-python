@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `SearchIndexClient`.`get_search_client` inherits the API version.
+
 ### Breaking Changes
 
 ### Bugs Fixed
