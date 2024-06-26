@@ -14,6 +14,7 @@ import os
 import logging
 import sys
 from prep_sphinx_env import should_build_docs
+from run_sphinx_apidoc import is_mgmt_package
 from pkg_resources import Requirement
 import ast
 import os
@@ -114,10 +115,12 @@ if __name__ == "__main__":
     pkg_details = ParsedSetup.from_path(package_dir)
 
     if should_build_docs(pkg_details.name):
+        # Only data-plane libraries run strict-sphinx at the moment
+        fail_on_warning = not is_mgmt_package(pkg_details.name)
         sphinx_build(
             target_dir,
             output_dir,
-            fail_on_warning=True,
+            fail_on_warning=fail_on_warning,
         )
 
         if in_ci() or args.in_ci:
