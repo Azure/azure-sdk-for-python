@@ -22,7 +22,11 @@ async def process_content(data):
         raise ValueError("Response cannot be None.")
 
     try:
-        return data.response.body()
+        content = bytearray()
+        async for chunk in data:
+            content.extend(chunk)
+        content = bytes(content)
+        return content
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
