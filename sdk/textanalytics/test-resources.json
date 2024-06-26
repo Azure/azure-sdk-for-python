@@ -64,6 +64,10 @@
         }
     ],
     "outputs": {
+        "TEXTANALYTICS_TEST_API_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsBaseName')), variables('cognitiveApiVersion')).key1]"
+        },
         "TEXTANALYTICS_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureTextAnalyticsUrl')]"
