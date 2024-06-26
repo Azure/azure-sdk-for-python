@@ -281,8 +281,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
-         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as the
          transferor's(Contoso) caller id when transfering a call a pstn target.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -845,7 +846,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request sent out to a participant.
-        :param  invitation_id: The invitation ID that was used to add the participant.
+
+        :param invitation_id: The invitation ID that was used to add the participant.
         :type invitation_id: str
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
@@ -882,19 +884,20 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> None:
         """Hold participant from call while playing music.
+
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or
          list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource]
         :param target_participant: The targets to play media to. Default value is 'all', to play media
          to all participants in the call.
         :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: Whether the media should be repeated until stopped.
+         **DEPRECATED**: 'loop' has been deprecated and will be removed from future releases.
         :paramtype loop: bool
-        **DEPRECATED**: 'loop' has been deprecated and will be removed from future releases.
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :return: None
@@ -1010,15 +1013,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         play_source: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         operation_context: Optional[str] = None,
-        operation_callback_uri: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
         """Play media to specific participant(s) in this call.
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
+        :keyword play_source: A PlaySource representing the source to play.
+        :paramtype play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -1045,7 +1048,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             play_source_info=play_source_single._to_generated() if play_source_single else None,  # pylint:disable=protected-access
             operation_context=operation_context,
-            operation_callback_uri=operation_callback_uri,
+            operation_callback_uri=operation_callback_url,
             kwargs=kwargs
         )
 
