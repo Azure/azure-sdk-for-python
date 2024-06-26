@@ -646,15 +646,6 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             #other-client--per-operation-configuration>`_. The default value is None.
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/datalake_samples_directory.py
-                :start-after: [START get_paths_in_directory]
-                :end-before: [END get_paths_in_directory]
-                :language: python
-                :dedent: 4
-                :caption: List the paths in the directory.
         """
         return self._file_system_client_async.get_paths(
             path=self.path_name,

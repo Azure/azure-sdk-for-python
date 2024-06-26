@@ -1616,18 +1616,20 @@ class TestDirectory(StorageRecordedTestCase):
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        file_name = "file"
-        directory_client.create_file(file_name)
+        directory_client1 = self.dsc.get_directory_client(self.file_system_name, directory_name + '1')
+        directory_client1.get_file_client('file0').create_file()
+        directory_client1.get_file_client('file1').create_file()
+        directory_client2 = self.dsc.get_directory_client(self.file_system_name, directory_name + '2')
+        directory_client2.get_file_client('file2').create_file()
 
         # Act
-        paths = list(directory_client.get_paths())
+        path_response = list(directory_client1.get_paths())
 
         # Assert
-        assert len(paths) == 1
-        assert paths[0]['name'] == directory_name + '/' + file_name
-        assert paths[0]['content_length'] == 0
-        assert paths[0]['expiry_time'] is None
+        assert len(path_response) == 2
+        assert path_response[0]['name'] == directory_name + '1' + '/' + 'file0'
+        assert path_response[1]['name'] == directory_name + '1' + '/' + 'file1'
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
