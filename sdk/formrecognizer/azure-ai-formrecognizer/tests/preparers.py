@@ -66,7 +66,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
 
 class GlobalClientPreparerAsync(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(GlobalClientPreparer, self).__init__(
+        super(GlobalClientPreparerAsync, self).__init__(
             name_prefix='',
             random_name_length=42
         )

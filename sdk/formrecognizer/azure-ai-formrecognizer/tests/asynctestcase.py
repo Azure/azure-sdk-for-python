@@ -10,6 +10,7 @@ import pytest
 import os
 from azure.core.credentials import AccessToken
 from testcase import FormRecognizerTest
+from devtools_testutils import get_credential
 
 
 class AsyncFakeTokenCredential(object):
@@ -27,12 +28,7 @@ class AsyncFormRecognizerTest(FormRecognizerTest):
 
     def generate_oauth_token(self):
         if self.is_live:
-            from azure.identity.aio import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("FORMRECOGNIZER_TENANT_ID"),
-                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
-                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
-            )
+            return get_credential(is_async=True)
         return self.generate_fake_token()
 
     def generate_fake_token(self):

@@ -15,7 +15,7 @@ from azure.ai.formrecognizer._helpers import (
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher, get_credential
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
@@ -94,12 +94,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
     def generate_oauth_token(self):
         if self.is_live:
-            from azure.identity import ClientSecretCredential
-            return ClientSecretCredential(
-                os.getenv("FORMRECOGNIZER_TENANT_ID"),
-                os.getenv("FORMRECOGNIZER_CLIENT_ID"),
-                os.getenv("FORMRECOGNIZER_CLIENT_SECRET"),
-            )
+            return get_credential()
         return self.generate_fake_token()
 
     def generate_fake_token(self):
