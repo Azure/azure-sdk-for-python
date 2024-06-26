@@ -214,7 +214,7 @@ class EventGridEvent(_serialization.Model):
         self.data = data
         self.event_type = event_type
         self.event_time = event_time
-        self.metadata_version = None
+        self.metadata_version: Optional[str] = None
         self.data_version = data_version
 
 

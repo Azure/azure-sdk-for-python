@@ -10,6 +10,15 @@ import json
 import jsondiff
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 
+def format_breaking_changes(breaking_changes):
+    formatted = "\n"
+    for bc in breaking_changes:
+        formatted += f"{bc}\n"
+    
+    formatted += f"\nFound {len(breaking_changes)} breaking changes.\n"
+    formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
+                    "any reported breaking changes or false positives.\n"
+    return formatted
 
 EXPECTED = [
     "(RemovedOrRenamedInstanceAttribute): The model or publicly exposed class 'azure.storage.queue.Metrics' had its instance variable 'retention_policy' deleted or renamed in the current version",
@@ -46,10 +55,11 @@ def test_multiple_checkers():
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
     bc.run_checks()
 
-    bc.report_breaking_changes()
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    for message in bc.breaking_changes:
-        assert message in EXPECTED
+    assert changes == expected_msg
 
 
 def test_ignore_checks():
@@ -69,10 +79,11 @@ def test_ignore_checks():
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue", ignore=ignore)
     bc.run_checks()
 
-    bc.report_breaking_changes()
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED[:-2])
     assert len(bc.breaking_changes)+2 == len(EXPECTED)
-    for message in bc.breaking_changes:
-        assert message in EXPECTED[:-2]
+    assert changes == expected_msg
 
 
 def test_replace_all_params():
@@ -156,10 +167,11 @@ def test_replace_all_params():
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
     bc.run_checks()
 
-    bc.report_breaking_changes()
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    for message in bc.breaking_changes:
-        assert message in EXPECTED
+    assert changes == expected_msg
 
 
 def test_replace_all_functions():
@@ -243,10 +255,11 @@ def test_replace_all_functions():
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
     bc.run_checks()
 
-    bc.report_breaking_changes()
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    for message in bc.breaking_changes:
-        assert message in EXPECTED
+    assert changes == expected_msg
 
 
 def test_replace_all_classes():
@@ -316,10 +329,11 @@ def test_replace_all_classes():
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
     bc.run_checks()
 
-    bc.report_breaking_changes()
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    for message in bc.breaking_changes:
-        assert message in EXPECTED
+    assert changes == expected_msg
 
 
 def test_replace_all_modules():
@@ -343,7 +357,8 @@ def test_replace_all_modules():
     bc = BreakingChangesTracker(stable, current, diff, "azure-storage-queue")
     bc.run_checks()
 
-    bc.report_breaking_changes()
+    changes = bc.report_changes()
+
+    expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
-    for message in bc.breaking_changes:
-        assert message in EXPECTED
+    assert changes == expected_msg
