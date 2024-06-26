@@ -261,9 +261,7 @@ if result.paragraphs:
             f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
         )
         print(f"...with content: '{paragraph.content}'")
-        print(
-            f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}"
-        )
+        print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
 if result.tables:
     for table_idx, table in enumerate(result.tables):
