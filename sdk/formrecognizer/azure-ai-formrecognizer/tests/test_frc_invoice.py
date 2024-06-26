@@ -8,7 +8,7 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
