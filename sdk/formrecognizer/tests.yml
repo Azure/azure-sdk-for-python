@@ -9,13 +9,16 @@ extends:
       UseFederatedAuth: true
       MatrixReplace:
         - TestSamples=.*/true
+      Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
       # As such, the canary test runs should run on a reduced matrix.
       CloudConfig:
-        Public:
+        Prod:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths: 
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
