@@ -7,14 +7,8 @@
 
 from enum import Enum
 from typing import Any, Dict, List, Union
-try:
-    import jsondiff
-except ModuleNotFoundError:
-    pass
-try:
-    from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
-except ModuleNotFoundError:
-    from .breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
+import jsondiff
+from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 
 class BreakingChangeType(str, Enum):
@@ -38,60 +32,60 @@ class BreakingChangeType(str, Enum):
 
 class BreakingChangesTracker:
     REMOVED_OR_RENAMED_CLIENT_MSG = \
-        "({}): The client '{}.{}' was deleted or renamed in the current version"
+        "The client '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLIENT_METHOD_MSG = \
-        "({}): The '{}.{}' client method '{}' was deleted or renamed in the current version"
+        "The '{}.{}' client method '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLASS_MSG = \
-        "({}): The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
+        "The model or publicly exposed class '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_CLASS_METHOD_MSG = \
-        "({}): The '{}.{}' method '{}' was deleted or renamed in the current version"
+        "The '{}.{}' method '{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' was deleted or renamed in the current version"
+        "The publicly exposed function '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "({}): The '{}.{} method '{}' had its '{}' parameter '{}' deleted or renamed in the current version"
+        "The '{}.{} method '{}' had its '{}' parameter '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "({}): The function '{}.{}' had its '{}' parameter '{}' deleted or renamed in the current version"
+        "The function '{}.{}' had its '{}' parameter '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "({}): The '{}.{} method '{}' had a '{}' parameter '{}' inserted in the current version"
+        "The '{}.{} method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
-        "({}): The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
+        "The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
-        "({}): The client '{}.{}' had its instance variable '{}' deleted or renamed in the current version"
+        "The client '{}.{}' had its instance variable '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG = \
-        "({}): The model or publicly exposed class '{}.{}' had its instance variable '{}' deleted or renamed " \
+        "The model or publicly exposed class '{}.{}' had its instance variable '{}' deleted or renamed " \
         "in the current version"
     REMOVED_OR_RENAMED_ENUM_VALUE_MSG = \
-        "({}): The '{}.{}' enum had its value '{}' deleted or renamed in the current version"
+        "The '{}.{}' enum had its value '{}' deleted or renamed in the current version"
     CHANGED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "({}): The class '{}.{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "The class '{}.{}' method '{}' had its parameter '{}' default value changed from '{}' to '{}'"
     CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' had its parameter '{}' default value changed from '{}' to '{}'"
+        "The publicly exposed function '{}.{}' had its parameter '{}' default value changed from '{}' to '{}'"
     REMOVED_PARAMETER_DEFAULT_VALUE_MSG = \
-        "({}): The class '{}.{}' method '{}' had default value '{}' removed from its parameter '{}' in " \
+        "The class '{}.{}' method '{}' had default value '{}' removed from its parameter '{}' in " \
         "the current version"
     REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' had default value '{}' removed from its parameter '{}' in " \
+        "The publicly exposed function '{}.{}' had default value '{}' removed from its parameter '{}' in " \
         "the current version"
     CHANGED_PARAMETER_ORDERING_MSG = \
-        "({}): The class '{}.{}' method '{}' had its parameters re-ordered from '{}' to '{}' in the current version"
+        "The class '{}.{}' method '{}' had its parameters re-ordered from '{}' to '{}' in the current version"
     CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG = \
-        "({}): The publicly exposed function '{}.{}' had its parameters re-ordered from '{}' to '{}' in " \
+        "The publicly exposed function '{}.{}' had its parameters re-ordered from '{}' to '{}' in " \
         "the current version"
     CHANGED_PARAMETER_KIND_MSG = \
-        "({}): The class '{}.{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
+        "The class '{}.{}' method '{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
-        "({}): The function '{}.{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
+        "The function '{}.{}' had its parameter '{}' changed from '{}' to '{}' in the current version"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
-        "({}): The class '{}.{}' method '{}' changed from '{}' to '{}' in the current version."
+        "The class '{}.{}' method '{}' changed from '{}' to '{}' in the current version."
     CHANGED_FUNCTION_KIND_MSG = \
-        "({}): The function '{}.{}' changed from '{}' to '{}' in the current version."
+        "The function '{}.{}' changed from '{}' to '{}' in the current version."
     REMOVED_OR_RENAMED_MODULE_MSG = \
-        "({}): The '{}' module was deleted or renamed in the current version"
+        "The '{}' module was deleted or renamed in the current version"
     REMOVED_CLASS_FUNCTION_KWARGS_MSG = \
-        "({}): The class '{}.{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
+        "The class '{}.{}' method '{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
     REMOVED_FUNCTION_KWARGS_MSG = \
-        "({}): The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
+        "The function '{}.{}' changed from accepting keyword arguments to not accepting them in " \
         "the current version"
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
@@ -105,20 +99,11 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
-
-    def __str__(self):
-        formatted = "\n"
-        for bc in self.breaking_changes:
-            formatted += bc + "\n"
-
-        formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
-                     "any reported breaking changes or false positives.\n"
-        return formatted
+        self.previous_version = kwargs.get("previous_version", None)
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
-        self.report_breaking_changes()
 
     def run_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
@@ -574,6 +559,7 @@ class BreakingChangesTracker:
                 )
             return True
 
+    # ----------------------------------- Report methods -----------------------------------
     def get_reportable_breaking_changes(self, ignore_changes: Dict) -> List:
         reportable_changes = []
         ignored = ignore_changes[self.package_name]
@@ -588,11 +574,23 @@ class BreakingChangesTracker:
             reportable_changes.append(bc)
         return reportable_changes
 
-    def report_breaking_changes(self) -> None:
+    def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
         if self.package_name in ignore_changes:
             self.breaking_changes = self.get_reportable_breaking_changes(ignore_changes)
 
+        # If there are no breaking changes after the ignore check, return early
+        if not self.breaking_changes:
+            return f"\nNo breaking changes found for {self.package_name} between stable version {self.previous_version} and current version."
+
+        formatted = "\n"
         for idx, bc in enumerate(self.breaking_changes):
             msg, *args = bc
-            self.breaking_changes[idx] = msg.format(*args)
+            # For simple breaking changes reporting, prepend the change code to the message
+            msg = "({}): " + msg + "\n"
+            formatted += msg.format(*args)
+        
+        formatted += f"\nFound {len(self.breaking_changes)} breaking changes.\n"
+        formatted += "\nSee aka.ms/azsdk/breaking-changes-tool to resolve " \
+                     "any reported breaking changes or false positives.\n"
+        return formatted
