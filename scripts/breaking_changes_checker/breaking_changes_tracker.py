@@ -99,7 +99,6 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
-        self.previous_version = kwargs.get("previous_version", None)
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
@@ -581,7 +580,7 @@ class BreakingChangesTracker:
 
         # If there are no breaking changes after the ignore check, return early
         if not self.breaking_changes:
-            return f"\nNo breaking changes found for {self.package_name} between stable version {self.previous_version} and current version."
+            return f"\nNo breaking changes found for {self.package_name} between versions."
 
         formatted = "\n"
         for idx, bc in enumerate(self.breaking_changes):
