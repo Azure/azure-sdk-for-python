@@ -22,6 +22,7 @@ from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportClusterParameters
 from ._models_py3 import FlushParameters
+from ._models_py3 import ForceLinkParameters
 from ._models_py3 import ForceUnlinkParameters
 from ._models_py3 import ImportClusterParameters
 from ._models_py3 import LinkedDatabase
@@ -50,6 +51,7 @@ from ._redis_enterprise_management_client_enums import ActionType
 from ._redis_enterprise_management_client_enums import AofFrequency
 from ._redis_enterprise_management_client_enums import ClusteringPolicy
 from ._redis_enterprise_management_client_enums import CmkIdentityType
+from ._redis_enterprise_management_client_enums import DeferUpgradeSetting
 from ._redis_enterprise_management_client_enums import EvictionPolicy
 from ._redis_enterprise_management_client_enums import LinkState
 from ._redis_enterprise_management_client_enums import ManagedServiceIdentityType
@@ -83,6 +85,7 @@ __all__ = [
     "ErrorResponse",
     "ExportClusterParameters",
     "FlushParameters",
+    "ForceLinkParameters",
     "ForceUnlinkParameters",
     "ImportClusterParameters",
     "LinkedDatabase",
@@ -110,6 +113,7 @@ __all__ = [
     "AofFrequency",
     "ClusteringPolicy",
     "CmkIdentityType",
+    "DeferUpgradeSetting",
     "EvictionPolicy",
     "LinkState",
     "ManagedServiceIdentityType",
