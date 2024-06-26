@@ -6,11 +6,18 @@
 # --------------------------------------------------------------------------------------------
 
 from enum import Enum
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional, NamedTuple
 import jsondiff
 import re
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
+
+class Suppression(NamedTuple):
+    change_type: str
+    module: str
+    class_name: Optional[str] = None
+    function_name: Optional[str] = None
+    parameter_or_property_name: Optional[str] = None
 
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
@@ -586,20 +593,15 @@ class BreakingChangesTracker:
             function_name = args[1] if len(args) > 1 else None
             parameter_name = args[2] if len(args) > 2 else None
 
-            for ignored_bc, *ignored_args in ignored:
-                ignored_module_name = ignored_args[0] if ignored_args else None
-                ignored_class_name = ignored_args[1] if len(ignored_args) > 1 else None
-                ignored_function_name = ignored_args[2] if len(ignored_args) > 2 else None
-                ignored_parameter_name = ignored_args[3] if len(ignored_args) > 3 else None
+            for rule in ignored:
+                suppression = Suppression(*rule)
 
-                if ignored_parameter_name is not None:
+                if suppression.parameter_or_property_name is not None:
                     # If the ignore rule is for a parameter, we should check parameters on the original breaking change
-                    if self.match((bc_type, module_name, class_name, function_name, parameter_name), (
-                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name, ignored_parameter_name)):
+                    if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
                         self.breaking_changes.remove(bc)
                         break
-                elif self.match((bc_type, module_name, class_name, function_name), (
-                    ignored_bc, ignored_module_name, ignored_class_name, ignored_function_name)):
+                elif self.match((bc_type, module_name, class_name, function_name), suppression):
                     self.breaking_changes.remove(bc)
                     break
 
