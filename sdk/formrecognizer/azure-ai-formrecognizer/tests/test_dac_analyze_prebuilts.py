@@ -8,10 +8,9 @@ import pytest
 import json
 import functools
 from datetime import date, time
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, get_credential
 from io import BytesIO
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
-from azure.core.credentials import AzureKeyCredential
 from azure.core.serialization import AzureJSONEncoder
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType, AddressValue
@@ -309,19 +308,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_receipt_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
-            client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
+            client = DocumentAnalysisClient("http://notreal.azure.com", get_credential())
             poller = client.begin_analyze_document("prebuilt-receipt", my_file)
-
-    @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            poller = client.begin_analyze_document("prebuilt-receipt", b"xx")
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

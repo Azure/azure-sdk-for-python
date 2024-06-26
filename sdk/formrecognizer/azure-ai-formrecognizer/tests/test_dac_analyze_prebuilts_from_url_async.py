@@ -7,9 +7,9 @@
 import pytest
 import functools
 from datetime import date, time
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ServiceRequestError
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
@@ -173,8 +173,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
+    async def test_polling_interval(self, formrecognizer_test_endpoint, **kwargs):
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(is_async=True), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
         async with client:
@@ -211,21 +211,8 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_receipt_url_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with pytest.raises(ServiceRequestError):
-            client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            async with client:
-                poller = await client.begin_analyze_document_from_url(
-                    "prebuilt-receipt",
-                    self.receipt_url_jpg
-                )
-                result = await poller.result()
-
-    @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_receipt_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
+            client = DocumentAnalysisClient("http://notreal.azure.com", get_credential(is_async=True))
             async with client:
                 poller = await client.begin_analyze_document_from_url(
                     "prebuilt-receipt",

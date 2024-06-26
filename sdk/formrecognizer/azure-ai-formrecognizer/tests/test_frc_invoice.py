@@ -26,11 +26,10 @@ class TestInvoice(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_invoice_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
+            client = FormRecognizerClient("http://notreal.azure.com", get_credential())
             poller = client.begin_recognize_invoices(my_file)
 
     @skip_flaky_test

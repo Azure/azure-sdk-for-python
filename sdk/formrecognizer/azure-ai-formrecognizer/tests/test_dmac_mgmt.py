@@ -6,8 +6,7 @@
 
 import functools
 import pytest
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, get_credential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.pipeline.transport import RequestsTransport
 from azure.ai.formrecognizer import (
@@ -35,14 +34,6 @@ class TestManagement(FormRecognizerTest):
         client = DocumentModelAdministrationClient(endpoint, token)
         info = client.get_resource_details()
         assert info
-
-    @skip_flaky_test
-    @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            result = client.get_resource_details()
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -231,9 +222,9 @@ class TestManagement(FormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
-    def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    def test_get_document_analysis_client(self, formrecognizer_test_endpoint, **kwargs):
         transport = RequestsTransport()
-        dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=get_credential(), transport=transport)
 
         with dtc:
             dtc.get_resource_details()

@@ -7,9 +7,8 @@
 import pytest
 import functools
 from io import BytesIO
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.core.exceptions import ServiceRequestError
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersion
@@ -25,11 +24,10 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_identity_document_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.identity_document_license_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
+            client = FormRecognizerClient("http://notreal.azure.com", get_credential())
             poller = client.begin_recognize_identity_documents(my_file)
 
     @FormRecognizerPreparer()

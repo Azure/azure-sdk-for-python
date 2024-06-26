@@ -22,16 +22,6 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 
 class TestContentFromUrlAsync(AsyncFormRecognizerTest):
-
-    @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            async with client:
-                poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
-                result = await poller.result()
-
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

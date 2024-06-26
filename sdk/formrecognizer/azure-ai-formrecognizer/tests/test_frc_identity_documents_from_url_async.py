@@ -6,8 +6,8 @@
 
 import pytest
 import functools
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
@@ -25,8 +25,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
+    async def test_polling_interval(self, formrecognizer_test_endpoint, **kwargs):
+        client = FormRecognizerClient(formrecognizer_test_endpoint, get_credential(is_async=True), polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
         async with client:

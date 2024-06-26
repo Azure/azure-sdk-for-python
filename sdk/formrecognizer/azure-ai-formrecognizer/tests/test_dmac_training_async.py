@@ -8,8 +8,7 @@ import uuid
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import set_bodiless_matcher, get_credential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
@@ -56,17 +55,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             )
                 assert "https://fakeuri.com/blank%20space" in poller._polling_method._initial_response.http_request.body
                 await poller.wait()
-
-    @skip_flaky_test
-    @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        set_bodiless_matcher()
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            async with client:
-                poller = await client.begin_build_document_model("template", blob_container_url="xx")
-                result = await poller.result()
 
     @skip_flaky_test
     @FormRecognizerPreparer()

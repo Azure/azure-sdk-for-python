@@ -8,9 +8,9 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ServiceRequestError, HttpResponseError
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer.aio import FormRecognizerClient
@@ -28,11 +28,10 @@ class TestInvoiceAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_invoice_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
+            client = FormRecognizerClient("http://notreal.azure.com", get_credential(is_async=True))
             async with client:
                 poller = await client.begin_recognize_invoices(my_file)
 

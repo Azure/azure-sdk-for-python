@@ -21,14 +21,6 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 
 class TestContentFromUrl(FormRecognizerTest):
-
-    @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            poller = client.begin_recognize_content_from_url(self.invoice_url_pdf)
-
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

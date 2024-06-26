@@ -7,8 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import set_bodiless_matcher, get_credential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
@@ -24,8 +23,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_document_analysis_none_model(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document_from_url(model_id=None, document_url="https://badurl.jpg")
@@ -34,8 +32,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_document_analysis_empty_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")

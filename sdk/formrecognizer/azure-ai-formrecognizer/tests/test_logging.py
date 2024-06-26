@@ -8,13 +8,9 @@
 import logging
 import pytest
 import json
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
-
+from unittest import mock
+from devtools_testutils import get_credential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from testcase import FormRecognizerTest
 from preparers import FormRecognizerPreparer
@@ -34,8 +30,7 @@ class TestLogging(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_logging_info_dac_client(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential())
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -57,8 +52,7 @@ class TestLogging(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_logging_info_dmac_client(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, get_credential())
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -78,7 +72,6 @@ class TestLogging(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_mock_quota_exceeded_403(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
 
         response = mock.Mock(
             status_code=403,
@@ -92,7 +85,7 @@ class TestLogging(FormRecognizerTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(), transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
@@ -102,7 +95,6 @@ class TestLogging(FormRecognizerTest):
     @FormRecognizerPreparer()
     def test_mock_quota_exceeded_429(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
 
         response = mock.Mock(
             status_code=429,
@@ -116,7 +108,7 @@ class TestLogging(FormRecognizerTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(), transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)

@@ -6,7 +6,7 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.core.exceptions import ServiceRequestError, ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
@@ -24,19 +24,11 @@ class TestContentFromStream(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_content_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
-            client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
+            client = FormRecognizerClient("http://notreal.azure.com", get_credential())
             poller = client.begin_recognize_content(my_file)
-
-    @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_content_authentication_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            poller = client.begin_recognize_content(b"xx", content_type="application/pdf")
 
     @skip_flaky_test
     @FormRecognizerPreparer()

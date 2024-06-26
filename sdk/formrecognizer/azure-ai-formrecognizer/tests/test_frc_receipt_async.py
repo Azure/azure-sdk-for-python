@@ -8,8 +8,8 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date, time
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from preparers import FormRecognizerPreparer
@@ -53,8 +53,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = FormRecognizerClient(formrecognizer_test_endpoint, get_credential(is_async=True))
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:

@@ -7,9 +7,8 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher
+from devtools_testutils import set_bodiless_matcher, set_custom_default_matcher, get_credential
 from azure.core.pipeline.transport import AioHttpTransport
-from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.ai.formrecognizer import (
     DocumentModelAdministrationClient,
@@ -38,14 +37,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async with client:
             info = await client.get_resource_details()
         assert info
-
-    @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            async with client:
-                result = await client.get_resource_details()
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -237,13 +228,13 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, **kwargs):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         )  
         transport = AioHttpTransport()
-        dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=get_credential(is_async=True), transport=transport)
 
         async with dtc:
             await dtc.get_resource_details()

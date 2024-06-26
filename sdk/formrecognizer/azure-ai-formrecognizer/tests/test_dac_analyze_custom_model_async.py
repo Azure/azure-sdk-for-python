@@ -7,7 +7,7 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_bodiless_matcher, get_credential
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
@@ -25,8 +25,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_analyze_document_none_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(model_id=None, document=b"xx")
@@ -35,8 +34,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     async def test_analyze_document_empty_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = DocumentAnalysisClient(formrecognizer_test_endpoint, get_credential(is_async=True))
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_analyze_document(model_id="", document=b"xx")

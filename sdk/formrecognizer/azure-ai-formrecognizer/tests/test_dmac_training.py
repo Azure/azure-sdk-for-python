@@ -54,15 +54,6 @@ class TestDMACTraining(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @recorded_by_proxy
-    def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        set_bodiless_matcher()
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
-        with pytest.raises(ClientAuthenticationError):
-            poller = client.begin_build_document_model(build_mode="template", blob_container_url="xx")
-
-    @skip_flaky_test
-    @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):

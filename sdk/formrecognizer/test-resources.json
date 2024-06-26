@@ -234,10 +234,6 @@
             "type": "string",
             "value": "[variables('formRecognizerBaseName')]"
         },
-        "FORMRECOGNIZER_TEST_API_KEY": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
-        },
         "FORMRECOGNIZER_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureFormRecognizerUrl')]"
