@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
@@ -17,7 +15,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_databases_create_with_geo_replication.py
+    python redis_enterprise_databases_upgrade_db_redis_version.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,36 +27,16 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 def main():
     client = RedisEnterpriseManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="subid",
     )
 
-    response = client.databases.begin_create(
+    client.databases.begin_upgrade_db_redis_version(
         resource_group_name="rg1",
         cluster_name="cache1",
         database_name="default",
-        parameters={
-            "properties": {
-                "clientProtocol": "Encrypted",
-                "clusteringPolicy": "EnterpriseCluster",
-                "evictionPolicy": "NoEviction",
-                "geoReplication": {
-                    "groupNickname": "groupName",
-                    "linkedDatabases": [
-                        {
-                            "id": "/subscriptions/subid1/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/cache1/databases/default"
-                        },
-                        {
-                            "id": "/subscriptions/subid2/resourceGroups/rg2/providers/Microsoft.Cache/redisEnterprise/cache2/databases/default"
-                        },
-                    ],
-                },
-                "port": 10000,
-            }
-        },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesCreateWithGeoReplication.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesUpgradeDBRedisVersion.json
 if __name__ == "__main__":
     main()

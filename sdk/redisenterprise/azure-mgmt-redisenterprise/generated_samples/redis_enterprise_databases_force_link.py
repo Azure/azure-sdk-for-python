@@ -17,7 +17,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_databases_create_with_geo_replication.py
+    python redis_enterprise_databases_force_link.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,36 +29,27 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 def main():
     client = RedisEnterpriseManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.databases.begin_create(
+    client.databases.begin_force_link_to_replication_group(
         resource_group_name="rg1",
         cluster_name="cache1",
         database_name="default",
         parameters={
-            "properties": {
-                "clientProtocol": "Encrypted",
-                "clusteringPolicy": "EnterpriseCluster",
-                "evictionPolicy": "NoEviction",
-                "geoReplication": {
-                    "groupNickname": "groupName",
-                    "linkedDatabases": [
-                        {
-                            "id": "/subscriptions/subid1/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/cache1/databases/default"
-                        },
-                        {
-                            "id": "/subscriptions/subid2/resourceGroups/rg2/providers/Microsoft.Cache/redisEnterprise/cache2/databases/default"
-                        },
-                    ],
+            "groupNickname": "groupName",
+            "linkedDatabases": [
+                {
+                    "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Cache/redisEnterprise/cache1/databases/default"
                 },
-                "port": 10000,
-            }
+                {
+                    "id": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rg2/providers/Microsoft.Cache/redisEnterprise/cache2/databases/default"
+                },
+            ],
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesCreateWithGeoReplication.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesForceLink.json
 if __name__ == "__main__":
     main()
