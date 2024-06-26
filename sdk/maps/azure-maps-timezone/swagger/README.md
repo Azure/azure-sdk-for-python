@@ -29,7 +29,7 @@ We automatically hardcode in that this is `python`.
 ## Basic Information
 
 ```yaml
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Timezone/preview/1.0/timezone.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Timezone/preview/1.0/timezone.json
 output-folder: ../azure/maps/timezone/_generated
 namespace: azure.maps.timezone
 package-name: azure-maps-timezone
@@ -40,7 +40,13 @@ clear-output-folder: true
 python: true
 no-async: false
 add-credential: false
-title: MapsTimezoneClient
+title: TimezoneClient
 disable-async-iterators: true
 python-sdks-folder: $(python-sdks-folder)
+
+directive:
+- from: swagger-document
+  where: $.securityDefinitions
+  transform: |
+    $["SharedKey"]["in"] = "header";
 ```

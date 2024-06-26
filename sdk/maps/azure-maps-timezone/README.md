@@ -1,9 +1,9 @@
-# Azure Maps Search Package client library for Python
+# Azure Maps Timezone Package client library for Python
 
-This package contains a Python SDK for Azure Maps Services for Search.
+This package contains a Python SDK for Azure Maps Services for Timezone.
 Read more about Azure Maps Services [here](https://docs.microsoft.com/azure/azure-maps/)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search) | [API reference documentation](https://docs.microsoft.com/rest/api/maps/search) | [Product documentation](https://docs.microsoft.com/azure/azure-maps/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone) | [API reference documentation](https://docs.microsoft.com/rest/api/maps/timezone) | [Product documentation](https://docs.microsoft.com/azure/azure-maps/)
 
 ## _Disclaimer_
 
@@ -25,15 +25,15 @@ az maps account create --resource-group <resource-group-name> --account-name <ac
 
 ### Install the package
 
-Install the Azure Maps Service Search SDK.
+Install the Azure Maps Service Timezone SDK.
 
 ```bash
-pip install azure-maps-search
+pip install azure-maps-timezone
 ```
 
-### Create and Authenticate the MapsSearchClient
+### Create and Authenticate the AzureTimezoneClient
 
-To create a client object to access the Azure Maps Search API, you will need a **credential** object. Azure Maps Search client also support two ways to authenticate.
+To create a client object to access the Azure Maps Timezone API, you will need a **credential** object. Azure Maps Timezone client also support two ways to authenticate.
 
 #### 1. Authenticate with a Subscription Key Credential
 
@@ -42,12 +42,14 @@ Once the Azure Maps Subscription Key is created, set the value of the key as env
 Then pass an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter into an instance of [AzureKeyCredential][azure-key-credential].
 
 ```python
+import os
+
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.search import MapsSearchClient
+from azure.maps.timezone import AzureTimezoneClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-search_client = MapsSearchClient(
+timezone_client = AzureTimezoneClient(
     credential=credential,
 )
 ```
@@ -71,21 +73,22 @@ Next, set the values of the client ID, tenant ID, and client secret of the AAD a
 You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
 
 ```python
-from azure.maps.search import MapsSearchClient
+import os
+from azure.maps.timezone import AzureTimezoneClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-search_client = MapsSearchClient(credential=credential)
+timezone_client = AzureTimezoneClient(credential=credential)
 ```
 
 ## Key concepts
 
-The Azure Maps Search client library for Python allows you to interact with each of the components through the use of a dedicated client object.
+The Azure Maps Timezone client library for Python allows you to interact with each of the components through the use of a dedicated client object.
 
 ### Sync Clients
 
-`MapsSearchClient` is the primary client for developers using the Azure Maps Search client library for Python.
-Once you initialized a `MapsSearchClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Search service that you can access.
+`AzureTimezoneClient` is the primary client for developers using the Azure Maps Timezone client library for Python.
+Once you initialized a `AzureTimezoneClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Timezone service that you can access.
 
 ### Async Clients
 
@@ -96,17 +99,18 @@ Async clients and credentials should be closed when they're no longer needed. Th
 
 ## Examples
 
-The following sections provide several code snippets covering some of the most common Azure Maps Search tasks, including:
+The following sections provide several code snippets covering some of the most common Azure Maps Timezone tasks, including:
 
-- [Request latitude and longitude coordinates for an address](#request-latitude-and-longitude-coordinates-for-an-address)
-- [Batch request for latitude and longitude coordinates for addresses](#batch-request-for-latitude-and-longitude-coordinates-for-addresses)
-- [Get polygons for a given location](#get-polygons-for-a-given-location)
-- [Make a Reverse Address Search to translate coordinate location to street address](#make-a-reverse-address-search-to-translate-coordinate-location-to-street-address)
-- [Batch request for reverse geocoding](#batch-request-for-reverse-geocoding)
+- [Get timezone by id](#get-timezone-by-id)
+- [Get timezone by coordinates](#get-timezone-by-coordinates)
+- [Get iana version](#get-iana-version)
+- [Get iana timezone ids](#get-iana-timezone-ids)
+- [Get windows timezone ids](#get-windows-timezone-ids)
+- [Convert windows timezone to iana](#convert-windows-timezone-to-iana)
 
-### Request latitude and longitude coordinates for an address
+### Get timezone by id
 
-You can use an authenticated client to convert an address into latitude and longitude coordinates. This process is also called geocoding. In addition to returning the coordinates, the response will also return detailed address properties such as street, postal code, municipality, and country/region information.
+This API returns current, historical, and future time zone information for the specified IANA time zone ID.
 
 ```python
 import os
@@ -115,34 +119,26 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def geocode():
+def get_timezone_by_id():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.timezone import AzureTimezoneClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
-        if 'features' in result and result['features']:
-            coordinates = result['features'][0]['geometry']['coordinates']
-            longitude = coordinates[0]
-            latitude = coordinates[1]
-
-            print(longitude, latitude)
-        else:
-            print("No results")
-
+        result = timezone_client.get_timezone_by_id(timezone_id="sr-Latn-RS")
+        print(result)
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    geocode()
+    get_timezone_by_id()
 ```
 
-### Batch request for latitude and longitude coordinates for addresses
+### Get timezone by coordinates
 
-This sample demonstrates how to perform batch search address.
+This API returns current, historical, and future time zone information for a specified latitude-longitude pair.
 
 ```python
 import os
@@ -151,112 +147,54 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def geocode_batch():
+def get_timezone_by_coordinates():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.timezone import AzureTimezoneClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_geocoding_batch({
-          "batchItems": [
-            {"query": "400 Broad St, Seattle, WA 98109"},
-            {"query": "15127 NE 24th Street, Redmond, WA 98052"},
-          ],
-        },)
-
-        if 'batchItems' not in result or not result['batchItems']:
-            print("No geocoding")
-            return
-
-        item1, item2 = result['batchItems']
-
-        if not item1.get('features'):
-            print("No geocoding1")
-            return
-
-        if not item2.get('features'):
-            print("No geocoding2")
-            return
-
-        coordinates1 = item1['features'][0]['geometry']['coordinates']
-        coordinates2 = item2['features'][0]['geometry']['coordinates']
-
-        longitude1, latitude1 = coordinates1
-        longitude2, latitude2 = coordinates2
-
-        print(longitude1, latitude1)
-        print(longitude2, latitude2)
-
+        result = timezone_client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
+        print(result)
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    geocode_batch()
+    get_timezone_by_coordinates()
 ```
 
-### Get polygons for a given location
+### Get iana version
 
-This sample demonstrates how to search polygons.
+This API returns the current IANA version number as Metadata.
 
 ```python
-# coding: utf-8
-
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-
-"""
-FILE: sample_get_polygon.py
-DESCRIPTION:
-    This sample demonstrates how to search polygons.
-USAGE:
-    python sample_get_polygon.py
-
-    Set the environment variables with your own values before running the sample:
-    - AZURE_SUBSCRIPTION_KEY - your subscription key
-"""
 import os
 
 from azure.core.exceptions import HttpResponseError
-from azure.maps.search import Resolution
-from azure.maps.search import BoundaryResultType
-
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def get_polygon():
+def get_iana_version():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.timezone import AzureTimezoneClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_polygon(
-          coordinates=[-122.204141, 47.61256],
-          result_type=BoundaryResultType.LOCALITY,
-          resolution=Resolution.SMALL,
-        )
-
-        if 'geometry' not in result or not result['geometry']:
-            print("No geometry found")
-            return
-
-        print(result["geometry"])
+        result = timezone_client.get_iana_version()
+        print(result)
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-    get_polygon()
+    get_iana_version()
 ```
 
-### Make a Reverse Address Search to translate coordinate location to street address
+### Get iana timezone ids
 
-You can translate coordinates into human-readable street addresses. This process is also called reverse geocoding. This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
+This API returns a full list of IANA time zone IDs. Updates to the IANA service will be reflected in the system within one day.
 
 ```python
 import os
@@ -265,92 +203,83 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def reverse_geocode():
+def get_iana_timezone_ids():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.search import AzureMapsSearchClient
+    from azure.maps.timezone import AzureTimezoneClient
 
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
-        if 'features' in result and result['features']:
-            props = result['features'][0].get('properties', {})
-            if props and 'address' in props and props['address']:
-                print(props['address'].get('formattedAddress', 'No formatted address found'))
-            else:
-                print("Address is None")
-        else:
-            print("No features available")
+        result = timezone_client.get_iana_timezone_ids()
+        print(result)
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-
 if __name__ == '__main__':
-   reverse_geocode()
+    get_iana_timezone_ids()
 ```
 
-### Batch request for reverse geocoding
+### Get windows timezone ids
 
-This sample demonstrates how to perform reverse search by given coordinates in batch.
+This API returns a full list of Windows time zone IDs.
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
+
 from azure.core.exceptions import HttpResponseError
-from azure.maps.search import AzureMapsSearchClient
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
-def reverse_geocode_batch():
-    maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
+def get_windows_timezone_ids():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.timezone import AzureTimezoneClient
+
+    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
     try:
-        result = maps_search_client.get_reverse_geocoding_batch({
-              "batchItems": [
-                {"coordinates": [-122.349309, 47.620498]},
-                {"coordinates": [-122.138679, 47.630356]},
-              ],
-            },)
-
-        if 'batchItems' in result and result['batchItems']:
-            # item 1
-            features = result['batchItems'][0]['features']
-            if features:
-                props = features[0].get('properties', {})
-                if props and 'address' in props and props['address']:
-                    print(props['address'].get('formattedAddress', 'No formatted address for item 1 found'))
-                else:
-                    print("Address 1 is None")
-            else:
-                print("No features available for item 1")
-
-            # item 2
-            features = result['batchItems'][1]['features']
-            if features:
-                props = features[0].get('properties', {})
-                if props and 'address' in props and props['address']:
-                    print(props['address'].get('formattedAddress', 'No formatted address for item 2 found'))
-                else:
-                    print("Address 2 is None")
-            else:
-                print("No features available for item 2")
-        else:
-            print("No batch items found")
+        result = timezone_client.get_windows_timezone_ids()
+        print(result)
     except HttpResponseError as exception:
         if exception.error is not None:
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
+if __name__ == '__main__':
+    get_windows_timezone_ids()
+```
+### Convert windows timezone to iana
+
+This API returns a corresponding IANA ID, given a valid Windows Time Zone ID.
+
+```python
+import os
+
+from azure.core.exceptions import HttpResponseError
+
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def convert_windows_timezone_to_iana():
+    from azure.core.credentials import AzureKeyCredential
+    from azure.maps.timezone import AzureTimezoneClient
+
+    timezone_client = AzureTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    try:
+        result = timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
+        print(result)
+    except HttpResponseError as exception:
+        if exception.error is not None:
+            print(f"Error Code: {exception.error.code}")
+            print(f"Message: {exception.error.message}")
 
 if __name__ == '__main__':
-   reverse_geocode_batch()
+    convert_windows_timezone_to_iana()
 ```
 
 ## Troubleshooting
 
 ### General
 
-Maps Search clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
+Maps Timezone clients raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
 This list can be used for reference to catch thrown exceptions. To get the specific error code of the exception, use the `error_code` attribute, i.e, `exception.error_code`.
 
@@ -364,10 +293,9 @@ Detailed DEBUG level logging, including request/response bodies and unredacted h
 ```python
 import sys
 import logging
-from azure.maps.search import MapsSearchClient
 
-# Create a logger for the 'azure.maps.search' SDK
-logger = logging.getLogger('azure.maps.search')
+# Create a logger for the 'azure.maps.timezone' SDK
+logger = logging.getLogger('azure.maps.timezone')
 logger.setLevel(logging.DEBUG)
 
 # Configure a console output
@@ -391,29 +319,30 @@ Still running into issues? If you encounter any bugs or have suggestions, please
 
 ### More sample code
 
-Get started with our [Maps Search samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search/samples) ([Async Version samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search/samples/async_samples)).
+Get started with our [Maps Timezone samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone/samples) ([Async Version samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone/samples/async_samples)).
 
-Several Azure Maps Search Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Maps Search
+Several Azure Maps Timezone Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Maps Timezone
 
 ```bash
 set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 
-pip install azure-maps-search --pre
+pip install azure-maps-timezone --pre
 
-python samples/sample_geocode.py
-python sample/sample_geocode_batch.py
-python samples/sample_get_polygon.py
-python samples/sample_reverse_geocode.py
-python samples/sample_reverse_geocode_batch.py
+python samples/get_timezone_by_id.py
+python sample/get_timezone_by_coordinates.py
+python samples/get_iana_version.py
+python samples/get_iana_timezone_ids.py
+python samples/get_windows_timezone_ids.py
+python samples/convert_windows_timezone_to_iana.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.
 
-Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search/samples/README.md)
+Further detail please refer to [Samples Introduction](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone/samples/README.md)
 
 ### Additional documentation
 
-For more extensive documentation on Azure Maps Search, see the [Azure Maps Search documentation](https://docs.microsoft.com/rest/api/maps/search) on docs.microsoft.com.
+For more extensive documentation on Azure Maps Timezone, see the [Azure Maps Timezone documentation](https://docs.microsoft.com/rest/api/maps/timezone) on docs.microsoft.com.
 
 ## Contributing
 

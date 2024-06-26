@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-maps-search"
-PACKAGE_PPRINT_NAME = "Maps Search"
+PACKAGE_NAME = "azure-maps-timezone"
+PACKAGE_PPRINT_NAME = "Maps timezone"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -59,7 +59,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-search',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-timezone',
     keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",

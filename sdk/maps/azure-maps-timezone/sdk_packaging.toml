@@ -1,7 +1,7 @@
 [packaging]
-package_name = "azure-maps-search"
+package_name = "azure-maps-timezone"
 package_nspkg = "azure-maps-nspkg"
-package_pprint_name = "Maps Search"
+package_pprint_name = "Maps Timezone"
 package_doc_id = ""
 is_stable = false
 is_arm = true
