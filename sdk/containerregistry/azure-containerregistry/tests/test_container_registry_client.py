@@ -448,7 +448,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def construct_container_registry_client(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
-        credential = self.get_credential(authority)
+        credential = self.get_credential(authority=authority)
 
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com"
