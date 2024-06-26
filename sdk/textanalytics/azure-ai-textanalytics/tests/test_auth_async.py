@@ -6,9 +6,9 @@
 import pytest
 from azure.ai.textanalytics import AnalyzeSentimentAction
 from azure.ai.textanalytics.aio import TextAnalyticsClient
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsTest
+from devtools_testutils import get_credential
 import os
 
 
@@ -71,6 +71,5 @@ class TestAuth(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     def test_none_endpoint(self, **kwargs):
-        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         with pytest.raises(ValueError):
-            text_analytics = TextAnalyticsClient(None, AzureKeyCredential(textanalytics_test_api_key))
+            text_analytics = TextAnalyticsClient(None, get_credential(is_async=True))

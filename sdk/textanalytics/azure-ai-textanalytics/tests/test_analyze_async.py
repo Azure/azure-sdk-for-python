@@ -14,10 +14,9 @@ import asyncio
 from unittest import mock
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_bodiless_matcher, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
 from azure.ai.textanalytics.aio._lro_async import AsyncAnalyzeActionsLROPoller, AsyncTextAnalysisLROPoller
@@ -751,7 +750,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     async def test_disable_service_logs(
             self,
             textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name,
             textanalytics_multi_label_classify_project_name,
@@ -760,7 +758,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
             ExtractKeyPhrasesAction(disable_service_logs=True),
@@ -998,12 +996,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     async def test_single_label_classify(
             self,
             textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1042,12 +1039,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     async def test_multi_label_classify(
             self,
             textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_multi_label_classify_project_name,
             textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1087,12 +1083,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     async def test_recognize_custom_entities(
             self,
             textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1135,7 +1130,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     async def test_custom_partial_error(
             self,
             textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name,
             textanalytics_multi_label_classify_project_name,
@@ -1144,7 +1138,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1272,8 +1266,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
+        client = TextAnalyticsClient(endpoint, get_credential(is_async=True), transport=transport, api_version="v3.1")
 
         with pytest.raises(HttpResponseError) as e:
             async with client:
@@ -1322,8 +1315,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport)
+        client = TextAnalyticsClient(endpoint, get_credential(is_async=True), transport=transport)
 
         # workaround to get mocked response to work with deserialized polymorphic response type
         def get_deserialized_for_mock(response, deserialized, headers):
@@ -1396,8 +1388,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
+        client = TextAnalyticsClient(endpoint, get_credential(is_async=True), transport=transport, api_version="v3.1")
 
         async with client:
             response = await (await client.begin_analyze_actions(
@@ -1470,8 +1461,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport)
+        client = TextAnalyticsClient(endpoint, get_credential(is_async=True), transport=transport)
 
         # workaround to get mocked response to work with deserialized polymorphic response type
         def get_deserialized_for_mock(response, deserialized, headers):
@@ -1569,8 +1559,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
+        client = TextAnalyticsClient(endpoint, get_credential(is_async=True), transport=transport, api_version="v3.1")
 
         async with client:
             with pytest.raises(HttpResponseError) as e:
@@ -1619,8 +1608,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
         endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key),
+        client = TextAnalyticsClient(endpoint, get_credential(is_async=True),
                                      transport=transport)
 
         # workaround to get mocked response to work with deserialized polymorphic response type
@@ -1726,7 +1714,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsCustomPreparer()
     async def test_analyze_multiapi_validate_v3_1(self, **kwargs):
         textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
         textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
         textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
         textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
@@ -1734,7 +1721,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
         textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
 
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), api_version="v3.1")
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True), api_version="v3.1")
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},

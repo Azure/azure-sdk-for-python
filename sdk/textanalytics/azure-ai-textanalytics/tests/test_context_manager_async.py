@@ -9,7 +9,7 @@ import sys
 
 from testcase import TextAnalyticsTest
 from testcase import TextAnalyticsPreparer
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import get_credential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 
 def get_completed_future(result=None):
@@ -33,11 +33,10 @@ class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     async def test_close(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
+            get_credential(is_async=True),
             transport=transport
         )
 
@@ -48,11 +47,10 @@ class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     async def test_context_manager(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = AsyncMockTransport()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
+            get_credential(is_async=True),
             transport=transport
         )
 

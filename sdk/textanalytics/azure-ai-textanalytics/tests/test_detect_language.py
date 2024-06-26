@@ -8,10 +8,9 @@ import platform
 import functools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.ai.textanalytics import (
     DetectLanguageInput,
     TextAnalyticsClient,
@@ -386,26 +385,28 @@ class TestDetectLanguage(TextAnalyticsTest):
         response = client.detect_language(docs, country_hint="DE", raw_response_hook=callback_2)
         response = client.detect_language(docs, raw_response_hook=callback)
 
-    @TextAnalyticsPreparer()
-    @recorded_by_proxy
-    def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        credential = AzureKeyCredential(textanalytics_test_api_key)
-        client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
+    # @pytest.skip("requires API key")
+    # @TextAnalyticsPreparer()
+    # @recorded_by_proxy
+    # def test_rotate_subscription_key(self, textanalytics_test_endpoint):
+    #     credential = get_credential()
+    #     client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+    #     docs = [{"id": "1", "text": "I will go to the park."},
+    #             {"id": "2", "text": "I did not like the hotel we stayed at."},
+    #             {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.detect_language(docs)
-        assert response is not None
+    #     response = client.detect_language(docs)
+    #     assert response is not None
 
-        credential.update("xxx")  # Make authentication fail
-        with pytest.raises(ClientAuthenticationError):
-            response = client.detect_language(docs)
+    #     credential.update("xxx")  # Make authentication fail
+    #     with pytest.raises(ClientAuthenticationError):
+    #         response = client.detect_language(docs)
 
-        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
-        response = client.detect_language(docs)
-        assert response is not None
+    #     updated_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
+    #     credential.update(updated_test_api_key)  # Authenticate successfully again
+    #     response = client.detect_language(docs)
+    #     assert response is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -572,8 +573,8 @@ class TestDetectLanguage(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy
-    def test_country_hint_none(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key))
+    def test_country_hint_none(self, textanalytics_test_endpoint):
+        client = TextAnalyticsClient(textanalytics_test_endpoint, get_credential())
 
         # service will eventually support this and we will not need to send "" for input == "none"
         documents = [{"id": "0", "country_hint": "none", "text": "This is written in English."}]
@@ -591,7 +592,7 @@ class TestDetectLanguage(TextAnalyticsTest):
         # test per-operation
         result3 = client.detect_language(documents=["this is written in english"], country_hint="none", raw_response_hook=callback)
         # test client default
-        new_client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), default_country_hint="none")
+        new_client = TextAnalyticsClient(textanalytics_test_endpoint, get_credential(), default_country_hint="none")
         result4 = new_client.detect_language(documents=["this is written in english"], raw_response_hook=callback)
 
     @TextAnalyticsPreparer()

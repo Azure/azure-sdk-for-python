@@ -8,7 +8,6 @@ import platform
 import functools
 
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsTest
 from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer

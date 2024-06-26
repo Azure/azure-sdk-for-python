@@ -4,8 +4,8 @@
 # ------------------------------------
 
 from unittest import mock
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
+from devtools_testutils import get_credential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 class TestContextManager(TextAnalyticsTest):
@@ -13,11 +13,10 @@ class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     def test_close(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
+            get_credential(),
             transport=transport
         )
         client.close()
@@ -27,11 +26,10 @@ class TestContextManager(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     def test_context_manager(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
-            AzureKeyCredential(textanalytics_test_api_key),
+            get_credential(),
             transport=transport
         )
 

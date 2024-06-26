@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient, TextAnalyticsApiVersion
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer

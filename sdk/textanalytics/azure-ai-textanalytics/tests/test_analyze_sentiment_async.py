@@ -12,7 +12,6 @@ import asyncio
 import functools
 from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
     VERSION,
@@ -23,6 +22,7 @@ from azure.ai.textanalytics import (
 
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
 
@@ -449,26 +449,27 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
-    @TextAnalyticsPreparer()
-    @recorded_by_proxy_async
-    async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        credential = AzureKeyCredential(textanalytics_test_api_key)
-        client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
+    # @pytest.skip("requires API key")
+    # @TextAnalyticsPreparer()
+    # @recorded_by_proxy_async
+    # async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    #     credential = get_credential(is_async=True)
+    #     client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+    #     docs = [{"id": "1", "text": "I will go to the park."},
+    #             {"id": "2", "text": "I did not like the hotel we stayed at."},
+    #             {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = await client.analyze_sentiment(docs)
-        assert response is not None
+    #     response = await client.analyze_sentiment(docs)
+    #     assert response is not None
 
-        credential.update("xxx")  # Make authentication fail
-        with pytest.raises(ClientAuthenticationError):
-            response = await client.analyze_sentiment(docs)
+    #     credential.update("xxx")  # Make authentication fail
+    #     with pytest.raises(ClientAuthenticationError):
+    #         response = await client.analyze_sentiment(docs)
 
-        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
-        response = await client.analyze_sentiment(docs)
-        assert response is not None
+    #     credential.update(textanalytics_test_api_key)  # Authenticate successfully again
+    #     response = await client.analyze_sentiment(docs)
+    #     assert response is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -894,7 +895,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     async def test_mock_quota_exceeded(self, **kwargs):
         textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
 
         response = mock.Mock(
             status_code=403,
@@ -907,7 +907,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = AsyncMockTransport(send=wrap_in_future(lambda request, **kwargs: response))
 
-        client = TextAnalyticsClient(textanalytics_test_endpoint, AzureKeyCredential(textanalytics_test_api_key), transport=transport)
+        client = TextAnalyticsClient(textanalytics_test_endpoint, get_credential(is_async=True), transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
             result = await client.analyze_sentiment(["I'm tired"])

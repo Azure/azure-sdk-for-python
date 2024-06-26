@@ -8,10 +8,9 @@ import platform
 import functools
 import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, get_credential
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
@@ -364,26 +363,28 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         )
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
-    @TextAnalyticsPreparer()
-    @recorded_by_proxy
-    def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        credential = AzureKeyCredential(textanalytics_test_api_key)
-        client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
+    # @pytest.skip("requires API key")
+    # @TextAnalyticsPreparer()
+    # @recorded_by_proxy
+    # def test_rotate_subscription_key(self, textanalytics_test_endpoint):
+    #     credential = get_credential()
+    #     client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
+    #     docs = [{"id": "1", "text": "I will go to the park."},
+    #             {"id": "2", "text": "I did not like the hotel we stayed at."},
+    #             {"id": "3", "text": "The restaurant had really good food."}]
 
-        response = client.extract_key_phrases(docs)
-        assert response is not None
+    #     response = client.extract_key_phrases(docs)
+    #     assert response is not None
 
-        credential.update("xxx")  # Make authentication fail
-        with pytest.raises(ClientAuthenticationError):
-            response = client.extract_key_phrases(docs)
+    #     credential.update("xxx")  # Make authentication fail
+    #     with pytest.raises(ClientAuthenticationError):
+    #         response = client.extract_key_phrases(docs)
 
-        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
-        response = client.extract_key_phrases(docs)
-        assert response is not None
+    #     updated_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
+    #     credential.update(updated_test_api_key)  # Authenticate successfully again
+    #     response = client.extract_key_phrases(docs)
+    #     assert response is not None
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

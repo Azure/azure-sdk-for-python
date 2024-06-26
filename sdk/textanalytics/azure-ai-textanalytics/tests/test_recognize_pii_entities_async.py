@@ -8,10 +8,10 @@ import platform
 import functools
 import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsTest
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
@@ -405,8 +405,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @recorded_by_proxy_async
-    async def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        credential = AzureKeyCredential(textanalytics_test_api_key)
+    async def test_rotate_subscription_key(self, textanalytics_test_endpoint):
+        credential = get_credential(is_async=True)
         client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
 
         docs = [{"id": "1", "text": "I will go to the park."},
@@ -420,7 +420,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_pii_entities(docs)
 
-        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
+        updated_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
+        credential.update(updated_test_api_key)  # Authenticate successfully again
         response = await client.recognize_pii_entities(docs)
         assert response is not None
 

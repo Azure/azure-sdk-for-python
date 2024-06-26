@@ -6,6 +6,7 @@
 import os
 import pytest
 import functools
+from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import (
     AzureMgmtPreparer,
     get_credential,
@@ -29,6 +30,7 @@ TextAnalyticsPreparer = functools.partial(
     PowerShellPreparer,
     'textanalytics',
     textanalytics_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
+    textanalytics_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
 )
 
 
@@ -43,12 +45,19 @@ class TextAnalyticsClientPreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         textanalytics_test_endpoint = kwargs.get("textanalytics_test_endpoint")
-
-        client = self.client_cls(
+        if "textanalytics_test_api_key" in self.client_kwargs:
+            textanalytics_test_api_key = self.client_kwargs.pop("textanalytics_test_api_key")
+            client = self.client_cls(
             textanalytics_test_endpoint,
-            get_credential(),
+            AzureKeyCredential(textanalytics_test_api_key),
             **self.client_kwargs
         )
+        else:
+            client = self.client_cls(
+                textanalytics_test_endpoint,
+                get_credential(),
+                **self.client_kwargs
+            )
         kwargs.update({"client": client})
         return kwargs
 
@@ -64,12 +73,19 @@ class TextAnalyticsClientPreparerAsync(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         textanalytics_test_endpoint = kwargs.get("textanalytics_test_endpoint")
-
-        client = self.client_cls(
+        if "textanalytics_test_api_key" in self.client_kwargs:
+            textanalytics_test_api_key = self.client_kwargs.pop("textanalytics_test_api_key")
+            client = self.client_cls(
             textanalytics_test_endpoint,
-            get_credential(is_async=True),
+            AzureKeyCredential(textanalytics_test_api_key),
             **self.client_kwargs
         )
+        else:
+            client = self.client_cls(
+                textanalytics_test_endpoint,
+                get_credential(is_async=True),
+                **self.client_kwargs
+            )
         kwargs.update({"client": client})
         return kwargs
 
