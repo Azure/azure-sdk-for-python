@@ -100,9 +100,11 @@ _P = ParamSpec("_P")
 _R = TypeVar("_R")
 
 
-def _set_attribute(span: AbstractSpan, key: str, value: Any) -> None:
-    if value is not None:
-        span.add_attribute(key, value)
+def _set_attributes(span: AbstractSpan, *attrs: tuple[str, Any]) -> None:
+    for attr in attrs:
+        key, value = attr
+        if value is not None:
+            span.add_attribute(key, value)
 
 
 def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
@@ -121,11 +123,14 @@ def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
 
 
 def _add_request_chat_attributes(span: AbstractSpan, **kwargs: Any) -> None:
-    _set_attribute(span, "gen_ai.system", "openai")
-    _set_attribute(span, "gen_ai.request.model", kwargs.get("model"))
-    _set_attribute(span, "gen_ai.request.max_tokens", kwargs.get("max_tokens"))
-    _set_attribute(span, "gen_ai.request.temperature", kwargs.get("temperature"))
-    _set_attribute(span, "gen_ai.request.top_p", kwargs.get("top_p"))
+    _set_attributes(
+        span,
+        ("gen_ai.system", "openai"),
+        ("gen_ai.request.model", kwargs.get("model")),
+        ("gen_ai.request.max_tokens", kwargs.get("max_tokens")),
+        ("gen_ai.request.temperature", kwargs.get("temperature")),
+        ("gen_ai.request.top_p", kwargs.get("top_p")),
+    )
 
 
 def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCompletions) -> None:
@@ -137,17 +142,19 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
             "index": choice.index,
         }
         if choice.message.tool_calls:
-            response["message.tool_calls"] = [tool.to_dict() for tool in choice.message.tool_calls]
+            response["message.tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
         span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(response)})
 
 
 def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
-    _set_attribute(span, "gen_ai.response.id", result.id)
-    _set_attribute(span, "gen_ai.response.model", result.model)
-    _set_attribute(span, "gen_ai.response.finish_reason", str(result.choices[0].finish_reason))
-    if hasattr(result, "usage"):
-        _set_attribute(span, "gen_ai.usage.completion_tokens", result.usage.completion_tokens if result.usage else None)
-        _set_attribute(span, "gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if result.usage else None)
+    _set_attributes(
+        span,
+        ("gen_ai.response.id", result.id),
+        ("gen_ai.response.model", result.model),
+        ("gen_ai.response.finish_reason", str(result.choices[0].finish_reason)),
+        ("gen_ai.usage.completion_tokens", result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None),
+        ("gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None),
+    )
 
 
 def _add_request_span_attributes(span: AbstractSpan, span_name: str, kwargs: Any) -> None:
@@ -164,7 +171,7 @@ def _add_response_span_attributes(span: AbstractSpan, result: object) -> None:
     # TODO add more models here
 
 
-def accumulate_response(item, accumulate: dict[str, Any]) -> None:
+def _accumulate_response(item, accumulate: dict[str, Any]) -> None:
     if item.finish_reason:
         accumulate["finish_reason"] = item.finish_reason
     if item.index:
@@ -197,14 +204,14 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                 accumulate: dict[str, Any] = {"role": ""}
                 for chunk in stream_obj:
                     for item in chunk.choices:
-                        accumulate_response(item, accumulate)
+                        _accumulate_response(item, accumulate)
                     yield chunk
 
                 span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(accumulate)})
                 _add_response_chat_attributes(span, chunk)
 
             except Exception as exc:
-                _set_attribute(span, "error.type", exc.__class__.__name__)
+                _set_attributes(span, ("error.type", exc.__class__.__name__))
                 raise
 
             finally:
@@ -238,7 +245,7 @@ def llm_trace(func: Callable[_P, _R]) -> Callable[_P, _R]:
                 _add_response_span_attributes(span, result)
 
         except Exception as exc:
-            _set_attribute(span, "error.type", exc.__class__.__name__)
+            _set_attributes(span, ("error.type", exc.__class__.__name__))
             span.finish()
             raise
 
