@@ -33,11 +33,7 @@ T = TypeVar('T', bytes, str)
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-
-    content = bytearray()
-    async for chunk in data:
-        content.extend(chunk)
-    content = bytes(content)
+    content = data.response.body()
 
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
