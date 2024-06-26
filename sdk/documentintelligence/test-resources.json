@@ -198,7 +198,7 @@
     "variables": {
         "authorizationApiVersion": "2018-09-01-preview",
         "documentIntelligenceBaseName": "[concat('documentintelligence', parameters('baseName'))]",
-        "documentIntelligenceApiVersion": "2022-10-01",
+        "documentIntelligenceApiVersion": "2023-10-31-preview",
         "azureDocumentIntelligenceUrl": "[concat('https://', variables('documentIntelligenceBaseName'), parameters('documentIntelligenceEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
     },
