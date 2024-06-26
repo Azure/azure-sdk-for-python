@@ -13,18 +13,14 @@ from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from conftest import skip_flaky_test
-
-
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_stream_transform_pdf(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -61,7 +57,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_stream_transform_jpg(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -98,7 +93,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_multipage_transform(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -136,7 +130,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_multipage_table_span_pdf(self, **kwargs):
         client = get_async_client(DocumentAnalysisClient)
@@ -155,7 +148,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_specify_pages(self):
         client = get_async_client(DocumentAnalysisClient)

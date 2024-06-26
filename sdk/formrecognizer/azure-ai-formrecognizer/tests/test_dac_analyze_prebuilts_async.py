@@ -17,17 +17,13 @@ from azure.ai.formrecognizer import AnalyzeResult
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from conftest import skip_flaky_test
-
-
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_damaged_file_passed_as_bytes(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -41,7 +37,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_damaged_file_passed_as_bytes_io(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -56,7 +51,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_blank_page(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -71,7 +65,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert result is not None
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     async def test_passing_unsupported_url_content_type(self, **kwargs):
         client = get_async_client(DocumentAnalysisClient)
         with pytest.raises(TypeError):
@@ -80,7 +73,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_auto_detect_unsupported_stream_content(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -98,7 +90,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_stream_transform_png(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -140,7 +131,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_stream_transform_jpg(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -183,7 +173,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_png(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -208,7 +197,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_multipage(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -248,7 +236,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_multipage_transform(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -292,7 +279,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     async def test_receipt_continuation_token(self, **kwargs):
         client = get_async_client(DocumentAnalysisClient)
 
@@ -309,7 +295,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_locale_specified(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -322,7 +307,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             assert result
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_receipt_locale_error(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -335,7 +319,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -349,7 +332,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_business_card_multipage_pdf(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -420,7 +402,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_identity_document_jpg_passport(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -446,7 +427,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_identity_document_jpg(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -480,7 +460,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_invoice_stream_transform_tiff(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -522,7 +501,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_w2_png_value_address(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -570,7 +548,6 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_invoice_jpg(self, **kwargs):
         client = get_async_client(DocumentAnalysisClient)

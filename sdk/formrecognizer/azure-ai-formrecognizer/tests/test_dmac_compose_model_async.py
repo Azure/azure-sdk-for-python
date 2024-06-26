@@ -13,17 +13,15 @@ from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, Async
 from azure.ai.formrecognizer import DocumentModelDetails
 from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelComposeOperationDetails, DocumentModelDetails as ModelDetails
 from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from conftest import skip_flaky_test
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_compose_model(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -57,7 +55,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_compose_model_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -92,7 +89,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_compose_continuation_token(self, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
@@ -114,7 +110,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_poller_metadata(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)

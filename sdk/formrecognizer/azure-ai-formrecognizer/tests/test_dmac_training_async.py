@@ -15,17 +15,14 @@ from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, Async
 from azure.ai.formrecognizer import DocumentModelDetails
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from conftest import skip_flaky_test
-
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 
 class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_polling_interval(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -45,7 +42,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         await client.close()
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_encoded_url(self):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -60,7 +56,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -93,7 +88,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_multipage(self, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -118,7 +112,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_nested_schema(self, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -140,7 +133,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -170,7 +162,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_multipage_transform(self, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -195,7 +186,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_nested_schema_transform(self, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -224,7 +214,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_azure_blob_path_filter(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -237,7 +226,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_build_model_continuation_token(self, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
@@ -251,7 +239,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_poller_metadata(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -270,7 +257,6 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             assert details["last_updated_on"]
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_file_list_source(self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)

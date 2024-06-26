@@ -13,10 +13,8 @@ from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultO
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from conftest import skip_flaky_test
-
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
@@ -40,7 +38,6 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_custom_document_selection_mark(self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -83,7 +80,6 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_label_tables_variable_rows(self, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -129,7 +125,6 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_label_tables_fixed_rows(self, formrecognizer_table_fixed_rows_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)

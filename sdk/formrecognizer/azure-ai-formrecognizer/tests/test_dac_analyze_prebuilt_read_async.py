@@ -12,11 +12,8 @@ from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult, AnalysisFeature
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from conftest import skip_flaky_test
-
-
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
 class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
@@ -24,7 +21,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_read_url_features_formulas(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -46,7 +42,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_read_stream_languages(self):
         client = get_async_client(DocumentAnalysisClient)
@@ -87,7 +82,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_html(self, **kwargs):
         client = get_async_client(DocumentAnalysisClient)
 
@@ -124,7 +118,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_spreadsheet(self, **kwargs):
         client = get_async_client(DocumentAnalysisClient)
 

@@ -37,32 +37,21 @@ FormRecognizerPreparer = functools.partial(
 )
 
 
-class GlobalClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(GlobalClientPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-        self.client_kwargs = client_kwargs
-        self.client_cls = client_cls
-
-    def create_resource(self, name, **kwargs):
-        if self.is_live:
-            form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
-            polling_interval = 5
-        else:
-            form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
-            polling_interval = 0
-
-        client = self.client_cls(
-            form_recognizer_account,
-            get_credential(),
-            polling_interval=polling_interval,
-            logging_enable=True if ENABLE_LOGGER == "True" else False,
-            **self.client_kwargs
-        )
-        kwargs.update({"client": client})
-        return kwargs
+def get_async_client(client_cls, **kwargs):
+    ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
+    if is_live():
+        form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
+        polling_interval = 5
+    else:
+        form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
+        polling_interval = 0
+    return client_cls(
+        form_recognizer_account,
+        get_credential(),
+        polling_interval=polling_interval,
+        logging_enable=True if ENABLE_LOGGER == "True" else False,
+        **kwargs
+    )
 
 
 def get_async_client(client_cls, **kwargs):

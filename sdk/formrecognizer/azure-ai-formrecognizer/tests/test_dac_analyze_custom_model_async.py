@@ -14,11 +14,9 @@ from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdm
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer, get_async_client
+from preparers import get_async_client
 from conftest import skip_flaky_test
 
-
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
@@ -42,7 +40,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_custom_document_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -91,7 +88,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_custom_document_multipage_transform(self, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -140,7 +136,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_custom_document_selection_mark(self, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -187,7 +182,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_pages_kwarg_specified(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -209,7 +203,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_custom_document_signature_field(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
@@ -237,7 +230,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_custom_document_blank_pdf(self, formrecognizer_storage_container_sas_url, **kwargs):
         client = get_async_client(DocumentModelAdministrationClient)
