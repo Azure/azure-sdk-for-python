@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, Callable, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -31,7 +31,7 @@ from ._file_client_helpers import (
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
 from ._lease import ShareLeaseClient
-from ._models import HandlesPaged
+from ._models import FileProperties, Handle, HandlesPaged
 from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from ._serialize import (
     get_access_conditions,
@@ -54,27 +54,28 @@ else:
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import ContentSettings, FileProperties, Handle, NTFSAttributes
+    from ._models import ContentSettings, NTFSAttributes
+    from ._shared.base_client import StorageConfiguration
 
 
 def _upload_file_helper(
-    client,
-    stream,
-    size,
-    metadata,
-    content_settings,
-    validate_content,
-    timeout,
-    max_concurrency,
-    file_settings,
-    file_attributes="none",
-    file_creation_time="now",
-    file_last_write_time="now",
-    file_permission=None,
-    file_permission_key=None,
-    progress_hook=None,
-    **kwargs
-):
+    client: "ShareFileClient",
+    stream: Any,
+    size: Optional[int],
+    metadata: Optional[Dict[str, str]],
+    content_settings: Optional["ContentSettings"],
+    validate_content: bool,
+    timeout: Optional[int],
+    max_concurrency: int,
+    file_settings: "StorageConfiguration",
+    file_attributes: Union[str, "NTFSAttributes"] = "none",
+    file_creation_time: Optional[Union[str, datetime]] = "now",
+    file_last_write_time: Optional[Union[str, datetime]] = "now",
+    file_permission: Optional[str] = None,
+    file_permission_key: Optional[str] = None,
+    progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
+    **kwargs: Any
+) -> Dict[str, Any]:
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
@@ -105,7 +106,7 @@ def _upload_file_helper(
             timeout=timeout,
             **kwargs
         )
-        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
+        return cast(Dict[str, Any], sorted(responses, key=lambda r: r.get('last_modified'))[-1])
     except HttpResponseError as error:
         process_storage_error(error)
 
@@ -200,7 +201,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(
@@ -450,7 +451,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return self._client.file.create(
+            return cast(Dict[str, Any], self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
                 file_attributes=_str(file_attributes),
@@ -464,7 +465,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 headers=headers,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -579,6 +580,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         if isinstance(data, bytes):
             data = data[:length]
 
+        stream: Optional[Any] = None
         if isinstance(data, bytes):
             stream = BytesIO(data)
         elif hasattr(data, 'read'):
@@ -729,19 +731,19 @@ class ShareFileClient(StorageAccountHostsMixin):
         headers.update(add_metadata_headers(metadata))
         kwargs.update(get_smb_properties(kwargs))
         try:
-            return self._client.file.start_copy(
+            return cast(Dict[str, Any], self._client.file.start_copy(
                 source_url,
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
                 headers=headers,
                 cls=return_response_headers,
                 timeout=timeout,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def abort_copy(self, copy_id: Union[str, "FileProperties"], **kwargs: Any) -> None:
+    def abort_copy(self, copy_id: Union[str, FileProperties], **kwargs: Any) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.
@@ -768,13 +770,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
-        try:
+
+        if isinstance(copy_id, FileProperties):
             copy_id = copy_id.copy.id
-        except AttributeError:
-            try:
-                copy_id = copy_id['copy_id']
-            except TypeError:
-                pass
+        elif isinstance(copy_id, Dict):
+            copy_id = copy_id['copy_id']
         try:
             self._client.file.abort_copy(copy_id=copy_id,
                                          lease_access_conditions=access_conditions,
@@ -839,11 +839,10 @@ class ShareFileClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Download a file.
         """
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
-
         range_end = None
         if length is not None:
+            if offset is None:
+                raise ValueError("Offset value must not be None if length is set.")
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -897,7 +896,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def rename_file(self, new_name: str, **kwargs: Any) -> Self:
+    def rename_file(self, new_name: str, **kwargs: Any) -> "ShareFileClient":
         """
         Rename the source file.
 
@@ -1018,7 +1017,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_file_properties(self, **kwargs: Any) -> "FileProperties":
+    def get_file_properties(self, **kwargs: Any) -> FileProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file.
 
@@ -1041,12 +1040,12 @@ class ShareFileClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            file_props = self._client.file.get_properties(
+            file_props = cast(FileProperties, self._client.file.get_properties(
                 sharesnapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 timeout=timeout,
                 cls=deserialize_file_properties,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
         file_props.name = self.file_name
@@ -1130,7 +1129,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
         file_change_time = kwargs.pop('file_change_time', None)
         try:
-            return self._client.file.set_http_headers(
+            return cast(Dict[str, Any], self._client.file.set_http_headers(
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 file_attributes=_str(file_attributes),
@@ -1142,7 +1141,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 timeout=timeout,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1179,13 +1178,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.file.set_metadata(
+            return cast(Dict[str, Any], self._client.file.set_metadata(
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1252,7 +1251,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
-            return self._client.file.upload_range(
+            return cast(Dict[str, Any], self._client.file.upload_range(
                 range=content_range,
                 content_length=length,
                 optionalbody=data,
@@ -1261,7 +1260,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1348,7 +1347,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             **kwargs
         )
         try:
-            return self._client.file.upload_range_from_url(**options)
+            return cast(Dict[str, Any], self._client.file.upload_range_from_url(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1485,7 +1484,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         end_range = length + offset - 1  # Reformat to an inclusive range index
         content_range = f'bytes={offset}-{end_range}'
         try:
-            return self._client.file.upload_range(
+            return cast(Dict[str, Any], self._client.file.upload_range(
                 timeout=timeout,
                 cls=return_response_headers,
                 content_length=0,
@@ -1493,7 +1492,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_range_write="clear",
                 range=content_range,
                 lease_access_conditions=access_conditions,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1522,7 +1521,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
         try:
-            return self._client.file.set_http_headers(
+            return cast(Dict[str, Any], self._client.file.set_http_headers(
                 file_content_length=size,
                 file_attributes="preserve",
                 file_creation_time="preserve",
@@ -1531,12 +1530,12 @@ class ShareFileClient(StorageAccountHostsMixin):
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
                 timeout=timeout,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, **kwargs: Any) -> ItemPaged["Handle"]:
+    def list_handles(self, **kwargs: Any) -> ItemPaged[Handle]:
         """Lists handles for file.
 
         :keyword int timeout:
@@ -1560,7 +1559,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             page_iterator_class=HandlesPaged)
 
     @distributed_trace
-    def close_handle(self, handle: Union[str, "Handle"], **kwargs: Any) -> Dict[str, int]:
+    def close_handle(self, handle: Union[str, Handle], **kwargs: Any) -> Dict[str, int]:
         """Close an open file handle.
 
         :param handle:
@@ -1577,9 +1576,9 @@ class ShareFileClient(StorageAccountHostsMixin):
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
-        try:
+        if isinstance(handle, Handle):
             handle_id = handle.id
-        except AttributeError:
+        else:
             handle_id = handle
         if handle_id == '*':
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
