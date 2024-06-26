@@ -25,7 +25,7 @@ extends:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
-          Location: chinanorth3
+          Location: chinaeast2
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'

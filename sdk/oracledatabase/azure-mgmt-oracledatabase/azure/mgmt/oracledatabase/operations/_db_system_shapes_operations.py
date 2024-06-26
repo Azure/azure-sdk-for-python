@@ -83,7 +83,7 @@ def build_get_request(location: str, dbsystemshapename: str, subscription_id: st
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "dbsystemshapename": _SERIALIZER.url("dbsystemshapename", dbsystemshapename, "str"),
+        "dbsystemshapename": _SERIALIZER.url("dbsystemshapename", dbsystemshapename, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

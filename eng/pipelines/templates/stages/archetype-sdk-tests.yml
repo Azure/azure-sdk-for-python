@@ -59,7 +59,8 @@ parameters:
       Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         ServiceConnection: azure-sdk-tests
-        SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
+        SubscriptionConfigurationFilePaths:
+          - eng/common/TestResources/sub-config/AzurePublicMsft.json
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Canary:
@@ -166,7 +167,7 @@ extends:
                                 Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                                 Cloud: ${{ cloud.key }}
                                 ServiceConnection: ${{ cloud.value.ServiceConnection }}
-                                SubscriptionConfigurationFilePath: ${{ cloud.value.SubscriptionConfigurationFilePath }}
+                                SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
       - ${{ else }}:
         - ${{ each cloud in parameters.CloudConfig }}:
             - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
@@ -223,7 +224,7 @@ extends:
                               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                               Cloud: ${{ cloud.key }}
                               ServiceConnection: ${{ cloud.value.ServiceConnection }}
-                              SubscriptionConfigurationFilePath: ${{ cloud.value.SubscriptionConfigurationFilePath }}
+                              SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
       - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}

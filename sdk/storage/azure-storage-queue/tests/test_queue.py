@@ -1387,9 +1387,8 @@ class TestStorageQueue(StorageRecordedTestCase):
             audience=f'https://badaudience.queue.core.windows.net'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            qsc.get_service_properties()
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        qsc.get_service_properties()
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -1429,9 +1428,8 @@ class TestStorageQueue(StorageRecordedTestCase):
             audience=f'https://badaudience.queue.core.windows.net'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            queue.get_queue_properties()
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        queue.get_queue_properties()
 
 
 # ------------------------------------------------------------------------------

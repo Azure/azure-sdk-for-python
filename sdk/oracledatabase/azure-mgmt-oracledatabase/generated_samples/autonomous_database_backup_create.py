@@ -38,7 +38,7 @@ def main():
         adbbackupid="1711644130",
         resource={
             "properties": {
-                "autonomousDatabaseId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg000/providers/Oracle.Database/autonomousDatabases/databasedb1",
+                "autonomousDatabaseOcid": "ocid1.autonomousdatabase.oc1..aaaaa3klq",
                 "displayName": "Nightly Backup",
                 "retentionPeriodInDays": 365,
             }
