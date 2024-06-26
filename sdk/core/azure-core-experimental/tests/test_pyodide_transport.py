@@ -57,16 +57,16 @@ class TestPyodideTransportClass:
     @pytest.fixture()
     def transport(self, mock_pyodide_module, mock_js_module):
         """Add the mock Pyodide module to `sys.modules` and import our transport."""
-        # Use patch so we don't clutter up the `sys.modules` namespace.
-        patch_dict = (
-            ("pyodide", mock_pyodide_module),
-            ("pyodide.http", mock_pyodide_module.http),
-            ("js", mock_js_module),
-        )
-        with mock.patch.dict(sys.modules, patch_dict):
-            import azure.core.experimental.transport
+        import azure.core.experimental.transport._pyodide
 
-            yield azure.core.experimental.transport
+        with mock.patch.multiple(
+            "azure.core.experimental.transport._pyodide",
+            js=mock_js_module,
+            pyfetch=mock_pyodide_module.http.pyfetch,
+            JsException=mock_pyodide_module.JsException,
+        ):
+
+            yield azure.core.experimental.transport._pyodide
 
     @pytest.fixture()
     def pipeline(self, transport):
@@ -95,7 +95,6 @@ class TestPyodideTransportClass:
         response_promise.set_result(mock_response)
         return response_promise
 
-    @pytest.mark.skipif(sys.version_info < (3, 8), reason="pyodide needs py 3.8+")
     @pytest.mark.asyncio
     async def test_successful_send(self, mock_pyfetch, mock_pyodide_module, pipeline):
         """Test that a successful send returns the correct values."""
@@ -143,7 +142,6 @@ class TestPyodideTransportClass:
         assert kwargs["cert"] is None
         assert not kwargs["files"]
 
-    @pytest.mark.skipif(sys.version_info < (3, 8), reason="pyodide needs py 3.8+")
     @pytest.mark.asyncio
     async def test_unsuccessful_send(self, mock_pyfetch, mock_pyodide_module, pipeline):
         """Test that the pipeline is failing correctly."""
@@ -156,7 +154,6 @@ class TestPyodideTransportClass:
         # 3 retries plus the original request.
         assert mock_pyfetch.call_count == retry_total + 1
 
-    @pytest.mark.skipif(sys.version_info < (3, 8), reason="pyodide needs py 3.8+")
     def test_valid_import(self, transport):
         """Test that we can import Pyodide classes from `azure.core.pipeline.transport`
         Adding the transport fixture will mock the Pyodide modules in `sys.modules`.

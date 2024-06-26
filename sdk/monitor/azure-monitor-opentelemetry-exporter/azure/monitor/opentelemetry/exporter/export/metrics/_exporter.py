@@ -229,11 +229,18 @@ def _handle_std_metric_envelope(
         attributes = {}
     # TODO: switch to semconv constants
     status_code = attributes.get("http.status_code")
+    if status_code:
+        try:
+            status_code = int(status_code) # type: ignore
+        except ValueError:
+            status_code = 0
+    else:
+        status_code = 0
     if name == "http.client.duration":
         properties["_MS.MetricId"] = "dependencies/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["Dependency.Type"] = "http"
-        properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400)) # type: ignore
+        properties["Dependency.Success"] = str(_is_status_code_success(status_code)) # type: ignore
         target = None
         if "peer.service" in attributes:
             target = attributes["peer.service"] # type: ignore
@@ -260,7 +267,7 @@ def _handle_std_metric_envelope(
         # TODO: operation/synthetic
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
-        properties["Request.Success"] = str(_is_status_code_success(status_code, 500)) # type: ignore
+        properties["Request.Success"] = str(_is_status_code_success(status_code)) # type: ignore
     else:
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
@@ -273,11 +280,13 @@ def _handle_std_metric_envelope(
     return envelope
 
 
-def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
-    if status_code is None:
+def _is_status_code_success(status_code: Optional[str]) -> bool:
+    if status_code is None or status_code == 0:
         return False
     try:
-        return int(status_code) < threshold
+        # Success criteria based solely off status code is True only if status_code < 400
+        # for both client and server spans
+        return int(status_code) < 400
     except ValueError:
         return False
 

@@ -123,7 +123,7 @@ To load an asynchronous client, import the `load_client` function from `azure.ai
 
 Entra ID authentication is also supported by the `load_client` function. Replace the key authentication above with `credential=DefaultAzureCredential()` for example.
 
-### Getting AI model information
+### Get AI model information
 
 All clients provide a `get_model_info` method to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info).
 

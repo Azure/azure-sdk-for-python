@@ -137,9 +137,11 @@ class TestModelAsyncClient(ModelClientTestBase):
                 "key4": [1, 2, 3],
                 "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
             },
+            raw_request_hook=self.request_callback,
         )
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
+        self._validate_model_extras(self.pipeline_request.http_request.data, self.pipeline_request.http_request.headers)
         await client.close()
 
     @ServicePreparerChatCompletions()
