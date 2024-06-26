@@ -7,7 +7,7 @@
 
 from enum import Enum
 from typing import (
-    Any, Dict, List, Optional, Union
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote
