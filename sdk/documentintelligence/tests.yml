@@ -16,7 +16,7 @@ extends:
       CloudConfig:
         Prod:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: westcentralus
+          Location: eastus
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths: 
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
