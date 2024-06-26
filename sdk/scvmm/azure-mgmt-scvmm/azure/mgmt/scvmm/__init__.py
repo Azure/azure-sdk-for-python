@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._scvmm import SCVMM
+from ._sc_vmm_mgmt_client import ScVmmMgmtClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -19,7 +19,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "SCVMM",
+    "ScVmmMgmtClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 
