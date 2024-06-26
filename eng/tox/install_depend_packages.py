@@ -110,7 +110,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # are running latestdependency. This will ensure that we always resolve the nightly build version, rather than a beta version from pypi.
 
     # if running latest nightly then we simply must attempt to find the nightly versions of the package in our prebuilt wheel directory
-    if os.environ.get("SetDevVersion") == "true" and dependency_type == "Latest":
+    if os.environ.get("SETDEVVERSION") == "true" and dependency_type == "Latest":
         logging.info("Retrieving latest azure dependencies from prebuilt wheel dir for nightly build.")
         pkg_info = ParsedSetup.from_path(setup_py_file_path)
         azure_requirements = [r for r in pkg_info.requires if "-nspkg" not in r and "azure-" in r]
