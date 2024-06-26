@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -27,7 +28,7 @@ class RadiologyInsightsClient(
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-09-01-preview". Note that overriding this default value may result in unsupported
@@ -94,7 +95,7 @@ class RadiologyInsightsClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "RadiologyInsightsClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
