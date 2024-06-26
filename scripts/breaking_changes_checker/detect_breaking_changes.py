@@ -286,7 +286,7 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, version: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
+def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, source_report), "r") as fd:
@@ -295,7 +295,7 @@ def test_compare_reports(pkg_dir: str, version: str, changelog: bool, source_rep
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    checker = BreakingChangesTracker(stable, current, diff, package_name, previous_version=version)
+    checker = BreakingChangesTracker(stable, current, diff, package_name)
     if changelog:
         checker = ChangelogTracker(stable, current, diff, package_name)
     checker.run_checks()
@@ -338,7 +338,7 @@ def main(
 
     # If source_report and target_report are provided, compare the two reports
     if source_report and target_report:
-        test_compare_reports(pkg_dir, version, changelog, str(source_report), str(target_report))
+        test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
         return
 
     # For default behavior, find the latest stable version on PyPi
