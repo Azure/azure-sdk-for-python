@@ -286,12 +286,12 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, version: str, changelog: bool, old_report: str = "stable.json", new_report: str = "current.json") -> None:
+def test_compare_reports(pkg_dir: str, version: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
     package_name = os.path.basename(pkg_dir)
 
-    with open(os.path.join(pkg_dir, old_report), "r") as fd:
+    with open(os.path.join(pkg_dir, source_report), "r") as fd:
         stable = json.load(fd)
-    with open(os.path.join(pkg_dir, new_report), "r") as fd:
+    with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
@@ -325,8 +325,8 @@ def main(
         pkg_dir: str,
         changelog: bool,
         code_report: bool,
-        old_report: Path,
-        new_report: Path,
+        source_report: Path,
+        target_report: Path,
     ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
@@ -336,9 +336,9 @@ def main(
         _LOGGER.info("code_report.json is written.")
         return
 
-    # If old_report and new_report are provided, compare the two reports
-    if old_report and new_report:
-        test_compare_reports(pkg_dir, version, changelog, str(old_report), str(new_report))
+    # If source_report and target_report are provided, compare the two reports
+    if source_report and target_report:
+        test_compare_reports(pkg_dir, version, changelog, str(source_report), str(target_report))
         return
 
     # For default behavior, find the latest stable version on PyPi
@@ -461,14 +461,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--old-report",
-        dest="old_report",
+        "--source-report",
+        dest="source_report",
         help="Path to the code report for the previous package version.",
     )
 
     parser.add_argument(
-        "--new-report",
-        dest="new_report",
+        "--target-report",
+        dest="target_report",
         help="Path to the code report for the new package version.",
     )
 
@@ -496,17 +496,17 @@ if __name__ == "__main__":
         pkg_details = ParsedSetup.from_path(pkg_dir)
         target_module = pkg_details.namespace
 
-    old_report = None
-    new_report = None
-    if args.old_report:
-        if not args.new_report:
-            _LOGGER.exception("If providing the `--old-report` flag, the `--new-report` flag is also required.")
+    source_report = None
+    target_report = None
+    if args.source_report:
+        if not args.target_report:
+            _LOGGER.exception("If providing the `--source-report` flag, the `--target-report` flag is also required.")
             exit(1)
-        old_report = Path(args.old_report)
-    if args.new_report:
-        if not args.old_report:
-            _LOGGER.exception("If providing the `--new-report` flag, the `--old-report` flag is also required.")
+        source_report = Path(args.source_report)
+    if args.target_report:
+        if not args.source_report:
+            _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
             exit(1)
-        new_report = Path(args.new_report)
+        target_report = Path(args.target_report)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, old_report, new_report)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, source_report, target_report)
