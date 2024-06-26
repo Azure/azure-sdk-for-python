@@ -52,7 +52,7 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
         "The '{}.{}' method '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had parameter '{}' of kind '{}' deleted or renamed in the current version"
+        "The function '{}.{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
         "The '{}.{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
@@ -597,7 +597,7 @@ class BreakingChangesTracker:
                 suppression = Suppression(*rule)
 
                 if suppression.parameter_or_property_name is not None:
-                    # If the ignore rule is for a parameter, we should check parameters on the original breaking change
+                    # If the ignore rule is for a property or parameter, we should check up to that level on the original breaking change
                     if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
                         self.breaking_changes.remove(bc)
                         break
