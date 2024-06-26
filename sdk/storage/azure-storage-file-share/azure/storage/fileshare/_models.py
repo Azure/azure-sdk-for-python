@@ -343,7 +343,7 @@ class ShareProperties(DictMixin):
         Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
     :ivar bool enable_snapshot_virtual_directory_access:
         Specifies whether the snapshot virtual directory should be accessible at the root of the share
-        mount point when NFS is enabled. if not specified, the default is True.
+        mount point when NFS is enabled. If not specified, it will be accessible.
     """
 
     def __init__(self, **kwargs):
