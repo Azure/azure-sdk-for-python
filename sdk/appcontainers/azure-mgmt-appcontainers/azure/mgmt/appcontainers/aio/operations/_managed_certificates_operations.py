@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -40,6 +41,10 @@ from ...operations._managed_certificates_operations import (
 )
 from .._vendor import ContainerAppsAPIClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -82,7 +87,7 @@ class ManagedCertificatesOperations:
         :rtype: ~azure.mgmt.appcontainers.models.ManagedCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -135,12 +140,15 @@ class ManagedCertificatesOperations:
         managed_certificate_envelope: Optional[Union[_models.ManagedCertificate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ManagedCertificate:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            400: lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
+            400: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(response=response, error_format=ARMErrorFormat),
+            ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
@@ -366,7 +374,7 @@ class ManagedCertificatesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -501,7 +509,7 @@ class ManagedCertificatesOperations:
         :rtype: ~azure.mgmt.appcontainers.models.ManagedCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -582,7 +590,7 @@ class ManagedCertificatesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedCertificateCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -1,5 +1,21 @@
 # Release History
 
+## 3.1.0 (2024-07-22)
+
+### Features Added
+
+  - Added operation ContainerAppsAPIClientOperationsMixin.get_custom_domain_verification_id
+  - Added operation JobsOperations.get_detector
+  - Added operation JobsOperations.list_detectors
+  - Added operation JobsOperations.proxy_get
+  - Added operation group ManagedEnvironmentUsagesOperations
+  - Added operation group UsagesOperations
+  - Model AuthConfig has a new parameter encryption_settings
+  - Model AvailableWorkloadProfileProperties has a new parameter gpus
+  - Model Ingress has a new parameter additional_port_mappings
+  - Model Login has a new parameter token_store
+  - Model ManagedEnvironment has a new parameter peer_traffic_configuration
+
 ## 3.1.0b1 (2024-03-18)
 
 ### Features Added

@@ -49,13 +49,6 @@ def main():
                 ],
                 "scopes": ["container-app-1", "container-app-2"],
                 "secrets": [{"name": "masterkey", "value": "keyvalue"}],
-                "serviceComponentBind": [
-                    {
-                        "metadata": {"name": "daprcomponentBind", "value": "redis-bind"},
-                        "name": "statestore",
-                        "serviceId": "/subscriptions/9f7371f1-b593-4c3c-84e2-9167806ad358/resourceGroups/ca-syn2-group/providers/Microsoft.App/containerapps/cappredis",
-                    }
-                ],
                 "version": "v1",
             }
         },
@@ -63,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ConnectedEnvironmentsDaprComponents_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsDaprComponents_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
