@@ -51,7 +51,7 @@ from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
-from .exceptions import ServiceBusConnectionError
+from .exceptions import ServiceBusConnectionError, SessionLockLostError
 
 if TYPE_CHECKING:
     try:
@@ -497,6 +497,14 @@ class ServiceBusReceiver(
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
+                except SessionLockLostError as exception:
+                    _LOGGER.info(
+                        "Session Message settling: %r has encountered an exception (%r)."
+                        "Will not retry through management link.",
+                        settle_operation,
+                        exception,
+                    )
+                    raise
                 except (RuntimeError, ServiceBusConnectionError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
@@ -520,7 +528,7 @@ class ServiceBusReceiver(
             )
         except Exception as exception:
             _LOGGER.info(
-                "Message settling: %r has encountered an exception (%r) through management link",
+                "Message settling: %r has encountered an exception (%r)",
                 settle_operation,
                 exception,
             )

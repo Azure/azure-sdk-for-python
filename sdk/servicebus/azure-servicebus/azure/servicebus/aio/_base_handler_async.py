@@ -197,7 +197,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 and isinstance(error, (SessionLockLostError, ServiceBusConnectionError))
             ):
                 self._session._lock_lost = True
-                await self._close_handler()
+                # await self._close_handler()
                 raise error
         except AttributeError:
             pass
