@@ -118,7 +118,10 @@ def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
             name = f"gen_ai.{message.get('role')}.message"
             span.span_instance.add_event(
                 name=name,
-                attributes={"event.data": json.dumps(message)}
+                attributes={
+                    "get_ai.system": "openai",
+                    "gen_ai.event.content": json.dumps(message)
+                }
             )
 
 
@@ -136,14 +139,19 @@ def _add_request_chat_attributes(span: AbstractSpan, **kwargs: Any) -> None:
 def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCompletions) -> None:
     for choice in result.choices:
         response: dict[str, Any] = {
-            "message.role": choice.message.role,
-            "message.content": choice.message.content,
+            "message": {"content": choice.message.content},
             "finish_reason": str(choice.finish_reason),
             "index": choice.index,
         }
         if choice.message.tool_calls:
-            response["message.tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
-        span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(response)})
+            response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
+        span.span_instance.add_event(
+            name="gen_ai.choice",
+            attributes={
+                "get_ai.system": "openai",
+                "gen_ai.event.content": json.dumps(response)
+            }
+        )
 
 
 def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
@@ -151,7 +159,7 @@ def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatComple
         span,
         ("gen_ai.response.id", result.id),
         ("gen_ai.response.model", result.model),
-        ("gen_ai.response.finish_reason", str(result.choices[0].finish_reason)),
+        ("gen_ai.response.finish_reason", str(result.choices[-1].finish_reason)),
         ("gen_ai.usage.completion_tokens", result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None),
         ("gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None),
     )
@@ -176,22 +184,22 @@ def _accumulate_response(item, accumulate: dict[str, Any]) -> None:
         accumulate["finish_reason"] = item.finish_reason
     if item.index:
         accumulate["index"] = item.index
-    if item.delta.role:
-        accumulate["role"] = item.delta.role
     if item.delta.content:
-        accumulate.setdefault("content", "")
-        accumulate["content"] += item.delta.content
+        accumulate.setdefault("message", {})
+        accumulate["message"].setdefault("content", "")
+        accumulate["message"]["content"] += item.delta.content
     if item.delta.tool_calls:
-        accumulate.setdefault("tool_calls", [])
+        accumulate.setdefault("message", {})
+        accumulate["message"].setdefault("tool_calls", [])
         for tool_call in item.delta.tool_calls:
             if tool_call.id:
-                accumulate["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
+                accumulate["message"]["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
             if tool_call.type:
-                accumulate["tool_calls"][-1]["type"] = tool_call.type
+                accumulate["message"]["tool_calls"][-1]["type"] = tool_call.type
             if tool_call.function and tool_call.function.name:
-                accumulate["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+                accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
             if tool_call.function and tool_call.function.arguments:
-                accumulate["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+                accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
 
 def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: AbstractSpan) ->  _models.StreamingChatCompletions:
@@ -201,13 +209,19 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
 
         def __iter__(self) -> Iterator[_models.StreamingChatCompletionsUpdate]:
             try:
-                accumulate: dict[str, Any] = {"role": ""}
+                accumulate: dict[str, Any] = {}
                 for chunk in stream_obj:
                     for item in chunk.choices:
                         _accumulate_response(item, accumulate)
                     yield chunk
 
-                span.span_instance.add_event(name="gen_ai.response.message", attributes={"event.data": json.dumps(accumulate)})
+                span.span_instance.add_event(
+                    name="gen_ai.choice",
+                    attributes={
+                        "get_ai.system": "openai",
+                        "gen_ai.event.content": json.dumps(accumulate)
+                    }
+                )
                 _add_response_chat_attributes(span, chunk)
 
             except Exception as exc:
@@ -215,9 +229,16 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                 raise
 
             finally:
-                # if stream_obj._done is False:
-                    # span.set_status(trace.Status(trace.StatusCode.ERROR, "Stream was not fully consumed"))
-                    # TODO should we add whatever we have for event / response attributes here?
+                if stream_obj._done is False:
+                    if accumulate.get("finish_reason") is None:
+                        accumulate["finish_reason"] = "error"
+                    span.span_instance.add_event(
+                        name="gen_ai.choice",
+                        attributes={
+                            "get_ai.system": "openai",
+                            "gen_ai.event.content": json.dumps(accumulate)
+                        }
+                    )
                 span.finish()
 
     return StreamWrapper(stream_obj)
@@ -240,7 +261,7 @@ def llm_trace(func: Callable[_P, _R]) -> Callable[_P, _R]:
             with span_impl_type.change_context(span.span_instance):
                 _add_request_span_attributes(span, span_name, kwargs)
                 result =  func(*args, **kwargs)
-                if kwargs.get("stream", True):
+                if kwargs.get("stream") is True:
                     return _wrapped_stream(result, span)
                 _add_response_span_attributes(span, result)
 
