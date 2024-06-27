@@ -140,7 +140,7 @@ if __name__ == '__main__':
     geocode()
 ```
 
-### Batch request for latitude and longitude coordinates for addresses
+### Batch geocode addresses
 
 This sample demonstrates how to perform batch search address.
 
