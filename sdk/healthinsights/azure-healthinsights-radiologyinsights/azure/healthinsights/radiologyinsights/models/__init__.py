@@ -31,7 +31,7 @@ from ._models import FollowupCommunicationInference
 from ._models import FollowupRecommendationInference
 from ._models import FollowupRecommendationOptions
 from ._models import GenericProcedureRecommendation
-from ._models import HealthInsightsOperationStatus
+from ._models import HealthInsightsOperationStatusRadiologyInsightsInferenceResultError
 from ._models import Identifier
 from ._models import ImagingProcedure
 from ._models import ImagingProcedureRecommendation
@@ -117,7 +117,7 @@ __all__ = [
     "FollowupRecommendationInference",
     "FollowupRecommendationOptions",
     "GenericProcedureRecommendation",
-    "HealthInsightsOperationStatus",
+    "HealthInsightsOperationStatusRadiologyInsightsInferenceResultError",
     "Identifier",
     "ImagingProcedure",
     "ImagingProcedureRecommendation",
