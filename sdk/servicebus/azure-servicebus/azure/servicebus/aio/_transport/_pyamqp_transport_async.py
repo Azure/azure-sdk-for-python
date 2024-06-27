@@ -355,7 +355,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
         except AMQPLinkError as le:
-            # Remove all Dispositions sent because we have lost the link sent on
             if (
                 le.condition == ErrorCondition.InternalError
                 and isinstance(le.description, str)
