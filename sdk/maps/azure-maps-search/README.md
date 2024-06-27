@@ -164,7 +164,7 @@ def geocode_batch():
           ],
         },)
 
-        if 'batchItems' not in result or not result['batchItems']:
+        if not result.get('batchItems', False):
             print("No geocoding")
             return
 
