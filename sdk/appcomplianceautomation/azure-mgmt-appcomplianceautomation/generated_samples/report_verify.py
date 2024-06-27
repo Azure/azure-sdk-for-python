@@ -7,14 +7,15 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMicrosoft365
+
+from azure.mgmt.appcomplianceautomation import AppComplianceAutomationMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-appcomplianceautomation
 # USAGE
-    python snapshot_download_resource_list.py
+    python report_verify.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,22 +25,16 @@ from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMic
 
 
 def main():
-    client = AppComplianceAutomationToolForMicrosoft365(
+    client = AppComplianceAutomationMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.snapshot.begin_download(
-        report_name="testReportName",
-        snapshot_name="testSnapshotName",
-        parameters={
-            "downloadType": "ResourceList",
-            "offerGuid": "00000000-0000-0000-0000-000000000000",
-            "reportCreatorTenantId": "00000000-0000-0000-0000-000000000000",
-        },
+    response = client.report.begin_verify(
+        report_name="testReport",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/preview/2022-11-16-preview/examples/Snapshot_ResourceList_Download.json
+# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/stable/2024-06-27/examples/Report_Verify.json
 if __name__ == "__main__":
     main()

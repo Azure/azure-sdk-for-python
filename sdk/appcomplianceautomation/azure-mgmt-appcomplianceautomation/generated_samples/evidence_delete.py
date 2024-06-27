@@ -7,14 +7,15 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMicrosoft365
+
+from azure.mgmt.appcomplianceautomation import AppComplianceAutomationMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-appcomplianceautomation
 # USAGE
-    python snapshot_download_compliance_detailed_pdf_report.py
+    python evidence_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,22 +25,16 @@ from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMic
 
 
 def main():
-    client = AppComplianceAutomationToolForMicrosoft365(
+    client = AppComplianceAutomationMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.snapshot.begin_download(
+    client.evidence.delete(
         report_name="testReportName",
-        snapshot_name="testSnapshotName",
-        parameters={
-            "downloadType": "ComplianceDetailedPdfReport",
-            "offerGuid": "00000000-0000-0000-0000-000000000000",
-            "reportCreatorTenantId": "00000000-0000-0000-0000-000000000000",
-        },
-    ).result()
-    print(response)
+        evidence_name="evidence1",
+    )
 
 
-# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/preview/2022-11-16-preview/examples/Snapshot_ComplianceDetailedPdfReport_Download.json
+# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/stable/2024-06-27/examples/Evidence_Delete.json
 if __name__ == "__main__":
     main()

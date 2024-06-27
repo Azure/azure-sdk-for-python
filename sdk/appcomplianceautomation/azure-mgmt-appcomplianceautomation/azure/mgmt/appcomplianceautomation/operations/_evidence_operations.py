@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -22,12 +22,10 @@ from azure.core.exceptions import (
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
@@ -44,7 +42,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(
+def build_list_by_report_request(
     report_name: str,
     *,
     skip_token: Optional[str] = None,
@@ -63,7 +61,7 @@ def build_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/snapshots")
+    _url = kwargs.pop("template_url", "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/evidences")
     path_format_arguments = {
         "reportName": _SERIALIZER.url("report_name", report_name, "str", pattern=r"^[-a-zA-Z0-9_]{1,50}$"),
     }
@@ -95,7 +93,7 @@ def build_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(report_name: str, snapshot_name: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(report_name: str, evidence_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -104,11 +102,11 @@ def build_get_request(report_name: str, snapshot_name: str, **kwargs: Any) -> Ht
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url", "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/snapshots/{snapshotName}"
+        "template_url", "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/evidences/{evidenceName}"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "reportName": _SERIALIZER.url("report_name", report_name, "str", pattern=r"^[-a-zA-Z0-9_]{1,50}$"),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str", pattern=r"^[a-zA-Z0-9-_]{1,64}$"),
+        "evidenceName": _SERIALIZER.url("evidence_name", evidence_name, "str", pattern=r"^[a-zA-Z0-9-_.]+$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -122,7 +120,77 @@ def build_get_request(report_name: str, snapshot_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_download_request(report_name: str, snapshot_name: str, **kwargs: Any) -> HttpRequest:
+def build_create_or_update_request(
+    report_name: str,
+    evidence_name: str,
+    *,
+    offer_guid: Optional[str] = None,
+    report_creator_tenant_id: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-27"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url", "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/evidences/{evidenceName}"
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "reportName": _SERIALIZER.url("report_name", report_name, "str", pattern=r"^[-a-zA-Z0-9_]{1,50}$"),
+        "evidenceName": _SERIALIZER.url("evidence_name", evidence_name, "str", pattern=r"^[a-zA-Z0-9-_.]+$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if offer_guid is not None:
+        _params["offerGuid"] = _SERIALIZER.query("offer_guid", offer_guid, "str", min_length=1)
+    if report_creator_tenant_id is not None:
+        _params["reportCreatorTenantId"] = _SERIALIZER.query(
+            "report_creator_tenant_id", report_creator_tenant_id, "str", min_length=1
+        )
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_delete_request(report_name: str, evidence_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-27"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url", "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/evidences/{evidenceName}"
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "reportName": _SERIALIZER.url("report_name", report_name, "str", pattern=r"^[-a-zA-Z0-9_]{1,50}$"),
+        "evidenceName": _SERIALIZER.url("evidence_name", evidence_name, "str", pattern=r"^[a-zA-Z0-9-_.]+$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_download_request(report_name: str, evidence_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -133,11 +201,11 @@ def build_download_request(report_name: str, snapshot_name: str, **kwargs: Any) 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/snapshots/{snapshotName}/download",
+        "/providers/Microsoft.AppComplianceAutomation/reports/{reportName}/evidences/{evidenceName}/download",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "reportName": _SERIALIZER.url("report_name", report_name, "str", pattern=r"^[-a-zA-Z0-9_]{1,50}$"),
-        "snapshotName": _SERIALIZER.url("snapshot_name", snapshot_name, "str", pattern=r"^[a-zA-Z0-9-_]{1,64}$"),
+        "evidenceName": _SERIALIZER.url("evidence_name", evidence_name, "str", pattern=r"^[a-zA-Z0-9-_.]+$"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -153,14 +221,14 @@ def build_download_request(report_name: str, snapshot_name: str, **kwargs: Any) 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SnapshotOperations:
+class EvidenceOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.appcomplianceautomation.AppComplianceAutomationMgmtClient`'s
-        :attr:`snapshot` attribute.
+        :attr:`evidence` attribute.
     """
 
     models = _models
@@ -173,7 +241,7 @@ class SnapshotOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(
+    def list_by_report(
         self,
         report_name: str,
         skip_token: Optional[str] = None,
@@ -184,8 +252,8 @@ class SnapshotOperations:
         offer_guid: Optional[str] = None,
         report_creator_tenant_id: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.SnapshotResource"]:
-        """Get the AppComplianceAutomation snapshot list.
+    ) -> Iterable["_models.EvidenceResource"]:
+        """Returns a paginated list of evidences for a specified report.
 
         :param report_name: Report Name. Required.
         :type report_name: str
@@ -204,16 +272,16 @@ class SnapshotOperations:
         :type offer_guid: str
         :param report_creator_tenant_id: The tenant id of the report creator. Default value is None.
         :type report_creator_tenant_id: str
-        :return: An iterator like instance of either SnapshotResource or the result of cls(response)
+        :return: An iterator like instance of either EvidenceResource or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.appcomplianceautomation.models.SnapshotResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.appcomplianceautomation.models.EvidenceResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SnapshotResourceListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvidenceResourceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -226,7 +294,7 @@ class SnapshotOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_list_request(
+                _request = build_list_by_report_request(
                     report_name=report_name,
                     skip_token=skip_token,
                     top=top,
@@ -261,7 +329,7 @@ class SnapshotOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("SnapshotResourceListResult", pipeline_response)
+            deserialized = self._deserialize("EvidenceResourceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -286,15 +354,15 @@ class SnapshotOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, report_name: str, snapshot_name: str, **kwargs: Any) -> _models.SnapshotResource:
-        """Get the AppComplianceAutomation snapshot and its properties.
+    def get(self, report_name: str, evidence_name: str, **kwargs: Any) -> _models.EvidenceResource:
+        """Get the evidence metadata.
 
         :param report_name: Report Name. Required.
         :type report_name: str
-        :param snapshot_name: Snapshot Name. Required.
-        :type snapshot_name: str
-        :return: SnapshotResource or the result of cls(response)
-        :rtype: ~azure.mgmt.appcomplianceautomation.models.SnapshotResource
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
+        :return: EvidenceResource or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -309,11 +377,11 @@ class SnapshotOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SnapshotResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvidenceResource] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             report_name=report_name,
-            snapshot_name=snapshot_name,
+            evidence_name=evidence_name,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -333,20 +401,104 @@ class SnapshotOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SnapshotResource", pipeline_response)
+        deserialized = self._deserialize("EvidenceResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _download_initial(
+    @overload
+    def create_or_update(
         self,
         report_name: str,
-        snapshot_name: str,
-        body: Union[_models.SnapshotDownloadRequest, IO[bytes]],
+        evidence_name: str,
+        properties: _models.EvidenceResource,
+        offer_guid: Optional[str] = None,
+        report_creator_tenant_id: Optional[str] = None,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
-    ) -> Optional[_models.DownloadResponse]:
+    ) -> _models.EvidenceResource:
+        """Create or Update an evidence a specified report.
+
+        :param report_name: Report Name. Required.
+        :type report_name: str
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
+        :param properties: Parameters for the create or update operation. Required.
+        :type properties: ~azure.mgmt.appcomplianceautomation.models.EvidenceResource
+        :param offer_guid: The offerGuid which mapping to the reports. Default value is None.
+        :type offer_guid: str
+        :param report_creator_tenant_id: The tenant id of the report creator. Default value is None.
+        :type report_creator_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvidenceResource or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        report_name: str,
+        evidence_name: str,
+        properties: IO[bytes],
+        offer_guid: Optional[str] = None,
+        report_creator_tenant_id: Optional[str] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvidenceResource:
+        """Create or Update an evidence a specified report.
+
+        :param report_name: Report Name. Required.
+        :type report_name: str
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
+        :param properties: Parameters for the create or update operation. Required.
+        :type properties: IO[bytes]
+        :param offer_guid: The offerGuid which mapping to the reports. Default value is None.
+        :type offer_guid: str
+        :param report_creator_tenant_id: The tenant id of the report creator. Default value is None.
+        :type report_creator_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvidenceResource or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
+        self,
+        report_name: str,
+        evidence_name: str,
+        properties: Union[_models.EvidenceResource, IO[bytes]],
+        offer_guid: Optional[str] = None,
+        report_creator_tenant_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.EvidenceResource:
+        """Create or Update an evidence a specified report.
+
+        :param report_name: Report Name. Required.
+        :type report_name: str
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
+        :param properties: Parameters for the create or update operation. Is either a EvidenceResource
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.appcomplianceautomation.models.EvidenceResource or IO[bytes]
+        :param offer_guid: The offerGuid which mapping to the reports. Default value is None.
+        :type offer_guid: str
+        :param report_creator_tenant_id: The tenant id of the report creator. Default value is None.
+        :type report_creator_tenant_id: str
+        :return: EvidenceResource or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -360,19 +512,21 @@ class SnapshotOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.DownloadResponse]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvidenceResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
         else:
-            _json = self._serialize.body(body, "SnapshotDownloadRequest")
+            _json = self._serialize.body(properties, "EvidenceResource")
 
-        _request = build_download_request(
+        _request = build_create_or_update_request(
             report_name=report_name,
-            snapshot_name=snapshot_name,
+            evidence_name=evidence_name,
+            offer_guid=offer_guid,
+            report_creator_tenant_id=report_creator_tenant_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -390,148 +544,199 @@ class SnapshotOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("DownloadResponse", pipeline_response)
+            deserialized = self._deserialize("EvidenceResource", pipeline_response)
 
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        if response.status_code == 201:
+            deserialized = self._deserialize("EvidenceResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def begin_download(
-        self,
-        report_name: str,
-        snapshot_name: str,
-        body: _models.SnapshotDownloadRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.DownloadResponse]:
-        """Download compliance needs from snapshot, like: Compliance Report, Resource List.
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, report_name: str, evidence_name: str, **kwargs: Any
+    ) -> None:
+        """Delete an existent evidence from a specified report.
 
         :param report_name: Report Name. Required.
         :type report_name: str
-        :param snapshot_name: Snapshot Name. Required.
-        :type snapshot_name: str
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_delete_request(
+            report_name=report_name,
+            evidence_name=evidence_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def download(
+        self,
+        report_name: str,
+        evidence_name: str,
+        body: _models.EvidenceFileDownloadRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvidenceFileDownloadResponse:
+        """Download evidence file.
+
+        :param report_name: Report Name. Required.
+        :type report_name: str
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
         :param body: Parameters for the query operation. Required.
-        :type body: ~azure.mgmt.appcomplianceautomation.models.SnapshotDownloadRequest
+        :type body: ~azure.mgmt.appcomplianceautomation.models.EvidenceFileDownloadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either DownloadResponse or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.appcomplianceautomation.models.DownloadResponse]
+        :return: EvidenceFileDownloadResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceFileDownloadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_download(
+    def download(
         self,
         report_name: str,
-        snapshot_name: str,
+        evidence_name: str,
         body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.DownloadResponse]:
-        """Download compliance needs from snapshot, like: Compliance Report, Resource List.
+    ) -> _models.EvidenceFileDownloadResponse:
+        """Download evidence file.
 
         :param report_name: Report Name. Required.
         :type report_name: str
-        :param snapshot_name: Snapshot Name. Required.
-        :type snapshot_name: str
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
         :param body: Parameters for the query operation. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns either DownloadResponse or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.appcomplianceautomation.models.DownloadResponse]
+        :return: EvidenceFileDownloadResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceFileDownloadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_download(
+    def download(
         self,
         report_name: str,
-        snapshot_name: str,
-        body: Union[_models.SnapshotDownloadRequest, IO[bytes]],
+        evidence_name: str,
+        body: Union[_models.EvidenceFileDownloadRequest, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.DownloadResponse]:
-        """Download compliance needs from snapshot, like: Compliance Report, Resource List.
+    ) -> _models.EvidenceFileDownloadResponse:
+        """Download evidence file.
 
         :param report_name: Report Name. Required.
         :type report_name: str
-        :param snapshot_name: Snapshot Name. Required.
-        :type snapshot_name: str
-        :param body: Parameters for the query operation. Is either a SnapshotDownloadRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.appcomplianceautomation.models.SnapshotDownloadRequest or IO[bytes]
-        :return: An instance of LROPoller that returns either DownloadResponse or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.appcomplianceautomation.models.DownloadResponse]
+        :param evidence_name: The evidence name. Required.
+        :type evidence_name: str
+        :param body: Parameters for the query operation. Is either a EvidenceFileDownloadRequest type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.appcomplianceautomation.models.EvidenceFileDownloadRequest or IO[bytes]
+        :return: EvidenceFileDownloadResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.appcomplianceautomation.models.EvidenceFileDownloadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DownloadResponse] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._download_initial(
-                report_name=report_name,
-                snapshot_name=snapshot_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
+        cls: ClsType[_models.EvidenceFileDownloadResponse] = kwargs.pop("cls", None)
 
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("DownloadResponse", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.DownloadResponse].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.DownloadResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+            _json = self._serialize.body(body, "EvidenceFileDownloadRequest")
+
+        _request = build_download_request(
+            report_name=report_name,
+            evidence_name=evidence_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
         )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("EvidenceFileDownloadResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
