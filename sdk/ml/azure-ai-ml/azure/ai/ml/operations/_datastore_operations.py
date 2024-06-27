@@ -11,8 +11,12 @@ from typing import Dict, Iterable, Optional, cast
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials, SasTokenConfiguration
+from azure.ai.ml._restclient.v2024_07_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
+    DatastoreSecrets,
+    NoneDatastoreCredentials,
+    SasDatastoreCredentials,
+)
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
@@ -42,8 +46,8 @@ class DatastoreOperations(_ScopeDependentOperations):
         resources.
     :type serviceclient_2022_10_01: ~azure.ai.ml._restclient.v2022_07_01._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces
-    :param serviceclient_2024_07_01_preview: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources.
+    :param serviceclient_2024_07_01_preview: Service client to allow end users to operate on Azure Machine Learning
+        Workspace resources.
     :type serviceclient_2024_07_01_preview: ~azure.ai.ml._restclient.v2024_07_01._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces
     """
@@ -169,7 +173,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         if datastore_resource.name and not isinstance(
             datastore_resource.properties.credentials, NoneDatastoreCredentials
         ):
-            if isinstance(datastore_resource.properties.credentials, SasTokenConfiguration):
+            if isinstance(datastore_resource.properties.credentials, SasDatastoreCredentials):
                 secrets = self._list_secrets(name=datastore_resource.name, expirable_secret=True)
             else:
                 secrets = self._list_secrets(datastore_resource.name)
