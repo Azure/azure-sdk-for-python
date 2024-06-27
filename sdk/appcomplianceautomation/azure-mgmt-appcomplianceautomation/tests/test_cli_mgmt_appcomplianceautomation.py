@@ -15,7 +15,7 @@ class TestMgmtAppComplianceAutomation(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AppComplianceAutomationMgmtClient)
 
-    @unittest.skip('failed to authentication')
+    @unittest.skip('lack of vaild token to authentication')
     @recorded_by_proxy
     def test_list_report(self):
         assert list(self.client.report.list()) == []
