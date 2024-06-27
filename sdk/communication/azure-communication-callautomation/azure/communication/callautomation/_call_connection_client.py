@@ -1014,7 +1014,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_callback_url: Optional[str] = None,
         **kwargs
     )-> None:
-        """Play media to specific participant(s) in this call.
+        """Put participant on hold while playing audio.
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
@@ -1060,7 +1060,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_context: Optional[str] = None,
         **kwargs
     )-> None:
-        """Play media to specific participant(s) in this call.
+        """Remove participant from hold.
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
