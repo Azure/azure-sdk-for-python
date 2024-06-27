@@ -11,12 +11,12 @@ from typing import Dict, Iterable, Optional, cast
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials, SasTokenConfiguration
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
+from azure.ai.ml._restclient.v2024_07_01_preview.models import SecretExpiry
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
@@ -98,10 +98,10 @@ class DatastoreOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
-    def _list_secrets(self, name: str, expirable_secret: bool) -> DatastoreSecrets:
+    def _list_secrets(self, name: str, expirable_secret: bool = False) -> DatastoreSecrets:
         return self._operation.list_secrets(
             name=name,
-            expirable_secret=expirable_secret,
+            body=SecretExpiry(expirable_secret=expirable_secret),
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._init_kwargs,
@@ -169,7 +169,10 @@ class DatastoreOperations(_ScopeDependentOperations):
         if datastore_resource.name and not isinstance(
             datastore_resource.properties.credentials, NoneDatastoreCredentials
         ):
-            secrets = self._list_secrets(datastore_resource.name)
+            if isinstance(datastore_resource.properties.credentials, SasTokenConfiguration):
+                secrets = self._list_secrets(name=datastore_resource.name, expirable_secret=True)
+            else:
+                secrets = self._list_secrets(datastore_resource.name)
             datastore_resource.properties.credentials.secrets = secrets
 
     @monitor_with_activity(ops_logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
