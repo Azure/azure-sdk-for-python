@@ -79,7 +79,7 @@ def get_datastore_info(
     operations: DatastoreOperations,
     name: str,
     **kwargs,
-) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]:
+) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -87,7 +87,7 @@ def get_datastore_info(
     :param name: Name of the datastore. If not provided, the default datastore will be used.
     :type name: str
     :return: The dictionary with datastore info
-    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
+    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
     """
     datastore_info: Dict = {}
     datastore = operations.get(name) if name else operations.get_default()
