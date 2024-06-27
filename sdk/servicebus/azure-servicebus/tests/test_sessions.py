@@ -1003,6 +1003,8 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                 assert receiver.session._lock_expired
                 with pytest.raises(SessionLockLostError):
                     receiver.complete_message(messages[0])
+                with pytest.raises(SessionLockLostError):
+                    receiver.session.renew_lock()
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = receiver.receive_messages(max_wait_time=30)
