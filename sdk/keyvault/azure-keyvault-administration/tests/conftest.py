@@ -28,8 +28,7 @@ def add_sanitizers(test_proxy):
     azure_managedhsm_url = azure_managedhsm_url.rstrip("/")
     azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL","https://fakeattestation.azurewebsites.net")
     azure_attestation_uri = azure_attestation_uri.rstrip('/')
-    storage_name = os.environ.get("BLOB_STORAGE_ACCOUNT_NAME", "blob_storage_account_name")
-    storage_endpoint_suffix = os.environ.get("KEYVAULT_STORAGE_ENDPOINT_SUFFIX", "keyvault_endpoint_suffix")
+    storage_url = os.environ.get("BLOB_STORAGE_URL", "https://storagename.blob.core.windows.net")
     client_id = os.environ.get("KEYVAULT_CLIENT_ID", "service-principal-id")
     sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN","fake-sas")
 
@@ -38,8 +37,7 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=azure_managedhsm_url,value="https://managedhsmvaultname.managedhsm.azure.net")
     add_general_string_sanitizer(target=azure_attestation_uri,value="https://fakeattestation.azurewebsites.net")
-    add_general_string_sanitizer(target=storage_name, value = "blob_storage_account_name")
-    add_general_string_sanitizer(target=storage_endpoint_suffix, value = "keyvault_endpoint_suffix")
+    add_general_string_sanitizer(target=storage_url, value="https://storagename.blob.core.windows.net")
     add_general_string_sanitizer(target=sas_token, value="fake-sas")
     add_general_string_sanitizer(target=client_id, value = "service-principal-id")
     # Sanitize API versions of `azure-keyvault-keys` requests
