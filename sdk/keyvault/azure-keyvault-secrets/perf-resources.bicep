@@ -26,6 +26,7 @@ var networkAcls = {
   defaultAction: 'Allow'
 }
 var secretsOfficerRoleAssignmentId = 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
+var kvAdminRoleAssignmentId = '00482a5a-887f-4fb3-b363-3b7fe8e74483'
 
 resource kv 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
   name: kvName
@@ -43,7 +44,17 @@ resource kv 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
   }
 }
 
-resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+resource kvAdminRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(kvAdminRoleAssignmentId,testApplicationOid,kv.id)
+  scope: kv
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', kvAdminRoleAssignmentId)
+    principalId: testApplicationOid
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource kvSecretsRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(secretsOfficerRoleAssignmentId,testApplicationOid,kv.id)
   scope: kv
   properties: {
