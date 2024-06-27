@@ -254,7 +254,7 @@ if __name__ == '__main__':
     get_polygon()
 ```
 
-### Make a Reverse Address Search to translate coordinate location to street address
+### Make a reverse geocode to translate coordinates to address
 
 You can translate coordinates into human-readable street addresses. This process is also called reverse geocoding. This is often used for applications that consume GPS feeds and want to discover addresses at specific coordinate points.
 
