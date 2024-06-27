@@ -42,7 +42,7 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._credentials import AccountKeyConfiguration
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, SasTokenConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
@@ -99,10 +99,12 @@ def get_datastore_info(
         datastore.account_name, storage_endpoint
     )
 
-    try:
+    if isinstance(datastore.credential, SasTokenConfiguration):
         datastore_info["credential"] = operations._list_secrets(name=name, expirable_secret=True)
-    except:
+    elif isinstance(datastore.credential, NoneCredentialConfiguration):
         datastore_info["credential"] = operations._credential
+    else:
+        datastore_info["credential"] = operations._list_secrets(name=name)
 
     if datastore.type == DatastoreType.AZURE_BLOB:
         datastore_info["container_name"] = str(datastore.container_name)
