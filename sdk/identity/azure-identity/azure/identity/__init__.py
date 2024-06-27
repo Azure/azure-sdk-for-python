@@ -6,7 +6,7 @@
 
 from ._auth_record import AuthenticationRecord
 from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
-from ._constants import AzureAuthorityHosts, KnownAuthorities
+from ._constants import AzureAuthorityHosts, KnownAuthorities, EnvironmentVariables
 from ._credentials import (
     AuthorizationCodeCredential,
     AzureDeveloperCliCredential,
@@ -49,6 +49,7 @@ __all__ = [
     "DefaultAzureCredential",
     "DeviceCodeCredential",
     "EnvironmentCredential",
+    "EnvironmentVariables",
     "InteractiveBrowserCredential",
     "KnownAuthorities",
     "OnBehalfOfCredential",
