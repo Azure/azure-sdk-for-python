@@ -10,6 +10,7 @@ extends:
       TestTimeoutInMinutes: 240
       TestResourceDirectories:
         - keyvault/
+      UseFederatedAuth: true
       CloudConfig:
         Public:
           ServiceConnection: azure-sdk-tests
@@ -42,7 +43,4 @@ extends:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
         AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
