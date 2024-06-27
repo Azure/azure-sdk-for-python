@@ -4,7 +4,9 @@
 
 ### Bugs Fixed
 
-  - Fix parameter maxpagesize's type
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentInstancesReportOperations.list from str to int
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentsInstancesReportOperations.list from str to int
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentsOperations.list from str to int
 
 ## 21.2.0 (2024-06-17)
 
