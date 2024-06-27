@@ -6,6 +6,8 @@
 # pylint: disable=invalid-overridden-method
 
 import asyncio
+import base64
+import hashlib
 import logging
 import random
 from typing import Any, Dict, TYPE_CHECKING
@@ -15,7 +17,13 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Async
 
 from .authentication import StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
-from .policies import is_retry, StorageRetryPolicy
+from .policies import StorageRetryPolicy
+from .models import LocationMode
+
+try:
+    _unicode_type = unicode # type: ignore
+except NameError:
+    _unicode_type = str
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -26,6 +34,13 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def encode_base64(data):
+    if isinstance(data, _unicode_type):
+        data = data.encode('utf-8')
+    encoded = base64.b64encode(data)
+    return encoded.decode('utf-8')
 
 
 async def retry_hook(settings, **kwargs):
@@ -40,6 +55,63 @@ async def retry_hook(settings, **kwargs):
                 retry_count=settings['count'] - 1,
                 location_mode=settings['mode'],
                 **kwargs)
+
+
+# Is this method/status code retryable? (Based on allowlists and control
+# variables such as the number of total retries to allow, whether to
+# respect the Retry-After header, whether this header is present, and
+# whether the returned status code is on the list of status codes to
+# be retried upon on the presence of the aforementioned header)
+async def is_retry(response, mode):   # pylint: disable=too-many-return-statements
+    status = response.http_response.status_code
+    if 300 <= status < 500:
+        # An exception occurred, but in most cases it was expected. Examples could
+        # include a 309 Conflict or 412 Precondition Failed.
+        if status == 404 and mode == LocationMode.SECONDARY:
+            # Response code 404 should be retried if secondary was used.
+            return True
+        if status == 408:
+            # Response code 408 is a timeout and should be retried.
+            return True
+        return False
+    if status >= 500:
+        # Response codes above 500 with the exception of 501 Not Implemented and
+        # 505 Version Not Supported indicate a server issue and should be retried.
+        if status in [501, 505]:
+            return False
+        return True
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(get_content_md5(await response.http_response.read()))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
+    return False
+
+
+def get_content_md5(data):
+    # Since HTTP does not differentiate between no content and empty content,
+    # we have to perform a None check.
+    data = data or b""
+    md5 = hashlib.md5() # nosec
+    if isinstance(data, bytes):
+        md5.update(data)
+    elif hasattr(data, 'read'):
+        pos = 0
+        try:
+            pos = data.tell()
+        except:  # pylint: disable=bare-except
+            pass
+        for chunk in iter(lambda: data.read(4096), b""):
+            md5.update(chunk)
+        try:
+            data.seek(pos, SEEK_SET)
+        except (AttributeError, IOError) as exc:
+            raise ValueError("Data should be bytes or a seekable file-like object.") from exc
+    else:
+        raise ValueError("Data should be bytes or a seekable file-like object.")
+
+    return md5.digest()
 
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
@@ -64,9 +136,8 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
-        await response.http_response.load_body()
 
-        will_retry = is_retry(response, request.context.options.get('mode'))
+        will_retry = await is_retry(response, request.context.options.get('mode'))
         # Auth error could come from Bearer challenge, in which case this request will be made again
         is_auth_error = response.http_response.status_code == 401
         should_update_counts = not (will_retry or is_auth_error)
@@ -112,7 +183,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
         while retries_remaining:
             try:
                 response = await self.next.send(request)
-                if is_retry(response, retry_settings['mode']):
+                if await is_retry(response, retry_settings['mode']):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
