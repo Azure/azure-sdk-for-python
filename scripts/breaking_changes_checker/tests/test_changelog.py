@@ -8,7 +8,10 @@
 import os
 import json
 import jsondiff
+import pytest
+from pathlib import Path
 from breaking_changes_checker.changelog_tracker import ChangelogTracker
+from breaking_changes_checker.detect_breaking_changes import test_compare_reports
 
 
 def test_changelog_flag():
@@ -303,3 +306,15 @@ def test_new_class_method_parameter_added():
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'bar', 'foo']
+
+
+def test_pass_custom_reports_changelog(capsys):
+    source_report = Path("test_stable.json")
+    target_report = Path("test_current.json")
+
+    try:
+        test_compare_reports("tests", True, str(source_report), str(target_report))
+        out, _ = capsys.readouterr()
+        assert "### Breaking Changes" in out
+    except SystemExit as e:
+        pytest.fail("test_compare_reports failed to report changelog when passing custom reports")
