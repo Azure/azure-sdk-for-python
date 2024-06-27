@@ -815,6 +815,7 @@ try {
                     -ResourceGroupName $resourceGroup.ResourceGroupName `
                     -TemplateFile $templateFile.jsonFilePath `
                     -TemplateParameterObject $templateFileParameters `
+                    -DeploymentDebugLogLevel All `
                     -Force:$Force
         }
         if ($deployment.ProvisioningState -ne 'Succeeded') {
