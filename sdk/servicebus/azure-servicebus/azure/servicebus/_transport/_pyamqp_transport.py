@@ -790,9 +790,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         # pylint: disable=protected-access
         try:
-            if handler._link._is_closed:  # pylint: disable=protected-access
-                raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced, 
-                    description="Message received on a different link than the current receiver link.")
             if settle_operation == MESSAGE_COMPLETE:
                 return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -830,7 +827,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
 
         except AMQPLinkError as le:
-            raise RuntimeError("Link is closed and cannot settle message.") from le
+            # TODO: fix logger
+            import logging
+            raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 

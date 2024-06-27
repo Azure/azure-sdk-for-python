@@ -365,7 +365,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
         except AMQPLinkError as le:
-            raise ServiceBusConnectionError(message="Link lost during settle operation.") from le
+            # TODO: fix logger
+            import logging
+            raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 
