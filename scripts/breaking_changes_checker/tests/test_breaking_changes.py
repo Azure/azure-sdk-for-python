@@ -11,7 +11,7 @@ import jsondiff
 import pytest
 from pathlib import Path
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
-from breaking_changes_checker.detect_breaking_changes import test_compare_reports
+from breaking_changes_checker.detect_breaking_changes import main
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -368,11 +368,11 @@ def test_replace_all_modules():
 
 
 def test_pass_custom_reports_breaking(capsys):
-    source_report = Path("test_stable.json")
-    target_report = Path("test_current.json")
+    source_report = "test_stable.json"
+    target_report = "test_current.json"
 
     try:
-        test_compare_reports("tests", False, str(source_report), str(target_report))
+        main(None, None, None, None, "tests", False, False, source_report, target_report)
     except SystemExit as e:
         if e.code == 1:
             out, _ = capsys.readouterr()

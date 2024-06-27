@@ -11,7 +11,7 @@ import jsondiff
 import pytest
 from pathlib import Path
 from breaking_changes_checker.changelog_tracker import ChangelogTracker
-from breaking_changes_checker.detect_breaking_changes import test_compare_reports
+from breaking_changes_checker.detect_breaking_changes import main
 
 
 def test_changelog_flag():
@@ -309,11 +309,11 @@ def test_new_class_method_parameter_added():
 
 
 def test_pass_custom_reports_changelog(capsys):
-    source_report = Path("test_stable.json")
-    target_report = Path("test_current.json")
+    source_report = "test_stable.json"
+    target_report = "test_current.json"
 
     try:
-        test_compare_reports("tests", True, str(source_report), str(target_report))
+        main(None, None, None, None, "tests", True, False, source_report, target_report)
         out, _ = capsys.readouterr()
         assert "### Breaking Changes" in out
     except SystemExit as e:
