@@ -9,38 +9,54 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
-from ._configuration import AppComplianceAutomationToolForMicrosoft365Configuration
-from .operations import Operations, ReportOperations, ReportsOperations, SnapshotOperations, SnapshotsOperations
+from ._configuration import AppComplianceAutomationMgmtClientConfiguration
+from .operations import (
+    EvidenceOperations,
+    Operations,
+    ProviderActionsOperations,
+    ReportOperations,
+    ScopingConfigurationOperations,
+    SnapshotOperations,
+    WebhookOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AppComplianceAutomationToolForMicrosoft365:  # pylint: disable=client-accepts-api-version-keyword
+class AppComplianceAutomationMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """App Compliance Automation Tool for Microsoft 365 API spec.
 
+    :ivar provider_actions: ProviderActionsOperations operations
+    :vartype provider_actions:
+     azure.mgmt.appcomplianceautomation.aio.operations.ProviderActionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.appcomplianceautomation.aio.operations.Operations
-    :ivar reports: ReportsOperations operations
-    :vartype reports: azure.mgmt.appcomplianceautomation.aio.operations.ReportsOperations
     :ivar report: ReportOperations operations
     :vartype report: azure.mgmt.appcomplianceautomation.aio.operations.ReportOperations
-    :ivar snapshots: SnapshotsOperations operations
-    :vartype snapshots: azure.mgmt.appcomplianceautomation.aio.operations.SnapshotsOperations
+    :ivar evidence: EvidenceOperations operations
+    :vartype evidence: azure.mgmt.appcomplianceautomation.aio.operations.EvidenceOperations
+    :ivar scoping_configuration: ScopingConfigurationOperations operations
+    :vartype scoping_configuration:
+     azure.mgmt.appcomplianceautomation.aio.operations.ScopingConfigurationOperations
     :ivar snapshot: SnapshotOperations operations
     :vartype snapshot: azure.mgmt.appcomplianceautomation.aio.operations.SnapshotOperations
+    :ivar webhook: WebhookOperations operations
+    :vartype webhook: azure.mgmt.appcomplianceautomation.aio.operations.WebhookOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-16-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-06-27". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -49,20 +65,46 @@ class AppComplianceAutomationToolForMicrosoft365:  # pylint: disable=client-acce
     def __init__(
         self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
-        self._config = AppComplianceAutomationToolForMicrosoft365Configuration(credential=credential, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = AppComplianceAutomationMgmtClientConfiguration(credential=credential, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
+        self.provider_actions = ProviderActionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.reports = ReportsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.report = ReportOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evidence = EvidenceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scoping_configuration = ScopingConfigurationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.snapshot = SnapshotOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.webhook = WebhookOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -82,14 +124,14 @@ class AppComplianceAutomationToolForMicrosoft365:  # pylint: disable=client-acce
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AppComplianceAutomationToolForMicrosoft365":
+    async def __aenter__(self) -> "AppComplianceAutomationMgmtClient":
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
