@@ -16,7 +16,6 @@ param location string = resourceGroup().location
   'premium'
 ])
 param keyVaultSku string = 'premium'
-param testApplicationId string
 
 var kvName = baseName
 var networkAcls = {
@@ -37,6 +36,24 @@ resource kv 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
       name: keyVaultSku
     }
     tenantId: tenantId
+    accessPolicies: [
+      {
+        tenantId: tenantId
+        objectId: testApplicationOid
+        permissions: {
+          secrets: [
+            'Get'
+            'List'
+            'Set'
+            'Delete'
+            'Recover'
+            'Backup'
+            'Restore'
+            'Purge'
+          ]
+        }
+      }
+    ]
     enableSoftDelete: true
     enableRbacAuthorization: true
     softDeleteRetentionInDays: 7
