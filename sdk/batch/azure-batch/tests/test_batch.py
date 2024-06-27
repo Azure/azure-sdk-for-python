@@ -712,9 +712,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.get_node_extension(batch_pool.id, nodes[0].id, extensions[1].vm_extension.name)
         )
         assert extension is not None
-        assert extension.vm_extension.name == "secretext"
-        assert extension.vm_extension.publisher == "Microsoft.Azure.KeyVault"
-        assert extension.vm_extension.type == "KeyVaultForLinux"
+        assert extension.vm_extension.name == "batchNodeExtension"
+        assert extension.vm_extension.publisher == "Microsoft.Azure.Extensions"
+        assert extension.vm_extension.type == "CustomScript"
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -769,10 +769,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Get remote desktop
         with io.BytesIO() as file_handle:
             remote_desktop_bytes = await async_wrapper(
-                client.get_node_remote_desktop_file(batch_pool.name, nodes[0].id)
+                client.get_node_remote_login_settings(batch_pool.name, nodes[0].id)
             )
             assert remote_desktop_bytes is not None
-        assert "full address" in str(b"".join(remote_desktop_bytes), "utf-8")
+        assert "remoteLoginIPAddress" in str(b"".join(remote_desktop_bytes), "utf-8")
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix="batch4", location=AZURE_LOCATION)
@@ -843,9 +843,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         with io.BytesIO() as file_handle:
             response = await async_wrapper(client.get_task_file(batch_job.id, task_id, only_files[0].name))
             for data in response:
-                file_length += 1
+                file_length += len(data)
         assert file_length == int(props.headers["Content-Length"])
-        assert "hello world" in str(response)
 
         # Test Delete File from Task
         response = await async_wrapper(client.delete_task_file(batch_job.id, task_id, only_files[0].name))
@@ -1030,7 +1029,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get Subtasks
         # TODO: Test with actual subtasks
-        subtasks = await async_wrapper(client.list_sub_tasks(batch_job.id, task_param.id))
+        subtasks = list(await async_wrapper(client.list_sub_tasks(batch_job.id, task_param.id)))
         assert isinstance(subtasks, Iterable)
 
         # Test Delete Task

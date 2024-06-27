@@ -182,12 +182,7 @@ class PoolPreparer(AzureMgmtPreparer):
             )
             vm_size = "standard_d2_v2"
 
-            if self.config == "paas":
-                vm_size = "standard_d2_v3"
-                deployment = models.DeploymentConfiguration(
-                    cloud_service_configuration=models.CloudServiceConfiguration(os_family="6")
-                )
-            elif self.os == "Windows":
+            if self.os == "Windows":
                 deployment = models.DeploymentConfiguration(
                     virtual_machine_configuration=models.VirtualMachineConfiguration(
                         image_reference=models.ImageReference(
