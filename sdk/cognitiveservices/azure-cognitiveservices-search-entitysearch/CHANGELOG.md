@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.1 (2024-06-27)
+## 2.0.1 (2024-06-26)
 
 ### Other Changes
 
