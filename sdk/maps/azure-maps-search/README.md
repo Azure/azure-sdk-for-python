@@ -290,7 +290,7 @@ if __name__ == '__main__':
    reverse_geocode()
 ```
 
-### Batch request for reverse geocoding
+### Batch reverse geocode
 
 This sample demonstrates how to perform reverse search by given coordinates in batch.
 
