@@ -373,7 +373,7 @@ class AttestationClient(object):
 
     async def _get_signers(
         self, **kwargs: Any
-    ):  # type: (Any) -> list[AttestationSigner]
+    )-> List[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens."""
 
         with self._statelock:

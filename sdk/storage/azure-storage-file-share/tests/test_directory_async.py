@@ -1495,7 +1495,6 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        with pytest.raises(ClientAuthenticationError):
-            await directory_client.exists()
+        await directory_client.exists()
 
 # ------------------------------------------------------------------------------

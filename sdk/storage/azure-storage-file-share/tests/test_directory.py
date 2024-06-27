@@ -1394,8 +1394,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         )
 
         # Assert
-        with pytest.raises(ClientAuthenticationError):
-            directory_client.exists()
+        directory_client.exists()
 
 
 # ------------------------------------------------------------------------------

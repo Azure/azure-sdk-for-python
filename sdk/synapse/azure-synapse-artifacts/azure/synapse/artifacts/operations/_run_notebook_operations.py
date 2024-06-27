@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -155,7 +155,7 @@ class RunNotebookOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _create_run_initial(
-        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO], **kwargs: Any
+        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO[bytes]], **kwargs: Any
     ) -> _models.RunNotebookResponse:
         error_map = {
             401: ClientAuthenticationError,
@@ -234,14 +234,6 @@ class RunNotebookOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either RunNotebookResponse or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.RunNotebookResponse]
@@ -250,25 +242,17 @@ class RunNotebookOperations:
 
     @overload
     def begin_create_run(
-        self, run_id: str, run_notebook_request: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, run_id: str, run_notebook_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
         :param run_id: Notebook run id. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Required.
-        :type run_notebook_request: IO
+        :type run_notebook_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either RunNotebookResponse or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.RunNotebookResponse]
@@ -277,26 +261,15 @@ class RunNotebookOperations:
 
     @distributed_trace
     def begin_create_run(
-        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO], **kwargs: Any
+        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
         :param run_id: Notebook run id. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Is either a RunNotebookRequest type
-         or a IO type. Required.
-        :type run_notebook_request: ~azure.synapse.artifacts.models.RunNotebookRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or a IO[bytes] type. Required.
+        :type run_notebook_request: ~azure.synapse.artifacts.models.RunNotebookRequest or IO[bytes]
         :return: An instance of LROPoller that returns either RunNotebookResponse or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.RunNotebookResponse]
@@ -347,13 +320,15 @@ class RunNotebookOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.RunNotebookResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.RunNotebookResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_status(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
@@ -361,7 +336,6 @@ class RunNotebookOperations:
 
         :param run_id: Notebook run id. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunNotebookResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -416,7 +390,6 @@ class RunNotebookOperations:
 
         :param run_id: Notebook run id. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunNotebookResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -457,7 +430,7 @@ class RunNotebookOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
@@ -473,7 +446,6 @@ class RunNotebookOperations:
 
         :param run_id: Notebook run id. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunNotebookSnapshotResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookSnapshotResponse
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -104,7 +104,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
          The default is :code:`<code>false</code>`, which returns a subset of the properties.
           Retrieval of all properties may increase the API latency. Default value is None.
         :type detailed: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AppServicePlan or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
@@ -116,7 +115,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.AppServicePlanCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -127,16 +126,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     detailed=detailed,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -147,14 +145,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AppServicePlanCollection", pipeline_response)
@@ -164,11 +162,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -180,8 +178,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Web/serverfarms"}
 
     @distributed_trace
     def list_by_resource_group(
@@ -193,7 +189,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
 
         :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AppServicePlan or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
@@ -205,7 +200,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.AppServicePlanCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -216,16 +211,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -236,14 +230,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AppServicePlanCollection", pipeline_response)
@@ -253,11 +247,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -270,10 +264,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms"
-    }
-
     @distributed_trace_async
     async def get(self, resource_group_name: str, name: str, **kwargs: Any) -> Optional[_models.AppServicePlan]:
         """Get an App Service plan.
@@ -284,12 +274,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServicePlan or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -303,21 +292,20 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[Optional[_models.AppServicePlan]] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -331,18 +319,18 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("AppServicePlan", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, name: str, app_service_plan: Union[_models.AppServicePlan, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        app_service_plan: Union[_models.AppServicePlan, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AppServicePlan:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -365,7 +353,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(app_service_plan, "AppServicePlan")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -373,16 +361,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -405,10 +392,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -433,14 +416,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServicePlan or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
@@ -452,7 +427,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: IO,
+        app_service_plan: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -466,18 +441,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the App Service plan. Required.
         :type name: str
         :param app_service_plan: Details of the App Service plan. Required.
-        :type app_service_plan: IO
+        :type app_service_plan: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServicePlan or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
@@ -486,7 +453,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, name: str, app_service_plan: Union[_models.AppServicePlan, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        name: str,
+        app_service_plan: Union[_models.AppServicePlan, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.AppServicePlan]:
         """Creates or updates an App Service Plan.
 
@@ -497,19 +468,8 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the App Service plan. Required.
         :type name: str
         :param app_service_plan: Details of the App Service plan. Is either a AppServicePlan type or a
-         IO type. Required.
-        :type app_service_plan: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type app_service_plan: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either AppServicePlan or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.v2018_02_01.models.AppServicePlan]
@@ -541,7 +501,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("AppServicePlan", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -551,17 +511,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.AppServicePlan].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}"
-    }
+        return AsyncLROPoller[_models.AppServicePlan](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -575,12 +533,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -594,21 +551,20 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -618,11 +574,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update(
@@ -647,7 +599,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServicePlan or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -658,7 +609,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: IO,
+        app_service_plan: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -672,11 +623,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the App Service plan. Required.
         :type name: str
         :param app_service_plan: Details of the App Service plan. Required.
-        :type app_service_plan: IO
+        :type app_service_plan: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServicePlan or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -687,7 +637,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         name: str,
-        app_service_plan: Union[_models.AppServicePlanPatchResource, IO],
+        app_service_plan: Union[_models.AppServicePlanPatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AppServicePlan:
         """Creates or updates an App Service Plan.
@@ -699,17 +649,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param name: Name of the App Service plan. Required.
         :type name: str
         :param app_service_plan: Details of the App Service plan. Is either a
-         AppServicePlanPatchResource type or a IO type. Required.
-        :type app_service_plan: ~azure.mgmt.web.v2018_02_01.models.AppServicePlanPatchResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         AppServicePlanPatchResource type or a IO[bytes] type. Required.
+        :type app_service_plan: ~azure.mgmt.web.v2018_02_01.models.AppServicePlanPatchResource or
+         IO[bytes]
         :return: AppServicePlan or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.AppServicePlan
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -732,7 +679,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(app_service_plan, "AppServicePlanPatchResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
@@ -740,16 +687,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -770,10 +716,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}"
-    }
-
     @distributed_trace_async
     async def list_capabilities(self, resource_group_name: str, name: str, **kwargs: Any) -> List[_models.Capability]:
         """List all capabilities of an App Service plan.
@@ -784,12 +726,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of Capability or the result of cls(response)
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.Capability]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -803,21 +744,20 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[List[_models.Capability]] = kwargs.pop("cls", None)
 
-        request = build_list_capabilities_request(
+        _request = build_list_capabilities_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_capabilities.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -830,13 +770,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("[Capability]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_capabilities.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/capabilities"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_hybrid_connection(
@@ -854,12 +790,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type namespace_name: str
         :param relay_name: Name of the Service Bus relay. Required.
         :type relay_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HybridConnection or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -873,23 +808,22 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.HybridConnection] = kwargs.pop("cls", None)
 
-        request = build_get_hybrid_connection_request(
+        _request = build_get_hybrid_connection_request(
             resource_group_name=resource_group_name,
             name=name,
             namespace_name=namespace_name,
             relay_name=relay_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_hybrid_connection.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -902,13 +836,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("HybridConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_hybrid_connection.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_hybrid_connection(  # pylint: disable=inconsistent-return-statements
@@ -926,12 +856,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type namespace_name: str
         :param relay_name: Name of the Service Bus relay. Required.
         :type relay_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -945,23 +874,22 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_hybrid_connection_request(
+        _request = build_delete_hybrid_connection_request(
             resource_group_name=resource_group_name,
             name=name,
             namespace_name=namespace_name,
             relay_name=relay_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_hybrid_connection.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -971,11 +899,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_hybrid_connection.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def list_hybrid_connection_keys(
@@ -993,12 +917,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type namespace_name: str
         :param relay_name: The name of the Service Bus relay. Required.
         :type relay_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HybridConnectionKey or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionKey
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1012,23 +935,22 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.HybridConnectionKey] = kwargs.pop("cls", None)
 
-        request = build_list_hybrid_connection_keys_request(
+        _request = build_list_hybrid_connection_keys_request(
             resource_group_name=resource_group_name,
             name=name,
             namespace_name=namespace_name,
             relay_name=relay_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_hybrid_connection_keys.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1041,13 +963,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("HybridConnectionKey", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_hybrid_connection_keys.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/listKeys"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_web_apps_by_hybrid_connection(
@@ -1065,7 +983,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type namespace_name: str
         :param relay_name: Name of the Hybrid Connection relay. Required.
         :type relay_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either str or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1076,7 +993,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.ResourceCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1087,19 +1004,18 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_web_apps_by_hybrid_connection_request(
+                _request = build_list_web_apps_by_hybrid_connection_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     namespace_name=namespace_name,
                     relay_name=relay_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_web_apps_by_hybrid_connection.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1110,14 +1026,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceCollection", pipeline_response)
@@ -1127,11 +1043,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1143,10 +1059,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_web_apps_by_hybrid_connection.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionNamespaces/{namespaceName}/relays/{relayName}/sites"
-    }
 
     @distributed_trace_async
     async def get_hybrid_connection_plan_limit(
@@ -1160,12 +1072,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HybridConnectionLimits or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.HybridConnectionLimits
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1179,21 +1090,20 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.HybridConnectionLimits] = kwargs.pop("cls", None)
 
-        request = build_get_hybrid_connection_plan_limit_request(
+        _request = build_get_hybrid_connection_plan_limit_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_hybrid_connection_plan_limit.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1206,13 +1116,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("HybridConnectionLimits", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_hybrid_connection_plan_limit.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionPlanLimits/limit"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_hybrid_connections(
@@ -1226,7 +1132,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either HybridConnection or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.HybridConnection]
@@ -1238,7 +1143,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.HybridConnectionCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1249,17 +1154,16 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_hybrid_connections_request(
+                _request = build_list_hybrid_connections_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_hybrid_connections.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1270,14 +1174,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("HybridConnectionCollection", pipeline_response)
@@ -1287,11 +1191,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1303,10 +1207,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_hybrid_connections.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/hybridConnectionRelays"
-    }
 
     @distributed_trace
     def list_metric_defintions(
@@ -1320,7 +1220,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceMetricDefinition or the result of
          cls(response)
         :rtype:
@@ -1333,7 +1232,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.ResourceMetricDefinitionCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1344,17 +1243,16 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_metric_defintions_request(
+                _request = build_list_metric_defintions_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_metric_defintions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1365,14 +1263,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceMetricDefinitionCollection", pipeline_response)
@@ -1382,11 +1280,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1398,10 +1296,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_metric_defintions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metricdefinitions"
-    }
 
     @distributed_trace
     def list_metrics(
@@ -1428,7 +1322,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
          2014-01-01T00:00:00Z and endTime eq 2014-12-31T23:59:59Z and timeGrain eq
          duration'[Hour|Minute|Day]'. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceMetric or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.ResourceMetric]
@@ -1440,7 +1333,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.ResourceMetricCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1451,19 +1344,18 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_metrics_request(
+                _request = build_list_metrics_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     details=details,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_metrics.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1474,14 +1366,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceMetricCollection", pipeline_response)
@@ -1491,11 +1383,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1507,10 +1399,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_metrics.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/metrics"
-    }
 
     @distributed_trace_async
     async def restart_web_apps(  # pylint: disable=inconsistent-return-statements
@@ -1529,12 +1417,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
          :code:`<code>false</code>`, which always restarts and reprovisions the apps. Default value is
          None.
         :type soft_restart: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1548,22 +1435,21 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_restart_web_apps_request(
+        _request = build_restart_web_apps_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             soft_restart=soft_restart,
             api_version=api_version,
-            template_url=self.restart_web_apps.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1573,11 +1459,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    restart_web_apps.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/restartSites"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_web_apps(
@@ -1607,7 +1489,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type filter: str
         :param top: List page size. If specified, results are paged. Default value is None.
         :type top: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Site or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.Site]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1618,7 +1499,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1629,7 +1510,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_web_apps_request(
+                _request = build_list_web_apps_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
@@ -1637,12 +1518,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                     filter=filter,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_web_apps.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1653,14 +1533,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("WebAppCollection", pipeline_response)
@@ -1670,11 +1550,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1687,10 +1567,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_web_apps.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/sites"
-    }
-
     @distributed_trace_async
     async def get_server_farm_skus(self, resource_group_name: str, name: str, **kwargs: Any) -> JSON:
         """Gets all selectable SKUs for a given App Service Plan.
@@ -1701,12 +1577,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of App Service Plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: JSON or the result of cls(response)
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1720,21 +1595,20 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_server_farm_skus_request(
+        _request = build_get_server_farm_skus_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_server_farm_skus.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1747,13 +1621,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_server_farm_skus.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/skus"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_usages(
@@ -1771,7 +1641,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
          syntax. Example: $filter=(name.value eq 'Metric1' or name.value eq 'Metric2'). Default value is
          None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CsmUsageQuota or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.v2018_02_01.models.CsmUsageQuota]
@@ -1783,7 +1652,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.CsmUsageQuotaCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1794,18 +1663,17 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_usages_request(
+                _request = build_list_usages_request(
                     resource_group_name=resource_group_name,
                     name=name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_usages.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1816,14 +1684,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("CsmUsageQuotaCollection", pipeline_response)
@@ -1833,11 +1701,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1850,10 +1718,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_usages.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/usages"
-    }
-
     @distributed_trace_async
     async def list_vnets(self, resource_group_name: str, name: str, **kwargs: Any) -> List[_models.VnetInfo]:
         """Get all Virtual Networks associated with an App Service plan.
@@ -1864,12 +1728,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param name: Name of the App Service plan. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of VnetInfo or the result of cls(response)
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1883,21 +1746,20 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[List[_models.VnetInfo]] = kwargs.pop("cls", None)
 
-        request = build_list_vnets_request(
+        _request = build_list_vnets_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_vnets.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1910,13 +1772,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("[VnetInfo]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_vnets.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_vnet_from_server_farm(
@@ -1932,12 +1790,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param vnet_name: Name of the Virtual Network. Required.
         :type vnet_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetInfo or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetInfo or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1951,22 +1808,21 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[Optional[_models.VnetInfo]] = kwargs.pop("cls", None)
 
-        request = build_get_vnet_from_server_farm_request(
+        _request = build_get_vnet_from_server_farm_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_vnet_from_server_farm.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1980,13 +1836,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("VnetInfo", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_vnet_from_server_farm.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_vnet_gateway(
@@ -2004,12 +1856,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param gateway_name: Name of the gateway. Only the 'primary' gateway is supported. Required.
         :type gateway_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetGateway or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2023,23 +1874,22 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[_models.VnetGateway] = kwargs.pop("cls", None)
 
-        request = build_get_vnet_gateway_request(
+        _request = build_get_vnet_gateway_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
             gateway_name=gateway_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_vnet_gateway.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2052,13 +1902,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("VnetGateway", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_vnet_gateway.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def update_vnet_gateway(
@@ -2089,7 +1935,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetGateway or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2102,7 +1947,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: IO,
+        connection_envelope: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2120,11 +1965,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param gateway_name: Name of the gateway. Only the 'primary' gateway is supported. Required.
         :type gateway_name: str
         :param connection_envelope: Definition of the gateway. Required.
-        :type connection_envelope: IO
+        :type connection_envelope: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetGateway or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2137,7 +1981,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         gateway_name: str,
-        connection_envelope: Union[_models.VnetGateway, IO],
+        connection_envelope: Union[_models.VnetGateway, IO[bytes]],
         **kwargs: Any
     ) -> _models.VnetGateway:
         """Update a Virtual Network gateway.
@@ -2152,18 +1996,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param gateway_name: Name of the gateway. Only the 'primary' gateway is supported. Required.
         :type gateway_name: str
-        :param connection_envelope: Definition of the gateway. Is either a VnetGateway type or a IO
-         type. Required.
-        :type connection_envelope: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param connection_envelope: Definition of the gateway. Is either a VnetGateway type or a
+         IO[bytes] type. Required.
+        :type connection_envelope: ~azure.mgmt.web.v2018_02_01.models.VnetGateway or IO[bytes]
         :return: VnetGateway or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2186,7 +2026,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(connection_envelope, "VnetGateway")
 
-        request = build_update_vnet_gateway_request(
+        _request = build_update_vnet_gateway_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
@@ -2196,16 +2036,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_vnet_gateway.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2218,13 +2057,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("VnetGateway", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update_vnet_gateway.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/gateways/{gatewayName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_routes_for_vnet(
@@ -2240,12 +2075,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param vnet_name: Name of the Virtual Network. Required.
         :type vnet_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of VnetRoute or the result of cls(response)
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2259,22 +2093,21 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[List[_models.VnetRoute]] = kwargs.pop("cls", None)
 
-        request = build_list_routes_for_vnet_request(
+        _request = build_list_routes_for_vnet_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_routes_for_vnet.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2287,13 +2120,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("[VnetRoute]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_routes_for_vnet.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_route_for_vnet(
@@ -2311,12 +2140,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of VnetRoute or None or the result of cls(response)
         :rtype: list[~azure.mgmt.web.v2018_02_01.models.VnetRoute] or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2330,23 +2158,22 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[Optional[List[_models.VnetRoute]]] = kwargs.pop("cls", None)
 
-        request = build_get_route_for_vnet_request(
+        _request = build_get_route_for_vnet_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
             route_name=route_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_route_for_vnet.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2360,13 +2187,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("[VnetRoute]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_route_for_vnet.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update_vnet_route(
@@ -2397,7 +2220,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetRoute or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2410,7 +2232,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: IO,
+        route: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2428,11 +2250,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
         :param route: Definition of the Virtual Network route. Required.
-        :type route: IO
+        :type route: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetRoute or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2445,7 +2266,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: Union[_models.VnetRoute, IO],
+        route: Union[_models.VnetRoute, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.VnetRoute]:
         """Create or update a Virtual Network route in an App Service plan.
@@ -2460,18 +2281,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
-        :param route: Definition of the Virtual Network route. Is either a VnetRoute type or a IO type.
-         Required.
-        :type route: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param route: Definition of the Virtual Network route. Is either a VnetRoute type or a
+         IO[bytes] type. Required.
+        :type route: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or IO[bytes]
         :return: VnetRoute or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2494,7 +2311,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(route, "VnetRoute")
 
-        request = build_create_or_update_vnet_route_request(
+        _request = build_create_or_update_vnet_route_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
@@ -2504,16 +2321,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_vnet_route.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2527,13 +2343,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("VnetRoute", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update_vnet_route.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete_vnet_route(  # pylint: disable=inconsistent-return-statements
@@ -2551,12 +2363,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2570,23 +2381,22 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_vnet_route_request(
+        _request = build_delete_vnet_route_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
             route_name=route_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_vnet_route.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2596,11 +2406,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_vnet_route.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update_vnet_route(
@@ -2631,7 +2437,6 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetRoute or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2644,7 +2449,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: IO,
+        route: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2662,11 +2467,10 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
         :param route: Definition of the Virtual Network route. Required.
-        :type route: IO
+        :type route: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VnetRoute or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2679,7 +2483,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         name: str,
         vnet_name: str,
         route_name: str,
-        route: Union[_models.VnetRoute, IO],
+        route: Union[_models.VnetRoute, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.VnetRoute]:
         """Create or update a Virtual Network route in an App Service plan.
@@ -2694,18 +2498,14 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type vnet_name: str
         :param route_name: Name of the Virtual Network route. Required.
         :type route_name: str
-        :param route: Definition of the Virtual Network route. Is either a VnetRoute type or a IO type.
-         Required.
-        :type route: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param route: Definition of the Virtual Network route. Is either a VnetRoute type or a
+         IO[bytes] type. Required.
+        :type route: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or IO[bytes]
         :return: VnetRoute or None or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2018_02_01.models.VnetRoute or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2728,7 +2528,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(route, "VnetRoute")
 
-        request = build_update_vnet_route_request(
+        _request = build_update_vnet_route_request(
             resource_group_name=resource_group_name,
             name=name,
             vnet_name=vnet_name,
@@ -2738,16 +2538,15 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_vnet_route.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2761,13 +2560,9 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("VnetRoute", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update_vnet_route.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/virtualNetworkConnections/{vnetName}/routes/{routeName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def reboot_worker(  # pylint: disable=inconsistent-return-statements
@@ -2783,12 +2578,11 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         :type name: str
         :param worker_name: Name of worker machine, which typically starts with RD. Required.
         :type worker_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2802,22 +2596,21 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_reboot_worker_request(
+        _request = build_reboot_worker_request(
             resource_group_name=resource_group_name,
             name=name,
             worker_name=worker_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.reboot_worker.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2827,8 +2620,4 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    reboot_worker.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/workers/{workerName}/reboot"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

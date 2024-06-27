@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Union
+from typing import List, Optional, Union, Any
 from uuid import uuid4
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.sms._generated.models import (
@@ -14,33 +14,35 @@ from azure.communication.sms._generated.models import (
 )
 from azure.communication.sms._models import SmsSendResult
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str, get_current_utc_time
 from .._version import SDK_MONIKER
 
+
 class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Sms gateway asynchronously.
 
     This client provides operations to send an SMS via a phone number.
 
-   :param str endpoint:
+    :param str endpoint:
         The endpoint url for Azure Communication Service resource.
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     """
     def __init__(
-            self, endpoint,  # type: str
-            credential,  # type: Union[AsyncTokenCredential, AzureKeyCredential],
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self,
+            endpoint: str,
+            credential: Union[AsyncTokenCredential, AzureKeyCredential],
+            **kwargs: Any,
+        ) -> None:
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.") # pylint: disable=raise-missing-from
+        except AttributeError as e:
+            raise ValueError("Account URL must be a string.") from e
 
         if not credential:
             raise ValueError(
@@ -56,35 +58,37 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
             **kwargs)
 
     @classmethod
-    def from_connection_string(cls, conn_str,  # type: str
-            **kwargs  # type: Any
-        ):  # type: (...) -> SmsClient
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> 'SmsClient':
         """Create SmsClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of SmsClient.
-        :rtype: ~azure.communication.SmsClient
+        :rtype: ~azure.communication.sms.aio.SmsClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sms_sample.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
+            .. literalinclude:: ../samples/send_sms_to_single_recipient_sample_async.py
+                :start-after: [START auth_from_connection_string_async]
+                :end-before: [END auth_from_connection_string_async]
                 :language: python
                 :dedent: 8
                 :caption: Creating the SmsClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
-
         return cls(endpoint, access_key, **kwargs)
 
     @distributed_trace_async
-    async def send(self, from_, # type: str
-             to, # type: Union[str, List[str]]
-             message, # type: str
-             **kwargs # type: Any
-             ): # type: (...) -> [SmsSendResult]
+    async def send(
+        self,
+        from_: str,
+        to: Union[str, List[str]],
+        message: str,
+        *,
+        enable_delivery_report: bool = False,
+        tag: Optional[str] = None,
+        **kwargs: Any
+    ) -> List[SmsSendResult]:
         """Sends SMSs to phone numbers.
 
         :param str from_: The sender of the SMS.
@@ -98,12 +102,8 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :return: A list of SmsSendResult.
         :rtype: [~azure.communication.sms.models.SmsSendResult]
         """
-
         if isinstance(to, str):
             to = [to]
-
-        enable_delivery_report = kwargs.pop('enable_delivery_report', False)
-        tag = kwargs.pop('tag', None)
 
         sms_send_options = SmsSendOptions(
             enable_delivery_report=enable_delivery_report,
@@ -136,11 +136,11 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
             ],
             **kwargs)
 
-    async def __aenter__(self) -> "SMSClient":
+    async def __aenter__(self) -> 'SmsClient':
         await self._sms_service_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: "Any") -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     async def close(self) -> None:

@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import re
 import ast
 import os
 import jsondiff
@@ -22,6 +23,7 @@ from typing import Dict, Union, Type, Callable
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
+from changelog_tracker import ChangelogTracker
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -100,6 +102,23 @@ def get_parameter_default(param: inspect.Parameter) -> None:
 
 
 def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
+    assign_nodes = [node for node in node.body if isinstance(node, ast.AnnAssign)]
+    # Check for class level attributes that follow the pattern: foo: List["_models.FooItem"] = rest_field(name="foo")
+    for assign in assign_nodes:
+        if hasattr(assign, "target"):
+            if hasattr(assign.target, "id") and not assign.target.id.startswith("_"):
+                attr = assign.target.id
+                attr_type = None
+                # FIXME: This can get the type hint for a limited set attributes. We need to address more complex
+                # type hints in the future.
+                # Build type hint for the attribute
+                if hasattr(assign.annotation, "value") and isinstance(assign.annotation.value, ast.Name):
+                    attr_type = assign.annotation.value.id
+                    if attr_type == "List" and hasattr(assign.annotation, "slice"):
+                        if isinstance(assign.annotation.slice, ast.Constant):
+                            attr_type = f"{attr_type}[{assign.annotation.slice.value}]"
+                attribute_names.update({attr: attr_type})
+
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
         assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
@@ -164,7 +183,11 @@ def get_properties(cls: Type) -> Dict:
             analyzer = ClassTreeAnalyzer(base_class.__name__)
             analyzer.visit(module)
             cls_node = analyzer.cls_node
-            get_property_names(cls_node, attribute_names)
+            if cls_node:
+                get_property_names(cls_node, attribute_names)
+            else:
+                # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
+                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
     else:
         get_property_names(cls_node, attribute_names)
     return attribute_names
@@ -262,7 +285,7 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, version: str) -> None:
+def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
@@ -271,16 +294,16 @@ def test_compare_reports(pkg_dir: str, version: str) -> None:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    bc = BreakingChangesTracker(stable, current, diff, package_name)
-    bc.run_checks()
+    checker = BreakingChangesTracker(stable, current, diff, package_name, previous_version=version)
+    if changelog:
+        checker = ChangelogTracker(stable, current, diff, package_name)
+    checker.run_checks()
 
     remove_json_files(pkg_dir)
 
-    if bc.breaking_changes:
-        print(bc)
+    print(checker.report_changes())
+    if not changelog and checker.breaking_changes:
         exit(1)
-
-    print(f"\nNo breaking changes found for {package_name} between stable version {version} and current version.")
 
 
 def remove_json_files(pkg_dir: str) -> None:
@@ -293,7 +316,7 @@ def remove_json_files(pkg_dir: str) -> None:
     _LOGGER.info("cleaning up")
 
 
-def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str):
+def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str, changelog: bool):
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
@@ -340,7 +363,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare_reports(pkg_dir, version)
+        test_compare_reports(pkg_dir, version, changelog)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
@@ -384,14 +407,27 @@ if __name__ == "__main__":
         default=None
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "-c",
+        "--changelog",
+        dest="changelog",
+        help="Output changes listed in changelog format.",
+        action="store_true",
+        default=False,
+    )
+
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
+
     in_venv = args.in_venv
     stable_version = args.stable_version
     target_module = args.target_module
     pkg_dir = os.path.abspath(args.target_package)
     package_name = os.path.basename(pkg_dir)
+    changelog = args.changelog
     logging.basicConfig(level=logging.INFO)
-    if package_name not in RUN_BREAKING_CHANGES_PACKAGES:
+    if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES):
         _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
                      f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
         exit(0)
@@ -412,4 +448,4 @@ if __name__ == "__main__":
             _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
             exit(0)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog)

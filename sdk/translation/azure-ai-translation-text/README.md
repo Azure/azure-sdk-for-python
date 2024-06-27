@@ -64,7 +64,7 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 
 ```python
 credential = AzureKeyCredential(apikey)
-text_translator = TextTranslationClient(credential=credential, endpoint=endpoint, region=region)
+text_translator = TextTranslationClient(credential=credential, region=region)
 ```
 
 <!-- END SNIPPET -->

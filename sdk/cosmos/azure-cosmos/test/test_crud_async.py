@@ -881,8 +881,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         document_list = [document async for document in created_collection.read_all_items()]
         assert len(document_list) == before_create_documents_count
 
-    async def _test_spatial_index(self):
-
+    async def test_geospatial_index_async(self):
         db = self.database_for_test
         # partial policy specified
         collection = await db.create_container(
