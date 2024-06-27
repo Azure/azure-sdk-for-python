@@ -43,6 +43,7 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, AsyncHttpResponse
+from ..rest._http_response_impl_async import AsyncHttpResponseImpl
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
@@ -79,6 +80,8 @@ class AsyncLROBasePolling(
 
     _pipeline_response: PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]
     """Store the latest received HTTP response, initialized by the first answer."""
+
+    _lro_response_type: "AsyncLROResponse"
 
     @property
     def _transport(self) -> AsyncHttpTransport[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
@@ -175,6 +178,9 @@ class AsyncLROBasePolling(
                 request, stream=False, **self._operation_config
             ),
         )
+
+class AsyncLROResponse(AsyncHttpResponseImpl):
+    pass
 
 
 __all__ = ["AsyncLROBasePolling"]
