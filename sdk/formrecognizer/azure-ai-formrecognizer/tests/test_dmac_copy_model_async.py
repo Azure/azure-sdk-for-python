@@ -13,30 +13,27 @@ from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2023_07_31.models import DocumentModelCopyToOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelDetails
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient, AsyncDocumentModelAdministrationLROPoller
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
 
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_none_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_copy_document_model_to(model_id=None, target={})
         assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_copy_model_empty_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_copy_document_model_to(model_id="", target={})
@@ -44,9 +41,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_successful(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         async with client:
             training_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
@@ -71,9 +68,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_with_model_id_and_desc(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
@@ -101,9 +98,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_fail_bad_model_id(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
@@ -118,9 +115,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_transform(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         raw_response = []
 
@@ -146,9 +143,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+    async def test_copy_authorization(self, formrecognizer_region, formrecognizer_resource_id, **kwargs):
+        client = get_dma_client()
         async with client:
             target = await client.get_copy_authorization()
 
@@ -161,9 +158,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_copy_model_with_composed_model(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         async with client:
             poller_1 = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
@@ -195,9 +192,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_copy_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
@@ -215,9 +211,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_poller_metadata(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)

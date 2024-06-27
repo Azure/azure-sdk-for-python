@@ -11,20 +11,19 @@ from azure.ai.formrecognizer import FormTrainingClient
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import FormRecognizerTest, _get_blob_url
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 
 class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    def test_form_multipage_unlabeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         fr_client = client.get_form_recognizer_client()
 
@@ -45,9 +44,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    def test_form_multipage_labeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         fr_client = client.get_form_recognizer_client()
 
@@ -69,9 +68,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    def test_custom_form_multipage_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -108,9 +107,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    def test_custom_form_multipage_labeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
@@ -149,9 +148,8 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     def test_custom_form_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_ft_client()
         formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
         fr_client = client.get_form_recognizer_client()
 
@@ -175,9 +173,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    def test_custom_form_multipage_vendor_set_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
@@ -214,9 +212,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    def test_custom_form_multipage_vendor_set_labeled_transform(self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=True)
@@ -254,9 +252,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url, **kwargs):
+    def test_pages_kwarg_specified(self, formrecognizer_testing_data_container_sas_url, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "multi1.pdf")
 

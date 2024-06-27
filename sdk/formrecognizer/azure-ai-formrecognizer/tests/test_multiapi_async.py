@@ -8,8 +8,7 @@ import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
-from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from azure.ai.formrecognizer.aio import (
     FormRecognizerClient,
@@ -25,48 +24,42 @@ from azure.ai.formrecognizer import (
     BlobSource
 )
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
+get_ft_client = functools.partial(get_async_client, FormTrainingClient)
+get_da_client = functools.partial(get_async_client, DocumentAnalysisClient)
+get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
 
 class TestMultiapi(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_default_api_version_form_recognizer_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     def test_default_api_version_form_training_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_ft_client()
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_v2_0_form_recognizer_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         assert "v2.0" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_v2_0_form_training_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_ft_client(api_version=FormRecognizerApiVersion.V2_0)
         assert "v2.0" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1})
     def test_V2_1_form_recognizer_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_1)
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1})
     def test_V2_1_form_training_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_ft_client(api_version=FormRecognizerApiVersion.V2_1)
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
@@ -100,9 +93,8 @@ class TestMultiapi(AsyncFormRecognizerTest):
             ", ".join(v.value for v in FormRecognizerApiVersion)) == str(excinfo.value)
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     def test_default_api_version_document_analysis_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_da_client()
         assert "2023-07-31" == client._api_version
 
     @FormRecognizerPreparer()
@@ -121,9 +113,8 @@ class TestMultiapi(AsyncFormRecognizerTest):
             ", ".join(v.value for v in DocumentAnalysisApiVersion)) == str(excinfo.value)
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     def test_default_api_version_document_model_admin_client(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         assert "2023-07-31" == client._api_version
 
     @FormRecognizerPreparer()
@@ -143,9 +134,9 @@ class TestMultiapi(AsyncFormRecognizerTest):
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy_async
-    async def test_v2_0_compatibility(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    async def test_v2_0_compatibility(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client(api_version=FormRecognizerApiVersion.V2_0)
         # test that the addition of new attributes in v2.1 does not break v2.0
         async with client:
             label_poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
@@ -185,10 +176,9 @@ class TestMultiapi(AsyncFormRecognizerTest):
             assert first_model.properties is None
 
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
     @recorded_by_proxy_async
-    async def test_v2022_08_31_dac_compatibility(self, client, **kwargs):
-
+    async def test_v2022_08_31_dac_compatibility(self, **kwargs):
+        client = get_da_client(api_version=DocumentAnalysisApiVersion.V2022_08_31)
         with open(self.multipage_table_pdf, "rb") as fd:
             my_file = fd.read()
 
@@ -225,9 +215,9 @@ class TestMultiapi(AsyncFormRecognizerTest):
                 ) == str(excinfo.value)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer(client_kwargs={"api_version": DocumentAnalysisApiVersion.V2022_08_31})
     @recorded_by_proxy_async
-    async def test_v2022_08_31_dmac_compatibility(self, client, formrecognizer_storage_container_sas_url, formrecognizer_training_data_classifier, **kwargs):
+    async def test_v2022_08_31_dmac_compatibility(self, formrecognizer_storage_container_sas_url, formrecognizer_training_data_classifier, **kwargs):
+        client = get_dma_client(api_version=DocumentAnalysisApiVersion.V2022_08_31)
         set_bodiless_matcher()
         async with client:
             poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)

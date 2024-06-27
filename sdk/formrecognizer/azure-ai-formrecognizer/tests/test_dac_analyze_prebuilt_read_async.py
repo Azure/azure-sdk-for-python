@@ -10,13 +10,12 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult, AnalysisFeature
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+get_da_client = functools.partial(get_async_client, DocumentAnalysisClient)
 
 
 class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
@@ -24,9 +23,9 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_read_url_features_formulas(self, client):
+    async def test_document_read_url_features_formulas(self):
+        client = get_da_client()
         async with client:
             poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
             result = await poller.result()
@@ -45,9 +44,9 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_read_stream_languages(self, client):
+    async def test_document_read_stream_languages(self):
+        client = get_da_client()
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -85,10 +84,8 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_html(self, **kwargs):
-        client = kwargs.get("client")
-
+        client = get_da_client()
         with open(self.html_file, "rb") as fd:
             document = fd.read()
 
@@ -122,10 +119,8 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_spreadsheet(self, **kwargs):
-        client = kwargs.get("client")
-
+        client = get_da_client()
         with open(self.spreadsheet, "rb") as fd:
             document = fd.read()
 

@@ -15,18 +15,17 @@ from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResul
 from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_sync_client, FormRecognizerClient)
 
 
 class TestInvoice(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     def test_invoice_bad_endpoint(self, **kwargs):
-        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
+        formrecognizer_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ServiceRequestError):
@@ -35,9 +34,9 @@ class TestInvoice(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_enum_content_type(self, client):
+    def test_passing_enum_content_type(self):
+        client = get_fr_client()
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_recognize_invoices(
@@ -48,9 +47,8 @@ class TestInvoice(FormRecognizerTest):
         assert result is not None
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
@@ -58,9 +56,8 @@ class TestInvoice(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
@@ -68,9 +65,8 @@ class TestInvoice(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_passing_bad_content_type_param_passed(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         with open(self.invoice_pdf, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
@@ -80,10 +76,8 @@ class TestInvoice(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_auto_detect_unsupported_stream_content(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_fr_client()
         with open(self.unsupported_content_py, "rb") as fd:
             my_file = fd.read()
 
@@ -94,9 +88,9 @@ class TestInvoice(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_stream_transform_pdf(self, client):
+    def test_invoice_stream_transform_pdf(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -135,9 +129,9 @@ class TestInvoice(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_stream_multipage_transform_pdf(self, client):
+    def test_invoice_stream_multipage_transform_pdf(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -180,10 +174,9 @@ class TestInvoice(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_tiff(self, client):
-
+    def test_invoice_tiff(self):
+        client = get_fr_client()
         with open(self.invoice_tiff, "rb") as stream:
             poller = client.begin_recognize_invoices(stream)
 
@@ -205,10 +198,9 @@ class TestInvoice(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_multipage_pdf(self, client):
-
+    def test_invoice_multipage_pdf(self):
+        client = get_fr_client()
         with open(self.multipage_vendor_pdf, "rb") as fd:
             invoice = fd.read()
         poller = client.begin_recognize_invoices(invoice)
@@ -234,9 +226,9 @@ class TestInvoice(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_jpg_include_field_elements(self, client):
+    def test_invoice_jpg_include_field_elements(self):
+        client = get_fr_client()
         with open(self.invoice_jpg, "rb") as fd:
             invoice = fd.read()
         poller = client.begin_recognize_invoices(invoice, include_field_elements=True)
@@ -288,10 +280,8 @@ class TestInvoice(FormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_invoice_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_fr_client()
         with open(self.invoice_tiff, "rb") as fd:
             invoice = fd.read()
 
@@ -303,9 +293,8 @@ class TestInvoice(FormRecognizerTest):
         initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_invoice_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
         with pytest.raises(ValueError) as e:
@@ -314,9 +303,9 @@ class TestInvoice(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_locale_specified(self, client):
+    def test_invoice_locale_specified(self):
+        client = get_fr_client()
         with open(self.invoice_tiff, "rb") as fd:
             invoice = fd.read()
         poller = client.begin_recognize_invoices(invoice, locale="en-US")
@@ -325,9 +314,9 @@ class TestInvoice(FormRecognizerTest):
         assert result
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_invoice_locale_error(self, client):
+    def test_invoice_locale_error(self):
+        client = get_fr_client()
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
         with pytest.raises(HttpResponseError) as e:
@@ -336,9 +325,9 @@ class TestInvoice(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_pages_kwarg_specified(self, client):
+    def test_pages_kwarg_specified(self):
+        client = get_fr_client()
         with open(self.invoice_pdf, "rb") as fd:
             invoice = fd.read()
 
