@@ -37,7 +37,7 @@ FormRecognizerPreparer = functools.partial(
 )
 
 
-def get_async_client(client_cls, **kwargs):
+def get_sync_client(client_cls, **kwargs):
     ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
     if is_live():
         form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]

@@ -11,9 +11,8 @@ from devtools_testutils import set_bodiless_matcher, get_credential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client as _get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import get_async_client
 from conftest import skip_flaky_test
 
 class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
