@@ -10,6 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import (
     AzureMgmtPreparer,
     get_credential,
+    is_live,
 )
 from azure.ai.textanalytics import (
     RecognizeEntitiesResult,
@@ -17,8 +18,10 @@ from azure.ai.textanalytics import (
     RecognizePiiEntitiesResult,
     AnalyzeSentimentResult,
     ExtractKeyPhrasesResult,
-    _AnalyzeActionsType
+    _AnalyzeActionsType,
+    TextAnalyticsClient,
 )
+from azure.ai.textanalytics.aio import TextAnalyticsClient as AsyncTextAnalyticsClient
 from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
 
 
@@ -34,60 +37,46 @@ TextAnalyticsPreparer = functools.partial(
 )
 
 
-class TextAnalyticsClientPreparer(AzureMgmtPreparer):
-    def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super().__init__(
-            name_prefix='',
-            random_name_length=42
-        )
-        self.client_kwargs = client_kwargs
-        self.client_cls = client_cls
-
-    def create_resource(self, name, **kwargs):
-        textanalytics_test_endpoint = kwargs.get("textanalytics_test_endpoint")
-        if "textanalytics_test_api_key" in self.client_kwargs:
-            textanalytics_test_api_key = self.client_kwargs.pop("textanalytics_test_api_key")
-            client = self.client_cls(
+def get_textanalytics_client(**kwargs):
+    if is_live():
+        textanalytics_test_endpoint = os.environ["TEXTANALYTICS_TEST_ENDPOINT"]
+    else:
+        textanalytics_test_endpoint = "https://fakeendpoint.cognitiveservices.azure.com"
+    if "textanalytics_test_api_key" in kwargs:
+            textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
+            client = TextAnalyticsClient(
             textanalytics_test_endpoint,
             AzureKeyCredential(textanalytics_test_api_key),
-            **self.client_kwargs
+            **kwargs
         )
-        else:
-            client = self.client_cls(
-                textanalytics_test_endpoint,
-                get_credential(),
-                **self.client_kwargs
-            )
-        kwargs.update({"client": client})
-        return kwargs
-
-
-class TextAnalyticsClientPreparerAsync(AzureMgmtPreparer):
-    def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super().__init__(
-            name_prefix='',
-            random_name_length=42
+    else:
+        client = TextAnalyticsClient(
+            textanalytics_test_endpoint,
+            get_credential(),
+            **kwargs
         )
-        self.client_kwargs = client_kwargs
-        self.client_cls = client_cls
+    return client
 
-    def create_resource(self, name, **kwargs):
-        textanalytics_test_endpoint = kwargs.get("textanalytics_test_endpoint")
-        if "textanalytics_test_api_key" in self.client_kwargs:
-            textanalytics_test_api_key = self.client_kwargs.pop("textanalytics_test_api_key")
-            client = self.client_cls(
+
+def get_async_textanalytics_client(**kwargs):
+    if is_live():
+        textanalytics_test_endpoint = os.environ["TEXTANALYTICS_TEST_ENDPOINT"]
+    else:
+        textanalytics_test_endpoint = "https://fakeendpoint.cognitiveservices.azure.com"
+    if "textanalytics_test_api_key" in kwargs:
+            textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
+            client = AsyncTextAnalyticsClient(
             textanalytics_test_endpoint,
             AzureKeyCredential(textanalytics_test_api_key),
-            **self.client_kwargs
+            **kwargs
         )
-        else:
-            client = self.client_cls(
-                textanalytics_test_endpoint,
-                get_credential(is_async=True),
-                **self.client_kwargs
-            )
-        kwargs.update({"client": client})
-        return kwargs
+    else:
+        client = AsyncTextAnalyticsClient(
+            textanalytics_test_endpoint,
+            get_credential(is_async=True),
+            **kwargs
+        )
+    return client
 
 
 class TextAnalyticsTest(AzureRecordedTestCase):

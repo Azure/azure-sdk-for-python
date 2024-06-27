@@ -9,9 +9,7 @@ import functools
 import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from testcase import TextAnalyticsTest
-from testcase import TextAnalyticsPreparer
-from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
-from devtools_testutils import get_credential
+from testcase import TextAnalyticsPreparer, get_async_textanalytics_client
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.ai.textanalytics import (
@@ -22,24 +20,20 @@ from azure.ai.textanalytics import (
     PiiEntityCategory
 )
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-# the first one
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 class TestRecognizePIIEntities(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_no_single_input(self, client):
+    async def test_no_single_input(self):
+        client = get_async_textanalytics_client()
         with pytest.raises(TypeError):
             response = await client.recognize_pii_entities("hello world")
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_dict(self, client):
-
+    async def test_all_successful_passing_dict(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
                 {"id": "2", "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
@@ -63,9 +57,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 assert entity.confidence_score is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_all_successful_passing_text_document_input(self, client):
+    async def test_all_successful_passing_text_document_input(self):
+        client = get_async_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="My SSN is 859-98-0987."),
             TextDocumentInput(id="2", text="Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."),
@@ -90,9 +84,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
                 assert entity.confidence_score is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_only_string(self, client):
+    async def test_passing_only_string(self):
+        client = get_async_textanalytics_client()
         docs = [
             "My SSN is 859-98-0987.",
             "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
@@ -112,9 +106,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert response[3].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_some_errors(self, client):
+    async def test_input_with_some_errors(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "1", "language": "notalanguage", "text": "hola"},
                 {"id": "2", "text": ""},
                 {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number?"}]
@@ -125,9 +119,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         # assert not response[2].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_input_with_all_errors(self, client):
+    async def test_input_with_all_errors(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "1", "text": ""},
                 {"id": "2", "language": "Spanish", "text": "Hola"},
                 {"id": "3", "language": "de", "text": ""}]
@@ -138,9 +132,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert response[2].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_too_many_documents(self, client):
+    async def test_too_many_documents(self):
+        client = get_async_textanalytics_client()
         docs = ["One", "Two", "Three", "Four", "Five", "Six"]
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -150,9 +144,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert "Batch request contains too many records" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_output_same_order_as_input(self, client):
+    async def test_output_same_order_as_input(self):
+        client = get_async_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="one"),
             TextDocumentInput(id="2", text="two"),
@@ -167,36 +161,36 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert str(idx + 1) == doc.id
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     @recorded_by_proxy_async
-    async def test_empty_credential_class(self, client):
+    async def test_empty_credential_class(self):
+        client = get_async_textanalytics_client(textanalytics_test_api_key="")
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_pii_entities(
                 ["This is written in English."]
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy_async
-    async def test_bad_credentials(self, client):
+    async def test_bad_credentials(self):
+        client = get_async_textanalytics_client(textanalytics_test_api_key="xxxxxxxxxxxx")
         with pytest.raises(ClientAuthenticationError):
             response = await client.recognize_pii_entities(
                 ["This is written in English."]
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_document_input(self, client):
+    async def test_bad_document_input(self):
+        client = get_async_textanalytics_client()
         docs = "This is the wrong type"
 
         with pytest.raises(TypeError):
             response = await client.recognize_pii_entities(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_mixing_inputs(self, client):
+    async def test_mixing_inputs(self):
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -206,9 +200,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             response = await client.recognize_pii_entities(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_out_of_order_ids(self, client):
+    async def test_out_of_order_ids(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -221,9 +215,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert resp.id == in_order[idx]
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_show_stats_and_model_version(self, client):
+    async def test_show_stats_and_model_version(self):
+        client = get_async_textanalytics_client()
         def callback(response):
             assert response is not None
             assert response.model_version
@@ -247,17 +241,17 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_batch_size_over_limit(self, client):
+    async def test_batch_size_over_limit(self):
+        client = get_async_textanalytics_client()
         docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = await client.recognize_pii_entities(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint(self, client):
+    async def test_whole_batch_language_hint(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"fr\""
             language = resp.http_request.body.count(language_str)
@@ -272,9 +266,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, language="fr", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_dont_use_language_hint(self, client):
+    async def test_whole_batch_dont_use_language_hint(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -289,9 +283,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, language="", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_per_item_dont_use_language_hint(self, client):
+    async def test_per_item_dont_use_language_hint(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -308,9 +302,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_obj_input(self, client):
+    async def test_whole_batch_language_hint_and_obj_input(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"de\""
             language = resp.http_request.body.count(language_str)
@@ -325,9 +319,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, language="de", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    async def test_whole_batch_language_hint_and_obj_per_item_hints(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -345,9 +339,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, language="en", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
+    async def test_whole_batch_language_hint_and_dict_per_item_hints(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -364,9 +358,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, language="en", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
     @recorded_by_proxy_async
-    async def test_client_passed_default_language_hint(self, client):
+    async def test_client_passed_default_language_hint(self):
+        client = get_async_textanalytics_client(default_language="es")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -386,18 +380,18 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_language_hint_method(self, client):
+    async def test_invalid_language_hint_method(self):
+        client = get_async_textanalytics_client()
         response = await client.recognize_pii_entities(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_invalid_language_hint_docs(self, client):
+    async def test_invalid_language_hint_docs(self):
+        client = get_async_textanalytics_client()
         response = await client.recognize_pii_entities(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         )
@@ -427,9 +421,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
     #     assert response is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_user_agent(self, client):
+    async def test_user_agent(self):
+        client = get_async_textanalytics_client()
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()) in \
@@ -442,9 +436,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         response = await client.recognize_pii_entities(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_attribute_error_no_result_attribute(self, client):
+    async def test_document_attribute_error_no_result_attribute(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "1", "text": ""}]
         response = await client.recognize_pii_entities(docs)
 
@@ -464,9 +458,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_attribute_error_nonexistent_attribute(self, client):
+    async def test_document_attribute_error_nonexistent_attribute(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "1", "text": ""}]
         response = await client.recognize_pii_entities(docs)
 
@@ -477,9 +471,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert default_behavior.args[0] == '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_model_version_error(self, client):
+    async def test_bad_model_version_error(self):
+        client = get_async_textanalytics_client()
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -489,9 +483,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_errors(self, client):
+    async def test_document_errors(self):
+        client = get_async_textanalytics_client()
         text = ""
         for _ in range(5121):
             text += "x"
@@ -509,9 +503,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert doc_errors[2].error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_warnings(self, client):
+    async def test_document_warnings(self):
+        client = get_async_textanalytics_client()
         # No warnings actually returned for recognize_pii_entities. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
@@ -523,35 +517,35 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert len(doc_warnings) == 0
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_not_passing_list_for_docs(self, client):
+    async def test_not_passing_list_for_docs(self):
+        client = get_async_textanalytics_client()
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             await client.recognize_pii_entities(docs)
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_missing_input_records_error(self, client):
+    async def test_missing_input_records_error(self):
+        client = get_async_textanalytics_client()
         docs = []
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_pii_entities(docs)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_none_docs(self, client):
+    async def test_passing_none_docs(self):
+        client = get_async_textanalytics_client()
         with pytest.raises(ValueError) as excinfo:
             await client.recognize_pii_entities(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_duplicate_ids_error(self, client):
+    async def test_duplicate_ids_error(self):
+        client = get_async_textanalytics_client()
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -562,9 +556,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_batch_size_over_limit_error(self, client):
+    async def test_batch_size_over_limit_error(self):
+        client = get_async_textanalytics_client()
         # Batch size over limit
         docs = ["hello world"] * 1001
         try:
@@ -575,9 +569,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
 
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_pass_cls(self, client):
+    async def test_pass_cls(self):
+        client = get_async_textanalytics_client()
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = await client.recognize_pii_entities(
@@ -587,9 +581,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_language_kwarg_english(self, client):
+    async def test_language_kwarg_english(self):
+        client = get_async_textanalytics_client()
         def callback(response):
             language_str = "\"language\": \"en\""
             assert response.http_request.body.count(language_str) == 1
@@ -605,16 +599,16 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_redacted_text(self, client):
+    async def test_redacted_text(self):
+        client = get_async_textanalytics_client()
         result = await client.recognize_pii_entities(["My SSN is 859-98-0987."])
         assert "My SSN is ***********." == result[0].redacted_text
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_phi_domain_filter(self, client):
+    async def test_phi_domain_filter(self):
+        client = get_async_textanalytics_client()
         # without the domain filter, this should return two entities: Microsoft as an org,
         # and the phone number. With the domain filter, it should only return one.
         result = await client.recognize_pii_entities(
@@ -628,9 +622,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert microsoft.category == "Organization"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_categories_filter(self, client):
+    async def test_categories_filter(self):
+        client = get_async_textanalytics_client()
         result = await client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
         )
@@ -647,9 +641,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert entity.category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER.value
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_categories_filter_with_domain_filter(self, client):
+    async def test_categories_filter_with_domain_filter(self):
+        client = get_async_textanalytics_client()
         # Currently there seems to be no effective difference with or without the PHI domain filter.
         result = await client.recognize_pii_entities(
             ["My name is Inigo Montoya, my SSN in 243-56-0987 and my phone number is 333-3333."],
@@ -662,9 +656,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         assert entity.category == PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER.value
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+    async def test_default_string_index_type_is_UnicodeCodePoint(self):
+        client = get_async_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "UnicodeCodePoint"
 
@@ -674,9 +668,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
+    async def test_default_string_index_type_UnicodeCodePoint_body_param(self):
+        client = get_async_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
@@ -686,9 +680,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type(self, client):
+    async def test_explicit_set_string_index_type(self):
+        client = get_async_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
@@ -699,9 +693,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_explicit_set_string_index_type_body_param(self, client):
+    async def test_explicit_set_string_index_type_body_param(self):
+        client = get_async_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
 
@@ -712,9 +706,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy_async
-    async def test_disable_service_logs(self, client):
+    async def test_disable_service_logs(self):
+        client = get_async_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
         await client.recognize_pii_entities(
@@ -724,9 +718,9 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy_async
-    async def test_disable_service_logs_body_param(self, client):
+    async def test_disable_service_logs_body_param(self):
+        client = get_async_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(resp):
             assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         await client.recognize_pii_entities(
@@ -736,10 +730,8 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
     async def test_pii_entities_multiapi_validate_v3_0(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_async_textanalytics_client(api_version="v3.0")
         with pytest.raises(ValueError) as e:
             await client.recognize_pii_entities(
                 documents=["Test"]

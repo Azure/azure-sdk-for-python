@@ -7,8 +7,7 @@ import pytest
 from azure.ai.textanalytics import AnalyzeSentimentAction
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from testcase import TextAnalyticsPreparer
-from testcase import TextAnalyticsTest
-from devtools_testutils import get_credential
+from testcase import TextAnalyticsTest, get_async_textanalytics_client, get_credential
 import os
 
 
@@ -17,11 +16,9 @@ class TestAuth(TextAnalyticsTest):
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     async def test_active_directory_auth(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        token = self.get_credential(TextAnalyticsClient, is_async=True)
         text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
         credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
-        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
+        text_analytics = get_async_textanalytics_client(credential_scopes=credential_scopes)
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},
@@ -33,11 +30,9 @@ class TestAuth(TextAnalyticsTest):
     @pytest.mark.live_test_only
     @TextAnalyticsPreparer()
     async def test_analyze_active_directory_auth(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
-        token = self.get_credential(TextAnalyticsClient, is_async=True)
         text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
         credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
-        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
+        text_analytics = get_async_textanalytics_client(credential_scopes=credential_scopes)
 
         docs = ["Microsoft was founded by Bill Gates and Paul Allen."]
 
@@ -53,19 +48,19 @@ class TestAuth(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     async def test_empty_credentials(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_endpoint = "https://fakeendpoint.cognitiveservices.azure.com/"
         with pytest.raises(TypeError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, "")
 
     @TextAnalyticsPreparer()
     def test_bad_type_for_credentials(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_endpoint = "https://fakeendpoint.cognitiveservices.azure.com/"
         with pytest.raises(TypeError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, [])
 
     @TextAnalyticsPreparer()
     def test_none_credentials(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_endpoint = "https://fakeendpoint.cognitiveservices.azure.com/"
         with pytest.raises(ValueError):
             text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, None)
 

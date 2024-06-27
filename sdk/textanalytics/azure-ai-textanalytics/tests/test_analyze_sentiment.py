@@ -9,9 +9,8 @@ import functools
 import json
 from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
-from devtools_testutils import recorded_by_proxy, get_credential
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, get_textanalytics_client
+from devtools_testutils import recorded_by_proxy
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextDocumentInput,
@@ -19,22 +18,20 @@ from azure.ai.textanalytics import (
     TextAnalyticsApiVersion,
 )
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_no_single_input(self, client):
+    def test_no_single_input(self):
+        client = get_textanalytics_client()
         with pytest.raises(TypeError):
             response = client.analyze_sentiment("hello world")
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_dict(self, client):
+    def test_all_successful_passing_dict(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
@@ -60,9 +57,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert response[2].sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_text_document_input(self, client):
+    def test_all_successful_passing_text_document_input(self):
+        client = get_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen."),
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -88,9 +85,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert response[2].sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_only_string(self, client):
+    def test_passing_only_string(self):
+        client = get_textanalytics_client()
         docs = [
             "Microsoft was founded by Bill Gates and Paul Allen.",
             "I did not like the hotel we stayed at. It was too expensive.",
@@ -105,9 +102,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert response[3].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_input_with_some_errors(self, client):
+    def test_input_with_some_errors(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
@@ -118,9 +115,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert not response[2].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_input_with_all_errors(self, client):
+    def test_input_with_all_errors(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": ""},
                 {"id": "2", "language": "english", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": ""}]
@@ -131,9 +128,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert response[2].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_too_many_documents(self, client):
+    def test_too_many_documents(self):
+        client = get_textanalytics_client()
         docs = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"]
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -143,9 +140,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert "Batch request contains too many records" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_warnings(self, client):
+    def test_document_warnings(self):
+        client = get_textanalytics_client()
         # No warnings actually returned for analyze_sentiment. Will update when they add
         docs = [
             {"id": "1", "text": "This won't actually create a warning :'("},
@@ -157,9 +154,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert len(doc_warnings) == 0
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_output_same_order_as_input(self, client):
+    def test_output_same_order_as_input(self):
+        client = get_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="one"),
             TextDocumentInput(id="2", text="two"),
@@ -174,36 +171,36 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert str(idx + 1) == doc.id
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     @recorded_by_proxy
-    def test_empty_credential_class(self, client):
+    def test_empty_credential_class(self):
+        client = get_textanalytics_client(textanalytics_test_api_key="")
         with pytest.raises(ClientAuthenticationError):
             response = client.analyze_sentiment(
                 ["This is written in English."]
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy
-    def test_bad_credentials(self, client):
+    def test_bad_credentials(self):
+        client = get_textanalytics_client(textanalytics_test_api_key="xxxxxxxxxxxx")
         with pytest.raises(ClientAuthenticationError):
             response = client.analyze_sentiment(
                 ["This is written in English."]
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_document_input(self, client):
+    def test_bad_document_input(self):
+        client = get_textanalytics_client()
         docs = "This is the wrong type"
 
         with pytest.raises(TypeError):
             response = client.analyze_sentiment(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_mixing_inputs(self, client):
+    def test_mixing_inputs(self):
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -213,9 +210,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             response = client.analyze_sentiment(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_out_of_order_ids(self, client):
+    def test_out_of_order_ids(self):
+        client = get_textanalytics_client()
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -228,9 +225,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert resp.id == in_order[idx]
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_show_stats_and_model_version(self, client):
+    def test_show_stats_and_model_version(self):
+        client = get_textanalytics_client()
         def callback(response):
             assert response is not None
             assert response.model_version
@@ -254,17 +251,17 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_batch_size_over_limit(self, client):
+    def test_batch_size_over_limit(self):
+        client = get_textanalytics_client()
         docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = client.analyze_sentiment(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint(self, client):
+    def test_whole_batch_language_hint(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"fr\""
             language = resp.http_request.body.count(language_str)
@@ -279,9 +276,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="fr", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_dont_use_language_hint(self, client):
+    def test_whole_batch_dont_use_language_hint(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -296,9 +293,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_per_item_dont_use_language_hint(self, client):
+    def test_per_item_dont_use_language_hint(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -315,9 +312,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_obj_input(self, client):
+    def test_whole_batch_language_hint_and_obj_input(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"de\""
             language = resp.http_request.body.count(language_str)
@@ -332,9 +329,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="de", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_dict_input(self, client):
+    def test_whole_batch_language_hint_and_dict_input(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -347,9 +344,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="es", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    def test_whole_batch_language_hint_and_obj_per_item_hints(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -367,9 +364,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
+    def test_whole_batch_language_hint_and_dict_per_item_hints(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -386,9 +383,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, language="en", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
     @recorded_by_proxy
-    def test_client_passed_default_language_hint(self, client):
+    def test_client_passed_default_language_hint(self):
+        client = get_textanalytics_client(default_language="es")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -408,18 +405,18 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_method(self, client):
+    def test_invalid_language_hint_method(self):
+        client = get_textanalytics_client()
         response = client.analyze_sentiment(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_docs(self, client):
+    def test_invalid_language_hint_docs(self):
+        client = get_textanalytics_client()
         response = client.analyze_sentiment(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         )
@@ -448,9 +445,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
     #     assert response is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_user_agent(self, client):
+    def test_user_agent(self):
+        client = get_textanalytics_client()
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()) in \
@@ -463,9 +460,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response = client.analyze_sentiment(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_attribute_error_no_result_attribute(self, client):
+    def test_document_attribute_error_no_result_attribute(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "text": ""}]
         response = client.analyze_sentiment(docs)
 
@@ -484,9 +481,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 'InvalidDocument - Document text is empty.\n'
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_attribute_error_nonexistent_attribute(self, client):
+    def test_document_attribute_error_nonexistent_attribute(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "text": ""}]
         response = client.analyze_sentiment(docs)
 
@@ -497,9 +494,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert default_behavior.args[0] == '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_model_version_error(self, client):
+    def test_bad_model_version_error(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -509,9 +506,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_errors(self, client):
+    def test_document_errors(self):
+        client = get_textanalytics_client()
         text = ""
         for _ in range(5121):
             text += "x"
@@ -529,35 +526,35 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert doc_errors[2].error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_not_passing_list_for_docs(self, client):
+    def test_not_passing_list_for_docs(self):
+        client = get_textanalytics_client()
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             client.analyze_sentiment(docs)
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_missing_input_records_error(self, client):
+    def test_missing_input_records_error(self):
+        client = get_textanalytics_client()
         docs = []
         with pytest.raises(ValueError) as excinfo:
             client.analyze_sentiment(docs)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_none_docs(self, client):
+    def test_passing_none_docs(self):
+        client = get_textanalytics_client()
         with pytest.raises(ValueError) as excinfo:
             client.analyze_sentiment(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_duplicate_ids_error(self, client):
+    def test_duplicate_ids_error(self):
+        client = get_textanalytics_client()
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -568,9 +565,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_batch_size_over_limit_error(self, client):
+    def test_batch_size_over_limit_error(self):
+        client = get_textanalytics_client()
         # Batch size over limit
         docs = ["hello world"] * 1001
         try:
@@ -580,9 +577,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_language_kwarg_spanish(self, client):
+    def test_language_kwarg_spanish(self):
+        client = get_textanalytics_client()
         def callback(response):
             language_str = "\"language\": \"es\""
             assert response.http_request.body.count(language_str) == 1
@@ -598,9 +595,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_pass_cls(self, client):
+    def test_pass_cls(self):
+        client = get_textanalytics_client()
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = client.analyze_sentiment(
@@ -610,9 +607,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_opinion_mining(self, client):
+    def test_opinion_mining(self):
+        client = get_textanalytics_client()
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at."
         ]
@@ -654,9 +651,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
                 assert not beautiful_opinion.is_negated
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_opinion_mining_with_negated_opinion(self, client):
+    def test_opinion_mining_with_negated_opinion(self):
+        client = get_textanalytics_client()
         documents = [
             "The food and service is not good"
         ]
@@ -692,9 +689,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_opinion_mining_more_than_5_documents(self, client):
+    def test_opinion_mining_more_than_5_documents(self):
+        client = get_textanalytics_client()
         documents = [
             "The food was unacceptable",
             "The rooms were beautiful. The AC was good and quiet.",
@@ -727,35 +724,35 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert doc_6_opinions == ["smelled"]
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_opinion_mining_no_mined_opinions(self, client):
+    def test_opinion_mining_no_mined_opinions(self):
+        client = get_textanalytics_client()
         document = client.analyze_sentiment(documents=["today is a hot day"], show_opinion_mining=True)[0]
 
         assert not document.sentences[0].mined_opinions
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_offset(self, client):
+    def test_offset(self):
+        client = get_textanalytics_client()
         result = client.analyze_sentiment(["I like nature. I do not like being inside"])
         sentences = result[0].sentences
         assert sentences[0].offset == 0
         assert sentences[1].offset == 15
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
     @recorded_by_proxy
-    def test_no_offset_v3_sentence_sentiment(self, client):
+    def test_no_offset_v3_sentence_sentiment(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_0)
         result = client.analyze_sentiment(["I like nature. I do not like being inside"])
         sentences = result[0].sentences
         assert sentences[0].offset is None
         assert sentences[1].offset is None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_default_string_index_type_is_UnicodeCodePoint(self, client):
+    def test_default_string_index_type_is_UnicodeCodePoint(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "UnicodeCodePoint"
 
@@ -765,9 +762,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_default_string_index_type_UnicodeCodePoint_body_param(self, client):
+    def test_default_string_index_type_UnicodeCodePoint_body_param(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "UnicodeCodePoint"
 
@@ -777,9 +774,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_explicit_set_string_index_type(self, client):
+    def test_explicit_set_string_index_type(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(response):
             assert response.http_request.query["stringIndexType"] == "TextElement_v8"
 
@@ -790,9 +787,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_explicit_set_string_index_type_body_param(self, client):
+    def test_explicit_set_string_index_type_body_param(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(response):
             assert json.loads(response.http_request.body)['parameters']["stringIndexType"] == "TextElements_v8"
 
@@ -803,9 +800,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_disable_service_logs(self, client):
+    def test_disable_service_logs(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
         client.analyze_sentiment(
@@ -815,9 +812,9 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_disable_service_logs_body_param(self, client):
+    def test_disable_service_logs_body_param(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(resp):
             assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         client.analyze_sentiment(
@@ -827,10 +824,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
     def test_sentiment_multiapi_validate_args_v3_0(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_textanalytics_client(api_version="v3.0")
         with pytest.raises(ValueError) as e:
             res = client.analyze_sentiment(["I'm tired"], string_index_type="UnicodeCodePoint")
         assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
@@ -849,7 +844,6 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     def test_mock_quota_exceeded(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
         response = mock.Mock(
             status_code=403,
             headers={"Retry-After": 186688, "Content-Type": "application/json"},
@@ -861,7 +855,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        client = TextAnalyticsClient(textanalytics_test_endpoint, get_credential(), transport=transport)
+        client = get_textanalytics_client(transport=transport)
 
         with pytest.raises(HttpResponseError) as e:
             result = client.analyze_sentiment(["I'm tired"])

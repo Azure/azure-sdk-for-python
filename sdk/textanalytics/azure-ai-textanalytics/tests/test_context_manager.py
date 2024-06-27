@@ -4,34 +4,23 @@
 # ------------------------------------
 
 from unittest import mock
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer
-from devtools_testutils import get_credential
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, get_textanalytics_client
 from azure.ai.textanalytics import TextAnalyticsClient
 
 class TestContextManager(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     def test_close(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
         transport = mock.MagicMock()
-        client = TextAnalyticsClient(
-            textanalytics_test_endpoint,
-            get_credential(),
-            transport=transport
-        )
+        client = get_textanalytics_client(transport=transport)
         client.close()
         assert transport.__enter__.call_count == 0
         assert transport.__exit__.call_count == 1
 
     @TextAnalyticsPreparer()
     def test_context_manager(self, **kwargs):
-        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
         transport = mock.MagicMock()
-        client = TextAnalyticsClient(
-            textanalytics_test_endpoint,
-            get_credential(),
-            transport=transport
-        )
+        client = get_textanalytics_client(transport=transport)
 
         with client:
             assert transport.__enter__.call_count == 1

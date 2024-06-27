@@ -7,14 +7,11 @@
 import pytest
 import functools
 import datetime
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
-from testcase import TextAnalyticsClientPreparerAsync as _TextAnalyticsClientPreparer
-from devtools_testutils import set_bodiless_matcher, get_credential
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud, get_async_textanalytics_client
+from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.textanalytics.aio import TextAnalyticsClient, AsyncTextAnalysisLROPoller
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 TextAnalyticsCustomPreparer = functools.partial(
     TextAnalyticsPreparer,
@@ -38,12 +35,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_poller_metadata(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [{"id": "56", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."}]
 
         async with client:
@@ -69,12 +65,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_recognize_custom_entities(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -109,12 +104,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_recognize_custom_entities_continuation_token(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -154,12 +148,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_single_label_classify(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -188,12 +181,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_single_label_classify_cont_token(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -231,12 +223,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_multi_label_classify(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_multi_label_classify_project_name,
             textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -265,13 +256,11 @@ class TestCustomTextAsync(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_multi_label_classify_cont_token(
             self,
-            textanalytics_custom_text_endpoint,
             textanalytics_multi_label_classify_project_name,
             textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint,
-                                     get_credential(is_async=True))
+        client = get_async_textanalytics_client()
         docs = [
             {"id": "1", "language": "en",
              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
