@@ -50,7 +50,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -85,10 +85,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -133,10 +133,10 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -315,7 +315,7 @@ class ClusterPropertiesEncryption(_serialization.Model):
         self.customer_managed_key_encryption = customer_managed_key_encryption
 
 
-class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Model):
+class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Model):  # pylint: disable=name-too-long
     """All Customer-managed key encryption properties for the resource. Set this to an empty object to
     use Microsoft-managed key encryption.
 
@@ -359,7 +359,9 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Mod
         self.key_encryption_key_url = key_encryption_key_url
 
 
-class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(_serialization.Model):
+class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """All identity configuration for Customer-managed key settings defining which identity should be
     used to auth to Key Vault.
 
@@ -500,7 +502,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -509,22 +511,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Describes a database on the RedisEnterprise cluster.
@@ -532,7 +518,7 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -568,6 +554,12 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar geo_replication: Optional set of properties to configure geo replication for this
      database.
     :vartype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redis_version: str
+    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+     NotDeferred. Learn more:  https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+     "NotDeferred".
+    :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
     """
 
     _validation = {
@@ -576,6 +568,7 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "type": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "resource_state": {"readonly": True},
+        "redis_version": {"readonly": True},
     }
 
     _attribute_map = {
@@ -591,6 +584,8 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "persistence": {"key": "properties.persistence", "type": "Persistence"},
         "modules": {"key": "properties.modules", "type": "[Module]"},
         "geo_replication": {"key": "properties.geoReplication", "type": "DatabasePropertiesGeoReplication"},
+        "redis_version": {"key": "properties.redisVersion", "type": "str"},
+        "defer_upgrade": {"key": "properties.deferUpgrade", "type": "str"},
     }
 
     def __init__(
@@ -603,6 +598,7 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         persistence: Optional["_models.Persistence"] = None,
         modules: Optional[List["_models.Module"]] = None,
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
+        defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -628,6 +624,10 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :keyword geo_replication: Optional set of properties to configure geo replication for this
          database.
         :paramtype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+        :keyword defer_upgrade: Option to defer upgrade when newest version is released - default is
+         NotDeferred. Learn more:  https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+         "NotDeferred".
+        :paramtype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
         """
         super().__init__(**kwargs)
         self.client_protocol = client_protocol
@@ -639,6 +639,8 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.persistence = persistence
         self.modules = modules
         self.geo_replication = geo_replication
+        self.redis_version = None
+        self.defer_upgrade = defer_upgrade
 
 
 class DatabaseList(_serialization.Model):
@@ -703,7 +705,7 @@ class DatabasePropertiesGeoReplication(_serialization.Model):
         self.linked_databases = linked_databases
 
 
-class DatabaseUpdate(_serialization.Model):
+class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A partial update to the RedisEnterprise database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -737,11 +739,18 @@ class DatabaseUpdate(_serialization.Model):
     :ivar geo_replication: Optional set of properties to configure geo replication for this
      database.
     :vartype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redis_version: str
+    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+     NotDeferred. Learn more:  https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+     "NotDeferred".
+    :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
         "resource_state": {"readonly": True},
+        "redis_version": {"readonly": True},
     }
 
     _attribute_map = {
@@ -754,6 +763,8 @@ class DatabaseUpdate(_serialization.Model):
         "persistence": {"key": "properties.persistence", "type": "Persistence"},
         "modules": {"key": "properties.modules", "type": "[Module]"},
         "geo_replication": {"key": "properties.geoReplication", "type": "DatabasePropertiesGeoReplication"},
+        "redis_version": {"key": "properties.redisVersion", "type": "str"},
+        "defer_upgrade": {"key": "properties.deferUpgrade", "type": "str"},
     }
 
     def __init__(
@@ -766,6 +777,7 @@ class DatabaseUpdate(_serialization.Model):
         persistence: Optional["_models.Persistence"] = None,
         modules: Optional[List["_models.Module"]] = None,
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
+        defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -791,6 +803,10 @@ class DatabaseUpdate(_serialization.Model):
         :keyword geo_replication: Optional set of properties to configure geo replication for this
          database.
         :paramtype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+        :keyword defer_upgrade: Option to defer upgrade when newest version is released - default is
+         NotDeferred. Learn more:  https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+         "NotDeferred".
+        :paramtype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
         """
         super().__init__(**kwargs)
         self.client_protocol = client_protocol
@@ -802,6 +818,8 @@ class DatabaseUpdate(_serialization.Model):
         self.persistence = persistence
         self.modules = modules
         self.geo_replication = geo_replication
+        self.redis_version = None
+        self.defer_upgrade = defer_upgrade
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -899,7 +917,7 @@ class ErrorResponse(_serialization.Model):
 class ExportClusterParameters(_serialization.Model):
     """Parameters for a Redis Enterprise export operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sas_uri: SAS URI for the target directory to export to. Required.
     :vartype sas_uri: str
@@ -944,10 +962,50 @@ class FlushParameters(_serialization.Model):
         self.ids = ids
 
 
+class ForceLinkParameters(_serialization.Model):
+    """Parameters for reconfiguring active geo-replication, of an existing database that was
+    previously unlinked from a replication group.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar group_nickname: The name of the group of linked database resources. This should match the
+     existing replication group name. Required.
+    :vartype group_nickname: str
+    :ivar linked_databases: The resource IDs of the databases that are expected to be linked and
+     included in the replication group. This parameter is used to validate that the linking is to
+     the expected (unlinked) part of the replication group, if it is splintered. Required.
+    :vartype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+    """
+
+    _validation = {
+        "group_nickname": {"required": True},
+        "linked_databases": {"required": True},
+    }
+
+    _attribute_map = {
+        "group_nickname": {"key": "groupNickname", "type": "str"},
+        "linked_databases": {"key": "linkedDatabases", "type": "[LinkedDatabase]"},
+    }
+
+    def __init__(self, *, group_nickname: str, linked_databases: List["_models.LinkedDatabase"], **kwargs: Any) -> None:
+        """
+        :keyword group_nickname: The name of the group of linked database resources. This should match
+         the existing replication group name. Required.
+        :paramtype group_nickname: str
+        :keyword linked_databases: The resource IDs of the databases that are expected to be linked and
+         included in the replication group. This parameter is used to validate that the linking is to
+         the expected (unlinked) part of the replication group, if it is splintered. Required.
+        :paramtype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+        """
+        super().__init__(**kwargs)
+        self.group_nickname = group_nickname
+        self.linked_databases = linked_databases
+
+
 class ForceUnlinkParameters(_serialization.Model):
     """Parameters for a Redis Enterprise Active Geo Replication Force Unlink operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ids: The resource IDs of the database resources to be unlinked. Required.
     :vartype ids: list[str]
@@ -973,7 +1031,7 @@ class ForceUnlinkParameters(_serialization.Model):
 class ImportClusterParameters(_serialization.Model):
     """Parameters for a Redis Enterprise import operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sas_uris: SAS URIs for the target blobs to import from. Required.
     :vartype sas_uris: list[str]
@@ -1032,7 +1090,7 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -1046,7 +1104,7 @@ class ManagedServiceIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.redisenterprise.models.UserAssignedIdentity]
@@ -1079,7 +1137,7 @@ class ManagedServiceIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.redisenterprise.models.UserAssignedIdentity]
@@ -1096,7 +1154,7 @@ class Module(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the module, e.g. 'RedisBloom', 'RediSearch', 'RedisTimeSeries'.
      Required.
@@ -1392,7 +1450,7 @@ class PrivateEndpointConnection(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1477,7 +1535,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1589,7 +1647,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
 class RegenerateKeyParameters(_serialization.Model):
     """Specifies which access keys to reset to a new random value.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_type: Which access key to regenerate. Required. Known values are: "Primary" and
      "Secondary".
@@ -1617,12 +1675,12 @@ class RegenerateKeyParameters(_serialization.Model):
 class Sku(_serialization.Model):
     """SKU parameters supplied to the create RedisEnterprise operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
-     EnterpriseFlash_F300 etc.). Required. Known values are: "Enterprise_E10", "Enterprise_E20",
-     "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300", "EnterpriseFlash_F700", and
-     "EnterpriseFlash_F1500".
+     EnterpriseFlash_F300 etc.). Required. Known values are: "Enterprise_E5", "Enterprise_E10",
+     "Enterprise_E20", "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300",
+     "EnterpriseFlash_F700", and "EnterpriseFlash_F1500".
     :vartype name: str or ~azure.mgmt.redisenterprise.models.SkuName
     :ivar capacity: The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on SKU.
      Valid values are (2, 4, 6, ...) for Enterprise SKUs and (3, 9, 15, ...) for Flash SKUs.
@@ -1641,9 +1699,9 @@ class Sku(_serialization.Model):
     def __init__(self, *, name: Union[str, "_models.SkuName"], capacity: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword name: The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
-         EnterpriseFlash_F300 etc.). Required. Known values are: "Enterprise_E10", "Enterprise_E20",
-         "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300", "EnterpriseFlash_F700", and
-         "EnterpriseFlash_F1500".
+         EnterpriseFlash_F300 etc.). Required. Known values are: "Enterprise_E5", "Enterprise_E10",
+         "Enterprise_E20", "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300",
+         "EnterpriseFlash_F700", and "EnterpriseFlash_F1500".
         :paramtype name: str or ~azure.mgmt.redisenterprise.models.SkuName
         :keyword capacity: The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on
          SKU. Valid values are (2, 4, 6, ...) for Enterprise SKUs and (3, 9, 15, ...) for Flash SKUs.

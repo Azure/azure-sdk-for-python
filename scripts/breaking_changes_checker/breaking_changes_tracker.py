@@ -5,11 +5,20 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from enum import Enum
-from typing import Any, Dict, List, Union
 import jsondiff
+import re
+from enum import Enum
+from typing import Any, Dict, List, Union, Optional, NamedTuple
+from copy import deepcopy
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
+
+class Suppression(NamedTuple):
+    change_type: str
+    module: str
+    class_name: Optional[str] = None
+    function_name: Optional[str] = None
+    parameter_or_property_name: Optional[str] = None
 
 class BreakingChangeType(str, Enum):
     REMOVED_OR_RENAMED_CLIENT = "RemovedOrRenamedClient"
@@ -42,11 +51,11 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG = \
         "The publicly exposed function '{}.{}' was deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG = \
-        "The '{}.{} method '{}' had its '{}' parameter '{}' deleted or renamed in the current version"
+        "The '{}.{}' method '{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG = \
-        "The function '{}.{}' had its '{}' parameter '{}' deleted or renamed in the current version"
+        "The function '{}.{}' had its parameter '{}' of kind '{}' deleted or renamed in the current version"
     ADDED_POSITIONAL_PARAM_TO_METHOD_MSG = \
-        "The '{}.{} method '{}' had a '{}' parameter '{}' inserted in the current version"
+        "The '{}.{}' method '{}' had a '{}' parameter '{}' inserted in the current version"
     ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG = \
         "The function '{}.{}' had a '{}' parameter '{}' inserted in the current version"
     REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG = \
@@ -444,7 +453,7 @@ class BreakingChangesTracker:
                         (
                             self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
-                            self.module_name, self.class_name, self.function_name, param_type, deleted
+                            self.module_name, self.class_name, self.function_name, deleted, param_type
                         )
                     )
                 else:
@@ -452,7 +461,7 @@ class BreakingChangesTracker:
                         (
                             self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
-                            self.module_name, self.function_name, param_type, deleted
+                            self.module_name, self.function_name, deleted, param_type
                         )
                     )
 
@@ -559,25 +568,46 @@ class BreakingChangesTracker:
                 )
             return True
 
-    # ----------------------------------- Report methods -----------------------------------
+    def match(self, bc, ignored):
+        if bc == ignored:
+            return True
+        for b, i in zip(bc, ignored):
+            if i == "*":
+                continue
+            if b != i:
+                return False
+        return True
+
     def get_reportable_breaking_changes(self, ignore_changes: Dict) -> List:
-        reportable_changes = []
-        ignored = ignore_changes[self.package_name]
-        for bc in self.breaking_changes:
-            msg, bc_type, module_name, *args = bc
+        ignored = []
+        # Match all ignore rules that should apply to this package
+        for ignored_package, ignore_rules in ignore_changes.items():
+            if re.findall(ignored_package, self.package_name):
+                ignored.extend(ignore_rules)
+
+        # Remove ignored breaking changes from list of reportable changes
+        bc_copy = deepcopy(self.breaking_changes)
+        for bc in bc_copy:
+            _, bc_type, module_name, *args = bc
             class_name = args[0] if args else None
             function_name = args[1] if len(args) > 1 else None
-            if (bc_type, module_name) in ignored or \
-                    (bc_type, module_name, class_name) in ignored or \
-                    (bc_type, module_name, class_name, function_name) in ignored:
-                continue
-            reportable_changes.append(bc)
-        return reportable_changes
+            parameter_name = args[2] if len(args) > 2 else None
+
+            for rule in ignored:
+                suppression = Suppression(*rule)
+
+                if suppression.parameter_or_property_name is not None:
+                    # If the ignore rule is for a property or parameter, we should check up to that level on the original breaking change
+                    if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
+                        self.breaking_changes.remove(bc)
+                        break
+                elif self.match((bc_type, module_name, class_name, function_name), suppression):
+                    self.breaking_changes.remove(bc)
+                    break
 
     def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
-        if self.package_name in ignore_changes:
-            self.breaking_changes = self.get_reportable_breaking_changes(ignore_changes)
+        self.get_reportable_breaking_changes(ignore_changes)
 
         # If there are no breaking changes after the ignore check, return early
         if not self.breaking_changes:
