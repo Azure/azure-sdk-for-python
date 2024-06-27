@@ -17,6 +17,7 @@ param location string = resourceGroup().location
 ])
 param keyVaultSku string = 'premium'
 param identityName string = 'identityForKeyVault'
+param testApplicationId string
 
 var kvName = baseName
 var networkAcls = {
@@ -72,6 +73,22 @@ resource kv 'Microsoft.KeyVault/vaults@2019-09-01' = {
       {
         tenantId: tenantId
         objectId: reference(identity.id, '2018-11-30').principalId
+        permissions: {
+          secrets: [
+            'Get'
+            'List'
+            'Set'
+            'Delete'
+            'Recover'
+            'Backup'
+            'Restore'
+            'Purge'
+          ]
+        }
+      }
+      {
+        tenantId: tenantId
+        objectId: testApplicationId
         permissions: {
           secrets: [
             'Get'
