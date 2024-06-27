@@ -1,6 +1,7 @@
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobServiceClient
 import os
+import sys
 
 """
 FILE: blob_samples_batch_delete_blobs.py
@@ -19,6 +20,11 @@ def batch_delete_blobs_sample(local_path):
     # Set the connection string and container name values to initialize the Container Client
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
+    if connection_string is None:
+        print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+              "Test: batch_delete_blobs_sample")
+        sys.exit(1)
+
     blob_service_client = BlobServiceClient.from_connection_string(conn_str=connection_string)
     # Create a ContainerClient to use the batch_delete function on a Blob Container
     container_client = blob_service_client.get_container_client("mycontainername")
@@ -33,7 +39,7 @@ def batch_delete_blobs_sample(local_path):
 
     # List blobs in storage account
     blob_list = [b.name for b in list(container_client.list_blobs())]
-    
+
     # Delete blobs
     container_client.delete_blobs(*blob_list)
 

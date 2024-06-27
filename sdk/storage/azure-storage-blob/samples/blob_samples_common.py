@@ -18,6 +18,7 @@ USAGE:
 """
 
 import os
+import sys
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
@@ -32,6 +33,10 @@ class CommonBlobSamples(object):
     #--Begin Blob Samples-----------------------------------------------------------------
 
     def blob_snapshots(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_snapshots")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -68,6 +73,10 @@ class CommonBlobSamples(object):
         blob_service_client.delete_container("containerformyblobs")
 
     def soft_delete_and_undelete_blob(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: soft_delete_and_undelete_blob")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -110,6 +119,10 @@ class CommonBlobSamples(object):
         blob_service_client.delete_container("containerfordeletedblobs")
 
     def delete_multiple_blobs(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: delete_multiple_blobs")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -143,6 +156,10 @@ class CommonBlobSamples(object):
         blob_service_client.delete_container("containerforbatchblobdelete")
 
     def acquire_lease_on_blob(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: acquire_lease_on_blob")
+            sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
@@ -176,6 +193,10 @@ class CommonBlobSamples(object):
         blob_service_client.delete_container("leasemyblobscontainer")
 
     def start_copy_blob_from_url_and_abort_copy(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: start_copy_blob_from_url_and_abort_copy")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -205,7 +226,10 @@ class CommonBlobSamples(object):
             # [START abort_copy_blob_from_url]
             # Passing in copy id to abort copy operation
             if props.copy.status != "success":
-                copied_blob.abort_copy(copy_id)
+                if copy_id is not None:
+                    copied_blob.abort_copy(copy_id)
+                else:
+                    print("copy_id was unexpectedly None, check if the operation completed successfully.")
 
             # check copy status
             props = copied_blob.get_blob_properties()
