@@ -20,7 +20,7 @@ from packaging.version import Version, parse
 import pdb
 
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import compare_python_version, find_whl
+from ci_tools.functions import compare_python_version
 
 
 from typing import List
@@ -61,6 +61,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
     "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
+    "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
@@ -96,34 +97,6 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
     override_added_packages = []
-    local_install_set = []
-    whl_dir = os.environ.get("PREBUILT_WHEEL_DIR", None)
-
-    # we have an edge case case scenario when
-    #   - package B depends on package A version 1.0.0
-    #   - Package A has 1.0.0b1 available on PyPI
-    # In this case, during a nightly build, we will replace the req with 1.0.0a1. However, due to the presence of 1.0.0b1 on PyPI,
-    # pip will resolve 1.0.0b1 from pypi as the "newer" version. This will _always_ be true as alpha releases are considered "older" than
-    # beta releases. I think the only alternative is to swap our `nightly alpha` builds to `nightly rc` builds. Doing so will cause
-    # our nightly builds to resolve the nightly produced version, rather than a beta version from pypi.
-    # Changing from alpha to rc is policy change, so for now we're going to make nightly builds take the dev req if they
-    # are running latestdependency. This will ensure that we always resolve the nightly build version, rather than a beta version from pypi.
-
-    # if running latest nightly then we simply must attempt to find the nightly versions of the package in our prebuilt wheel directory
-    if os.environ.get("SETDEVVERSION") == "true" and dependency_type == "Latest":
-        logging.info("Retrieving latest azure dependencies from prebuilt wheel dir for nightly build.")
-        pkg_info = ParsedSetup.from_path(setup_py_file_path)
-        azure_requirements = [r for r in pkg_info.requires if "-nspkg" not in r and "azure-" in r]
-        
-        for req in azure_requirements:
-            pkg_name, pkg_spec = parse_require(req)
-
-            # only the very latest will be in this directory
-            located_wheel = find_whl(whl_dir, pkg_name, "*")
-
-            if located_wheel:
-                released_packages = [pkg for pkg in released_packages if pkg.split("==")[0] != pkg_name]
-                local_install_set.append(os.path.join(whl_dir, located_wheel))
 
     # new section added to account for difficulties with msrest
     for pkg_spec in released_packages:
@@ -136,7 +109,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
 
-    install_set = released_packages + list(set(override_added_packages)) + local_install_set
+    install_set = released_packages + list(set(override_added_packages))
 
     # install released dependent packages
     if released_packages or dev_req_file_path:
@@ -267,9 +240,6 @@ def process_requirement(req, dependency_type, orig_pkg_name):
 
     # think of the various versions that come back from pypi as the top of a funnel
     # We apply generic overrides -> platform specific overrides -> package specific overrides
-
-    # def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
-    # lookin PREBUILT_WHEEL_DIR for a wheel that matches the package name and version
 
     versions = process_bounded_versions(orig_pkg_name, pkg_name, versions)
 
