@@ -16,7 +16,6 @@ param location string = resourceGroup().location
   'premium'
 ])
 param keyVaultSku string = 'premium'
-param identityName string = 'identityForKeyVault'
 param testApplicationId string
 
 var kvName = baseName
@@ -26,25 +25,9 @@ var networkAcls = {
   ipRules: []
   defaultAction: 'Allow'
 }
-var bootstrapRoleAssignmentId = guid('${resourceGroup().id}contributor')
-var contributorRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c'
+var secretsOfficerRoleAssignmentId = 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
 
-resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: identityName
-  location: location
-}
-
-resource bootstrapRoleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {
-  name: bootstrapRoleAssignmentId
-  properties: {
-    roleDefinitionId: contributorRoleDefinitionId
-    principalId: reference(identity.id, '2018-11-30').principalId
-    scope: resourceGroup().id
-    principalType: 'ServicePrincipal'
-  }
-}
-
-resource kv 'Microsoft.KeyVault/vaults@2019-09-01' = {
+resource kv 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
   name: kvName
   location: location
   properties: {
@@ -53,59 +36,20 @@ resource kv 'Microsoft.KeyVault/vaults@2019-09-01' = {
       name: keyVaultSku
     }
     tenantId: tenantId
-    accessPolicies: [
-      {
-        tenantId: tenantId
-        objectId: testApplicationOid
-        permissions: {
-          secrets: [
-            'Get'
-            'List'
-            'Set'
-            'Delete'
-            'Recover'
-            'Backup'
-            'Restore'
-            'Purge'
-          ]
-        }
-      }
-      {
-        tenantId: tenantId
-        objectId: reference(identity.id, '2018-11-30').principalId
-        permissions: {
-          secrets: [
-            'Get'
-            'List'
-            'Set'
-            'Delete'
-            'Recover'
-            'Backup'
-            'Restore'
-            'Purge'
-          ]
-        }
-      }
-      {
-        tenantId: tenantId
-        objectId: testApplicationId
-        permissions: {
-          secrets: [
-            'Get'
-            'List'
-            'Set'
-            'Delete'
-            'Recover'
-            'Backup'
-            'Restore'
-            'Purge'
-          ]
-        }
-      }
-    ]
     enableSoftDelete: true
+    enableRbacAuthorization: true
     softDeleteRetentionInDays: 7
     networkAcls: networkAcls
+  }
+}
+
+resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(secretsOfficerRoleAssignmentId,testApplicationOid,kv.id)
+  scope: kv
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretsOfficerRoleAssignmentId)
+    principalId: testApplicationOid
+    principalType: 'User'
   }
 }
 
