@@ -5,10 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from enum import Enum
-from typing import Any, Dict, List, Union, Optional, NamedTuple
 import jsondiff
 import re
+from enum import Enum
+from typing import Any, Dict, List, Union, Optional, NamedTuple
+from copy import deepcopy
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 
@@ -585,7 +586,6 @@ class BreakingChangesTracker:
                 ignored.extend(ignore_rules)
 
         # Remove ignored breaking changes from list of reportable changes
-        from copy import deepcopy
         bc_copy = deepcopy(self.breaking_changes)
         for bc in bc_copy:
             _, bc_type, module_name, *args = bc
