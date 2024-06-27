@@ -32,11 +32,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def create_task_collection(
         self,
         job_id: str,
-        task_collection: _models.BatchTaskCollection,
+        task_collection: _models.BatchTaskAddCollectionResult,
         concurrencies: Optional[int] = 0,
         *,
         time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchTaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -59,7 +59,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
-        :type task_collection: ~azure.batch.models.BatchTaskCollection
+        :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
         :param concurrencies: number of threads to use in parallel when adding tasks. If specified
         and greater than 0, will start additional threads to submit requests and wait for them to finish.
         Otherwise will submit create_task_collection requests sequentially on main thread
@@ -67,10 +67,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
+        :paramtype ocpdate: ~datetime.datetime
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -81,7 +81,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.batch.custom.CreateTasksErrorException
         """
 
-        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocp_date": ocp_date})
+        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocpdate": ocpdate})
 
         results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
@@ -126,7 +126,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         file_path: str,
         *,
         time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
@@ -143,10 +143,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
+        :paramtype ocpdate: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -171,7 +171,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs.update(
             {
                 "time_out_in_seconds": time_out_in_seconds,
-                "ocp_date": ocp_date,
+                "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
                 "ocp_range": ocp_range,
@@ -187,7 +187,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         file_path: str,
         *,
         time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -203,10 +203,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
+        :paramtype ocpdate: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -228,7 +228,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs.update(
             {
                 "time_out_in_seconds": time_out_in_seconds,
-                "ocp_date": ocp_date,
+                "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
             }
@@ -250,7 +250,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         file_path: str,
         *,
         time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -266,10 +266,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
+        :paramtype ocpdate: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -291,7 +291,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs.update(
             {
                 "time_out_in_seconds": time_out_in_seconds,
-                "ocp_date": ocp_date,
+                "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
             }
@@ -306,46 +306,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         return get_response[0].http_response
 
-    def get_node_remote_desktop_file(
-        self,
-        pool_id: str,
-        node_id: str,
-        *,
-        time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> bytes:
-        """Gets the Remote Desktop Protocol file for the specified Compute Node.
-
-        Before you can access a Compute Node by using the RDP file, you must create a
-        user Account on the Compute Node. This API can only be invoked on Pools created
-        with a cloud service configuration. For Pools created with a virtual machine
-        configuration, see the GetRemoteLoginSettings API.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
-         Protocol file. Required.
-        :type node_id: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: bytes
-        :rtype: bytes
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        args = [pool_id, node_id]
-        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocp_date": ocp_date})
-        kwargs["stream"] = True
-        return super().get_node_remote_desktop_file(*args, **kwargs)
-
     def get_task_file(
         self,
         job_id: str,
@@ -353,7 +313,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         file_path: str,
         *,
         time_out_in_seconds: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
+        ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
@@ -370,10 +330,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
+        :paramtype ocpdate: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -399,7 +359,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         kwargs.update(
             {
                 "time_out_in_seconds": time_out_in_seconds,
-                "ocp_date": ocp_date,
+                "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
                 "ocp_range": ocp_range,
@@ -433,7 +393,9 @@ class _TaskWorkflowManager(object):
         <azure.batch.models.BatchTaskAddCollectionResult>`
     """
 
-    def __init__(self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskCollection, **kwargs):
+    def __init__(
+        self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskAddCollectionResult, **kwargs
+    ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
         self.failure_tasks = collections.deque()
@@ -469,7 +431,7 @@ class _TaskWorkflowManager(object):
             create_task_collection_response: _models.BatchTaskAddCollectionResult = (
                 self._original_create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskAddCollectionResult(value=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )

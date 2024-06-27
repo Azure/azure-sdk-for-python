@@ -31,78 +31,77 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import (
-    build_batch_create_job_request,
-    build_batch_create_job_schedule_request,
-    build_batch_create_node_user_request,
-    build_batch_create_pool_request,
-    build_batch_create_task_collection_request,
-    build_batch_create_task_request,
-    build_batch_delete_job_request,
-    build_batch_delete_job_schedule_request,
-    build_batch_delete_node_file_request,
-    build_batch_delete_node_user_request,
-    build_batch_delete_pool_request,
-    build_batch_delete_task_file_request,
-    build_batch_delete_task_request,
-    build_batch_disable_job_request,
-    build_batch_disable_job_schedule_request,
-    build_batch_disable_node_scheduling_request,
-    build_batch_disable_pool_auto_scale_request,
-    build_batch_enable_job_request,
-    build_batch_enable_job_schedule_request,
-    build_batch_enable_node_scheduling_request,
-    build_batch_enable_pool_auto_scale_request,
-    build_batch_evaluate_pool_auto_scale_request,
-    build_batch_get_application_request,
-    build_batch_get_job_request,
-    build_batch_get_job_schedule_request,
-    build_batch_get_job_task_counts_request,
-    build_batch_get_node_extension_request,
-    build_batch_get_node_file_properties_request,
-    build_batch_get_node_file_request,
-    build_batch_get_node_remote_login_settings_request,
-    build_batch_get_node_request,
-    build_batch_get_pool_request,
-    build_batch_get_task_file_properties_request,
-    build_batch_get_task_file_request,
-    build_batch_get_task_request,
-    build_batch_job_schedule_exists_request,
-    build_batch_list_applications_request,
-    build_batch_list_job_preparation_and_release_task_status_request,
-    build_batch_list_job_schedules_request,
-    build_batch_list_jobs_from_schedule_request,
-    build_batch_list_jobs_request,
-    build_batch_list_node_extensions_request,
-    build_batch_list_node_files_request,
-    build_batch_list_nodes_request,
-    build_batch_list_pool_node_counts_request,
-    build_batch_list_pool_usage_metrics_request,
-    build_batch_list_pools_request,
-    build_batch_list_sub_tasks_request,
-    build_batch_list_supported_images_request,
-    build_batch_list_task_files_request,
-    build_batch_list_tasks_request,
-    build_batch_pool_exists_request,
-    build_batch_reactivate_task_request,
-    build_batch_reboot_node_request,
-    build_batch_remove_nodes_request,
-    build_batch_replace_job_request,
-    build_batch_replace_job_schedule_request,
-    build_batch_replace_node_user_request,
-    build_batch_replace_pool_properties_request,
-    build_batch_replace_task_request,
-    build_batch_resize_pool_request,
-    build_batch_stop_pool_resize_request,
-    build_batch_terminate_job_request,
-    build_batch_terminate_job_schedule_request,
-    build_batch_terminate_task_request,
-    build_batch_update_job_request,
-    build_batch_update_job_schedule_request,
-    build_batch_update_pool_request,
-    build_batch_upload_node_logs_request,
+from ...operations._operations import (
+    build_batch_api_create_job_request,
+    build_batch_api_create_job_schedule_request,
+    build_batch_api_create_node_user_request,
+    build_batch_api_create_pool_request,
+    build_batch_api_create_task_collection_request,
+    build_batch_api_create_task_request,
+    build_batch_api_delete_job_request,
+    build_batch_api_delete_job_schedule_request,
+    build_batch_api_delete_node_file_request,
+    build_batch_api_delete_node_user_request,
+    build_batch_api_delete_pool_request,
+    build_batch_api_delete_task_file_request,
+    build_batch_api_delete_task_request,
+    build_batch_api_disable_job_request,
+    build_batch_api_disable_job_schedule_request,
+    build_batch_api_disable_node_scheduling_request,
+    build_batch_api_disable_pool_auto_scale_request,
+    build_batch_api_enable_job_request,
+    build_batch_api_enable_job_schedule_request,
+    build_batch_api_enable_node_scheduling_request,
+    build_batch_api_enable_pool_auto_scale_request,
+    build_batch_api_evaluate_pool_auto_scale_request,
+    build_batch_api_get_application_request,
+    build_batch_api_get_job_request,
+    build_batch_api_get_job_schedule_request,
+    build_batch_api_get_job_task_counts_request,
+    build_batch_api_get_node_extension_request,
+    build_batch_api_get_node_file_properties_request,
+    build_batch_api_get_node_file_request,
+    build_batch_api_get_node_remote_login_settings_request,
+    build_batch_api_get_node_request,
+    build_batch_api_get_pool_request,
+    build_batch_api_get_task_file_properties_request,
+    build_batch_api_get_task_file_request,
+    build_batch_api_get_task_request,
+    build_batch_api_job_schedule_exists_request,
+    build_batch_api_list_applications_request,
+    build_batch_api_list_job_preparation_and_release_task_status_request,
+    build_batch_api_list_job_schedules_request,
+    build_batch_api_list_jobs_from_schedule_request,
+    build_batch_api_list_jobs_request,
+    build_batch_api_list_node_extensions_request,
+    build_batch_api_list_node_files_request,
+    build_batch_api_list_nodes_request,
+    build_batch_api_list_pool_node_counts_request,
+    build_batch_api_list_pool_usage_metrics_request,
+    build_batch_api_list_pools_request,
+    build_batch_api_list_sub_tasks_request,
+    build_batch_api_list_supported_images_request,
+    build_batch_api_list_task_files_request,
+    build_batch_api_list_tasks_request,
+    build_batch_api_pool_exists_request,
+    build_batch_api_reactivate_task_request,
+    build_batch_api_reboot_node_request,
+    build_batch_api_remove_nodes_request,
+    build_batch_api_replace_job_request,
+    build_batch_api_replace_job_schedule_request,
+    build_batch_api_replace_node_user_request,
+    build_batch_api_replace_pool_properties_request,
+    build_batch_api_replace_task_request,
+    build_batch_api_resize_pool_request,
+    build_batch_api_stop_pool_resize_request,
+    build_batch_api_terminate_job_request,
+    build_batch_api_terminate_job_schedule_request,
+    build_batch_api_terminate_task_request,
+    build_batch_api_update_job_request,
+    build_batch_api_update_job_schedule_request,
+    build_batch_api_update_pool_request,
+    build_batch_api_upload_node_logs_request,
 )
-from .._vendor import BatchClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -112,7 +111,40 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-many-public-methods
+class BatchOpsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.batch.aio.BatchClient`'s
+        :attr:`batch_ops` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+
+class BatchApiOperations:  # pylint: disable=too-many-public-methods
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.batch.aio.BatchClient`'s
+        :attr:`batch_api` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_applications(
@@ -175,7 +207,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_applications_request(
+                _request = build_batch_api_list_applications_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -223,7 +255,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -296,7 +328,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchApplication] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_application_request(
+        _request = build_batch_api_get_application_request(
             application_id=application_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -310,7 +342,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -324,10 +356,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -426,7 +458,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_pool_usage_metrics_request(
+                _request = build_batch_api_list_pool_usage_metrics_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -477,7 +509,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -1279,7 +1311,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_pool_request(
+        _request = build_batch_api_create_pool_request(
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
             content_type=content_type,
@@ -1294,7 +1326,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1308,11 +1340,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -2223,7 +2255,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_pools_request(
+                _request = build_batch_api_list_pools_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -2274,7 +2306,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -2366,7 +2398,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_pool_request(
+        _request = build_batch_api_delete_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -2384,7 +2416,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2467,7 +2499,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_pool_exists_request(
+        _request = build_batch_api_pool_exists_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -2485,7 +2517,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2500,10 +2532,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
             response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -3429,7 +3461,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchPool] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_pool_request(
+        _request = build_batch_api_get_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3449,7 +3481,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3463,10 +3495,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3725,7 +3757,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_update_pool_request(
+        _request = build_batch_api_update_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3745,7 +3777,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3759,11 +3791,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -3808,7 +3840,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_disable_pool_auto_scale_request(
+        _request = build_batch_api_disable_pool_auto_scale_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3822,7 +3854,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3836,11 +3868,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -3947,7 +3979,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_enable_pool_auto_scale_request(
+        _request = build_batch_api_enable_pool_auto_scale_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3967,7 +3999,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3981,11 +4013,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -4079,7 +4111,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_evaluate_pool_auto_scale_request(
+        _request = build_batch_api_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4095,7 +4127,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4109,11 +4141,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4225,7 +4257,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_resize_pool_request(
+        _request = build_batch_api_resize_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4245,7 +4277,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4259,11 +4291,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -4339,7 +4371,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_stop_pool_resize_request(
+        _request = build_batch_api_stop_pool_resize_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4357,7 +4389,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4371,11 +4403,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -4601,7 +4633,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_pool_properties_request(
+        _request = build_batch_api_replace_pool_properties_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4617,7 +4649,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4631,11 +4663,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -4737,7 +4769,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_remove_nodes_request(
+        _request = build_batch_api_remove_nodes_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4757,7 +4789,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4771,11 +4803,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -4789,7 +4821,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchSupportedImage"]:
+    ) -> AsyncIterable["_models.ImageInfo"]:
         # pylint: disable=line-too-long
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
@@ -4810,8 +4842,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of BatchSupportedImage
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchSupportedImage]
+        :return: An iterator like instance of ImageInfo
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.ImageInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4868,7 +4900,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchSupportedImage]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ImageInfo]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -4881,7 +4913,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_supported_images_request(
+                _request = build_batch_api_list_supported_images_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -4921,7 +4953,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchSupportedImage], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.ImageInfo], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
@@ -4930,7 +4962,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -5065,7 +5097,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_pool_node_counts_request(
+                _request = build_batch_api_list_pool_node_counts_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -5114,7 +5146,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -5202,7 +5234,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_request(
+        _request = build_batch_api_delete_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -5220,7 +5252,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6950,7 +6982,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchJob] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_job_request(
+        _request = build_batch_api_get_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -6970,7 +7002,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6984,10 +7016,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -7998,7 +8030,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_update_job_request(
+        _request = build_batch_api_update_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -8018,7 +8050,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8032,11 +8064,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -9755,7 +9787,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_job_request(
+        _request = build_batch_api_replace_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -9775,7 +9807,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9789,11 +9821,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -9888,7 +9920,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_disable_job_request(
+        _request = build_batch_api_disable_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -9908,7 +9940,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9922,11 +9954,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -10001,7 +10033,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_job_request(
+        _request = build_batch_api_enable_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -10019,7 +10051,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -10033,11 +10065,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -10133,7 +10165,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         else:
             _content = None
 
-        _request = build_batch_terminate_job_request(
+        _request = build_batch_api_terminate_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -10153,7 +10185,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -10167,11 +10199,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -11768,7 +11800,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_job_request(
+        _request = build_batch_api_create_job_request(
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
             content_type=content_type,
@@ -11783,7 +11815,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -11797,11 +11829,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -13500,7 +13532,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_jobs_request(
+                _request = build_batch_api_list_jobs_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -13551,7 +13583,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -15265,7 +15297,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_jobs_from_schedule_request(
+                _request = build_batch_api_list_jobs_from_schedule_request(
                     job_schedule_id=job_schedule_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -15317,7 +15349,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -15528,7 +15560,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_job_preparation_and_release_task_status_request(
+                _request = build_batch_api_list_job_preparation_and_release_task_status_request(
                     job_id=job_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -15579,7 +15611,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -15667,7 +15699,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchTaskCountsResult] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_job_task_counts_request(
+        _request = build_batch_api_get_job_task_counts_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -15681,7 +15713,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -15695,10 +15727,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -15775,7 +15807,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_job_schedule_exists_request(
+        _request = build_batch_api_job_schedule_exists_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -15793,7 +15825,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -15808,10 +15840,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
             response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -15886,7 +15918,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_schedule_request(
+        _request = build_batch_api_delete_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -15904,7 +15936,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -17752,7 +17784,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchJobSchedule] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_job_schedule_request(
+        _request = build_batch_api_get_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -17772,7 +17804,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -17786,10 +17818,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -19554,7 +19586,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_update_job_schedule_request(
+        _request = build_batch_api_update_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -19574,7 +19606,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -19588,11 +19620,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -21433,7 +21465,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_job_schedule_request(
+        _request = build_batch_api_replace_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21453,7 +21485,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21467,11 +21499,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -21541,7 +21573,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_disable_job_schedule_request(
+        _request = build_batch_api_disable_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21559,7 +21591,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21573,11 +21605,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -21647,7 +21679,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_job_schedule_request(
+        _request = build_batch_api_enable_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21665,7 +21697,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21679,11 +21711,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -21753,7 +21785,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_terminate_job_schedule_request(
+        _request = build_batch_api_terminate_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21771,7 +21803,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21785,11 +21817,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -23523,7 +23555,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_job_schedule_request(
+        _request = build_batch_api_create_job_schedule_request(
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
             content_type=content_type,
@@ -23538,7 +23570,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -23552,11 +23584,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -25375,7 +25407,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_job_schedules_request(
+                _request = build_batch_api_list_job_schedules_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -25426,7 +25458,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -25921,7 +25953,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(task, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_task_request(
+        _request = build_batch_api_create_task_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -25937,7 +25969,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -25951,11 +25983,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -26586,7 +26618,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_tasks_request(
+                _request = build_batch_api_list_tasks_request(
                     job_id=job_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -26638,7 +26670,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -27235,7 +27267,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(task_collection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_task_collection_request(
+        _request = build_batch_api_create_task_collection_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -27251,7 +27283,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -27265,10 +27297,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -27352,7 +27384,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_task_request(
+        _request = build_batch_api_delete_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -27371,7 +27403,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -28033,7 +28065,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchTask] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_request(
+        _request = build_batch_api_get_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -28054,7 +28086,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -28068,11 +28100,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -28724,7 +28756,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(task, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_task_request(
+        _request = build_batch_api_replace_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -28745,7 +28777,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -28759,11 +28791,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -28893,7 +28925,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_sub_tasks_request(
+                _request = build_batch_api_list_sub_tasks_request(
                     job_id=job_id,
                     task_id=task_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -28943,7 +28975,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -29029,7 +29061,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_terminate_task_request(
+        _request = build_batch_api_terminate_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -29048,7 +29080,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29062,11 +29094,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -29146,7 +29178,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_reactivate_task_request(
+        _request = build_batch_api_reactivate_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -29165,7 +29197,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29179,11 +29211,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -29241,7 +29273,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_task_file_request(
+        _request = build_batch_api_delete_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -29258,7 +29290,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29339,7 +29371,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_file_request(
+        _request = build_batch_api_get_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -29358,7 +29390,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29372,17 +29404,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         deserialized = response.iter_bytes()
 
@@ -29447,7 +29479,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_file_properties_request(
+        _request = build_batch_api_get_task_file_properties_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -29465,7 +29497,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29479,17 +29511,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -29576,7 +29608,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_task_files_request(
+                _request = build_batch_api_list_task_files_request(
                     job_id=job_id,
                     task_id=task_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -29628,7 +29660,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -29721,7 +29753,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(user, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_node_user_request(
+        _request = build_batch_api_create_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -29738,7 +29770,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29752,11 +29784,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -29808,7 +29840,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_node_user_request(
+        _request = build_batch_api_delete_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
@@ -29824,7 +29856,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29924,7 +29956,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_node_user_request(
+        _request = build_batch_api_replace_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
@@ -29942,7 +29974,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29956,11 +29988,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -30449,7 +30481,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNode] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_request(
+        _request = build_batch_api_get_node_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30465,7 +30497,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30479,10 +30511,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -30559,7 +30591,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         else:
             _content = None
 
-        _request = build_batch_reboot_node_request(
+        _request = build_batch_api_reboot_node_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30576,7 +30608,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30590,11 +30622,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -30667,7 +30699,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         else:
             _content = None
 
-        _request = build_batch_disable_node_scheduling_request(
+        _request = build_batch_api_disable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30684,7 +30716,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30698,11 +30730,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -30752,7 +30784,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_node_scheduling_request(
+        _request = build_batch_api_enable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30767,7 +30799,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30781,11 +30813,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -30848,7 +30880,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNodeRemoteLoginSettings] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_remote_login_settings_request(
+        _request = build_batch_api_get_node_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30863,7 +30895,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30877,10 +30909,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -30988,7 +31020,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_upload_node_logs_request(
+        _request = build_batch_api_upload_node_logs_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -31005,7 +31037,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -31019,10 +31051,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -31527,7 +31559,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_nodes_request(
+                _request = build_batch_api_list_nodes_request(
                     pool_id=pool_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -31578,7 +31610,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -31714,7 +31746,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNodeVMExtension] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_extension_request(
+        _request = build_batch_api_get_node_extension_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
@@ -31731,7 +31763,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -31745,10 +31777,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -31883,7 +31915,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_node_extensions_request(
+                _request = build_batch_api_list_node_extensions_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -31934,7 +31966,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -32003,7 +32035,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_node_file_request(
+        _request = build_batch_api_delete_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -32020,7 +32052,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -32101,7 +32133,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_file_request(
+        _request = build_batch_api_get_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -32120,7 +32152,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -32134,17 +32166,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         deserialized = response.iter_bytes()
 
@@ -32209,7 +32241,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_file_properties_request(
+        _request = build_batch_api_get_node_file_properties_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -32227,7 +32259,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -32241,17 +32273,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -32336,7 +32368,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_node_files_request(
+                _request = build_batch_api_list_node_files_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -32388,7 +32420,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response

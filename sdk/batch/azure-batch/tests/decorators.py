@@ -10,7 +10,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport
 
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from devtools_testutils import trim_kwargs_from_test_function
 from devtools_testutils.helpers import is_live_and_not_recording
 from devtools_testutils.proxy_testcase import (
     get_test_id,
@@ -20,6 +20,7 @@ from devtools_testutils.proxy_testcase import (
 )
 
 from async_wrapper import async_wrapper
+
 
 # A modified version of devtools_testutils.aio.recorded_by_proxy_async
 # that modifies AioHttpTransport.send and RequestsTransport.send to make

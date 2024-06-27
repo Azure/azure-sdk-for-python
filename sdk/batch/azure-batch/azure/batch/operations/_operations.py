@@ -9,11 +9,10 @@
 import datetime
 import json
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, List, Optional, Type, TypeVar
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Type, TypeVar
 import urllib.parse
 
 from azure.core import MatchConditions
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -23,96 +22,3043 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import (
-    build_batch_create_job_request,
-    build_batch_create_job_schedule_request,
-    build_batch_create_node_user_request,
-    build_batch_create_pool_request,
-    build_batch_create_task_collection_request,
-    build_batch_create_task_request,
-    build_batch_delete_job_request,
-    build_batch_delete_job_schedule_request,
-    build_batch_delete_node_file_request,
-    build_batch_delete_node_user_request,
-    build_batch_delete_pool_request,
-    build_batch_delete_task_file_request,
-    build_batch_delete_task_request,
-    build_batch_disable_job_request,
-    build_batch_disable_job_schedule_request,
-    build_batch_disable_node_scheduling_request,
-    build_batch_disable_pool_auto_scale_request,
-    build_batch_enable_job_request,
-    build_batch_enable_job_schedule_request,
-    build_batch_enable_node_scheduling_request,
-    build_batch_enable_pool_auto_scale_request,
-    build_batch_evaluate_pool_auto_scale_request,
-    build_batch_get_application_request,
-    build_batch_get_job_request,
-    build_batch_get_job_schedule_request,
-    build_batch_get_job_task_counts_request,
-    build_batch_get_node_extension_request,
-    build_batch_get_node_file_properties_request,
-    build_batch_get_node_file_request,
-    build_batch_get_node_remote_login_settings_request,
-    build_batch_get_node_request,
-    build_batch_get_pool_request,
-    build_batch_get_task_file_properties_request,
-    build_batch_get_task_file_request,
-    build_batch_get_task_request,
-    build_batch_job_schedule_exists_request,
-    build_batch_list_applications_request,
-    build_batch_list_job_preparation_and_release_task_status_request,
-    build_batch_list_job_schedules_request,
-    build_batch_list_jobs_from_schedule_request,
-    build_batch_list_jobs_request,
-    build_batch_list_node_extensions_request,
-    build_batch_list_node_files_request,
-    build_batch_list_nodes_request,
-    build_batch_list_pool_node_counts_request,
-    build_batch_list_pool_usage_metrics_request,
-    build_batch_list_pools_request,
-    build_batch_list_sub_tasks_request,
-    build_batch_list_supported_images_request,
-    build_batch_list_task_files_request,
-    build_batch_list_tasks_request,
-    build_batch_pool_exists_request,
-    build_batch_reactivate_task_request,
-    build_batch_reboot_node_request,
-    build_batch_remove_nodes_request,
-    build_batch_replace_job_request,
-    build_batch_replace_job_schedule_request,
-    build_batch_replace_node_user_request,
-    build_batch_replace_pool_properties_request,
-    build_batch_replace_task_request,
-    build_batch_resize_pool_request,
-    build_batch_stop_pool_resize_request,
-    build_batch_terminate_job_request,
-    build_batch_terminate_job_schedule_request,
-    build_batch_terminate_task_request,
-    build_batch_update_job_request,
-    build_batch_update_job_schedule_request,
-    build_batch_update_pool_request,
-    build_batch_upload_node_logs_request,
-)
-from .._vendor import BatchClientMixinABC
+from .. import models as _models
+from .._model_base import SdkJSONEncoder, _deserialize
+from .._serialization import Serializer
+from .._vendor import prep_if_match, prep_if_none_match
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-many-public-methods
+def build_batch_api_list_applications_request(  # pylint: disable=name-too-long
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/applications"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_application_request(
+    application_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/applications/{applicationId}"
+    path_format_arguments = {
+        "applicationId": _SERIALIZER.url("application_id", application_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_pool_usage_metrics_request(  # pylint: disable=name-too-long
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    starttime: Optional[datetime.datetime] = None,
+    endtime: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/poolusagemetrics"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if starttime is not None:
+        _params["startTime"] = _SERIALIZER.query("starttime", starttime, "iso-8601")
+    if endtime is not None:
+        _params["endtime"] = _SERIALIZER.query("endtime", endtime, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_create_pool_request(
+    *, time_out_in_seconds: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_pools_request(
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_pool_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_pool_exists_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_pool_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_update_pool_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_disable_pool_auto_scale_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/disableautoscale"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_enable_pool_auto_scale_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/enableautoscale"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_evaluate_pool_auto_scale_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/evaluateautoscale"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_resize_pool_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/resize"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_stop_pool_resize_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/stopresize"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_replace_pool_properties_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/updateproperties"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_remove_nodes_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/removenodes"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_supported_images_request(  # pylint: disable=name-too-long
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/supportedimages"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_pool_node_counts_request(  # pylint: disable=name-too-long
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/nodecounts"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_update_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_replace_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_disable_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/disable"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_enable_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/enable"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_terminate_job_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/terminate"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_create_job_request(
+    *, time_out_in_seconds: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_jobs_request(
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_jobs_from_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}/jobs"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_job_preparation_and_release_task_status_request(  # pylint: disable=name-too-long
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/jobpreparationandreleasetaskstatus"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_job_task_counts_request(  # pylint: disable=name-too-long
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/taskcounts"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_job_schedule_exists_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_job_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_job_schedule_request(
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_update_job_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_replace_job_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_disable_job_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}/disable"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_enable_job_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}/enable"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_terminate_job_schedule_request(  # pylint: disable=name-too-long
+    job_schedule_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules/{jobScheduleId}/terminate"
+    path_format_arguments = {
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_create_job_schedule_request(  # pylint: disable=name-too-long
+    *, time_out_in_seconds: Optional[int] = None, ocpdate: Optional[datetime.datetime] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_job_schedules_request(  # pylint: disable=name-too-long
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobschedules"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_create_task_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_tasks_request(
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_create_task_collection_request(  # pylint: disable=name-too-long
+    job_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/addtaskcollection"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_task_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_task_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    expand: Optional[List[str]] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_replace_task_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_sub_tasks_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/subtasksinfo"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_terminate_task_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/terminate"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_reactivate_task_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/reactivate"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_task_file_request(
+    job_id: str,
+    task_id: str,
+    file_path: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    recursive: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if recursive is not None:
+        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_task_file_request(
+    job_id: str,
+    task_id: str,
+    file_path: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    ocp_range: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/octet-stream")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    if ocp_range is not None:
+        _headers["ocp-range"] = _SERIALIZER.header("ocp_range", ocp_range, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_task_file_properties_request(  # pylint: disable=name-too-long
+    job_id: str,
+    task_id: str,
+    file_path: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_task_files_request(
+    job_id: str,
+    task_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    recursive: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{jobId}/tasks/{taskId}/files"
+    path_format_arguments = {
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if recursive is not None:
+        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_create_node_user_request(
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/users"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_node_user_request(
+    pool_id: str,
+    node_id: str,
+    user_name: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "userName": _SERIALIZER.url("user_name", user_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_replace_node_user_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    user_name: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "userName": _SERIALIZER.url("user_name", user_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_node_request(
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_reboot_node_request(
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_disable_node_scheduling_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_enable_node_scheduling_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_node_remote_login_settings_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/remoteloginsettings"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_upload_node_logs_request(
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/uploadbatchservicelogs"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_nodes_request(
+    pool_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_node_extension_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    extension_name: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/extensions/{extensionName}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "extensionName": _SERIALIZER.url("extension_name", extension_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_node_extensions_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    select: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/extensions"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_delete_node_file_request(
+    pool_id: str,
+    node_id: str,
+    file_path: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    recursive: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if recursive is not None:
+        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_node_file_request(
+    pool_id: str,
+    node_id: str,
+    file_path: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    ocp_range: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/octet-stream")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    if ocp_range is not None:
+        _headers["ocp-range"] = _SERIALIZER.header("ocp_range", ocp_range, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_get_node_file_properties_request(  # pylint: disable=name-too-long
+    pool_id: str,
+    node_id: str,
+    file_path: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    if_modified_since: Optional[datetime.datetime] = None,
+    if_unmodified_since: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    if if_modified_since is not None:
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+    if if_unmodified_since is not None:
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_api_list_node_files_request(
+    pool_id: str,
+    node_id: str,
+    *,
+    time_out_in_seconds: Optional[int] = None,
+    ocpdate: Optional[datetime.datetime] = None,
+    maxresults: Optional[int] = None,
+    filter: Optional[str] = None,
+    recursive: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01.19.0"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/pools/{poolId}/nodes/{nodeId}/files"
+    path_format_arguments = {
+        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if time_out_in_seconds is not None:
+        _params["timeOut"] = _SERIALIZER.query("time_out_in_seconds", time_out_in_seconds, "int")
+    if maxresults is not None:
+        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if recursive is not None:
+        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+
+    # Construct headers
+    if ocpdate is not None:
+        _headers["ocp-date"] = _SERIALIZER.header("ocpdate", ocpdate, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class BatchOpsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.batch.BatchClient`'s
+        :attr:`batch_ops` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+
+class BatchApiOperations:  # pylint: disable=too-many-public-methods
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.batch.BatchClient`'s
+        :attr:`batch_api` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_applications(
@@ -122,7 +3068,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocpdate: Optional[datetime.datetime] = None,
         maxresults: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchApplication"]:
+    ) -> Iterable["_models.BatchApplication"]:
         """Lists all of the applications available in the specified Account.
 
         This operation returns only Applications and versions that are available for
@@ -143,7 +3089,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          applications can be returned. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of BatchApplication
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchApplication]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchApplication]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -175,7 +3121,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_applications_request(
+                _request = build_batch_api_list_applications_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -212,35 +3158,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchApplication], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get_application(
+    @distributed_trace
+    def get_application(
         self,
         application_id: str,
         *,
@@ -296,7 +3242,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchApplication] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_application_request(
+        _request = build_batch_api_get_application_request(
             application_id=application_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -310,7 +3256,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -318,16 +3264,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -350,7 +3296,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         endtime: Optional[datetime.datetime] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchPoolUsageMetrics"]:
+    ) -> Iterable["_models.BatchPoolUsageMetrics"]:
         # pylint: disable=line-too-long
         """Lists the usage metrics, aggregated by Pool across individual time intervals,
         for the specified Account.
@@ -388,7 +3334,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of BatchPoolUsageMetrics
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolUsageMetrics]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchPoolUsageMetrics]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -426,7 +3372,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_pool_usage_metrics_request(
+                _request = build_batch_api_list_pool_usage_metrics_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -466,35 +3412,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchPoolUsageMetrics], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def create_pool(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def create_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool: _models.BatchPoolCreateContent,
         *,
@@ -1279,7 +4225,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_pool_request(
+        _request = build_batch_api_create_pool_request(
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
             content_type=content_type,
@@ -1294,7 +4240,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1302,17 +4248,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [201]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1328,7 +4274,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchPool"]:
+    ) -> Iterable["_models.BatchPool"]:
         # pylint: disable=line-too-long
         """Lists all of the Pools in the specified Account.
 
@@ -1354,7 +4300,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: list[str]
         :return: An iterator like instance of BatchPool
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPool]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchPool]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2223,7 +5169,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_pools_request(
+                _request = build_batch_api_list_pools_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -2263,35 +5209,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchPool], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def delete_pool(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
@@ -2366,7 +5312,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_pool_request(
+        _request = build_batch_api_delete_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -2384,7 +5330,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2392,7 +5338,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2404,8 +5350,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def pool_exists(
+    @distributed_trace
+    def pool_exists(
         self,
         pool_id: str,
         *,
@@ -2467,7 +5413,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_pool_exists_request(
+        _request = build_batch_api_pool_exists_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -2485,7 +5431,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2493,24 +5439,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200, 404]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
             response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
-    @distributed_trace_async
-    async def get_pool(
+    @distributed_trace
+    def get_pool(
         self,
         pool_id: str,
         *,
@@ -3429,7 +6375,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchPool] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_pool_request(
+        _request = build_batch_api_get_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3449,7 +6395,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3457,16 +6403,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3478,8 +6424,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def update_pool(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def update_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         pool: _models.BatchPoolUpdateContent,
@@ -3725,7 +6671,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_update_pool_request(
+        _request = build_batch_api_update_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3745,7 +6691,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3753,23 +6699,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def disable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def disable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
@@ -3808,7 +6754,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_disable_pool_auto_scale_request(
+        _request = build_batch_api_disable_pool_auto_scale_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3822,7 +6768,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3830,23 +6776,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         content: _models.BatchPoolEnableAutoScaleContent,
@@ -3947,7 +6893,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_enable_pool_auto_scale_request(
+        _request = build_batch_api_enable_pool_auto_scale_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -3967,7 +6913,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3975,23 +6921,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def evaluate_pool_auto_scale(
+    @distributed_trace
+    def evaluate_pool_auto_scale(
         self,
         pool_id: str,
         content: _models.BatchPoolEvaluateAutoScaleContent,
@@ -4079,7 +7025,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_evaluate_pool_auto_scale_request(
+        _request = build_batch_api_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4095,7 +7041,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4103,17 +7049,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4125,8 +7071,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def resize_pool(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def resize_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         content: _models.BatchPoolResizeContent,
@@ -4225,7 +7171,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_resize_pool_request(
+        _request = build_batch_api_resize_pool_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4245,7 +7191,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4253,23 +7199,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def stop_pool_resize(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def stop_pool_resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
@@ -4339,7 +7285,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_stop_pool_resize_request(
+        _request = build_batch_api_stop_pool_resize_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4357,7 +7303,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4365,23 +7311,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def replace_pool_properties(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def replace_pool_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         pool: _models.BatchPoolReplaceContent,
@@ -4601,7 +7547,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(pool, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_pool_properties_request(
+        _request = build_batch_api_replace_pool_properties_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4617,7 +7563,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4625,23 +7571,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def remove_nodes(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_nodes(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         content: _models.BatchNodeRemoveContent,
@@ -4737,7 +7683,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_remove_nodes_request(
+        _request = build_batch_api_remove_nodes_request(
             pool_id=pool_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -4757,7 +7703,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4765,17 +7711,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -4789,7 +7735,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchSupportedImage"]:
+    ) -> Iterable["_models.ImageInfo"]:
         # pylint: disable=line-too-long
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
@@ -4810,8 +7756,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of BatchSupportedImage
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchSupportedImage]
+        :return: An iterator like instance of ImageInfo
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.ImageInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4868,7 +7814,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchSupportedImage]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ImageInfo]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -4881,7 +7827,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_supported_images_request(
+                _request = build_batch_api_list_supported_images_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -4919,32 +7865,32 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchSupportedImage], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.ImageInfo], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_pool_node_counts(
@@ -4955,7 +7901,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchPoolNodeCounts"]:
+    ) -> Iterable["_models.BatchPoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the
         numbers returned may not always be up to date. If you need exact node counts,
         use a list query.
@@ -4976,7 +7922,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of BatchPoolNodeCounts
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolNodeCounts]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchPoolNodeCounts]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5065,7 +8011,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_pool_node_counts_request(
+                _request = build_batch_api_list_pool_node_counts_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -5103,35 +8049,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchPoolNodeCounts], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def delete_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         *,
@@ -5202,7 +8148,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_request(
+        _request = build_batch_api_delete_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -5220,7 +8166,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5228,7 +8174,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5240,8 +8186,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_job(
+    @distributed_trace
+    def get_job(
         self,
         job_id: str,
         *,
@@ -6950,7 +9896,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchJob] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_job_request(
+        _request = build_batch_api_get_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -6970,7 +9916,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6978,16 +9924,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -6999,8 +9945,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def update_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def update_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         job: _models.BatchJobUpdateContent,
@@ -7998,7 +10944,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_update_job_request(
+        _request = build_batch_api_update_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -8018,7 +10964,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8026,23 +10972,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def replace_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def replace_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         job: _models.BatchJob,
@@ -9755,7 +12701,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_job_request(
+        _request = build_batch_api_replace_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -9775,7 +12721,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9783,23 +12729,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def disable_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def disable_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         content: _models.BatchJobDisableContent,
@@ -9888,7 +12834,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_disable_job_request(
+        _request = build_batch_api_disable_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -9908,7 +12854,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9916,23 +12862,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def enable_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def enable_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         *,
@@ -10001,7 +12947,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_job_request(
+        _request = build_batch_api_enable_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -10019,7 +12965,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -10027,23 +12973,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def terminate_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def terminate_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         parameters: Optional[_models.BatchJobTerminateContent] = None,
@@ -10133,7 +13079,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         else:
             _content = None
 
-        _request = build_batch_terminate_job_request(
+        _request = build_batch_api_terminate_job_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -10153,7 +13099,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -10161,23 +13107,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def create_job(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def create_job(  # pylint: disable=inconsistent-return-statements
         self,
         job: _models.BatchJobCreateContent,
         *,
@@ -11768,7 +14714,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_job_request(
+        _request = build_batch_api_create_job_request(
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
             content_type=content_type,
@@ -11783,7 +14729,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -11791,17 +14737,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [201]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -11817,7 +14763,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJob"]:
+    ) -> Iterable["_models.BatchJob"]:
         # pylint: disable=line-too-long
         """Lists all of the Jobs in the specified Account.
 
@@ -11843,7 +14789,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: list[str]
         :return: An iterator like instance of BatchJob
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -13500,7 +16446,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_jobs_request(
+                _request = build_batch_api_list_jobs_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -13540,32 +16486,32 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchJob], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_jobs_from_schedule(
@@ -13579,7 +16525,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJob"]:
+    ) -> Iterable["_models.BatchJob"]:
         # pylint: disable=line-too-long
         """Lists the Jobs that have been created under the specified Job Schedule.
 
@@ -13608,7 +16554,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: list[str]
         :return: An iterator like instance of BatchJob
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -15265,7 +18211,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_jobs_from_schedule_request(
+                _request = build_batch_api_list_jobs_from_schedule_request(
                     job_schedule_id=job_schedule_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -15306,32 +18252,32 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchJob], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_job_preparation_and_release_task_status(  # pylint: disable=name-too-long
@@ -15344,7 +18290,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
+    ) -> Iterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
         # pylint: disable=line-too-long
         """Lists the execution status of the Job Preparation and Job Release Task for the
         specified Job across the Compute Nodes where the Job has run.
@@ -15377,7 +18323,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :paramtype select: list[str]
         :return: An iterator like instance of BatchJobPreparationAndReleaseTaskStatus
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJobPreparationAndReleaseTaskStatus]
+         ~azure.core.paging.ItemPaged[~azure.batch.models.BatchJobPreparationAndReleaseTaskStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -15528,7 +18474,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_job_preparation_and_release_task_status_request(
+                _request = build_batch_api_list_job_preparation_and_release_task_status_request(
                     job_id=job_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -15568,35 +18514,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get_job_task_counts(
+    @distributed_trace
+    def get_job_task_counts(
         self,
         job_id: str,
         *,
@@ -15667,7 +18613,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchTaskCountsResult] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_job_task_counts_request(
+        _request = build_batch_api_get_job_task_counts_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -15681,7 +18627,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -15689,16 +18635,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -15710,8 +18656,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def job_schedule_exists(
+    @distributed_trace
+    def job_schedule_exists(
         self,
         job_schedule_id: str,
         *,
@@ -15775,7 +18721,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_job_schedule_exists_request(
+        _request = build_batch_api_job_schedule_exists_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -15793,7 +18739,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -15801,24 +18747,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200, 404]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
             response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
-    @distributed_trace_async
-    async def delete_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
@@ -15886,7 +18832,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_job_schedule_request(
+        _request = build_batch_api_delete_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -15904,7 +18850,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -15912,7 +18858,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -15924,8 +18870,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_job_schedule(
+    @distributed_trace
+    def get_job_schedule(
         self,
         job_schedule_id: str,
         *,
@@ -17752,7 +20698,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchJobSchedule] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_job_schedule_request(
+        _request = build_batch_api_get_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -17772,7 +20718,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -17780,16 +20726,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -17801,8 +20747,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def update_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def update_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         job_schedule: _models.BatchJobScheduleUpdateContent,
@@ -19554,7 +22500,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_update_job_schedule_request(
+        _request = build_batch_api_update_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -19574,7 +22520,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -19582,23 +22528,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def replace_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def replace_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         job_schedule: _models.BatchJobSchedule,
@@ -21433,7 +24379,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_job_schedule_request(
+        _request = build_batch_api_replace_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21453,7 +24399,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21461,23 +24407,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def disable_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def disable_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
@@ -21541,7 +24487,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_disable_job_schedule_request(
+        _request = build_batch_api_disable_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21559,7 +24505,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21567,23 +24513,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def enable_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def enable_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
@@ -21647,7 +24593,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_job_schedule_request(
+        _request = build_batch_api_enable_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21665,7 +24611,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21673,23 +24619,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def terminate_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def terminate_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
@@ -21753,7 +24699,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_terminate_job_schedule_request(
+        _request = build_batch_api_terminate_job_schedule_request(
             job_schedule_id=job_schedule_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -21771,7 +24717,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -21779,23 +24725,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def create_job_schedule(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def create_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule: _models.BatchJobScheduleCreateContent,
         *,
@@ -23523,7 +26469,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(job_schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_job_schedule_request(
+        _request = build_batch_api_create_job_schedule_request(
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
             content_type=content_type,
@@ -23538,7 +26484,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -23546,17 +26492,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [201]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -23572,7 +26518,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchJobSchedule"]:
+    ) -> Iterable["_models.BatchJobSchedule"]:
         # pylint: disable=line-too-long
         """Lists all of the Job Schedules in the specified Account.
 
@@ -23598,7 +26544,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: list[str]
         :return: An iterator like instance of BatchJobSchedule
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJobSchedule]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchJobSchedule]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -25375,7 +28321,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_job_schedules_request(
+                _request = build_batch_api_list_job_schedules_request(
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
                     maxresults=maxresults,
@@ -25415,35 +28361,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchJobSchedule], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def create_task(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def create_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task: _models.BatchTaskCreateContent,
@@ -25921,7 +28867,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(task, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_task_request(
+        _request = build_batch_api_create_task_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -25937,7 +28883,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -25945,17 +28891,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [201]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -25972,7 +28918,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         select: Optional[List[str]] = None,
         expand: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchTask"]:
+    ) -> Iterable["_models.BatchTask"]:
         # pylint: disable=line-too-long
         """Lists all of the Tasks that are associated with the specified Job.
 
@@ -26002,7 +28948,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: list[str]
         :return: An iterator like instance of BatchTask
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchTask]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchTask]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -26586,7 +29532,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_tasks_request(
+                _request = build_batch_api_list_tasks_request(
                     job_id=job_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -26627,35 +29573,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchTask], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def create_task_collection(
+    @distributed_trace
+    def create_task_collection(
         self,
         job_id: str,
         task_collection: _models.BatchTaskGroup,
@@ -27235,7 +30181,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(task_collection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_task_collection_request(
+        _request = build_batch_api_create_task_collection_request(
             job_id=job_id,
             time_out_in_seconds=time_out_in_seconds,
             ocpdate=ocpdate,
@@ -27251,7 +30197,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -27259,16 +30205,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -27280,8 +30226,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete_task(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task_id: str,
@@ -27352,7 +30298,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_task_request(
+        _request = build_batch_api_delete_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -27371,7 +30317,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -27379,7 +30325,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -27391,8 +30337,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_task(
+    @distributed_trace
+    def get_task(
         self,
         job_id: str,
         task_id: str,
@@ -28033,7 +30979,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchTask] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_request(
+        _request = build_batch_api_get_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -28054,7 +31000,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -28062,17 +31008,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -28084,8 +31030,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def replace_task(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def replace_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task_id: str,
@@ -28724,7 +31670,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(task, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_task_request(
+        _request = build_batch_api_replace_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -28745,7 +31691,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -28753,17 +31699,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -28778,7 +31724,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocpdate: Optional[datetime.datetime] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchSubtask"]:
+    ) -> Iterable["_models.BatchSubtask"]:
         # pylint: disable=line-too-long
         """Lists all of the subtasks that are associated with the specified multi-instance
         Task.
@@ -28800,7 +31746,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
         :return: An iterator like instance of BatchSubtask
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchSubtask]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchSubtask]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -28893,7 +31839,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_sub_tasks_request(
+                _request = build_batch_api_list_sub_tasks_request(
                     job_id=job_id,
                     task_id=task_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -28932,35 +31878,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchSubtask], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def terminate_task(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def terminate_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task_id: str,
@@ -29029,7 +31975,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_terminate_task_request(
+        _request = build_batch_api_terminate_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -29048,7 +31994,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29056,23 +32002,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def reactivate_task(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def reactivate_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task_id: str,
@@ -29146,7 +32092,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_reactivate_task_request(
+        _request = build_batch_api_reactivate_task_request(
             job_id=job_id,
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -29165,7 +32111,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29173,23 +32119,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def delete_task_file(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_task_file(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task_id: str,
@@ -29241,7 +32187,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_task_file_request(
+        _request = build_batch_api_delete_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -29258,7 +32204,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29266,7 +32212,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -29278,8 +32224,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_task_file(
+    @distributed_trace
+    def get_task_file(
         self,
         job_id: str,
         task_id: str,
@@ -29291,7 +32237,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> Iterator[bytes]:
         """Returns the content of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -29322,8 +32268,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -29337,9 +32283,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_file_request(
+        _request = build_batch_api_get_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -29358,7 +32304,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29366,23 +32312,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         deserialized = response.iter_bytes()
 
@@ -29391,8 +32337,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_task_file_properties(
+    @distributed_trace
+    def get_task_file_properties(
         self,
         job_id: str,
         task_id: str,
@@ -29447,7 +32393,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_file_properties_request(
+        _request = build_batch_api_get_task_file_properties_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -29465,7 +32411,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29473,23 +32419,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -29507,7 +32453,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNodeFile"]:
+    ) -> Iterable["_models.BatchNodeFile"]:
         # pylint: disable=line-too-long
         """Lists the files in a Task's directory on its Compute Node.
 
@@ -29537,7 +32483,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          combination with the filter parameter to list specific type of files. Default value is None.
         :paramtype recursive: bool
         :return: An iterator like instance of BatchNodeFile
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeFile]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchNodeFile]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -29576,7 +32522,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_task_files_request(
+                _request = build_batch_api_list_task_files_request(
                     job_id=job_id,
                     task_id=task_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -29617,35 +32563,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def create_node_user(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def create_node_user(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -29721,7 +32667,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(user, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_create_node_user_request(
+        _request = build_batch_api_create_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -29738,7 +32684,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29746,23 +32692,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [201]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def delete_node_user(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_node_user(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -29808,7 +32754,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_node_user_request(
+        _request = build_batch_api_delete_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
@@ -29824,7 +32770,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29832,7 +32778,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -29844,8 +32790,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def replace_node_user(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def replace_node_user(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -29924,7 +32870,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_replace_node_user_request(
+        _request = build_batch_api_replace_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
@@ -29942,7 +32888,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -29950,23 +32896,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_node(
+    @distributed_trace
+    def get_node(
         self,
         pool_id: str,
         node_id: str,
@@ -30449,7 +33395,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNode] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_request(
+        _request = build_batch_api_get_node_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30465,7 +33411,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30473,16 +33419,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -30494,8 +33440,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def reboot_node(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def reboot_node(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -30559,7 +33505,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         else:
             _content = None
 
-        _request = build_batch_reboot_node_request(
+        _request = build_batch_api_reboot_node_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30576,7 +33522,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30584,23 +33530,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [202]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def disable_node_scheduling(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def disable_node_scheduling(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -30667,7 +33613,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         else:
             _content = None
 
-        _request = build_batch_disable_node_scheduling_request(
+        _request = build_batch_api_disable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30684,7 +33630,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30692,23 +33638,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def enable_node_scheduling(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def enable_node_scheduling(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -30752,7 +33698,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_enable_node_scheduling_request(
+        _request = build_batch_api_enable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30767,7 +33713,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30775,23 +33721,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_node_remote_login_settings(
+    @distributed_trace
+    def get_node_remote_login_settings(
         self,
         pool_id: str,
         node_id: str,
@@ -30848,7 +33794,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNodeRemoteLoginSettings] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_remote_login_settings_request(
+        _request = build_batch_api_get_node_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -30863,7 +33809,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -30871,16 +33817,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -30892,8 +33838,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def upload_node_logs(
+    @distributed_trace
+    def upload_node_logs(
         self,
         pool_id: str,
         node_id: str,
@@ -30988,7 +33934,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         _content = json.dumps(content, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_batch_upload_node_logs_request(
+        _request = build_batch_api_upload_node_logs_request(
             pool_id=pool_id,
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
@@ -31005,7 +33951,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -31013,16 +33959,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -31045,7 +33991,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         filter: Optional[str] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNode"]:
+    ) -> Iterable["_models.BatchNode"]:
         # pylint: disable=line-too-long
         """Lists the Compute Nodes in the specified Pool.
 
@@ -31071,7 +34017,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
         :return: An iterator like instance of BatchNode
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNode]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchNode]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -31527,7 +34473,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_nodes_request(
+                _request = build_batch_api_list_nodes_request(
                     pool_id=pool_id,
                     time_out_in_seconds=time_out_in_seconds,
                     ocpdate=ocpdate,
@@ -31567,35 +34513,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchNode], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get_node_extension(
+    @distributed_trace
+    def get_node_extension(
         self,
         pool_id: str,
         node_id: str,
@@ -31714,7 +34660,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNodeVMExtension] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_extension_request(
+        _request = build_batch_api_get_node_extension_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
@@ -31731,7 +34677,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -31739,16 +34685,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -31771,7 +34717,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNodeVMExtension"]:
+    ) -> Iterable["_models.BatchNodeVMExtension"]:
         # pylint: disable=line-too-long
         """Lists the Compute Nodes Extensions in the specified Pool.
 
@@ -31795,7 +34741,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: list[str]
         :return: An iterator like instance of BatchNodeVMExtension
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeVMExtension]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchNodeVMExtension]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -31883,7 +34829,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_node_extensions_request(
+                _request = build_batch_api_list_node_extensions_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -31923,35 +34869,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchNodeVMExtension], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def delete_node_file(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_node_file(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
@@ -32003,7 +34949,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_delete_node_file_request(
+        _request = build_batch_api_delete_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -32020,7 +34966,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -32028,7 +34974,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -32040,8 +34986,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace_async
-    async def get_node_file(
+    @distributed_trace
+    def get_node_file(
         self,
         pool_id: str,
         node_id: str,
@@ -32053,7 +34999,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> Iterator[bytes]:
         """Returns the content of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -32084,8 +35030,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -32099,9 +35045,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_file_request(
+        _request = build_batch_api_get_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -32120,7 +35066,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -32128,23 +35074,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         deserialized = response.iter_bytes()
 
@@ -32153,8 +35099,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_node_file_properties(
+    @distributed_trace
+    def get_node_file_properties(
         self,
         pool_id: str,
         node_id: str,
@@ -32209,7 +35155,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_file_properties_request(
+        _request = build_batch_api_get_node_file_properties_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
@@ -32227,7 +35173,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -32235,23 +35181,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.BatchError, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
         response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
             "bool", response.headers.get("ocp-batch-file-isdirectory")
         )
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -32269,7 +35215,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BatchNodeFile"]:
+    ) -> Iterable["_models.BatchNodeFile"]:
         # pylint: disable=line-too-long
         """Lists all of the files in Task directories on the specified Compute Node.
 
@@ -32297,7 +35243,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :keyword recursive: Whether to list children of a directory. Default value is None.
         :paramtype recursive: bool
         :return: An iterator like instance of BatchNodeFile
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeFile]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.BatchNodeFile]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -32336,7 +35282,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_node_files_request(
+                _request = build_batch_api_list_node_files_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     time_out_in_seconds=time_out_in_seconds,
@@ -32377,29 +35323,29 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
             return _request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
-                    await response.read()  # Load the body in memory and close the socket
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.BatchError, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)

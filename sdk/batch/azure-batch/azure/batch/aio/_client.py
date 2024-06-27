@@ -23,15 +23,15 @@ if TYPE_CHECKING:
 
 
 class BatchClient(BatchClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """Azure Batch provides Cloud-scale job scheduling and compute management.
+    """BatchClient.
 
     :param endpoint: Batch account endpoint (for example:
      https://batchaccount.eastus2.batch.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-05-01.17.0". Note that overriding this default value may result in unsupported behavior.
+     "2024-02-01.19.0". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
