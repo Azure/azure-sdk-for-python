@@ -104,7 +104,7 @@ The following sections provide several code snippets covering some of the most c
 - [Make a Reverse Address Search to translate coordinate location to street address](#make-a-reverse-address-search-to-translate-coordinate-location-to-street-address)
 - [Batch request for reverse geocoding](#batch-request-for-reverse-geocoding)
 
-### Request latitude and longitude coordinates for an address
+### Geocode an address
 
 You can use an authenticated client to convert an address into latitude and longitude coordinates. This process is also called geocoding. In addition to returning the coordinates, the response will also return detailed address properties such as street, postal code, municipality, and country/region information.
 
