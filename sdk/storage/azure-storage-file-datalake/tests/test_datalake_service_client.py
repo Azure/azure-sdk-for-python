@@ -464,7 +464,7 @@ class TestDatalakeService(StorageRecordedTestCase):
         self.dsc.create_file_system('testfs1')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient)
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
@@ -488,7 +488,7 @@ class TestDatalakeService(StorageRecordedTestCase):
         self.dsc.create_file_system('testfs2')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient)
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,

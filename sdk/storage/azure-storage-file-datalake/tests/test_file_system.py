@@ -1086,7 +1086,7 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client.create_directory('testdir1')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient)
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
@@ -1114,7 +1114,7 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client.create_directory('testdir2')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient)
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
