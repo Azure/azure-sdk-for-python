@@ -99,9 +99,9 @@ def get_datastore_info(
         datastore.account_name, storage_endpoint
     )
 
-    if isinstance(datastore.credential, SasTokenConfiguration):
+    if isinstance(datastore.credentials, SasTokenConfiguration):
         datastore_info["credential"] = operations._list_secrets(name=name, expirable_secret=True)
-    elif isinstance(datastore.credential, NoneCredentialConfiguration):
+    elif isinstance(datastore.credentials, NoneCredentialConfiguration):
         datastore_info["credential"] = operations._credential
     else:
         datastore_info["credential"] = operations._list_secrets(name=name)
