@@ -87,7 +87,7 @@
         }
     },
     "variables": {
-        "apiVersion": "2023-10-01-preview",
+        "apiVersion": "2017-04-18",
         "endpoint": "[format('https://{0}{1}/', parameters('baseName'), parameters('cognitiveServicesEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
     },
