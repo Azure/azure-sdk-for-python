@@ -376,8 +376,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 and le.description.startswith("Delivery tag")
             ):
                 raise RuntimeError("Link error occurred during settle operation.") from le
-
-            raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
+            # TODO: fix logger
+            import logging
+            raise PyamqpTransportAsync.create_servicebus_exception(logging.getLogger(__name__), le)
+            # raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
 
         except AMQPConnectionError as e:
             print("AMQP CONNECTION ERROR")
