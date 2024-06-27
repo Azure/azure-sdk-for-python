@@ -26,7 +26,7 @@ class TestMapsSearchClient(AzureRecordedTestCase):
     def test_geocode(self):
         result = self.client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
 
-        assert 'features' in result and result['features']
+        assert result.get('features', False)
         coordinates = result['features'][0]['geometry']['coordinates']
         longitude = coordinates[0]
         latitude = coordinates[1]
@@ -46,32 +46,30 @@ class TestMapsSearchClient(AzureRecordedTestCase):
 
         assert 'batchItems' in result and result['batchItems']
 
-        item1, item2 = result['batchItems']
+        expected_coordinates = [
+            (-122.349309, 47.620498),
+            (-122.138669, 47.630359)
+        ]
 
-        assert item1.get('features')
+        for i, item in enumerate(result['batchItems']):
+            assert item.get('features')
 
-        assert item2.get('features')
+            coordinates = item['features'][0]['geometry']['coordinates']
+            longitude, latitude = coordinates
 
-        coordinates1 = item1['features'][0]['geometry']['coordinates']
-        coordinates2 = item2['features'][0]['geometry']['coordinates']
+            expected_longitude, expected_latitude = expected_coordinates[i]
 
-        longitude1, latitude1 = coordinates1
-        longitude2, latitude2 = coordinates2
-
-        assert longitude1 == -122.349309
-        assert latitude1 == 47.620498
-
-        assert longitude2 == -122.138669
-        assert latitude2 == 47.630359
+            assert longitude == expected_longitude
+            assert latitude == expected_latitude
 
     @MapsSearchPreparer()
     @recorded_by_proxy
     def test_reverse_geocode(self):
         result = self.client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
-        assert 'features' in result and result['features']
+        assert result.get('features', False)
         props = result['features'][0].get('properties', {})
 
-        assert props and 'address' in props and props['address']
+        assert props.get('address', False)
         assert props['address'].get('formattedAddress', 'No formatted address found') == "2265 152nd Ave NE, Redmond, Washington 98052, United States"
 
     @MapsSearchPreparer()
@@ -84,21 +82,22 @@ class TestMapsSearchClient(AzureRecordedTestCase):
             ],
         }, )
 
-        assert 'batchItems' in result and result['batchItems']
+        assert result.get('batchItems', False)
 
-        # item 1
-        features = result['batchItems'][0]['features']
-        assert features
-        props = features[0].get('properties', {})
-        assert props and 'address' in props and props['address']
-        assert props['address'].get('formattedAddress', 'No formatted address for item 1 found') == "400 Broad St, Seattle, Washington 98109, United States"
+        expected_addresses = [
+            "400 Broad St, Seattle, Washington 98109, United States",
+            "2265 152nd Ave NE, Redmond, Washington 98052, United States"
+        ]
 
-        # item 2
-        features = result['batchItems'][1]['features']
-        assert features
-        props = features[0].get('properties', {})
-        assert props and 'address' in props and props['address']
-        assert props['address'].get('formattedAddress', 'No formatted address for item 2 found') == "2265 152nd Ave NE, Redmond, Washington 98052, United States"
+        for i, item in enumerate(result['batchItems']):
+            features = item.get('features', [])
+            assert features
+
+            props = features[0].get('properties', {})
+            assert props and props.get('address', False)
+
+            formatted_address = props['address'].get('formattedAddress', f'No formatted address for item {i + 1} found')
+            assert formatted_address == expected_addresses[i]
 
     @MapsSearchPreparer()
     @recorded_by_proxy
@@ -109,4 +108,4 @@ class TestMapsSearchClient(AzureRecordedTestCase):
             "resolution": Resolution.SMALL,
         })
 
-        assert 'geometry' in result and result['geometry'] and result['geometry']['geometries']
+        assert result.get('geometry', False) and result['geometry'].get('geometries', False)

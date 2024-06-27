@@ -98,8 +98,8 @@ Async clients and credentials should be closed when they're no longer needed. Th
 
 The following sections provide several code snippets covering some of the most common Azure Maps Search tasks, including:
 
-- [Request latitude and longitude coordinates for an address](#request-latitude-and-longitude-coordinates-for-an-address)
-- [Batch request for latitude and longitude coordinates for addresses](#batch-request-for-latitude-and-longitude-coordinates-for-addresses)
+- [Geocode an address](#geocode-an-address)
+- [Batch geocode addresses](#batch-geocode-addresses)
 - [Get polygons for a given location](#get-polygons-for-a-given-location)
 - [Make a Reverse Address Search to translate coordinate location to street address](#make-a-reverse-address-search-to-translate-coordinate-location-to-street-address)
 - [Batch request for reverse geocoding](#batch-request-for-reverse-geocoding)
@@ -165,27 +165,17 @@ def geocode_batch():
         },)
 
         if not result.get('batchItems', False):
-            print("No geocoding")
+            print("No batchItems in geocoding")
             return
 
-        item1, item2 = result['batchItems']
+        for item in result['batchItems']:
+            if not item.get('features', False):
+                print(f"No features in item: {item}")
+                continue
 
-        if not item1.get('features'):
-            print("No geocoding1")
-            return
-
-        if not item2.get('features'):
-            print("No geocoding2")
-            return
-
-        coordinates1 = item1['features'][0]['geometry']['coordinates']
-        coordinates2 = item2['features'][0]['geometry']['coordinates']
-
-        longitude1, latitude1 = coordinates1
-        longitude2, latitude2 = coordinates2
-
-        print(longitude1, latitude1)
-        print(longitude2, latitude2)
+            coordinates = item['features'][0]['geometry']['coordinates']
+            longitude, latitude = coordinates
+            print(longitude, latitude)
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -201,24 +191,6 @@ if __name__ == '__main__':
 This sample demonstrates how to search polygons.
 
 ```python
-# coding: utf-8
-
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-
-"""
-FILE: sample_get_polygon.py
-DESCRIPTION:
-    This sample demonstrates how to search polygons.
-USAGE:
-    python sample_get_polygon.py
-
-    Set the environment variables with your own values before running the sample:
-    - AZURE_SUBSCRIPTION_KEY - your subscription key
-"""
 import os
 
 from azure.core.exceptions import HttpResponseError
@@ -272,7 +244,7 @@ def reverse_geocode():
     maps_search_client = AzureMapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
-        if not result.get('features', False):
+        if result.get('features', False):
             props = result['features'][0].get('properties', {})
             if props and props.get('address', False):
                 print(props['address'].get('formattedAddress', 'No formatted address found'))
@@ -312,28 +284,18 @@ def reverse_geocode_batch():
               ],
             },)
 
-        if 'batchItems' in result and result['batchItems']:
-            # item 1
-            features = result['batchItems'][0]['features']
-            if features:
-                props = features[0].get('properties', {})
-                if props and 'address' in props and props['address']:
-                    print(props['address'].get('formattedAddress', 'No formatted address for item 1 found'))
+        if result.get('batchItems', False):
+            for idx, item in enumerate(result['batchItems']):
+                features = item['features']
+                if features:
+                    props = features[0].get('properties', {})
+                    if props and props.get('address', False):
+                        print(
+                            props['address'].get('formattedAddress', f'No formatted address for item {idx + 1} found'))
+                    else:
+                        print(f"Address {idx + 1} is None")
                 else:
-                    print("Address 1 is None")
-            else:
-                print("No features available for item 1")
-
-            # item 2
-            features = result['batchItems'][1]['features']
-            if features:
-                props = features[0].get('properties', {})
-                if props and 'address' in props and props['address']:
-                    print(props['address'].get('formattedAddress', 'No formatted address for item 2 found'))
-                else:
-                    print("Address 2 is None")
-            else:
-                print("No features available for item 2")
+                    print(f"No features available for item {idx + 1}")
         else:
             print("No batch items found")
     except HttpResponseError as exception:

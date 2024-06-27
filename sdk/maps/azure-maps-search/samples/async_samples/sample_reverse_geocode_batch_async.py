@@ -39,28 +39,19 @@ async def reverse_geocode_async():
                 ],
             }, )
 
-            if 'batchItems' in result and result['batchItems']:
-                # item 1
-                features = result['batchItems'][0]['features']
-                if features:
-                    props = features[0].get('properties', {})
-                    if props and 'address' in props and props['address']:
-                        print(props['address'].get('formattedAddress', 'No formatted address for item 1 found'))
+            if result.get('batchItems', False):
+                for idx, item in enumerate(result['batchItems']):
+                    features = item['features']
+                    if features:
+                        props = features[0].get('properties', {})
+                        if props and props.get('address', False):
+                            print(
+                                props['address'].get('formattedAddress',
+                                                     f'No formatted address for item {idx + 1} found'))
+                        else:
+                            print(f"Address {idx + 1} is None")
                     else:
-                        print("Address 1 is None")
-                else:
-                    print("No features available for item 1")
-
-                # item 2
-                features = result['batchItems'][1]['features']
-                if features:
-                    props = features[0].get('properties', {})
-                    if props and 'address' in props and props['address']:
-                        print(props['address'].get('formattedAddress', 'No formatted address for item 2 found'))
-                    else:
-                        print("Address 2 is None")
-                else:
-                    print("No features available for item 2")
+                        print(f"No features available for item {idx + 1}")
             else:
                 print("No batch items found")
         except HttpResponseError as exception:

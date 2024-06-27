@@ -38,7 +38,7 @@ async def get_polygon_async():
                 resolution=Resolution.SMALL,
             )
 
-            if 'geometry' not in result or not result['geometry']:
+            if not result.get('geometry', False):
                 print("No geometry found")
                 return
 

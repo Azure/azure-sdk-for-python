@@ -33,9 +33,9 @@ async def reverse_geocode_async():
     async with maps_search_client:
         try:
             result = await maps_search_client.get_reverse_geocoding(coordinates=[-122.138679, 47.630356])
-            if 'features' in result and result['features']:
+            if result.get('features', False):
                 props = result['features'][0].get('properties', {})
-                if props and 'address' in props and props['address']:
+                if props and props.get('address', False):
                     print(props['address'].get('formattedAddress', 'No formatted address found'))
                 else:
                     print("Address is None")

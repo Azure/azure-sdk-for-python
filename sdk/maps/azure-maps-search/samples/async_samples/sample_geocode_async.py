@@ -31,7 +31,7 @@ async def geocode_async():
     try:
         async with maps_search_client:
             result = await maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
-            if 'features' in result and result['features']:
+            if result.get('features', False):
                 coordinates = result['features'][0]['geometry']['coordinates']
                 longitude = coordinates[0]
                 latitude = coordinates[1]

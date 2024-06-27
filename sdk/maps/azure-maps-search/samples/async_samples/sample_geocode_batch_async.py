@@ -37,28 +37,18 @@ async def geocode_batch_async():
                 ],
             }, )
 
-            if 'batchItems' not in result or not result['batchItems']:
-                print("No geocoding")
+            if not result.get('batchItems', False):
+                print("No batchItems in geocoding")
                 return
 
-            item1, item2 = result['batchItems']
+            for item in result['batchItems']:
+                if not item.get('features', False):
+                    print(f"No features in item: {item}")
+                    continue
 
-            if not item1.get('features'):
-                print("No geocoding1")
-                return
-
-            if not item2.get('features'):
-                print("No geocoding2")
-                return
-
-            coordinates1 = item1['features'][0]['geometry']['coordinates']
-            coordinates2 = item2['features'][0]['geometry']['coordinates']
-
-            longitude1, latitude1 = coordinates1
-            longitude2, latitude2 = coordinates2
-
-            print(longitude1, latitude1)
-            print(longitude2, latitude2)
+                coordinates = item['features'][0]['geometry']['coordinates']
+                longitude, latitude = coordinates
+                print(longitude, latitude)
 
     except HttpResponseError as exception:
         if exception.error is not None:
