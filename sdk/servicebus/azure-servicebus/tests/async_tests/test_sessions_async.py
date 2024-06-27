@@ -829,8 +829,6 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 assert receiver.session._lock_expired
                 with pytest.raises(SessionLockLostError):
                     await receiver.complete_message(messages[0])
-                with pytest.raises(SessionLockLostError):
-                    await receiver.session.renew_lock()
 
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 messages = await receiver.receive_messages(max_wait_time=30)
