@@ -66,13 +66,19 @@ steps:
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
-      env: ${{ parameters.EnvVars }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
         azureSubscription: ${{ parameters.ServiceConnection }}
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
@@ -124,13 +130,19 @@ steps:
     - task: AzurePowerShell@5
       displayName: Test Samples (AzurePowerShell@5)
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-      env: ${{ parameters.EnvVars }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
         azureSubscription: ${{ parameters.ServiceConnection }}
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
           scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           --service="${{ parameters.ServiceDirectory }}"

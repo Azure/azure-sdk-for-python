@@ -4,6 +4,8 @@
 
 ### Features Added
 
+Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
+
 ### Bugs Fixed
 - InputTypes exported in constants module
 
