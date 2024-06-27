@@ -9,7 +9,6 @@ import os
 import json
 import jsondiff
 import pytest
-from pathlib import Path
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
 
