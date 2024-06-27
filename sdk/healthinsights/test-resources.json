@@ -110,17 +110,7 @@
             "dependsOn": [
                 "[concat('Microsoft.CognitiveServices/accounts/', variables('HealthInsightsName'))]"
             ]
-        },
-        {
-          "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
-          "apiVersion": "2018-09-01-preview",
-          "name":"[concat(variables('textAnalyticsName'), '/Microsoft.Authorization/', variables('textAnalyticsContributorRoleGuid'))]",
-          "properties": {
-              "roleDefinitionId": "[variables('textAnalyticsContributorRole')]",
-              "principalType": "ServicePrincipal",
-              "scope": "[concat(subscription().id,'/resourcegroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]"
-          }
-      }
+        }
     ],  
     "outputs": {
         "LANGUAGE_API_KEY": {
