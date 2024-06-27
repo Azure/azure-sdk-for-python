@@ -113,9 +113,9 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the virtual machine should be created. Possible values are: **Attach** \u2013
+    """Specifies how the virtual machine should be created. Possible values are: **Attach** \\u2013
     This value is used when you are using a specialized disk to create the virtual machine.
-    **FromImage** \u2013 This value is used when you are using an image to create the virtual
+    **FromImage** \\u2013 This value is used when you are using an image to create the virtual
     machine. If you are using a platform image, you also use the imageReference element described
     above. If you are using a marketplace image, you  also use the plan element previously
     described.
