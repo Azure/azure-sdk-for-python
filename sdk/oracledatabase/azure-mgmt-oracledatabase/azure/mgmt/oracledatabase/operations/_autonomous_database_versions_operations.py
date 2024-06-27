@@ -84,7 +84,9 @@ def build_get_request(location: str, autonomousdbversionsname: str, subscription
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "autonomousdbversionsname": _SERIALIZER.url("autonomousdbversionsname", autonomousdbversionsname, "str"),
+        "autonomousdbversionsname": _SERIALIZER.url(
+            "autonomousdbversionsname", autonomousdbversionsname, "str", pattern=r".*"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
