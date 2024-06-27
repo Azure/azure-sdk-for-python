@@ -54,6 +54,7 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
+from ..rest._http_response_impl import HttpResponseImpl
 
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
@@ -570,6 +571,7 @@ class _SansIOLROBasePolling(
         self._operation_config = operation_config
         self._lro_options = lro_options
         self._path_format_arguments = path_format_arguments
+        self._lro_response_type = LROResponse
 
     def initialize(
         self,
@@ -618,7 +620,26 @@ class _SansIOLROBasePolling(
     def get_continuation_token(self) -> str:
         import pickle
 
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
+        poller_request = HttpRequest(
+            self._initial_response.http_request.method,
+            self._initial_response.http_request.url,
+            headers={
+                "x-ms-client-request-id" : self._initial_response.http_request.headers["x-ms-client-request-id"]
+            },
+        )
+
+        poller_response = self._lro_response_type(
+            self._initial_response.http_response,
+            poller_request,
+            None,
+            self._initial_response.http_response.status_code,
+            None,
+            None,
+            self._initial_response.http_response.headers,
+            None,
+        )
+        continuation_token = PipelineResponse(poller_request, poller_response, self._initial_response.context) # in async
+        return base64.b64encode(pickle.dumps(continuation_token)).decode("ascii")
 
     @classmethod
     def from_continuation_token(
@@ -843,6 +864,20 @@ class LROBasePolling(
                 request, stream=False, **self._operation_config
             ),
         )
+
+class LROResponse(HttpResponseImpl):
+    def __init__(self, response, request, internal_response, status_code, reason, content_type, headers, stream_download_generator):
+        super(LROResponse, self).__init__(
+            request=request,
+            internal_response=internal_response,
+            status_code=status_code,
+            reason=reason,
+            content_type=content_type, 
+            headers=headers,
+            stream_download_generator=stream_download_generator,
+        )
+        self._content = response.body()
+
 
 
 __all__ = [
