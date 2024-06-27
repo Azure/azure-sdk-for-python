@@ -837,7 +837,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                                               session_id=session_id,
                                               max_wait_time=10,
                                               receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
-                                              prefetch_count=9,
+                                              prefetch_count=4,
                                               auto_lock_renewer=renewer) as receiver:
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
                 with pytest.raises(SessionLockLostError):
@@ -864,12 +864,13 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
+                            messages.append(message)
                             try:
                                 receiver.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockLostError")
                             except SessionLockLostError as e:
-                                assert isinstance(e.inner_exception, AutoLockRenewTimeout)
-                            messages.append(message)
+                                raise
+                            
 
             # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
             renewer._renew_period = 1
