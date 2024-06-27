@@ -7,14 +7,15 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMicrosoft365
+
+from azure.mgmt.appcomplianceautomation import AppComplianceAutomationMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-appcomplianceautomation
 # USAGE
-    python reports_list.py
+    python webhook_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,15 +25,17 @@ from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMic
 
 
 def main():
-    client = AppComplianceAutomationToolForMicrosoft365(
+    client = AppComplianceAutomationMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
-    response = client.reports.list()
+    response = client.webhook.list(
+        report_name="testReportName",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/preview/2022-11-16-preview/examples/Reports_List.json
+# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/stable/2024-06-27/examples/Webhook_List.json
 if __name__ == "__main__":
     main()
