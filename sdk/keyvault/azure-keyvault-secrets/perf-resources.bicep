@@ -49,7 +49,7 @@ resource kvRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-pr
   properties: {
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretsOfficerRoleAssignmentId)
     principalId: testApplicationOid
-    principalType: 'User'
+    principalType: 'ServicePrincipal'
   }
 }
 
