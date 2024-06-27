@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as Data
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
@@ -39,7 +40,11 @@ class DatastoreOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param serviceclient_2022_10_01: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources.
-    :type serviceclient_2022_10_01: ~azure.ai.ml._restclient.v2022_10_01._azure_machine_learning_workspaces.
+    :type serviceclient_2022_10_01: ~azure.ai.ml._restclient.v2022_07_01._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces
+    :param serviceclient_2024_07_01_preview: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources.
+    :type serviceclient_2024_07_01_preview: ~azure.ai.ml._restclient.v2024_07_01._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces
     """
 
@@ -47,15 +52,15 @@ class DatastoreOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        serviceclient_2023_04_01_preview: ServiceClient042023Preview,
         serviceclient_2024_01_01_preview: ServiceClient012024Preview,
+        serviceclient_2024_07_01_preview: ServiceClient072024Preview,
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation = serviceclient_2023_04_01_preview.datastores
+        self._operation = serviceclient_2024_07_01_preview.datastores
         self._compute_operation = serviceclient_2024_01_01_preview.compute
-        self._credential = serviceclient_2023_04_01_preview._config.credential
+        self._credential = serviceclient_2024_07_01_preview._config.credential
         self._init_kwargs = kwargs
 
     @monitor_with_activity(ops_logger, "Datastore.List", ActivityType.PUBLICAPI)
