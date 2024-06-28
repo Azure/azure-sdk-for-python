@@ -6,7 +6,7 @@ trigger:
 pr:
   branches:
     include:
-    - pipelinev3
+    - pipelinev3*
 
 parameters:
   - name: Service
