@@ -80,6 +80,7 @@ jobs:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          GeneratePRDiff: true
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -101,6 +102,7 @@ jobs:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          GeneratePRDiff: true
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -122,6 +124,7 @@ jobs:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          GeneratePRDiff: true
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -143,6 +146,7 @@ jobs:
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          GeneratePRDiff: true
 
       - template: ../steps/build-package-artifacts.yml
         parameters:

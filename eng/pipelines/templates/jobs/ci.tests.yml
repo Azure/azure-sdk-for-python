@@ -79,6 +79,11 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages'
+        targetPath: $(Build.ArtifactStagingDirectory)
+
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -122,11 +127,6 @@ jobs:
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         BeforeTestSteps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: 'packages'
-              targetPath: $(Build.ArtifactStagingDirectory)
-
           - template: ../steps/set-dev-build.yml
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}

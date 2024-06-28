@@ -2,21 +2,49 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
+  - name: GeneratePRDiff
+    type: boolean
+    default: false
+  - name: TargetRepo
+    type: string
+    default: $(Build.SourcesDirectory)
 
 steps:
-  - pwsh: |
-      $setting = "${{ parameters.BuildTargetingString }}"
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - ${{ if parameters.GeneratePRDiff }}:
 
-      # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
-      if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
-          Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
-          $setting = "$(BuildTargetingString)"
-      }
-      else {
-        Write-Host "We are falling back to the parameter value ${{ parameters.BuildTargetingString }}"
-      }
+      - pwsh: |
+          mkdir -p $(Build.ArtifactStagingDirectory)/diff
+        displayName: Create PR Diff Folder
 
-      Write-Host "Setting TargetingString to $setting"
-      Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
-    displayName: Check override of targeting string
-    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))
+      - task: PowerShell@7
+        inputs:
+          filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
+          arguments: '-TargetPath ${{ parameters.TargetRepo }} -OutputPath $(Build.ArtifactStagingDirectory)/diff'
+        displayName: 'Compare PR changes to targeting string'
+
+    # assume that the targeted packages are present in the "packages" artifact under the `diff` folder
+    - ${{ else }}:
+      - pwsh: |
+          Write-Host "We are in a PR, but a downstream run, and we need to figure out what our targeting string is!"
+          cat $(Build.ArtifactStagingDirectory)/packages/diff/diff.json
+        displayName: Coalesce targeting string for PR Builds
+
+  - ${{ else }}:
+    - pwsh: |
+        $setting = "${{ parameters.BuildTargetingString }}"
+
+        # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
+        if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+            Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
+            $setting = "$(BuildTargetingString)"
+        }
+        else {
+          Write-Host "We are falling back to the parameter value ${{ parameters.BuildTargetingString }}"
+        }
+
+        Write-Host "Setting TargetingString to $setting"
+        Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
+      displayName: Check override of targeting string by variable for individual build
+      condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))
+

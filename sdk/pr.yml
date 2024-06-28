@@ -1,0 +1,22 @@
+
+pr:
+  branches:
+    include:
+    - pipelinev3
+  paths:
+    include:
+    # when being utilized for all prs, the value will be /*
+    # during development leaving just eng/ path
+    - eng/
+
+parameters:
+  - name: Service
+    type: string
+    default: auto
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: ${{ parameters.Service }}
+    BuildTargetingString: "*"
+    ValidateFormatting: true
