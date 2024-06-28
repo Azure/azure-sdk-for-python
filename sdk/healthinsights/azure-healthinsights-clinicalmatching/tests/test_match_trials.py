@@ -1,5 +1,6 @@
 import functools
 import json
+import pytest
 
 
 from azure.core.credentials import AzureKeyCredential

@@ -1,6 +1,7 @@
 import functools
 import json
 import os
+import pytest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.cancerprofiling import CancerProfilingClient
