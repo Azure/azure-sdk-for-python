@@ -69,7 +69,7 @@ setup(
     },
     python_requires=">=3.8",
     install_requires=[
-        "azure-core>=1.23.0",
+        "azure-core>=1.30.0",
         "msrest>=0.6.21",
         'azure-common>=1.1',
         "typing-extensions>=4.0.1",
