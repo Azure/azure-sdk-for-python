@@ -21,7 +21,7 @@ While this article provides an example using setup.py, this can also be achieved
 
 We want to build sdist and wheels in order to follow the following constraints:
 - Solution should work with *recent* versions of pip and setuptools (not the very latest only, but not archaeology either)
-- Wheels must work with Python 3.7+
+- Wheels must work with Python 3.8+
 - mixed dev installation and PyPI installation should be explicitly addressed
 
 # What do I do in my files to achieve that
@@ -59,7 +59,7 @@ The "packages" section MUST EXCLUDE the `azure` package. Example:
 
 Since the package is Python 3 only, you must notify it in the setup.py as well:
 ```python
-    python_requires=">=3.7",
+    python_requires=">=3.8",
 ```
 
 Example of a full setup.py
@@ -113,14 +113,14 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
@@ -150,7 +150,7 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
 - Remove "universal" from setup.cfg, or completely remove the file if it was the only option
 - In setup.py:
   - Remove `extra_requires`
-  - Add `python_requires=">=3.7",`
+  - Add `python_requires=">=3.8",`
   - Remove the Python 2 and 3.5/3.6 classifiers
   - Add classifier `Programming Language :: Python :: 3 :: Only`
   - Remove the "azure" check if applicable (see next note)

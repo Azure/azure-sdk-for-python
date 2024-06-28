@@ -40,6 +40,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class IsTemporaryTicket(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This property indicates if support ticket is a temporary ticket."""
+
+    YES = "Yes"
+    NO = "No"
+
+
 class PreferredContactMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Preferred contact method."""
 

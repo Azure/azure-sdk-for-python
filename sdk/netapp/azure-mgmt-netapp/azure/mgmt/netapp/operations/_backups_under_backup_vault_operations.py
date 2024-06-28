@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,7 +48,7 @@ def build_restore_files_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -68,7 +68,9 @@ def build_restore_files_request(
         "backupVaultName": _SERIALIZER.url(
             "backup_vault_name", backup_vault_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
         ),
-        "backupName": _SERIALIZER.url("backup_name", backup_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,255}$"),
+        "backupName": _SERIALIZER.url(
+            "backup_name", backup_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_.]{0,255}$"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -109,7 +111,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.BackupRestoreFiles, IO],
+        body: Union[_models.BackupRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -135,7 +137,7 @@ class BackupsUnderBackupVaultOperations:
         else:
             _json = self._serialize.body(body, "BackupRestoreFiles")
 
-        request = build_restore_files_request(
+        _request = build_restore_files_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             backup_vault_name=backup_vault_name,
@@ -145,16 +147,15 @@ class BackupsUnderBackupVaultOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._restore_files_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -168,11 +169,7 @@ class BackupsUnderBackupVaultOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _restore_files_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}/restoreFiles"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_restore_files(
@@ -204,14 +201,6 @@ class BackupsUnderBackupVaultOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -224,7 +213,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -243,18 +232,10 @@ class BackupsUnderBackupVaultOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Restore payload supplied in the body of the operation. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -267,7 +248,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.BackupRestoreFiles, IO],
+        body: Union[_models.BackupRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create a new Backup Restore Files request.
@@ -284,19 +265,8 @@ class BackupsUnderBackupVaultOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Restore payload supplied in the body of the operation. Is either a
-         BackupRestoreFiles type or a IO type. Required.
-        :type body: ~azure.mgmt.netapp.models.BackupRestoreFiles or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         BackupRestoreFiles type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupRestoreFiles or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -328,7 +298,7 @@ class BackupsUnderBackupVaultOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -339,14 +309,10 @@ class BackupsUnderBackupVaultOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_restore_files.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}/restoreFiles"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

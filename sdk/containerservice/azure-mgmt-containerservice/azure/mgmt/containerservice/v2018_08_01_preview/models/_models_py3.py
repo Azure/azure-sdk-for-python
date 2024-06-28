@@ -72,7 +72,7 @@ class CloudErrorBody(_serialization.Model):
 class ContainerServiceDiagnosticsProfile(_serialization.Model):
     """Profile for diagnostics on the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
     :vartype vm_diagnostics:
@@ -100,7 +100,7 @@ class ContainerServiceDiagnosticsProfile(_serialization.Model):
 class ContainerServiceLinuxProfile(_serialization.Model):
     """Profile for Linux VMs in the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_username: The administrator username to use for Linux VMs. Required.
     :vartype admin_username: str
@@ -137,7 +137,7 @@ class ContainerServiceMasterProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
      and 5. The default value is 1. Known values are: 1, 3, and 5.
@@ -388,7 +388,7 @@ class ContainerServiceNetworkProfile(_serialization.Model):
 class ContainerServiceSshConfiguration(_serialization.Model):
     """SSH configuration for Linux-based VMs running on Azure.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. Only
      expect one key specified. Required.
@@ -418,7 +418,7 @@ class ContainerServiceSshConfiguration(_serialization.Model):
 class ContainerServiceSshPublicKey(_serialization.Model):
     """Contains information about SSH certificate public key data.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
      certificate must be in PEM format with or without headers. Required.
@@ -448,7 +448,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
     :vartype enabled: bool
@@ -479,7 +479,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
 class ContainerServiceWindowsProfile(_serialization.Model):
     """Profile for Windows VMs in the container service cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar admin_username: The administrator username to use for Windows VMs. Required.
     :vartype admin_username: str
@@ -569,7 +569,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -618,7 +618,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -762,7 +762,7 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
 class ManagedClusterAADProfile(_serialization.Model):
     """AADProfile specifies attributes for Azure Active Directory integration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar client_app_id: The client AAD application ID. Required.
     :vartype client_app_id: str
@@ -819,7 +819,7 @@ class ManagedClusterAccessProfile(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -874,7 +874,7 @@ class ManagedClusterAccessProfile(Resource):
 class ManagedClusterAddonProfile(_serialization.Model):
     """A Kubernetes add-on profile for a managed cluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar enabled: Whether the add-on is enabled or not. Required.
     :vartype enabled: bool
@@ -906,7 +906,7 @@ class ManagedClusterAddonProfile(_serialization.Model):
 class ManagedClusterAgentPoolProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Profile for the container service agent pool.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Unique name of the agent pool profile in the context of the subscription and
      resource group. Required.
@@ -1128,7 +1128,7 @@ class ManagedClusterListResult(_serialization.Model):
 class ManagedClusterPoolUpgradeProfile(_serialization.Model):
     """The list of available upgrade versions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kubernetes_version: Kubernetes version (major, minor, patch). Required.
     :vartype kubernetes_version: str
@@ -1184,7 +1184,7 @@ class ManagedClusterServicePrincipalProfile(_serialization.Model):
     """Information about a service principal identity for the cluster to use for manipulating Azure
     APIs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar client_id: The ID for the service principal. Required.
     :vartype client_id: str
@@ -1218,7 +1218,7 @@ class ManagedClusterUpgradeProfile(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of upgrade profile.
     :vartype id: str
@@ -1349,7 +1349,7 @@ class OperationValue(_serialization.Model):
 class OrchestratorProfile(_serialization.Model):
     """Contains information about orchestrator.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar orchestrator_type: Orchestrator type. Required.
     :vartype orchestrator_type: str

@@ -15,13 +15,19 @@ from azure.ai.ml.constants._monitoring import (
     DEFAULT_DATA_DRIFT_SIGNAL_NAME,
     DEFAULT_DATA_QUALITY_SIGNAL_NAME,
     DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME,
+    DEFAULT_TOKEN_USAGE_SIGNAL_NAME,
+    MonitorTargetTasks,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
 from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 from azure.ai.ml.entities._monitoring.signals import (
+    CustomMonitoringSignal,
     DataDriftSignal,
     DataQualitySignal,
+    FeatureAttributionDriftSignal,
+    GenerationSafetyQualitySignal,
+    GenerationTokenStatisticsSignal,
     MonitoringSignal,
     PredictionDriftSignal,
 )
@@ -43,6 +49,7 @@ class MonitorDefinition(RestTranslatableMixin):
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
         , ~azure.ai.ml.entities.CustomMonitoringSignal
         , ~azure.ai.ml.entities.GenerationSafetyQualitySignal
+        , ~azure.ai.ml.entities.GenerationTokenStatisticsSignal
         , ~azure.ai.ml.entities.ModelPerformanceSignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
@@ -62,7 +69,18 @@ class MonitorDefinition(RestTranslatableMixin):
         *,
         compute: ServerlessSparkCompute,
         monitoring_target: Optional[MonitoringTarget] = None,
-        monitoring_signals: Optional[Dict] = None,
+        monitoring_signals: Dict[
+            str,
+            Union[
+                DataDriftSignal,
+                DataQualitySignal,
+                PredictionDriftSignal,
+                FeatureAttributionDriftSignal,
+                CustomMonitoringSignal,
+                GenerationSafetyQualitySignal,
+                GenerationTokenStatisticsSignal,
+            ],
+        ] = None,  # type: ignore[assignment]
         alert_notification: Optional[Union[Literal["azmonitoring"], AlertNotification]] = None,
     ) -> None:
         self.compute = compute
@@ -108,22 +126,37 @@ class MonitorDefinition(RestTranslatableMixin):
                 from_rest_alert_notification = AZMONITORING
             else:
                 from_rest_alert_notification = AlertNotification._from_rest_object(obj.alert_notification_setting)
+
+        _monitoring_signals = {}
+        for signal_name, signal in obj.signals.items():
+            _monitoring_signals[signal_name] = MonitoringSignal._from_rest_object(signal)
+
         return cls(
             compute=ServerlessSparkCompute._from_rest_object(obj.compute_configuration),
-            monitoring_target=MonitoringTarget(
-                endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type
-            )
-            if obj.monitoring_target
-            else None,
-            monitoring_signals={
-                signal_name: MonitoringSignal._from_rest_object(signal) for signal_name, signal in obj.signals.items()
-            },
+            monitoring_target=(
+                MonitoringTarget(
+                    endpoint_deployment_id=obj.monitoring_target.deployment_id, ml_task=obj.monitoring_target.task_type
+                )
+                if obj.monitoring_target
+                else None
+            ),
+            monitoring_signals=_monitoring_signals,  # type: ignore[arg-type]
             alert_notification=from_rest_alert_notification,
         )
 
     def _populate_default_signal_information(self) -> None:
-        self.monitoring_signals = {
-            DEFAULT_DATA_DRIFT_SIGNAL_NAME: DataDriftSignal._get_default_data_drift_signal(),
-            DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
-            DEFAULT_DATA_QUALITY_SIGNAL_NAME: DataQualitySignal._get_default_data_quality_signal(),
-        }
+        if (
+            isinstance(self.monitoring_target, MonitoringTarget)
+            and self.monitoring_target.ml_task is not None
+            and self.monitoring_target.ml_task.lower()
+            == MonitorTargetTasks.QUESTION_ANSWERING.lower()  # type: ignore[union-attr]
+        ):
+            self.monitoring_signals = {
+                DEFAULT_TOKEN_USAGE_SIGNAL_NAME: GenerationTokenStatisticsSignal._get_default_token_statistics_signal(),  # pylint: disable=line-too-long
+            }
+        else:
+            self.monitoring_signals = {
+                DEFAULT_DATA_DRIFT_SIGNAL_NAME: DataDriftSignal._get_default_data_drift_signal(),
+                DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME: PredictionDriftSignal._get_default_prediction_drift_signal(),  # pylint: disable=line-too-long
+                DEFAULT_DATA_QUALITY_SIGNAL_NAME: DataQualitySignal._get_default_data_quality_signal(),
+            }

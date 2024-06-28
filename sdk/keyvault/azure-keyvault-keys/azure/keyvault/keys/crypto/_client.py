@@ -560,3 +560,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
 
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)
+
+    def __enter__(self) -> "CryptographyClient":
+        self._client.__enter__()
+        return self

@@ -46,13 +46,13 @@ class CmkIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
+class DeferUpgradeSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Option to defer upgrade when newest version is released - default is NotDeferred. Learn more:
+    https://aka.ms/redisversionupgrade.
+    """
 
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
+    DEFERRED = "Deferred"
+    NOT_DEFERRED = "NotDeferred"
 
 
 class EvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -159,11 +159,16 @@ class ResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLING = "Disabling"
     DISABLE_FAILED = "DisableFailed"
     DISABLED = "Disabled"
+    SCALING = "Scaling"
+    SCALING_FAILED = "ScalingFailed"
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SkuName."""
+    """The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
+    EnterpriseFlash_F300 etc.).
+    """
 
+    ENTERPRISE_E5 = "Enterprise_E5"
     ENTERPRISE_E10 = "Enterprise_E10"
     ENTERPRISE_E20 = "Enterprise_E20"
     ENTERPRISE_E50 = "Enterprise_E50"

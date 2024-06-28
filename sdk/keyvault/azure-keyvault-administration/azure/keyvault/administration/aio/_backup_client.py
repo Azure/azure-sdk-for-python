@@ -57,8 +57,9 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     ) -> AsyncLROPoller[KeyVaultBackupResult]:
         ...
 
+    # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace_async
-    async def begin_backup(
+    async def begin_backup(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
         self, blob_storage_url: str, *args: str, **kwargs: Any
     ) -> AsyncLROPoller[KeyVaultBackupResult]:
         """Begin a full backup of the Key Vault.
@@ -150,8 +151,11 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     ) -> AsyncLROPoller[None]:
         ...
 
+    # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace_async
-    async def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_restore(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+        self, folder_url: str, *args: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -244,3 +248,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             polling=polling,
             **kwargs,
         )
+
+    async def __aenter__(self) -> "KeyVaultBackupClient":
+        await self._client.__aenter__()
+        return self

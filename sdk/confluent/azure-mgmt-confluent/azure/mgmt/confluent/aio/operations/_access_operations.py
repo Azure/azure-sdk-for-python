@@ -27,10 +27,13 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._access_operations import (
+    build_create_role_binding_request,
+    build_delete_role_binding_request,
     build_invite_user_request,
     build_list_clusters_request,
     build_list_environments_request,
     build_list_invitations_request,
+    build_list_role_binding_name_list_request,
     build_list_role_bindings_request,
     build_list_service_accounts_request,
     build_list_users_request,
@@ -73,8 +76,7 @@ class AccessOperations:
 
         Organization users details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -103,8 +105,7 @@ class AccessOperations:
 
         Organization users details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -131,8 +132,7 @@ class AccessOperations:
 
         Organization users details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -224,8 +224,7 @@ class AccessOperations:
 
         Organization service accounts details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -254,8 +253,7 @@ class AccessOperations:
 
         Organization service accounts details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -282,8 +280,7 @@ class AccessOperations:
 
         Organization service accounts details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -375,8 +372,7 @@ class AccessOperations:
 
         Organization accounts invitation details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -405,8 +401,7 @@ class AccessOperations:
 
         Organization accounts invitation details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -433,8 +428,7 @@ class AccessOperations:
 
         Organization accounts invitation details.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -526,8 +520,7 @@ class AccessOperations:
 
         Invite user to the organization.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -556,8 +549,7 @@ class AccessOperations:
 
         Invite user to the organization.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -584,8 +576,7 @@ class AccessOperations:
 
         Invite user to the organization.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
+        :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
@@ -1114,4 +1105,374 @@ class AccessOperations:
 
     list_role_bindings.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/access/default/listRoleBindings"
+    }
+
+    @overload
+    async def create_role_binding(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: _models.AccessCreateRoleBindingRequestModel,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RoleBindingRecord:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: Create role binding Request Model. Required.
+        :type body: ~azure.mgmt.confluent.models.AccessCreateRoleBindingRequestModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RoleBindingRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.RoleBindingRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_role_binding(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RoleBindingRecord:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: Create role binding Request Model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RoleBindingRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.RoleBindingRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_role_binding(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: Union[_models.AccessCreateRoleBindingRequestModel, IO],
+        **kwargs: Any
+    ) -> _models.RoleBindingRecord:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: Create role binding Request Model. Is either a AccessCreateRoleBindingRequestModel
+         type or a IO type. Required.
+        :type body: ~azure.mgmt.confluent.models.AccessCreateRoleBindingRequestModel or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RoleBindingRecord or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.RoleBindingRecord
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RoleBindingRecord] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "AccessCreateRoleBindingRequestModel")
+
+        request = build_create_role_binding_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.create_role_binding.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RoleBindingRecord", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_role_binding.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/access/default/createRoleBinding"
+    }
+
+    @distributed_trace_async
+    async def delete_role_binding(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, organization_name: str, role_binding_id: str, **kwargs: Any
+    ) -> None:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param role_binding_id: Confluent Role binding id. Required.
+        :type role_binding_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_delete_role_binding_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            role_binding_id=role_binding_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.delete_role_binding.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_role_binding.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/access/default/deleteRoleBinding/{roleBindingId}"
+    }
+
+    @overload
+    async def list_role_binding_name_list(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: _models.ListAccessRequestModel,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AccessRoleBindingNameListSuccessResponse:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: List Access Request Model. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AccessRoleBindingNameListSuccessResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.AccessRoleBindingNameListSuccessResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def list_role_binding_name_list(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AccessRoleBindingNameListSuccessResponse:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: List Access Request Model. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AccessRoleBindingNameListSuccessResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.AccessRoleBindingNameListSuccessResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def list_role_binding_name_list(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: Union[_models.ListAccessRequestModel, IO],
+        **kwargs: Any
+    ) -> _models.AccessRoleBindingNameListSuccessResponse:
+        """Organization role bindings.
+
+        Organization role bindings.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO type.
+         Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AccessRoleBindingNameListSuccessResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.confluent.models.AccessRoleBindingNameListSuccessResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AccessRoleBindingNameListSuccessResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _json = self._serialize.body(body, "ListAccessRequestModel")
+
+        request = build_list_role_binding_name_list_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.list_role_binding_name_list.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ResourceProviderDefaultErrorResponse, pipeline_response
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("AccessRoleBindingNameListSuccessResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    list_role_binding_name_list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Confluent/organizations/{organizationName}/access/default/listRoleBindingNameList"
     }

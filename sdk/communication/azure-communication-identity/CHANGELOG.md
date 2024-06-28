@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 3.7 is no longer supported. Please use Python version 3.8 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+
 ## 1.5.0 (2024-02-14)
 
 ### Features Added

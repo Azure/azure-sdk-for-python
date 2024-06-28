@@ -1,0 +1,8 @@
+name: test_ws_conn_open_ai
+type: azure_open_ai
+azure_endpoint: dummy
+api_key: "12344"
+api_version: "1.0"
+open_ai_resource_id: "some id"
+tags:
+  hello: world

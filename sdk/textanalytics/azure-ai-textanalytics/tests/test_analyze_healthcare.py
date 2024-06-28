@@ -536,7 +536,7 @@ class TestHealth(TextAnalyticsTest):
                 # assert result.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
                 assert result.entities
 
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()

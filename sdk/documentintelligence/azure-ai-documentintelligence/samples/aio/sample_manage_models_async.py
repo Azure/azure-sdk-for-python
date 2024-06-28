@@ -69,6 +69,12 @@ async def sample_manage_models():
                             f"Field: '{field_name}' has type '{field['type']}' and confidence score "
                             f"{doc_type.field_confidence[field_name]}"
                         )
+        if model.warnings:
+            print("Warnings encountered while building the model:")
+            for warning in model.warnings:
+                print(
+                    f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}"
+                )
         # [END build_model]
 
         # [START get_resource_info]

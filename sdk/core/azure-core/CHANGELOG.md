@@ -1,12 +1,31 @@
 # Release History
 
-## 1.30.1 (Unreleased)
+## 1.30.3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.30.2 (2024-06-06)
+
+### Features Added
+
+- Tracing: `DistributedTracingPolicy` will now set an attribute, `http.request.resend_count`, on HTTP spans for resent requests to indicate the resend attempt number.  #35069
+
+### Bugs Fixed
+
+- Raise correct exception if transport is used while already closed  #35559
+
+### Other Changes
+
+- HTTP tracing spans will now include an `error.type` attribute if an error status code is returned.  #34619
+- Minimum required Python version is now 3.8
+
+## 1.30.1 (2024-02-29)
 
 ### Other Changes
 

@@ -21,7 +21,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -78,7 +78,7 @@ class Certificate(Resource):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -136,7 +136,7 @@ class Certificate(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype key_vault_secret_status: str or
      ~azure.mgmt.web.v2018_11_01.models.KeyVaultSecretStatus
     :ivar server_farm_id: Resource ID of the associated App Service plan, formatted as:
-     "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
+     "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".  # pylint: disable=line-too-long
     :vartype server_farm_id: str
     """
 
@@ -223,7 +223,7 @@ class Certificate(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword key_vault_secret_name: Key Vault secret name.
         :paramtype key_vault_secret_name: str
         :keyword server_farm_id: Resource ID of the associated App Service plan, formatted as:
-         "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
+         "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".  # pylint: disable=line-too-long
         :paramtype server_farm_id: str
         """
         super().__init__(kind=kind, location=location, tags=tags, **kwargs)
@@ -253,7 +253,7 @@ class CertificateCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.web.v2018_11_01.models.Certificate]
@@ -378,7 +378,7 @@ class CertificatePatchResource(ProxyOnlyResource):  # pylint: disable=too-many-i
     :vartype key_vault_secret_status: str or
      ~azure.mgmt.web.v2018_11_01.models.KeyVaultSecretStatus
     :ivar server_farm_id: Resource ID of the associated App Service plan, formatted as:
-     "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
+     "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".  # pylint: disable=line-too-long
     :vartype server_farm_id: str
     """
 
@@ -456,7 +456,7 @@ class CertificatePatchResource(ProxyOnlyResource):  # pylint: disable=too-many-i
         :keyword key_vault_secret_name: Key Vault secret name.
         :paramtype key_vault_secret_name: str
         :keyword server_farm_id: Resource ID of the associated App Service plan, formatted as:
-         "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".
+         "/subscriptions/{subscriptionID}/resourceGroups/{groupName}/providers/Microsoft.Web/serverfarms/{appServicePlanName}".  # pylint: disable=line-too-long
         :paramtype server_farm_id: str
         """
         super().__init__(kind=kind, **kwargs)

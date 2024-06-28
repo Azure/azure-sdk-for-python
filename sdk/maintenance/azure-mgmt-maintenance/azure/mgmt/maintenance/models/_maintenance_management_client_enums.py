@@ -37,7 +37,7 @@ class MaintenanceScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HOST = "Host"
     """This maintenance scope controls installation of azure platform updates i.e. services on
-    #: physical nodes hosting customer VMs."""
+    physical nodes hosting customer VMs."""
     RESOURCE = "Resource"
     """This maintenance scope controls the default update maintenance of the Azure Resource"""
     OS_IMAGE = "OSImage"
@@ -86,10 +86,10 @@ class UpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No updates are pending."""
     CANCEL = "Cancel"
     """Cancel the schedule and stop creating PMR for resources part of it. Applicable to Maintenance
-    #: Configuration resource type only."""
+    Configuration resource type only."""
     CANCELLED = "Cancelled"
     """Send the Cancelled response to the user if request came to cancel the schedule. Applicable to
-    #: Maintenance Configuration resource type only."""
+    Maintenance Configuration resource type only."""
 
 
 class Visibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -1,14 +1,14 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.1.0 (2024-04-24)
 
 ### Bugs Fixed
+- Use the correct REST API parameter name `groups` in method `get_client_access_token`
+- Upgrade dependency package `pyjwt` to `>=2.0.0` which changes the return type of `jwt.encode(...)`. See https://pyjwt.readthedocs.io/en/stable/changelog.html#id30 for detail
 
-### Other Changes
+### Features Added
+- Add overload signatures for operation `send_to_all` ,`send_to_user` ,`send_to_group` and `send_to_connection`
+- Update the type of parameter `content` from `IO` to `Union[IO, str, JSON]` for operation `send_to_all` ,`send_to_user` ,`send_to_group` and `send_to_connection`
 
 ## 1.1.0b1 (2022-12-12)
 

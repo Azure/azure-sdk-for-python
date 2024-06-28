@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,7 +75,6 @@ class ProtectionContainersOperations:
         :type fabric_name: str
         :param container_name: Name of the container whose details need to be fetched. Required.
         :type container_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ProtectionContainerResource or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionContainerResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -94,23 +93,22 @@ class ProtectionContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ProtectionContainerResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -122,13 +120,9 @@ class ProtectionContainersOperations:
         deserialized = self._deserialize("ProtectionContainerResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}"
-    }
+        return deserialized  # type: ignore
 
     async def _register_initial(
         self,
@@ -136,7 +130,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        parameters: Union[_models.ProtectionContainerResource, IO],
+        parameters: Union[_models.ProtectionContainerResource, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ProtectionContainerResource]:
         error_map = {
@@ -162,7 +156,7 @@ class ProtectionContainersOperations:
         else:
             _json = self._serialize.body(parameters, "ProtectionContainerResource")
 
-        request = build_register_request(
+        _request = build_register_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -172,16 +166,15 @@ class ProtectionContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._register_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -195,13 +188,9 @@ class ProtectionContainersOperations:
             deserialized = self._deserialize("ProtectionContainerResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _register_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_register(
@@ -235,14 +224,6 @@ class ProtectionContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ProtectionContainerResource or the
          result of cls(response)
         :rtype:
@@ -257,7 +238,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -277,18 +258,10 @@ class ProtectionContainersOperations:
         :param container_name: Name of the container to be registered. Required.
         :type container_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ProtectionContainerResource or the
          result of cls(response)
         :rtype:
@@ -303,7 +276,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        parameters: Union[_models.ProtectionContainerResource, IO],
+        parameters: Union[_models.ProtectionContainerResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ProtectionContainerResource]:
         """Registers the container with Recovery Services vault.
@@ -321,20 +294,9 @@ class ProtectionContainersOperations:
         :param container_name: Name of the container to be registered. Required.
         :type container_name: str
         :param parameters: Request body for operation. Is either a ProtectionContainerResource type or
-         a IO type. Required.
+         a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionContainerResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionContainerResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ProtectionContainerResource or the
          result of cls(response)
         :rtype:
@@ -369,7 +331,7 @@ class ProtectionContainersOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ProtectionContainerResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -379,17 +341,15 @@ class ProtectionContainersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ProtectionContainerResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_register.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}"
-    }
+        return AsyncLROPoller[_models.ProtectionContainerResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def unregister(  # pylint: disable=inconsistent-return-statements
@@ -410,7 +370,6 @@ class ProtectionContainersOperations:
         :param container_name: Name of the container which needs to be unregistered from the Recovery
          Services Vault. Required.
         :type container_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -429,23 +388,22 @@ class ProtectionContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_unregister_request(
+        _request = build_unregister_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.unregister.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -455,11 +413,7 @@ class ProtectionContainersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    unregister.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def inquire(  # pylint: disable=inconsistent-return-statements
@@ -487,7 +441,6 @@ class ProtectionContainersOperations:
         :type container_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -506,7 +459,7 @@ class ProtectionContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_inquire_request(
+        _request = build_inquire_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
@@ -514,16 +467,15 @@ class ProtectionContainersOperations:
             subscription_id=self._config.subscription_id,
             filter=filter,
             api_version=api_version,
-            template_url=self.inquire.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -533,11 +485,7 @@ class ProtectionContainersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    inquire.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/inquire"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def refresh(  # pylint: disable=inconsistent-return-statements
@@ -557,7 +505,6 @@ class ProtectionContainersOperations:
         :type fabric_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -576,23 +523,22 @@ class ProtectionContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_refresh_request(
+        _request = build_refresh_request(
             vault_name=vault_name,
             resource_group_name=resource_group_name,
             fabric_name=fabric_name,
             subscription_id=self._config.subscription_id,
             filter=filter,
             api_version=api_version,
-            template_url=self.refresh.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -602,8 +548,4 @@ class ProtectionContainersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    refresh.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/refreshContainers"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

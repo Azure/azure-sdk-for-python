@@ -74,7 +74,7 @@ def build_get_client_access_token_request(
     user_id: Optional[str] = None,
     roles: Optional[List[str]] = None,
     minutes_to_expire: int = 60,
-    group: Optional[List[str]] = None,
+    groups: Optional[List[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -99,8 +99,8 @@ def build_get_client_access_token_request(
     if minutes_to_expire is not None:
         _params["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int", minimum=1)
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if group is not None:
-        _params["group"] = [_SERIALIZER.query("group", q, "str") if q is not None else "" for q in group]
+    if groups is not None:
+        _params["group"] = [_SERIALIZER.query("groups", q, "str") if q is not None else "" for q in groups]
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -691,7 +691,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         user_id: Optional[str] = None,
         roles: Optional[List[str]] = None,
         minutes_to_expire: int = 60,
-        group: Optional[List[str]] = None,
+        groups: Optional[List[str]] = None,
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -705,8 +705,8 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token. Default value is 60.
         :paramtype minutes_to_expire: int
-        :keyword group: Groups that the connection will join when it connects. Default value is None.
-        :paramtype group: list[str]
+        :keyword groups: Groups that the connection will join when it connects. Default value is None.
+        :paramtype groups: list[str]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -738,7 +738,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
             user_id=user_id,
             roles=roles,
             minutes_to_expire=minutes_to_expire,
-            group=group,
+            groups=groups,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

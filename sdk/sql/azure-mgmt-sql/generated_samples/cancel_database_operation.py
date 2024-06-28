@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.sql import SqlManagementClient
 
 """
@@ -37,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-02-01-preview/examples/CancelDatabaseOperation.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-11-01-preview/examples/CancelDatabaseOperation.json
 if __name__ == "__main__":
     main()

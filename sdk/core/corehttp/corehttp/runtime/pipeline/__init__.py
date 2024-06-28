@@ -113,12 +113,10 @@ class PipelineContext(Dict[str, Any]):
         raise TypeError("Context objects cannot be updated.")
 
     @overload
-    def pop(self, __key: str) -> Any:
-        ...
+    def pop(self, __key: str) -> Any: ...
 
     @overload
-    def pop(self, __key: str, __default: Optional[Any]) -> Any:
-        ...
+    def pop(self, __key: str, __default: Optional[Any]) -> Any: ...
 
     def pop(self, *args: Any) -> Any:
         """Removes specified key and returns the value.

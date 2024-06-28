@@ -72,9 +72,9 @@ class MaterializationSettings(RestTranslatableMixin):
 
         return RestMaterializationSettings(
             schedule=self.schedule._to_rest_object() if self.schedule else None,  # pylint: disable=protected-access
-            notification=self.notification._to_rest_object()  # pylint: disable=protected-access
-            if self.notification
-            else None,
+            notification=(
+                self.notification._to_rest_object() if self.notification else None  # pylint: disable=protected-access
+            ),
             resource=self.resource._to_rest_object() if self.resource else None,  # pylint: disable=protected-access
             spark_configuration=self.spark_configuration,
             store_type=store_type,
@@ -85,9 +85,11 @@ class MaterializationSettings(RestTranslatableMixin):
         if not obj:
             return None
         return MaterializationSettings(
-            schedule=RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
-            if obj.schedule
-            else None,
+            schedule=(
+                RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
+                if obj.schedule
+                else None
+            ),
             notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_configuration=obj.spark_configuration,

@@ -6,13 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._vmm_servers_operations import VmmServersOperations
+from ._virtual_machine_instances_operations import VirtualMachineInstancesOperations
+from ._guest_agents_operations import GuestAgentsOperations
+from ._vm_instance_hybrid_identity_metadatas_operations import VmInstanceHybridIdentityMetadatasOperations
 from ._operations import Operations
-from ._clouds_operations import CloudsOperations
-from ._virtual_networks_operations import VirtualNetworksOperations
-from ._virtual_machines_operations import VirtualMachinesOperations
-from ._virtual_machine_templates_operations import VirtualMachineTemplatesOperations
 from ._availability_sets_operations import AvailabilitySetsOperations
+from ._clouds_operations import CloudsOperations
+from ._virtual_machine_templates_operations import VirtualMachineTemplatesOperations
+from ._virtual_networks_operations import VirtualNetworksOperations
+from ._vmm_servers_operations import VmmServersOperations
 from ._inventory_items_operations import InventoryItemsOperations
 
 from ._patch import __all__ as _patch_all
@@ -20,13 +22,15 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "VmmServersOperations",
+    "VirtualMachineInstancesOperations",
+    "GuestAgentsOperations",
+    "VmInstanceHybridIdentityMetadatasOperations",
     "Operations",
-    "CloudsOperations",
-    "VirtualNetworksOperations",
-    "VirtualMachinesOperations",
-    "VirtualMachineTemplatesOperations",
     "AvailabilitySetsOperations",
+    "CloudsOperations",
+    "VirtualMachineTemplatesOperations",
+    "VirtualNetworksOperations",
+    "VmmServersOperations",
     "InventoryItemsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

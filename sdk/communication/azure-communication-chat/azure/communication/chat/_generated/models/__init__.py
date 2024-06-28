@@ -25,6 +25,7 @@ from ._models_py3 import CommunicationIdentifierModel
 from ._models_py3 import CommunicationUserIdentifierModel
 from ._models_py3 import CreateChatThreadRequest
 from ._models_py3 import CreateChatThreadResult
+from ._models_py3 import MicrosoftTeamsAppIdentifierModel
 from ._models_py3 import MicrosoftTeamsUserIdentifierModel
 from ._models_py3 import PhoneNumberIdentifierModel
 from ._models_py3 import SendChatMessageRequest
@@ -62,6 +63,7 @@ __all__ = [
     "CommunicationUserIdentifierModel",
     "CreateChatThreadRequest",
     "CreateChatThreadResult",
+    "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
     "PhoneNumberIdentifierModel",
     "SendChatMessageRequest",

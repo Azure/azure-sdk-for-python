@@ -8,6 +8,7 @@ import warnings
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
+from .streaming.streaming_data_parser import StreamingDataParser
 from ._models import (
     CallConnectionProperties,
     FileSource,
@@ -41,7 +42,7 @@ from ._generated.models._enums import (
     RecordingContent,
     RecordingChannel,
     RecordingFormat,
-    RecordingStorage,
+    RecordingStorageKind,
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
@@ -52,10 +53,18 @@ from ._generated.models._enums import (
     RecordingState,
     VoiceKind
 )
+from .streaming.models import (
+    TranscriptionMetadata,
+    TranscriptionData
+)
+
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
+
+    # parser
+    "StreamingDataParser",
 
     # models for input
     "FileSource",
@@ -87,12 +96,16 @@ __all__ = [
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
 
+    # streaming models
+    "TranscriptionMetadata",
+    "TranscriptionData",
+
     # enums
     "CallRejectReason",
     "RecordingContent",
     "RecordingChannel",
     "RecordingFormat",
-    "RecordingStorage",
+    "RecordingStorageKind",
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",

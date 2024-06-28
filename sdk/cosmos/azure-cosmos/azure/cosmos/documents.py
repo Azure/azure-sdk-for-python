@@ -59,7 +59,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         is not guaranteed to be real time.
     :ivar ConsistencyPolicy:
         UserConsistencyPolicy settings.
-    :vartype: Dict[str, Union[str, int]]
+    :vartype ConsistencyPolicy: Dict[str, Union[str, int]]
     :ivar boolean EnableMultipleWritableLocations:
         Flag on the azure Cosmos account that indicates if writes can take
         place in multiple locations.
@@ -407,6 +407,7 @@ class _QueryFeature:
     OffsetAndLimit: Literal["OffsetAndLimit"] = "OffsetAndLimit"
     OrderBy: Literal["OrderBy"] = "OrderBy"
     Top: Literal["Top"] = "Top"
+    NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
 
 
 class _DistinctType:

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.redis_enterprise.begin_delete(
+    client.redis_enterprise.begin_delete(
         resource_group_name="rg1",
         cluster_name="cache1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseDelete.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDelete.json
 if __name__ == "__main__":
     main()

@@ -21,10 +21,10 @@ from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import MlException, ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class DatastoreOperations(_ScopeDependentOperations):
@@ -58,7 +58,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         self._credential = serviceclient_2023_04_01_preview._config.credential
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.List", ActivityType.PUBLICAPI)
     def list(self, *, include_secrets: bool = False) -> Iterable[Datastore]:
         """Lists all datastores and associated information within a workspace.
 
@@ -92,7 +92,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             ),
         )
 
-    @monitor_with_activity(logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
     def _list_secrets(self, name: str) -> DatastoreSecrets:
         return self._operation.list_secrets(
             name=name,
@@ -101,7 +101,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    @monitor_with_activity(logger, "Datastore.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
         """Deletes a datastore reference with the given name from the workspace. This method does not delete the actual
         datastore or underlying data in the datastore.
@@ -126,7 +126,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    @monitor_with_activity(logger, "Datastore.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, *, include_secrets: bool = False) -> Datastore:  # type: ignore
         """Returns information about the datastore referenced by the given name.
 
@@ -166,7 +166,7 @@ class DatastoreOperations(_ScopeDependentOperations):
             secrets = self._list_secrets(datastore_resource.name)
             datastore_resource.properties.credentials.secrets = secrets
 
-    @monitor_with_activity(logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
     def get_default(self, *, include_secrets: bool = False) -> Datastore:  # type: ignore
         """Returns the workspace's default datastore.
 
@@ -197,7 +197,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, datastore: Datastore) -> Datastore:  # type: ignore
         """Attaches the passed in datastore to the workspace or updates the datastore if it already exists.
 
@@ -225,13 +225,13 @@ class DatastoreOperations(_ScopeDependentOperations):
                 skip_validation=True,
             )
             return Datastore._from_rest_object(datastore_resource)
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
                 raise ex
 
-    @monitor_with_activity(logger, "Datastore.Mount", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Datastore.Mount", ActivityType.PUBLICAPI)
     @experimental
     def mount(
         self,
@@ -272,10 +272,9 @@ class DatastoreOperations(_ScopeDependentOperations):
         try:
             from azureml.dataprep import rslex_fuse_subprocess_wrapper
         except ImportError as exc:
-            raise Exception(
-                "Mount operations requires package azureml-dataprep-rslex installed. "
-                + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
-            ) from exc
+            msg = "Mount operations requires package azureml-dataprep-rslex installed. \
+                You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
+            raise MlException(message=msg, no_personal_data_message=msg) from exc
 
         uri = rslex_fuse_subprocess_wrapper.build_datastore_uri(
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
@@ -309,9 +308,11 @@ class DatastoreOperations(_ScopeDependentOperations):
                     if mount.mount_state == "MountRequested":
                         pass
                     elif mount.mount_state == "MountFailed":
-                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                        msg = f"Mount failed [name: {mount_name}]: {mount.error}"
+                        raise MlException(message=msg, no_personal_data_message=msg)
                     else:
-                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        raise MlException(message=msg, no_personal_data_message=msg)
                 except IndexError:
                     pass
                 time.sleep(5)

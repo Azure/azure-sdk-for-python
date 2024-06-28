@@ -17,6 +17,7 @@ from threading import Lock
 from typing import Iterable, List, Optional, Union
 
 from typing_extensions import Literal
+
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 from ._http_utils import HttpPipeline
@@ -237,7 +238,7 @@ class ArtifactCache:
         while retries <= max_retries:
             try:
                 self._redirect_artifacts_tool_path(organization)
-            except Exception as e:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=W0718
                 _logger.warning("Redirect artifacts tool path failed, details: %s", e)
 
             retries += 1

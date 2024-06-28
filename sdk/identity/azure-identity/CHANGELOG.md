@@ -1,18 +1,75 @@
 # Release History
 
-## 1.16.0b2 (Unreleased)
+## 1.17.2 (Unreleased)
 
 ### Features Added
-
-- Added pickling support. ([#34134](https://github.com/Azure/azure-sdk-for-python/pull/34134))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Fixed an issue in `AzurePowerShellCredential` where if `pwsh` isn't available and the Command Prompt language is not English, it would not fall back to `powershell`. ([#34271](https://github.com/Azure/azure-sdk-for-python/pull/34271))
+### Other Changes
+
+## 1.17.1 (2024-06-21)
+
+### Bugs Fixed
+
+- Continue to attempt requesting token if the probing request receives non-json response. ([#36184](https://github.com/Azure/azure-sdk-for-python/pull/36184))
+
+## 1.17.0 (2024-06-18)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.16.0.
+> Only code written against a beta version such as 1.17.0b1 is affected.
+- `AzurePipelinesCredential` now has a required keyword argument `system_access_token`.  ([#35858](https://github.com/Azure/azure-sdk-for-python/pull/35858))
+
+### Bugs Fixed
+
+- Allow credential chains to continue when an IMDS probe request returns a non-JSON response in `ManagedIdentityCredential`. ([#36016](https://github.com/Azure/azure-sdk-for-python/pull/36016))
+
+## 1.17.0b2 (2024-06-11)
+
+### Features Added
+
+- `OnBehalfOfCredential` now supports client assertion callbacks through the `client_assertion_func` keyword argument. This enables authenticating with client assertions such as federated credentials.  ([#35812](https://github.com/Azure/azure-sdk-for-python/pull/35812))
+
+### Bugs Fixed
+
+- Managed identity bug fixes
+
+## 1.16.1 (2024-06-11)
+
+### Bugs Fixed
+
+- Managed identity bug fixes
+
+## 1.17.0b1 (2024-05-13)
+
+### Features Added
+
+- Added environment variable `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` support for `EnvironmentCredential`.
+- Introduced a new credential, `AzurePipelinesCredential`, for supporting workload identity federation in Azure Pipelines with service connections ([#35397](https://github.com/Azure/azure-sdk-for-python/pull/35397)).
+
+### Bugs Fixed
+
+- Fixed typing errors when certain credentials are used as context managers. ([#35415](https://github.com/Azure/azure-sdk-for-python/pull/35415))
+
+## 1.16.0 (2024-04-09)
 
 ### Other Changes
+
+- For IMDS requests in `ManagedIdentityCredential`, the retry backoff factor was reduced from 2 to 0.8 in order to avoid excessive retry delays and improve responsiveness. Users can customize this setting with the `retry_backoff_factor` parameter: `ManagedIdentityCredential(retry_backoff_factor=2)`.  ([#35070](https://github.com/Azure/azure-sdk-for-python/pull/35070))
+
+## 1.16.0b2 (2024-03-05)
+
+### Features Added
+
+- Added pickling support. ([#34134](https://github.com/Azure/azure-sdk-for-python/pull/34134))
+
+### Bugs Fixed
+
+- Fixed an issue in `AzurePowerShellCredential` where if `pwsh` isn't available and the Command Prompt language is not English, it would not fall back to `powershell`. ([#34271](https://github.com/Azure/azure-sdk-for-python/pull/34271))
 
 ## 1.16.0b1 (2024-02-06)
 
@@ -134,7 +191,7 @@
 ### Features Added
 
 - Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
-- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Microsoft Entra ID that your application can handle CAE claims challenges.
+- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/entra/identity/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Microsoft Entra ID that your application can handle CAE claims challenges.
 
 ## 1.13.0b2 (2023-02-07)
 
@@ -863,7 +920,7 @@ its use in national clouds
 ### New features:
 - `AuthorizationCodeCredential` authenticates with a previously obtained
 authorization code. See Microsoft Entra's
-[authorization code documentation](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+[authorization code documentation](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)
 for more information about this authentication flow.
 - Multi-cloud support: client credentials accept the authority of an Azure Active
 Directory authentication endpoint as an `authority` keyword argument. Known

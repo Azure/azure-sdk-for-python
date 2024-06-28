@@ -482,3 +482,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
 
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)
+
+    async def __aenter__(self) -> "CryptographyClient":
+        await self._client.__aenter__()
+        return self

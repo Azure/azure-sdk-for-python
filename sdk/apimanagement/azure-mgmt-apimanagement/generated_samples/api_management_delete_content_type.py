@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.content_type.delete(
+    client.content_type.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         content_type_id="page",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteContentType.json

@@ -7,7 +7,7 @@ or execute the various commands available in the toolbox.
 
 1.  If you don't already have it, install Python:
 
-    - Windows: [Python website][python_website] or from the [Windows store][python_39]
+    - Windows: [Python website][python_website] or from the [Windows store][python_312]
     - Ubuntu/Debian `sudo apt-get install python3`
     - RHEL/CentOS `sudo yum install python3`
 
@@ -25,7 +25,7 @@ or execute the various commands available in the toolbox.
     You can initialize a virtual environment this way:
 
     ```
-    python -m venv env # Might be "python3" or "py -3.6" depending on your Python installation
+    python -m venv env # Might be "python3" or "py -3.8" depending on your Python installation
     source env/bin/activate      # Linux shell (Bash, ZSH, etc.) only
     ./env/scripts/activate       # PowerShell only
     ./env/scripts/activate.bat   # Windows CMD only
@@ -37,7 +37,7 @@ or execute the various commands available in the toolbox.
     ```
     azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
-    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install tox<5
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install "tox<5"
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -e .
     ```
 
@@ -46,17 +46,14 @@ or execute the various commands available in the toolbox.
     The recommended place to store your .env file is one directory higher than the `azure-sdk-for-python` location.
     This ensures the secrets will be loaded by the interpreter and most importantly not be committed to Git history.
 
-## Set up the SDK's test-running tool
+## Follow test-running guidance
 
-SDK tests use an in-house tool called the test proxy, which runs in a container and enables recording and playing back HTTP interactions.
-
-Follow the instructions in the [Perform one-time test proxy setup][proxy_setup] section of [tests.md][tests] to set up the test proxy on your machine.
+After following the steps above, you'll be able to run recorded SDK tests with `pytest`. For more information about tests -- how to run live tests, write new tests, etc. -- refer to the documentation in [tests.md][tests].
 
 
 <!-- LINKS -->
 [python_website]: https://www.python.org/downloads/
-[python_39]: https://www.microsoft.com/p/python-39/9p7qfqmjrfp7
-[proxy_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#perform-one-time-test-proxy-setup
+[python_312]: https://apps.microsoft.com/detail/9ncvdn91xzqp
 [tests]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [tox]: https://tox.wiki/en/latest/
 [virtual_environment]: https://docs.python.org/3/tutorial/venv.html

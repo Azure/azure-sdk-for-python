@@ -34,6 +34,7 @@ def get_batch_id_from_poller(polling_method):
 # By default, use the latest supported API version
 class MapsRouteClient(AsyncMapsRouteClientBase):
     """Azure Maps Route REST APIs.
+
     :param credential:
         Credential needed for the client to connect to Azure.
     :type credential:
@@ -153,7 +154,9 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response.
+
+         For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -191,11 +194,11 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
          vehicles may not be allowed to drive on some roads. Default value is False.
         :paramtype is_commercial_vehicle: bool
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -377,11 +380,11 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
          Default value is None.
         :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
@@ -600,7 +603,9 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response.
+
+         For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -634,11 +639,11 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -733,7 +738,9 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response.
+
+         For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -767,11 +774,11 @@ class MapsRouteClient(AsyncMapsRouteClientBase):
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``=thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is

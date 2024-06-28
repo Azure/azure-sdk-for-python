@@ -134,7 +134,7 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
-    :vartype current_page: list(dict(str, Any))
+    :vartype current_page: list[dict[str, Any]]
 
     :param callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only directories whose names

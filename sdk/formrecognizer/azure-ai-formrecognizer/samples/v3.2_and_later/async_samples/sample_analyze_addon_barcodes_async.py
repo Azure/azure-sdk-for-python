@@ -84,7 +84,7 @@ async def analyze_barcodes():
         # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", document=f, features=[AnalysisFeature.barcode/QR code]
+                "prebuilt-layout", document=f, features=[AnalysisFeature.BARCODES]
             )
         result = await poller.result()
 

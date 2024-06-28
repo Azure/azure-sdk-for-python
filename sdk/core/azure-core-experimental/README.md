@@ -15,6 +15,7 @@ pip install azure-core-experimental
 
 - pyodide transport
 - httpx transport
+- urllib3 transport
 
 ## Contributing
 

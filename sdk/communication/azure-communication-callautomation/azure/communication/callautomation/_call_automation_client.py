@@ -61,7 +61,7 @@ if TYPE_CHECKING:
         RecordingContent,
         RecordingChannel,
         RecordingFormat,
-        RecordingStorage
+        RecordingStorageKind
     )
 
 
@@ -316,7 +316,6 @@ class CallAutomationClient:
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         transcription_configuration: Optional['TranscriptionConfiguration'] = None,
-        source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -337,9 +336,6 @@ class CallAutomationClient:
         :keyword transcription_configuration: Configuration of live transcription.
         :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
          or None
-        :source_caller_id_number: The source caller Id, a phone number, that's will be used when
-        inviting a pstn target. Required only when transferring call to PSTN, if this is an incoming voip call.
-        :vartype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -351,7 +347,6 @@ class CallAutomationClient:
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
@@ -458,7 +453,7 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
+        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
         external_storage_location: Optional[str] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
@@ -491,7 +486,7 @@ class CallAutomationClient:
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str or None
         :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'BlobStorage'.
+         when RecordingStorageKind is set to 'AzureBlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
@@ -511,7 +506,7 @@ class CallAutomationClient:
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
+        recording_storage_kind: Optional[Union[str, 'RecordingStorageKind']] = None,
         external_storage_location: Optional[str] = None,
         pause_on_start: Optional[bool] = None,
         **kwargs
@@ -544,7 +539,7 @@ class CallAutomationClient:
          ``External`` enables bring your own storage.
         :paramtype recording_storage_type: str or None
         :keyword external_storage_location: The location where recording is stored,
-         when RecordingStorageType is set to 'BlobStorage'.
+         when RecordingStorageKind is set to 'AzureBlobStorage'.
         :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None

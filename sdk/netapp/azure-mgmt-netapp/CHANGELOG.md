@@ -1,5 +1,35 @@
 # Release History
 
+## 13.0.0 (2024-05-20)
+
+### Features Added
+
+  - Added operation BackupsOperations.begin_create
+  - Added operation BackupsOperations.begin_delete
+  - Added operation BackupsOperations.begin_update
+  - Added operation BackupsOperations.get
+  - Added operation BackupsOperations.get_latest_status
+  - Added operation BackupsOperations.get_volume_latest_restore_status
+  - Added operation BackupsOperations.list_by_vault
+  - Added operation group BackupVaultsOperations
+  - Added operation group BackupsUnderAccountOperations
+  - Added operation group BackupsUnderBackupVaultOperations
+  - Added operation group BackupsUnderVolumeOperations
+  - Added operation group NetAppResourceRegionInfosOperations
+  - Model VolumeBackups has a new parameter volume_resource_id
+  - Model VolumePatchPropertiesDataProtection has a new parameter backup
+  - Model VolumePropertiesDataProtection has a new parameter backup
+
+### Breaking Changes
+
+  - Removed operation BackupsOperations.get_volume_restore_status
+
+## 12.0.0 (2024-03-18)
+
+### Breaking Changes
+
+  - Model VolumeGroupMetaData no longer has parameter deployment_spec_id
+
 ## 12.0.0b1 (2023-12-22)
 
 ### Features Added

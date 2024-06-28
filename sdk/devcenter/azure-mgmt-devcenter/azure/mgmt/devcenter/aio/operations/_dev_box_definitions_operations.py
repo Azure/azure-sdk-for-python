@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,7 +78,6 @@ class DevBoxDefinitionsOperations:
         :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
          Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DevBoxDefinition or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devcenter.models.DevBoxDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -100,18 +99,17 @@ class DevBoxDefinitionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_dev_center_request(
+                _request = build_list_by_dev_center_request(
                     resource_group_name=resource_group_name,
                     dev_center_name=dev_center_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_dev_center.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -123,13 +121,13 @@ class DevBoxDefinitionsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DevBoxDefinitionListResult", pipeline_response)
@@ -139,25 +137,22 @@ class DevBoxDefinitionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_dev_center.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions"
-    }
 
     @distributed_trace_async
     async def get(
@@ -172,7 +167,6 @@ class DevBoxDefinitionsOperations:
         :type dev_center_name: str
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DevBoxDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.devcenter.models.DevBoxDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -191,47 +185,43 @@ class DevBoxDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DevBoxDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             dev_center_name=dev_center_name,
             dev_box_definition_name=dev_box_definition_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DevBoxDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         dev_center_name: str,
         dev_box_definition_name: str,
-        body: Union[_models.DevBoxDefinition, IO],
+        body: Union[_models.DevBoxDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.DevBoxDefinition:
         error_map = {
@@ -257,7 +247,7 @@ class DevBoxDefinitionsOperations:
         else:
             _json = self._serialize.body(body, "DevBoxDefinition")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             dev_center_name=dev_center_name,
             dev_box_definition_name=dev_box_definition_name,
@@ -266,23 +256,23 @@ class DevBoxDefinitionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
             deserialized = self._deserialize("DevBoxDefinition", pipeline_response)
@@ -294,10 +284,6 @@ class DevBoxDefinitionsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -324,14 +310,6 @@ class DevBoxDefinitionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DevBoxDefinition or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devcenter.models.DevBoxDefinition]
@@ -344,7 +322,7 @@ class DevBoxDefinitionsOperations:
         resource_group_name: str,
         dev_center_name: str,
         dev_box_definition_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -359,18 +337,10 @@ class DevBoxDefinitionsOperations:
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
         :param body: Represents a Dev Box definition. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DevBoxDefinition or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devcenter.models.DevBoxDefinition]
@@ -383,7 +353,7 @@ class DevBoxDefinitionsOperations:
         resource_group_name: str,
         dev_center_name: str,
         dev_box_definition_name: str,
-        body: Union[_models.DevBoxDefinition, IO],
+        body: Union[_models.DevBoxDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DevBoxDefinition]:
         """Creates or updates a Dev Box definition.
@@ -395,20 +365,9 @@ class DevBoxDefinitionsOperations:
         :type dev_center_name: str
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
-        :param body: Represents a Dev Box definition. Is either a DevBoxDefinition type or a IO type.
-         Required.
-        :type body: ~azure.mgmt.devcenter.models.DevBoxDefinition or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param body: Represents a Dev Box definition. Is either a DevBoxDefinition type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.devcenter.models.DevBoxDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DevBoxDefinition or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devcenter.models.DevBoxDefinition]
@@ -441,7 +400,7 @@ class DevBoxDefinitionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DevBoxDefinition", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -454,24 +413,22 @@ class DevBoxDefinitionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DevBoxDefinition].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+        return AsyncLROPoller[_models.DevBoxDefinition](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _update_initial(
         self,
         resource_group_name: str,
         dev_center_name: str,
         dev_box_definition_name: str,
-        body: Union[_models.DevBoxDefinitionUpdate, IO],
+        body: Union[_models.DevBoxDefinitionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.DevBoxDefinition]:
         error_map = {
@@ -497,7 +454,7 @@ class DevBoxDefinitionsOperations:
         else:
             _json = self._serialize.body(body, "DevBoxDefinitionUpdate")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             dev_center_name=dev_center_name,
             dev_box_definition_name=dev_box_definition_name,
@@ -506,36 +463,36 @@ class DevBoxDefinitionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("DevBoxDefinition", pipeline_response)
 
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update(
@@ -562,14 +519,6 @@ class DevBoxDefinitionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DevBoxDefinition or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devcenter.models.DevBoxDefinition]
@@ -582,7 +531,7 @@ class DevBoxDefinitionsOperations:
         resource_group_name: str,
         dev_center_name: str,
         dev_box_definition_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -597,18 +546,10 @@ class DevBoxDefinitionsOperations:
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
         :param body: Represents a Dev Box definition. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DevBoxDefinition or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devcenter.models.DevBoxDefinition]
@@ -621,7 +562,7 @@ class DevBoxDefinitionsOperations:
         resource_group_name: str,
         dev_center_name: str,
         dev_box_definition_name: str,
-        body: Union[_models.DevBoxDefinitionUpdate, IO],
+        body: Union[_models.DevBoxDefinitionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DevBoxDefinition]:
         """Partially updates a Dev Box definition.
@@ -633,20 +574,9 @@ class DevBoxDefinitionsOperations:
         :type dev_center_name: str
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
-        :param body: Represents a Dev Box definition. Is either a DevBoxDefinitionUpdate type or a IO
-         type. Required.
-        :type body: ~azure.mgmt.devcenter.models.DevBoxDefinitionUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param body: Represents a Dev Box definition. Is either a DevBoxDefinitionUpdate type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.devcenter.models.DevBoxDefinitionUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DevBoxDefinition or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.devcenter.models.DevBoxDefinition]
@@ -679,7 +609,7 @@ class DevBoxDefinitionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DevBoxDefinition", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -692,17 +622,15 @@ class DevBoxDefinitionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DevBoxDefinition].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+        return AsyncLROPoller[_models.DevBoxDefinition](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, dev_center_name: str, dev_box_definition_name: str, **kwargs: Any
@@ -721,36 +649,36 @@ class DevBoxDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             dev_center_name=dev_center_name,
             dev_box_definition_name=dev_box_definition_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -765,14 +693,6 @@ class DevBoxDefinitionsOperations:
         :type dev_center_name: str
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -800,7 +720,7 @@ class DevBoxDefinitionsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -812,17 +732,13 @@ class DevBoxDefinitionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/devcenters/{devCenterName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_project(
@@ -838,7 +754,6 @@ class DevBoxDefinitionsOperations:
         :param top: The maximum number of resources to return from the operation. Example: '$top=10'.
          Default value is None.
         :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DevBoxDefinition or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.devcenter.models.DevBoxDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -860,18 +775,17 @@ class DevBoxDefinitionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_project_request(
+                _request = build_list_by_project_request(
                     resource_group_name=resource_group_name,
                     project_name=project_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
                     api_version=api_version,
-                    template_url=self.list_by_project.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -883,13 +797,13 @@ class DevBoxDefinitionsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DevBoxDefinitionListResult", pipeline_response)
@@ -899,25 +813,22 @@ class DevBoxDefinitionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_project.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/projects/{projectName}/devboxdefinitions"
-    }
 
     @distributed_trace_async
     async def get_by_project(
@@ -932,7 +843,6 @@ class DevBoxDefinitionsOperations:
         :type project_name: str
         :param dev_box_definition_name: The name of the Dev Box definition. Required.
         :type dev_box_definition_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DevBoxDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.devcenter.models.DevBoxDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -951,37 +861,33 @@ class DevBoxDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DevBoxDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_by_project_request(
+        _request = build_get_by_project_request(
             resource_group_name=resource_group_name,
             project_name=project_name,
             dev_box_definition_name=dev_box_definition_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_by_project.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DevBoxDefinition", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_by_project.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/projects/{projectName}/devboxdefinitions/{devBoxDefinitionName}"
-    }
+        return deserialized  # type: ignore

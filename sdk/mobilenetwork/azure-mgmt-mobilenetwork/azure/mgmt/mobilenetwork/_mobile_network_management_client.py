@@ -9,8 +9,10 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from ._configuration import MobileNetworkManagementClientConfiguration
@@ -19,18 +21,21 @@ from .operations import (
     AttachedDataNetworksOperations,
     DataNetworksOperations,
     DiagnosticsPackagesOperations,
+    ExtendedUeInformationOperations,
     MobileNetworksOperations,
     Operations,
     PacketCapturesOperations,
     PacketCoreControlPlaneVersionsOperations,
     PacketCoreControlPlanesOperations,
     PacketCoreDataPlanesOperations,
+    RoutingInfoOperations,
     ServicesOperations,
     SimGroupsOperations,
     SimPoliciesOperations,
     SimsOperations,
     SitesOperations,
     SlicesOperations,
+    UeInformationOperations,
 )
 
 if TYPE_CHECKING:
@@ -59,6 +64,8 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :ivar packet_core_control_planes: PacketCoreControlPlanesOperations operations
     :vartype packet_core_control_planes:
      azure.mgmt.mobilenetwork.operations.PacketCoreControlPlanesOperations
+    :ivar routing_info: RoutingInfoOperations operations
+    :vartype routing_info: azure.mgmt.mobilenetwork.operations.RoutingInfoOperations
     :ivar packet_core_control_plane_versions: PacketCoreControlPlaneVersionsOperations operations
     :vartype packet_core_control_plane_versions:
      azure.mgmt.mobilenetwork.operations.PacketCoreControlPlaneVersionsOperations
@@ -77,13 +84,18 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype sites: azure.mgmt.mobilenetwork.operations.SitesOperations
     :ivar slices: SlicesOperations operations
     :vartype slices: azure.mgmt.mobilenetwork.operations.SlicesOperations
+    :ivar extended_ue_information: ExtendedUeInformationOperations operations
+    :vartype extended_ue_information:
+     azure.mgmt.mobilenetwork.operations.ExtendedUeInformationOperations
+    :ivar ue_information: UeInformationOperations operations
+    :vartype ue_information: azure.mgmt.mobilenetwork.operations.UeInformationOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-09-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -100,7 +112,25 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = MobileNetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -119,6 +149,7 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self.packet_core_control_planes = PacketCoreControlPlanesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.routing_info = RoutingInfoOperations(self._client, self._config, self._serialize, self._deserialize)
         self.packet_core_control_plane_versions = PacketCoreControlPlaneVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -131,8 +162,12 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self.sim_policies = SimPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.slices = SlicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extended_ue_information = ExtendedUeInformationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ue_information = UeInformationOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -152,7 +187,7 @@ class MobileNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()

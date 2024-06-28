@@ -285,7 +285,7 @@ class ExportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Export the Api Definition in OpenAPI 2.0 Specification as JSON document to the Storage Blob."""
     WSDL = "wsdl-link"
     """Export the Api Definition in WSDL Schema to Storage Blob. This is only supported for APIs of
-    #: Type ``soap``"""
+    Type ``soap``"""
     WADL = "wadl-link"
     """Export the Api Definition in WADL Schema to Storage Blob."""
     OPENAPI = "openapi-link"
@@ -303,7 +303,7 @@ class ExportResultFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The API Definition is exported in OpenAPI Specification 2.0 format to the Storage Blob."""
     WSDL = "wsdl-link+xml"
     """The API Definition is exported in WSDL Schema to Storage Blob. This is only supported for APIs
-    #: of Type ``soap``"""
+    of Type ``soap``"""
     WADL = "wadl-link-json"
     """Export the API Definition in WADL Schema to Storage Blob."""
     OPEN_API = "openapi-link"
@@ -319,7 +319,7 @@ class GrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Implicit Code Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.2."""
     RESOURCE_OWNER_PASSWORD = "resourceOwnerPassword"
     """Resource Owner Password Grant flow as described
-    #: https://tools.ietf.org/html/rfc6749#section-4.3."""
+    https://tools.ietf.org/html/rfc6749#section-4.3."""
     CLIENT_CREDENTIALS = "clientCredentials"
     """Client Credentials Grant flow as described https://tools.ietf.org/html/rfc6749#section-4.4."""
 
@@ -349,7 +349,7 @@ class HttpCorrelationProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Do not read and inject correlation headers."""
     LEGACY = "Legacy"
     """Inject Request-Id and Request-Context headers with request correlation data. See
-    #: https://github.com/dotnet/corefx/blob/master/src/System.Diagnostics.DiagnosticSource/src/HttpCorrelationProtocol.md."""
+    https://github.com/dotnet/corefx/blob/master/src/System.Diagnostics.DiagnosticSource/src/HttpCorrelationProtocol.md."""
     W3_C = "W3C"
     """Inject Trace Context headers. See https://w3c.github.io/trace-context."""
 
@@ -435,24 +435,24 @@ class NotificationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REQUEST_PUBLISHER_NOTIFICATION_MESSAGE = "RequestPublisherNotificationMessage"
     """The following email recipients and users will receive email notifications about subscription
-    #: requests for API products requiring approval."""
+    requests for API products requiring approval."""
     PURCHASE_PUBLISHER_NOTIFICATION_MESSAGE = "PurchasePublisherNotificationMessage"
     """The following email recipients and users will receive email notifications about new API product
-    #: subscriptions."""
+    subscriptions."""
     NEW_APPLICATION_NOTIFICATION_MESSAGE = "NewApplicationNotificationMessage"
     """The following email recipients and users will receive email notifications when new applications
-    #: are submitted to the application gallery."""
+    are submitted to the application gallery."""
     BCC = "BCC"
     """The following recipients will receive blind carbon copies of all emails sent to developers."""
     NEW_ISSUE_PUBLISHER_NOTIFICATION_MESSAGE = "NewIssuePublisherNotificationMessage"
     """The following email recipients and users will receive email notifications when a new issue or
-    #: comment is submitted on the developer portal."""
+    comment is submitted on the developer portal."""
     ACCOUNT_CLOSED_PUBLISHER = "AccountClosedPublisher"
     """The following email recipients and users will receive email notifications when developer closes
-    #: his account."""
+    his account."""
     QUOTA_LIMIT_APPROACHING_PUBLISHER_NOTIFICATION_MESSAGE = "QuotaLimitApproachingPublisherNotificationMessage"
     """The following email recipients and users will receive email notifications when subscription
-    #: usage gets close to usage quota."""
+    usage gets close to usage quota."""
 
 
 class OAuth2GrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -501,12 +501,12 @@ class PolicyContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The contents are inline and Content type is an XML document."""
     XML_LINK = "xml-link"
     """The policy XML document is hosted on a HTTP endpoint accessible from the API Management
-    #: service."""
+    service."""
     RAWXML = "rawxml"
     """The contents are inline and Content type is a non XML encoded policy document."""
     RAWXML_LINK = "rawxml-link"
     """The policy document is not XML encoded and is hosted on a HTTP endpoint accessible from the API
-    #: Management service."""
+    Management service."""
 
 
 class PolicyExportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -778,13 +778,13 @@ class Verbosity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     VERBOSE = "verbose"
     """All the traces emitted by trace policies will be sent to the logger attached to this diagnostic
-    #: instance."""
+    instance."""
     INFORMATION = "information"
     """Traces with 'severity' set to 'information' and 'error' will be sent to the logger attached to
-    #: this diagnostic instance."""
+    this diagnostic instance."""
     ERROR = "error"
     """Only traces with 'severity' set to 'error' will be sent to the logger attached to this
-    #: diagnostic instance."""
+    diagnostic instance."""
 
 
 class VersioningScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -812,4 +812,4 @@ class VirtualNetworkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The service is part of Virtual Network and it is accessible from Internet."""
     INTERNAL = "Internal"
     """The service is part of Virtual Network and it is only accessible from within the virtual
-    #: network."""
+    network."""

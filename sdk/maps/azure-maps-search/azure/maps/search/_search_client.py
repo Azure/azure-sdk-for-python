@@ -269,10 +269,6 @@ class MapsSearchClient(MapsSearchClientBase):
             The applicable coordinates as (lat, lon)
         :type coordinates:
             LatLon
-        :param language:
-            Language in which search results should be returned.
-        :type language:
-            str
         :keyword bool include_speed_limit:
             Boolean. To enable return of the posted speed limit.
         :keyword int heading:
@@ -401,8 +397,7 @@ class MapsSearchClient(MapsSearchClientBase):
         :type route:
             ~azure.maps.search.models.SearchAlongRouteOptions
         :keyword int top:
-            Maximum number of responses that will be returned. Default value is 10. Max value
-         is 20.
+            Maximum number of responses that will be returned. Default value is 10. Max value is 20.
         :keyword list[str] brand_filter:
             A comma-separated list of brand names which could be used to restrict the
             result to specific brands. Item order does not matter. When multiple brands are provided, only
@@ -622,9 +617,9 @@ class MapsSearchClient(MapsSearchClientBase):
         coordinates: LatLon,
         **kwargs: Any
     ) -> SearchAddressResult:
-        """**Search Nearby Point of Interest **
+        """**Search Nearby Point of Interest**
 
-         If you have a use case for only retrieving POI results around a specific location, the nearby
+        If you have a use case for only retrieving POI results around a specific location, the nearby
         search method may be the right choice. This endpoint will only return POI results, and does not
         take in a search query parameter.
 

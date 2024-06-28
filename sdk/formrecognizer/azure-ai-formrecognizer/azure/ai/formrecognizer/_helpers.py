@@ -11,7 +11,7 @@ from azure.core.pipeline.transport import HttpTransport
 from azure.core.exceptions import HttpResponseError
 
 
-POLLING_INTERVAL = 5
+POLLING_INTERVAL = 1
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 
 

@@ -172,7 +172,6 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
-
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
 
     This accepts both global configuration, and per-request level with "enable_http_logger"

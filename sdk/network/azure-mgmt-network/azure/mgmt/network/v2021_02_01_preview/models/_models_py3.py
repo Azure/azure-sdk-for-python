@@ -23,7 +23,7 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ActiveSecurityAdminRule, ActiveDefaultSecurityAdminRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -125,7 +125,7 @@ class ActiveBaseSecurityUserRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ActiveSecurityUserRule, ActiveDefaultSecurityUserRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -476,7 +476,7 @@ class ActiveConnectivityConfiguration(
         self.region = region
 
 
-class ActiveConnectivityConfigurationsListResult(_serialization.Model):
+class ActiveConnectivityConfigurationsListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list active connectivity configurations. It contains a list of active
     connectivity configurations and a skiptoken to get the next set of results.
 
@@ -518,7 +518,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -691,7 +691,7 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disa
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -850,7 +850,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1082,7 +1082,7 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1366,7 +1366,7 @@ class BaseAdminRule(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1415,7 +1415,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1591,7 +1591,7 @@ class BaseUserRule(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -1959,7 +1959,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -2077,7 +2077,7 @@ class DefaultUserRule(BaseUserRule):  # pylint: disable=too-many-instance-attrib
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -2182,7 +2182,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     EffectiveSecurityAdminRule, EffectiveDefaultSecurityAdminRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -2269,7 +2269,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -2428,7 +2428,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -3225,7 +3225,7 @@ class NetworkManagerDeploymentStatusParameter(_serialization.Model):
         self.skip_token = skip_token
 
 
-class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):
+class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a
     list of groups and a skiptoken to get the next set of results.
 
@@ -3262,7 +3262,7 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.
         self.skip_token = skip_token
 
 
-class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
+class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of
     groups and a skiptoken to get the next set of results.
 
@@ -3328,7 +3328,7 @@ class NetworkManagerListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):
+class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):  # pylint: disable=name-too-long
     """Scope of Network Manager.
 
     :ivar management_groups: List of management groups.
@@ -3750,16 +3750,16 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype remote_perimeter_guid: str
     :ivar remote_perimeter_location: Remote NSP location with which the link gets created.
     :vartype remote_perimeter_location: str
-    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\
-     *'] to allow inbound to all profiles. It's default value is ['*\ '].
+    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\\
+     *'] to allow inbound to all profiles. It's default value is ['*\\ '].
     :vartype local_inbound_profiles: list[str]
     :ivar local_outbound_profiles: Local Outbound profile names from which Outbound is allowed. In
      current version, it is readonly property and it's value is set to ['*'] to allow outbound from
      all profiles. In later version, user will be able to modify it.
     :vartype local_outbound_profiles: list[str]
     :ivar remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. Use
-     ['\ *'] to allow inbound to all profiles. This property can only be updated in auto-approval
-     mode. It's default value is ['*\ '].
+     ['\\ *'] to allow inbound to all profiles. This property can only be updated in auto-approval
+     mode. It's default value is ['*\\ '].
     :vartype remote_inbound_profiles: list[str]
     :ivar remote_outbound_profiles: Remote Outbound profile names from which Outbound is allowed.
      In current version, it is readonly property and it's value is set to ['*'] to allow outbound
@@ -3825,11 +3825,11 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
          resource.
         :paramtype auto_approved_remote_perimeter_resource_id: str
         :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
-         ['\ *'] to allow inbound to all profiles. It's default value is ['*\ '].
+         ['\\ *'] to allow inbound to all profiles. It's default value is ['*\\ '].
         :paramtype local_inbound_profiles: list[str]
         :keyword remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. Use
-         ['\ *'] to allow inbound to all profiles. This property can only be updated in auto-approval
-         mode. It's default value is ['*\ '].
+         ['\\ *'] to allow inbound to all profiles. This property can only be updated in auto-approval
+         mode. It's default value is ['*\\ '].
         :paramtype remote_inbound_profiles: list[str]
         :keyword description: A message passed to the owner of the remote NSP link resource with this
          connection request. In case of Auto-approved flow, it is default to 'Auto Approved'. Restricted
@@ -3903,11 +3903,11 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
     :vartype remote_perimeter_guid: str
     :ivar remote_perimeter_location: Remote NSP location with which the link gets created.
     :vartype remote_perimeter_location: str
-    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\
-     *'] to allow inbound to all profiles. It's default value is ['*\ '].
+    :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\\
+     *'] to allow inbound to all profiles. It's default value is ['*\\ '].
     :vartype local_inbound_profiles: list[str]
     :ivar local_outbound_profiles: Local Outbound profile names from which Outbound is allowed. Use
-     ['\ *'] to allow outbound from all profiles. It's default value is ['*\ '].
+     ['\\ *'] to allow outbound from all profiles. It's default value is ['*\\ '].
     :vartype local_outbound_profiles: list[str]
     :ivar remote_inbound_profiles: Remote Inbound profile names to which Inbound is allowed. ['*']
      value implies inbound is allowed to all profiles at remote perimeter. This property can only be
@@ -3967,7 +3967,7 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
     ) -> None:
         """
         :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
-         ['\ *'] to allow inbound to all profiles. It's default value is ['*\ '].
+         ['\\ *'] to allow inbound to all profiles. It's default value is ['*\\ '].
         :paramtype local_inbound_profiles: list[str]
         :keyword status: The NSP linkReference state. It cannot be changed if link is created in
          auto-approval mode. Known values are: "Approved", "Pending", "Rejected", and "Disconnected".
@@ -4641,7 +4641,7 @@ class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID.
     :vartype id: str

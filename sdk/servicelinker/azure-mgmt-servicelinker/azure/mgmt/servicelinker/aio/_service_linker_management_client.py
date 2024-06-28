@@ -46,7 +46,7 @@ class ServiceLinkerManagementClient:  # pylint: disable=client-accepts-api-versi
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-04-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -57,7 +57,7 @@ class ServiceLinkerManagementClient:  # pylint: disable=client-accepts-api-versi
         self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
         self._config = ServiceLinkerManagementClientConfiguration(credential=credential, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -100,5 +100,5 @@ class ServiceLinkerManagementClient:  # pylint: disable=client-accepts-api-versi
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

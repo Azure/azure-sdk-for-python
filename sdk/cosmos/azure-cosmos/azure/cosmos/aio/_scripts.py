@@ -24,7 +24,7 @@
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type, TYPE_CHECKING
+from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from ._container import ContainerProxy
 
 
-PartitionKeyType = Union[str, int, float, bool, List[Union[str, int, float, bool]], Type[NonePartitionKeyValue]]
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ScriptsProxy:
@@ -109,7 +109,7 @@ class ScriptsProxy:
 
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -282,7 +282,7 @@ class ScriptsProxy:
             feed_options["maxItemCount"] = max_item_count
         return self.client_connection.QueryTriggers(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -408,7 +408,7 @@ class ScriptsProxy:
 
         return self.client_connection.QueryUserDefinedFunctions(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )

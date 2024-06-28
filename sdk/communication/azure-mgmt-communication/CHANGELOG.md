@@ -1,5 +1,12 @@
 # Release History
 
+## 2.1.0 (2024-03-18)
+
+### Features Added
+
+  - Model CommunicationServiceResource has a new parameter identity
+  - Model CommunicationServiceResourceUpdate has a new parameter identity
+
 ## 2.1.0b2 (2023-12-18)
 
 ### Features Added

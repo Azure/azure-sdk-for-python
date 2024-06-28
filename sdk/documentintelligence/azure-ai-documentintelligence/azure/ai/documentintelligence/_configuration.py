@@ -31,13 +31,13 @@ class DocumentIntelligenceClientConfiguration:  # pylint: disable=too-many-insta
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-10-31-preview")
+        api_version: str = kwargs.pop("api_version", "2024-02-29-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -86,13 +86,13 @@ class DocumentIntelligenceAdministrationClientConfiguration:  # pylint: disable=
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     "2024-02-29-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-10-31-preview")
+        api_version: str = kwargs.pop("api_version", "2024-02-29-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

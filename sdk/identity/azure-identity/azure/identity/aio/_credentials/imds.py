@@ -57,6 +57,9 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
 
         try:
             token = await self._client.request_token(*scopes, headers={"Metadata": "true"})
+        except CredentialUnavailableError:
+            # Response is not json, skip the IMDS credential
+            raise
         except HttpResponseError as ex:
             # 400 in response to a token request indicates managed identity is disabled,
             # or the identity with the specified client_id is not available

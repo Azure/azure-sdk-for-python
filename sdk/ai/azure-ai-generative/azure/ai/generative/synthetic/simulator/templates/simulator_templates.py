@@ -1,16 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-from azure.ai.generative.synthetic.simulator.templates._templates import ALL_TEMPLATES, CONTEXT_KEY, CH_TEMPLATES_COLLECTION_KEY
-from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
 from jinja2 import (
     Environment as JinjaEnvironment,
     FileSystemLoader as JinjaFileSystemLoader,
     meta as JinjaMeta,
 )
-import os
-import asyncio
+from azure.ai.generative.synthetic.simulator.templates._templates import (
+    ALL_TEMPLATES,
+    CONTEXT_KEY,
+    CH_TEMPLATES_COLLECTION_KEY,
+)
+from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
+
 
 class Template:
     def __init__(self, template_name, text, context_key, content_harm=False, template_parameters=None):
@@ -19,14 +21,15 @@ class Template:
         self.template_name = template_name
         self.content_harm = content_harm
         self.template_parameters = template_parameters
-        
+
     def __str__(self):
         if self.content_harm:
             return "{{ch_template_placeholder}}"
         return self.text
 
-    def __to_ch_templates(self):
+    def __to_ch_templates(self):  # pylint: disable=unused-private-member
         pass
+
 
 class ContentHarmTemplatesUtils:
     @staticmethod
@@ -46,16 +49,14 @@ class ContentHarmTemplatesUtils:
     @staticmethod
     def json_name_to_md_name(name):
         result = name.replace("_aml", "")
-        
-        return result+".md"
+
+        return result + ".md"
 
 
 class SimulatorTemplates:
     def __init__(self, rai_client=None):
         self.cached_templates_source = {}
-        self.template_env = JinjaEnvironment(
-            loader=JinjaFileSystemLoader(searchpath=template_dir)
-        )
+        self.template_env = JinjaEnvironment(loader=JinjaFileSystemLoader(searchpath=template_dir))
         self.rai_client = rai_client
         self.categorized_ch_parameters = None
 
@@ -80,57 +81,48 @@ class SimulatorTemplates:
                 categorized_parameters[template_key] = {
                     "parameters": parameters[k],
                     "category": util.get_template_category(k),
-                    "parameters_key": k
+                    "parameters_key": k,
                 }
             self.categorized_ch_parameters = categorized_parameters
-        
+
         template_category = collection_key.split("adv_")[-1]
 
         plist = self.categorized_ch_parameters
         ch_templates = []
-        for tkey in [k for k in plist.keys() if plist[k]["category"] == template_category]:
-            params = plist[tkey]["parameters"]
-            for p in params:
-                p.update(
-                    {
-                        "ch_template_placeholder" : "{{ch_template_placeholder}}"
-                    }
+        for key, value in plist.items():
+            if value["category"] == template_category:
+                params = value["parameters"]
+                for p in params:
+                    p.update({"ch_template_placeholder": "{{ch_template_placeholder}}"})
+
+                template = Template(
+                    template_name=key, text=None, context_key=[], content_harm=True, template_parameters=params
                 )
 
-            template = Template(
-                template_name=tkey,
-                text=None,
-                context_key=[],
-                content_harm=True,
-                template_parameters=params
-            )
-
-            ch_templates.append(template)
+                ch_templates.append(template)
         return ch_templates
 
     def get_template(self, template_name):
         if template_name in CH_TEMPLATES_COLLECTION_KEY:
             return Template(
-                template_name=template_name,
-                text=None,
-                context_key=[],
-                content_harm=True,
-                template_parameters=None
+                template_name=template_name, text=None, context_key=[], content_harm=True, template_parameters=None
             )
 
         if template_name in self.cached_templates_source:
-            template, template_path, loader_func = self.cached_templates_source[template_name]
+            template, _, _ = self.cached_templates_source[template_name]
             return Template(template_name, template, self._get_template_context_key(template_name))
 
-        if template_name not in ALL_TEMPLATES.keys():
+        for name, (template, _, _) in self.cached_templates_source.items():
+            if name == template_name:
+                return Template(template_name, template, self._get_template_context_key(template_name))
+
+        if template_name not in ALL_TEMPLATES:
             raise ValueError(f"{template_name} not in templates library.")
 
-        template_source = self.template_env.loader.get_source(
-            self.template_env, ALL_TEMPLATES[template_name]
-        )
+        template_source = self.template_env.loader.get_source(self.template_env, ALL_TEMPLATES[template_name])
         self.cached_templates_source[template_name] = template_source
 
-        template, template_path, loader_func = template_source
+        template, _, _ = template_source
         return Template(template_name, template, self._get_template_context_key(template_name))
 
     def get_template_parameters(self, template_name):

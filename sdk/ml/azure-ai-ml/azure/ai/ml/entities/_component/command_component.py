@@ -113,7 +113,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
                 DistributionConfiguration,
             ]
         ] = None,
-        resources: Optional[Union[Dict, JobResourceConfiguration]] = None,
+        resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
@@ -150,7 +150,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.code = code
         self.environment_variables = environment_variables
         self.environment = environment
-        self.resources = resources
+        self.resources = resources  # type: ignore[assignment]
         self.distribution = distribution
 
         # check mutual exclusivity of promoted properties
@@ -280,7 +280,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
             else:
                 try:
                     current_obj = current_obj[item]
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     return False
         return True
 
@@ -295,6 +295,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         try:
             toYaml: str = self._to_yaml()
             return toYaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             toStr: str = super(CommandComponent, self).__str__()
             return toStr

@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 """
@@ -37,6 +40,7 @@ def main():
             "properties": {
                 "clientProtocol": "Encrypted",
                 "clusteringPolicy": "EnterpriseCluster",
+                "deferUpgrade": "NotDeferred",
                 "evictionPolicy": "AllKeysLRU",
                 "modules": [
                     {"args": "ERROR_RATE 0.00 INITIAL_SIZE 400", "name": "RedisBloom"},
@@ -51,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseDatabasesCreate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesCreate.json
 if __name__ == "__main__":
     main()

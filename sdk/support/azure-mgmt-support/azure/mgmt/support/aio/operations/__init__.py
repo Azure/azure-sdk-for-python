@@ -13,13 +13,7 @@ from ._support_tickets_operations import SupportTicketsOperations
 from ._support_tickets_no_subscription_operations import SupportTicketsNoSubscriptionOperations
 from ._communications_operations import CommunicationsOperations
 from ._communications_no_subscription_operations import CommunicationsNoSubscriptionOperations
-from ._support_ticket_communications_no_subscription_operations import (
-    SupportTicketCommunicationsNoSubscriptionOperations,
-)
 from ._chat_transcripts_operations import ChatTranscriptsOperations
-from ._support_ticket_chat_transcripts_no_subscription_operations import (
-    SupportTicketChatTranscriptsNoSubscriptionOperations,
-)
 from ._chat_transcripts_no_subscription_operations import ChatTranscriptsNoSubscriptionOperations
 from ._file_workspaces_operations import FileWorkspacesOperations
 from ._file_workspaces_no_subscription_operations import FileWorkspacesNoSubscriptionOperations
@@ -38,9 +32,7 @@ __all__ = [
     "SupportTicketsNoSubscriptionOperations",
     "CommunicationsOperations",
     "CommunicationsNoSubscriptionOperations",
-    "SupportTicketCommunicationsNoSubscriptionOperations",
     "ChatTranscriptsOperations",
-    "SupportTicketChatTranscriptsNoSubscriptionOperations",
     "ChatTranscriptsNoSubscriptionOperations",
     "FileWorkspacesOperations",
     "FileWorkspacesNoSubscriptionOperations",

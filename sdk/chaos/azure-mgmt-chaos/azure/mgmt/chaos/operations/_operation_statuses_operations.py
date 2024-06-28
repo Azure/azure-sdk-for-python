@@ -38,16 +38,16 @@ def build_get_request(location: str, async_operation_id: str, subscription_id: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{location}/operationsStatuses/{asyncOperationId}",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{location}/operationStatuses/{asyncOperationId}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "location": _SERIALIZER.url("location", location, "str"),
+        "location": _SERIALIZER.url("location", location, "str", min_length=1),
         "asyncOperationId": _SERIALIZER.url("async_operation_id", async_operation_id, "str"),
         "subscriptionId": _SERIALIZER.url(
             "subscription_id",
@@ -91,7 +91,7 @@ class OperationStatusesOperations:
     def get(self, location: str, async_operation_id: str, **kwargs: Any) -> _models.OperationStatus:
         """Get the status of a long running azure asynchronous operation.
 
-        :param location: The region name of operation. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param async_operation_id: The operation Id. Required.
         :type async_operation_id: str
@@ -146,5 +146,5 @@ class OperationStatusesOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{location}/operationsStatuses/{asyncOperationId}"
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{location}/operationStatuses/{asyncOperationId}"
     }
