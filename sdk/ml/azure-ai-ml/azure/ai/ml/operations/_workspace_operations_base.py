@@ -130,9 +130,6 @@ class WorkspaceOperationsBase(ABC):
                 workspace.tags.pop("createdByToolkit")
             if existing_workspace.tags is not None:
                 existing_workspace.tags.update(workspace.tags)  # type: ignore
-                # Remove deprecated keys from older workspaces that might still have them before we try to update.
-                for bad_key in WORKSPACE_PATCH_REJECTED_KEYS:
-                    _ = existing_workspace.tags.pop(bad_key, None)
             workspace.tags = existing_workspace.tags
             # TODO do we want projects to do this?
             if workspace._kind != WorkspaceKind.PROJECT:
@@ -378,6 +375,11 @@ class WorkspaceOperationsBase(ABC):
             or kwargs.get("update_online_store_role_assignment", None)
         )
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
+    
+        # Remove deprecated keys from older workspaces that might still have them before we try to update.
+        if workspace.tags is not None:
+            for bad_key in WORKSPACE_PATCH_REJECTED_KEYS:
+                _ = workspace.tags.pop(bad_key, None)
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
