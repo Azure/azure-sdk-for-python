@@ -11,7 +11,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SynonymMap
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, get_credential
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
@@ -20,8 +20,8 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_synonym_map(self, endpoint, api_key):
-        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
+    async def test_synonym_map(self, endpoint):
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
         async with client:
             await self._test_create_synonym_map(client)
             await self._test_delete_synonym_map(client)
