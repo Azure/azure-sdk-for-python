@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_point_of_interest_categories_async.py
+FILE: sample_reverse_geocode_async.py
 DESCRIPTION:
-    This sample demonstrates get POI categories.
+    This sample demonstrates how to perform reverse search by given coordinates.
 USAGE:
-    python sample_get_point_of_interest_categories_async.py
+    python sample_reverse_geocode_async.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
@@ -19,19 +19,28 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+from azure.maps.search.models import LatLon
 
-async def get_point_of_interest_categories_async():
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+
+async def reverse_geocode_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_search_client:
-        result = await maps_search_client.get_point_of_interest_categories()
+        result = await maps_search_client.get_reverse_geocoding(coordinates=LatLon(47.630356, -122.138679))
 
-    print("Get Search POI Categories:")
-    print(result)
+    if result.features:
+        props = result.features[0].properties
+        if props and props.address:
+            print(props.address.formatted_address)
+        else:
+            print("Address is None")
+    else:
+        print("No features available")
 
 if __name__ == '__main__':
-    asyncio.run(get_point_of_interest_categories_async())
+    asyncio.run(reverse_geocode_async())

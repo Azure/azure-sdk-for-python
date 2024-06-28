@@ -7,28 +7,36 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_get_geometries.py
+FILE: sample_get_polygon.py
 DESCRIPTION:
-    This sample demonstrates how to perform fuzzy search by location and lat/lon.
+    This sample demonstrates how to search polygons.
 USAGE:
-    python sample_get_geometries.py
+    python sample_get_polygon.py
 
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+from azure.maps.search.models import Resolution
+from azure.maps.search.models import BoundaryResultType
+from azure.maps.search.models import LatLon
 
-def get_geometries():
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+def get_polygon():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_search_client.get_geometries(geometry_ids=["8bceafe8-3d98-4445-b29b-fd81d3e9adf5"])
+    result = maps_search_client.get_polygon(
+        coordinates=LatLon(47.61256, -122.204141),
+        result_type=BoundaryResultType.LOCALITY,
+        resolution=Resolution.SMALL
+    )
 
-    print(result[0].geometry_data)
+    print(result.geometry)
 
 if __name__ == '__main__':
-    get_geometries()
+    get_polygon()

@@ -7,32 +7,36 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication_async.py
+FILE: sample_geocode_async.py
 DESCRIPTION:
-    This sample demonstrates how to authenticate with the Azure Maps Search
-    service with an Subscription key. See more details about authentication here:
-    https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys
+    This sample demonstrates how to perform search by location.
 USAGE:
-    python sample_authentication_async.py
+    python sample_geocode_async.py
+
     Set the environment variables with your own values before running the sample:
     - AZURE_SUBSCRIPTION_KEY - your subscription key
 """
-
 import asyncio
 import os
 
-async def authentication_maps_service_client_with_subscription_key_credential_async():
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
+
+async def geocode_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
-    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
-
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-
     async with maps_search_client:
-        result = await maps_search_client.get_point_of_interest_categories()
+        result = await maps_search_client.get_geocoding(query="15127 NE 24th Street, Redmond, WA 98052")
 
-    print(result)
+    if result.features:
+        coordinates = result.features[0].geometry.coordinates
+        longitude = coordinates[0]
+        latitude = coordinates[1]
+
+        print(longitude, latitude)
+    else:
+        print("No results")
 
 if __name__ == '__main__':
-    asyncio.run(authentication_maps_service_client_with_subscription_key_credential_async())
+    asyncio.run(geocode_async())
