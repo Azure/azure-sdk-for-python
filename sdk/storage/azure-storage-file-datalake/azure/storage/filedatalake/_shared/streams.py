@@ -495,7 +495,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
             segment_remaining = self._segment_content_length - self._segment_content_offset
             read_size = min(segment_remaining, size - count)
 
-            segment_content = self._inner_stream.read(read_size)
+            segment_content = self._read_from_inner(read_size)
             content.write(segment_content)
 
             # Update the running CRC64 for the segment and message
@@ -524,18 +524,21 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
         if self.message_length - self._message_offset < length:
             raise StructuredMessageError("Invalid structured message data detected.")
 
+    def _read_from_inner(self, size: int) -> bytes:
+        return self._inner_stream.read(size)
+
     def _read_message_header(self) -> None:
         # The first byte should always be the message version
-        self.message_version = int.from_bytes(self._inner_stream.read(1), 'little')
+        self.message_version = int.from_bytes(self._read_from_inner(1), 'little')
 
         if self.message_version == 1:
-            message_length = int.from_bytes(self._inner_stream.read(8), 'little')
+            message_length = int.from_bytes(self._read_from_inner(8), 'little')
             if message_length != self.message_length:
                 raise StructuredMessageError(f"Structured message length {message_length} "
                                              f"did not match content length {self.message_length}")
 
-            self.flags = StructuredMessageProperties(int.from_bytes(self._inner_stream.read(2), 'little'))
-            self.num_segments = int.from_bytes(self._inner_stream.read(2), 'little')
+            self.flags = StructuredMessageProperties(int.from_bytes(self._read_from_inner(2), 'little'))
+            self.num_segments = int.from_bytes(self._read_from_inner(2), 'little')
 
             self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
 
@@ -549,7 +552,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
             raise StructuredMessageError("Invalid structured message data detected.")
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            message_crc = self._inner_stream.read(StructuredMessageConstants.CRC64_LENGTH)
+            message_crc = self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
             if self._message_crc64 != int.from_bytes(message_crc, 'little'):
                 raise StructuredMessageError("CRC64 mismatch detected in message trailer. "
@@ -560,11 +563,11 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
     def _read_segment_header(self) -> None:
         self._assert_remaining_length(self._segment_header_length)
 
-        segment_number = int.from_bytes(self._inner_stream.read(2), 'little')
+        segment_number = int.from_bytes(self._read_from_inner(2), 'little')
         if segment_number != self._segment_number + 1:
             raise StructuredMessageError(f"Structured message segment number invalid or out of order {segment_number}")
         self._segment_number = segment_number
-        self._segment_content_length = int.from_bytes(self._inner_stream.read(8), 'little')
+        self._segment_content_length = int.from_bytes(self._read_from_inner(8), 'little')
         self._message_offset += self._segment_header_length
 
         self._segment_content_offset = 0
@@ -574,7 +577,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
         self._assert_remaining_length(self._segment_footer_length)
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            segment_crc = self._inner_stream.read(StructuredMessageConstants.CRC64_LENGTH)
+            segment_crc = self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
             if self._segment_crc64 != int.from_bytes(segment_crc, 'little'):
                 raise StructuredMessageError(f"CRC64 mismatch detected in segment {self._segment_number}. "
