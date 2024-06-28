@@ -2,18 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Dict
+from typing import Any, Optional, Dict, cast
 import time
+import logging
 
 import msal
 from azure.core.credentials import AccessToken
 
 from .msal_client import MsalClient
+from .utils import within_credential_chain
 from .._internal import _scopes_to_resource
 from .._exceptions import CredentialUnavailableError
 
+_LOGGER = logging.getLogger(__name__)
 
-class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
+class MsalManagedIdentityClient():  # pylint: disable=too-many-instance-attributes
     """Base class for managed identity client wrapping MSAL ManagedIdentityClient.
     """
 
@@ -36,7 +39,7 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
     def close(self) -> None:
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
@@ -58,6 +61,66 @@ class MsalManagedIdentityClient:  # pylint: disable=too-many-instance-attributes
         if "object_id" in identity_config and identity_config["object_id"]:
             return msal.UserAssignedManagedIdentity(object_id=identity_config["object_id"])
         return msal.SystemAssignedManagedIdentity()
+    
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
+        :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
+        :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
+            required data, state, or platform support
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+            attribute gives a reason.
+        """
+        if not scopes:
+            raise ValueError('"get_token" requires at least one scope')
+        _scopes_to_resource(*scopes)
+        token = None
+        try:
+            token = self._request_token(
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            )
+            if token:
+                _LOGGER.log(
+                    logging.DEBUG if within_credential_chain.get() else logging.INFO,
+                    "%s.get_token succeeded",
+                    self.__class__.__name__,
+                )
+                return token
+            _LOGGER.log(
+                logging.DEBUG if within_credential_chain.get() else logging.WARNING,
+                "%s.get_token failed",
+                self.__class__.__name__,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+            )
+            raise CredentialUnavailableError(self.get_unavailable_message())
+        except Exception as ex:  # pylint:disable=broad-except
+            _LOGGER.log(
+                logging.DEBUG if within_credential_chain.get() else logging.WARNING,
+                "%s.get_token failed: %s",
+                self.__class__.__name__,
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+            )
+            raise
 
     def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()

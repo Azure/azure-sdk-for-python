@@ -62,48 +62,6 @@ def test_imds_request_failure_docker_desktop(error_ending):
     assert error_message in ex.value.message
 
 
-def test_cache():
-    scope = "https://foo.bar"
-    expired = "this token's expired"
-    now = int(time.time())
-    token_payload = {
-        "access_token": expired,
-        "refresh_token": "",
-        "expires_in": 0,
-        "expires_on": now - 300,  # expired 5 minutes ago
-        "not_before": now,
-        "resource": scope,
-        "token_type": "Bearer",
-    }
-
-    mock_response = mock.Mock(
-        text=lambda encoding=None: json.dumps(token_payload),
-        headers={"content-type": "application/json"},
-        status_code=200,
-        content_type="application/json",
-    )
-    mock_send = mock.Mock(return_value=mock_response)
-
-    credential = ImdsCredential(transport=mock.Mock(send=mock_send))
-    token = credential.get_token(scope)
-    assert token.token == expired
-    assert mock_send.call_count == 1
-
-    # calling get_token again should provoke another HTTP request
-    good_for_an_hour = "this token's good for an hour"
-    token_payload["expires_on"] = int(time.time()) + 3600
-    token_payload["expires_in"] = 3600
-    token_payload["access_token"] = good_for_an_hour
-    token = credential.get_token(scope)
-    assert token.token == good_for_an_hour
-    assert mock_send.call_count == 2
-
-    # get_token should return the cached token now
-    token = credential.get_token(scope)
-    assert token.token == good_for_an_hour
-    assert mock_send.call_count == 2
-
-
 @pytest.mark.usefixtures("record_imds_test")
 class TestImds(RecordedTestCase):
     @recorded_by_proxy

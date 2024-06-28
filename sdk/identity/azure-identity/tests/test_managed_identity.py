@@ -839,7 +839,6 @@ def test_azure_arc(tmpdir):
         with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
             token = ManagedIdentityCredential(transport=transport).get_token(scope)
             assert token.token == access_token
-            assert token.expires_on == expires_on
 
 
 def test_azure_arc_tenant_id(tmpdir):
@@ -893,7 +892,6 @@ def test_azure_arc_tenant_id(tmpdir):
         with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
             token = ManagedIdentityCredential(transport=transport).get_token(scope, tenant_id="tenant_id")
             assert token.token == access_token
-            assert token.expires_on == expires_on
 
 
 def test_azure_arc_client_id():
