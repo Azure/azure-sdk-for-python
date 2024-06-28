@@ -8,9 +8,7 @@ import platform
 import functools
 import json
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, get_textanalytics_client
 from devtools_testutils import recorded_by_proxy
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
@@ -19,23 +17,20 @@ from azure.ai.textanalytics import (
     TextAnalyticsApiVersion,
 )
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
-
 
 class TestExtractKeyPhrases(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_no_single_input(self, client):
+    def test_no_single_input(self):
+        client = get_textanalytics_client()
         with pytest.raises(TypeError):
             response = client.extract_key_phrases("hello world")
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_dict(self, client):
+    def test_all_successful_passing_dict(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
@@ -48,9 +43,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert phrases.statistics is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_text_document_input(self, client):
+    def test_all_successful_passing_text_document_input(self):
+        client = get_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen", language="en"),
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen", language="es")
@@ -64,9 +59,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert phrases.id is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_only_string(self, client):
+    def test_passing_only_string(self):
+        client = get_textanalytics_client()
         docs = [
             "Microsoft was founded by Bill Gates and Paul Allen",
             "Microsoft fue fundado por Bill Gates y Paul Allen",
@@ -77,9 +72,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert response[2].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_input_with_some_errors(self, client):
+    def test_input_with_some_errors(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
@@ -88,9 +83,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert not response[1].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_input_with_all_errors(self, client):
+    def test_input_with_all_errors(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "English", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": ""}]
 
@@ -99,9 +94,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert response[1].is_error
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_too_many_documents(self, client):
+    def test_too_many_documents(self):
+        client = get_textanalytics_client()
         docs = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven"]
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -111,9 +106,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert "Batch request contains too many records" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_output_same_order_as_input(self, client):
+    def test_output_same_order_as_input(self):
+        client = get_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="one"),
             TextDocumentInput(id="2", text="two"),
@@ -128,36 +123,36 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert str(idx + 1) == doc.id
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": ""})
     @recorded_by_proxy
-    def test_empty_credential_class(self, client):
+    def test_empty_credential_class(self):
+        client = get_textanalytics_client(textanalytics_test_api_key="")
         with pytest.raises(ClientAuthenticationError):
             response = client.extract_key_phrases(
                 ["This is written in English."]
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"textanalytics_test_api_key": "xxxxxxxxxxxx"})
     @recorded_by_proxy
-    def test_bad_credentials(self, client):
+    def test_bad_credentials(self):
+        client = get_textanalytics_client(textanalytics_test_api_key="xxxxxxxxxxxx")
         with pytest.raises(ClientAuthenticationError):
             response = client.extract_key_phrases(
                 ["This is written in English."]
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_document_input(self, client):
+    def test_bad_document_input(self):
+        client = get_textanalytics_client()
         docs = "This is the wrong type"
 
         with pytest.raises(TypeError):
             response = client.extract_key_phrases(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_mixing_inputs(self, client):
+    def test_mixing_inputs(self):
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
             TextDocumentInput(id="2", text="I did not like the hotel we stayed at. It was too expensive."),
@@ -167,9 +162,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             response = client.extract_key_phrases(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_out_of_order_ids(self, client):
+    def test_out_of_order_ids(self):
+        client = get_textanalytics_client()
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "22", "text": ""},
@@ -182,9 +177,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert resp.id == in_order[idx]
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_show_stats_and_model_version(self, client):
+    def test_show_stats_and_model_version(self):
+        client = get_textanalytics_client()
         def callback(response):
             assert response is not None
             assert response.model_version
@@ -208,17 +203,17 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_batch_size_over_limit(self, client):
+    def test_batch_size_over_limit(self):
+        client = get_textanalytics_client()
         docs = ["hello world"] * 1050
         with pytest.raises(HttpResponseError):
             response = client.extract_key_phrases(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint(self, client):
+    def test_whole_batch_language_hint(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"fr\""
             language = resp.http_request.body.count(language_str)
@@ -233,9 +228,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, language="fr", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_dont_use_language_hint(self, client):
+    def test_whole_batch_dont_use_language_hint(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -250,9 +245,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, language="", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_per_item_dont_use_language_hint(self, client):
+    def test_per_item_dont_use_language_hint(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"\""
             language = resp.http_request.body.count(language_str)
@@ -269,9 +264,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_obj_input(self, client):
+    def test_whole_batch_language_hint_and_obj_input(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"de\""
             language = resp.http_request.body.count(language_str)
@@ -286,9 +281,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, language="de", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_obj_per_item_hints(self, client):
+    def test_whole_batch_language_hint_and_obj_per_item_hints(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -306,9 +301,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_whole_batch_language_hint_and_dict_per_item_hints(self, client):
+    def test_whole_batch_language_hint_and_dict_per_item_hints(self):
+        client = get_textanalytics_client()
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -325,9 +320,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, language="en", raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"default_language": "es"})
     @recorded_by_proxy
-    def test_client_passed_default_language_hint(self, client):
+    def test_client_passed_default_language_hint(self):
+        client = get_textanalytics_client(default_language="es")
         def callback(resp):
             language_str = "\"language\": \"es\""
             language = resp.http_request.body.count(language_str)
@@ -347,48 +342,50 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_method(self, client):
+    def test_invalid_language_hint_method(self):
+        client = get_textanalytics_client()
         response = client.extract_key_phrases(
             ["This should fail because we're passing in an invalid language hint"], language="notalanguage"
         )
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_docs(self, client):
+    def test_invalid_language_hint_docs(self):
+        client = get_textanalytics_client()
         response = client.extract_key_phrases(
             [{"id": "1", "language": "notalanguage", "text": "This should fail because we're passing in an invalid language hint"}]
         )
         assert response[0].error.code == 'UnsupportedLanguageCode'
 
+    # @pytest.skip("requires API key")
+    # @TextAnalyticsPreparer()
+    # @recorded_by_proxy
+    # def test_rotate_subscription_key(self, textanalytics_test_endpoint):
+    #     credential = get_credential()
+    #     client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
+
+    #     docs = [{"id": "1", "text": "I will go to the park."},
+    #             {"id": "2", "text": "I did not like the hotel we stayed at."},
+    #             {"id": "3", "text": "The restaurant had really good food."}]
+
+    #     response = client.extract_key_phrases(docs)
+    #     assert response is not None
+
+    #     credential.update("xxx")  # Make authentication fail
+    #     with pytest.raises(ClientAuthenticationError):
+    #         response = client.extract_key_phrases(docs)
+
+    #     updated_test_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
+    #     credential.update(updated_test_api_key)  # Authenticate successfully again
+    #     response = client.extract_key_phrases(docs)
+    #     assert response is not None
+
     @TextAnalyticsPreparer()
     @recorded_by_proxy
-    def test_rotate_subscription_key(self, textanalytics_test_endpoint, textanalytics_test_api_key):
-        credential = AzureKeyCredential(textanalytics_test_api_key)
-        client = TextAnalyticsClient(textanalytics_test_endpoint, credential)
-
-        docs = [{"id": "1", "text": "I will go to the park."},
-                {"id": "2", "text": "I did not like the hotel we stayed at."},
-                {"id": "3", "text": "The restaurant had really good food."}]
-
-        response = client.extract_key_phrases(docs)
-        assert response is not None
-
-        credential.update("xxx")  # Make authentication fail
-        with pytest.raises(ClientAuthenticationError):
-            response = client.extract_key_phrases(docs)
-
-        credential.update(textanalytics_test_api_key)  # Authenticate successfully again
-        response = client.extract_key_phrases(docs)
-        assert response is not None
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy
-    def test_user_agent(self, client):
+    def test_user_agent(self):
+        client = get_textanalytics_client()
         def callback(resp):
             assert "azsdk-python-ai-textanalytics/{} Python/{} ({})".format(
                 VERSION, platform.python_version(), platform.platform()) in \
@@ -401,9 +398,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         response = client.extract_key_phrases(docs, raw_response_hook=callback)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_attribute_error_no_result_attribute(self, client):
+    def test_document_attribute_error_no_result_attribute(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "text": ""}]
         response = client.extract_key_phrases(docs)
 
@@ -423,9 +420,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
 
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_attribute_error_nonexistent_attribute(self, client):
+    def test_document_attribute_error_nonexistent_attribute(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "text": ""}]
         response = client.extract_key_phrases(docs)
 
@@ -436,9 +433,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert default_behavior.args[0] == '\'DocumentError\' object has no attribute \'attribute_not_on_result_or_error\''
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_model_version_error(self, client):
+    def test_bad_model_version_error(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "english", "text": "I did not like the hotel we stayed at."}]
 
         try:
@@ -448,9 +445,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_document_errors(self, client):
+    def test_document_errors(self):
+        client = get_textanalytics_client()
         text = ""
         for _ in range(5121):
             text += "x"
@@ -468,35 +465,35 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert doc_errors[2].error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_not_passing_list_for_docs(self, client):
+    def test_not_passing_list_for_docs(self):
+        client = get_textanalytics_client()
         docs = {"id": "1", "text": "hello world"}
         with pytest.raises(TypeError) as excinfo:
             client.extract_key_phrases(docs)
         assert "Input documents cannot be a dict" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_missing_input_records_error(self, client):
+    def test_missing_input_records_error(self):
+        client = get_textanalytics_client()
         docs = []
         with pytest.raises(ValueError) as excinfo:
             client.extract_key_phrases(docs)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_none_docs(self, client):
+    def test_passing_none_docs(self):
+        client = get_textanalytics_client()
         with pytest.raises(ValueError) as excinfo:
             client.extract_key_phrases(None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_duplicate_ids_error(self, client):
+    def test_duplicate_ids_error(self):
+        client = get_textanalytics_client()
         # Duplicate Ids
         docs = [{"id": "1", "text": "hello world"},
                 {"id": "1", "text": "I did not like the hotel we stayed at."}]
@@ -507,9 +504,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_batch_size_over_limit_error(self, client):
+    def test_batch_size_over_limit_error(self):
+        client = get_textanalytics_client()
         # Batch size over limit
         docs = ["hello world"] * 1001
         try:
@@ -519,9 +516,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
             assert err.error.message is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_language_kwarg_spanish(self, client):
+    def test_language_kwarg_spanish(self):
+        client = get_textanalytics_client()
         def callback(response):
             language_str = "\"language\": \"es\""
             assert response.http_request.body.count(language_str) == 1
@@ -537,9 +534,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_pass_cls(self, client):
+    def test_pass_cls(self):
+        client = get_textanalytics_client()
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = client.extract_key_phrases(
@@ -549,9 +546,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_1})
     @recorded_by_proxy
-    def test_disable_service_logs(self, client):
+    def test_disable_service_logs(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V3_1)
         def callback(resp):
             assert resp.http_request.query['loggingOptOut']
         client.extract_key_phrases(
@@ -561,9 +558,9 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V2022_05_01})
     @recorded_by_proxy
-    def test_disable_service_logs_body_param(self, client):
+    def test_disable_service_logs_body_param(self):
+        client = get_textanalytics_client(api_version=TextAnalyticsApiVersion.V2022_05_01)
         def callback(resp):
             assert json.loads(resp.http_request.body)['parameters']['loggingOptOut']
         client.extract_key_phrases(
@@ -573,10 +570,8 @@ class TestExtractKeyPhrases(TextAnalyticsTest):
         )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
     def test_key_phrases_multiapi_validate_args_v3_0(self, **kwargs):
-        client = kwargs.pop("client")
-
+        client = get_textanalytics_client(api_version="v3.0")
         with pytest.raises(ValueError) as e:
             res = client.extract_key_phrases(["I'm tired"], disable_service_logs=True)
         assert str(e.value) == "'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"

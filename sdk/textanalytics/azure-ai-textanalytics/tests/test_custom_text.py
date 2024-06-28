@@ -6,22 +6,16 @@
 import pytest
 import functools
 import datetime
-from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud, get_textanalytics_client
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     TextAnalysisLROPoller
 )
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
-
 TextAnalyticsCustomPreparer = functools.partial(
     TextAnalyticsPreparer,
     textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     textanalytics_single_label_classify_project_name="single_label_classify_project_name",
     textanalytics_single_label_classify_deployment_name="single_label_classify_deployment_name",
     textanalytics_multi_label_classify_project_name="multi_label_classify_project_name",
@@ -41,13 +35,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_poller_metadata(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [{"id": "56", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."}]
 
         poller = client.begin_recognize_custom_entities(
@@ -72,13 +64,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_recognize_custom_entities(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -113,13 +103,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_recognize_custom_entities_continuation_token(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -159,13 +147,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_single_label_classify(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -194,13 +180,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_single_label_classify_cont_token(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -237,13 +221,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_multi_label_classify(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_multi_label_classify_project_name,
             textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -272,14 +254,11 @@ class TestCustomText(TextAnalyticsTest):
     @recorded_by_proxy
     def test_multi_label_classify_cont_token(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_multi_label_classify_project_name,
             textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint,
-                                     AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en",
              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},

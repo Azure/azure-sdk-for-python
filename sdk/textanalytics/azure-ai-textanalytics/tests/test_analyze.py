@@ -12,9 +12,7 @@ import datetime
 import json
 from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud, get_textanalytics_client
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics._lro import AnalyzeActionsLROPoller, TextAnalysisLROPoller
 from azure.ai.textanalytics import (
@@ -45,13 +43,10 @@ from azure.ai.textanalytics import (
     AbstractiveSummaryAction,
 )
 
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 TextAnalyticsCustomPreparer = functools.partial(
     TextAnalyticsPreparer,
     textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     textanalytics_single_label_classify_project_name="single_label_classify_project_name",
     textanalytics_single_label_classify_deployment_name="single_label_classify_deployment_name",
     textanalytics_multi_label_classify_project_name="multi_label_classify_project_name",
@@ -67,16 +62,15 @@ class TestAnalyze(TextAnalyticsTest):
         return 5 if self.is_live else 0
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     def test_no_single_input(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_textanalytics_client()
         with pytest.raises(TypeError):
             response = client.begin_analyze_actions("hello world", actions=[], polling_interval=self._interval())
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_dict_key_phrase_task(self, client):
+    def test_all_successful_passing_dict_key_phrase_task(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
                 {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
 
@@ -100,9 +94,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.id is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_dict_sentiment_task(self, client):
+    def test_all_successful_passing_dict_sentiment_task(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": "Microsoft was founded by Bill Gates and Paul Allen."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at. It was too expensive."},
                 {"id": "3", "language": "en", "text": "The restaurant had really good food. I recommend you try it."}]
@@ -141,9 +135,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.sentences[1].text == "I recommend you try it."
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_sentiment_analysis_task_with_opinion_mining(self, client):
+    def test_sentiment_analysis_task_with_opinion_mining(self):
+        client = get_textanalytics_client()
         documents = [
             "It has a sleek premium aluminum design that makes it beautiful to look at.",
             "The food and service is not good"
@@ -217,9 +211,9 @@ class TestAnalyze(TextAnalyticsTest):
                     assert 0.0 == food_target.confidence_scores.neutral
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_text_document_input_entities_task(self, client):
+    def test_all_successful_passing_text_document_input_entities_task(self):
+        client = get_textanalytics_client()
         docs = [
             TextDocumentInput(id="1", text="Microsoft was founded by Bill Gates and Paul Allen on April 4, 1975", language="en"),
             TextDocumentInput(id="2", text="Microsoft fue fundado por Bill Gates y Paul Allen el 4 de abril de 1975.", language="es"),
@@ -252,10 +246,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert entity.confidence_score is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_all_successful_passing_string_pii_entities_task(self, client):
-
+    def test_all_successful_passing_string_pii_entities_task(self):
+        client = get_textanalytics_client()
         docs = ["My SSN is 859-98-0987.",
                 "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check.",
                 "Is 998.214.865-68 your Brazilian CPF number?"
@@ -287,9 +280,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert entity.confidence_score is not None
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_request_on_empty_document(self, client):
+    def test_bad_request_on_empty_document(self):
+        client = get_textanalytics_client()
         docs = [""]
 
         with pytest.raises(HttpResponseError):
@@ -300,11 +293,9 @@ class TestAnalyze(TextAnalyticsTest):
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "textanalytics_test_api_key": "",
-    })
     @recorded_by_proxy
-    def test_empty_credential_class(self, client):
+    def test_empty_credential_class(self):
+        client = get_textanalytics_client(textanalytics_test_api_key="")
         with pytest.raises(ClientAuthenticationError):
             response = client.begin_analyze_actions(
                 ["This is written in English."],
@@ -319,11 +310,9 @@ class TestAnalyze(TextAnalyticsTest):
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={
-        "textanalytics_test_api_key": "xxxxxxxxxxxx",
-    })
     @recorded_by_proxy
-    def test_bad_credentials(self, client):
+    def test_bad_credentials(self):
+        client = get_textanalytics_client(textanalytics_test_api_key="xxxxxxxxxxxx")
         with pytest.raises(ClientAuthenticationError):
             response = client.begin_analyze_actions(
                 ["This is written in English."],
@@ -338,9 +327,9 @@ class TestAnalyze(TextAnalyticsTest):
             )
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_out_of_order_ids_multiple_tasks(self, client):
+    def test_out_of_order_ids_multiple_tasks(self):
+        client = get_textanalytics_client()
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
@@ -376,10 +365,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy
-    def test_show_stats_and_model_version_multiple_tasks_v3_1(self, client):
-
+    def test_show_stats_and_model_version_multiple_tasks_v3_1(self):
+        client = get_textanalytics_client(api_version="v3.1")
         def callback(resp):
             assert resp.raw_response
             tasks = resp.raw_response['tasks']
@@ -437,10 +425,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.transaction_count
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_show_stats_and_model_version_multiple_tasks(self, client):
-
+    def test_show_stats_and_model_version_multiple_tasks(self):
+        client = get_textanalytics_client()
         def callback(resp):
             assert resp.raw_response
             tasks = resp.raw_response['tasks']
@@ -496,9 +483,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.transaction_count
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_poller_metadata(self, client):
+    def test_poller_metadata(self):
+        client = get_textanalytics_client()
         docs = [{"id": "56", "text": ":)"}]
 
         poller = client.begin_analyze_actions(
@@ -524,9 +511,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert poller.id
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_invalid_language_hint_method(self, client):
+    def test_invalid_language_hint_method(self):
+        client = get_textanalytics_client()
         response = list(client.begin_analyze_actions(
             ["This should fail because we're passing in an invalid language hint"],
             language="notalanguage",
@@ -546,9 +533,9 @@ class TestAnalyze(TextAnalyticsTest):
                 assert doc.error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_model_version_error_multiple_tasks(self, client):
+    def test_bad_model_version_error_multiple_tasks(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError) as e:
@@ -566,9 +553,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert e.value.error.details
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_bad_model_version_error_all_tasks(self, client):  # TODO: verify behavior of service
+    def test_bad_model_version_error_all_tasks(self):  # TODO: verify behavior of service
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
         with pytest.raises(HttpResponseError):
@@ -585,9 +572,8 @@ class TestAnalyze(TextAnalyticsTest):
             ).result()
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     def test_missing_input_records_error(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_textanalytics_client()
         docs = []
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze_actions(
@@ -604,17 +590,16 @@ class TestAnalyze(TextAnalyticsTest):
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     def test_passing_none_docs(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_textanalytics_client()
         with pytest.raises(ValueError) as excinfo:
             client.begin_analyze_actions(None, None)
         assert "Input documents can not be empty or None" in str(excinfo.value)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_pass_cls(self, client):
+    def test_pass_cls(self):
+        client = get_textanalytics_client()
         def callback(pipeline_response, deserialized, _):
             return "cls result"
         res = client.begin_analyze_actions(
@@ -628,9 +613,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert res == "cls result"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_multiple_pages_of_results_returned_successfully(self, client):
+    def test_multiple_pages_of_results_returned_successfully(self):
+        client = get_textanalytics_client()
         single_doc = "hello world"
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 25)))] # max number of documents is 25
 
@@ -670,9 +655,9 @@ class TestAnalyze(TextAnalyticsTest):
             assert len(document_results) == len(docs)
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_too_many_documents(self, client):
+    def test_too_many_documents(self):
+        client = get_textanalytics_client()
         docs = list(itertools.repeat("input document", 26))  # Maximum number of documents per request is 25
 
         with pytest.raises(HttpResponseError) as excinfo:
@@ -694,8 +679,6 @@ class TestAnalyze(TextAnalyticsTest):
     @recorded_by_proxy
     def test_disable_service_logs(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name,
             textanalytics_multi_label_classify_project_name,
@@ -704,7 +687,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         actions = [
             RecognizeEntitiesAction(disable_service_logs=True),
             ExtractKeyPhrasesAction(disable_service_logs=True),
@@ -746,10 +729,9 @@ class TestAnalyze(TextAnalyticsTest):
         ).result()
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_pii_action_categories_filter(self, client):
-
+    def test_pii_action_categories_filter(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "text": "My SSN is 859-98-0987."},
                 {"id": "2",
                  "text": "Your ABA number - 111000025 - is the first 9 digits in the lower left hand corner of your personal check."},
@@ -776,9 +758,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skip("No longer tests what it intended to. Need new way to test partial actions before re-enabling.")
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_partial_success_for_actions(self, client):
+    def test_partial_success_for_actions(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "tr", "text": "I did not like the hotel we stayed at."},
                 {"id": "2", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
@@ -815,9 +797,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skip("Flaky test")
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_multiple_of_same_action(self, client):
+    def test_multiple_of_same_action(self):
+        client = get_textanalytics_client()
         docs = [
             {"id": "28", "text": "My SSN is 859-98-0987. Here is another sentence."},
             {"id": "3", "text": "Is 998.214.865-68 your Brazilian CPF number? Here is another sentence."},
@@ -895,9 +877,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_multiple_of_same_action_with_partial_results(self, client):
+    def test_multiple_of_same_action_with_partial_results(self):
+        client = get_textanalytics_client()
         docs = [{"id": "5", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
                 {"id": "2", "text": ""}]
 
@@ -936,13 +918,11 @@ class TestAnalyze(TextAnalyticsTest):
     @recorded_by_proxy
     def test_single_label_classify(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -977,13 +957,11 @@ class TestAnalyze(TextAnalyticsTest):
     @recorded_by_proxy
     def test_multi_label_classify(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_multi_label_classify_project_name,
             textanalytics_multi_label_classify_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1018,13 +996,11 @@ class TestAnalyze(TextAnalyticsTest):
     @recorded_by_proxy
     def test_recognize_custom_entities(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_custom_entities_project_name,
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1062,8 +1038,6 @@ class TestAnalyze(TextAnalyticsTest):
     @recorded_by_proxy
     def test_custom_partial_error(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
             textanalytics_single_label_classify_project_name,
             textanalytics_single_label_classify_deployment_name,
             textanalytics_multi_label_classify_project_name,
@@ -1072,7 +1046,7 @@ class TestAnalyze(TextAnalyticsTest):
             textanalytics_custom_entities_deployment_name
     ):
         set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1109,9 +1083,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_analyze_continuation_token(self, client):
+    def test_analyze_continuation_token(self):
+        client = get_textanalytics_client()
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."},
@@ -1195,9 +1169,7 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
+        client = get_textanalytics_client(transport=transport, api_version="v3.1")
 
         with pytest.raises(HttpResponseError) as e:
             response = list(client.begin_analyze_actions(
@@ -1241,9 +1213,7 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport)
+        client = get_textanalytics_client(transport=transport)
 
         # workaround to get mocked response to work with deserialized polymorphic response type
         def get_deserialized_for_mock(response, deserialized, headers):
@@ -1312,9 +1282,7 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
+        client = get_textanalytics_client(transport=transport, api_version="v3.1")
 
         response = list(client.begin_analyze_actions(
             docs,
@@ -1381,9 +1349,7 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport)
+        client = get_textanalytics_client(transport=transport)
 
         # workaround to get mocked response to work with deserialized polymorphic response type
         def get_deserialized_for_mock(response, deserialized, headers):
@@ -1474,9 +1440,7 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key), transport=transport, api_version="v3.1")
+        client = get_textanalytics_client(transport=transport, api_version="v3.1")
 
         with pytest.raises(HttpResponseError) as e:
             response = list(client.begin_analyze_actions(
@@ -1521,10 +1485,7 @@ class TestAnalyze(TextAnalyticsTest):
         response.content_type = "application/json"
         transport = mock.Mock(send=lambda request, **kwargs: response)
 
-        endpoint = kwargs.pop("textanalytics_test_endpoint")
-        key = kwargs.pop("textanalytics_test_api_key")
-        client = TextAnalyticsClient(endpoint, AzureKeyCredential(key),
-                                     transport=transport)
+        client = get_textanalytics_client(transport=transport)
 
         # workaround to get mocked response to work with deserialized polymorphic response type
         def get_deserialized_for_mock(response, deserialized, headers):
@@ -1556,9 +1517,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : keyphrasescomposite."
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy
-    def test_analyze_works_with_v3_1(self, client):
+    def test_analyze_works_with_v3_1(self):
+        client = get_textanalytics_client(api_version="v3.1")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
@@ -1595,9 +1556,8 @@ class TestAnalyze(TextAnalyticsTest):
                 assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.0"})
     def test_analyze_multiapi_validate_v3_0(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_textanalytics_client(api_version="v3.0")
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
                 {"id": "19", "text": ":P"},
@@ -1623,7 +1583,6 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsCustomPreparer()
     def test_analyze_multiapi_validate_v3_1(self, **kwargs):
         textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
-        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
         textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
         textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
         textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
@@ -1631,7 +1590,7 @@ class TestAnalyze(TextAnalyticsTest):
         textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
         textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
 
-        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key), api_version="v3.1")
+        client = get_textanalytics_client(api_version="v3.1")
 
         docs = [{"id": "56", "text": ":)"},
                 {"id": "0", "text": ":("},
@@ -1669,9 +1628,9 @@ class TestAnalyze(TextAnalyticsTest):
                                f"Use service API version {version_supported} or newer.\n"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_healthcare_action(self, client):
+    def test_healthcare_action(self):
+        client = get_textanalytics_client()
         docs = [
             "Patient does not suffer from high blood pressure.",
             "Prescribed 100mg ibuprofen, taken twice daily.",
@@ -1699,9 +1658,9 @@ class TestAnalyze(TextAnalyticsTest):
                     assert res.statistics
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_cancel(self, client):
+    def test_cancel(self):
+        client = get_textanalytics_client()
         single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))]
         actions=[
@@ -1720,9 +1679,9 @@ class TestAnalyze(TextAnalyticsTest):
         poller.cancel()
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_cancel_partial_results(self, client):
+    def test_cancel_partial_results(self):
+        client = get_textanalytics_client()
         single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 5)))]
         actions=[
@@ -1751,9 +1710,9 @@ class TestAnalyze(TextAnalyticsTest):
         assert poller.status() == "cancelled"
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_cancel_fail_terminal_state(self, client):
+    def test_cancel_fail_terminal_state(self):
+        client = get_textanalytics_client()
         single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))] # max number of documents is 25
         actions=[
@@ -1774,9 +1733,9 @@ class TestAnalyze(TextAnalyticsTest):
             poller.cancel()  # can't cancel when already in terminal state
 
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer({"api_version": "v3.1"})
     @recorded_by_proxy
-    def test_cancel_fail_v3_1(self, client):
+    def test_cancel_fail_v3_1(self):
+        client = get_textanalytics_client(api_version="v3.1")
         single_doc = "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
         docs = [{"id": str(idx), "text": val} for (idx, val) in enumerate(list(itertools.repeat(single_doc, 20)))] # max number of documents is 25
         actions=[
@@ -1799,9 +1758,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_dict_extract_summary_action(self, client):
+    def test_passing_dict_extract_summary_action(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
@@ -1846,9 +1805,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_extract_summary_action_with_options(self, client):
+    def test_extract_summary_action_with_options(self):
+        client = get_textanalytics_client()
         docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
             "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
@@ -1893,9 +1852,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_extract_summary_partial_results(self, client):
+    def test_extract_summary_partial_results(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
 
         response = client.begin_analyze_actions(
@@ -1914,9 +1873,9 @@ class TestAnalyze(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_passing_dict_abstract_summary_action(self, client):
+    def test_passing_dict_abstract_summary_action(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
