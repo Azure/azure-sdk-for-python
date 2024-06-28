@@ -9,11 +9,13 @@ def create_session_with_retry(retry=3):
     """
     Create requests.session with retry.
 
+    :param retry: Number of retries for HTTP requests. Default is 3.
     :type retry: int
-    rtype: Response
+    :return: Requests session object with retry configured.
+    :rtype: requests.sessions.Session
     """
-    import requests
-    from requests.adapters import HTTPAdapter
+    import requests  # pylint: disable=networking-import-outside-azure-core-transport
+    from requests.adapters import HTTPAdapter  # pylint: disable=networking-import-outside-azure-core-transport
 
     retry_policy = _get_retry_policy(num_retry=retry)
 
@@ -27,6 +29,8 @@ def _get_retry_policy(num_retry=3):
     """
     Request retry policy with increasing backoff.
 
+    :param num_retry: The number of retries. Default is 3.
+    :type num_retry: int
     :return: Returns the msrest or requests REST client retry policy.
     :rtype: urllib3.Retry
     """
@@ -49,7 +53,18 @@ def _get_retry_policy(num_retry=3):
 
 
 def send_post_request(url, headers, payload):
-    """Send a POST request."""
+    """
+    Send a POST request.
+
+    :param url: The URL to send the POST request to.
+    :type url: str
+    :param headers: The headers to be included in the request.
+    :type headers: dict
+    :param payload: The payload to be sent in the request body.
+    :type payload: dict
+    :return: The response object.
+    :rtype: Response
+    """
     with create_session_with_retry() as session:
         response = session.post(url, data=json.dumps(payload), headers=headers)
         # Raise an exception if the response contains an HTTP error status code
