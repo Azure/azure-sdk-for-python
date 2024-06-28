@@ -330,6 +330,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         from ..._pyamqp.error import ErrorCondition
         try:
+            if handler._link._is_closed:
+                raise AMQPLinkError("Link is closed.")
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
