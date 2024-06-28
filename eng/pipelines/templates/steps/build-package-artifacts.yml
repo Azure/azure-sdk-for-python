@@ -75,18 +75,27 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-  # todo: make save-package-properties work for multiple discovered services
-  - task: Powershell@2
-    inputs:
-      filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-      arguments: >
-        -ServiceDirectory ${{parameters.ServiceDirectory}}
-        -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        -AddDevVersion
-      pwsh: true
-      workingDirectory: $(Pipeline.Workspace)
-    displayName: Update package properties with dev version
-    condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
+  - if ${{ eq(parameters.ServiceDirectory, "auto") }}:
+    - task: Powershell@2
+          inputs:
+            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-All-Package-Properties.ps1
+            # inputDiffJson populated by targeting-string-resolve.yml
+            arguments: >
+              -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
+              -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Update package properties with dev version
+  - ${{ else }}:
+    - task: Powershell@2
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+        arguments: >
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+      displayName: Update package properties with dev version
 
   - script: |
       sudo apt-get update
