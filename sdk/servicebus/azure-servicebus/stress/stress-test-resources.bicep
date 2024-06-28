@@ -112,9 +112,7 @@ resource testQueueWithSessions 'Microsoft.ServiceBus/namespaces/queues@2017-04-0
   }
 }
 
-output SERVICEBUS_CONNECTION_STRING string = listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', baseName, 'RootManageSharedAccessKey'), apiVersion).primaryConnectionString
-output SERVICEBUS_CONNECTION_STRING_NO_MANAGE string = listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', baseName, 'NoManage'), apiVersion).primaryConnectionString
-output SERVICEBUS_CONNECTION_STRING_PREMIUM string = listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', sbPremiumName, 'RootManageSharedAccessKey'), apiVersion).primaryConnectionString
-output SERVICEBUS_ENDPOINT string = replace(replace(servicebus.properties.serviceBusEndpoint, ':443/', ''), 'https://', '')
+
+output SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE string = replace(replace(servicebus.properties.serviceBusEndpoint, ':443/', ''), 'https://', '')
 output QUEUE_NAME string = 'testQueue'
 output QUEUE_NAME_WITH_SESSIONS string = 'testQueueWithSessions'
