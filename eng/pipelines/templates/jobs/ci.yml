@@ -232,6 +232,20 @@ jobs:
       os: linux
 
     steps:
+    - task: DownloadPipelineArtifact@2
+      condition: succeededOrFailed()
+      inputs:
+        artifactName: 'packages_extended'
+        targetPath: $(Build.ArtifactStagingDirectory)
+
+    - pwsh: |
+        $source = "$(Build.ArtifactStagingDirectory)/packages_extended"
+        $destination = "$(Build.ArtifactStagingDirectory)/packages"
+        if (Test-Path $source) {
+          Rename-Item -Path $source -NewName $destination
+        }
+      displayName: Move packages_extended to packages
+
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -248,12 +262,6 @@ jobs:
         ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
           Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
-
-    - task: DownloadPipelineArtifact@2
-      condition: succeededOrFailed()
-      inputs:
-        artifactName: 'packages_extended'
-        targetPath: $(Build.ArtifactStagingDirectory)
 
     - template: ../steps/analyze.yml
       parameters:

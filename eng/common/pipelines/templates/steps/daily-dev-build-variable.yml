@@ -4,6 +4,7 @@ parameters:
   ServiceDirectory: ''
 steps:
 - ${{if ne(parameters.ServiceDirectory, '')}}:
+  # need to expand and contract this guy
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1

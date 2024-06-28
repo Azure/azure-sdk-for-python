@@ -75,6 +75,7 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
+  # todo: make save-package-properties work for multiple discovered services
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
