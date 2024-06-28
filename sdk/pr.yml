@@ -1,3 +1,7 @@
+trigger:
+  branches:
+    exclude:
+    - pipelinev3
 
 pr:
   branches:
