@@ -809,14 +809,48 @@ try {
         }
         Log $msg
 
-        $deployment = Retry {
-            New-AzResourceGroupDeployment `
+        $deployment = $null
+
+        try {
+            $deployment = New-AzResourceGroupDeployment `
                     -Name $BaseName `
                     -ResourceGroupName $resourceGroup.ResourceGroupName `
                     -TemplateFile $templateFile.jsonFilePath `
                     -TemplateParameterObject $templateFileParameters `
                     -Force:$Force
+        } catch {
+            Write-Error "Failed to deploy template '$($templateFile.jsonFilePath)' to resource group '$($resourceGroup.ResourceGroupName)'"
+            try {
+                # Extract error details
+                $errorDetails = $_.Exception
+
+                # Write detailed error information
+                Write-Host "Error Message: $($errorDetails.Message)"
+                Write-Host "Error Type: $($errorDetails.GetType().FullName)"
+                
+                if ($errorDetails.InnerException) {
+                    Write-Host "Inner Exception: $($errorDetails.InnerException.Message)"
+                }
+
+                if ($errorDetails.ErrorRecord) {
+                    Write-Host "Error Record: $($errorDetails.ErrorRecord)"
+                }
+            }
+            catch(){}
+
+            try {
+                Write-Host ($deployment | Format-Table | Out-String)   
+            }
+            catch(){}
+
+            try {
+                Write-Host ($_ | Format-Table | Out-String)   
+            }
+            catch(){}
+
+            throw
         }
+        
         if ($deployment.ProvisioningState -ne 'Succeeded') {
             Write-Host "Deployment '$($deployment.DeploymentName)' has state '$($deployment.ProvisioningState)' with CorrelationId '$($deployment.CorrelationId)'. Exiting..."
             Write-Host @'
