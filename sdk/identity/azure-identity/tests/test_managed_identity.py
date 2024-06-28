@@ -634,7 +634,7 @@ def test_imds_text_response():
     mock_send = mock.Mock(return_value=response)
     credential = ManagedIdentityCredential(transport=mock.Mock(send=mock_send))
     with pytest.raises(CredentialUnavailableError):
-        token = credential.get_token("")
+        token = credential.get_token("scope")
     within_credential_chain.set(False)
 
 
@@ -915,7 +915,7 @@ def test_azure_arc_client_id():
 
 def test_azure_arc_key_too_large(tmp_path):
 
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -951,7 +951,7 @@ def test_azure_arc_key_too_large(tmp_path):
 
 def test_azure_arc_key_not_exist(tmp_path):
 
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"
@@ -981,7 +981,7 @@ def test_azure_arc_key_not_exist(tmp_path):
 
 def test_azure_arc_key_invalid(tmp_path):
 
-    api_version = "2019-11-01"
+    api_version = "2020-06-01"
     identity_endpoint = "http://localhost:42/token"
     imds_endpoint = "http://localhost:42"
     scope = "scope"

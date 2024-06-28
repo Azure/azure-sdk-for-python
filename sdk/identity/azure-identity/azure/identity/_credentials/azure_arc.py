@@ -32,7 +32,7 @@ def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
         )
 
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2019-11-01", "resource": scope}, **identity_config))
+    request.format_parameters(dict({"api-version": "2020-06-01", "resource": scope}, **identity_config))
     return request
 
 
