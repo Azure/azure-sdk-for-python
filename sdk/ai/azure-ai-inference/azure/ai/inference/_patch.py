@@ -19,12 +19,31 @@ Why do we patch auto-generated code?
 6. Add support for load() method in ImageUrl class (see /models/_patch.py).
 
 """
+from __future__ import annotations
+
 import json
 import logging
 import sys
-
+import functools
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING, Iterable
+from typing import (
+    Any,
+    Dict,
+    Union,
+    IO,
+    List,
+    Literal,
+    Optional,
+    overload,
+    Type,
+    TYPE_CHECKING,
+    Iterable,
+    Iterator,
+    TypeVar,
+    Callable,
+)
+
+from typing_extensions import ParamSpec
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
@@ -38,6 +57,9 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceNotModifiedError,
 )
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
+from azure.core.tracing.common import get_function_and_class_name
 from . import models as _models
 from ._model_base import SdkJSONEncoder, _deserialize
 from ._serialization import Serializer
@@ -63,6 +85,7 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
+    from azure.core.tracing import AbstractSpan
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
@@ -71,6 +94,187 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 _LOGGER = logging.getLogger(__name__)
+
+
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+def _set_attributes(span: AbstractSpan, *attrs: tuple[str, Any]) -> None:
+    for attr in attrs:
+        key, value = attr
+        if value is not None:
+            span.add_attribute(key, value)
+
+
+def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
+    for message in kwargs.get("messages", []):
+        try:
+            message = message.as_dict()
+        except AttributeError:
+            pass
+
+        if message.get("role"):
+            name = f"gen_ai.{message.get('role')}.message"
+            span.span_instance.add_event(
+                name=name,
+                attributes={
+                    "get_ai.system": "openai",
+                    "gen_ai.event.content": json.dumps(message)
+                }
+            )
+
+
+def _add_request_chat_attributes(span: AbstractSpan, **kwargs: Any) -> None:
+    _set_attributes(
+        span,
+        ("gen_ai.system", "openai"),
+        ("gen_ai.request.model", kwargs.get("model")),
+        ("gen_ai.request.max_tokens", kwargs.get("max_tokens")),
+        ("gen_ai.request.temperature", kwargs.get("temperature")),
+        ("gen_ai.request.top_p", kwargs.get("top_p")),
+    )
+
+
+def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCompletions) -> None:
+    for choice in result.choices:
+        response: dict[str, Any] = {
+            "message": {"content": choice.message.content},
+            "finish_reason": str(choice.finish_reason),
+            "index": choice.index,
+        }
+        if choice.message.tool_calls:
+            response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
+        span.span_instance.add_event(
+            name="gen_ai.choice",
+            attributes={
+                "get_ai.system": "openai",
+                "gen_ai.event.content": json.dumps(response)
+            }
+        )
+
+
+def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
+    _set_attributes(
+        span,
+        ("gen_ai.response.id", result.id),
+        ("gen_ai.response.model", result.model),
+        ("gen_ai.response.finish_reason", str(result.choices[-1].finish_reason)),
+        ("gen_ai.usage.completion_tokens", result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None),
+        ("gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None),
+    )
+
+
+def _add_request_span_attributes(span: AbstractSpan, span_name: str, kwargs: Any) -> None:
+    if span_name.startswith("ChatCompletionsClient.complete"):
+        _add_request_chat_attributes(span, **kwargs)
+        _add_request_chat_message_event(span, **kwargs)
+    # TODO add more models here
+
+
+def _add_response_span_attributes(span: AbstractSpan, result: object) -> None:
+    if isinstance(result, _models.ChatCompletions):
+        _add_response_chat_attributes(span, result)
+        _add_response_chat_message_event(span, result)
+    # TODO add more models here
+
+
+def _accumulate_response(item, accumulate: dict[str, Any]) -> None:
+    if item.finish_reason:
+        accumulate["finish_reason"] = item.finish_reason
+    if item.index:
+        accumulate["index"] = item.index
+    if item.delta.content:
+        accumulate.setdefault("message", {})
+        accumulate["message"].setdefault("content", "")
+        accumulate["message"]["content"] += item.delta.content
+    if item.delta.tool_calls:
+        accumulate.setdefault("message", {})
+        accumulate["message"].setdefault("tool_calls", [])
+        for tool_call in item.delta.tool_calls:
+            if tool_call.id:
+                accumulate["message"]["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
+            if tool_call.type:
+                accumulate["message"]["tool_calls"][-1]["type"] = tool_call.type
+            if tool_call.function and tool_call.function.name:
+                accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+            if tool_call.function and tool_call.function.arguments:
+                accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+
+
+def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: AbstractSpan) ->  _models.StreamingChatCompletions:
+    class StreamWrapper(_models.StreamingChatCompletions):
+        def __init__(self, stream_obj):
+            super().__init__(stream_obj._response)
+
+        def __iter__(self) -> Iterator[_models.StreamingChatCompletionsUpdate]:
+            try:
+                accumulate: dict[str, Any] = {}
+                for chunk in stream_obj:
+                    for item in chunk.choices:
+                        _accumulate_response(item, accumulate)
+                    yield chunk
+
+                span.span_instance.add_event(
+                    name="gen_ai.choice",
+                    attributes={
+                        "get_ai.system": "openai",
+                        "gen_ai.event.content": json.dumps(accumulate)
+                    }
+                )
+                _add_response_chat_attributes(span, chunk)
+
+            except Exception as exc:
+                _set_attributes(span, ("error.type", exc.__class__.__name__))
+                raise
+
+            finally:
+                if stream_obj._done is False:
+                    if accumulate.get("finish_reason") is None:
+                        accumulate["finish_reason"] = "error"
+                    span.span_instance.add_event(
+                        name="gen_ai.choice",
+                        attributes={
+                            "get_ai.system": "openai",
+                            "gen_ai.event.content": json.dumps(accumulate)
+                        }
+                    )
+                span.finish()
+
+    return StreamWrapper(stream_obj)
+
+
+
+def llm_trace(func: Callable[_P, _R]) -> Callable[_P, _R]:
+    @functools.wraps(func)
+    def inner(*args: _P.args, **kwargs: _P.kwargs) -> _R:
+
+        span_impl_type = settings.tracing_implementation()
+        if span_impl_type is None:
+            return func(*args, **kwargs)
+
+        span_name = get_function_and_class_name(func, *args)
+        span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
+        try:
+            # tracing events not supported in azure-core-tracing-opentelemetry
+            # so need to access the span instance directly
+            with span_impl_type.change_context(span.span_instance):
+                _add_request_span_attributes(span, span_name, kwargs)
+                result =  func(*args, **kwargs)
+                if kwargs.get("stream") is True:
+                    return _wrapped_stream(result, span)
+                _add_response_span_attributes(span, result)
+
+        except Exception as exc:
+            _set_attributes(span, ("error.type", exc.__class__.__name__))
+            span.finish()
+            raise
+
+        span.finish()
+        return result
+
+    return inner
+
 
 
 def load_client(
@@ -360,7 +564,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError
         """
 
-    @distributed_trace
+    @llm_trace
     def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
