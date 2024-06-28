@@ -3,6 +3,7 @@ pr:
   branches:
     include:
     - pipelinev3
+    - pipelinev3-test
   paths:
     include:
     # when being utilized for all prs, the value will be /*
