@@ -20,7 +20,7 @@ steps:
       - task: PowerShell@2
         inputs:
           filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
-          arguments: '-TargetPath ${{ parameters.TargetRepo }} -OutputPath $(Build.ArtifactStagingDirectory)/diff'
+          arguments: '-TargetPath ${{ parameters.TargetRepo }} -ArtifactPath $(Build.ArtifactStagingDirectory)/diff'
         displayName: 'Compare PR changes to targeting string'
 
     # assume that the targeted packages are present in the "packages" artifact under the `diff` folder
