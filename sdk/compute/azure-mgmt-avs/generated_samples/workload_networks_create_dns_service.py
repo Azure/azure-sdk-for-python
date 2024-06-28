@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.avs import AVSClient
 
 """
@@ -14,7 +17,7 @@ from azure.mgmt.avs import AVSClient
     pip install azure-identity
     pip install azure-mgmt-avs
 # USAGE
-    python workload_networks_delete_vm_groups.py
+    python workload_networks_create_dns_service.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +32,24 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.workload_networks.begin_delete_vm_group(
+    response = client.workload_networks.begin_create_dns_service(
         resource_group_name="group1",
-        vm_group_id="vmGroup1",
         private_cloud_name="cloud1",
+        dns_service_id="dnsService1",
+        workload_network_dns_service={
+            "properties": {
+                "defaultDnsZone": "defaultDnsZone1",
+                "displayName": "dnsService1",
+                "dnsServiceIp": "5.5.5.5",
+                "fqdnZones": ["fqdnZone1"],
+                "logLevel": "INFO",
+                "revision": 1,
+            }
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/WorkloadNetworks_DeleteVMGroups.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-09-01/examples/WorkloadNetworks_CreateDnsService.json
 if __name__ == "__main__":
     main()

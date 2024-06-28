@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.avs import AVSClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.avs import AVSClient
     pip install azure-identity
     pip install azure-mgmt-avs
 # USAGE
-    python workload_networks_update_dns_zones.py
+    python iscsi_paths_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,23 +30,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.workload_networks.begin_update_dns_zone(
+    client.iscsi_paths.begin_delete(
         resource_group_name="group1",
         private_cloud_name="cloud1",
-        dns_zone_id="dnsZone1",
-        workload_network_dns_zone={
-            "properties": {
-                "displayName": "dnsZone1",
-                "dnsServerIps": ["1.1.1.1"],
-                "domain": [],
-                "revision": 1,
-                "sourceIp": "8.8.8.8",
-            }
-        },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/WorkloadNetworks_UpdateDnsZones.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-09-01/examples/IscsiPaths_Delete.json
 if __name__ == "__main__":
     main()
