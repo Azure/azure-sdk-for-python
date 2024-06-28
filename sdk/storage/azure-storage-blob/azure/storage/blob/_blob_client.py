@@ -22,13 +22,14 @@ from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
-from ._shared.uploads import IterStreamer, prepare_upload_data
-from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
+from ._shared.streams import IterStreamer
+from ._shared.streams_async import AsyncIterStreamer
+from ._shared.uploads import prepare_upload_data
 from ._shared.validation import (
     calculate_crc64_bytes,
     calculate_md5,

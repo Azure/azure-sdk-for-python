@@ -20,8 +20,9 @@ from ._quick_query_helper import DataLakeFileQueryReader
 from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length
 from ._shared.response_handlers import return_response_headers
-from ._shared.uploads import IterStreamer, prepare_upload_data
-from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.streams import IterStreamer
+from ._shared.streams_async import AsyncIterStreamer
+from ._shared.uploads import prepare_upload_data
 from ._shared.validation import ChecksumAlgorithm, parse_validation_option, SM_HEADER_V1_CRC64
 from ._upload_helper import upload_datalake_file
 from ._download import StorageStreamDownloader

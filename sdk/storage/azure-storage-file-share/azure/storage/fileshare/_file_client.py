@@ -23,10 +23,11 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
-from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
+from ._shared.uploads import FileChunkUploader, upload_data_chunks
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.streams import IterStreamer
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient

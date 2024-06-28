@@ -26,7 +26,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
     container: ContainerClient = None
 
     async def _setup(self, account_name, account_key):
-        self.bsc = BlobServiceClient(self.account_url(account_name, "blob"), credential=account_key, logging_enable=True)
+        credential = {'account_name': account_name, 'account_key': account_key}
+        self.bsc = BlobServiceClient(self.account_url(account_name, "blob"), credential=credential, logging_enable=True)
         self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
         await self.container.create_container()
 
@@ -356,4 +357,20 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob(offset=0, length=len(data1) + data2_encoded_len)
         assert await content.readall() == data1 + data2.encode('utf-8')
+        await self._teardown()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512
+        await blob.upload_blob(data)
+
+        # Assert
+        content = await blob.download_blob()
+        assert await content.readall() == data
         await self._teardown()
