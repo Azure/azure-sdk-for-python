@@ -836,17 +836,23 @@ try {
                     Write-Host "Error Record: $($errorDetails.ErrorRecord)"
                 }
             }
-            catch(){}
+            catch {
+                Write-Host $_
+            }
 
             try {
                 Write-Host ($deployment | Format-Table | Out-String)   
             }
-            catch(){}
+            catch {
+                Write-Host $_
+            }
 
             try {
                 Write-Host ($_ | Format-Table | Out-String)   
             }
-            catch(){}
+            catch {
+                Write-Host $_
+            }
 
             throw
         }
