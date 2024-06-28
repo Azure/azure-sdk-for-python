@@ -127,8 +127,8 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.name == wps_name
 
         workspace.tags = {
-            WORKSPACE_PATCH_REJECTED_KEYS[0] : "should be removed",
-            WORKSPACE_PATCH_REJECTED_KEYS[1] : "should be removed",
+            WORKSPACE_PATCH_REJECTED_KEYS[0]: "should be removed",
+            WORKSPACE_PATCH_REJECTED_KEYS[1]: "should be removed",
         }
         param_image_build_compute = "compute"
         param_display_name = "Test display name"

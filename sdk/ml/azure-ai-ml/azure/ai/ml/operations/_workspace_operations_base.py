@@ -375,7 +375,7 @@ class WorkspaceOperationsBase(ABC):
             or kwargs.get("update_online_store_role_assignment", None)
         )
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
-    
+
         # Remove deprecated keys from older workspaces that might still have them before we try to update.
         if workspace.tags is not None:
             for bad_key in WORKSPACE_PATCH_REJECTED_KEYS:
