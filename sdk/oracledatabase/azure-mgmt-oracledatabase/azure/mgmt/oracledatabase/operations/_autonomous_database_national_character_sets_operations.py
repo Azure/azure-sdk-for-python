@@ -84,7 +84,7 @@ def build_get_request(location: str, adbsncharsetname: str, subscription_id: str
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "location": _SERIALIZER.url("location", location, "str", min_length=1),
-        "adbsncharsetname": _SERIALIZER.url("adbsncharsetname", adbsncharsetname, "str"),
+        "adbsncharsetname": _SERIALIZER.url("adbsncharsetname", adbsncharsetname, "str", pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

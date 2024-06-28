@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- `SearchIndexClient`.`get_search_client` inherits the API version.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed the issue that we missed ODATA header when using Entra ID auth.
 
 ### Other Changes
 
