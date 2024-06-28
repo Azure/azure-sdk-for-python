@@ -92,6 +92,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type local: bool
         :return: A list of endpoints
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.OnlineEndpoint]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_list_operation]
+                :end-before: [END online_endpoint_list_operation]
+                :language: python
+                :dedent: 8
+                :caption: List all online endpoints in the workspace.
         """
         if local:
             return self._local_endpoint_helper.list()
@@ -112,6 +121,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :raise: Exception if cannot get online credentials
         :return: Depending on the auth mode in the endpoint, returns either keys or token
         :rtype: Union[~azure.ai.ml.entities.EndpointAuthKeys, ~azure.ai.ml.entities.EndpointAuthToken]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_get_keys_operation]
+                :end-before: [END online_endpoint_get_keys_operation]
+                :language: python
+                :dedent: 8
+                :caption: Get the auth credentials for an online endpoint.
         """
         return self._get_online_credentials(name=name)
 
@@ -132,6 +150,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: Endpoint object retrieved from the service.
         :rtype: ~azure.ai.ml.entities.OnlineEndpoint
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_get_operation]
+                :end-before: [END online_endpoint_get_operation]
+                :language: python
+                :dedent: 8
+                :caption: Get an online endpoint.
         """
         # first get the endpoint
         if local:
@@ -175,6 +202,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_delete_operation]
+                :end-before: [END online_endpoint_delete_operation]
+                :language: python
+                :dedent: 8
+                :caption: Delete an online endpoint.
         """
         if local:
             return self._local_endpoint_helper.delete(name=str(name))
@@ -219,6 +255,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineEndpoint]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_create_update_operation]
+                :end-before: [END online_endpoint_create_update_operation]
+                :language: python
+                :dedent: 8
+                :caption: Create or update an online endpoint.
         """
         try:
             if local:
@@ -278,6 +323,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :paramtype key_type: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_begin_regenerate_keys_operation]
+                :end-before: [END online_endpoint_begin_regenerate_keys_operation]
+                :language: python
+                :dedent: 8
+                :caption: Regenerate keys for an online endpoint.
         """
         endpoint = self._online_operation.get(
             resource_group_name=self._resource_group_name,
@@ -333,6 +387,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if local endpoint is None.
         :return: Prediction output for online endpoint.
         :rtype: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START online_endpoint_invoke_operation]
+                :end-before: [END online_endpoint_invoke_operation]
+                :language: python
+                :dedent: 8
+                :caption: Invoke an online endpoint.
         """
         params_override = params_override or []
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538

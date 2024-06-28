@@ -30,22 +30,41 @@ from .model_batch_deployment_settings import ModelBatchDeploymentSettings
 class ModelBatchDeployment(Deployment):
     """Job Definition entity.
 
-    :param type: Job definition type. Allowed value is: pipeline
-    :type type: str
-    :param name: Job name
-    :type name: str
-    :param job: Job definition
-    :type job: Union[Job, str]
-    :param component: Component definition
-    :type component: Union[Component, str]
-    :param settings: Job settings
-    :type settings: Dict[str, Any]
-    :param description: Job description.
-    :type description: str
-    :param tags: Job tags
-    :type tags: Dict[str, Any]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :param name: Name of the deployment resource, defaults to None
+    :type name: typing.Optional[str]
+    :keyword endpoint_name: Name of the Endpoint resource, defaults to None
+    :paramtype endpoint_name: typing.Optional[str]
+    :keyword description: Description of the deployment resource, defaults to None
+    :paramtype description: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword model: The Model entity, defaults to None
+    :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :param compute: Compute target
+    :type compute: typing.Optional[str]
+    :param settings: Settings for model batch deployment.
+    :type settings: typing.Optional[~azure.ai.ml.entities.ModelBatchDeploymentSettings]
+    :param resources: Resource configuration for model batch deployment.
+    :type resources: typing.Optional[~azure.ai.ml.entities.ResourceConfiguration]
+    :keyword code_configuration: Code Configuration, defaults to None
+    :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
+        , defaults to None
+    :paramtype code_path: typing.Optional[typing.Union[str, PathLike]]
+    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
+        , defaults to None
+    :paramtype scoring_script: typing.Optional[typing.Union[str, PathLike]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START model_batch_deployment_entity_create]
+            :end-before: [END model_batch_deployment_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ModelBatchDeployment entity.
     """
 
     def __init__(

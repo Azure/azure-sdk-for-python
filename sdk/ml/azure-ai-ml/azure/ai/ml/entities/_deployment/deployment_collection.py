@@ -16,11 +16,22 @@ class DeploymentCollection:
     """Collection entity
 
     :param enabled: Is logging for this collection enabled. Possible values include: 'true', 'false'.
-    :type enabled: str
-    :param data: Data asset id associated with collection logging.
-    :type data: str
-    :param client_id: Client ID associated with collection logging.
-    :type client_id: str
+    :type enabled: typing.Optional[str]
+    :param data: Data asset id associated with collection logging. If not set, data defaults to None.
+    :type data: typing.Optional[str]
+    :param client_id: Client ID associated with collection logging. If not set, client_id defaults to None.
+    :type client_id: typing.Optional[str]
+    :param sampling_rate: Sampling rate for this collection. If not set, sampling_rate defaults to 1.
+    :type sampling_rate: typing.Optional[float]
+
+    .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+                :start-after: [START data_collector_entity_create]
+                :end-before: [END data_collector_entity_create]
+                :language: python
+                :dedent: 8
+                :caption: Creating a DataCollector entity.
 
     """
 

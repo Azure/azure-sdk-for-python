@@ -15,7 +15,16 @@ class RequestLogging:
     """Request Logging deployment entity.
 
     :param capture_headers: Request payload header.
-    :type capture_headers: list[str]
+    :type capture_headers: typing.Optional[list[str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START request_logging_entity_create]
+            :end-before: [END request_logging_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a RequestLogging entity.
     """
 
     def __init__(

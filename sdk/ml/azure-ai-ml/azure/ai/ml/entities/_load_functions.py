@@ -642,6 +642,15 @@ def load_online_deployment(
         Details will be provided in the error message.
     :return: Constructed online deployment object.
     :rtype: OnlineDeployment
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START online_deployment_load_example]
+            :end-before: [END online_deployment_load_example]
+            :language: python
+            :dedent: 8
+            :caption: Loading an Online Deployment from a YAML config file.
     """
     return cast(OnlineDeployment, load_common(OnlineDeployment, source, relative_origin, params_override, **kwargs))
 
@@ -672,6 +681,15 @@ def load_batch_deployment(
     :paramtype params_override: List[Dict]
     :return: Constructed batch deployment object.
     :rtype: BatchDeployment
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START batch_deployment_load_example]
+            :end-before: [END batch_deployment_load_example]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Batch Deployment from a YAML config file.
     """
     return cast(BatchDeployment, load_common(BatchDeployment, source, relative_origin, params_override, **kwargs))
 
@@ -769,6 +787,15 @@ def load_online_endpoint(
         Details will be provided in the error message.
     :return: Constructed online endpoint object.
     :rtype: OnlineEndpoint
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START online_deployment_load_example]
+            :end-before: [END online_deployment_load_example]
+            :language: python
+            :dedent: 8
+            :caption: Loading an Online Endpoint from a YAML config file.
     """
     return cast(OnlineEndpoint, load_common(OnlineEndpoint, source, relative_origin, params_override, **kwargs))
 
@@ -799,6 +826,15 @@ def load_batch_endpoint(
     :paramtype params_override: List[Dict]
     :return: Constructed batch endpoint object.
     :rtype: BatchEndpoint
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START batch_endpoint_load_example]
+            :end-before: [END batch_endpoint_load_example]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Batch Endpoint from a YAML config file.
     """
     return cast(BatchEndpoint, load_common(BatchEndpoint, source, relative_origin, params_override, **kwargs))
 

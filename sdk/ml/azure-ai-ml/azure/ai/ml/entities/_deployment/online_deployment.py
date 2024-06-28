@@ -80,13 +80,13 @@ class OnlineDeployment(Deployment):
     :keyword app_insights_enabled: Is appinsights enabled, defaults to False
     :paramtype app_insights_enabled: typing.Optional[bool]
     :keyword scale_settings: How the online deployment will scale, defaults to None
-    :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.OnlineScaleSettings]
+    :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.scale_settings.OnlineScaleSettings]
     :keyword request_settings: Online Request Settings, defaults to None
-    :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
+    :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.deployment_settings.OnlineRequestSettings]
     :keyword liveness_probe: Liveness probe settings, defaults to None
-    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.deployment_settings.ProbeSettings]
     :keyword readiness_probe: Readiness probe settings, defaults to None
-    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.deployment_settings.ProbeSettings]
     :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
     :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
     :keyword instance_count: The instance count used for this deployment, defaults to None
@@ -153,11 +153,11 @@ class OnlineDeployment(Deployment):
         :keyword scale_settings: How the online deployment will scale, defaults to None
         :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.OnlineScaleSettings]
         :keyword request_settings: Online Request Settings, defaults to None
-        :paramtype request_settings: typing.Optional[OnlineRequestSettings]
+        :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.deployment_settings.OnlineRequestSettings]
         :keyword liveness_probe: Liveness probe settings, defaults to None
-        :paramtype liveness_probe: typing.Optional[ProbeSettings]
+        :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.deployment.settings.ProbeSettings]
         :keyword readiness_probe: Readiness probe settings, defaults to None
-        :paramtype readiness_probe: typing.Optional[ProbeSettings]
+        :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.deployment_settings.ProbeSettings]
         :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
         :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
         :keyword instance_count: The instance count used for this deployment, defaults to None
@@ -407,6 +407,15 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :keyword scoring_script: Equivalent to code_configuration.code.scoring_script.
         Will be ignored if code_configuration is present, defaults to None
     :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START kubernetes_online_deployment_config]
+            :end-before: [END kubernetes_online_deployment_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Kubernetes Online Deployment entity.
     """
 
     def __init__(
@@ -654,6 +663,15 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :paramtype scoring_script_path: typing.Optional[typing.Union[str, os.PathLike]]
     :keyword data_collector: Data collector, defaults to None
     :paramtype data_collector: typing.Optional[typing.List[~azure.ai.ml.entities.DataCollector]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_endpoint_deployment_configs.py
+            :start-after: [START managed_online_endpoint_config]
+            :end-before: [END managed_online_endpoint_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Managed Online Endpoint entity.
     """
 
     def __init__(
