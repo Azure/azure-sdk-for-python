@@ -35,11 +35,11 @@ def main():
     response = client.autonomous_databases.generate_wallet(
         resource_group_name="rg000",
         autonomousdatabasename="databasedb1",
-        body={"generateType": "Single", "isRegional": False, "password": "ExamplePassword12345"},
+        body={"generateType": "Single", "isRegional": False, "password": "********"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/oracle/resource-manager/Oracle.Database/preview/2023-09-01-preview/examples/autonomousDatabase_generateWallet.json
+# x-ms-original-file: specification/oracle/resource-manager/Oracle.Database/stable/2023-09-01/examples/autonomousDatabase_generateWallet.json
 if __name__ == "__main__":
     main()
