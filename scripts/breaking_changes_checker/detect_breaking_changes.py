@@ -399,7 +399,7 @@ def main(
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare_reports(pkg_dir, version, changelog)
+        test_compare_reports(pkg_dir, changelog)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
@@ -496,17 +496,13 @@ if __name__ == "__main__":
         pkg_details = ParsedSetup.from_path(pkg_dir)
         target_module = pkg_details.namespace
 
-    source_report = None
-    target_report = None
     if args.source_report:
         if not args.target_report:
             _LOGGER.exception("If providing the `--source-report` flag, the `--target-report` flag is also required.")
             exit(1)
-        source_report = Path(args.source_report)
     if args.target_report:
         if not args.source_report:
             _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
             exit(1)
-        target_report = Path(args.target_report)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, source_report, target_report)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.source_report, args.target_report)
