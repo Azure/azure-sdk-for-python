@@ -229,7 +229,7 @@ class WorkspaceOperationsBase(ABC):
             CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,too-many-locals
     def begin_update(
         self,
         workspace: Workspace,
