@@ -1,6 +1,7 @@
 import functools
 import json
 
+
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
 
