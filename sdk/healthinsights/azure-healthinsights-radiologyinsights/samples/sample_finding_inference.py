@@ -6,7 +6,7 @@ import os
 import uuid
 
 
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
@@ -48,12 +48,12 @@ USAGE:
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
-        KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
+        credential = DefaultAzureCredential()
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
         job_id = str(uuid.uuid4())
 
-        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
+        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
 
         doc_content1 = """FINDINGS:
         In the right upper lobe, there is a new mass measuring 5.6 x 4.5 x 3.4 cm.

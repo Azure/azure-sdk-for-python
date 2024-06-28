@@ -53,32 +53,6 @@ radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credentia
 ```
 <!-- SNIPPET:sample_credentials.credentials-->
 
-#### Get the API Key
-
-Another way to authenticate is using the API Key:
-
-You can also get the **API Key** from the Health Insights service resource in the Azure Portal.
-Alternatively, you can use **Azure CLI** snippet below to get the API key of your resource.
-
-```PowerShell
-az cognitiveservices account keys list --resource-group <your-resource-group-name> --name <your-resource-name>
-```
-
-#### Create a RadiologyInsightsClient with an API Key Credential
-
-Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter to authenticate the client:
-
-<!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_client-->
-```Python 
-from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
-
-KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
-ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
-
-radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
-```
-<!-- SNIPPET:sample_age_mismatch_inference_async.create_radiology_insights_client-->
 
 ### Long-Running Operations
 
@@ -364,4 +338,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [python]: https://www.python.org/downloads/
 [sample_folder]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthinsights/azure-healthinsights-radiologyinsights/samples
-[azure_credential]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
+[azure_credential]: https://learn.microsoft.com/python/api/overview/azure/identity-readme

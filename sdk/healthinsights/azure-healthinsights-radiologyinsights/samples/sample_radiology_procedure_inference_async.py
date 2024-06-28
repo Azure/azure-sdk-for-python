@@ -7,7 +7,7 @@ import os
 import uuid
 
 
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
@@ -46,12 +46,12 @@ class HealthInsightsSamples:
 
     async def radiology_insights_async(self) -> None:
         # [START create_radiology_insights_client]
-        KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
+        credential = DefaultAzureCredential()
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
         job_id = str(uuid.uuid4())
 
-        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
+        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
         # [END create_radiology_insights_client]
         doc_content1 = """
         Exam:  Head CT with Contrast

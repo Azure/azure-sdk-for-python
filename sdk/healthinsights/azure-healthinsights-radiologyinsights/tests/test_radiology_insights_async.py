@@ -2,7 +2,7 @@ import functools
 import datetime
 import asyncio
 
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 from devtools_testutils.aio import recorded_by_proxy_async
