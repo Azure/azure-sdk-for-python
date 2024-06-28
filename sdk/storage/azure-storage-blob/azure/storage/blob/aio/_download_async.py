@@ -14,7 +14,7 @@ from typing import AsyncIterator, Generic, IO, Optional, overload, TypeVar, Unio
 
 import asyncio
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
@@ -33,7 +33,13 @@ T = TypeVar('T', bytes, str)
 async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
-    content = data.response.body()
+    content = bytearray()
+    try:
+        async for chunk in data:
+            content.extend(chunk)
+        content = bytes(content)
+    except ServiceRequestError:
+        content = data.response.content
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
