@@ -238,4 +238,3 @@ class AzureTimezoneClient(AsyncTimezoneClientBase):
         )
 
         return result
-
