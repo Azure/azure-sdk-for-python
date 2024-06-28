@@ -990,6 +990,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         *,
         locale: str,
+        operation_context: Optional[str] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -997,6 +998,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :keyword locale: Defines new locale for transcription.
         :paramtype locale: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
         :return: None
@@ -1005,6 +1008,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """
         update_transcription_request = UpdateTranscriptionRequest(
             locale=locale,
+            operation_context=operation_context,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
             **kwargs
         )
@@ -1121,6 +1125,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         *,
         operation_callback_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
         **kwargs
     )->None:
         """Stops media streaming in the call.
@@ -1130,12 +1135,15 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
         """
         stop_media_streaming_request=StopMediaStreamingRequest(
-            operation_callback_uri=operation_callback_url
+            operation_callback_uri=operation_callback_url,
+            operation_context=operation_context
             )
         self._call_media_client.stop_media_streaming(
             self._call_connection_id,

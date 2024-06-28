@@ -4349,22 +4349,30 @@ class StopMediaStreamingRequest(_serialization.Model):
      This setup is per-action. If this is not set, the default callback URI set by
      CreateCall/AnswerCall will be used.
     :vartype operation_callback_uri: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(self, *, operation_callback_uri: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, operation_callback_uri: Optional[str] = None, operation_context: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_uri: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
 
 
 class StopTranscriptionRequest(_serialization.Model):
@@ -4986,6 +4994,8 @@ class UpdateTranscriptionRequest(_serialization.Model):
     :ivar speech_recognition_model_endpoint_id: Sets Endpoint id where the custom model was
      deployed.
     :vartype speech_recognition_model_endpoint_id: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
     """
 
     _validation = {
@@ -4995,10 +5005,16 @@ class UpdateTranscriptionRequest(_serialization.Model):
     _attribute_map = {
         "locale": {"key": "locale", "type": "str"},
         "speech_recognition_model_endpoint_id": {"key": "speechRecognitionModelEndpointId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
-        self, *, locale: str, speech_recognition_model_endpoint_id: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        locale: str,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword locale: Sets new locale for transcription. Required.
@@ -5006,7 +5022,10 @@ class UpdateTranscriptionRequest(_serialization.Model):
         :keyword speech_recognition_model_endpoint_id: Sets Endpoint id where the custom model was
          deployed.
         :paramtype speech_recognition_model_endpoint_id: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.locale = locale
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
+        self.operation_context = operation_context
