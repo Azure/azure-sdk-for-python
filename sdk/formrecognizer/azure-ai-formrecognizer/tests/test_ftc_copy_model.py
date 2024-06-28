@@ -19,7 +19,7 @@ get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 class TestCopyModel(FormRecognizerTest):
 
-    @pytest.skip("Test is flaky and times out")
+    @pytest.mark.skip("Test is flaky and times out")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_copy_model_successful_v2(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
