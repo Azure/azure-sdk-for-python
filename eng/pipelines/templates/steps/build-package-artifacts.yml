@@ -74,7 +74,9 @@ steps:
   - template: set-dev-build.yml@self
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  - ${{ if eq(parameters.ServiceDirectory, "auto") }}:
+
+  
+  - ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
     - task: Powershell@2
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-All-Package-Properties.ps1
