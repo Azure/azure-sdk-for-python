@@ -77,15 +77,15 @@ steps:
 
   - if ${{ eq(parameters.ServiceDirectory, "auto") }}:
     - task: Powershell@2
-          inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-All-Package-Properties.ps1
-            # inputDiffJson populated by targeting-string-resolve.yml
-            arguments: >
-              -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
-              -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-            pwsh: true
-            workingDirectory: $(Pipeline.Workspace)
-          displayName: Update package properties with dev version
+      inputs:
+        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-All-Package-Properties.ps1
+        # inputDiffJson populated by targeting-string-resolve.yml
+        arguments: >
+          -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
+          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+        pwsh: true
+        workingDirectory: $(Pipeline.Workspace)
+      displayName: Update package properties with dev version
   - ${{ else }}:
     - task: Powershell@2
       inputs:
