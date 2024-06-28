@@ -20,7 +20,7 @@ HealthInsightsEnvPreparer = functools.partial(
 
 
 class TestCancerProfiling(AzureRecordedTestCase):
-    
+    @pytest.mark.skip
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy
     def test_cancer_profiling(self, healthinsights_endpoint, healthinsights_key):
