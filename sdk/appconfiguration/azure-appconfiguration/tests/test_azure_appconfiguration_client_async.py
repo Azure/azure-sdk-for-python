@@ -281,6 +281,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
 
     @app_config_decorator_async
     @recorded_by_proxy_async
+    async def test_list_configuration_settings_with_tags_filter(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        await self.set_up(appconfiguration_connection_string)
+        items = await self.convert_to_list(self.client.list_configuration_settings(tags_filter=["tag1=value1"]))
+        assert len(items) == 1
+        assert items[0].key == KEY
+        assert items[0].label == LABEL
+        self.tear_down()
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
@@ -441,6 +453,18 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
+        await self.tear_down()
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_revisions_with_tags_filter(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        await self.set_up(appconfiguration_connection_string)
+        items = await self.convert_to_list(self.client.list_revisions(tags_filter=["tag1=value1"]))
+        assert len(items) >= 1
+        assert all(x.key == KEY for x in items)
+        assert all(x.label == LABEL for x in items)
         await self.tear_down()
 
     @app_config_decorator_async
@@ -1077,6 +1101,9 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name))
         assert len(items) == 1
 
+        items = self.client.list_configuration_settings(snapshot_name=snapshot_name, tags_filter=["tag1=invalid"])
+        assert len(list(items)) == 0
+
         await self.tear_down()
 
     @app_config_decorator_async
@@ -1194,6 +1221,22 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             config_settings = client.list_configuration_settings()
             async for config_setting in config_settings:
                 await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        await self.set_up(appconfiguration_connection_string)
+
+        rep = await self.convert_to_list(self.client.list_labels(name=LABEL))
+        assert len(list(rep)) == 1
+
+        rep = await self.convert_to_list(self.client.list_labels(name="test*"))
+        assert len(list(rep)) == 1
+
+        rep = await self.convert_to_list(self.client.list_labels())
+        assert len(list(rep)) == 2
+
+        await self.tear_down()
 
 
 class TestAppConfigurationClientUnitTest:

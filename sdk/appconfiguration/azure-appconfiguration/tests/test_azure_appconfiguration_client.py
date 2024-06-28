@@ -280,6 +280,18 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
     @app_config_decorator
     @recorded_by_proxy
+    def test_list_configuration_settings_with_tags_filter(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_connection_string)
+        items = list(self.client.list_configuration_settings(tags_filter=["tag1=value1"]))
+        assert len(items) == 1
+        assert items[0].key == KEY
+        assert items[0].label == LABEL
+        self.tear_down()
+
+    @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
@@ -434,6 +446,18 @@ class TestAppConfigurationClient(AppConfigTestCase):
         items = list(self.client.list_revisions(key_filter=KEY))
         assert len(items) >= 1
         assert all(x.key == KEY for x in items)
+        self.tear_down()
+
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_list_revisions_with_tags_filter(self, appconfiguration_connection_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        self.set_up(appconfiguration_connection_string)
+        items = list(self.client.list_revisions(tags_filter=["tag1=value1"]))
+        assert len(items) >= 1
+        assert all(x.key == KEY for x in items)
+        assert all(x.label == LABEL for x in items)
         self.tear_down()
 
     @app_config_decorator
@@ -1054,6 +1078,9 @@ class TestAppConfigurationClient(AppConfigTestCase):
         items = self.client.list_configuration_settings(snapshot_name=snapshot_name)
         assert len(list(items)) == 1
 
+        items = self.client.list_configuration_settings(snapshot_name=snapshot_name, tags_filter=["tag1=invalid"])
+        assert len(list(items)) == 0
+
         self.tear_down()
 
     @app_config_decorator
@@ -1167,6 +1194,22 @@ class TestAppConfigurationClient(AppConfigTestCase):
             config_settings = client.list_configuration_settings()
             for config_setting in config_settings:
                 client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+
+    @app_config_decorator
+    @recorded_by_proxy
+    def test_list_snapshot_configuration_settings(self, appconfiguration_connection_string):
+        self.set_up(appconfiguration_connection_string)
+
+        rep = self.client.list_labels(name=LABEL)
+        assert len(list(rep)) == 1
+
+        rep = self.client.list_labels(name="test*")
+        assert len(list(rep)) == 1
+
+        rep = self.client.list_labels()
+        assert len(list(rep)) == 2
+
+        self.tear_down()
 
 
 class TestAppConfigurationClientUnitTest:
