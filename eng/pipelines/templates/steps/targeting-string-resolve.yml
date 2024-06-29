@@ -39,7 +39,7 @@ steps:
 
     - pwsh: |
         python -m pip install tools/azure-sdk-tools[build]
-        python $(Build.SourcesDirectory)/scripts/devops_tasks/calculate_targeted_packages.py --input_json "$(PRDiffJson)"
+        python $(Build.SourcesDirectory)/scripts/devops_tasks/calculate_targeted_packages.py "$(PRDiffJson)"
       displayName: Resolve Targeted Packages
 
   - ${{ else }}:
