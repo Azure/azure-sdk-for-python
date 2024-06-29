@@ -3053,7 +3053,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def _AddPartitionKey(self, collection_link, document, options):
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
         new_options = dict(options)
-        partitionKeyDefinition = self._get_partition_key_definition(collection_link)
+        partitionKeyDefinition = await self._get_partition_key_definition(collection_link)
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
             # If the user has passed in the partitionKey in options use that else extract it from the document
