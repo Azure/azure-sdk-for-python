@@ -39,16 +39,7 @@ resource kv 'Microsoft.KeyVault/vaults@2021-04-01-preview' = {
         tenantId: tenantId
         objectId: testApplicationOid
         permissions: {
-          secrets: [
-            'Get'
-            'List'
-            'Set'
-            'Delete'
-            'Recover'
-            'Backup'
-            'Restore'
-            'Purge'
-          ]
+          secrets: ['all']
         }
       }
     ]
