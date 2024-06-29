@@ -47,7 +47,9 @@ class MsalManagedIdentityClient():  # pylint: disable=too-many-instance-attribut
         now = int(time.time())
         if result and "access_token" in result and "expires_in" in result:
             return AccessToken(result["access_token"], now + int(result["expires_in"]))
-        error_message = self.get_unavailable_message()
+        if result and "error" in result:
+            error_desc = cast(str, result["error"])
+        error_message = self.get_unavailable_message(error_desc)
         raise CredentialUnavailableError(error_message)
 
     def get_managed_identity(self, **kwargs: Any):

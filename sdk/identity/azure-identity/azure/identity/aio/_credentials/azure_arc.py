@@ -26,8 +26,8 @@ class AzureArcCredential(AsyncManagedIdentityBase):
             )
         return None
 
-    def get_unavailable_message(self) -> str:
-        return "Azure Arc managed identity configuration not found in environment"
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"Azure Arc managed identity configuration not found in environment. {desc}"
 
 
 class ArcChallengeAuthPolicy(AsyncHTTPPolicy):

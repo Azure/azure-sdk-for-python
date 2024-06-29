@@ -19,8 +19,8 @@ from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
 class AzureArcCredential(MsalManagedIdentityClient):
-    def get_unavailable_message(self) -> str:
-        return "Azure Arc managed identity configuration not found in environment"
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"Azure Arc managed identity configuration not found in environment. {desc}"
 
 
 def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:

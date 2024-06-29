@@ -15,8 +15,8 @@ from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
 class ServiceFabricCredential(MsalManagedIdentityClient):
-    def get_unavailable_message(self) -> str:
-        return "Service Fabric managed identity configuration not found in environment"
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"Service Fabric managed identity configuration not found in environment. {desc}"
 
 
 def _get_client_args(**kwargs: Any) -> Optional[Dict]:
