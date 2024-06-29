@@ -17,7 +17,7 @@ from azure.ai.documentintelligence.models import (
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
-from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(
     _GlobalClientPreparer, DocumentIntelligenceAdministrationClient

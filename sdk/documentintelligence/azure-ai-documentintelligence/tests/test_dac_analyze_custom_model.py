@@ -6,8 +6,7 @@
 
 import pytest
 import uuid
-from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher, get_credential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.documentintelligence import DocumentIntelligenceClient, DocumentIntelligenceAdministrationClient
 from azure.ai.documentintelligence.models import (
@@ -24,9 +23,8 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     def test_analyze_document_none_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
         with pytest.raises(ValueError) as e:
             client.begin_analyze_document(model_id=None, analyze_request=b"xx")
@@ -35,9 +33,8 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     def test_analyze_document_none_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
         with pytest.raises(ValueError) as e:
             client.begin_analyze_document(
@@ -49,9 +46,8 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
     @recorded_by_proxy
     def test_analyze_document_empty_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
         with pytest.raises(ResourceNotFoundError) as e:
             client.begin_analyze_document(model_id="", analyze_request=b"xx")
@@ -62,9 +58,8 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
     @recorded_by_proxy
     def test_analyze_document_empty_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
         with pytest.raises(ResourceNotFoundError) as e:
             client.begin_analyze_document(
@@ -78,12 +73,11 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
     def test_custom_document_transform(self, documentintelligence_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
         di_admin_client = DocumentIntelligenceAdministrationClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
         di_client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential()
         )
 
         recorded_variables = kwargs.pop("variables", {})

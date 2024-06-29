@@ -18,7 +18,7 @@ from azure.ai.documentintelligence.models import (
     BuildDocumentClassifierRequest,
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
-from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(
     _GlobalClientPreparer, DocumentIntelligenceAdministrationClient
