@@ -151,3 +151,4 @@ def import_image(endpoint, repository, tags):
         for tag in tags:
             manifest_digest = client.set_manifest(repository, oci_manifest, tag=tag)
             logger.info(f"Uploaded manifest: digest - {manifest_digest}")
+
