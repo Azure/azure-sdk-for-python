@@ -3201,7 +3201,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if response_hook:
             response_hook(last_response_headers, None)
 
-    def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
+    async def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
         partition_key_definition: Optional[Dict[str, Any]]
         # If the document collection link is present in the cache, then use the cached partitionkey definition
         if collection_link in self.__container_properties_cache:
@@ -3209,7 +3209,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
-            container = self.ReadContainer(collection_link)
+            container = await self.ReadContainer(collection_link)
             partition_key_definition = container.get("partitionKey")
             self.__container_properties_cache[collection_link] = _set_properties_cache(container)
         return partition_key_definition

@@ -114,6 +114,26 @@ class ContainerRecreateRetryPolicy:
                 new_partition_key = json.dumps([options["partitionKey"]])
         return new_partition_key
 
+    async def _extract_partition_key_async(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
+            -> str:
+        partition_key_definition = container_cache["partitionKey"]
+        body_dict = self.__str_to_dict(body)
+        new_partition_key = _Undefined
+        if body_dict:
+            options = await client._AddPartitionKey(self.container_link, body_dict, {})
+            # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
+            if isinstance(options["partitionKey"], _Undefined):
+                new_partition_key = [{}]
+            # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
+            elif isinstance(options["partitionKey"], _Empty):
+                new_partition_key = []
+            # else serialize using json dumps method which apart from regular values will serialize None into null
+            elif partition_key_definition["kind"] == "MultiHash":
+                new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
+            else:
+                new_partition_key = json.dumps([options["partitionKey"]])
+        return new_partition_key
+
     def should_update_throughput_link(self, body: Optional[str], cached_container: Optional[Dict[str, Any]]) -> bool:
         body_dict = self.__str_to_dict(body)
         if not body_dict:

@@ -138,7 +138,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     # If partition key value was previously extracted from the document definition
                     # reattempt to extract partition key with updated partition key definition
                     if retry_policy.should_extract_partition_key(args[3].headers, cached_container):
-                        new_partition_key = retry_policy._extract_partition_key(
+                        new_partition_key = retry_policy._extract_partition_key_async(
                             client, container_cache=cached_container, body=args[3].body
                         )
                         args[3].headers[HttpHeaders.PartitionKey] = new_partition_key
