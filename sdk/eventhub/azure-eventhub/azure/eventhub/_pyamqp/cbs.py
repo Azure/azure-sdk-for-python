@@ -86,6 +86,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
         self._token_status_code: Optional[int] = None
         self._token_status_description: Optional[str] = None
+        self._token_error_condition: Optional[bytes] = None
 
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
@@ -165,6 +166,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 extra=self._network_trace_params
             )
             self.auth_state = CbsAuthState.ERROR
+            self._token_error_condition = error_condition
             return
         _LOGGER.debug(
             "CBS Put token result (%r), status code: %s, status_description: %s.",
@@ -308,6 +310,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 self._token_status_code,
                 self._token_status_description,
                 encoding=self._encoding,  # TODO: drop off all the encodings
+                condition=self._token_error_condition,
             )
         if self.auth_state == CbsAuthState.TIMEOUT:
             raise TimeoutError("Authentication attempt timed-out.")

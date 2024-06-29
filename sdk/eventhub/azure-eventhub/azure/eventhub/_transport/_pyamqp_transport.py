@@ -729,6 +729,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return error
 
     @staticmethod
+    def _is_non_retryable(exception: Exception) -> bool: 
+        try:
+            return exception.condition in NO_RETRY_ERRORS
+        except AttributeError:
+            return False
+
+    @staticmethod
     def _handle_exception(
         exception, closable, *, is_consumer=False
     ):  # pylint:disable=too-many-branches, too-many-statements
