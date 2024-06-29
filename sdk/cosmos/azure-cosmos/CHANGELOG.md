@@ -3,11 +3,13 @@
 ### 4.7.1 (Unreleased)
 
 #### Features Added
+* Added Retry Policy for Container Recreate in the Python SDK. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 
 #### Breaking Changes
 
 #### Bugs Fixed
 * Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR 35731](https://github.com/Azure/azure-sdk-for-python/pull/35731)
+* Incomplete Partition Key Extractions in documents for Subpartitioning now gives 400/1001 errors to match other SDKs. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 
 #### Other Changes
 

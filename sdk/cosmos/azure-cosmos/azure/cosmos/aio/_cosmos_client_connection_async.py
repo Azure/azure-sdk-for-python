@@ -3053,37 +3053,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def _AddPartitionKey(self, collection_link, document, options):
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
         new_options = dict(options)
-        # If we get an Empty or Undefined Partition key, refresh the container properties cache
-        # and try one more time.
-        for attempts in range(2):
-            # Refresh cache on second attempt
-            if attempts == 1:
-                await self._refresh_container_properties_cache(collection_link)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
-
-            # If the document collection link is present in the cache, then use the cached partitionkey definition
-            if collection_link in self.__container_properties_cache:
-                cached_container = self.__container_properties_cache.get(collection_link)
-                partitionKeyDefinition = cached_container.get("partitionKey")
-            # Else read the collection from backend and add it to the cache
-            else:
-                container = await self.ReadContainer(collection_link)
-                partitionKeyDefinition = container.get("partitionKey")
-                self.__container_properties_cache[collection_link] = _set_properties_cache(container)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
-
-            # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
-            if partitionKeyDefinition:
-                # If the user has passed in the partitionKey in options use that else extract it from the document
-                if "partitionKey" not in options:
-                    partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                    new_options["partitionKey"] = partitionKeyValue
-            else:
-                break
-            # If we successfully extract the partition key, break out of loop
-            if partitionKeyValue and not isinstance(partitionKeyValue, _Empty) and not isinstance(partitionKeyValue,
-                                                                                                  _Undefined):
-                break
+        partitionKeyDefinition = self._get_partition_key_definition(collection_link)
+        # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
+        if partitionKeyDefinition:
+            # If the user has passed in the partitionKey in options use that else extract it from the document
+            if "partitionKey" not in options:
+                partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
+                new_options["partitionKey"] = partitionKeyValue
 
         return new_options
 
@@ -3099,8 +3075,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if isinstance(val, _Undefined):
-                    break
+                if isinstance(val, _Undefined) or isinstance(val, _Empty):
+                    val = None
                 ret.append(val)
             return ret
 
@@ -3224,3 +3200,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, None)
+
+    def _get_partition_key_definition(self, collection_link: str) -> Optional[Dict[str, Any]]:
+        partition_key_definition: Optional[Dict[str, Any]]
+        # If the document collection link is present in the cache, then use the cached partitionkey definition
+        if collection_link in self.__container_properties_cache:
+            cached_container: Dict[str, Any] = self.__container_properties_cache.get(collection_link, {})
+            partition_key_definition = cached_container.get("partitionKey")
+        # Else read the collection from backend and add it to the cache
+        else:
+            container = self.ReadContainer(collection_link)
+            partition_key_definition = container.get("partitionKey")
+            self.__container_properties_cache[collection_link] = _set_properties_cache(container)
+        return partition_key_definition

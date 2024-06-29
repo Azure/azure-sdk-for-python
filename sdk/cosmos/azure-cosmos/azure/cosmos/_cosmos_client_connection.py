@@ -3202,27 +3202,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any]
     ) -> Dict[str, Any]:
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
+        partitionKeyDefinition = self._get_partition_key_definition(collection_link)
         new_options = dict(options)
-        # If we get an Empty or Undefined Partition key, refresh the container properties cache
-        # and try one more time.
-        for attempts in range(2):
-            # Refresh cache on second attempt
-            if attempts == 1:
-                self._refresh_container_properties_cache(collection_link)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
-            partitionKeyDefinition = self._get_partition_key_definition(collection_link)
-            partitionKeyValue = None
-            # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
-            if partitionKeyDefinition:
-                # If the user has passed in the partitionKey in options use that else extract it from the document
-                if "partitionKey" not in options:
-                    partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
-                    new_options["partitionKey"] = partitionKeyValue
-            else:
-                break
-            # If we successfully extract the partition key, break out of loop
-            if partitionKeyValue and not isinstance(partitionKeyValue, _Empty) and not isinstance(partitionKeyValue, _Undefined):  # pylint: disable=line-too-long
-                break
+        # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
+        if partitionKeyDefinition:
+            # If the user has passed in the partitionKey in options use that else extract it from the document
+            if "partitionKey" not in options:
+                partitionKeyValue = self._ExtractPartitionKey(partitionKeyDefinition, document)
+                new_options["partitionKey"] = partitionKeyValue
         return new_options
 
     # Extracts the partition key from the document using the partitionKey definition
@@ -3241,8 +3228,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if isinstance(val, _Undefined):
-                    break
+                if isinstance(val, _Undefined) or isinstance(val, _Empty):
+                    val = None
                 ret.append(val)
             return ret
 

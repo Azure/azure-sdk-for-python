@@ -21,7 +21,7 @@ from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos.diagnostics import RecordDiagnostics
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -249,7 +249,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
-            assert "Partition key [[]] is invalid" in error.message
+            assert error.sub_status == SubStatusCodes.PARTITION_KEY_MISMATCH
             del self.last_headers[:]
 
         await created_db.delete_container(created_collection.id)
@@ -411,7 +411,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
-            assert "Partition key provided either doesn't correspond to definition in the collection" in error.message
+            assert error.sub_status == SubStatusCodes.PARTITION_KEY_MISMATCH
 
         # using incomplete partition key in read item
         try:
@@ -419,7 +419,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code, StatusCodes.BAD_REQUEST
-            assert "Partition key provided either doesn't correspond to definition in the collection" in error.message
+            assert error.sub_status == SubStatusCodes.PARTITION_KEY_MISMATCH
 
         # using mix value types for partition key
         doc_mixed_types = {'id': "doc4",

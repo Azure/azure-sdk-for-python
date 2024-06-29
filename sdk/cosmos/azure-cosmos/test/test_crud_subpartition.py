@@ -19,7 +19,7 @@ import test_config
 from azure.cosmos import _retry_utility
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -235,8 +235,7 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
-            self.assertTrue("Partition key [[]] is invalid"
-                            in error.message)
+            self.assertEqual(error.sub_status, SubStatusCodes.PARTITION_KEY_MISMATCH)
             del self.last_headers[:]
 
         created_db.delete_container(created_collection.id)
@@ -410,8 +409,7 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
-            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
-                            in error.message)
+            self.assertEqual(error.sub_status, SubStatusCodes.PARTITION_KEY_MISMATCH)
 
         # using incomplete partition key in read item
         try:
@@ -419,8 +417,7 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
-            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
-                            in error.message)
+            self.assertEqual(error.sub_status, SubStatusCodes.PARTITION_KEY_MISMATCH)
 
         # using mix value types for partition key
         doc_mixed_types = {'id': "doc4",

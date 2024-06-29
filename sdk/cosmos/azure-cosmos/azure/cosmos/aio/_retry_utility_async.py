@@ -24,6 +24,7 @@
 
 import time
 import asyncio
+import ast
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -76,7 +77,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         client.connection_policy, global_endpoint_manager, *args
     )
 
-    container_recreate_retry_policy = ContainerRecreateRetryPolicy(client, *args)
+    container_recreate_retry_policy = ContainerRecreateRetryPolicy(
+        client, client._container_properties_cache, *args
+    )
 
     while True:
         client_timeout = kwargs.get('timeout')
@@ -96,6 +99,15 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+            # If container does not have throughput, results will return empty list, but to align with other SDKs
+            # we manually raise a 404. We raise it here, so we can handle it in retry utilities
+            if result and isinstance(result[0], dict) and 'Offers' in result[0] and not result[0]['Offers'] \
+                    and args[3].method == 'POST':
+                # Grab the link used for getting throughput properties to add to message.
+                link = ast.literal_eval(args[3].body)["parameters"][0]["value"]
+                raise exceptions.CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find ThroughputProperties for container " + link)
 
             return result
         except exceptions.CosmosHttpResponseError as e:
@@ -114,22 +126,40 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 retry_policy = partition_key_range_gone_retry_policy
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
+                # pylint: disable=protected-access
+                # Before we retry if retry policy is container recreate, we need refresh the cache of the
+                # container properties and pass in the new RID in the headers.
+                await client._refresh_container_properties_cache(retry_policy.container_link)
+                if retry_policy.check_if_rid_different(
+                        retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
+                    retry_policy.refresh_container_properties_cache = False
+                else:
+                    cached_container = client._container_properties_cache[retry_policy.container_link]
+                    # If partition key value was previously extracted from the document definition
+                    # reattempt to extract partition key with updated partition key definition
+                    if retry_policy.should_extract_partition_key(args[3].headers, cached_container):
+                        new_partition_key = retry_policy._extract_partition_key(
+                            client, container_cache=cached_container, body=args[3].body
+                        )
+                        args[3].headers[HttpHeaders.PartitionKey] = new_partition_key
+                    # If getting throughput, we have to replace the container link received from stale cache
+                    # with refreshed cache
+                    if retry_policy.should_update_throughput_link(args[3].body, cached_container):
+                        new_body = retry_policy._update_throughput_link(args[3].body)
+                        args[3].body = new_body
+                        args[3].data = new_body
+
+                    retry_policy.container_rid = cached_container["_rid"]
+                    args[3].headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
 
-            try:
-                # This supports retry policies that need to be awaited
-                should_retry = await retry_policy.ShouldRetryAsync(e)
-            except AttributeError:
-                # If the method doesn't need to be awaited we proceed with a regular method call
-                should_retry = retry_policy.ShouldRetry(e)
-
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]
             # is the request. It needs to be modified for write forbidden exception
-            if not should_retry:
+            if not retry_policy.ShouldRetry(e):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[
@@ -141,8 +171,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
-            if isinstance(retry_policy, ContainerRecreateRetryPolicy):
-                args[3].headers[retry_policy.intendedHeaders] = retry_policy.container_rid
 
             # Wait for retry_after_in_milliseconds time before the next retry
             await asyncio.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
