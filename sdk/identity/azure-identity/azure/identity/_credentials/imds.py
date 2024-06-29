@@ -59,6 +59,7 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
 class ImdsCredential(MsalManagedIdentityClient):
     def __init__(self, **kwargs: Any) -> None:
         super(ImdsCredential, self).__init__(**kwargs)
+        self._config = kwargs
 
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True
@@ -81,7 +82,7 @@ class ImdsCredential(MsalManagedIdentityClient):
             # If within a chain (e.g. DefaultAzureCredential), we do a quick check to see if the IMDS endpoint
             # is available to avoid hanging for a long time if the endpoint isn't available.
             try:
-                client = ManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
+                client = ManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **self._config))
                 client.request_token(*scopes, connection_timeout=1, retry_total=0)
                 self._endpoint_available = True
             except HttpResponseError as ex:

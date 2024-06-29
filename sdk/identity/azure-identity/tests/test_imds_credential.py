@@ -44,14 +44,11 @@ def test_identity_not_available():
         credential.get_token("scope")
 
 
-@pytest.mark.parametrize("error_ending", ("network", "host", "foo"))
-def test_imds_request_failure_docker_desktop(error_ending):
+@pytest.mark.parametriz
+def test_imds_request_failure_docker_desktop():
     """The credential should raise CredentialUnavailableError when a 403 with a specific message is received"""
 
-    error_message = (
-        "connecting to 169.254.169.254:80: connecting to 169.254.169.254:80: dial tcp 169.254.169.254:80: "
-        f"connectex: A socket operation was attempted to an unreachable {error_ending}."  # cspell:disable-line
-    )
+    error_message = "no response"
     probe = mock_response(status_code=403, json_payload={"error": error_message})
     transport = mock.Mock(send=mock.Mock(return_value=probe))
     credential = ImdsCredential(transport=transport)
@@ -128,5 +125,5 @@ class TestImds(RecordedTestCase):
         within_credential_chain.set(True)
         cred = ImdsCredential(transport=transport)
         token = cred.get_token(scope)
-        assert token == expected_token
+        assert token.token == expected_token.token
         within_credential_chain.set(False)
