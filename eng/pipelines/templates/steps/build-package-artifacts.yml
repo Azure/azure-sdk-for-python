@@ -74,7 +74,6 @@ steps:
   - template: set-dev-build.yml@self
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
   
   - ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
     - task: Powershell@2
