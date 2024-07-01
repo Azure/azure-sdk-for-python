@@ -8,7 +8,6 @@
 
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
@@ -18,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class WebPubSubServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for WebPubSubServiceClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -31,14 +30,13 @@ class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, hub: str, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-11-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2024-01-01")
 
         if hub is None:
             raise ValueError("Parameter 'hub' must not be None.")
@@ -53,20 +51,18 @@ class WebPubSubServiceClientConfiguration(Configuration):  # pylint: disable=too
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://webpubsub.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "messaging-webpubsubservice/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.BearerTokenCredentialPolicy(
