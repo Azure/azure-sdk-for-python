@@ -9,7 +9,6 @@ DEPENDENCIES = [
     "packaging",
     "wheel",
     "Jinja2",
-    "MarkupSafe",
     "json-delta>=2.0",
     # Tests
     "pytest-cov",
