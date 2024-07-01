@@ -7,7 +7,7 @@
 
 from enum import Enum
 from typing import (
-    Any, Dict, List, Optional, Union,
+    Any, Callable, Dict, List, Literal, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote
@@ -31,6 +31,7 @@ from ._shared.response_handlers import process_storage_error, return_context_and
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from ._generated.models import ShareRootSquash
 
 
 def _wrap_item(item):
@@ -254,7 +255,25 @@ class ShareSasPermissions(object):
     :param bool create:
         Create a new file in the share, or copy a file to a new file in the share.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False, create=False):  # pylint: disable=redefined-builtin
+
+    read: bool = False
+    """The read permission for share SAS."""
+    write: bool = False
+    """The write permission for share SAS."""
+    delete: bool = False
+    """The delete permission for share SAS."""
+    list: bool = False
+    """The list permission for share SAS."""
+    create: bool = False
+    """Create a new file in the share, or copy a file to a new file in the share."""
+
+    def __init__(
+        self, read: bool = False,
+        write: bool = False,
+        delete: bool = False,
+        list: bool = False,
+        create: bool = False
+    ) -> None:  # pylint: disable=redefined-builtin
         self.read = read
         self.create = create
         self.write = write
@@ -266,12 +285,11 @@ class ShareSasPermissions(object):
                      ('d' if self.delete else '') +
                      ('l' if self.list else ''))
 
-
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
-    def from_string(cls, permission):
+    def from_string(cls, permission: str) -> "ShareSasPermissions":
         """Create a ShareSasPermissions from a string.
 
         To specify read, create, write, delete, or list permissions you need only to
@@ -337,6 +355,7 @@ class AccessPolicy(GenAccessPolicy):
         be interpreted as UTC.
     :type start: ~datetime.datetime or str
     """
+
     permission: Optional[Union[ShareSasPermissions, str]]  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
             operations allowed by the permissions."""
@@ -356,17 +375,16 @@ class AccessPolicy(GenAccessPolicy):
 
 
 class LeaseProperties(DictMixin):
-    """File or Share Lease Properties.
+    """File or Share Lease Properties."""
 
-    :ivar str status:
-        The lease status of the file or share. Possible values: locked|unlocked
-    :ivar str state:
-        Lease state of the file or share. Possible values: available|leased|expired|breaking|broken
-    :ivar str duration:
-        When a file or share is leased, specifies whether the lease is of infinite or fixed duration.
-    """
+    status: str
+    """The lease status of the file or share. Possible values: locked|unlocked"""
+    state: str
+    """Lease state of the file or share. Possible values: available|leased|expired|breaking|broken"""
+    duration: Optional[str]
+    """When a file or share is leased, specifies whether the lease is of infinite or fixed duration."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.status = get_enum_value(kwargs.get('x-ms-lease-status'))
         self.state = get_enum_value(kwargs.get('x-ms-lease-state'))
         self.duration = get_enum_value(kwargs.get('x-ms-lease-duration'))
@@ -383,34 +401,51 @@ class LeaseProperties(DictMixin):
 class ContentSettings(DictMixin):
     """Used to store the content settings of a file.
 
-    :param str content_type:
+    :param Optional[str] content_type:
         The content type specified for the file. If no content type was
         specified, the default content type is application/octet-stream.
-    :param str content_encoding:
+    :param Optional[str] content_encoding:
         If the content_encoding has previously been set
         for the file, that value is stored.
-    :param str content_language:
+    :param Optional[str] content_language:
         If the content_language has previously been set
         for the file, that value is stored.
-    :param str content_disposition:
+    :param Optional[str] content_disposition:
         content_disposition conveys additional information about how to
         process the response payload, and also can be used to attach
         additional metadata. If content_disposition has previously been set
         for the file, that value is stored.
-    :param str cache_control:
+    :param Optional[str] cache_control:
         If the cache_control has previously been set for
         the file, that value is stored.
-    :param bytearray content_md5:
+    :param Optional[bytearray] content_md5:
         If the content_md5 has been set for the file, this response
         header is stored so that the client can check for message content
         integrity.
     """
 
-    def __init__(
-            self, content_type=None, content_encoding=None,
-            content_language=None, content_disposition=None,
-            cache_control=None, content_md5=None, **kwargs):
+    content_type: Optional[str] = None
+    """The content type specified for the file."""
+    content_encoding: Optional[str] = None
+    """The content encoding specified for the file."""
+    content_language: Optional[str] = None
+    """The content language specified for the file."""
+    content_disposition: Optional[str] = None
+    """The content disposition specified for the file."""
+    cache_control: Optional[str] = None
+    """The cache control specified for the file."""
+    content_md5: Optional[bytearray] = None
+    """The content md5 specified for the file."""
 
+    def __init__(
+        self, content_type: Optional[str] = None,
+        content_encoding: Optional[str] = None,
+        content_language: Optional[str] = None,
+        content_disposition: Optional[str] = None,
+        cache_control: Optional[str] = None,
+        content_md5: Optional[bytearray] = None,
+        **kwargs: Any
+    ) -> None:
         self.content_type = content_type or kwargs.get('Content-Type')
         self.content_encoding = content_encoding or kwargs.get('Content-Encoding')
         self.content_language = content_language or kwargs.get('Content-Language')
@@ -431,54 +466,62 @@ class ContentSettings(DictMixin):
 
 
 class ShareProperties(DictMixin):
-    """Share's properties class.
+    """Share's properties class."""
 
-    :ivar str name:
-        The name of the share.
-    :ivar ~datetime.datetime last_modified:
-        A datetime object representing the last time the share was modified.
-    :ivar str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :ivar int quota:
-        The allocated quota.
-    :ivar str access_tier:
-        The share's access tier.
-    :ivar dict metadata: A dict with name_value pairs to associate with the
-        share as metadata.
-    :ivar str snapshot:
-        Snapshot of the share.
-    :ivar bool deleted:
-        To indicate if this share is deleted or not.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar datetime deleted:
-        To indicate the deleted time of the deleted share.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar str version:
-        To indicate the version of deleted share.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar int remaining_retention_days:
-        To indicate how many remaining days the deleted share will be kept.
-        This is a service returned value, and the value will be set when list shared including deleted ones.
-    :ivar int provisioned_bandwidth:
-        Provisioned bandwidth in megabits/second. Only applicable to premium file accounts.
-    :ivar ~azure.storage.fileshare.models.ShareRootSquash or str root_squash:
-        Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-    :ivar list(str) protocols:
-        Indicates the protocols enabled on the share. The protocol can be either SMB or NFS.
-    :ivar bool enable_snapshot_virtual_directory_access:
-        Specifies whether the snapshot virtual directory should be accessible at the root of the share
-        mount point when NFS is enabled. if not specified, the default is True.
-    """
+    name: Optional[str] = None
+    """The name of the share."""
+    last_modified: "datetime"
+    """A datetime object representing the last time the share was modified."""
+    etag: str
+    """The ETag contains a value that you can use to perform operations conditionally."""
+    quota: int
+    """The allocated quota."""
+    access_tier: str
+    """The share's access tier.'"""
+    next_allowed_quota_downgrade_time: Optional[str] = None
+    """The share's next allowed quota downgrade time."""
+    metadata: Dict[str, str]
+    """Name-value pairs associate with the share as metadata."""
+    snapshot: Optional[str] = None
+    """Snapshot of the share."""
+    deleted: Optional[bool] = None
+    """Whether this share was deleted. 
+        This is a service returned value, and the value will be set when list shared including deleted ones."""
+    deleted_time: Optional["datetime"] = None
+    """A datetime object representing the time at which the share was deleted.
+        This is a service returned value, and the value will be set when list shared including deleted ones."""
+    version: Optional[str] = None
+    """To indicate the version of deleted share.
+        This is a service returned value, and the value will be set when list shared including deleted ones."""
+    remaining_retention_days: Optional[int] = None
+    """The number of days that the share will be retained before being permanently deleted by the service.
+        This is a service returned value, and the value will be set when list shared including deleted ones."""
+    provisioned_egress_mbps: Optional[int] = None
+    """Provisioned egress in megabits/second. Only applicable to premium file accounts."""
+    provisioned_ingress_mbps: Optional[int] = None
+    """Provisioned ingress in megabits/second. Only applicable to premium file accounts."""
+    provisioned_iops: Optional[int] = None
+    """Provisioned input/output operators per second (iops). Only applicable to premium file accounts."""
+    provisioned_bandwidth: Optional[int] = None
+    """Provisioned bandwidth in megabits/second. Only applicable to premium file accounts."""
+    lease: LeaseProperties
+    """Share lease properties."""
+    protocols: Optional[List[str]] = None
+    """Indicates the protocols enabled on the share. The protocol can be either SMB or NFS."""
+    root_squash: Optional[Union["ShareRootSquash", str]] = None
+    """Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'."""
+    enable_snapshot_virtual_directory_access: Optional[bool] = None
+    """Specifies whether the snapshot virtual directory should be accessible at the root of the share
+        mount point when NFS is enabled. if not specified, the default is True."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.name = None
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
-        self.quota = kwargs.get('x-ms-share-quota')
-        self.access_tier = kwargs.get('x-ms-access-tier')
+        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
+        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.quota = kwargs.get('x-ms-share-quota')  # type: ignore [assignment]
+        self.access_tier = kwargs.get('x-ms-access-tier')  # type: ignore [assignment]
         self.next_allowed_quota_downgrade_time = kwargs.get('x-ms-share-next-allowed-quota-downgrade-time')
-        self.metadata = kwargs.get('metadata')
+        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
         self.snapshot = None
         self.deleted = None
         self.deleted_time = None
@@ -494,6 +537,7 @@ class ShareProperties(DictMixin):
         self.root_squash = kwargs.get('x-ms-root-squash', None)
         self.enable_snapshot_virtual_directory_access = \
             kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
+
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -525,24 +569,33 @@ class ShareProperties(DictMixin):
 class SharePropertiesPaged(PageIterator):
     """An iterable of Share properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.fileshare.ShareProperties)
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only shares whose names
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] prefix: Filters the results to return only shares whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of share names to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+
+    service_endpoint: Optional[str] = None
+    """The service URL."""
+    prefix: Optional[str] = None
+    """A filename prefix being used to filter the list."""
+    marker: Optional[str] = None
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results to retrieve per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results. The available
+        options include "primary" and "secondary"."""
+    current_page: List[ShareProperties]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(SharePropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -583,32 +636,49 @@ class Handle(DictMixin):
     All required parameters must be populated in order to send to Azure.
 
     :keyword str client_name: Required. Name of the client machine where the share is being mounted.
-    :keyword str handle_id: Required. XSMB service handle ID
-    :keyword str path: Required. File or directory name including full path starting
-     from share root
-    :keyword str file_id: Required. FileId uniquely identifies the file or
-     directory.
-    :keyword str parent_id: ParentId uniquely identifies the parent directory of the
-     object.
-    :keyword str session_id: Required. SMB session ID in context of which the file
-     handle was opened
-    :keyword str client_ip: Required. Client IP that opened the handle
+    :keyword str handle_id: Required. XSMB service handle ID.
+    :keyword str path: Required. File or directory name including full path starting from share root.
+    :keyword str file_id: Required. FileId uniquely identifies the file or directory.
+    :keyword Optional[str] parent_id: ParentId uniquely identifies the parent directory of the object.
+    :keyword str session_id: Required. SMB session ID in context of which the file handle was opened.
+    :keyword str client_ip: Required. Client IP that opened the handle.
     :keyword ~datetime.datetime open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
-    :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to (UTC)
+    :keyword Optional[~datetime.datetime] last_reconnect_time: Time handle was last connected to. (UTC)
     :keyword access_rights: Access rights of the handle.
     :paramtype access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]]
     """
 
-    def __init__(self, **kwargs):
-        self.client_name = kwargs.get('client_name')
-        self.id = kwargs.get('handle_id')
-        self.path = kwargs.get('path')
-        self.file_id = kwargs.get('file_id')
+    client_name: str
+    """Name of the client machine where the share is being mounted."""
+    client_id: str
+    """XSMB service handle ID."""
+    path: str
+    """File or directory name including full path starting from share root."""
+    file_id: str
+    """FileId uniquely identifies the file or directory."""
+    parent_id: Optional[str] = None
+    """ParentId uniquely identifies the parent directory of the object."""
+    session_id: str
+    """SMB session ID in context of which the file handle was opened."""
+    client_ip: str
+    """Client IP that opened the handle."""
+    open_time: "datetime"
+    """Time when the session that previously opened the handle was last been reconnected. (UTC)"""
+    last_reconnect_time: Optional["datetime"] = None
+    """Time handle that was last connected to. (UTC)"""
+    access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]] = None
+    """Access rights of the handle."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.client_name = kwargs.get('client_name')  # type: ignore [assignment]
+        self.id = kwargs.get('handle_id')  # type: ignore [assignment]
+        self.path = kwargs.get('path')  # type: ignore [assignment]
+        self.file_id = kwargs.get('file_id')  # type: ignore [assignment]
         self.parent_id = kwargs.get('parent_id')
-        self.session_id = kwargs.get('session_id')
-        self.client_ip = kwargs.get('client_ip')
-        self.open_time = kwargs.get('open_time')
+        self.session_id = kwargs.get('session_id')  # type: ignore [assignment]
+        self.client_ip = kwargs.get('client_ip')  # type: ignore [assignment]
+        self.open_time = kwargs.get('open_time')  # type: ignore [assignment]
         self.last_reconnect_time = kwargs.get('last_reconnect_time')
         self.access_rights = kwargs.get('access_right_list')
 
@@ -631,20 +701,27 @@ class Handle(DictMixin):
 class HandlesPaged(PageIterator):
     """An iterable of Handles.
 
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.fileshare.Handle)
-
-    :param callable command: Function to retrieve the next page of items.
-    :param int results_per_page: The maximum number of share names to retrieve per
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None):
+
+    marker: Optional[str] = None
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results.
+        The available options include "primary" and "secondary"."""
+    current_page: List[Handle]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(HandlesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -672,56 +749,144 @@ class HandlesPaged(PageIterator):
         return self._response.next_marker or None, self.current_page
 
 
-class DirectoryProperties(DictMixin):
-    """Directory's properties class.
+class NTFSAttributes(object):
+    """Valid set of attributes to set for file or directory.
 
-    :ivar str name:
-        The name of the directory.
-    :ivar ~datetime.datetime last_modified:
-        A datetime object representing the last time the directory was modified.
-    :ivar str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :ivar bool server_encrypted:
-        Whether encryption is enabled.
-    :keyword dict metadata: A dict with name_value pairs to associate with the
-        directory as metadata.
-    :ivar change_time: Change time for the file.
-    :vartype change_time: str or ~datetime.datetime
-    :ivar creation_time: Creation time for the file.
-    :vartype creation_time: str or ~datetime.datetime
-    :ivar last_write_time: Last write time for the file.
-    :vartype last_write_time: str or ~datetime.datetime
-    :ivar last_access_time: Last access time for the file.
-    :vartype last_access_time: ~datetime.datetime
-    :ivar file_attributes:
-        The file system attributes for files and directories.
-    :vartype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
-    :ivar permission_key: Key of the permission to be set for the
-        directory/file.
-    :vartype permission_key: str
-    :ivar file_id: Required. FileId uniquely identifies the file or
-     directory.
-    :vartype file_id: str
-    :ivar parent_id: ParentId uniquely identifies the parent directory of the
-     object.
-    :vartype parent_id: str
+    To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
     """
 
-    def __init__(self, **kwargs):
+    read_only: bool = False
+    """Enable/disable 'ReadOnly' attribute for DIRECTORY or FILE."""
+    hidden: bool = False
+    """Enable/disable 'Hidden' attribute for DIRECTORY or FILE."""
+    system: bool = False
+    """Enable/disable 'System' attribute for DIRECTORY or FILE."""
+    none: bool = False
+    """Enable/disable 'None' attribute for DIRECTORY or FILE to clear all attributes of FILE/DIRECTORY."""
+    directory: bool = False
+    """Enable/disable 'Directory' attribute for DIRECTORY."""
+    archive: bool = False
+    """Enable/disable 'Archive' attribute for DIRECTORY."""
+    temporary: bool = False
+    """Enable/disable 'Temporary' attribute for DIRECTORY."""
+    offline: bool = False
+    """Enable/disable 'Offline' attribute for DIRECTORY."""
+    not_content_indexed: bool = False
+    """Enable/disable 'NotContentIndexed' attribute for DIRECTORY."""
+    no_scrub_data: bool = False
+    """Enable/disable 'NoScrubData' attribute for DIRECTORY."""
+
+    def __init__(
+        self, read_only: bool = False,
+        hidden: bool = False,
+        system: bool = False,
+        none: bool = False,
+        directory: bool = False,
+        archive: bool = False,
+        temporary: bool = False,
+        offline: bool = False,
+        not_content_indexed: bool = False,
+        no_scrub_data: bool = False
+    ) -> None:
+        self.read_only = read_only
+        self.hidden = hidden
+        self.system = system
+        self.none = none
+        self.directory = directory
+        self.archive = archive
+        self.temporary = temporary
+        self.offline = offline
+        self.not_content_indexed = not_content_indexed
+        self.no_scrub_data = no_scrub_data
+        self._str = (('ReadOnly|' if self.read_only else '') +
+                               ('Hidden|' if self.hidden else '') +
+                               ('System|' if self.system else '') +
+                               ('None|' if self.none else '') +
+                               ('Directory|' if self.directory else '') +
+                               ('Archive|' if self.archive else '') +
+                               ('Temporary|' if self.temporary else '') +
+                               ('Offline|' if self.offline else '') +
+                               ('NotContentIndexed|' if self.not_content_indexed else '') +
+                               ('NoScrubData|' if self.no_scrub_data else ''))
+
+    def __str__(self):
+        concatenated_params = self._str
+        return concatenated_params.strip('|')
+
+    @classmethod
+    def from_string(cls, string: str) -> "NTFSAttributes":
+        """Create a NTFSAttributes from a string.
+
+        To specify permissions you can pass in a string with the
+        desired permissions, e.g. "ReadOnly|Hidden|System"
+
+        :param str string: The string which dictates the permissions.
+        :return: A NTFSAttributes object
+        :rtype: ~azure.storage.fileshare.NTFSAttributes
+        """
+        read_only = "ReadOnly" in string
+        hidden = "Hidden" in string
+        system = "System" in string
+        none = "None" in string
+        directory = "Directory" in string
+        archive = "Archive" in string
+        temporary = "Temporary" in string
+        offline = "Offline" in string
+        not_content_indexed = "NotContentIndexed" in string
+        no_scrub_data = "NoScrubData" in string
+
+        parsed = cls(read_only, hidden, system, none, directory, archive, temporary, offline, not_content_indexed,
+                     no_scrub_data)
+        parsed._str = string  # pylint: disable = protected-access
+        return parsed
+
+
+class DirectoryProperties(DictMixin):
+    """Directory's properties class."""
+
+    name: Optional[str] = None
+    """The name of the directory."""
+    last_modified: "datetime"
+    """A datetime object representing the last time the directory was modified."""
+    etag: str
+    """The ETag contains a value that you can use to perform operations conditionally."""
+    server_encrypted: bool
+    """Whether encryption is enabled."""
+    metadata: Dict[str, str]
+    """Name_value pairs to associate with the directory as metadata."""
+    change_time: Optional[Union[str, "datetime"]] = None
+    """Change time for the file."""
+    creation_time: Optional[Union[str, "datetime"]] = None
+    """Creation time for the file."""
+    last_write_time: Optional[Union[str, "datetime"]] = None
+    """Last write time for the file."""
+    last_access_time: Optional["datetime"] = None
+    """Last access time for the file."""
+    file_attributes: Union[str, NTFSAttributes]
+    """The file system attributes for files and directories."""
+    permission_key: str
+    """Key of the permission to be set for the directory/file."""
+    file_id: str
+    """FileId uniquely identifies the file or directory."""
+    parent_id: str
+    """ParentId uniquely identifies the parent directory of the object."""
+    is_directory: bool = True
+    """Whether input is a directory."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.name = None
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
-        self.metadata = kwargs.get('metadata')
+        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
+        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
+        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
         self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
         self.last_access_time = None
-        self.file_attributes = kwargs.get('x-ms-file-attributes')
-        self.permission_key = kwargs.get('x-ms-file-permission-key')
-        self.file_id = kwargs.get('x-ms-file-id')
-        self.parent_id = kwargs.get('x-ms-file-parent-id')
+        self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
+        self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
+        self.file_id = kwargs.get('x-ms-file-id')  # type: ignore [assignment]
+        self.parent_id = kwargs.get('x-ms-file-parent-id')  # type: ignore [assignment]
         self.is_directory = True
 
     @classmethod
@@ -747,24 +912,34 @@ class DirectoryPropertiesPaged(PageIterator):
     will have the keys 'name' (str) and 'is_directory' (bool).
     Items that are files (is_directory=False) will have an additional 'content_length' key.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list[dict[str, Any]]
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only directories whose names
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] prefix: Filters the results to return only directories whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of share names to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+
+    service_endpoint: Optional[str] = None
+    """The service URL."""
+    prefix: Optional[str] = None
+    """A file name prefix being used to filter the list."""
+    marker: Optional[str] = None
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    continuation_token: Optional[str] = None
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results. The available options include "primary" and "secondary"."""
+    current_page: List[Dict[str, Any]]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(DirectoryPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -803,29 +978,6 @@ class DirectoryPropertiesPaged(PageIterator):
 class FileProperties(DictMixin):
     """File's properties class.
 
-    :ivar str name:
-        The name of the file.
-    :ivar str path:
-        The path of the file.
-    :ivar str share:
-        The name of share.
-    :ivar str snapshot:
-        File snapshot.
-    :ivar int content_length:
-        Size of file in bytes.
-    :ivar dict metadata: A dict with name_value pairs to associate with the
-        file as metadata.
-    :ivar str file_type:
-        Type of the file.
-    :ivar ~datetime.datetime last_modified:
-        A datetime object representing the last time the file was modified.
-    :ivar str etag:
-        The ETag contains a value that you can use to perform operations
-        conditionally.
-    :ivar int size:
-        Size of file in bytes.
-    :ivar str content_range:
-        The range of bytes.
     :ivar bool server_encrypted:
         Whether encryption is enabled.
     :ivar copy:
@@ -836,7 +988,31 @@ class FileProperties(DictMixin):
     :vartype content_settings: ~azure.storage.fileshare.ContentSettings
     """
 
-    def __init__(self, **kwargs):
+    name: Optional[str] = None
+    """The name of the file."""
+    path: Optional[str] = None
+    """The path of the file."""
+    share: Optional[str] = None
+    """The name of the share."""
+    snapshot: Optional[str] = None
+    """File snapshot."""
+    content_length: int
+    """Size of file in bytes."""
+    metadata: Dict[str, str]
+    """Name-value pairs to associate with the file as metadata."""
+    file_type: str
+    """String indicating the type of file."""
+    last_modified: "datetime"
+    """A datetime object representing the last time the file was modified."""
+    etag: str
+    """The ETag contains a value that can be used to perform operations conditionally."""
+    size: int
+    """Size of the file in bytes."""
+    content_range: Optional[str] = None
+    """Indicates the range of bytes returned in the event that the client
+        requested a subset of the file."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')
         self.path = None
         self.share = None
@@ -983,7 +1159,7 @@ class FileSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission):
+    def from_string(cls, permission: str) -> "FileSasPermissions":
         """Create a FileSasPermissions from a string.
 
         To specify read, create, write, or delete permissions you need only to
@@ -1002,88 +1178,6 @@ class FileSasPermissions(object):
 
         parsed = cls(p_read, p_create, p_write, p_delete)
 
-        return parsed
-
-
-class NTFSAttributes(object):
-    """
-    Valid set of attributes to set for file or directory.
-    To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
-
-    :ivar bool read_only:
-        Enable/disable 'ReadOnly' attribute for DIRECTORY or FILE
-    :ivar bool hidden:
-        Enable/disable 'Hidden' attribute for DIRECTORY or FILE
-    :ivar bool system:
-        Enable/disable 'System' attribute for DIRECTORY or FILE
-    :ivar bool none:
-        Enable/disable 'None' attribute for DIRECTORY or FILE to clear all attributes of FILE/DIRECTORY
-    :ivar bool directory:
-        Enable/disable 'Directory' attribute for DIRECTORY
-    :ivar bool archive:
-        Enable/disable 'Archive' attribute for DIRECTORY or FILE
-    :ivar bool temporary:
-        Enable/disable 'Temporary' attribute for FILE
-    :ivar bool offline:
-        Enable/disable 'Offline' attribute for DIRECTORY or FILE
-    :ivar bool not_content_indexed:
-        Enable/disable 'NotContentIndexed' attribute for DIRECTORY or FILE
-    :ivar bool no_scrub_data:
-        Enable/disable 'NoScrubData' attribute for DIRECTORY or FILE
-    """
-    def __init__(self, read_only=False, hidden=False, system=False, none=False, directory=False, archive=False,
-                 temporary=False, offline=False, not_content_indexed=False, no_scrub_data=False):
-
-        self.read_only = read_only
-        self.hidden = hidden
-        self.system = system
-        self.none = none
-        self.directory = directory
-        self.archive = archive
-        self.temporary = temporary
-        self.offline = offline
-        self.not_content_indexed = not_content_indexed
-        self.no_scrub_data = no_scrub_data
-        self._str = (('ReadOnly|' if self.read_only else '') +
-                               ('Hidden|' if self.hidden else '') +
-                               ('System|' if self.system else '') +
-                               ('None|' if self.none else '') +
-                               ('Directory|' if self.directory else '') +
-                               ('Archive|' if self.archive else '') +
-                               ('Temporary|' if self.temporary else '') +
-                               ('Offline|' if self.offline else '') +
-                               ('NotContentIndexed|' if self.not_content_indexed else '') +
-                               ('NoScrubData|' if self.no_scrub_data else ''))
-
-    def __str__(self):
-        concatenated_params = self._str
-        return concatenated_params.strip('|')
-
-    @classmethod
-    def from_string(cls, string):
-        """Create a NTFSAttributes from a string.
-
-        To specify permissions you can pass in a string with the
-        desired permissions, e.g. "ReadOnly|Hidden|System"
-
-        :param str string: The string which dictates the permissions.
-        :return: A NTFSAttributes object
-        :rtype: ~azure.storage.fileshare.NTFSAttributes
-        """
-        read_only = "ReadOnly" in string
-        hidden = "Hidden" in string
-        system = "System" in string
-        none = "None" in string
-        directory = "Directory" in string
-        archive = "Archive" in string
-        temporary = "Temporary" in string
-        offline = "Offline" in string
-        not_content_indexed = "NotContentIndexed" in string
-        no_scrub_data = "NoScrubData" in string
-
-        parsed = cls(read_only, hidden, system, none, directory, archive, temporary, offline, not_content_indexed,
-                     no_scrub_data)
-        parsed._str = string  # pylint: disable = protected-access
         return parsed
 
 
