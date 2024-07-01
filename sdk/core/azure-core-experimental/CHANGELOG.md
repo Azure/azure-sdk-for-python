@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- urllib3 implementation of azure-core transport protocol
+
 ### Breaking Changes
 
 ### Bugs Fixed

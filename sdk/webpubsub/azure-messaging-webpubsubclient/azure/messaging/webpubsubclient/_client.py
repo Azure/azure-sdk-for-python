@@ -583,6 +583,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send message to group.
+
         :param group_name: The group name. Required.
         :type group_name: str.
         :param content: The data content. Required.
@@ -604,6 +605,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send message to group.
+
         :param group_name: The group name. Required.
         :type group_name: str.
         :param content: The data content. Required.
@@ -625,6 +627,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send message to group.
+
         :param group_name: The group name. Required.
         :type group_name: str.
         :param content: The data content. Required.
@@ -646,6 +649,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send message to group.
+
         :param group_name: The group name. Required.
         :type group_name: str.
         :param content: The data content. Required.

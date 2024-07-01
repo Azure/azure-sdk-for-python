@@ -57,6 +57,12 @@ def _in_span(word, spans):
     return False
 
 
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+
+
 def analyze_with_highres():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -99,17 +105,18 @@ def analyze_with_highres():
                 words = get_words(page, line)
                 print(
                     f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                    f"within bounding polygon '{line.polygon}'"
+                    f"within bounding polygon '{format_polygon(line.polygon)}'"
                 )
 
-                for word in words:
-                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+        if page.words:
+            for word in page.words:
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
                 print(
                     f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                    f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                    f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
                 )
 
     if result.tables:
@@ -117,12 +124,16 @@ def analyze_with_highres():
             print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
             if table.bounding_regions:
                 for region in table.bounding_regions:
-                    print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                    print(
+                        f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                    )
             for cell in table.cells:
                 print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
                 if cell.bounding_regions:
                     for region in cell.bounding_regions:
-                        print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+                        print(
+                            f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
+                        )
 
     print("----------------------------------------")
     # [END analyze_with_highres]

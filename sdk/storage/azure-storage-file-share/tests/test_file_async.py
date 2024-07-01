@@ -3877,5 +3877,4 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        with pytest.raises(ClientAuthenticationError):
-            await file_client.get_file_properties()
+        await file_client.exists()

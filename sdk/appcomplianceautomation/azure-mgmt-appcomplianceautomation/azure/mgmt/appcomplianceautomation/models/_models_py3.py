@@ -8,108 +8,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-
-
-class Assessment(_serialization.Model):
-    """A class represent the assessment.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the assessment.
-    :vartype name: str
-    :ivar severity: The severity level of this assessment. Known values are: "High", "Medium", and
-     "Low".
-    :vartype severity: str or ~azure.mgmt.appcomplianceautomation.models.AssessmentSeverity
-    :ivar description: The description of the assessment.
-    :vartype description: str
-    :ivar remediation: The remediation of the assessment.
-    :vartype remediation: str
-    :ivar is_pass: Indicates whether all the resource(s) are compliant. Known values are: "True"
-     and "False".
-    :vartype is_pass: str or ~azure.mgmt.appcomplianceautomation.models.IsPass
-    :ivar policy_id: The policy id mapping to this assessment.
-    :vartype policy_id: str
-    :ivar resource_list: List of resource assessments.
-    :vartype resource_list: list[~azure.mgmt.appcomplianceautomation.models.AssessmentResource]
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-        "severity": {"readonly": True},
-        "description": {"readonly": True},
-        "remediation": {"readonly": True},
-        "is_pass": {"readonly": True},
-        "policy_id": {"readonly": True},
-        "resource_list": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "severity": {"key": "severity", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "remediation": {"key": "remediation", "type": "str"},
-        "is_pass": {"key": "isPass", "type": "str"},
-        "policy_id": {"key": "policyId", "type": "str"},
-        "resource_list": {"key": "resourceList", "type": "[AssessmentResource]"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.name = None
-        self.severity = None
-        self.description = None
-        self.remediation = None
-        self.is_pass = None
-        self.policy_id = None
-        self.resource_list = None
-
-
-class AssessmentResource(_serialization.Model):
-    """A class represent the assessment resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar resource_id: The Id of the resource.
-    :vartype resource_id: str
-    :ivar resource_status: Resource status. Known values are: "Healthy", "Unhealthy", and
-     "NotApplicable".
-    :vartype resource_status: str or ~azure.mgmt.appcomplianceautomation.models.ResourceStatus
-    :ivar reason: The reason for the N/A resource.
-    :vartype reason: str
-    :ivar status_change_date: The status change date for the resource. For unavailable date, set it
-     as N/A.
-    :vartype status_change_date: str
-    """
-
-    _validation = {
-        "resource_id": {"readonly": True},
-        "resource_status": {"readonly": True},
-        "reason": {"readonly": True},
-        "status_change_date": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "resource_status": {"key": "resourceStatus", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-        "status_change_date": {"key": "statusChangeDate", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.resource_id = None
-        self.resource_status = None
-        self.reason = None
-        self.status_change_date = None
 
 
 class Category(_serialization.Model):
@@ -119,10 +24,8 @@ class Category(_serialization.Model):
 
     :ivar category_name: The name of the compliance category. e.g. "Operational Security".
     :vartype category_name: str
-    :ivar category_type: The category type. Known values are: "FullyAutomated",
-     "PartiallyAutomated", and "Manual".
-    :vartype category_type: str or ~azure.mgmt.appcomplianceautomation.models.CategoryType
-    :ivar category_status: Category status. Known values are: "Healthy" and "Unhealthy".
+    :ivar category_status: Category status. Known values are: "Passed", "Failed", "NotApplicable",
+     and "PendingApproval".
     :vartype category_status: str or ~azure.mgmt.appcomplianceautomation.models.CategoryStatus
     :ivar control_families: List of control families.
     :vartype control_families: list[~azure.mgmt.appcomplianceautomation.models.ControlFamily]
@@ -130,25 +33,140 @@ class Category(_serialization.Model):
 
     _validation = {
         "category_name": {"readonly": True},
-        "category_type": {"readonly": True},
         "category_status": {"readonly": True},
         "control_families": {"readonly": True},
     }
 
     _attribute_map = {
         "category_name": {"key": "categoryName", "type": "str"},
-        "category_type": {"key": "categoryType", "type": "str"},
         "category_status": {"key": "categoryStatus", "type": "str"},
         "control_families": {"key": "controlFamilies", "type": "[ControlFamily]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.category_name = None
-        self.category_type = None
         self.category_status = None
         self.control_families = None
+
+
+class CertSyncRecord(_serialization.Model):
+    """A class represent the certification record synchronized from app compliance.
+
+    :ivar offer_guid: The offerGuid which mapping to the reports.
+    :vartype offer_guid: str
+    :ivar certification_status: Indicates the status of certification process.
+    :vartype certification_status: str
+    :ivar ingestion_status: Indicates the status of compliance process.
+    :vartype ingestion_status: str
+    :ivar controls: The control records list to be synchronized.
+    :vartype controls: list[~azure.mgmt.appcomplianceautomation.models.ControlSyncRecord]
+    """
+
+    _validation = {
+        "offer_guid": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "offer_guid": {"key": "offerGuid", "type": "str"},
+        "certification_status": {"key": "certificationStatus", "type": "str"},
+        "ingestion_status": {"key": "ingestionStatus", "type": "str"},
+        "controls": {"key": "controls", "type": "[ControlSyncRecord]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        offer_guid: Optional[str] = None,
+        certification_status: Optional[str] = None,
+        ingestion_status: Optional[str] = None,
+        controls: Optional[List["_models.ControlSyncRecord"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword offer_guid: The offerGuid which mapping to the reports.
+        :paramtype offer_guid: str
+        :keyword certification_status: Indicates the status of certification process.
+        :paramtype certification_status: str
+        :keyword ingestion_status: Indicates the status of compliance process.
+        :paramtype ingestion_status: str
+        :keyword controls: The control records list to be synchronized.
+        :paramtype controls: list[~azure.mgmt.appcomplianceautomation.models.ControlSyncRecord]
+        """
+        super().__init__(**kwargs)
+        self.offer_guid = offer_guid
+        self.certification_status = certification_status
+        self.ingestion_status = ingestion_status
+        self.controls = controls
+
+
+class CheckNameAvailabilityRequest(_serialization.Model):
+    """The check availability request body.
+
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CheckNameAvailabilityResponse(_serialization.Model):
+    """The check availability result.
+
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.appcomplianceautomation.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or
+         ~azure.mgmt.appcomplianceautomation.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
 
 
 class ComplianceReportItem(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -158,84 +176,76 @@ class ComplianceReportItem(_serialization.Model):  # pylint: disable=too-many-in
 
     :ivar category_name: The category name.
     :vartype category_name: str
+    :ivar control_family_name: The control family name.
+    :vartype control_family_name: str
     :ivar control_id: The control Id - e.g. "1".
     :vartype control_id: str
     :ivar control_name: The control name.
     :vartype control_name: str
-    :ivar control_type: The control type. Known values are: "FullyAutomated", "PartiallyAutomated",
-     and "Manual".
-    :vartype control_type: str or ~azure.mgmt.appcomplianceautomation.models.ControlType
-    :ivar compliance_state: The compliance result's status. Known values are: "Healthy" and
-     "Unhealthy".
-    :vartype compliance_state: str or ~azure.mgmt.appcomplianceautomation.models.ComplianceState
-    :ivar policy_id: The compliance result mapped policy Id.
-    :vartype policy_id: str
-    :ivar policy_display_name: The policy's display name.
-    :vartype policy_display_name: str
-    :ivar policy_description: The policy's detail description.
-    :vartype policy_description: str
-    :ivar subscription_id: The compliance result mapped subscription Id.
-    :vartype subscription_id: str
-    :ivar resource_group: The compliance result mapped resource group.
-    :vartype resource_group: str
-    :ivar resource_type: The compliance result mapped resource type.
-    :vartype resource_type: str
-    :ivar resource_id: The compliance result mapped resource Id - e.g.
-     "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".
+    :ivar control_status: Control status. Known values are: "Passed", "Failed", "NotApplicable",
+     and "PendingApproval".
+    :vartype control_status: str or ~azure.mgmt.appcomplianceautomation.models.ControlStatus
+    :ivar responsibility_title: The title of the customer responsibility.
+    :vartype responsibility_title: str
+    :ivar responsibility_description: The description of the customer responsibility.
+    :vartype responsibility_description: str
+    :ivar resource_id: The Id of the resource.
     :vartype resource_id: str
-    :ivar status_change_date: The compliance result last changed date - e.g.
-     "2022-10-24T02:55:16.3274379Z". For unavailable date, set it as "N/A".
-    :vartype status_change_date: str
+    :ivar resource_type: The type of the resource.  e.g. "Microsoft.SignalRService/SignalR".
+    :vartype resource_type: str
+    :ivar resource_origin: Resource origin. Known values are: "Azure", "AWS", and "GCP".
+    :vartype resource_origin: str or ~azure.mgmt.appcomplianceautomation.models.ResourceOrigin
+    :ivar resource_status: Resource status. Known values are: "Healthy" and "Unhealthy".
+    :vartype resource_status: str or ~azure.mgmt.appcomplianceautomation.models.ResourceStatus
+    :ivar resource_status_change_date: The status change date for the resource.
+    :vartype resource_status_change_date: ~datetime.datetime
     """
 
     _validation = {
         "category_name": {"readonly": True},
+        "control_family_name": {"readonly": True},
         "control_id": {"readonly": True},
         "control_name": {"readonly": True},
-        "control_type": {"readonly": True},
-        "compliance_state": {"readonly": True},
-        "policy_id": {"readonly": True},
-        "policy_display_name": {"readonly": True},
-        "policy_description": {"readonly": True},
-        "subscription_id": {"readonly": True},
-        "resource_group": {"readonly": True},
-        "resource_type": {"readonly": True},
+        "control_status": {"readonly": True},
+        "responsibility_title": {"readonly": True},
+        "responsibility_description": {"readonly": True},
         "resource_id": {"readonly": True},
-        "status_change_date": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "resource_origin": {"readonly": True},
+        "resource_status": {"readonly": True},
+        "resource_status_change_date": {"readonly": True},
     }
 
     _attribute_map = {
         "category_name": {"key": "categoryName", "type": "str"},
+        "control_family_name": {"key": "controlFamilyName", "type": "str"},
         "control_id": {"key": "controlId", "type": "str"},
         "control_name": {"key": "controlName", "type": "str"},
-        "control_type": {"key": "controlType", "type": "str"},
-        "compliance_state": {"key": "complianceState", "type": "str"},
-        "policy_id": {"key": "policyId", "type": "str"},
-        "policy_display_name": {"key": "policyDisplayName", "type": "str"},
-        "policy_description": {"key": "policyDescription", "type": "str"},
-        "subscription_id": {"key": "subscriptionId", "type": "str"},
-        "resource_group": {"key": "resourceGroup", "type": "str"},
-        "resource_type": {"key": "resourceType", "type": "str"},
+        "control_status": {"key": "controlStatus", "type": "str"},
+        "responsibility_title": {"key": "responsibilityTitle", "type": "str"},
+        "responsibility_description": {"key": "responsibilityDescription", "type": "str"},
         "resource_id": {"key": "resourceId", "type": "str"},
-        "status_change_date": {"key": "statusChangeDate", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_origin": {"key": "resourceOrigin", "type": "str"},
+        "resource_status": {"key": "resourceStatus", "type": "str"},
+        "resource_status_change_date": {"key": "resourceStatusChangeDate", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.category_name = None
+        self.control_family_name = None
         self.control_id = None
         self.control_name = None
-        self.control_type = None
-        self.compliance_state = None
-        self.policy_id = None
-        self.policy_display_name = None
-        self.policy_description = None
-        self.subscription_id = None
-        self.resource_group = None
-        self.resource_type = None
+        self.control_status = None
+        self.responsibility_title = None
+        self.responsibility_description = None
         self.resource_id = None
-        self.status_change_date = None
+        self.resource_type = None
+        self.resource_origin = None
+        self.resource_status = None
+        self.resource_status_change_date = None
 
 
 class ComplianceResult(_serialization.Model):
@@ -259,7 +269,7 @@ class ComplianceResult(_serialization.Model):
         "categories": {"key": "categories", "type": "[Category]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.compliance_name = None
@@ -271,60 +281,54 @@ class Control(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar control_id: The Id of the control. e.g. "Operational Security#10".
+    :ivar control_id: The Id of the control. e.g. "Operational_Security_10".
     :vartype control_id: str
-    :ivar control_short_name: The short name of the control. e.g. "Unsupported OS and Software.".
-    :vartype control_short_name: str
+    :ivar control_name: The name of the control. e.g. "Unsupported OS and Software.".
+    :vartype control_name: str
     :ivar control_full_name: The full name of the control. e.g. "Validate that unsupported
      operating systems and software components are not in use.".
     :vartype control_full_name: str
-    :ivar control_type: The control type. Known values are: "FullyAutomated", "PartiallyAutomated",
-     and "Manual".
-    :vartype control_type: str or ~azure.mgmt.appcomplianceautomation.models.ControlType
     :ivar control_description: The control's description.
     :vartype control_description: str
     :ivar control_description_hyper_link: The hyper link to the control's description'.
     :vartype control_description_hyper_link: str
-    :ivar control_status: Control status. Known values are: "Passed", "Failed", and
-     "NotApplicable".
+    :ivar control_status: Control status. Known values are: "Passed", "Failed", "NotApplicable",
+     and "PendingApproval".
     :vartype control_status: str or ~azure.mgmt.appcomplianceautomation.models.ControlStatus
-    :ivar assessments: List of assessments.
-    :vartype assessments: list[~azure.mgmt.appcomplianceautomation.models.Assessment]
+    :ivar responsibilities: List of customer responsibility.
+    :vartype responsibilities: list[~azure.mgmt.appcomplianceautomation.models.Responsibility]
     """
 
     _validation = {
         "control_id": {"readonly": True},
-        "control_short_name": {"readonly": True},
+        "control_name": {"readonly": True},
         "control_full_name": {"readonly": True},
-        "control_type": {"readonly": True},
         "control_description": {"readonly": True},
         "control_description_hyper_link": {"readonly": True},
         "control_status": {"readonly": True},
-        "assessments": {"readonly": True},
+        "responsibilities": {"readonly": True},
     }
 
     _attribute_map = {
         "control_id": {"key": "controlId", "type": "str"},
-        "control_short_name": {"key": "controlShortName", "type": "str"},
+        "control_name": {"key": "controlName", "type": "str"},
         "control_full_name": {"key": "controlFullName", "type": "str"},
-        "control_type": {"key": "controlType", "type": "str"},
         "control_description": {"key": "controlDescription", "type": "str"},
         "control_description_hyper_link": {"key": "controlDescriptionHyperLink", "type": "str"},
         "control_status": {"key": "controlStatus", "type": "str"},
-        "assessments": {"key": "assessments", "type": "[Assessment]"},
+        "responsibilities": {"key": "responsibilities", "type": "[Responsibility]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.control_id = None
-        self.control_short_name = None
+        self.control_name = None
         self.control_full_name = None
-        self.control_type = None
         self.control_description = None
         self.control_description_hyper_link = None
         self.control_status = None
-        self.assessments = None
+        self.responsibilities = None
 
 
 class ControlFamily(_serialization.Model):
@@ -332,38 +336,63 @@ class ControlFamily(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar family_name: The name of the control family. e.g. "Malware Protection - Anti-Virus".
-    :vartype family_name: str
-    :ivar family_type: The control family type. Known values are: "FullyAutomated",
-     "PartiallyAutomated", and "Manual".
-    :vartype family_type: str or ~azure.mgmt.appcomplianceautomation.models.ControlFamilyType
-    :ivar family_status: Control family status. Known values are: "Healthy" and "Unhealthy".
-    :vartype family_status: str or ~azure.mgmt.appcomplianceautomation.models.ControlFamilyStatus
+    :ivar control_family_name: The name of the control family. e.g. "Malware Protection -
+     Anti-Virus".
+    :vartype control_family_name: str
+    :ivar control_family_status: The control family status. Known values are: "Passed", "Failed",
+     "NotApplicable", and "PendingApproval".
+    :vartype control_family_status: str or
+     ~azure.mgmt.appcomplianceautomation.models.ControlFamilyStatus
     :ivar controls: List of controls.
     :vartype controls: list[~azure.mgmt.appcomplianceautomation.models.Control]
     """
 
     _validation = {
-        "family_name": {"readonly": True},
-        "family_type": {"readonly": True},
-        "family_status": {"readonly": True},
+        "control_family_name": {"readonly": True},
+        "control_family_status": {"readonly": True},
         "controls": {"readonly": True},
     }
 
     _attribute_map = {
-        "family_name": {"key": "familyName", "type": "str"},
-        "family_type": {"key": "familyType", "type": "str"},
-        "family_status": {"key": "familyStatus", "type": "str"},
+        "control_family_name": {"key": "controlFamilyName", "type": "str"},
+        "control_family_status": {"key": "controlFamilyStatus", "type": "str"},
         "controls": {"key": "controls", "type": "[Control]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.family_name = None
-        self.family_type = None
-        self.family_status = None
+        self.control_family_name = None
+        self.control_family_status = None
         self.controls = None
+
+
+class ControlSyncRecord(_serialization.Model):
+    """A class represent the control record synchronized from app compliance.
+
+    :ivar control_id: The Id of the control. e.g. "Operational_Security_10".
+    :vartype control_id: str
+    :ivar control_status: Control status synchronized from app compliance.
+    :vartype control_status: str
+    """
+
+    _attribute_map = {
+        "control_id": {"key": "controlId", "type": "str"},
+        "control_status": {"key": "controlStatus", "type": "str"},
+    }
+
+    def __init__(
+        self, *, control_id: Optional[str] = None, control_status: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword control_id: The Id of the control. e.g. "Operational_Security_10".
+        :paramtype control_id: str
+        :keyword control_status: Control status synchronized from app compliance.
+        :paramtype control_status: str
+        """
+        super().__init__(**kwargs)
+        self.control_id = control_id
+        self.control_status = control_status
 
 
 class DownloadResponse(_serialization.Model):
@@ -371,15 +400,15 @@ class DownloadResponse(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar resource_list: List of the reports.
+    :ivar resource_list: Resource list of the report.
     :vartype resource_list: list[~azure.mgmt.appcomplianceautomation.models.ResourceItem]
     :ivar compliance_report: List of the compliance result.
     :vartype compliance_report:
      list[~azure.mgmt.appcomplianceautomation.models.ComplianceReportItem]
-    :ivar compliance_pdf_report: compliance pdf report.
+    :ivar compliance_pdf_report: Compliance pdf report.
     :vartype compliance_pdf_report:
      ~azure.mgmt.appcomplianceautomation.models.DownloadResponseCompliancePdfReport
-    :ivar compliance_detailed_pdf_report: compliance detailed pdf report.
+    :ivar compliance_detailed_pdf_report: The detailed compliance pdf report.
     :vartype compliance_detailed_pdf_report:
      ~azure.mgmt.appcomplianceautomation.models.DownloadResponseComplianceDetailedPdfReport
     """
@@ -401,7 +430,7 @@ class DownloadResponse(_serialization.Model):
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_list = None
@@ -410,12 +439,12 @@ class DownloadResponse(_serialization.Model):
         self.compliance_detailed_pdf_report = None
 
 
-class DownloadResponseComplianceDetailedPdfReport(_serialization.Model):
-    """compliance detailed pdf report.
+class DownloadResponseComplianceDetailedPdfReport(_serialization.Model):  # pylint: disable=name-too-long
+    """The detailed compliance pdf report.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar sas_uri: uri of compliance detailed pdf report.
+    :ivar sas_uri: The uri of detailed compliance pdf report.
     :vartype sas_uri: str
     """
 
@@ -427,18 +456,18 @@ class DownloadResponseComplianceDetailedPdfReport(_serialization.Model):
         "sas_uri": {"key": "sasUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.sas_uri = None
 
 
 class DownloadResponseCompliancePdfReport(_serialization.Model):
-    """compliance pdf report.
+    """Compliance pdf report.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar sas_uri: uri of compliance pdf report.
+    :ivar sas_uri: The uri of compliance pdf report.
     :vartype sas_uri: str
     """
 
@@ -450,7 +479,7 @@ class DownloadResponseCompliancePdfReport(_serialization.Model):
         "sas_uri": {"key": "sasUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.sas_uri = None
@@ -477,7 +506,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -517,7 +546,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -528,7 +557,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.appcomplianceautomation.models.ErrorDetail
@@ -538,13 +568,474 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.appcomplianceautomation.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.error = error
+
+
+class EvidenceFileDownloadRequest(_serialization.Model):
+    """Evidence file's download request.
+
+    :ivar report_creator_tenant_id: Tenant id.
+    :vartype report_creator_tenant_id: str
+    :ivar offer_guid: The offerGuid which mapping to the reports.
+    :vartype offer_guid: str
+    """
+
+    _validation = {
+        "offer_guid": {"min_length": 1},
+    }
+
+    _attribute_map = {
+        "report_creator_tenant_id": {"key": "reportCreatorTenantId", "type": "str"},
+        "offer_guid": {"key": "offerGuid", "type": "str"},
+    }
+
+    def __init__(
+        self, *, report_creator_tenant_id: Optional[str] = None, offer_guid: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword report_creator_tenant_id: Tenant id.
+        :paramtype report_creator_tenant_id: str
+        :keyword offer_guid: The offerGuid which mapping to the reports.
+        :paramtype offer_guid: str
+        """
+        super().__init__(**kwargs)
+        self.report_creator_tenant_id = report_creator_tenant_id
+        self.offer_guid = offer_guid
+
+
+class EvidenceFileDownloadResponse(_serialization.Model):
+    """Object that includes all the possible response for the evidence file download operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar evidence_file: The uri of evidence file.
+    :vartype evidence_file:
+     ~azure.mgmt.appcomplianceautomation.models.EvidenceFileDownloadResponseEvidenceFile
+    """
+
+    _validation = {
+        "evidence_file": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "evidence_file": {"key": "evidenceFile", "type": "EvidenceFileDownloadResponseEvidenceFile"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.evidence_file = None
+
+
+class EvidenceFileDownloadResponseEvidenceFile(_serialization.Model):
+    """The uri of evidence file.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar url: The url of evidence file.
+    :vartype url: str
+    """
+
+    _validation = {
+        "url": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "url": {"key": "url", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.url = None
+
+
+class EvidenceProperties(_serialization.Model):
+    """Evidence's properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar evidence_type: Evidence type. Known values are: "File", "AutoCollectedEvidence", and
+     "Data".
+    :vartype evidence_type: str or ~azure.mgmt.appcomplianceautomation.models.EvidenceType
+    :ivar file_path: The path of the file in storage. Required.
+    :vartype file_path: str
+    :ivar extra_data: Extra data considered as evidence.
+    :vartype extra_data: str
+    :ivar control_id: Control id.
+    :vartype control_id: str
+    :ivar responsibility_id: Responsibility id.
+    :vartype responsibility_id: str
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Creating", "Deleting", "Fixing", "Verifying", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcomplianceautomation.models.ProvisioningState
+    """
+
+    _validation = {
+        "file_path": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "evidence_type": {"key": "evidenceType", "type": "str"},
+        "file_path": {"key": "filePath", "type": "str"},
+        "extra_data": {"key": "extraData", "type": "str"},
+        "control_id": {"key": "controlId", "type": "str"},
+        "responsibility_id": {"key": "responsibilityId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        file_path: str,
+        evidence_type: Optional[Union[str, "_models.EvidenceType"]] = None,
+        extra_data: Optional[str] = None,
+        control_id: Optional[str] = None,
+        responsibility_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword evidence_type: Evidence type. Known values are: "File", "AutoCollectedEvidence", and
+         "Data".
+        :paramtype evidence_type: str or ~azure.mgmt.appcomplianceautomation.models.EvidenceType
+        :keyword file_path: The path of the file in storage. Required.
+        :paramtype file_path: str
+        :keyword extra_data: Extra data considered as evidence.
+        :paramtype extra_data: str
+        :keyword control_id: Control id.
+        :paramtype control_id: str
+        :keyword responsibility_id: Responsibility id.
+        :paramtype responsibility_id: str
+        """
+        super().__init__(**kwargs)
+        self.evidence_type = evidence_type
+        self.file_path = file_path
+        self.extra_data = extra_data
+        self.control_id = control_id
+        self.responsibility_id = responsibility_id
+        self.provisioning_state = None
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    """
+
+
+class EvidenceResource(ProxyResource):
+    """A class represent an AppComplianceAutomation evidence resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    :ivar properties: Evidence property. Required.
+    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.EvidenceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "EvidenceProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.EvidenceProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Evidence property. Required.
+        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.EvidenceProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class EvidenceResourceListResult(_serialization.Model):
+    """The response of a EvidenceResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The EvidenceResource items on this page. Required.
+    :vartype value: list[~azure.mgmt.appcomplianceautomation.models.EvidenceResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[EvidenceResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.EvidenceResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The EvidenceResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.appcomplianceautomation.models.EvidenceResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class GetCollectionCountRequest(_serialization.Model):
+    """Get collection count's request object.
+
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+
+
+class GetCollectionCountResponse(_serialization.Model):
+    """The get collection count response.
+
+    :ivar count: The count of the specified resource.
+    :vartype count: int
+    """
+
+    _attribute_map = {
+        "count": {"key": "count", "type": "int"},
+    }
+
+    def __init__(self, *, count: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword count: The count of the specified resource.
+        :paramtype count: int
+        """
+        super().__init__(**kwargs)
+        self.count = count
+
+
+class GetOverviewStatusRequest(_serialization.Model):
+    """Get overview status request object.
+
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+
+
+class GetOverviewStatusResponse(_serialization.Model):
+    """The get overview status response.
+
+    :ivar status_list: List of different status items.
+    :vartype status_list: list[~azure.mgmt.appcomplianceautomation.models.StatusItem]
+    """
+
+    _attribute_map = {
+        "status_list": {"key": "statusList", "type": "[StatusItem]"},
+    }
+
+    def __init__(self, *, status_list: Optional[List["_models.StatusItem"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword status_list: List of different status items.
+        :paramtype status_list: list[~azure.mgmt.appcomplianceautomation.models.StatusItem]
+        """
+        super().__init__(**kwargs)
+        self.status_list = status_list
+
+
+class ListInUseStorageAccountsRequest(_serialization.Model):
+    """Parameters for listing in use storage accounts operation. If subscription list is null, it will
+    check the user's all subscriptions.
+
+    :ivar subscription_ids: List of subscription ids to be query. If the list is null or empty, the
+     API will query all the subscriptions of the user.
+    :vartype subscription_ids: list[str]
+    """
+
+    _attribute_map = {
+        "subscription_ids": {"key": "subscriptionIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, subscription_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword subscription_ids: List of subscription ids to be query. If the list is null or empty,
+         the API will query all the subscriptions of the user.
+        :paramtype subscription_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.subscription_ids = subscription_ids
+
+
+class ListInUseStorageAccountsResponse(_serialization.Model):
+    """Parameters for listing in use storage accounts operation. If subscription list is null, it will
+    check the user's all subscriptions.
+
+    :ivar storage_account_list: The storage account list which in use in related reports.
+    :vartype storage_account_list: list[~azure.mgmt.appcomplianceautomation.models.StorageInfo]
+    """
+
+    _attribute_map = {
+        "storage_account_list": {"key": "storageAccountList", "type": "[StorageInfo]"},
+    }
+
+    def __init__(self, *, storage_account_list: Optional[List["_models.StorageInfo"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword storage_account_list: The storage account list which in use in related reports.
+        :paramtype storage_account_list: list[~azure.mgmt.appcomplianceautomation.models.StorageInfo]
+        """
+        super().__init__(**kwargs)
+        self.storage_account_list = storage_account_list
+
+
+class OnboardRequest(_serialization.Model):
+    """Parameters for onboard operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar subscription_ids: List of subscription ids to be onboarded. Required.
+    :vartype subscription_ids: list[str]
+    """
+
+    _validation = {
+        "subscription_ids": {"required": True},
+    }
+
+    _attribute_map = {
+        "subscription_ids": {"key": "subscriptionIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, subscription_ids: List[str], **kwargs: Any) -> None:
+        """
+        :keyword subscription_ids: List of subscription ids to be onboarded. Required.
+        :paramtype subscription_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.subscription_ids = subscription_ids
+
+
+class OnboardResponse(_serialization.Model):
+    """Success. The response indicates given subscriptions has been onboarded.
+
+    :ivar subscription_ids: List of subscription ids that are onboarded.
+    :vartype subscription_ids: list[str]
+    """
+
+    _attribute_map = {
+        "subscription_ids": {"key": "subscriptionIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, subscription_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword subscription_ids: List of subscription ids that are onboarded.
+        :paramtype subscription_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.subscription_ids = subscription_ids
 
 
 class Operation(_serialization.Model):
@@ -584,7 +1075,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.appcomplianceautomation.models.OperationDisplay
@@ -630,7 +1121,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -640,7 +1131,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -660,7 +1152,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -670,244 +1162,453 @@ class OperationListResult(_serialization.Model):
 class OverviewStatus(_serialization.Model):
     """The overview of the compliance result for one report.
 
-    :ivar passed_count: The count of all passed full automation control.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar passed_count: The count of all passed control.
     :vartype passed_count: int
-    :ivar failed_count: The count of all failed full automation control.
+    :ivar failed_count: The count of all failed control.
     :vartype failed_count: int
     :ivar manual_count: The count of all manual control.
     :vartype manual_count: int
+    :ivar not_applicable_count: The count of all not applicable control.
+    :vartype not_applicable_count: int
+    :ivar pending_count: The count of all pending for approval control.
+    :vartype pending_count: int
     """
+
+    _validation = {
+        "passed_count": {"readonly": True},
+        "failed_count": {"readonly": True},
+        "manual_count": {"readonly": True},
+        "not_applicable_count": {"readonly": True},
+        "pending_count": {"readonly": True},
+    }
 
     _attribute_map = {
         "passed_count": {"key": "passedCount", "type": "int"},
         "failed_count": {"key": "failedCount", "type": "int"},
         "manual_count": {"key": "manualCount", "type": "int"},
+        "not_applicable_count": {"key": "notApplicableCount", "type": "int"},
+        "pending_count": {"key": "pendingCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        passed_count: Optional[int] = None,
-        failed_count: Optional[int] = None,
-        manual_count: Optional[int] = None,
-        **kwargs
-    ):
-        """
-        :keyword passed_count: The count of all passed full automation control.
-        :paramtype passed_count: int
-        :keyword failed_count: The count of all failed full automation control.
-        :paramtype failed_count: int
-        :keyword manual_count: The count of all manual control.
-        :paramtype manual_count: int
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.passed_count = passed_count
-        self.failed_count = failed_count
-        self.manual_count = manual_count
+        self.passed_count = None
+        self.failed_count = None
+        self.manual_count = None
+        self.not_applicable_count = None
+        self.pending_count = None
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class QuickAssessment(_serialization.Model):
+    """A class represent the quick assessment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    :ivar resource_id: Resource id.
+    :vartype resource_id: str
+    :ivar responsibility_id: Responsibility id.
+    :vartype responsibility_id: str
+    :ivar timestamp: The timestamp of resource creation (UTC).
+    :vartype timestamp: ~datetime.datetime
+    :ivar resource_status: Quick assessment status. Known values are: "Healthy" and "Unhealthy".
+    :vartype resource_status: str or ~azure.mgmt.appcomplianceautomation.models.ResourceStatus
+    :ivar display_name: Quick assessment display name.
+    :vartype display_name: str
+    :ivar description: Quick assessment display name.
+    :vartype description: str
+    :ivar remediation_link: Link to remediation steps for this quick assessment.
+    :vartype remediation_link: str
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
+        "resource_id": {"readonly": True},
+        "responsibility_id": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "resource_status": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "remediation_link": {"readonly": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "responsibility_id": {"key": "responsibilityId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "resource_status": {"key": "resourceStatus", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "remediation_link": {"key": "remediationLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.resource_id = None
+        self.responsibility_id = None
+        self.timestamp = None
+        self.resource_status = None
+        self.display_name = None
+        self.description = None
+        self.remediation_link = None
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+class Recommendation(_serialization.Model):
+    """A class represent the recommendation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    :ivar recommendation_id: The Id of the recommendation.
+    :vartype recommendation_id: str
+    :ivar recommendation_short_name: The short name of the recommendation. e.g. "Invalid TLS
+     config".
+    :vartype recommendation_short_name: str
+    :ivar recommendation_solutions: List of recommendation solutions.
+    :vartype recommendation_solutions:
+     list[~azure.mgmt.appcomplianceautomation.models.RecommendationSolution]
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
+        "recommendation_id": {"readonly": True},
+        "recommendation_short_name": {"readonly": True},
+        "recommendation_solutions": {"readonly": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
+        "recommendation_id": {"key": "recommendationId", "type": "str"},
+        "recommendation_short_name": {"key": "recommendationShortName", "type": "str"},
+        "recommendation_solutions": {"key": "recommendationSolutions", "type": "[RecommendationSolution]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
+        self.recommendation_id = None
+        self.recommendation_short_name = None
+        self.recommendation_solutions = None
+
+
+class RecommendationSolution(_serialization.Model):
+    """A class represent the recommendation solution.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar recommendation_solution_index: The index of the recommendation solution.
+    :vartype recommendation_solution_index: str
+    :ivar recommendation_solution_content: The detail steps of the recommendation solution.
+    :vartype recommendation_solution_content: str
+    :ivar is_recommend_solution: Indicates whether this solution is the recommended. Known values
+     are: "true" and "false".
+    :vartype is_recommend_solution: str or
+     ~azure.mgmt.appcomplianceautomation.models.IsRecommendSolution
+    """
+
+    _validation = {
+        "recommendation_solution_index": {"readonly": True},
+        "recommendation_solution_content": {"readonly": True},
+        "is_recommend_solution": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "recommendation_solution_index": {"key": "recommendationSolutionIndex", "type": "str"},
+        "recommendation_solution_content": {"key": "recommendationSolutionContent", "type": "str"},
+        "is_recommend_solution": {"key": "isRecommendSolution", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.recommendation_solution_index = None
+        self.recommendation_solution_content = None
+        self.is_recommend_solution = None
 
 
 class ReportComplianceStatus(_serialization.Model):
     """A list which includes all the compliance result for one report.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar m365: The Microsoft 365 certification name.
     :vartype m365: ~azure.mgmt.appcomplianceautomation.models.OverviewStatus
     """
+
+    _validation = {
+        "m365": {"readonly": True},
+    }
 
     _attribute_map = {
         "m365": {"key": "m365", "type": "OverviewStatus"},
     }
 
-    def __init__(self, *, m365: Optional["_models.OverviewStatus"] = None, **kwargs):
-        """
-        :keyword m365: The Microsoft 365 certification name.
-        :paramtype m365: ~azure.mgmt.appcomplianceautomation.models.OverviewStatus
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.m365 = m365
+        self.m365 = None
 
 
-class ReportProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Report's properties.
+class ReportFixResult(_serialization.Model):
+    """Report fix result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    :ivar result: Indicates whether the fix action is Succeeded or Failed. Known values are:
+     "Succeeded" and "Failed".
+    :vartype result: str or ~azure.mgmt.appcomplianceautomation.models.Result
+    :ivar reason: If the report fix action failed, to indicate the detailed failed reason.
+    :vartype reason: str
+    """
 
-    :ivar id: Report id in database.
-    :vartype id: str
-    :ivar status: Report status. Known values are: "Active", "Failed", and "Disabled".
-    :vartype status: str or ~azure.mgmt.appcomplianceautomation.models.ReportStatus
-    :ivar tenant_id: Report's tenant id.
-    :vartype tenant_id: str
-    :ivar report_name: Report name.
-    :vartype report_name: str
-    :ivar offer_guid: Report offer Guid.
-    :vartype offer_guid: str
+    _validation = {
+        "result": {"readonly": True},
+        "reason": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "result": {"key": "result", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.result = None
+        self.reason = None
+
+
+class ReportPatchProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Patch Report's properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar trigger_time: Report collection trigger time.
+    :vartype trigger_time: ~datetime.datetime
     :ivar time_zone: Report collection trigger time's time zone, the available list can be obtained
      by executing "Get-TimeZone -ListAvailable" in PowerShell.
-     An example of valid timezone id is "Pacific Standard Time". Required.
+     An example of valid timezone id is "Pacific Standard Time".
     :vartype time_zone: str
-    :ivar trigger_time: Report collection trigger time. Required.
-    :vartype trigger_time: ~datetime.datetime
+    :ivar resources: List of resource data.
+    :vartype resources: list[~azure.mgmt.appcomplianceautomation.models.ResourceMetadata]
+    :ivar status: Report status. Known values are: "Active", "Failed", "Reviewing", and "Disabled".
+    :vartype status: str or ~azure.mgmt.appcomplianceautomation.models.ReportStatus
+    :ivar errors: List of report error codes.
+    :vartype errors: list[str]
+    :ivar tenant_id: Report's tenant id.
+    :vartype tenant_id: str
+    :ivar offer_guid: A list of comma-separated offerGuids indicates a series of offerGuids that
+     map to the report. For example,
+     "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002" and
+     "00000000-0000-0000-0000-000000000003".
+    :vartype offer_guid: str
     :ivar next_trigger_time: Report next collection trigger time.
     :vartype next_trigger_time: ~datetime.datetime
     :ivar last_trigger_time: Report last collection trigger time.
     :vartype last_trigger_time: ~datetime.datetime
     :ivar subscriptions: List of subscription Ids.
     :vartype subscriptions: list[str]
-    :ivar resources: List of resource data. Required.
-    :vartype resources: list[~azure.mgmt.appcomplianceautomation.models.ResourceMetadata]
     :ivar compliance_status: Report compliance status.
     :vartype compliance_status: ~azure.mgmt.appcomplianceautomation.models.ReportComplianceStatus
+    :ivar storage_info: The information of 'bring your own storage' binding to the report.
+    :vartype storage_info: ~azure.mgmt.appcomplianceautomation.models.StorageInfo
+    :ivar cert_records: List of synchronized certification records.
+    :vartype cert_records: list[~azure.mgmt.appcomplianceautomation.models.CertSyncRecord]
     :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
-     "Canceled", "Creating", "Deleting", and "Updating".
+     "Canceled", "Creating", "Deleting", "Fixing", "Verifying", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.appcomplianceautomation.models.ProvisioningState
     """
 
     _validation = {
-        "id": {"readonly": True},
         "status": {"readonly": True},
+        "errors": {"readonly": True},
         "tenant_id": {"readonly": True},
-        "report_name": {"readonly": True},
-        "time_zone": {"required": True},
-        "trigger_time": {"required": True},
         "next_trigger_time": {"readonly": True},
         "last_trigger_time": {"readonly": True},
         "subscriptions": {"readonly": True},
-        "resources": {"required": True},
         "compliance_status": {"readonly": True},
+        "cert_records": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-        "report_name": {"key": "reportName", "type": "str"},
-        "offer_guid": {"key": "offerGuid", "type": "str"},
-        "time_zone": {"key": "timeZone", "type": "str"},
         "trigger_time": {"key": "triggerTime", "type": "iso-8601"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "resources": {"key": "resources", "type": "[ResourceMetadata]"},
+        "status": {"key": "status", "type": "str"},
+        "errors": {"key": "errors", "type": "[str]"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "offer_guid": {"key": "offerGuid", "type": "str"},
         "next_trigger_time": {"key": "nextTriggerTime", "type": "iso-8601"},
         "last_trigger_time": {"key": "lastTriggerTime", "type": "iso-8601"},
         "subscriptions": {"key": "subscriptions", "type": "[str]"},
-        "resources": {"key": "resources", "type": "[ResourceMetadata]"},
         "compliance_status": {"key": "complianceStatus", "type": "ReportComplianceStatus"},
+        "storage_info": {"key": "storageInfo", "type": "StorageInfo"},
+        "cert_records": {"key": "certRecords", "type": "[CertSyncRecord]"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        time_zone: str,
+        trigger_time: Optional[datetime.datetime] = None,
+        time_zone: Optional[str] = None,
+        resources: Optional[List["_models.ResourceMetadata"]] = None,
+        offer_guid: Optional[str] = None,
+        storage_info: Optional["_models.StorageInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword trigger_time: Report collection trigger time.
+        :paramtype trigger_time: ~datetime.datetime
+        :keyword time_zone: Report collection trigger time's time zone, the available list can be
+         obtained by executing "Get-TimeZone -ListAvailable" in PowerShell.
+         An example of valid timezone id is "Pacific Standard Time".
+        :paramtype time_zone: str
+        :keyword resources: List of resource data.
+        :paramtype resources: list[~azure.mgmt.appcomplianceautomation.models.ResourceMetadata]
+        :keyword offer_guid: A list of comma-separated offerGuids indicates a series of offerGuids that
+         map to the report. For example,
+         "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002" and
+         "00000000-0000-0000-0000-000000000003".
+        :paramtype offer_guid: str
+        :keyword storage_info: The information of 'bring your own storage' binding to the report.
+        :paramtype storage_info: ~azure.mgmt.appcomplianceautomation.models.StorageInfo
+        """
+        super().__init__(**kwargs)
+        self.trigger_time = trigger_time
+        self.time_zone = time_zone
+        self.resources = resources
+        self.status = None
+        self.errors = None
+        self.tenant_id = None
+        self.offer_guid = offer_guid
+        self.next_trigger_time = None
+        self.last_trigger_time = None
+        self.subscriptions = None
+        self.compliance_status = None
+        self.storage_info = storage_info
+        self.cert_records = None
+        self.provisioning_state = None
+
+
+class ReportProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Create Report's properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar trigger_time: Report collection trigger time. Required.
+    :vartype trigger_time: ~datetime.datetime
+    :ivar time_zone: Report collection trigger time's time zone, the available list can be obtained
+     by executing "Get-TimeZone -ListAvailable" in PowerShell.
+     An example of valid timezone id is "Pacific Standard Time". Required.
+    :vartype time_zone: str
+    :ivar resources: List of resource data. Required.
+    :vartype resources: list[~azure.mgmt.appcomplianceautomation.models.ResourceMetadata]
+    :ivar status: Report status. Known values are: "Active", "Failed", "Reviewing", and "Disabled".
+    :vartype status: str or ~azure.mgmt.appcomplianceautomation.models.ReportStatus
+    :ivar errors: List of report error codes.
+    :vartype errors: list[str]
+    :ivar tenant_id: Report's tenant id.
+    :vartype tenant_id: str
+    :ivar offer_guid: A list of comma-separated offerGuids indicates a series of offerGuids that
+     map to the report. For example,
+     "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002" and
+     "00000000-0000-0000-0000-000000000003".
+    :vartype offer_guid: str
+    :ivar next_trigger_time: Report next collection trigger time.
+    :vartype next_trigger_time: ~datetime.datetime
+    :ivar last_trigger_time: Report last collection trigger time.
+    :vartype last_trigger_time: ~datetime.datetime
+    :ivar subscriptions: List of subscription Ids.
+    :vartype subscriptions: list[str]
+    :ivar compliance_status: Report compliance status.
+    :vartype compliance_status: ~azure.mgmt.appcomplianceautomation.models.ReportComplianceStatus
+    :ivar storage_info: The information of 'bring your own storage' binding to the report.
+    :vartype storage_info: ~azure.mgmt.appcomplianceautomation.models.StorageInfo
+    :ivar cert_records: List of synchronized certification records.
+    :vartype cert_records: list[~azure.mgmt.appcomplianceautomation.models.CertSyncRecord]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Creating", "Deleting", "Fixing", "Verifying", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcomplianceautomation.models.ProvisioningState
+    """
+
+    _validation = {
+        "trigger_time": {"required": True},
+        "time_zone": {"required": True},
+        "resources": {"required": True},
+        "status": {"readonly": True},
+        "errors": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "next_trigger_time": {"readonly": True},
+        "last_trigger_time": {"readonly": True},
+        "subscriptions": {"readonly": True},
+        "compliance_status": {"readonly": True},
+        "cert_records": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "trigger_time": {"key": "triggerTime", "type": "iso-8601"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "resources": {"key": "resources", "type": "[ResourceMetadata]"},
+        "status": {"key": "status", "type": "str"},
+        "errors": {"key": "errors", "type": "[str]"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "offer_guid": {"key": "offerGuid", "type": "str"},
+        "next_trigger_time": {"key": "nextTriggerTime", "type": "iso-8601"},
+        "last_trigger_time": {"key": "lastTriggerTime", "type": "iso-8601"},
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
+        "compliance_status": {"key": "complianceStatus", "type": "ReportComplianceStatus"},
+        "storage_info": {"key": "storageInfo", "type": "StorageInfo"},
+        "cert_records": {"key": "certRecords", "type": "[CertSyncRecord]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
         trigger_time: datetime.datetime,
+        time_zone: str,
         resources: List["_models.ResourceMetadata"],
         offer_guid: Optional[str] = None,
-        **kwargs
-    ):
+        storage_info: Optional["_models.StorageInfo"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword offer_guid: Report offer Guid.
-        :paramtype offer_guid: str
+        :keyword trigger_time: Report collection trigger time. Required.
+        :paramtype trigger_time: ~datetime.datetime
         :keyword time_zone: Report collection trigger time's time zone, the available list can be
          obtained by executing "Get-TimeZone -ListAvailable" in PowerShell.
          An example of valid timezone id is "Pacific Standard Time". Required.
         :paramtype time_zone: str
-        :keyword trigger_time: Report collection trigger time. Required.
-        :paramtype trigger_time: ~datetime.datetime
         :keyword resources: List of resource data. Required.
         :paramtype resources: list[~azure.mgmt.appcomplianceautomation.models.ResourceMetadata]
+        :keyword offer_guid: A list of comma-separated offerGuids indicates a series of offerGuids that
+         map to the report. For example,
+         "00000000-0000-0000-0000-000000000001,00000000-0000-0000-0000-000000000002" and
+         "00000000-0000-0000-0000-000000000003".
+        :paramtype offer_guid: str
+        :keyword storage_info: The information of 'bring your own storage' binding to the report.
+        :paramtype storage_info: ~azure.mgmt.appcomplianceautomation.models.StorageInfo
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.status = None
-        self.tenant_id = None
-        self.report_name = None
-        self.offer_guid = offer_guid
-        self.time_zone = time_zone
         self.trigger_time = trigger_time
+        self.time_zone = time_zone
+        self.resources = resources
+        self.status = None
+        self.errors = None
+        self.tenant_id = None
+        self.offer_guid = offer_guid
         self.next_trigger_time = None
         self.last_trigger_time = None
         self.subscriptions = None
-        self.resources = resources
         self.compliance_status = None
+        self.storage_info = storage_info
+        self.cert_records = None
         self.provisioning_state = None
 
 
@@ -916,10 +1617,10 @@ class ReportResource(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -949,7 +1650,7 @@ class ReportResource(ProxyResource):
         "properties": {"key": "properties", "type": "ReportProperties"},
     }
 
-    def __init__(self, *, properties: "_models.ReportProperties", **kwargs):
+    def __init__(self, *, properties: "_models.ReportProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Report property. Required.
         :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.ReportProperties
@@ -958,20 +1659,19 @@ class ReportResource(ProxyResource):
         self.properties = properties
 
 
-class ReportResourceList(_serialization.Model):
-    """Object that includes an array of resources and a possible link for next set.
+class ReportResourceListResult(_serialization.Model):
+    """The response of a ReportResource list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: List of the reports.
+    :ivar value: The ReportResource items on this page. Required.
     :vartype value: list[~azure.mgmt.appcomplianceautomation.models.ReportResource]
-    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -979,15 +1679,17 @@ class ReportResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.ReportResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword next_link: The URL the client should use to fetch the next page (per server side
-         paging).
-         It's null for now, added for future use.
+        :keyword value: The ReportResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.appcomplianceautomation.models.ReportResource]
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.value = None
+        self.value = value
         self.next_link = next_link
 
 
@@ -995,20 +1697,49 @@ class ReportResourcePatch(_serialization.Model):
     """A class represent a AppComplianceAutomation report resource update properties.
 
     :ivar properties: Report property.
-    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.ReportProperties
+    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.ReportPatchProperties
     """
 
     _attribute_map = {
-        "properties": {"key": "properties", "type": "ReportProperties"},
+        "properties": {"key": "properties", "type": "ReportPatchProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ReportProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ReportPatchProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Report property.
-        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.ReportProperties
+        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.ReportPatchProperties
         """
         super().__init__(**kwargs)
         self.properties = properties
+
+
+class ReportVerificationResult(_serialization.Model):
+    """Report health status verification result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar result: Indicates whether the report verification action is Succeeded or Failed. Known
+     values are: "Succeeded" and "Failed".
+    :vartype result: str or ~azure.mgmt.appcomplianceautomation.models.Result
+    :ivar reason: If the report verification action failed, to indicate the detailed failed reason.
+    :vartype reason: str
+    """
+
+    _validation = {
+        "result": {"readonly": True},
+        "reason": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "result": {"key": "result", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.result = None
+        self.reason = None
 
 
 class ResourceItem(_serialization.Model):
@@ -1020,10 +1751,11 @@ class ResourceItem(_serialization.Model):
     :vartype subscription_id: str
     :ivar resource_group: The resource group name of this resource.
     :vartype resource_group: str
-    :ivar resource_type: The resource type of this resource.
+    :ivar resource_type: The resource type of this resource. e.g.
+     "Microsoft.SignalRService/SignalR".
     :vartype resource_type: str
     :ivar resource_id: The resource Id - e.g.
-     "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".
+     "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".  # pylint: disable=line-too-long
     :vartype resource_id: str
     """
 
@@ -1041,7 +1773,7 @@ class ResourceItem(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.subscription_id = None
@@ -1053,20 +1785,20 @@ class ResourceItem(_serialization.Model):
 class ResourceMetadata(_serialization.Model):
     """Single resource Id's metadata.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: Resource Id - e.g.
-     "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".
+     "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".  # pylint: disable=line-too-long
      Required.
     :vartype resource_id: str
-    :ivar resource_type: Resource type.
+    :ivar resource_type: Resource type. e.g. "Microsoft.Compute/virtualMachines".
     :vartype resource_type: str
     :ivar resource_kind: Resource kind.
     :vartype resource_kind: str
-    :ivar resource_name: Resource name.
-    :vartype resource_name: str
-    :ivar tags: Resource's tag type.
-    :vartype tags: dict[str, str]
+    :ivar resource_origin: Resource Origin. Known values are: "Azure", "AWS", and "GCP".
+    :vartype resource_origin: str or ~azure.mgmt.appcomplianceautomation.models.ResourceOrigin
+    :ivar account_id: Account Id. For example - the AWS account id.
+    :vartype account_id: str
     """
 
     _validation = {
@@ -1077,8 +1809,8 @@ class ResourceMetadata(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
         "resource_type": {"key": "resourceType", "type": "str"},
         "resource_kind": {"key": "resourceKind", "type": "str"},
-        "resource_name": {"key": "resourceName", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
+        "resource_origin": {"key": "resourceOrigin", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
     }
 
     def __init__(
@@ -1087,36 +1819,418 @@ class ResourceMetadata(_serialization.Model):
         resource_id: str,
         resource_type: Optional[str] = None,
         resource_kind: Optional[str] = None,
-        resource_name: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        resource_origin: Optional[Union[str, "_models.ResourceOrigin"]] = None,
+        account_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Resource Id - e.g.
-         "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".
+         "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1".  # pylint: disable=line-too-long
          Required.
         :paramtype resource_id: str
-        :keyword resource_type: Resource type.
+        :keyword resource_type: Resource type. e.g. "Microsoft.Compute/virtualMachines".
         :paramtype resource_type: str
         :keyword resource_kind: Resource kind.
         :paramtype resource_kind: str
-        :keyword resource_name: Resource name.
-        :paramtype resource_name: str
-        :keyword tags: Resource's tag type.
-        :paramtype tags: dict[str, str]
+        :keyword resource_origin: Resource Origin. Known values are: "Azure", "AWS", and "GCP".
+        :paramtype resource_origin: str or ~azure.mgmt.appcomplianceautomation.models.ResourceOrigin
+        :keyword account_id: Account Id. For example - the AWS account id.
+        :paramtype account_id: str
         """
         super().__init__(**kwargs)
         self.resource_id = resource_id
         self.resource_type = resource_type
         self.resource_kind = resource_kind
-        self.resource_name = resource_name
-        self.tags = tags
+        self.resource_origin = resource_origin
+        self.account_id = account_id
+
+
+class Responsibility(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """A class represent the customer responsibility.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar responsibility_id: The id of the customer responsibility.
+    :vartype responsibility_id: str
+    :ivar responsibility_title: The title of the customer responsibility.
+    :vartype responsibility_title: str
+    :ivar responsibility_description: The description of the customer responsibility.
+    :vartype responsibility_description: str
+    :ivar responsibility_type: The type of customer responsibility. Known values are: "Automated",
+     "ScopedManual", and "Manual".
+    :vartype responsibility_type: str or
+     ~azure.mgmt.appcomplianceautomation.models.ResponsibilityType
+    :ivar responsibility_severity: The severity level of this customer responsibility. Known values
+     are: "High", "Medium", and "Low".
+    :vartype responsibility_severity: str or
+     ~azure.mgmt.appcomplianceautomation.models.ResponsibilitySeverity
+    :ivar responsibility_status: The status of this customer responsibility. Known values are:
+     "Passed", "Failed", "NotApplicable", and "PendingApproval".
+    :vartype responsibility_status: str or
+     ~azure.mgmt.appcomplianceautomation.models.ResponsibilityStatus
+    :ivar responsibility_environment: The supported cloud environment of this customer
+     responsibility. Known values are: "Azure", "AWS", "GCP", and "General".
+    :vartype responsibility_environment: str or
+     ~azure.mgmt.appcomplianceautomation.models.ResponsibilityEnvironment
+    :ivar failed_resource_count: The count of all failed resources.
+    :vartype failed_resource_count: int
+    :ivar total_resource_count: The count of all resources.
+    :vartype total_resource_count: int
+    :ivar resource_list: List of resource.
+    :vartype resource_list: list[~azure.mgmt.appcomplianceautomation.models.ResponsibilityResource]
+    :ivar recommendation_list: List of recommendation.
+    :vartype recommendation_list: list[~azure.mgmt.appcomplianceautomation.models.Recommendation]
+    :ivar guidance: The evidence upload guidance description.
+    :vartype guidance: str
+    :ivar justification: The justification given by the user to clarify the reason.
+    :vartype justification: str
+    :ivar evidence_files: List of evidence file url.
+    :vartype evidence_files: list[str]
+    """
+
+    _validation = {
+        "responsibility_id": {"readonly": True},
+        "responsibility_title": {"readonly": True},
+        "responsibility_description": {"readonly": True},
+        "responsibility_type": {"readonly": True},
+        "responsibility_severity": {"readonly": True},
+        "responsibility_status": {"readonly": True},
+        "responsibility_environment": {"readonly": True},
+        "resource_list": {"readonly": True},
+        "recommendation_list": {"readonly": True},
+        "guidance": {"readonly": True},
+        "justification": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "responsibility_id": {"key": "responsibilityId", "type": "str"},
+        "responsibility_title": {"key": "responsibilityTitle", "type": "str"},
+        "responsibility_description": {"key": "responsibilityDescription", "type": "str"},
+        "responsibility_type": {"key": "responsibilityType", "type": "str"},
+        "responsibility_severity": {"key": "responsibilitySeverity", "type": "str"},
+        "responsibility_status": {"key": "responsibilityStatus", "type": "str"},
+        "responsibility_environment": {"key": "responsibilityEnvironment", "type": "str"},
+        "failed_resource_count": {"key": "failedResourceCount", "type": "int"},
+        "total_resource_count": {"key": "totalResourceCount", "type": "int"},
+        "resource_list": {"key": "resourceList", "type": "[ResponsibilityResource]"},
+        "recommendation_list": {"key": "recommendationList", "type": "[Recommendation]"},
+        "guidance": {"key": "guidance", "type": "str"},
+        "justification": {"key": "justification", "type": "str"},
+        "evidence_files": {"key": "evidenceFiles", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        failed_resource_count: Optional[int] = None,
+        total_resource_count: Optional[int] = None,
+        evidence_files: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword failed_resource_count: The count of all failed resources.
+        :paramtype failed_resource_count: int
+        :keyword total_resource_count: The count of all resources.
+        :paramtype total_resource_count: int
+        :keyword evidence_files: List of evidence file url.
+        :paramtype evidence_files: list[str]
+        """
+        super().__init__(**kwargs)
+        self.responsibility_id = None
+        self.responsibility_title = None
+        self.responsibility_description = None
+        self.responsibility_type = None
+        self.responsibility_severity = None
+        self.responsibility_status = None
+        self.responsibility_environment = None
+        self.failed_resource_count = failed_resource_count
+        self.total_resource_count = total_resource_count
+        self.resource_list = None
+        self.recommendation_list = None
+        self.guidance = None
+        self.justification = None
+        self.evidence_files = evidence_files
+
+
+class ResponsibilityResource(_serialization.Model):
+    """A class represent the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_id: The Id of the resource.
+    :vartype resource_id: str
+    :ivar account_id: Account Id. For example - AWS account Id.
+    :vartype account_id: str
+    :ivar resource_type: The type of the resource. e.g. "Microsoft.SignalRService/SignalR".
+    :vartype resource_type: str
+    :ivar resource_origin: Resource origin. Known values are: "Azure", "AWS", and "GCP".
+    :vartype resource_origin: str or ~azure.mgmt.appcomplianceautomation.models.ResourceOrigin
+    :ivar resource_status: Resource status. Known values are: "Healthy" and "Unhealthy".
+    :vartype resource_status: str or ~azure.mgmt.appcomplianceautomation.models.ResourceStatus
+    :ivar resource_status_change_date: The status change date for the resource.
+    :vartype resource_status_change_date: ~datetime.datetime
+    :ivar recommendation_ids: List of recommendation id.
+    :vartype recommendation_ids: list[str]
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "account_id": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "resource_origin": {"readonly": True},
+        "resource_status": {"readonly": True},
+        "resource_status_change_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_origin": {"key": "resourceOrigin", "type": "str"},
+        "resource_status": {"key": "resourceStatus", "type": "str"},
+        "resource_status_change_date": {"key": "resourceStatusChangeDate", "type": "iso-8601"},
+        "recommendation_ids": {"key": "recommendationIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, recommendation_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword recommendation_ids: List of recommendation id.
+        :paramtype recommendation_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.resource_id = None
+        self.account_id = None
+        self.resource_type = None
+        self.resource_origin = None
+        self.resource_status = None
+        self.resource_status_change_date = None
+        self.recommendation_ids = recommendation_ids
+
+
+class ScopingAnswer(_serialization.Model):
+    """Scoping answer.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar question_id: Question id. Required.
+    :vartype question_id: str
+    :ivar answers: Question answer value list. Required.
+    :vartype answers: list[str]
+    """
+
+    _validation = {
+        "question_id": {"required": True, "pattern": r"^[-a-zA-Z0-9_]{1,50}$"},
+        "answers": {"required": True},
+    }
+
+    _attribute_map = {
+        "question_id": {"key": "questionId", "type": "str"},
+        "answers": {"key": "answers", "type": "[str]"},
+    }
+
+    def __init__(self, *, question_id: str, answers: List[str], **kwargs: Any) -> None:
+        """
+        :keyword question_id: Question id. Required.
+        :paramtype question_id: str
+        :keyword answers: Question answer value list. Required.
+        :paramtype answers: list[str]
+        """
+        super().__init__(**kwargs)
+        self.question_id = question_id
+        self.answers = answers
+
+
+class ScopingConfigurationProperties(_serialization.Model):
+    """ScopingConfiguration's properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar answers: List of scoping question answers.
+    :vartype answers: list[~azure.mgmt.appcomplianceautomation.models.ScopingAnswer]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Creating", "Deleting", "Fixing", "Verifying", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcomplianceautomation.models.ProvisioningState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "answers": {"key": "answers", "type": "[ScopingAnswer]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, answers: Optional[List["_models.ScopingAnswer"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword answers: List of scoping question answers.
+        :paramtype answers: list[~azure.mgmt.appcomplianceautomation.models.ScopingAnswer]
+        """
+        super().__init__(**kwargs)
+        self.answers = answers
+        self.provisioning_state = None
+
+
+class ScopingConfigurationResource(ProxyResource):
+    """A class represent an AppComplianceAutomation scoping configuration resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    :ivar properties: ScopingConfiguration property. Required.
+    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.ScopingConfigurationProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ScopingConfigurationProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ScopingConfigurationProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: ScopingConfiguration property. Required.
+        :paramtype properties:
+         ~azure.mgmt.appcomplianceautomation.models.ScopingConfigurationProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ScopingConfigurationResourceListResult(_serialization.Model):
+    """The response of a ScopingConfigurationResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ScopingConfigurationResource items on this page. Required.
+    :vartype value: list[~azure.mgmt.appcomplianceautomation.models.ScopingConfigurationResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ScopingConfigurationResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.ScopingConfigurationResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The ScopingConfigurationResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.appcomplianceautomation.models.ScopingConfigurationResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ScopingQuestion(_serialization.Model):
+    """The definition of a scoping question.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar question_id: Question id. Required.
+    :vartype question_id: str
+    :ivar superior_question_id: Superior question id.
+    :vartype superior_question_id: str
+    :ivar input_type: Input type of the question answer. Required. Known values are: "None",
+     "Text", "Email", "MultilineText", "Url", "Number", "Boolean", "Telephone", "YesNoNa", "Date",
+     "YearPicker", "SingleSelection", "SingleSelectDropdown", "MultiSelectCheckbox",
+     "MultiSelectDropdown", "MultiSelectDropdownCustom", "Group", and "Upload".
+    :vartype input_type: str or ~azure.mgmt.appcomplianceautomation.models.InputType
+    :ivar option_ids: Option id list. Required.
+    :vartype option_ids: list[str]
+    :ivar rules: The rule of the question. Required.
+    :vartype rules: list[str or ~azure.mgmt.appcomplianceautomation.models.Rule]
+    :ivar show_sub_questions_value: The answer value to show the sub questions.
+    :vartype show_sub_questions_value: str
+    """
+
+    _validation = {
+        "question_id": {"required": True, "readonly": True},
+        "superior_question_id": {"readonly": True},
+        "input_type": {"required": True, "readonly": True},
+        "option_ids": {"required": True, "readonly": True},
+        "rules": {"required": True, "readonly": True},
+        "show_sub_questions_value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "question_id": {"key": "questionId", "type": "str"},
+        "superior_question_id": {"key": "superiorQuestionId", "type": "str"},
+        "input_type": {"key": "inputType", "type": "str"},
+        "option_ids": {"key": "optionIds", "type": "[str]"},
+        "rules": {"key": "rules", "type": "[str]"},
+        "show_sub_questions_value": {"key": "showSubQuestionsValue", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.question_id = None
+        self.superior_question_id = None
+        self.input_type = None
+        self.option_ids = None
+        self.rules = None
+        self.show_sub_questions_value = None
+
+
+class ScopingQuestions(_serialization.Model):
+    """Scoping question list.
+
+    :ivar questions: List of scoping questions.
+    :vartype questions: list[~azure.mgmt.appcomplianceautomation.models.ScopingQuestion]
+    """
+
+    _attribute_map = {
+        "questions": {"key": "questions", "type": "[ScopingQuestion]"},
+    }
+
+    def __init__(self, *, questions: Optional[List["_models.ScopingQuestion"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword questions: List of scoping questions.
+        :paramtype questions: list[~azure.mgmt.appcomplianceautomation.models.ScopingQuestion]
+        """
+        super().__init__(**kwargs)
+        self.questions = questions
 
 
 class SnapshotDownloadRequest(_serialization.Model):
     """Snapshot's download request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar report_creator_tenant_id: Tenant id.
     :vartype report_creator_tenant_id: str
@@ -1144,8 +2258,8 @@ class SnapshotDownloadRequest(_serialization.Model):
         download_type: Union[str, "_models.DownloadType"],
         report_creator_tenant_id: Optional[str] = None,
         offer_guid: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword report_creator_tenant_id: Tenant id.
         :paramtype report_creator_tenant_id: str
@@ -1166,14 +2280,12 @@ class SnapshotProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Snapshot id in the database.
-    :vartype id: str
     :ivar snapshot_name: Snapshot name.
     :vartype snapshot_name: str
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
-     "Canceled", "Creating", "Deleting", and "Updating".
+     "Canceled", "Creating", "Deleting", "Fixing", "Verifying", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.appcomplianceautomation.models.ProvisioningState
     :ivar report_properties: The report essential info.
@@ -1186,7 +2298,6 @@ class SnapshotProperties(_serialization.Model):
     """
 
     _validation = {
-        "id": {"readonly": True},
         "snapshot_name": {"readonly": True},
         "created_at": {"readonly": True},
         "provisioning_state": {"readonly": True},
@@ -1196,7 +2307,6 @@ class SnapshotProperties(_serialization.Model):
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
         "snapshot_name": {"key": "snapshotName", "type": "str"},
         "created_at": {"key": "createdAt", "type": "iso-8601"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -1205,10 +2315,9 @@ class SnapshotProperties(_serialization.Model):
         "compliance_results": {"key": "complianceResults", "type": "[ComplianceResult]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
         self.snapshot_name = None
         self.created_at = None
         self.provisioning_state = None
@@ -1223,7 +2332,7 @@ class SnapshotResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1233,7 +2342,7 @@ class SnapshotResource(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
-    :ivar properties: Snapshot's property'.
+    :ivar properties: Snapshot's property.
     :vartype properties: ~azure.mgmt.appcomplianceautomation.models.SnapshotProperties
     """
 
@@ -1242,7 +2351,6 @@ class SnapshotResource(ProxyResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "properties": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1253,26 +2361,28 @@ class SnapshotResource(ProxyResource):
         "properties": {"key": "properties", "type": "SnapshotProperties"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
+    def __init__(self, *, properties: Optional["_models.SnapshotProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Snapshot's property.
+        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.SnapshotProperties
+        """
         super().__init__(**kwargs)
-        self.properties = None
+        self.properties = properties
 
 
-class SnapshotResourceList(_serialization.Model):
-    """Object that includes an array of resources and a possible link for next set.
+class SnapshotResourceListResult(_serialization.Model):
+    """The response of a SnapshotResource list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: List of the snapshots.
+    :ivar value: The SnapshotResource items on this page. Required.
     :vartype value: list[~azure.mgmt.appcomplianceautomation.models.SnapshotResource]
-    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "value": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1280,16 +2390,137 @@ class SnapshotResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.SnapshotResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword next_link: The URL the client should use to fetch the next page (per server side
-         paging).
-         It's null for now, added for future use.
+        :keyword value: The SnapshotResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.appcomplianceautomation.models.SnapshotResource]
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.value = None
+        self.value = value
         self.next_link = next_link
+
+
+class StatusItem(_serialization.Model):
+    """Single status.
+
+    :ivar status_name: Status name - e.g. "Active", "Failed".
+    :vartype status_name: str
+    :ivar status_value: Status value. e.g. "100", or "100%".
+    :vartype status_value: str
+    """
+
+    _attribute_map = {
+        "status_name": {"key": "statusName", "type": "str"},
+        "status_value": {"key": "statusValue", "type": "str"},
+    }
+
+    def __init__(self, *, status_name: Optional[str] = None, status_value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword status_name: Status name - e.g. "Active", "Failed".
+        :paramtype status_name: str
+        :keyword status_value: Status value. e.g. "100", or "100%".
+        :paramtype status_value: str
+        """
+        super().__init__(**kwargs)
+        self.status_name = status_name
+        self.status_value = status_value
+
+
+class StorageInfo(_serialization.Model):
+    """The information of 'bring your own storage' account binding to the report.
+
+    :ivar subscription_id: The subscription id which 'bring your own storage' account belongs to.
+    :vartype subscription_id: str
+    :ivar resource_group: The resourceGroup which 'bring your own storage' account belongs to.
+    :vartype resource_group: str
+    :ivar account_name: 'bring your own storage' account name.
+    :vartype account_name: str
+    :ivar location: The region of 'bring your own storage' account.
+    :vartype location: str
+    """
+
+    _attribute_map = {
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        account_name: Optional[str] = None,
+        location: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword subscription_id: The subscription id which 'bring your own storage' account belongs
+         to.
+        :paramtype subscription_id: str
+        :keyword resource_group: The resourceGroup which 'bring your own storage' account belongs to.
+        :paramtype resource_group: str
+        :keyword account_name: 'bring your own storage' account name.
+        :paramtype account_name: str
+        :keyword location: The region of 'bring your own storage' account.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
+        self.account_name = account_name
+        self.location = location
+
+
+class SyncCertRecordRequest(_serialization.Model):
+    """Synchronize certification record request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar cert_record: certification record to be synchronized. Required.
+    :vartype cert_record: ~azure.mgmt.appcomplianceautomation.models.CertSyncRecord
+    """
+
+    _validation = {
+        "cert_record": {"required": True},
+    }
+
+    _attribute_map = {
+        "cert_record": {"key": "certRecord", "type": "CertSyncRecord"},
+    }
+
+    def __init__(self, *, cert_record: "_models.CertSyncRecord", **kwargs: Any) -> None:
+        """
+        :keyword cert_record: certification record to be synchronized. Required.
+        :paramtype cert_record: ~azure.mgmt.appcomplianceautomation.models.CertSyncRecord
+        """
+        super().__init__(**kwargs)
+        self.cert_record = cert_record
+
+
+class SyncCertRecordResponse(_serialization.Model):
+    """Synchronize certification record response.
+
+    :ivar cert_record: certification record synchronized.
+    :vartype cert_record: ~azure.mgmt.appcomplianceautomation.models.CertSyncRecord
+    """
+
+    _attribute_map = {
+        "cert_record": {"key": "certRecord", "type": "CertSyncRecord"},
+    }
+
+    def __init__(self, *, cert_record: Optional["_models.CertSyncRecord"] = None, **kwargs: Any) -> None:
+        """
+        :keyword cert_record: certification record synchronized.
+        :paramtype cert_record: ~azure.mgmt.appcomplianceautomation.models.CertSyncRecord
+        """
+        super().__init__(**kwargs)
+        self.cert_record = cert_record
 
 
 class SystemData(_serialization.Model):
@@ -1329,8 +2560,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1355,3 +2586,317 @@ class SystemData(_serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class TriggerEvaluationProperty(_serialization.Model):
+    """Trigger evaluation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar trigger_time: The time when the evaluation is triggered.
+    :vartype trigger_time: ~datetime.datetime
+    :ivar evaluation_end_time: The time when the evaluation is end.
+    :vartype evaluation_end_time: ~datetime.datetime
+    :ivar resource_ids: List of resource ids to be evaluated.
+    :vartype resource_ids: list[str]
+    :ivar quick_assessments: List of quick assessments.
+    :vartype quick_assessments: list[~azure.mgmt.appcomplianceautomation.models.QuickAssessment]
+    """
+
+    _validation = {
+        "trigger_time": {"readonly": True},
+        "evaluation_end_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "trigger_time": {"key": "triggerTime", "type": "iso-8601"},
+        "evaluation_end_time": {"key": "evaluationEndTime", "type": "iso-8601"},
+        "resource_ids": {"key": "resourceIds", "type": "[str]"},
+        "quick_assessments": {"key": "quickAssessments", "type": "[QuickAssessment]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_ids: Optional[List[str]] = None,
+        quick_assessments: Optional[List["_models.QuickAssessment"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_ids: List of resource ids to be evaluated.
+        :paramtype resource_ids: list[str]
+        :keyword quick_assessments: List of quick assessments.
+        :paramtype quick_assessments: list[~azure.mgmt.appcomplianceautomation.models.QuickAssessment]
+        """
+        super().__init__(**kwargs)
+        self.trigger_time = None
+        self.evaluation_end_time = None
+        self.resource_ids = resource_ids
+        self.quick_assessments = quick_assessments
+
+
+class TriggerEvaluationRequest(_serialization.Model):
+    """Trigger evaluation request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_ids: List of resource ids to be evaluated. Required.
+    :vartype resource_ids: list[str]
+    """
+
+    _validation = {
+        "resource_ids": {"required": True},
+    }
+
+    _attribute_map = {
+        "resource_ids": {"key": "resourceIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, resource_ids: List[str], **kwargs: Any) -> None:
+        """
+        :keyword resource_ids: List of resource ids to be evaluated. Required.
+        :paramtype resource_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.resource_ids = resource_ids
+
+
+class TriggerEvaluationResponse(_serialization.Model):
+    """Trigger evaluation response.
+
+    :ivar properties: trigger evaluation property.
+    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.TriggerEvaluationProperty
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "TriggerEvaluationProperty"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.TriggerEvaluationProperty"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: trigger evaluation property.
+        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.TriggerEvaluationProperty
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class WebhookProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Webhook properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar webhook_id: Webhook id in database.
+    :vartype webhook_id: str
+    :ivar status: Webhook status. Known values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.appcomplianceautomation.models.WebhookStatus
+    :ivar tenant_id: Tenant id.
+    :vartype tenant_id: str
+    :ivar send_all_events: whether to send notification under any event. Known values are: "true"
+     and "false".
+    :vartype send_all_events: str or ~azure.mgmt.appcomplianceautomation.models.SendAllEvents
+    :ivar events: under which event notification should be sent.
+    :vartype events: list[str or ~azure.mgmt.appcomplianceautomation.models.NotificationEvent]
+    :ivar payload_url: webhook payload url.
+    :vartype payload_url: str
+    :ivar content_type: content type. "application/json"
+    :vartype content_type: str or ~azure.mgmt.appcomplianceautomation.models.ContentType
+    :ivar webhook_key: webhook secret token. If not set, this field value is null; otherwise,
+     please set a string value.
+    :vartype webhook_key: str
+    :ivar update_webhook_key: whether to update webhookKey. Known values are: "true" and "false".
+    :vartype update_webhook_key: str or ~azure.mgmt.appcomplianceautomation.models.UpdateWebhookKey
+    :ivar webhook_key_enabled: whether webhookKey is enabled. Known values are: "true" and "false".
+    :vartype webhook_key_enabled: str or
+     ~azure.mgmt.appcomplianceautomation.models.WebhookKeyEnabled
+    :ivar enable_ssl_verification: whether to enable ssl verification. Known values are: "true" and
+     "false".
+    :vartype enable_ssl_verification: str or
+     ~azure.mgmt.appcomplianceautomation.models.EnableSslVerification
+    :ivar delivery_status: webhook deliveryStatus. Known values are: "Succeeded", "Failed", and
+     "NotStarted".
+    :vartype delivery_status: str or ~azure.mgmt.appcomplianceautomation.models.DeliveryStatus
+    :ivar provisioning_state: Azure Resource Provisioning State. Known values are: "Succeeded",
+     "Failed", "Canceled", "Creating", "Deleting", "Fixing", "Verifying", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.appcomplianceautomation.models.ProvisioningState
+    """
+
+    _validation = {
+        "webhook_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "payload_url": {"pattern": r"^(http(s)?://)[\S]{0,64994}$"},
+        "webhook_key": {"pattern": r"^.{0,2048}$"},
+        "webhook_key_enabled": {"readonly": True},
+        "delivery_status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "webhook_id": {"key": "webhookId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "send_all_events": {"key": "sendAllEvents", "type": "str"},
+        "events": {"key": "events", "type": "[str]"},
+        "payload_url": {"key": "payloadUrl", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "webhook_key": {"key": "webhookKey", "type": "str"},
+        "update_webhook_key": {"key": "updateWebhookKey", "type": "str"},
+        "webhook_key_enabled": {"key": "webhookKeyEnabled", "type": "str"},
+        "enable_ssl_verification": {"key": "enableSslVerification", "type": "str"},
+        "delivery_status": {"key": "deliveryStatus", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.WebhookStatus"]] = None,
+        send_all_events: Optional[Union[str, "_models.SendAllEvents"]] = None,
+        events: Optional[List[Union[str, "_models.NotificationEvent"]]] = None,
+        payload_url: Optional[str] = None,
+        content_type: Optional[Union[str, "_models.ContentType"]] = None,
+        webhook_key: Optional[str] = None,
+        update_webhook_key: Optional[Union[str, "_models.UpdateWebhookKey"]] = None,
+        enable_ssl_verification: Optional[Union[str, "_models.EnableSslVerification"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Webhook status. Known values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.appcomplianceautomation.models.WebhookStatus
+        :keyword send_all_events: whether to send notification under any event. Known values are:
+         "true" and "false".
+        :paramtype send_all_events: str or ~azure.mgmt.appcomplianceautomation.models.SendAllEvents
+        :keyword events: under which event notification should be sent.
+        :paramtype events: list[str or ~azure.mgmt.appcomplianceautomation.models.NotificationEvent]
+        :keyword payload_url: webhook payload url.
+        :paramtype payload_url: str
+        :keyword content_type: content type. "application/json"
+        :paramtype content_type: str or ~azure.mgmt.appcomplianceautomation.models.ContentType
+        :keyword webhook_key: webhook secret token. If not set, this field value is null; otherwise,
+         please set a string value.
+        :paramtype webhook_key: str
+        :keyword update_webhook_key: whether to update webhookKey. Known values are: "true" and
+         "false".
+        :paramtype update_webhook_key: str or
+         ~azure.mgmt.appcomplianceautomation.models.UpdateWebhookKey
+        :keyword enable_ssl_verification: whether to enable ssl verification. Known values are: "true"
+         and "false".
+        :paramtype enable_ssl_verification: str or
+         ~azure.mgmt.appcomplianceautomation.models.EnableSslVerification
+        """
+        super().__init__(**kwargs)
+        self.webhook_id = None
+        self.status = status
+        self.tenant_id = None
+        self.send_all_events = send_all_events
+        self.events = events
+        self.payload_url = payload_url
+        self.content_type = content_type
+        self.webhook_key = webhook_key
+        self.update_webhook_key = update_webhook_key
+        self.webhook_key_enabled = None
+        self.enable_ssl_verification = enable_ssl_verification
+        self.delivery_status = None
+        self.provisioning_state = None
+
+
+class WebhookResource(ProxyResource):
+    """A class represent an AppComplianceAutomation webhook resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.appcomplianceautomation.models.SystemData
+    :ivar properties: Webhook property. Required.
+    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.WebhookProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "WebhookProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.WebhookProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Webhook property. Required.
+        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.WebhookProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class WebhookResourceListResult(_serialization.Model):
+    """The response of a WebhookResource list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The WebhookResource items on this page. Required.
+    :vartype value: list[~azure.mgmt.appcomplianceautomation.models.WebhookResource]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[WebhookResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.WebhookResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The WebhookResource items on this page. Required.
+        :paramtype value: list[~azure.mgmt.appcomplianceautomation.models.WebhookResource]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class WebhookResourcePatch(_serialization.Model):
+    """A class represent a AppComplianceAutomation webhook resource update properties.
+
+    :ivar properties: Webhook property.
+    :vartype properties: ~azure.mgmt.appcomplianceautomation.models.WebhookProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "WebhookProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.WebhookProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Webhook property.
+        :paramtype properties: ~azure.mgmt.appcomplianceautomation.models.WebhookProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties

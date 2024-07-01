@@ -61,6 +61,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
     "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
+    "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
@@ -94,9 +95,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # dependency type must either be latest or minimum
     # Latest dependency will find latest released package that satisfies requires of given package name
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
-
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
-
     override_added_packages = []
 
     # new section added to account for difficulties with msrest
