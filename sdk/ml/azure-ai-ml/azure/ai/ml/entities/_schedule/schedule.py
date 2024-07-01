@@ -86,8 +86,6 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -465,7 +463,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         try:
             res_yaml: str = self._to_yaml()
             return res_yaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             res_jobSchedule: str = super(JobSchedule, self).__str__()
             return res_jobSchedule
 
@@ -483,6 +481,9 @@ class ScheduleTriggerResult:
     """Schedule trigger result returned by trigger an enabled schedule once.
 
     This class shouldn't be instantiated directly. Instead, it is used as the return type of schedule trigger.
+
+    :ivar str job_name:
+    :ivar str schedule_action_type:
     """
 
     def __init__(self, **kwargs):  # pylint: disable=unused-argument

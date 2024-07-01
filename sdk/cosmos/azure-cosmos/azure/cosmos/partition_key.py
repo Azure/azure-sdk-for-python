@@ -27,8 +27,8 @@ from typing import IO, Sequence, Type, Union, overload, List
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt64, _UInt128
-from ._cosmos_murmurhash3 import murmurhash3_128
-from ._routing.routing_range import Range
+from ._cosmos_murmurhash3 import murmurhash3_128 as _murmurhash3_128
+from ._routing.routing_range import Range as _Range
 
 
 _MaximumExclusiveEffectivePartitionKey = 0xFF
@@ -150,7 +150,7 @@ class PartitionKey(dict):
     def _get_epk_range_for_prefix_partition_key(
         self,
         pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]]
-    ) -> Range:
+    ) -> _Range:
         if self.kind != "MultiHash":
             raise ValueError(
                 "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
@@ -165,13 +165,13 @@ class PartitionKey(dict):
         min_epk = self._get_effective_partition_key_string(pk_value)
         if min_epk == _MinimumInclusiveEffectivePartitionKey:
             min_epk = ""
-            return Range(min_epk, min_epk, True, False)
+            return _Range(min_epk, min_epk, True, False)
 
         if min_epk == _MaximumExclusiveEffectivePartitionKey:
-            return Range("FF", "FF", True, False)
+            return _Range("FF", "FF", True, False)
 
         max_epk = str(min_epk) + "FF"
-        return Range(min_epk, max_epk, True, False)
+        return _Range(min_epk, max_epk, True, False)
 
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:
         # We shouldn't be supporting V1
@@ -231,7 +231,7 @@ class PartitionKey(dict):
                 self._write_for_hashing_v2(component, ms)
 
             ms_bytes = ms.getvalue()
-            hash128 = murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
+            hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
             hash_bytes = _UInt128.to_byte_array(hash128)
             hash_bytes.reverse()
 
@@ -254,7 +254,7 @@ class PartitionKey(dict):
             self._write_for_hashing_v2(value, binary_writer)
 
             ms_bytes = ms.getvalue()
-            hash128 = murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
+            hash128 = _murmurhash3_128(bytearray(ms_bytes), _UInt128(0, 0))
             hash_v_bytes = hash128.to_byte_array()
             hash_v = list(reversed(hash_v_bytes))
 

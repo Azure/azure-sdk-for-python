@@ -129,7 +129,7 @@ class OSFeedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the resource."""
+    """Provisioning state of resource."""
 
     SUCCEEDED = "Succeeded"
     """Resource has been created."""

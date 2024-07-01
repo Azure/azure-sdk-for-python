@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/flow.schema.json
-name: template_eval_flow
-display_name: Template Evaluation Flow
+name: chat_quality_safety_eval
+display_name: Chat Quality Safety Evaluation
 type: evaluate
 path: ./flow.dag.yaml
 description: Template Evaluation Flow

@@ -7,3 +7,7 @@ variables:
   DisableDockerDetector: true
   # Disable CodeQL injections except for where we specifically enable it
   Codeql.SkipTaskAutoInjection: true
+  BuildId: $(Build.BuildId)
+  REPOROOT: $(Build.SourcesDirectory)
+  WINDOWS_OUTPUTROOT: $(REPOROOT)\out
+  WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'

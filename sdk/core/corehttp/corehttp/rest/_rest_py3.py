@@ -329,16 +329,13 @@ class HttpResponse(_HttpResponseBase):
     """
 
     @abc.abstractmethod
-    def __enter__(self) -> "HttpResponse":
-        ...
+    def __enter__(self) -> "HttpResponse": ...
 
     @abc.abstractmethod
-    def __exit__(self, *args: Any) -> None:
-        ...
+    def __exit__(self, *args: Any) -> None: ...
 
     @abc.abstractmethod
-    def close(self) -> None:
-        ...
+    def close(self) -> None: ...
 
     @abc.abstractmethod
     def read(self) -> bytes:
@@ -415,5 +412,4 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         yield  # pylint: disable=unreachable
 
     @abc.abstractmethod
-    async def close(self) -> None:
-        ...
+    async def close(self) -> None: ...

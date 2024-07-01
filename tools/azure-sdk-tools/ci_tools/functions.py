@@ -154,7 +154,7 @@ def generate_difference(original_packages: List[str], filtered_packages: List[st
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
-        individual_globs = glob_string.split(",")
+        individual_globs = [glob_string.strip() for glob_string in glob_string.split(",")]
     else:
         individual_globs = "azure-*"
     collected_top_level_directories = []
@@ -394,18 +394,23 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     if pkg_name is None:
         logging.error("Package name cannot be empty to find sdist")
         return
+    else:
+        # ensure package name matches cananonicalized package name
+        pkg_name = pkg_name.replace("-", "[-_]")
 
-    pkg_name_format = f"{pkg_name}-{pkg_version}.tar.gz"
+    pkg_format = f"{pkg_name}-{pkg_version}.tar.gz"
 
     packages = []
     for root, dirnames, filenames in os.walk(dist_dir):
-        for filename in fnmatch.filter(filenames, pkg_name_format):
+        for filename in fnmatch.filter(filenames, pkg_format):
             packages.append(os.path.join(root, filename))
 
     packages = [os.path.relpath(w, dist_dir) for w in packages]
 
     if not packages:
-        logging.error("No sdist is found in directory %s with package name format %s", dist_dir, pkg_name_format)
+        logging.error(
+            f"No sdist is found in directory {dist_dir} with package name format {pkg_format}."
+        )
         return
     return packages[0]
 
@@ -558,8 +563,8 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
     whls = [os.path.relpath(w, whl_dir) for w in whls]
 
     if not whls:
-        logging.error("No whl is found in directory %s with package name format %s", whl_dir, pkg_name_format)
-        logging.info("List of whls in directory: %s", glob.glob(os.path.join(whl_dir, "*.whl")))
+        logging.info(f"No whl is found in directory {whl_dir} with package name format {pkg_name_format}")
+        logging.info(f"List of whls in directory: {glob.glob(os.path.join(whl_dir, '*.whl'))}")
         return
 
     compatible_tags = get_interpreter_compatible_tags()

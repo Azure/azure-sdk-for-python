@@ -1,5 +1,45 @@
 # Release History
 
+## 9.5.1 (2024-06-19)
+
+### Features Added
+
+  - Model ServiceResourceCreateUpdateParameters has a new parameter properties
+
+### Breaking Changes
+
+  - Model ServiceResourceCreateUpdateParameters no longer has parameter instance_count
+  - Model ServiceResourceCreateUpdateParameters no longer has parameter instance_size
+  - Model ServiceResourceCreateUpdateParameters no longer has parameter service_type
+
+### Bugs Fixed
+
+  - Disable parameter flatten for Model ServiceResourceCreateUpdateParameters to avoid deserializatin
+
+## 9.5.0 (2024-05-20)
+
+### Features Added
+
+  - Model ClusterResourceProperties has a new parameter azure_connection_method
+  - Model ClusterResourceProperties has a new parameter private_link_resource_id
+  - Model DataCenterResourceProperties has a new parameter private_endpoint_ip_address
+  - Model SqlDedicatedGatewayServiceResourceProperties has a new parameter dedicated_gateway_type
+
+## 10.0.0b3 (2024-03-18)
+
+### Features Added
+
+  - Added operation DataTransferJobsOperations.complete
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_per_region_per_partition_autoscale
+  - Model DatabaseAccountGetResults has a new parameter enable_per_region_per_partition_autoscale
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_per_region_per_partition_autoscale
+  - Model PrivateEndpointConnection has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model ResourceRestoreParameters has a new parameter restore_with_ttl_disabled
+  - Model RestoreParameters has a new parameter restore_with_ttl_disabled
+  - Model RestoreParametersBase has a new parameter restore_with_ttl_disabled
+
 ## 10.0.0b2 (2024-01-26)
 
 ### Features Added

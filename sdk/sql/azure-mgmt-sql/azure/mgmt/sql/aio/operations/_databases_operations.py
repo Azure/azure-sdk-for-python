@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,6 +36,7 @@ from ...operations._databases_operations import (
     build_export_request,
     build_failover_request,
     build_get_request,
+    build_import_method_request,
     build_import_request,
     build_list_by_elastic_pool_request,
     build_list_by_server_request,
@@ -88,7 +89,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param filter: An OData filter expression that describes a subset of metrics to return.
          Required.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Metric or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.Metric]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -110,26 +110,25 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_metrics_request(
+                _request = build_list_metrics_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     database_name=database_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_metrics.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("MetricListResult", pipeline_response)
@@ -139,11 +138,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -154,10 +153,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_metrics.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/metrics"
-    }
 
     @distributed_trace
     def list_metric_definitions(
@@ -172,7 +167,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.MetricDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -194,25 +188,24 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_metric_definitions_request(
+                _request = build_list_metric_definitions_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     database_name=database_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_metric_definitions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("MetricDefinitionListResult", pipeline_response)
@@ -222,11 +215,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -237,10 +230,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_metric_definitions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/metricDefinitions"
-    }
 
     @distributed_trace
     def list_by_server(
@@ -255,7 +244,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param skip_token: Default value is None.
         :type skip_token: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Database or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.Database]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -277,25 +265,24 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_server_request(
+                _request = build_list_by_server_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     subscription_id=self._config.subscription_id,
                     skip_token=skip_token,
                     api_version=api_version,
-                    template_url=self.list_by_server.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DatabaseListResult", pipeline_response)
@@ -305,11 +292,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -320,10 +307,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_server.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases"
-    }
 
     @distributed_trace_async
     async def get(
@@ -349,7 +332,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param filter: An OData filter expression that filters elements in the collection. Default
          value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Database or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.Database
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -368,7 +350,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -376,16 +358,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             expand=expand,
             filter=filter,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -397,20 +378,16 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("Database", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, IO],
+        parameters: Union[_models.Database, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.Database]:
         error_map = {
@@ -436,7 +413,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "Database")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -445,16 +422,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -471,13 +447,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("Database", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create_or_update(
@@ -504,14 +476,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -524,7 +488,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -539,18 +503,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -563,7 +519,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.Database, IO],
+        parameters: Union[_models.Database, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
         """Creates a new database or updates an existing database.
@@ -575,20 +531,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is either a Database type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.sql.models.Database or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: The requested database resource state. Is either a Database type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.Database or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -621,7 +566,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Database", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -634,17 +579,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Database].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+        return AsyncLROPoller[_models.Database](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -663,22 +606,21 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -688,11 +630,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -707,14 +645,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -742,7 +672,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -753,24 +683,20 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _update_initial(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseUpdate, IO],
+        parameters: Union[_models.DatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.Database]:
         error_map = {
@@ -796,7 +722,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "DatabaseUpdate")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -805,16 +731,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -828,13 +753,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("Database", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update(
@@ -861,14 +782,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -881,7 +794,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -896,18 +809,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -920,7 +825,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseUpdate, IO],
+        parameters: Union[_models.DatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Database]:
         """Updates an existing database.
@@ -933,19 +838,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The requested database resource state. Is either a DatabaseUpdate type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -978,7 +872,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Database", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -990,24 +884,22 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Database].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}"
-    }
+        return AsyncLROPoller[_models.Database](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _export_initial(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ExportDatabaseDefinition, IO],
+        parameters: Union[_models.ExportDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ImportExportOperationResult]:
         error_map = {
@@ -1033,7 +925,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ExportDatabaseDefinition")
 
-        request = build_export_request(
+        _request = build_export_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -1042,16 +934,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._export_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1065,13 +956,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("ImportExportOperationResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _export_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_export(
@@ -1098,14 +985,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -1118,7 +997,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1133,18 +1012,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database export request parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -1157,7 +1028,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ExportDatabaseDefinition, IO],
+        parameters: Union[_models.ExportDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ImportExportOperationResult]:
         """Exports a database.
@@ -1170,19 +1041,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database export request parameters. Is either a ExportDatabaseDefinition
-         type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -1215,7 +1075,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ImportExportOperationResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1225,17 +1085,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ImportExportOperationResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_export.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/export"
-    }
+        return AsyncLROPoller[_models.ImportExportOperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _failover_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1259,23 +1117,22 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_failover_request(
+        _request = build_failover_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             replica_type=replica_type,
             api_version=api_version,
-            template_url=self._failover_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1285,11 +1142,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _failover_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_failover(
@@ -1312,14 +1165,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param replica_type: The type of replica to be failed over. Known values are: "Primary" and
          "ReadableSecondary". Default value is None.
         :type replica_type: str or ~azure.mgmt.sql.models.ReplicaType
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1348,7 +1193,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1357,24 +1202,20 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_failover.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/failover"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _import_initial(
         self,
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ImportExistingDatabaseDefinition, IO],
+        parameters: Union[_models.ImportExistingDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.ImportExportOperationResult]:
         error_map = {
@@ -1400,7 +1241,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ImportExistingDatabaseDefinition")
 
-        request = build_import_request(
+        _request = build_import_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -1409,16 +1250,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._import_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1432,13 +1272,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("ImportExportOperationResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _import_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_import_method(
@@ -1465,14 +1301,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -1485,7 +1313,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1500,18 +1328,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database import request parameters. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -1524,7 +1344,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ImportExistingDatabaseDefinition, IO],
+        parameters: Union[_models.ImportExistingDatabaseDefinition, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ImportExportOperationResult]:
         """Imports a bacpac into a new database.
@@ -1537,19 +1357,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The database import request parameters. Is either a
-         ImportExistingDatabaseDefinition type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ImportExistingDatabaseDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ImportExportOperationResult or the
          result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.ImportExportOperationResult]
@@ -1582,7 +1391,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("ImportExportOperationResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1592,17 +1401,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ImportExportOperationResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_import_method.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/import"
-    }
+        return AsyncLROPoller[_models.ImportExportOperationResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     async def rename(  # pylint: disable=inconsistent-return-statements
@@ -1629,7 +1436,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1641,7 +1447,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1656,11 +1462,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database to rename. Required.
         :type database_name: str
         :param parameters: The resource move definition for renaming this database. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1672,7 +1477,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ResourceMoveDefinition, IO],
+        parameters: Union[_models.ResourceMoveDefinition, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Renames a database.
@@ -1685,12 +1490,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the database to rename. Required.
         :type database_name: str
         :param parameters: The resource move definition for renaming this database. Is either a
-         ResourceMoveDefinition type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.ResourceMoveDefinition or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ResourceMoveDefinition type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ResourceMoveDefinition or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1718,7 +1519,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ResourceMoveDefinition")
 
-        request = build_rename_request(
+        _request = build_rename_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -1727,16 +1528,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.rename.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1746,11 +1546,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    rename.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/move"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     async def _pause_initial(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -1769,22 +1565,21 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
-        request = build_pause_request(
+        _request = build_pause_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._pause_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1798,13 +1593,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("Database", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _pause_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_pause(
@@ -1819,14 +1610,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database to be paused. Required.
         :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -1856,7 +1639,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Database", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1866,17 +1649,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Database].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_pause.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/pause"
-    }
+        return AsyncLROPoller[_models.Database](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _resume_initial(
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -1895,22 +1676,21 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
-        request = build_resume_request(
+        _request = build_resume_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._resume_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1924,13 +1704,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("Database", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _resume_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_resume(
@@ -1945,14 +1721,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database to be resumed. Required.
         :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Database or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.Database]
@@ -1982,7 +1750,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Database", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1992,17 +1760,15 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Database].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_resume.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/resume"
-    }
+        return AsyncLROPoller[_models.Database](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _upgrade_data_warehouse_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
@@ -2021,22 +1787,21 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_upgrade_data_warehouse_request(
+        _request = build_upgrade_data_warehouse_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._upgrade_data_warehouse_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2046,11 +1811,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _upgrade_data_warehouse_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/upgradeDataWarehouse"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_upgrade_data_warehouse(
@@ -2065,14 +1826,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database to be upgraded. Required.
         :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2100,7 +1853,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -2109,17 +1862,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_upgrade_data_warehouse.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/upgradeDataWarehouse"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_by_elastic_pool(
@@ -2134,7 +1883,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Database or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.Database]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2156,25 +1904,24 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_elastic_pool_request(
+                _request = build_list_by_elastic_pool_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     elastic_pool_name=elastic_pool_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_elastic_pool.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DatabaseListResult", pipeline_response)
@@ -2184,11 +1931,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2199,10 +1946,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_elastic_pool.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/databases"
-    }
 
     @distributed_trace
     def list_inaccessible_by_server(
@@ -2215,7 +1958,6 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Database or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.Database]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2237,24 +1979,23 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_inaccessible_by_server_request(
+                _request = build_list_inaccessible_by_server_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_inaccessible_by_server.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DatabaseListResult", pipeline_response)
@@ -2264,11 +2005,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2279,7 +2020,3 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_inaccessible_by_server.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/inaccessibleDatabases"
-    }

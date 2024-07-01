@@ -9,6 +9,7 @@
 from ._models import AddressValue
 from ._models import AnalyzeDocumentRequest
 from ._models import AnalyzeResult
+from ._models import AnalyzeResultOperation
 from ._models import AuthorizeCopyRequest
 from ._models import AzureBlobContentSource
 from ._models import AzureBlobFileListContentSource
@@ -58,6 +59,7 @@ from ._models import InnerError
 from ._models import OperationDetails
 from ._models import QuotaDetails
 from ._models import ResourceDetails
+from ._models import Warning
 
 from ._enums import ContentFormat
 from ._enums import ContentSourceKind
@@ -85,6 +87,7 @@ __all__ = [
     "AddressValue",
     "AnalyzeDocumentRequest",
     "AnalyzeResult",
+    "AnalyzeResultOperation",
     "AuthorizeCopyRequest",
     "AzureBlobContentSource",
     "AzureBlobFileListContentSource",
@@ -134,6 +137,7 @@ __all__ = [
     "OperationDetails",
     "QuotaDetails",
     "ResourceDetails",
+    "Warning",
     "ContentFormat",
     "ContentSourceKind",
     "DocumentAnalysisFeature",

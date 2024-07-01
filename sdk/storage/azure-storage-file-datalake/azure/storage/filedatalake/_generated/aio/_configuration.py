@@ -6,21 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 VERSION = "unknown"
 
 
-class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AzureDataLakeStorageRESTAPIConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AzureDataLakeStorageRESTAPI.
 
     Note that all parameters used to create this instance are saved as instance
@@ -42,7 +35,6 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     """
 
     def __init__(self, url: str, x_ms_lease_duration: Optional[int] = None, **kwargs: Any) -> None:
-        super(AzureDataLakeStorageRESTAPIConfiguration, self).__init__(**kwargs)
         resource: Literal["filesystem"] = kwargs.pop("resource", "filesystem")
         version: Literal["2023-05-03"] = kwargs.pop("version", "2023-05-03")
 
@@ -54,6 +46,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
         self.resource = resource
         self.version = version
         kwargs.setdefault("sdk_moniker", "azuredatalakestoragerestapi/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -62,7 +55,7 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")

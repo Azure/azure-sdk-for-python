@@ -6,7 +6,7 @@
 """
 Streaming tests.
 
-Test naming convention: test_{1}_{2}
+Test naming convention for streaming response tests: test_{1}_{2}
 
 1:
 compress or decompress. Refers to the stream that is returned from the testserver / streams.py
@@ -26,22 +26,6 @@ from corehttp.exceptions import DecodeError
 from utils import SYNC_TRANSPORTS
 
 
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_decompress_plain_no_header(transport):
-    # expect plain text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    content = response.read()
-    decoded = content.decode("utf-8")
-    assert decoded == "test"
-
-
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_compress_plain_no_header_offline(port, transport):
     # cspell:disable-next-line
@@ -57,38 +41,6 @@ def test_compress_plain_no_header_offline(port, transport):
         assert decoded == "test"
 
 
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_compress_plain_no_header(transport):
-    # expect plain text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    content = response.read()
-    decoded = content.decode("utf-8")
-    assert decoded == "test"
-
-
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_decompress_compressed_no_header(transport):
-    # expect compressed text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    content = response.read()
-    with pytest.raises(UnicodeDecodeError):
-        content.decode("utf-8")
-
-
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_compress_compressed_no_header_offline(port, transport):
     # expect compressed text
@@ -102,38 +54,6 @@ def test_compress_compressed_no_header_offline(port, transport):
         content.decode("utf-8")
 
 
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_compress_compressed_no_header(transport):
-    # expect compressed text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    content = response.read()
-    with pytest.raises(UnicodeDecodeError):
-        content.decode("utf-8")
-
-
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_decompress_plain_header(transport):
-    # expect error
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.iter_bytes()
-    with pytest.raises(DecodeError):
-        list(data)
-
-
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_decompress_plain_header_offline(port, transport):
     request = HttpRequest(method="GET", url="http://localhost:{}/streams/compressed".format(port))
@@ -143,39 +63,6 @@ def test_decompress_plain_header_offline(port, transport):
         data = response.iter_bytes()
         with pytest.raises(DecodeError):
             list(data)
-
-
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_compress_plain_header(transport):
-    # expect plain text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.iter_raw()
-    content = b"".join(list(data))
-    decoded = content.decode("utf-8")
-    assert decoded == "test"
-
-
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_decompress_compressed_header(transport):
-    # expect plain text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    content = response.read()
-    decoded = content.decode("utf-8")
-    assert decoded == "test"
 
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
@@ -188,23 +75,6 @@ def test_decompress_compressed_header_offline(port, transport):
         content = response.read()
         decoded = content.decode("utf-8")
         assert decoded == "test"
-
-
-@pytest.mark.live_test_only
-@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
-def test_compress_compressed_header(transport):
-    # expect compressed text
-    account_name = "coretests"
-    account_url = "https://{}.blob.core.windows.net".format(account_name)
-    url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
-    client = PipelineClient(account_url, transport=transport())
-    request = HttpRequest("GET", url)
-    pipeline_response = client.pipeline.run(request, stream=True)
-    response = pipeline_response.http_response
-    data = response.iter_raw()
-    content = b"".join(list(data))
-    with pytest.raises(UnicodeDecodeError):
-        content.decode("utf-8")
 
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
@@ -243,6 +113,7 @@ def test_decompress_compressed_no_header_offline(port, transport):
     pipeline_response = client.pipeline.run(request, stream=True)
     response = pipeline_response.http_response
     content = response.read()
+    assert content.startswith(b"\x1f\x8b")  # gzip magic number
     with pytest.raises(UnicodeDecodeError):
         content.decode("utf-8")
 
@@ -259,3 +130,33 @@ def test_compress_compressed_header_offline(port, transport):
     content = b"".join(list(data))
     with pytest.raises(UnicodeDecodeError):
         content.decode("utf-8")
+
+
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_streaming_request_iterable(port, transport):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    class Content:
+        def __iter__(self):
+            yield b"test 123"
+
+    client = PipelineClient(url, transport=transport())
+    request = HttpRequest("POST", url=url, content=Content())
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123"
+
+
+@pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+def test_streaming_request_generator(port, transport):
+    url = "http://localhost:{}/streams/upload".format(port)
+
+    def content():
+        yield b"test 123"
+        yield b"test 456"
+
+    client = PipelineClient(url, transport=transport())
+    request = HttpRequest("POST", url=url, content=content())
+    response = client.send_request(request)
+    response.raise_for_status()
+    assert response.text() == "test 123test 456"

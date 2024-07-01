@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, invalid-overridden-method
+# pylint: disable=too-many-lines, invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 import warnings
 from functools import partial
@@ -167,9 +167,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :param str source_url:
             A URL of up to 2 KB in length that specifies a file or blob.
             The value should be URL-encoded as it would appear in a request URI.
-            If the source is in another account, the source must either be public
-            or must be authenticated via a shared access signature. If the source
-            is public, no authentication is required.
+            The source must either be public or must be authenticated via a shared
+            access signature as part of the url or using the source_authorization keyword.
+            If the source is public, no authentication is required.
             Examples:
             https://myaccount.blob.core.windows.net/mycontainer/myblob
 
@@ -186,7 +186,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
         :paramtype tags: dict(str, str)
         :keyword bytearray source_content_md5:
             Specify the md5 that is used to verify the integrity of the source bytes.
@@ -234,7 +234,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,
             language, disposition, md5, and cache control.
@@ -254,6 +254,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Response from creating a new block blob for a given URL.
+        :rtype: Dict[str, Any]
         """
         options = self._upload_blob_from_url_options(
             source_url=self._encode_source_url(source_url),
@@ -287,7 +289,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -393,7 +395,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            #other-client--per-operation-configuration>`__. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
@@ -461,6 +463,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             value that, when present, specifies the version of the blob to download.
 
             .. versionadded:: 12.4.0
+
             This keyword argument was introduced in API version '2019-12-12'.
 
         :keyword bool validate_content:
@@ -519,7 +522,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            #other-client--per-operation-configuration>`__. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
@@ -569,6 +572,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             value that, when present, specifies the version of the blob to delete.
 
             .. versionadded:: 12.4.0
+
             This keyword argument was introduced in API version '2019-12-12'.
 
         :keyword lease:
@@ -604,7 +608,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -639,7 +643,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -671,7 +675,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: boolean
         :rtype: bool
         """
@@ -706,6 +710,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             value that, when present, specifies the version of the blob to get properties.
 
             .. versionadded:: 12.4.0
+
             This keyword argument was introduced in API version '2019-12-12'.
 
         :keyword ~datetime.datetime if_modified_since:
@@ -741,7 +746,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: BlobProperties
         :rtype: ~azure.storage.blob.BlobProperties
 
@@ -827,7 +832,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
@@ -892,8 +897,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Union[str, datetime]]
         """
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
@@ -920,7 +926,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
@@ -942,7 +948,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
@@ -964,7 +970,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
@@ -1000,7 +1006,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1060,7 +1066,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
@@ -1093,7 +1099,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1149,7 +1155,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
@@ -1223,7 +1229,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
         :rtype: dict[str, Any]
 
@@ -1305,7 +1311,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_).
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_).
 
             The (case-sensitive) literal "COPY" can instead be passed to copy tags from the source blob.
             This option is only available when `incremental_copy=False` and `requires_sync=True`.
@@ -1383,7 +1389,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -1513,7 +1519,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A BlobLeaseClient object.
         :rtype: ~azure.storage.blob.aio.BlobLeaseClient
 
@@ -1559,7 +1565,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1589,13 +1595,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             length=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob.
 
         :param str block_id: A string value that identifies the block.
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
+        :type data: Union[Iterable[AnyStr], IO[AnyStr]]
         :param int length: Size of the block.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
@@ -1630,8 +1637,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
-        :rtype: None
+            #other-client--per-operation-configuration>`__.
+        :returns: Blob property dict.
+        :rtype: Dict[str, Any]
         """
         options = self._stage_block_options(
             block_id,
@@ -1652,7 +1660,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
             **kwargs
         ):
-        # type: (...) -> None
+        # type: (...) -> Dict[str, Any]
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
@@ -1689,11 +1697,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
-        :rtype: None
+        :returns: Blob property dict.
+        :rtype: Dict[str, Any]
         """
         options = self._stage_block_from_url_options(
             block_id,
@@ -1732,7 +1741,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A tuple of two lists - committed and uncommitted blocks
         :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
         """
@@ -1774,7 +1783,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
 
             .. versionadded:: 12.4.0
 
@@ -1846,7 +1855,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -1881,7 +1890,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1917,7 +1926,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
             and tag values must be between 0 and 256 characters.
             Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+            space (' '), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
         :type tags: dict(str, str)
         :keyword str version_id:
             The version id parameter is an opaque DateTime
@@ -1941,7 +1950,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
@@ -1974,7 +1983,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
@@ -2046,7 +2055,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
@@ -2138,7 +2147,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An iterable (auto-paging) of PageRange.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
         """
@@ -2177,7 +2186,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         .. versionadded:: 12.2.0
             This operation was introduced in API version '2019-07-07'.
 
-        :param previous_snapshot_url:
+        :param str previous_snapshot_url:
             Specifies the URL of a previous snapshot of the managed disk.
             The response will only contain pages that were changed between the target blob and
             its previous snapshot.
@@ -2221,7 +2230,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns:
             A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
             The first element are filled page ranges, the 2nd element is cleared page ranges.
@@ -2286,7 +2295,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -2344,7 +2353,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -2439,7 +2448,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -2554,10 +2563,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Response after uploading pages from specified URL.
+        :rtype: Dict[str, Any]
         """
 
         options = self._upload_pages_from_url_options(
@@ -2633,7 +2644,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -2654,6 +2665,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
         :param data:
             Content of the block.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
         :param int length:
             Size of the block in bytes.
         :keyword bool validate_content:
@@ -2722,7 +2734,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
@@ -2829,10 +2841,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :returns: Result after appending a new block.
+        :rtype: Dict[str, Union[str, datetime, int]]
         """
         options = self._append_block_from_url_options(
             copy_source_url=self._encode_source_url(copy_source_url),
@@ -2884,7 +2898,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """

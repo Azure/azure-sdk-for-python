@@ -12,11 +12,9 @@ from ._version import VERSION
 __version__ = VERSION
 
 
-from ._patch import TranslatorCredential
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "TranslatorCredential",
     "TextTranslationClient",
 ]
 

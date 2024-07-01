@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.support import MicrosoftSupport
 
 """
@@ -26,7 +29,7 @@ from azure.mgmt.support import MicrosoftSupport
 def main():
     client = MicrosoftSupport(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="132d901f-189d-4381-9214-fe68e27e05a1",
     )
 
     response = client.support_tickets.begin_create(
@@ -52,7 +55,7 @@ def main():
                 "severity": "moderate",
                 "supportPlanId": "U291cmNlOlNDTSxDbGFyaWZ5SW5zdGFsbGF0aW9uU2l0ZUlkOjcsTGluZUl0ZW1JZDo5ODY1NzIyOSxDb250cmFjdElkOjk4NjU5MTk0LFN1YnNjcmlwdGlvbklkOjc2Y2I3N2ZhLThiMTctNGVhYi05NDkzLWI2NWRhY2U5OTgxMyw=",
                 "technicalTicketDetails": {
-                    "resourceId": "/subscriptions/subid/resourceGroups/test/providers/Microsoft.Compute/virtualMachines/testserver"
+                    "resourceId": "/subscriptions/132d901f-189d-4381-9214-fe68e27e05a1/resourceGroups/test/providers/Microsoft.Compute/virtualMachines/testserver"
                 },
                 "title": "my title",
             }
@@ -61,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2022-09-01-preview/examples/CreateTechnicalSupportTicketForSubscription.json
+# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/stable/2024-04-01/examples/CreateTechnicalSupportTicketForSubscription.json
 if __name__ == "__main__":
     main()

@@ -59,7 +59,7 @@ async def test_iter_with_error(port, transport):
 
     request = HttpRequest("GET", "http://doesNotExist")
     with pytest.raises(ServiceRequestError):
-        async with (await client.send_request(request, stream=True)):
+        async with await client.send_request(request, stream=True):
             raise ValueError("Should error before entering")
     assert response.is_closed
 
@@ -123,39 +123,6 @@ async def test_cannot_read_after_response_closed(port, transport):
         await response.read()
     assert "<HttpRequest [GET], url: 'http://localhost:{}/streams/basic'>".format(port) in str(ex.value)
     assert "can no longer be read or streamed, since the response has already been closed" in str(ex.value)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
-async def test_decompress_plain_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
-    client = AsyncMockRestClient(port, transport=transport())
-    async with client:
-        response = await client.send_request(request, stream=True)
-        with pytest.raises(ResponseNotReadError):
-            response.content
-        await response.read()
-        assert response.content == b"test"
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
-async def test_compress_plain_no_header(port, transport):
-    # thanks to Xiang Yan for this test!
-    account_name = "coretests"
-    url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
-    request = HttpRequest("GET", url)
-    client = AsyncMockRestClient(port, transport=transport())
-    async with client:
-        response = await client.send_request(request, stream=True)
-        iter = response.iter_raw()
-        data = b""
-        async for d in iter:
-            data += d
-        assert data == b"test"
 
 
 @pytest.mark.asyncio

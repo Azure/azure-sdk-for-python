@@ -3,8 +3,8 @@
     {
       "Agent": {
         "identity-integration": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
           "ArmTemplateParameters": "@{ ProvisionLiveResources = $true }"
         }
       },

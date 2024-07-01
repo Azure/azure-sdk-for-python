@@ -82,3 +82,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
             **kwargs
         )
         return KeyVaultSetting._from_generated(result)
+
+    def __enter__(self) -> "KeyVaultSettingsClient":
+        self._client.__enter__()
+        return self

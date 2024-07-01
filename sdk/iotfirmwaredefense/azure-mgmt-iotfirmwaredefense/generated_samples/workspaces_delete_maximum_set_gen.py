@@ -35,6 +35,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/fist/resource-manager/Microsoft.IoTFirmwareDefense/preview/2023-02-08-preview/examples/Workspaces_Delete_MaximumSet_Gen.json
+# x-ms-original-file: specification/fist/resource-manager/Microsoft.IoTFirmwareDefense/stable/2024-01-10/examples/Workspaces_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

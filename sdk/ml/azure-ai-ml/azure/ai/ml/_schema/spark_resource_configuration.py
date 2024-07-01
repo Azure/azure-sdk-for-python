@@ -26,7 +26,7 @@ class SparkResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
         :param data: The marshalled data.
         :type data: dict[str, str]
         :return: A SparkResourceConfiguration object.
-        :rtype: :class:`~azure.ai.ml.entities.SparkResourceConfiguration`
+        :rtype: ~azure.ai.ml.entities.SparkResourceConfiguration
         """
         from azure.ai.ml.entities import SparkResourceConfiguration
 

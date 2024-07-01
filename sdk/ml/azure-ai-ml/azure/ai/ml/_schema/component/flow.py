@@ -66,6 +66,10 @@ class _FlowComponentOverridableSchema(metaclass=PatchedSchemaMeta):
 class FlowSchema(YamlFileSchema, _ComponentMetadataSchema, _FlowComponentOverridableSchema):
     """Schema for flow.dag.yaml file."""
 
+    environment_variables = fields.Dict(
+        fields.Str(),
+        fields.Str(),
+    )
     additional_includes = fields.List(LocalPathField())
 
 

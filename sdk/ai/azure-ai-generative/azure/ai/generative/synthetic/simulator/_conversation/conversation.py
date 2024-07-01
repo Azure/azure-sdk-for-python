@@ -90,8 +90,6 @@ async def simulate_conversation(
     else:
         conversation_id = None
     first_prompt = first_response["samples"][0]
-    logger.info(f"First turn: {first_prompt}")
-
     # Add all generated turns into array to pass for each bot while generating
     # new responses. We add generated response and the person generating it.
     # in the case of the first turn, it is supposed to be the user search query
@@ -115,7 +113,6 @@ async def simulate_conversation(
             current_character_idx = current_turn % len(bots)
             current_bot = bots[current_character_idx]
             # invoke Bot to generate response given the input request
-            logger.info("-- Sending to %s", current_bot.role.value)
             # pass only the last generated turn without passing the bot name.
             response, request, time_taken, full_response = await current_bot.generate_response(
                 session=session,
@@ -137,7 +134,6 @@ async def simulate_conversation(
                     request=request,
                 )
             )
-            logger.info("Last turn: %s", conversation_history[-1])
             if mlflow_logger is not None:
                 logger_tasks.append(  # schedule logging but don't get blocked by it
                     asyncio.create_task(mlflow_logger.log_successful_response(time_taken))

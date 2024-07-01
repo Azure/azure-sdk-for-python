@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, IO, Optional
+from typing import Any, List, IO, Optional, Union, overload
 from datetime import datetime, timedelta, tzinfo
 import jwt
 from azure.core.credentials import AzureKeyCredential
@@ -82,6 +82,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     @distributed_trace
     def get_client_access_token(self, **kwargs: Any) -> JSON:
         """Build an authentication token.
+
         :keyword user_id: User Id.
         :paramtype user_id: str
         :keyword roles: Roles that the connection with the generated token will have.
@@ -93,13 +94,15 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :paramtype groups: list[str]
         :returns: JSON response containing the web socket endpoint, the token and a url with the generated access token.
         :rtype: JSON
+
         Example:
-        >>> get_client_access_token()
-        {
-            'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-            'token': '<access-token>...',
-            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=<access-token>...'
-        }
+
+            >>> get_client_access_token()
+            {
+                'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
+                'token': '<access-token>...',
+                'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=<access-token>...'
+            }
         """
         endpoint = self._config.endpoint.lower()
         if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
@@ -126,9 +129,53 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
-    @distributed_trace
+    @overload
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
+        self, message: Union[str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+    ) -> None:
+        """Broadcast content inside request body to all the connected client connections.
+
+        Broadcast content inside request body to all the connected client connections.
+
+        :param message: The payload body. Required.
+        :type message: Union[str, JSON]
+        :keyword excluded: Excluded connection Ids. Default value is None.
+        :paramtype excluded: list[str]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def send_to_all(  # pylint: disable=inconsistent-return-statements
+        self, message: str, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
+    ) -> None:
+        """Broadcast content inside request body to all the connected client connections.
+
+        Broadcast content inside request body to all the connected client connections.
+
+        :param message: The payload body. Required.
+        :type message: str
+        :keyword excluded: Excluded connection Ids. Default value is None.
+        :paramtype excluded: list[str]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def send_to_all(  # pylint: disable=inconsistent-return-statements
+        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -141,6 +188,30 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def send_to_all(  # pylint: disable=inconsistent-return-statements
+        self, message: Union[IO, str, JSON], *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Broadcast content inside request body to all the connected client connections.
+
+        Broadcast content inside request body to all the connected client connections.
+
+        :param message: The payload body. Required.
+        :type message: Union[IO, str, JSON]
+        :keyword excluded: Excluded connection Ids. Default value is None.
+        :paramtype excluded: list[str]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -156,7 +227,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -199,9 +270,53 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
+    @overload
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter: Optional[str] = None, **kwargs: Any
+        self, user_id: str, message: Union[str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = "application/json", **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific user.
+
+        Send content inside request body to the specific user.
+
+        :param user_id: The user Id. Required.
+        :type user_id: str
+        :param message: The payload body. Required.
+        :type message: Union[str, JSON]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+    @overload      
+    def send_to_user(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, message: str, *, filter: Optional[str] = None, content_type: Optional[str] = "text/plain", **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific user.
+
+        Send content inside request body to the specific user.
+
+        :param user_id: The user Id. Required.
+        :type user_id: str
+        :param message: The payload body. Required.
+        :type message: str
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def send_to_user(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, message: IO, *, filter: Optional[str] = None, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -214,6 +329,30 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def send_to_user(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, message: Union[IO, str, JSON], *, filter: Optional[str] = None, content_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific user.
+
+        Send content inside request body to the specific user.
+
+        :param user_id: The user Id. Required.
+        :type user_id: str
+        :param message: The payload body. Required.
+        :type message: Union[IO, str, JSON]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -229,7 +368,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -272,7 +411,71 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
+    @overload
+    def send_to_group(  # pylint: disable=inconsistent-return-statements
+        self,
+        group: str,
+        message: Union[str, JSON],
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Send content inside request body to a group of connections.
+
+        Send content inside request body to a group of connections.
+
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
+        :type group: str
+        :param message: The payload body. Required.
+        :type message: Union[str, JSON]
+        :keyword excluded: Excluded connection Ids. Default value is None.
+        :paramtype excluded: list[str]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def send_to_group(  # pylint: disable=inconsistent-return-statements
+        self,
+        group: str,
+        message: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = "text/plain",
+        **kwargs: Any
+    ) -> None:
+        """Send content inside request body to a group of connections.
+
+        Send content inside request body to a group of connections.
+
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
+        :type group: str
+        :param message: The payload body. Required.
+        :type message: str
+        :keyword excluded: Excluded connection Ids. Default value is None.
+        :paramtype excluded: list[str]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
     def send_to_group(  # pylint: disable=inconsistent-return-statements
         self,
         group: str,
@@ -280,6 +483,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         *,
         excluded: Optional[List[str]] = None,
         filter: Optional[str] = None,
+        content_type: Optional[str] = "application/octet-stream",
         **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -296,6 +500,40 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
          messages. Default value is None.
         :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def send_to_group(  # pylint: disable=inconsistent-return-statements
+        self,
+        group: str,
+        message: Union[IO, str, JSON],
+        *,
+        excluded: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Send content inside request body to a group of connections.
+
+        Send content inside request body to a group of connections.
+
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
+        :type group: str
+        :param message: The payload body. Required.
+        :type message: Union[IO, str, JSON]
+        :keyword excluded: Excluded connection Ids. Default value is None.
+        :paramtype excluded: list[str]
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -311,7 +549,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None
@@ -354,10 +592,48 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             raise HttpResponseError(response=response)
         if cls:
             return cls(pipeline_response, None, {})
-
-    @distributed_trace
+        
+    @overload
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, message: IO, **kwargs: Any
+        self, connection_id: str, message: Union[str, JSON], *, content_type: Optional[str] = "application/json", **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific connection.
+
+        Send content inside request body to the specific connection.
+
+        :param connection_id: The connection Id. Required.
+        :type connection_id: str
+        :param message: The payload body. Required.
+        :type message: Union[str, JSON]
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def send_to_connection(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, message: str, *, content_type: Optional[str] = "text/plain", **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific connection.
+
+        Send content inside request body to the specific connection.
+
+        :param connection_id: The connection Id. Required.
+        :type connection_id: str
+        :param message: The payload body. Required.
+        :type message: str
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def send_to_connection(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, message: IO, *, content_type: Optional[str] = "application/octet-stream", **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
@@ -367,6 +643,27 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :type connection_id: str
         :param message: The payload body. Required.
         :type message: IO
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+    @distributed_trace
+    def send_to_connection(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, message: Union[IO, str, JSON], *, content_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific connection.
+
+        Send content inside request body to the specific connection.
+
+        :param connection_id: The connection Id. Required.
+        :type connection_id: str
+        :param message: The payload body. Required.
+        :type message: Union[IO, str, JSON]
+        :keyword content_type: The content type of the payload. Default value is None. Allowed values are 'application/json', 'application/octet-stream' and 'text/plain'
+        :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -382,7 +679,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        content_type = _headers.pop("Content-Type", "application/json") if content_type is None else content_type
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = None

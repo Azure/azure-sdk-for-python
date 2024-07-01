@@ -264,18 +264,20 @@ class Component(
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
-    def _resolve_component_source_from_id(
+    def _resolve_component_source_from_id(  # pylint: disable=docstring-type-do-not-use-class
         id: Optional[Union["Component", str]],
     ) -> Any:
         """Resolve the component source from id.
+
         :param id: The component ID
         :type id: Optional[str]
         :return: The component source
         :rtype: Literal[
-                ComponentSource.CLASS,
-                ComponentSource.REMOTE_REGISTRY,
-                ComponentSource.REMOTE_WORKSPACE_COMPONENT
-            ]
+            ComponentSource.CLASS,
+            ComponentSource.REMOTE_REGISTRY,
+            ComponentSource.REMOTE_WORKSPACE_COMPONENT
+
+        ]
         """
         if id is None:
             return ComponentSource.CLASS

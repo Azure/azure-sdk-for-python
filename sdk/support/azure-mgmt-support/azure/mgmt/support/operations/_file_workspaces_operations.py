@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,7 +38,7 @@ def build_get_request(file_workspace_name: str, subscription_id: str, **kwargs: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -65,7 +65,7 @@ def build_create_request(file_workspace_name: str, subscription_id: str, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -115,7 +115,6 @@ class FileWorkspacesOperations:
 
         :param file_workspace_name: File Workspace Name. Required.
         :type file_workspace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileWorkspaceDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.FileWorkspaceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -134,20 +133,19 @@ class FileWorkspacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.FileWorkspaceDetails] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             file_workspace_name=file_workspace_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -160,13 +158,9 @@ class FileWorkspacesOperations:
         deserialized = self._deserialize("FileWorkspaceDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/fileWorkspaces/{fileWorkspaceName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def create(self, file_workspace_name: str, **kwargs: Any) -> _models.FileWorkspaceDetails:
@@ -174,7 +168,6 @@ class FileWorkspacesOperations:
 
         :param file_workspace_name: File workspace name. Required.
         :type file_workspace_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FileWorkspaceDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.FileWorkspaceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -193,20 +186,19 @@ class FileWorkspacesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.FileWorkspaceDetails] = kwargs.pop("cls", None)
 
-        request = build_create_request(
+        _request = build_create_request(
             file_workspace_name=file_workspace_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -219,10 +211,6 @@ class FileWorkspacesOperations:
         deserialized = self._deserialize("FileWorkspaceDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/fileWorkspaces/{fileWorkspaceName}"
-    }
+        return deserialized  # type: ignore

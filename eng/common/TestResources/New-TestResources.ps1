@@ -52,7 +52,7 @@ param (
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $ProvisionerApplicationOid,
 
-    [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
+    [Parameter(ParameterSetName = 'Provisioner')]
     [string] $ProvisionerApplicationSecret,
 
     [Parameter()]
@@ -80,6 +80,19 @@ param (
     [ValidateNotNull()]
     [hashtable] $EnvironmentVariables = @{},
 
+    # List of CIDR ranges to add to specific resource firewalls, e.g. @(10.100.0.0/16, 10.200.0.0/16)
+    [Parameter()]
+    [ValidateCount(0,399)]
+    [Validatescript({
+        foreach ($range in $PSItem) {
+            if ($range -like '*/31' -or $range -like '*/32') {
+                throw "Firewall IP Ranges cannot contain a /31 or /32 CIDR"
+            }
+        }
+        return $true
+    })]
+    [array] $AllowIpRanges = @(),
+
     [Parameter()]
     [switch] $CI = ($null -ne $env:SYSTEM_TEAMPROJECTID),
 
@@ -92,8 +105,9 @@ param (
     [Parameter()]
     [switch] $SuppressVsoCommands = ($null -eq $env:SYSTEM_TEAMPROJECTID),
 
+    # Default behavior is to use logged in credentials
     [Parameter()]
-    [switch] $UserAuth,
+    [switch] $ServicePrincipalAuth,
 
     # Captures any arguments not declared here (no parameter errors)
     # This enables backwards compatibility with old script versions in
@@ -104,6 +118,13 @@ param (
 )
 
 . $PSScriptRoot/SubConfig-Helpers.ps1
+
+if (!$ServicePrincipalAuth) {
+    # Clear secrets if not using Service Principal auth. This prevents secrets
+    # from being passed to pre- and post-scripts.
+    $PSBoundParameters['TestApplicationSecret'] = $TestApplicationSecret = ''
+    $PSBoundParameters['ProvisionerApplicationSecret'] = $ProvisionerApplicationSecret = ''
+}
 
 # By default stop for any error.
 if (!$PSBoundParameters.ContainsKey('ErrorAction')) {
@@ -196,14 +217,14 @@ function NewServicePrincipalWrapper([string]$subscription, [string]$resourceGrou
             # Submitting a password credential object without specifying a password will result in one being generated on the server side.
             $password = New-Object -TypeName "Microsoft.Azure.PowerShell.Cmdlets.Resources.MSGraph.Models.ApiV10.MicrosoftGraphPasswordCredential"
             $password.DisplayName = "Password for $displayName"
-            $credential = Retry { New-AzADSpCredential -PasswordCredentials $password -ServicePrincipalObject $servicePrincipal }
+            $credential = Retry { New-AzADSpCredential -PasswordCredentials $password -ServicePrincipalObject $servicePrincipal -ErrorAction 'Stop' }
             $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
             $appId = $servicePrincipal.AppId
         } else {
             Write-Verbose "Creating service principal credential via MS Graph API"
             # In 5.2.0 the password credential issue was fixed (see https://github.com/Azure/azure-powershell/pull/16690) but the
             # parameter set was changed making the above call fail due to a missing ServicePrincipalId parameter.
-            $credential = Retry { $servicePrincipal | New-AzADSpCredential }
+            $credential = Retry { $servicePrincipal | New-AzADSpCredential -ErrorAction 'Stop' }
             $spPassword = ConvertTo-SecureString $credential.SecretText -AsPlainText -Force
             $appId = $servicePrincipal.AppId
         }
@@ -245,7 +266,7 @@ function MergeHashes([hashtable] $source, [psvariable] $dest)
 function BuildBicepFile([System.IO.FileSystemInfo] $file)
 {
     if (!(Get-Command bicep -ErrorAction Ignore)) {
-        Write-Error "A bicep file was found at '$($file.FullName)' but the Azure Bicep CLI is not installed. See https://aka.ms/install-bicep-pwsh"
+        Write-Error "A bicep file was found at '$($file.FullName)' but the Azure Bicep CLI is not installed. See aka.ms/bicep-install"
         throw
     }
 
@@ -267,9 +288,6 @@ function BuildDeploymentOutputs([string]$serviceName, [object]$azContext, [objec
     $serviceDirectoryPrefix = BuildServiceDirectoryPrefix $serviceName
     # Add default values
     $deploymentOutputs = [Ordered]@{
-        "${serviceDirectoryPrefix}CLIENT_ID" = $TestApplicationId;
-        "${serviceDirectoryPrefix}CLIENT_SECRET" = $TestApplicationSecret;
-        "${serviceDirectoryPrefix}TENANT_ID" = $azContext.Tenant.Id;
         "${serviceDirectoryPrefix}SUBSCRIPTION_ID" =  $azContext.Subscription.Id;
         "${serviceDirectoryPrefix}RESOURCE_GROUP" = $resourceGroup.ResourceGroupName;
         "${serviceDirectoryPrefix}LOCATION" = $resourceGroup.Location;
@@ -278,6 +296,12 @@ function BuildDeploymentOutputs([string]$serviceName, [object]$azContext, [objec
         "${serviceDirectoryPrefix}RESOURCE_MANAGER_URL" = $azContext.Environment.ResourceManagerUrl;
         "${serviceDirectoryPrefix}SERVICE_MANAGEMENT_URL" = $azContext.Environment.ServiceManagementUrl;
         "AZURE_SERVICE_DIRECTORY" = $serviceName.ToUpperInvariant();
+    }
+
+    if ($ServicePrincipalAuth) {
+        $deploymentOutputs["${serviceDirectoryPrefix}CLIENT_ID"] = $TestApplicationId;
+        $deploymentOutputs["${serviceDirectoryPrefix}CLIENT_SECRET"] = $TestApplicationSecret;
+        $deploymentOutputs["${serviceDirectoryPrefix}TENANT_ID"] = $azContext.Tenant.Id;
     }
 
     MergeHashes $environmentVariables $(Get-Variable deploymentOutputs)
@@ -518,8 +542,8 @@ try {
         }
     }
 
-    # If a provisioner service principal was provided, log into it to perform the pre- and post-scripts and deployments.
-    if ($ProvisionerApplicationId) {
+    # If a provisioner service principal was provided log into it to perform the pre- and post-scripts and deployments.
+    if ($ProvisionerApplicationId -and $ServicePrincipalAuth) {
         $null = Disable-AzContextAutosave -Scope Process
 
         Log "Logging into service principal '$ProvisionerApplicationId'."
@@ -614,9 +638,9 @@ try {
         }
     }
 
-    if ($UserAuth) {
+    if (!$CI -and !$ServicePrincipalAuth) {
         if ($TestApplicationId) {
-            Write-Warning "The specified TestApplicationId '$TestApplicationId' will be ignored when UserAuth is set."
+            Write-Warning "The specified TestApplicationId '$TestApplicationId' will be ignored when -ServicePrincipalAutth is not set."
         }
 
         $userAccount = (Get-AzADUser -UserPrincipalName (Get-AzContext).Account)
@@ -625,8 +649,8 @@ try {
         $userAccountName = $userAccount.UserPrincipalName
         Log "User authentication with user '$userAccountName' ('$TestApplicationId') will be used."
     }
-    # If no test application ID was specified during an interactive session, create a new service principal.
-    elseif (!$CI -and !$TestApplicationId) {
+    # If user has specified -ServicePrincipalAuth
+    elseif (!$CI -and $ServicePrincipalAuth) {
         # Cache the created service principal in this session for frequent reuse.
         $servicePrincipal = if ($AzureTestPrincipal -and (Get-AzADServicePrincipal -ApplicationId $AzureTestPrincipal.AppId) -and $AzureTestSubscription -eq $SubscriptionId) {
             Log "TestApplicationId was not specified; loading cached service principal '$($AzureTestPrincipal.AppId)'"
@@ -686,7 +710,9 @@ try {
     # Make sure pre- and post-scripts are passed formerly required arguments.
     $PSBoundParameters['TestApplicationId'] = $TestApplicationId
     $PSBoundParameters['TestApplicationOid'] = $TestApplicationOid
-    $PSBoundParameters['TestApplicationSecret'] = $TestApplicationSecret
+    if ($ServicePrincipalAuth) {
+        $PSBoundParameters['TestApplicationSecret'] = $TestApplicationSecret
+    }
 
     # If the role hasn't been explicitly assigned to the resource group and a cached service principal or user authentication is in use,
     # query to see if the grant is needed.
@@ -704,7 +730,7 @@ try {
    # considered a critical failure, as the test application may have subscription-level permissions and not require
    # the explicit grant.
    if (!$resourceGroupRoleAssigned) {
-        $idSlug = if ($userAuth) { "User '$userAccountName' ('$TestApplicationId')"} else { "Test Application '$TestApplicationId'"};
+        $idSlug = if (!$ServicePrincipalAuth) { "User '$userAccountName' ('$TestApplicationId')" } else { "Test Application '$TestApplicationId'"};
         Log "Attempting to assign the 'Owner' role for '$ResourceGroupName' to the $idSlug"
         $ownerAssignment = New-AzRoleAssignment `
                             -RoleDefinitionName "Owner" `
@@ -730,12 +756,15 @@ try {
     if ($ProvisionerApplicationOid) {
         $templateParameters["provisionerApplicationOid"] = "$ProvisionerApplicationOid"
     }
-
     if ($TenantId) {
         $templateParameters.Add('tenantId', $TenantId)
     }
-    if ($TestApplicationSecret) {
+    if ($TestApplicationSecret -and $ServicePrincipalAuth) {
         $templateParameters.Add('testApplicationSecret', $TestApplicationSecret)
+    }
+    # Only add subnets when running in an azure pipeline context
+    if ($CI -and $Environment -eq 'AzureCloud' -and $env:PoolSubnet) {
+        $templateParameters.Add('azsdkPipelineSubnetList', @($env:PoolSubnet))
     }
 
     $defaultCloudParameters = LoadCloudConfig $Environment
@@ -814,6 +843,32 @@ try {
                                                                 -templateFile $templateFile `
                                                                 -environmentVariables $EnvironmentVariables
 
+        $storageAccounts = Retry { Get-AzResource -ResourceGroupName $ResourceGroupName -ResourceType "Microsoft.Storage/storageAccounts" }
+        # Add client IP to storage account when running as local user. Pipeline's have their own vnet with access
+        if ($storageAccounts) {
+            foreach ($account in $storageAccounts) {
+                $rules = Get-AzStorageAccountNetworkRuleSet -ResourceGroupName $ResourceGroupName -AccountName $account.Name
+                if ($rules -and $rules.DefaultAction -eq "Allow") {
+                    Write-Host "Restricting network rules in storage account '$($account.Name)' to deny access by default"
+                    Retry { Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $ResourceGroupName -Name $account.Name -DefaultAction Deny }
+                    if ($CI -and $env:PoolSubnet) {
+                        Write-Host "Enabling access to '$($account.Name)' from pipeline subnet $($env:PoolSubnet)"
+                        Retry { Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -Name $account.Name -VirtualNetworkResourceId $env:PoolSubnet }
+                    } elseif ($AllowIpRanges) {
+                        Write-Host "Enabling access to '$($account.Name)' to $($AllowIpRanges.Length) IP ranges"
+                        $ipRanges = $AllowIpRanges | ForEach-Object {
+                            @{ Action = 'allow'; IPAddressOrRange = $_ }
+                        }
+                        Retry { Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $ResourceGroupName -Name $account.Name -IPRule $ipRanges | Out-Null }
+                    } elseif (!$CI) {
+                        Write-Host "Enabling access to '$($account.Name)' from client IP"
+                        $clientIp ??= Retry { Invoke-RestMethod -Uri 'https://icanhazip.com/' }  # cloudflare owned ip site
+                        Retry { Add-AzStorageAccountNetworkRule -ResourceGroupName $ResourceGroupName -Name $account.Name -IPAddressOrRange $clientIp | Out-Null }
+                    }
+                }
+            }
+        }
+
         $postDeploymentScript = $templateFile.originalFilePath | Split-Path | Join-Path -ChildPath "$ResourceType-resources-post.ps1"
         if (Test-Path $postDeploymentScript) {
             Log "Invoking post-deployment script '$postDeploymentScript'"
@@ -828,7 +883,6 @@ try {
         Write-Host "Deleting ARM deployment as it may contain secrets. Deployed resources will not be affected."
         $null = $deployment | Remove-AzResourceGroupDeployment
     }
-
 } finally {
     $exitActions.Invoke()
 }
@@ -999,6 +1053,10 @@ Optional key-value pairs of parameters to pass to the ARM template(s).
 .PARAMETER EnvironmentVariables
 Optional key-value pairs of parameters to set as environment variables to the shell.
 
+.PARAMETER AllowIpRanges
+Optional array of CIDR ranges to add to the network firewall for resource types like storage.
+When running locally, if this parameter is not set then the client's IP will be queried and added to the firewall instead.
+
 .PARAMETER CI
 Indicates the script is run as part of a Continuous Integration / Continuous
 Deployment (CI/CD) build (only Azure Pipelines is currently supported).
@@ -1016,18 +1074,15 @@ The environment file will be named for the test resources template that it was
 generated for. For ARM templates, it will be test-resources.json.env. For
 Bicep templates, test-resources.bicep.env.
 
-.PARAMETER UserAuth
-Create the resource group and deploy the template using the signed in user's credentials.
-No service principal will be created or used.
-
-The environment file will be named for the test resources template that it was
-generated for. For ARM templates, it will be test-resources.json.env. For
-Bicep templates, test-resources.bicep.env.
-
 .PARAMETER SuppressVsoCommands
 By default, the -CI parameter will print out secrets to logs with Azure Pipelines log
 commands that cause them to be redacted. For CI environments that don't support this (like
 stress test clusters), this flag can be set to $false to avoid printing out these secrets to the logs.
+
+.PARAMETER ServicePrincipalAuth
+Use the provisioner SP credentials to deploy, and pass the test SP credentials
+to tests. If provisioner and test SP are not set, provision an SP with user
+credentials and pass the new SP to tests.
 
 .EXAMPLE
 Connect-AzAccount -Subscription 'REPLACE_WITH_SUBSCRIPTION_ID'

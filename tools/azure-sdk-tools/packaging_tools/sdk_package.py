@@ -19,6 +19,7 @@ def main(generate_input, generate_output):
     result = {"packages": []}
     for package in data.values():
         package_name = package["packageName"]
+        prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
         if "azure-mgmt-" in package_name:
@@ -37,7 +38,7 @@ def main(generate_input, generate_output):
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Built package
-        create_package(package_name)
+        create_package(prefolder, package_name)
         folder_name = package["path"][0]
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
@@ -60,9 +61,6 @@ def main(generate_input, generate_output):
             "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
-        # to distinguish with track1
-        if "azure-mgmt-" in package_name:
-            package["packageName"] = "track2_" + package["packageName"]
         for artifact in package["artifacts"]:
             if ".whl" in artifact:
                 package["language"] = "Python"

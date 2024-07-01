@@ -29,7 +29,8 @@ response = client.list_metric_definitions(metrics_uri, namespace="microsoft.even
 
 for item in response:
     print(item.name)
-    for availability in item.metric_availabilities:
-        print(availability.granularity)
+    if item.metric_availabilities:
+        for availability in item.metric_availabilities:
+            print(availability.granularity)
 
 # [END send_metric_definitions_query]

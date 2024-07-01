@@ -7,17 +7,17 @@ import os
 import sys
 import pathlib
 import subprocess
+import pytest
 from devtools_testutils import AzureRecordedTestCase
 from azure.identity import DefaultAzureCredential
 from conftest import (
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
-    ENV_AZURE_OPENAI_API_VERSION,
+    LATEST,
     ENV_AZURE_OPENAI_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_AUDIO_NAME,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT,
-    ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY,
     reload
 )
 
@@ -30,7 +30,7 @@ class TestCLI(AzureRecordedTestCase):
     def test_cli_env_vars_key(self):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
             os.environ["OPENAI_API_TYPE"] = "azure"
 
@@ -59,7 +59,7 @@ class TestCLI(AzureRecordedTestCase):
     def test_cli_env_vars_token(self):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
             os.environ["OPENAI_API_TYPE"] = "azure"
 
@@ -85,7 +85,7 @@ class TestCLI(AzureRecordedTestCase):
                 del os.environ['OPENAI_API_VERSION']
                 del os.environ["OPENAI_API_TYPE"]
 
-    def test_cli_ad_token(self):
+    def test_cli_api_key(self):
         with reload():
             result = subprocess.run(
                 [
@@ -94,8 +94,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
+                    f"--api-version={LATEST}",
+                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_KEY)}",
                     "api",
                     "completions.create",
                     "-m",
@@ -116,8 +116,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_KEY)}",
+                    f"--api-version={LATEST}",
+                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
                     "api",
                     "completions.create",
                     "-m",
@@ -138,8 +138,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_KEY)}",
+                    f"--api-version={LATEST}",
+                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
                     "api",
                     "chat.completions.create",
                     "-m",
@@ -161,8 +161,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY)}",
+                    f"--api-version={LATEST}",
+                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
                     "api",
                     "audio.transcriptions.create",
                     "-m",
@@ -183,8 +183,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY)}",
+                    f"--api-version={LATEST}",
+                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
                     "api",
                     "audio.translations.create",
                     "-m",
@@ -205,8 +205,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_KEY)}",
+                    f"--api-version={LATEST}",
+                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
                     "api",
                     "models.list",
                 ],
@@ -223,8 +223,8 @@ class TestCLI(AzureRecordedTestCase):
                     "openai",
                     "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
-                    f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
-                    f"--api-key={os.getenv(ENV_AZURE_OPENAI_KEY)}",
+                    f"--api-version={LATEST}",
+                    f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
                     "api",
                     "models.retrieve",
                     "-i",

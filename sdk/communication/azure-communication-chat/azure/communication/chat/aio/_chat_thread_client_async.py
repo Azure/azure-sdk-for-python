@@ -44,8 +44,8 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
     This client provides operations to add participant(s) to chat thread, remove participant from
-    chat thread, send message, delete message, update message, send typing notifications,
-    send and list read receipt
+        chat thread, send message, delete message, update message, send typing notifications,
+        send and list read receipt
 
     :ivar thread_id: Chat thread id.
     :vartype thread_id: str
@@ -128,7 +128,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START get_thread]
                 :end-before: [END get_thread]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Retrieving chat thread properties by chat thread id.
         """
 
@@ -157,7 +157,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START update_topic]
                 :end-before: [END update_topic]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Updating chat thread.
         """
 
@@ -187,7 +187,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START send_read_receipt]
                 :end-before: [END send_read_receipt]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Sending read receipt of a chat message.
         """
         if not message_id:
@@ -218,7 +218,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START list_read_receipts]
                 :end-before: [END list_read_receipts]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Listing read receipts.
         """
         results_per_page = kwargs.pop("results_per_page", None)
@@ -252,7 +252,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START send_typing_notification]
                 :end-before: [END send_typing_notification]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Send typing notification.
         """
 
@@ -291,7 +291,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START send_message]
                 :end-before: [END send_message]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Sending a message.
         """
         if not content:
@@ -346,7 +346,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START get_message]
                 :end-before: [END get_message]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Retrieving a message by message id.
         """
         if not message_id:
@@ -374,7 +374,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START list_messages]
                 :end-before: [END list_messages]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Listing messages of a chat thread.
         """
         results_per_page = kwargs.pop("results_per_page", None)
@@ -412,7 +412,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START update_message]
                 :end-before: [END update_message]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Updating an already sent message.
         """
         if not message_id:
@@ -446,7 +446,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START delete_message]
                 :end-before: [END delete_message]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Deleting a message.
         """
         if not message_id:
@@ -476,7 +476,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START list_participants]
                 :end-before: [END list_participants]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Listing participants of chat thread.
         """
 
@@ -515,7 +515,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 :start-after: [START add_participants]
                 :end-before: [END add_participants]
                 :language: python
-                :dedent: 12
+                :dedent: 8
                 :caption: Adding participants to chat thread.
         """
         response = []

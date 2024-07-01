@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import sys
 import functools
@@ -54,7 +55,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
     For more optional configuration, please click
     `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-    #optional-configuration>`_.
+    #optional-configuration>`__.
 
     :param str account_url:
         The URL to the file share storage account. Any other entities included
@@ -69,6 +70,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword token_intent:
         Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
         Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
@@ -155,7 +161,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
 
@@ -184,7 +194,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: A dictionary containing file service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
@@ -230,7 +240,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
+        :type cors: list[~azure.storage.fileshare.CorsRule]
         :param protocol:
             Sets protocol settings
         :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
@@ -239,7 +249,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -290,7 +300,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :returns: An iterable (auto-paging) of ShareProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.ShareProperties]
 
@@ -334,9 +344,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
         which to interact with the newly created share.
 
         :param str share_name: The name of the share to create.
-        :keyword dict(str,str) metadata:
+        :keyword metadata:
             A dict with name_value pairs to associate with the
             share as metadata. Example:{'Category':'test'}
+        :paramtype metadata: Optional[dict[str, str]]
         :keyword int quota:
             Quota in bytes.
         :keyword int timeout:
@@ -344,7 +355,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.ShareClient
 
@@ -386,7 +397,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :rtype: None
 
         .. admonition:: Example:
@@ -413,6 +424,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         set in the delete retention policy.
 
         .. versionadded:: 12.2.0
+
             This operation was introduced in API version '2019-12-12'.
 
         :param str deleted_share_name:
@@ -424,7 +436,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
-            #other-client--per-operation-configuration>`_.
+            #other-client--per-operation-configuration>`__.
         :return: A ShareClient for the undeleted Share.
         :rtype: ~azure.storage.fileshare.ShareClient
         """

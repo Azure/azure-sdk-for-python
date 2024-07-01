@@ -2,8 +2,6 @@ tests/testserver_tests/coretestserver
 -e tests/testserver_tests/coretestserver
 -e ../../identity/azure-identity
 ../../identity/azure-identity
--e ../../../tools/azure-devtools
-../../../tools/azure-devtools
 
 ../azure-mgmt-core
 -e ../azure-mgmt-core

@@ -7,7 +7,6 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 from html import escape
 
-
 SUPPORTED_VALUE_TYPE_TUPLE = (int, float, str, datetime, timedelta)
 TABLE_FMT = '<table style="width:100%">{0}</table>'
 ROW_FMT = "<tr>{0}</tr>"
@@ -96,20 +95,17 @@ def to_html(object_to_convert):
     return converted_value
 
 
-def is_string_link(string):
-    # type: (str) -> bool
+def is_string_link(string: str) -> bool:
     return isinstance(string, str) and string.strip().lower().startswith("http")
 
 
-def make_link(link_string, link_text=None):
-    # type: (str) -> str
+def make_link(link_string: str, link_text: str = "") -> str:
     if not link_text:  # Actually want truthy string
         link_text = "Link"
     return LINK_FMT.format(escape(link_string), link_text)
 
 
-def convert_value(value):
-    # type: (...) -> str
+def convert_value(value: str) -> str:
     if value is None:
         return ""
     if is_string_link(value):

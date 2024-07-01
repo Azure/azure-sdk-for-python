@@ -49,7 +49,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -60,7 +60,9 @@ def build_update_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
         "privateEndpointConnectionName": _SERIALIZER.url(
             "private_endpoint_connection_name", private_endpoint_connection_name, "str"
         ),
@@ -94,7 +96,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -104,7 +106,9 @@ def build_get_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
         "privateEndpointConnectionName": _SERIALIZER.url(
             "private_endpoint_connection_name", private_endpoint_connection_name, "str"
         ),
@@ -136,7 +140,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -146,7 +150,9 @@ def build_delete_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
         "privateEndpointConnectionName": _SERIALIZER.url(
             "private_endpoint_connection_name", private_endpoint_connection_name, "str"
         ),
@@ -177,7 +183,7 @@ def build_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -188,7 +194,9 @@ def build_list_by_service_request(
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -235,7 +243,7 @@ class PrivateEndpointConnectionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Updates a Private Endpoint connection to the search service in the given resource group.
+        """Updates a private endpoint connection to the search service in the given resource group.
 
         .. seealso::
            - https://aka.ms/search-manage
@@ -243,11 +251,11 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection to the
-         Azure Cognitive Search service with the specified resource group. Required.
+         Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
          update. Required.
@@ -276,7 +284,7 @@ class PrivateEndpointConnectionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Updates a Private Endpoint connection to the search service in the given resource group.
+        """Updates a private endpoint connection to the search service in the given resource group.
 
         .. seealso::
            - https://aka.ms/search-manage
@@ -284,11 +292,11 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection to the
-         Azure Cognitive Search service with the specified resource group. Required.
+         Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
          update. Required.
@@ -315,7 +323,7 @@ class PrivateEndpointConnectionsOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
-        """Updates a Private Endpoint connection to the search service in the given resource group.
+        """Updates a private endpoint connection to the search service in the given resource group.
 
         .. seealso::
            - https://aka.ms/search-manage
@@ -323,11 +331,11 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection to the
-         Azure Cognitive Search service with the specified resource group. Required.
+         Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
          update. Is either a PrivateEndpointConnection type or a IO type. Required.
@@ -426,11 +434,11 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection to the
-         Azure Cognitive Search service with the specified resource group. Required.
+         Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
@@ -511,11 +519,11 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection to the
-         Azure Cognitive Search service with the specified resource group. Required.
+         Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
@@ -597,7 +605,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param search_management_request_options: Parameter group. Default value is None.

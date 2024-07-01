@@ -1,0 +1,5 @@
+name: ai_services_conn_api
+type: azure_ai_services
+endpoint: my_endpoint
+api_key: "2222"
+ai_services_resource_id: "this-needs-to-be-a-valid-ai-services-id-in-e2e-tests"

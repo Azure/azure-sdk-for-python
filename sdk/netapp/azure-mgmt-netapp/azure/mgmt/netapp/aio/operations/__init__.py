@@ -15,12 +15,11 @@ from ._pools_operations import PoolsOperations
 from ._volumes_operations import VolumesOperations
 from ._snapshots_operations import SnapshotsOperations
 from ._snapshot_policies_operations import SnapshotPoliciesOperations
-from ._backups_operations import BackupsOperations
-from ._account_backups_operations import AccountBackupsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._volume_quota_rules_operations import VolumeQuotaRulesOperations
 from ._volume_groups_operations import VolumeGroupsOperations
 from ._subvolumes_operations import SubvolumesOperations
+from ._backups_operations import BackupsOperations
 from ._backup_vaults_operations import BackupVaultsOperations
 from ._backups_under_backup_vault_operations import BackupsUnderBackupVaultOperations
 from ._backups_under_volume_operations import BackupsUnderVolumeOperations
@@ -40,12 +39,11 @@ __all__ = [
     "VolumesOperations",
     "SnapshotsOperations",
     "SnapshotPoliciesOperations",
-    "BackupsOperations",
-    "AccountBackupsOperations",
     "BackupPoliciesOperations",
     "VolumeQuotaRulesOperations",
     "VolumeGroupsOperations",
     "SubvolumesOperations",
+    "BackupsOperations",
     "BackupVaultsOperations",
     "BackupsUnderBackupVaultOperations",
     "BackupsUnderVolumeOperations",

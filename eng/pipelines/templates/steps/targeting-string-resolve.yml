@@ -9,7 +9,11 @@ steps:
 
       # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
       if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+          Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
           $setting = "$(BuildTargetingString)"
+      }
+      else {
+        Write-Host "We are falling back to the parameter value ${{ parameters.BuildTargetingString }}"
       }
 
       Write-Host "Setting TargetingString to $setting"

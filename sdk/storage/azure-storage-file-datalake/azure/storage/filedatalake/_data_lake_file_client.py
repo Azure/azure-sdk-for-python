@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
@@ -61,6 +63,11 @@ class DataLakeFileClient(PathClient):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -114,12 +121,16 @@ class DataLakeFileClient(PathClient):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
-        :return a DataLakeFileClient
-        :rtype ~azure.storage.filedatalake.DataLakeFileClient
+        :returns: A DataLakeFileClient.
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(
@@ -209,9 +220,10 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: response dict (Etag and last modified).
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
+        :returns: response dict (Etag and last modified).
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -257,7 +269,8 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: None
+        :returns: None.
+        :rtype: None
 
         .. admonition:: Example:
 
@@ -301,6 +314,13 @@ class DataLakeFileClient(PathClient):
             Decrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a customer-provided key.
+        :keyword bool upn:
+            If True, the user identity values returned in the x-ms-owner, x-ms-group,
+            and x-ms-acl response headers will be transformed from Azure Active Directory Object IDs to User
+            Principal Names in the owner, group, and acl fields of
+            :class:`~azure.storage.filedatalake.FileProperties`. If False, the values will be returned
+            as Azure Active Directory Object IDs. The default value is False. Note that group and application
+            Object IDs are not translate because they do not have unique friendly names.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -308,7 +328,7 @@ class DataLakeFileClient(PathClient):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: All user-defined metadata, standard HTTP properties, and system properties for the file.
-        :rtype: FileProperties
+        :rtype: ~azure.storage.filedatalake.FileProperties
 
         .. admonition:: Example:
 
@@ -319,6 +339,11 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
         return self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
 
     @distributed_trace
@@ -408,6 +433,7 @@ class DataLakeFileClient(PathClient):
         Upload data to a file.
 
         :param data: Content to be uploaded to file
+        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
@@ -472,7 +498,8 @@ class DataLakeFileClient(PathClient):
             Defaults to 100*1024*1024, or 100MB.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :return: response dict (Etag and last modified).
+        :returns: response dict (Etag and last modified).
+        :rtype: dict[str, Any]
         """
         options = self._upload_options(
             data,
@@ -523,8 +550,10 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :param offset: start position of the data to be appended to.
+        :type data: bytes, str, Iterable[AnyStr], or IO[AnyStr]
+        :param int offset: start position of the data to be appended to.
         :param length: Size of the data in bytes.
+        :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
         :keyword bool validate_content:
@@ -558,7 +587,8 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :return: dict of the response header
+        :returns: dict of the response header.
+        :rtype: dict[str, str], dict[str, ~datetime.datetime], or dict[str, int]
 
         .. admonition:: Example:
 
@@ -619,8 +649,8 @@ class DataLakeFileClient(PathClient):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """ Commit the previous appended data.
 
-        :param offset: offset is equal to the length of the file after commit the
-            previous appended data.
+        :param int offset: offset is equal to the length of the file after commit
+            the previous appended data.
         :param bool retain_uncommitted_data: Valid only for flush operations.  If
             "true", uncommitted data is retained after the flush operation
             completes; otherwise, the uncommitted data is deleted after the flush
@@ -685,7 +715,8 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :return: response header in dict
+        :returns: response header in dict
+        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
 
         .. admonition:: Example:
 

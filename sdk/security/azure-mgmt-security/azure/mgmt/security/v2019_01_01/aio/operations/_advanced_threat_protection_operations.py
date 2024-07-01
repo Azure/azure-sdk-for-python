@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,10 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._advanced_threat_protection_operations import build_create_request, build_get_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -63,15 +63,11 @@ class AdvancedThreatProtectionOperations:
 
         :param resource_id: The identifier of the resource. Required.
         :type resource_id: str
-        :keyword setting_name: Advanced Threat Protection setting name. Default value is "current".
-         Note that overriding this default value may result in unsupported behavior.
-        :paramtype setting_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdvancedThreatProtectionSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -86,20 +82,19 @@ class AdvancedThreatProtectionOperations:
         setting_name: Literal["current"] = kwargs.pop("setting_name", "current")
         cls: ClsType[_models.AdvancedThreatProtectionSetting] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_id=resource_id,
             api_version=api_version,
             setting_name=setting_name,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -111,11 +106,9 @@ class AdvancedThreatProtectionOperations:
         deserialized = self._deserialize("AdvancedThreatProtectionSetting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/advancedThreatProtectionSettings/{settingName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def create(
@@ -136,10 +129,6 @@ class AdvancedThreatProtectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword setting_name: Advanced Threat Protection setting name. Default value is "current".
-         Note that overriding this default value may result in unsupported behavior.
-        :paramtype setting_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdvancedThreatProtectionSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -149,7 +138,7 @@ class AdvancedThreatProtectionOperations:
     async def create(
         self,
         resource_id: str,
-        advanced_threat_protection_setting: IO,
+        advanced_threat_protection_setting: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -159,14 +148,10 @@ class AdvancedThreatProtectionOperations:
         :param resource_id: The identifier of the resource. Required.
         :type resource_id: str
         :param advanced_threat_protection_setting: Advanced Threat Protection Settings. Required.
-        :type advanced_threat_protection_setting: IO
+        :type advanced_threat_protection_setting: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword setting_name: Advanced Threat Protection setting name. Default value is "current".
-         Note that overriding this default value may result in unsupported behavior.
-        :paramtype setting_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdvancedThreatProtectionSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -176,7 +161,7 @@ class AdvancedThreatProtectionOperations:
     async def create(
         self,
         resource_id: str,
-        advanced_threat_protection_setting: Union[_models.AdvancedThreatProtectionSetting, IO],
+        advanced_threat_protection_setting: Union[_models.AdvancedThreatProtectionSetting, IO[bytes]],
         **kwargs: Any
     ) -> _models.AdvancedThreatProtectionSetting:
         """Creates or updates the Advanced Threat Protection settings on a specified resource.
@@ -184,21 +169,14 @@ class AdvancedThreatProtectionOperations:
         :param resource_id: The identifier of the resource. Required.
         :type resource_id: str
         :param advanced_threat_protection_setting: Advanced Threat Protection Settings. Is either a
-         AdvancedThreatProtectionSetting type or a IO type. Required.
+         AdvancedThreatProtectionSetting type or a IO[bytes] type. Required.
         :type advanced_threat_protection_setting:
-         ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting or IO
-        :keyword setting_name: Advanced Threat Protection setting name. Default value is "current".
-         Note that overriding this default value may result in unsupported behavior.
-        :paramtype setting_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting or IO[bytes]
         :return: AdvancedThreatProtectionSetting or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01.models.AdvancedThreatProtectionSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -222,23 +200,22 @@ class AdvancedThreatProtectionOperations:
         else:
             _json = self._serialize.body(advanced_threat_protection_setting, "AdvancedThreatProtectionSetting")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_id=resource_id,
             api_version=api_version,
             setting_name=setting_name,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -250,10 +227,6 @@ class AdvancedThreatProtectionOperations:
         deserialized = self._deserialize("AdvancedThreatProtectionSetting", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create.metadata = {
-        "url": "/{resourceId}/providers/Microsoft.Security/advancedThreatProtectionSettings/{settingName}"
-    }
+        return deserialized  # type: ignore

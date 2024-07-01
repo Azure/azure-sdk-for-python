@@ -6,6 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import APIKeyOwnerEntity
+from ._models_py3 import APIKeyRecord
+from ._models_py3 import APIKeyResourceEntity
+from ._models_py3 import APIKeySpecEntity
+from ._models_py3 import AccessCreateRoleBindingRequestModel
 from ._models_py3 import AccessInviteUserAccountModel
 from ._models_py3 import AccessInvitedUserDetails
 from ._models_py3 import AccessListClusterSuccessResponse
@@ -14,6 +19,7 @@ from ._models_py3 import AccessListInvitationsSuccessResponse
 from ._models_py3 import AccessListRoleBindingsSuccessResponse
 from ._models_py3 import AccessListServiceAccountsSuccessResponse
 from ._models_py3 import AccessListUsersSuccessResponse
+from ._models_py3 import AccessRoleBindingNameListSuccessResponse
 from ._models_py3 import ClusterByokEntity
 from ._models_py3 import ClusterConfigEntity
 from ._models_py3 import ClusterEnvironmentEntity
@@ -24,11 +30,16 @@ from ._models_py3 import ClusterStatusEntity
 from ._models_py3 import ConfluentAgreementResource
 from ._models_py3 import ConfluentAgreementResourceListResponse
 from ._models_py3 import ConfluentListMetadata
+from ._models_py3 import CreateAPIKeyModel
 from ._models_py3 import EnvironmentRecord
 from ._models_py3 import ErrorResponseBody
+from ._models_py3 import GetEnvironmentsResponse
 from ._models_py3 import InvitationRecord
 from ._models_py3 import LinkOrganization
 from ._models_py3 import ListAccessRequestModel
+from ._models_py3 import ListClustersSuccessResponse
+from ._models_py3 import ListRegionsSuccessResponse
+from ._models_py3 import ListSchemaRegistryClustersResponse
 from ._models_py3 import MetadataEntity
 from ._models_py3 import OfferDetail
 from ._models_py3 import OperationDisplay
@@ -37,8 +48,21 @@ from ._models_py3 import OperationResult
 from ._models_py3 import OrganizationResource
 from ._models_py3 import OrganizationResourceListResult
 from ._models_py3 import OrganizationResourceUpdate
+from ._models_py3 import RegionRecord
+from ._models_py3 import RegionSpecEntity
 from ._models_py3 import ResourceProviderDefaultErrorResponse
 from ._models_py3 import RoleBindingRecord
+from ._models_py3 import SCClusterByokEntity
+from ._models_py3 import SCClusterNetworkEnvironmentEntity
+from ._models_py3 import SCClusterRecord
+from ._models_py3 import SCClusterSpecEntity
+from ._models_py3 import SCConfluentListMetadata
+from ._models_py3 import SCEnvironmentRecord
+from ._models_py3 import SCMetadataEntity
+from ._models_py3 import SchemaRegistryClusterEnvironmentRegionEntity
+from ._models_py3 import SchemaRegistryClusterRecord
+from ._models_py3 import SchemaRegistryClusterSpecEntity
+from ._models_py3 import SchemaRegistryClusterStatusEntity
 from ._models_py3 import ServiceAccountRecord
 from ._models_py3 import SystemData
 from ._models_py3 import UserDetail
@@ -53,6 +77,11 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "APIKeyOwnerEntity",
+    "APIKeyRecord",
+    "APIKeyResourceEntity",
+    "APIKeySpecEntity",
+    "AccessCreateRoleBindingRequestModel",
     "AccessInviteUserAccountModel",
     "AccessInvitedUserDetails",
     "AccessListClusterSuccessResponse",
@@ -61,6 +90,7 @@ __all__ = [
     "AccessListRoleBindingsSuccessResponse",
     "AccessListServiceAccountsSuccessResponse",
     "AccessListUsersSuccessResponse",
+    "AccessRoleBindingNameListSuccessResponse",
     "ClusterByokEntity",
     "ClusterConfigEntity",
     "ClusterEnvironmentEntity",
@@ -71,11 +101,16 @@ __all__ = [
     "ConfluentAgreementResource",
     "ConfluentAgreementResourceListResponse",
     "ConfluentListMetadata",
+    "CreateAPIKeyModel",
     "EnvironmentRecord",
     "ErrorResponseBody",
+    "GetEnvironmentsResponse",
     "InvitationRecord",
     "LinkOrganization",
     "ListAccessRequestModel",
+    "ListClustersSuccessResponse",
+    "ListRegionsSuccessResponse",
+    "ListSchemaRegistryClustersResponse",
     "MetadataEntity",
     "OfferDetail",
     "OperationDisplay",
@@ -84,8 +119,21 @@ __all__ = [
     "OrganizationResource",
     "OrganizationResourceListResult",
     "OrganizationResourceUpdate",
+    "RegionRecord",
+    "RegionSpecEntity",
     "ResourceProviderDefaultErrorResponse",
     "RoleBindingRecord",
+    "SCClusterByokEntity",
+    "SCClusterNetworkEnvironmentEntity",
+    "SCClusterRecord",
+    "SCClusterSpecEntity",
+    "SCConfluentListMetadata",
+    "SCEnvironmentRecord",
+    "SCMetadataEntity",
+    "SchemaRegistryClusterEnvironmentRegionEntity",
+    "SchemaRegistryClusterRecord",
+    "SchemaRegistryClusterSpecEntity",
+    "SchemaRegistryClusterStatusEntity",
     "ServiceAccountRecord",
     "SystemData",
     "UserDetail",

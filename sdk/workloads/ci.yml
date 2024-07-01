@@ -28,6 +28,9 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: workloads
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-workloads
       safeName: azuremgmtworkloads
+    - name: azure-mgmt-workloadssapvirtualinstance
+      safeName: azuremgmtworkloadssapvirtualinstance

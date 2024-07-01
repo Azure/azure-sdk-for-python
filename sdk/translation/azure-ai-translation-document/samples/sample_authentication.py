@@ -67,6 +67,6 @@ def sample_authentication_with_azure_active_directory():
     result = document_translation_client.get_supported_document_formats()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample_authentication_api_key()
     sample_authentication_with_azure_active_directory()

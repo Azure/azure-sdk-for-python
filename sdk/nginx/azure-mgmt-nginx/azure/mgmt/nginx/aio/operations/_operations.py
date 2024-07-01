@@ -54,9 +54,9 @@ class Operations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.OperationResult"]:
-        """List all operations provided by Nginx.NginxPlus for the 2023-04-01 api version.
+        """List all operations provided by Nginx.NginxPlus for the 2024-01-01-preview api version.
 
-        List all operations provided by Nginx.NginxPlus for the 2023-04-01 api version.
+        List all operations provided by Nginx.NginxPlus for the 2024-01-01-preview api version.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OperationResult or the result of cls(response)

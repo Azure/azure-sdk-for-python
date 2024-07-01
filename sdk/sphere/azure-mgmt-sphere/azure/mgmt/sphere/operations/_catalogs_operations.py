@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,7 +52,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -67,7 +67,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +82,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -97,7 +97,7 @@ def build_get_request(resource_group_name: str, catalog_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -113,7 +113,7 @@ def build_get_request(resource_group_name: str, catalog_name: str, subscription_
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -130,7 +130,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -147,7 +147,7 @@ def build_create_or_update_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -166,7 +166,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -183,7 +183,7 @@ def build_update_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -202,7 +202,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,7 +218,7 @@ def build_delete_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -235,7 +235,7 @@ def build_count_devices_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -251,7 +251,7 @@ def build_count_devices_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -276,7 +276,7 @@ def build_list_deployments_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -292,7 +292,7 @@ def build_list_deployments_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -325,7 +325,7 @@ def build_list_device_groups_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -342,7 +342,7 @@ def build_list_device_groups_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -377,7 +377,7 @@ def build_list_device_insights_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -393,7 +393,7 @@ def build_list_device_insights_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -426,7 +426,7 @@ def build_list_devices_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -442,7 +442,7 @@ def build_list_devices_request(
         "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -456,6 +456,42 @@ def build_list_devices_request(
         _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_upload_image_request(
+    resource_group_name: str, catalog_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/uploadImage",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "catalogName": _SERIALIZER.url("catalog_name", catalog_name, "str", pattern=r"^[A-Za-z0-9_-]{1,50}$"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -484,7 +520,6 @@ class CatalogsOperations:
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.Catalog"]:
         """List Catalog resources by subscription ID.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Catalog or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -506,15 +541,14 @@ class CatalogsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_subscription_request(
+                _request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_subscription.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -526,13 +560,13 @@ class CatalogsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("CatalogListResult", pipeline_response)
@@ -542,11 +576,11 @@ class CatalogsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -558,8 +592,6 @@ class CatalogsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.AzureSphere/catalogs"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Catalog"]:
@@ -568,7 +600,6 @@ class CatalogsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Catalog or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -590,16 +621,15 @@ class CatalogsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -611,13 +641,13 @@ class CatalogsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("CatalogListResult", pipeline_response)
@@ -627,11 +657,11 @@ class CatalogsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -643,10 +673,6 @@ class CatalogsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs"
-    }
 
     @distributed_trace
     def get(self, resource_group_name: str, catalog_name: str, **kwargs: Any) -> _models.Catalog:
@@ -657,7 +683,6 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Catalog or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -676,21 +701,20 @@ class CatalogsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Catalog] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -703,16 +727,12 @@ class CatalogsOperations:
         deserialized = self._deserialize("Catalog", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, catalog_name: str, resource: Union[_models.Catalog, IO], **kwargs: Any
+        self, resource_group_name: str, catalog_name: str, resource: Union[_models.Catalog, IO[bytes]], **kwargs: Any
     ) -> _models.Catalog:
         error_map = {
             401: ClientAuthenticationError,
@@ -737,7 +757,7 @@ class CatalogsOperations:
         else:
             _json = self._serialize.body(resource, "Catalog")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
@@ -745,16 +765,15 @@ class CatalogsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -778,10 +797,6 @@ class CatalogsOperations:
 
         return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
-
     @overload
     def begin_create_or_update(
         self,
@@ -804,14 +819,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Catalog or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -822,7 +829,7 @@ class CatalogsOperations:
         self,
         resource_group_name: str,
         catalog_name: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -835,18 +842,10 @@ class CatalogsOperations:
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Catalog or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -854,7 +853,7 @@ class CatalogsOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, catalog_name: str, resource: Union[_models.Catalog, IO], **kwargs: Any
+        self, resource_group_name: str, catalog_name: str, resource: Union[_models.Catalog, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Catalog]:
         """Create a Catalog.
 
@@ -863,19 +862,9 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :param resource: Resource create parameters. Is either a Catalog type or a IO type. Required.
-        :type resource: ~azure.mgmt.sphere.models.Catalog or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param resource: Resource create parameters. Is either a Catalog type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.sphere.models.Catalog or IO[bytes]
         :return: An instance of LROPoller that returns either Catalog or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sphere.models.Catalog]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -906,7 +895,7 @@ class CatalogsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Catalog", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -918,17 +907,15 @@ class CatalogsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Catalog].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
+        return LROPoller[_models.Catalog](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
     def update(
@@ -952,7 +939,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Catalog or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -963,7 +949,7 @@ class CatalogsOperations:
         self,
         resource_group_name: str,
         catalog_name: str,
-        properties: IO,
+        properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -976,11 +962,10 @@ class CatalogsOperations:
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: IO
+        :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Catalog or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -988,7 +973,11 @@ class CatalogsOperations:
 
     @distributed_trace
     def update(
-        self, resource_group_name: str, catalog_name: str, properties: Union[_models.CatalogUpdate, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        catalog_name: str,
+        properties: Union[_models.CatalogUpdate, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Catalog:
         """Update a Catalog.
 
@@ -998,12 +987,8 @@ class CatalogsOperations:
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
         :param properties: The resource properties to be updated. Is either a CatalogUpdate type or a
-         IO type. Required.
-        :type properties: ~azure.mgmt.sphere.models.CatalogUpdate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.sphere.models.CatalogUpdate or IO[bytes]
         :return: Catalog or the result of cls(response)
         :rtype: ~azure.mgmt.sphere.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1031,7 +1016,7 @@ class CatalogsOperations:
         else:
             _json = self._serialize.body(properties, "CatalogUpdate")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
@@ -1039,16 +1024,15 @@ class CatalogsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1061,13 +1045,9 @@ class CatalogsOperations:
         deserialized = self._deserialize("Catalog", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
+        return deserialized  # type: ignore
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, catalog_name: str, **kwargs: Any
@@ -1086,21 +1066,20 @@ class CatalogsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1116,11 +1095,7 @@ class CatalogsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, catalog_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1131,14 +1106,6 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1165,7 +1132,7 @@ class CatalogsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1176,20 +1143,16 @@ class CatalogsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def count_devices(self, resource_group_name: str, catalog_name: str, **kwargs: Any) -> _models.CountDeviceResponse:
+    def count_devices(self, resource_group_name: str, catalog_name: str, **kwargs: Any) -> _models.CountDevicesResponse:
         """Counts devices in catalog.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1197,9 +1160,8 @@ class CatalogsOperations:
         :type resource_group_name: str
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CountDeviceResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.sphere.models.CountDeviceResponse
+        :return: CountDevicesResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.sphere.models.CountDevicesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1214,23 +1176,22 @@ class CatalogsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CountDeviceResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CountDevicesResponse] = kwargs.pop("cls", None)
 
-        request = build_count_devices_request(
+        _request = build_count_devices_request(
             resource_group_name=resource_group_name,
             catalog_name=catalog_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.count_devices.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1240,16 +1201,12 @@ class CatalogsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CountDeviceResponse", pipeline_response)
+        deserialized = self._deserialize("CountDevicesResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    count_devices.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/countDevices"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_deployments(
@@ -1277,7 +1234,6 @@ class CatalogsOperations:
         :type skip: int
         :param maxpagesize: The maximum number of result items per page. Default value is None.
         :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Deployment or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1299,7 +1255,7 @@ class CatalogsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_deployments_request(
+                _request = build_list_deployments_request(
                     resource_group_name=resource_group_name,
                     catalog_name=catalog_name,
                     subscription_id=self._config.subscription_id,
@@ -1308,12 +1264,11 @@ class CatalogsOperations:
                     skip=skip,
                     maxpagesize=maxpagesize,
                     api_version=api_version,
-                    template_url=self.list_deployments.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1325,13 +1280,13 @@ class CatalogsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentListResult", pipeline_response)
@@ -1341,11 +1296,11 @@ class CatalogsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1357,10 +1312,6 @@ class CatalogsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_deployments.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDeployments"
-    }
 
     @overload
     def list_device_groups(
@@ -1396,7 +1347,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeviceGroup or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.DeviceGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1407,7 +1357,7 @@ class CatalogsOperations:
         self,
         resource_group_name: str,
         catalog_name: str,
-        list_device_groups_request: IO,
+        list_device_groups_request: IO[bytes],
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
@@ -1424,7 +1374,7 @@ class CatalogsOperations:
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
         :param list_device_groups_request: List device groups for catalog. Required.
-        :type list_device_groups_request: IO
+        :type list_device_groups_request: IO[bytes]
         :param filter: Filter the result list using the given expression. Default value is None.
         :type filter: str
         :param top: The number of result items to return. Default value is None.
@@ -1436,7 +1386,6 @@ class CatalogsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeviceGroup or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.DeviceGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1447,7 +1396,7 @@ class CatalogsOperations:
         self,
         resource_group_name: str,
         catalog_name: str,
-        list_device_groups_request: Union[_models.ListDeviceGroupsRequest, IO],
+        list_device_groups_request: Union[_models.ListDeviceGroupsRequest, IO[bytes]],
         filter: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
@@ -1462,8 +1411,9 @@ class CatalogsOperations:
         :param catalog_name: Name of catalog. Required.
         :type catalog_name: str
         :param list_device_groups_request: List device groups for catalog. Is either a
-         ListDeviceGroupsRequest type or a IO type. Required.
-        :type list_device_groups_request: ~azure.mgmt.sphere.models.ListDeviceGroupsRequest or IO
+         ListDeviceGroupsRequest type or a IO[bytes] type. Required.
+        :type list_device_groups_request: ~azure.mgmt.sphere.models.ListDeviceGroupsRequest or
+         IO[bytes]
         :param filter: Filter the result list using the given expression. Default value is None.
         :type filter: str
         :param top: The number of result items to return. Default value is None.
@@ -1472,10 +1422,6 @@ class CatalogsOperations:
         :type skip: int
         :param maxpagesize: The maximum number of result items per page. Default value is None.
         :type maxpagesize: int
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeviceGroup or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.DeviceGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1505,7 +1451,7 @@ class CatalogsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_device_groups_request(
+                _request = build_list_device_groups_request(
                     resource_group_name=resource_group_name,
                     catalog_name=catalog_name,
                     subscription_id=self._config.subscription_id,
@@ -1517,12 +1463,11 @@ class CatalogsOperations:
                     content_type=content_type,
                     json=_json,
                     content=_content,
-                    template_url=self.list_device_groups.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1534,13 +1479,13 @@ class CatalogsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DeviceGroupListResult", pipeline_response)
@@ -1550,11 +1495,11 @@ class CatalogsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1566,10 +1511,6 @@ class CatalogsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_device_groups.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDeviceGroups"
-    }
 
     @distributed_trace
     def list_device_insights(
@@ -1597,7 +1538,6 @@ class CatalogsOperations:
         :type skip: int
         :param maxpagesize: The maximum number of result items per page. Default value is None.
         :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeviceInsight or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.DeviceInsight]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1619,7 +1559,7 @@ class CatalogsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_device_insights_request(
+                _request = build_list_device_insights_request(
                     resource_group_name=resource_group_name,
                     catalog_name=catalog_name,
                     subscription_id=self._config.subscription_id,
@@ -1628,12 +1568,11 @@ class CatalogsOperations:
                     skip=skip,
                     maxpagesize=maxpagesize,
                     api_version=api_version,
-                    template_url=self.list_device_insights.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1645,13 +1584,13 @@ class CatalogsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("PagedDeviceInsight", pipeline_response)
@@ -1661,11 +1600,11 @@ class CatalogsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1677,10 +1616,6 @@ class CatalogsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_device_insights.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDeviceInsights"
-    }
 
     @distributed_trace
     def list_devices(
@@ -1708,7 +1643,6 @@ class CatalogsOperations:
         :type skip: int
         :param maxpagesize: The maximum number of result items per page. Default value is None.
         :type maxpagesize: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Device or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sphere.models.Device]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1730,7 +1664,7 @@ class CatalogsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_devices_request(
+                _request = build_list_devices_request(
                     resource_group_name=resource_group_name,
                     catalog_name=catalog_name,
                     subscription_id=self._config.subscription_id,
@@ -1739,12 +1673,11 @@ class CatalogsOperations:
                     skip=skip,
                     maxpagesize=maxpagesize,
                     api_version=api_version,
-                    template_url=self.list_devices.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1756,13 +1689,13 @@ class CatalogsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DeviceListResult", pipeline_response)
@@ -1772,11 +1705,11 @@ class CatalogsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1789,6 +1722,185 @@ class CatalogsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_devices.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureSphere/catalogs/{catalogName}/listDevices"
-    }
+    def _upload_image_initial(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        catalog_name: str,
+        upload_image_request: Union[_models.Image, IO[bytes]],
+        **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(upload_image_request, (IOBase, bytes)):
+            _content = upload_image_request
+        else:
+            _json = self._serialize.body(upload_image_request, "Image")
+
+        _request = build_upload_image_request(
+            resource_group_name=resource_group_name,
+            catalog_name=catalog_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    def begin_upload_image(
+        self,
+        resource_group_name: str,
+        catalog_name: str,
+        upload_image_request: _models.Image,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Creates an image. Use this action when the image ID is unknown.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param catalog_name: Name of catalog. Required.
+        :type catalog_name: str
+        :param upload_image_request: Image upload request body. Required.
+        :type upload_image_request: ~azure.mgmt.sphere.models.Image
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_upload_image(
+        self,
+        resource_group_name: str,
+        catalog_name: str,
+        upload_image_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Creates an image. Use this action when the image ID is unknown.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param catalog_name: Name of catalog. Required.
+        :type catalog_name: str
+        :param upload_image_request: Image upload request body. Required.
+        :type upload_image_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_upload_image(
+        self,
+        resource_group_name: str,
+        catalog_name: str,
+        upload_image_request: Union[_models.Image, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Creates an image. Use this action when the image ID is unknown.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param catalog_name: Name of catalog. Required.
+        :type catalog_name: str
+        :param upload_image_request: Image upload request body. Is either a Image type or a IO[bytes]
+         type. Required.
+        :type upload_image_request: ~azure.mgmt.sphere.models.Image or IO[bytes]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._upload_image_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                catalog_name=catalog_name,
+                upload_image_request=upload_image_request,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

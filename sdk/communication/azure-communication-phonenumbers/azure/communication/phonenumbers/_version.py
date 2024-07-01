@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.1.1"
+VERSION = "1.2.0b2"
 
 SDK_MONIKER = "communication-phonenumbers/{}".format(VERSION)  # type: str

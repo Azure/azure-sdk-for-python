@@ -9,6 +9,7 @@ import tempfile
 from flask import (
     Response,
     Blueprint,
+    request,
 )
 
 streams_api = Blueprint("streams_api", __name__)
@@ -79,6 +80,7 @@ def compressed():
 
 
 def compressed_stream():
+
     with tempfile.TemporaryFile(mode="w+b") as f:
         gzf = gzip.GzipFile(mode="w+b", fileobj=f)
         gzf.write(b"test")
@@ -90,3 +92,15 @@ def compressed_stream():
 @streams_api.route("/decompress_header", methods=["GET"])
 def decompress_header():
     return Response(compressed_stream(), status=200, headers={"Content-Encoding": "gzip"})
+
+
+@streams_api.route("/upload", methods=["POST"])
+def upload():
+    chunk_size = 1024
+    byte_content = b""
+    while True:
+        chunk = request.stream.read(chunk_size)
+        if len(chunk) == 0:
+            break
+        byte_content += chunk
+    return Response(byte_content, status=200)

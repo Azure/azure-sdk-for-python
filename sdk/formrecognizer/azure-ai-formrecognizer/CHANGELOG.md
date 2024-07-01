@@ -1,6 +1,6 @@
 # Release History
 
-## 3.3.3 (Unreleased)
+## 3.3.4 (Unreleased)
 
 ### Features Added
 
@@ -9,8 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 3.3.3 (2024-04-09)
+
+### Other Changes
 - Added support for Python 3.12.
 - Python 3.7 is no longer supported. Please use Python version 3.8 or later.
+- Changed the default polling interval from 5s to 1s.
 
 ## 3.3.2 (2023-11-07)
 

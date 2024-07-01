@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.mobilenetwork import MobileNetworkManagementClient
 
 """
@@ -34,12 +37,32 @@ def main():
         mobile_network_name="testMobileNetwork",
         parameters={
             "location": "eastus",
-            "properties": {"publicLandMobileNetworkIdentifier": {"mcc": "001", "mnc": "01"}},
+            "properties": {
+                "publicLandMobileNetworkIdentifier": {"mcc": "001", "mnc": "01"},
+                "publicLandMobileNetworks": [
+                    {
+                        "homeNetworkPublicKeys": {
+                            "profileA": [
+                                {"id": 1, "url": "https://contosovault.vault.azure.net/secrets/exampleHnpk"},
+                                {
+                                    "id": 2,
+                                    "url": "https://contosovault.vault.azure.net/secrets/exampleHnpk2/5e4876e9140e4e16bfe6e2cf92e0cbd2",
+                                },
+                            ],
+                            "profileB": [
+                                {"id": 1, "url": "https://contosovault.vault.azure.net/secrets/exampleHnpkProfileB"}
+                            ],
+                        },
+                        "mcc": "001",
+                        "mnc": "01",
+                    }
+                ],
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2023-09-01/examples/MobileNetworkCreate.json
+# x-ms-original-file: specification/mobilenetwork/resource-manager/Microsoft.MobileNetwork/stable/2024-04-01/examples/MobileNetworkCreate.json
 if __name__ == "__main__":
     main()

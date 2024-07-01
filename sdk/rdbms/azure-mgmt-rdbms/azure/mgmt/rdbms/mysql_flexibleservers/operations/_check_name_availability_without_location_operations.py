@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -64,7 +69,7 @@ def build_execute_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class CheckNameAvailabilityWithoutLocationOperations:
+class CheckNameAvailabilityWithoutLocationOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -100,7 +105,6 @@ class CheckNameAvailabilityWithoutLocationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailability or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.NameAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -108,17 +112,16 @@ class CheckNameAvailabilityWithoutLocationOperations:
 
     @overload
     def execute(
-        self, name_availability_request: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, name_availability_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NameAvailability:
         """Check the availability of name for server.
 
         :param name_availability_request: The required parameters for checking if server name is
          available. Required.
-        :type name_availability_request: IO
+        :type name_availability_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NameAvailability or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.NameAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -126,23 +129,19 @@ class CheckNameAvailabilityWithoutLocationOperations:
 
     @distributed_trace
     def execute(
-        self, name_availability_request: Union[_models.NameAvailabilityRequest, IO], **kwargs: Any
+        self, name_availability_request: Union[_models.NameAvailabilityRequest, IO[bytes]], **kwargs: Any
     ) -> _models.NameAvailability:
         """Check the availability of name for server.
 
         :param name_availability_request: The required parameters for checking if server name is
-         available. Is either a NameAvailabilityRequest type or a IO type. Required.
+         available. Is either a NameAvailabilityRequest type or a IO[bytes] type. Required.
         :type name_availability_request:
-         ~azure.mgmt.rdbms.mysql_flexibleservers.models.NameAvailabilityRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.NameAvailabilityRequest or IO[bytes]
         :return: NameAvailability or the result of cls(response)
         :rtype: ~azure.mgmt.rdbms.mysql_flexibleservers.models.NameAvailability
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -165,22 +164,21 @@ class CheckNameAvailabilityWithoutLocationOperations:
         else:
             _json = self._serialize.body(name_availability_request, "NameAvailabilityRequest")
 
-        request = build_execute_request(
+        _request = build_execute_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.execute.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -193,8 +191,6 @@ class CheckNameAvailabilityWithoutLocationOperations:
         deserialized = self._deserialize("NameAvailability", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    execute.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DBforMySQL/checkNameAvailability"}
+        return deserialized  # type: ignore

@@ -20,7 +20,7 @@ from azure.search.documents import (
     RequestEntityTooLargeError,
     ApiVersion,
 )
-from azure.search.documents._utils import odata
+from azure.search.documents._utils import odata, get_answer_query
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
@@ -54,6 +54,23 @@ class Test_odata:
 
     def test_prevent_double_quoting(self):
         assert odata("foo eq '{foo}'", foo="a string") == "foo eq 'a string'"
+
+
+class TestAnswerQuery:
+    def test_no_args(self):
+        assert get_answer_query() is None
+
+    def test_query_answer(self):
+        assert get_answer_query("query") == "query"
+
+    def test_query_answer_count(self):
+        assert get_answer_query("query", 5) == "query|count-5"
+
+    def test_query_answer_threshold(self):
+        assert get_answer_query("query", query_answer_threshold=0.5) == "query|threshold-0.5"
+
+    def test_query_answer_count_threshold(self):
+        assert get_answer_query("query", 5, 0.5) == "query|count-5,threshold-0.5"
 
 
 class TestSearchClient:

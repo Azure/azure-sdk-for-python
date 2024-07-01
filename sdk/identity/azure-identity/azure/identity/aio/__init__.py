@@ -20,6 +20,7 @@ from ._credentials import (
     VisualStudioCodeCredential,
     ClientAssertionCredential,
     WorkloadIdentityCredential,
+    AzurePipelinesCredential,
 )
 from ._bearer_token_provider import get_bearer_token_provider
 
@@ -28,6 +29,7 @@ __all__ = [
     "AuthorizationCodeCredential",
     "AzureDeveloperCliCredential",
     "AzureCliCredential",
+    "AzurePipelinesCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ClientSecretCredential",

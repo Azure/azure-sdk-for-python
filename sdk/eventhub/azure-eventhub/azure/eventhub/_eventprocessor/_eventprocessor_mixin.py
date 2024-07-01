@@ -5,6 +5,7 @@
 from __future__ import annotations
 from datetime import datetime
 from typing import (
+    Mapping,
     Union,
     List,
     Dict,
@@ -36,8 +37,8 @@ class EventProcessorMixin:
     _owner_level: Optional[int] = None
     _prefetch: Optional[int] = None
     _track_last_enqueued_event_properties: bool = False
-    _initial_event_position_inclusive: Union[bool, Dict[str, bool]] = {}
-    _initial_event_position: Union[int, str, datetime, Dict[str, Union[int, str, datetime]]] = (
+    _initial_event_position_inclusive: Union[bool, Mapping[str, bool]] = {}
+    _initial_event_position: Union[int, str, datetime, Mapping[str, Union[int, str, datetime]]] = (
         {}
     )
 
@@ -49,7 +50,7 @@ class EventProcessorMixin:
         checkpoint_offset = checkpoint.get("offset") if checkpoint else None
 
         event_position_inclusive = False
-        if isinstance(self._initial_event_position_inclusive, dict):
+        if isinstance(self._initial_event_position_inclusive, Mapping):
             event_position_inclusive = self._initial_event_position_inclusive.get(
                 partition_id, False
             )
@@ -59,7 +60,7 @@ class EventProcessorMixin:
         event_position: Union[str, int, datetime] = "-1"
         if checkpoint_offset:
             event_position = checkpoint_offset
-        elif isinstance(self._initial_event_position, dict):
+        elif isinstance(self._initial_event_position, Mapping):
             event_position = self._initial_event_position.get(partition_id, "-1")  # type: ignore
         else:
             event_position = cast(

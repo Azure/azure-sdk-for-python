@@ -287,6 +287,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_pipeline_with_setting_node_output_mode(self, client: MLClient):
         # get dataset
         training_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
