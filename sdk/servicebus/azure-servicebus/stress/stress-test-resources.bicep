@@ -1,14 +1,10 @@
 @description('The base resource name.')
 param baseName string = resourceGroup().name
 
-@description('The client OID to grant access to test resources.')
-param testApplicationOid string
 
-var apiVersion = '2017-04-01'
 var location = resourceGroup().location
 var authorizationRuleName_var = '${baseName}/RootManageSharedAccessKey'
 var authorizationRuleNameNoManage_var = '${baseName}/NoManage'
-var serviceBusDataOwnerRoleId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/090c5cfd-751d-490a-894a-3ce6f1109419'
 
 var sbPremiumName = 'sb-premium-${baseName}'
 
