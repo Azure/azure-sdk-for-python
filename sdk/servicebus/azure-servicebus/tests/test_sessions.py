@@ -1085,7 +1085,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                     assert len(tokens) == 2
 
                 # Wait for messages to be sent
-                time.sleep(30)
+                time.sleep(15)
 
 
                 messages = receiver.receive_messages(max_message_count=2, max_wait_time=15)
