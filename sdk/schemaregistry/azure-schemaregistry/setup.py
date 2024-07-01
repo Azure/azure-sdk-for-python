@@ -67,7 +67,10 @@ setup(
     python_requires=">=3.8",
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    install_requires=["azure-core<2.0.0,>=1.28.0"],
+    install_requires=[
+        "azure-core<2.0.0,>=1.28.0",
+        "isodate>=0.6.0",
+    ],
     extras_require={
         "jsonencoder": [
             "jsonschema>=4.10.3",
