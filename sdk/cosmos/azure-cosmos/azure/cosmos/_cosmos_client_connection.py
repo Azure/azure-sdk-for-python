@@ -3202,7 +3202,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Mapping[str, Any]
     ) -> Dict[str, Any]:
         collection_link = base.TrimBeginningAndEndingSlashes(collection_link)
-        # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
         partitionKeyDefinition = self._get_partition_key_definition(collection_link)
         new_options = dict(options)
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
@@ -3229,8 +3228,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if isinstance(val, _Undefined):
-                    break
+                if isinstance(val, _Undefined) or isinstance(val, _Empty):
+                    val = None
                 ret.append(val)
             return ret
 
@@ -3271,6 +3270,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def refresh_routing_map_provider(self) -> None:
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+
+    def _refresh_container_properties_cache(self, container_link: str):
+        # If container properties cache is stale, refresh it by reading the container.
+        container = self.ReadContainer(container_link, options=None)
+        # Only cache Container Properties that will not change in the lifetime of the container
+        self._set_container_properties_cache(container_link, _set_properties_cache(container))
 
     def _UpdateSessionIfRequired(
         self,
