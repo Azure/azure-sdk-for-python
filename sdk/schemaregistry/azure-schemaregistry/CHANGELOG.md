@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.0b4 (Unreleased)
+## 1.3.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated azure-core minimum dependency to 1.28.0.
 
 ## 1.3.0b3 (2023-11-09)
 
