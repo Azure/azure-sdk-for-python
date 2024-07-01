@@ -41,14 +41,14 @@ class ListSecretsTest(PerfStressTest):
             )
 
         await super().global_setup()
-        create = [self.async_client.set_secret(name, "secret-value") for name in self.secret_names]
+        create = [asyncio.create_task(self.async_client.set_secret(name, "secret-value")) for name in self.secret_names]
         await asyncio.wait(create)
 
     async def global_cleanup(self):
         """The global cleanup is run only once."""
-        delete = [self.async_client.delete_secret(name) for name in self.secret_names]
+        delete = [asyncio.create_task(self.async_client.delete_secret(name)) for name in self.secret_names]
         await asyncio.wait(delete)
-        purge = [self.async_client.purge_deleted_secret(name) for name in self.secret_names]
+        purge = [asyncio.create_task(self.async_client.purge_deleted_secret(name)) for name in self.secret_names]
         await asyncio.wait(purge)
         await super().global_cleanup()
 
