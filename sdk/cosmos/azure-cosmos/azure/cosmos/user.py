@@ -156,9 +156,9 @@ class UserProxy:
     ) -> Permission:
         """Get the permission identified by `id`.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+        :param permission: The ID (name), dict representing the properties or :class:`~azure.cosmos.Permission`
             instance of the permission to be retrieved.
-        :type permission: Union[str, Permission, Dict[str, Any]]
+        :type permission: Union[str, ~azure.cosmos.Permission, Dict[str, Any]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
@@ -241,9 +241,9 @@ class UserProxy:
 
         If the permission does not already exist, an exception is raised.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+        :param permission: The ID (name), dict representing the properties or :class:`~azure.cosmos.Permission`
             instance of the permission to be replaced.
-        :type permission: Union[str, Permission, Dict[str, Any]]
+        :type permission: Union[str, ~azure.cosmos.Permission, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the permission to replace.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the permission after replace went through.
@@ -276,9 +276,9 @@ class UserProxy:
 
         If the permission does not already exist, an exception is raised.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+        :param permission: The ID (name), dict representing the properties or :class:`~azure.cosmos.Permission`
             instance of the permission to be replaced.
-        :type permission: Union[str, Permission, Dict[str, Any]]
+        :type permission: Union[str, ~azure.cosmos.Permission, Dict[str, Any]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
