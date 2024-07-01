@@ -22,10 +22,10 @@ from azure.core.utils import case_insensitive_dict
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
     JSON,
-    build_send_to_all_request,
-    build_send_to_connection_request,
-    build_send_to_user_request,
-    build_send_to_group_request,
+    build_web_pub_sub_service_send_to_all_request,
+    build_web_pub_sub_service_send_to_connection_request,
+    build_web_pub_sub_service_send_to_user_request,
+    build_web_pub_sub_service_send_to_group_request,
 )
 from ..._operations._patch import get_token_by_key
 
@@ -40,6 +40,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         minutes_to_expire: Optional[int] = 60,
         jwt_headers: Dict[str, Any] = None,
         groups: Optional[List[str]] = None,
+        client_type: Optional[str] = "Default",
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -56,6 +57,10 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype api_version: str
+        :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
+         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
+         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is "Default".
+        :paramtype client_type: str
         :return: JSON object
         :rtype: JSON
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -82,10 +87,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         client_endpoint = "ws" + endpoint[4:]
         hub = self._config.hub
-        client_url = "{}/client/hubs/{}".format(client_endpoint, hub)
+        path = "/clients/mqtt/hubs/" if client_type.lower() == "mqtt" else "/client/hubs/"
+        client_url = client_endpoint + path + hub
         if isinstance(self._config.credential, AzureKeyCredential):
             token = get_token_by_key(
                 endpoint,
+                path,
                 hub,
                 self._config.credential.key,
                 user_id=user_id,
@@ -247,7 +254,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_all_request(
+        request = build_web_pub_sub_service_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
             filter=filter,
@@ -430,7 +437,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_group_request(
+        request = build_web_pub_sub_service_send_to_group_request(
             group=group,
             hub=self._config.hub,
             excluded=excluded,
@@ -572,7 +579,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_connection_request(
+        request = build_web_pub_sub_service_send_to_connection_request(
             connection_id=connection_id,
             hub=self._config.hub,
             content_type=content_type,
@@ -738,7 +745,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        request = build_send_to_user_request(
+        request = build_web_pub_sub_service_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
             filter=filter,
