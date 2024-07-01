@@ -96,6 +96,14 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
 
         self._loop = kwargs.get('loop', None)
 
+        from ._file_system_client_async import FileSystemClient
+        self._file_system_client_async = FileSystemClient(
+            account_url=account_url,
+            file_system_name=file_system_name,
+            credential=credential,
+            **kwargs
+        )
+
     async def __aexit__(self, *args):
         await self._blob_client.close()
         await self._datalake_client_for_blob_operation.close()
