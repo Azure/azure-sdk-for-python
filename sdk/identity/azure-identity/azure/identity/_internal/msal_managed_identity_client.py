@@ -56,6 +56,13 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         raise CredentialUnavailableError(error_message)
 
     def get_managed_identity(self, **kwargs: Any):
+        """
+        Get the managed identity configuration.
+        :keyword str client_id: The client ID of the user-assigned managed identity.
+        :keyword dict identity_config: The identity configuration.
+        :rtype: msal.ManagedIdentity
+        :return: The managed identity configuration.
+        """
         if "client_id" in kwargs and kwargs["client_id"]:
             return msal.UserAssignedManagedIdentity(client_id=kwargs["client_id"])
         identity_config = kwargs.pop("identity_config", None) or {}
