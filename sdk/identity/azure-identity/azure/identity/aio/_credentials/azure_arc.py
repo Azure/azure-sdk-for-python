@@ -22,7 +22,7 @@ class AzureArcCredential(AsyncManagedIdentityBase):
             return AsyncManagedIdentityClient(
                 _per_retry_policies=[ArcChallengeAuthPolicy()],
                 request_factory=functools.partial(_get_request, url),
-                **kwargs
+                **kwargs,
             )
         return None
 

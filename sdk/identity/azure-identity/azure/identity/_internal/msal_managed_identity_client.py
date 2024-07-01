@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Optional, Dict, cast
+import abc
 import time
 import logging
 
@@ -16,14 +17,11 @@ from .._exceptions import CredentialUnavailableError
 
 _LOGGER = logging.getLogger(__name__)
 
-class MsalManagedIdentityClient():  # pylint: disable=too-many-instance-attributes
-    """Base class for managed identity client wrapping MSAL ManagedIdentityClient.
-    """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+class MsalManagedIdentityClient(abc.ABC):  # pylint: disable=too-many-instance-attributes
+    """Base class for managed identity client wrapping MSAL ManagedIdentityClient."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self._settings = kwargs
         self._client = MsalClient(**kwargs)
         managed_identity = self.get_managed_identity(**kwargs)
@@ -36,10 +34,14 @@ class MsalManagedIdentityClient():  # pylint: disable=too-many-instance-attribut
     def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
+    @abc.abstractmethod
+    def get_unavailable_message(self, desc: str = "") -> str:
+        pass
+
     def close(self) -> None:
         self.__exit__()
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
@@ -63,7 +65,7 @@ class MsalManagedIdentityClient():  # pylint: disable=too-many-instance-attribut
         if "object_id" in identity_config and identity_config["object_id"]:
             return msal.UserAssignedManagedIdentity(object_id=identity_config["object_id"])
         return msal.SystemAssignedManagedIdentity()
-    
+
     def get_token(
         self,
         *scopes: str,
@@ -97,9 +99,7 @@ class MsalManagedIdentityClient():  # pylint: disable=too-many-instance-attribut
         _scopes_to_resource(*scopes)
         token = None
         try:
-            token = self._request_token(
-                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
-            )
+            token = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
             if token:
                 _LOGGER.log(
                     logging.DEBUG if within_credential_chain.get() else logging.INFO,

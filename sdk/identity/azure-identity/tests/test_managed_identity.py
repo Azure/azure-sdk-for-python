@@ -400,6 +400,7 @@ def test_prefers_app_service_2019_08_01():
     assert token.token == access_token
     assert token.expires_on == expires_on
 
+
 def test_app_service_2019_08_01():
     """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
@@ -545,9 +546,7 @@ def test_app_service_user_assigned_identity():
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
-        credential = ManagedIdentityCredential(
-            client_id=client_id, transport=transport
-        )
+        credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
         token = credential.get_token(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on

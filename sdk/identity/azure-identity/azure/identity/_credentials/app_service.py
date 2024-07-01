@@ -11,9 +11,11 @@ from azure.core.pipeline.transport import HttpRequest
 from .._constants import EnvironmentVariables
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
+
 class AppServiceCredential(MsalManagedIdentityClient):
     def get_unavailable_message(self, desc: str = "") -> str:
         return f"App Service managed identity configuration not found in environment. {desc}"
+
 
 def _get_client_args(**kwargs: Any) -> Optional[Dict]:
     identity_config = kwargs.pop("identity_config", None) or {}
