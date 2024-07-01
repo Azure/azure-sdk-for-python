@@ -70,10 +70,6 @@
       "type": "String",
       "value": "[parameters('testApplicationId')]"
     },
-    "AZURE_CLIENT_SECRET": {
-      "type": "String",
-      "value": "[parameters('testApplicationSecret')]"
-    },
     "COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING": {
       "type": "string",
       "value": "[listKeys(resourceId('Microsoft.Communication/CommunicationServices',variables('uniqueSubDomainName')), '2023-03-31').primaryConnectionString]"
