@@ -440,14 +440,14 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         schemaregistry_group = kwargs.pop("schemaregistry_group")
 
         sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        schema_groups = sr_client._generated_client._list_schema_groups()
+        schema_groups = sr_client._generated_client.list_schema_groups()
         async for group in schema_groups:
             assert group == schemaregistry_group
 
         name = "test-schema1"
         await sr_client.register_schema(schemaregistry_group, name, schema_str, format)
 
-        schema_versions = sr_client._generated_client._list_schema_versions(schemaregistry_group, name)
+        schema_versions = sr_client._generated_client.list_schema_versions(schemaregistry_group, name)
         versions = []
         async for version in schema_versions:
             versions.append(version)
