@@ -134,7 +134,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = await self._generated_client._register_schema(  # pylint:disable=protected-access
+        ] = await self._generated_client._register_schema( # type: ignore # pylint:disable=protected-access
             group_name=group_name,
             schema_name=name,
             content=cast(IO[Any], definition),
@@ -206,7 +206,7 @@ class SchemaRegistryClient(object):
             (
                 http_response,
                 schema_properties,
-            ) = await self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
+            ) = await self._generated_client._get_schema_by_id( # type: ignore # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
@@ -229,7 +229,7 @@ class SchemaRegistryClient(object):
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = await self._generated_client._get_schema_by_version(  # type: ignore
+            http_response, schema_properties = await self._generated_client._get_schema_by_version( # type: ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
                 schema_version=version,
@@ -286,7 +286,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = await self._generated_client._get_schema_properties_by_content(  # pylint:disable=protected-access
+        ] = await self._generated_client._get_schema_properties_by_content( # type: ignore # pylint:disable=protected-access
             group_name=group_name,
             schema_name=name,
             schema_content=cast(IO[Any], definition),
