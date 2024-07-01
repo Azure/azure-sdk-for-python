@@ -65,17 +65,6 @@ resource authorizationRuleNameNoManage 'Microsoft.ServiceBus/namespaces/Authoriz
 
 
 
-resource dataOwnerRoleId 'Microsoft.Authorization/roleAssignments@2018-01-01-preview' = {
-  name: guid('dataOwnerRoleId${baseName}')
-  properties: {
-    roleDefinitionId: serviceBusDataOwnerRoleId
-    principalId: testApplicationOid
-  }
-  dependsOn: [
-    servicebus
-  ]
-}
-
 resource testQueue 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
   parent: servicebus
   name: 'testQueue'
