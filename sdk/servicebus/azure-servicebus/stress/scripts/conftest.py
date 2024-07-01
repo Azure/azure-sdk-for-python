@@ -8,6 +8,7 @@ import os
 import sys
 from azure.servicebus import ServiceBusClient
 from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
 
 LOGGING_ENABLE = False
 ENV_FILE = os.environ.get('ENV_FILE')
@@ -35,9 +36,10 @@ def pytest_configure(config):
 
 @pytest.fixture(scope="session", autouse=True)
 def sb_client():
-    service_bus_connection_str = os.environ['SERVICE_BUS_CONNECTION_STR']
-    client = ServiceBusClient.from_connection_string(
-        service_bus_connection_str, logging_enable=LOGGING_ENABLE)
+    service_bus_endpoint = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+    credential = DefaultAzureCredential()
+    client = ServiceBusClient(
+        service_bus_endpoint, credential, logging_enable=LOGGING_ENABLE)
     return client
 
 @pytest.fixture()
