@@ -132,27 +132,25 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[
-            str, Union[int, str]
-        ] = await self._generated_client._register_schema( # type: ignore # pylint:disable=protected-access
-            group_name=group_name,
-            schema_name=name,
-            content=cast(IO[Any], definition),
-            content_type=kwargs.pop("content_type", get_content_type(format)),
-            cls=partial(prepare_schema_properties_result, format),
-            **http_request_kwargs,
+        schema_properties: Dict[str, Union[int, str]] = (
+            await self._generated_client._register_schema(  # type: ignore # pylint:disable=protected-access
+                group_name=group_name,
+                schema_name=name,
+                content=cast(IO[Any], definition),
+                content_type=kwargs.pop("content_type", get_content_type(format)),
+                cls=partial(prepare_schema_properties_result, format),
+                **http_request_kwargs,
+            )
         )
 
         properties = cast("SchemaPropertiesDict", schema_properties)
         return SchemaProperties(**properties)
 
     @overload
-    async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
-        ...
+    async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema: ...
 
     @overload
-    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
-        ...
+    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema: ...
 
     @distributed_trace_async
     async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
@@ -206,7 +204,7 @@ class SchemaRegistryClient(object):
             (
                 http_response,
                 schema_properties,
-            ) = await self._generated_client._get_schema_by_id( # type: ignore # pylint:disable=protected-access
+            ) = await self._generated_client._get_schema_by_id(  # type: ignore # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
@@ -229,7 +227,7 @@ class SchemaRegistryClient(object):
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = await self._generated_client._get_schema_by_version( # type: ignore # pylint:disable=protected-access
+            http_response, schema_properties = await self._generated_client._get_schema_by_version(  # type: ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
                 schema_version=version,
@@ -284,15 +282,15 @@ class SchemaRegistryClient(object):
         format = get_case_insensitive_format(format)
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
-        schema_properties: Dict[
-            str, Union[int, str]
-        ] = await self._generated_client._get_schema_properties_by_content( # type: ignore # pylint:disable=protected-access
-            group_name=group_name,
-            schema_name=name,
-            schema_content=cast(IO[Any], definition),
-            content_type=kwargs.pop("content_type", get_content_type(format)),
-            cls=partial(prepare_schema_properties_result, format),
-            **http_request_kwargs,
+        schema_properties: Dict[str, Union[int, str]] = (
+            await self._generated_client._get_schema_properties_by_content(  # type: ignore # pylint:disable=protected-access
+                group_name=group_name,
+                schema_name=name,
+                schema_content=cast(IO[Any], definition),
+                content_type=kwargs.pop("content_type", get_content_type(format)),
+                cls=partial(prepare_schema_properties_result, format),
+                **http_request_kwargs,
+            )
         )
         properties = cast("SchemaPropertiesDict", schema_properties)
         return SchemaProperties(**properties)

@@ -26,7 +26,7 @@ class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-at
     :param fully_qualified_namespace: The Schema Registry service endpoint, for example
      'my-namespace.servicebus.windows.net'. Required.
     :type fully_qualified_namespace: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-07-01".
      Note that overriding this default value may result in unsupported behavior.

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -29,7 +30,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     :param fully_qualified_namespace: The Schema Registry service endpoint, for example
      'my-namespace.servicebus.windows.net'. Required.
     :type fully_qualified_namespace: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-07-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -96,7 +97,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SchemaRegistryClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

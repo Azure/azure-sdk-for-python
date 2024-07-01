@@ -11,9 +11,13 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class SchemaContentTypeValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of SchemaContentTypeValues."""
+    """Describes closed list of schema content type values."""
 
     AVRO = "application/json; serialization=Avro"
+    """Avro encoding."""
     JSON = "application/json; serialization=Json"
+    """JSON encoding"""
     CUSTOM = "text/plain; charset=utf-8"
+    """Plain text custom encoding."""
     PROTOBUF = "text/vnd.ms.protobuf"
+    """Protobuf encoding."""

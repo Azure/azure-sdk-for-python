@@ -124,8 +124,7 @@ def create_message_content(
     validate: "Validator",
     message_type: Type[MessageType],
     **kwargs: Any,
-) -> MessageType:
-    ...
+) -> MessageType: ...
 
 
 @overload
@@ -135,8 +134,7 @@ def create_message_content(
     schema_id: str,
     validate: "Validator",
     message_type: None = None,
-) -> MessageContent:
-    ...
+) -> MessageContent: ...
 
 
 def create_message_content(
