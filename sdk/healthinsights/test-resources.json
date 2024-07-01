@@ -62,7 +62,7 @@
       }
   },
 "variables": {
-        "healthApiVersion": "2024-04-01-preview",
+        "healthApiVersion": "2023-10-01-preview",
         "textAnalyticsName":  "[format('textanalytics-{0}', parameters('baseName'))]",
         "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",
         "textAnalyticsContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
@@ -110,7 +110,17 @@
             "dependsOn": [
                 "[concat('Microsoft.CognitiveServices/accounts/', variables('HealthInsightsName'))]"
             ]
-        }
+        },
+        {
+          "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
+          "apiVersion": "2018-09-01-preview",
+          "name":"[concat(variables('textAnalyticsName'), '/Microsoft.Authorization/', variables('textAnalyticsContributorRoleGuid'))]",
+          "properties": {
+              "roleDefinitionId": "[variables('textAnalyticsContributorRole')]",
+              "principalType": "ServicePrincipal",
+              "scope": "[concat(subscription().id,'/resourcegroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]"
+          }
+      }
     ],  
     "outputs": {
         "LANGUAGE_API_KEY": {
