@@ -4716,7 +4716,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
-        "coolness_period": {"maximum": 183, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 2},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
         "file_access_logs": {"readonly": True},
@@ -5525,7 +5525,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
-        "coolness_period": {"maximum": 183, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 2},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
         "file_access_logs": {"readonly": True},
@@ -5892,6 +5892,8 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str]
     :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
     :vartype throughput_mibps: float
@@ -5960,6 +5962,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "service_level": {"key": "properties.serviceLevel", "type": "str"},
         "usage_threshold": {"key": "properties.usageThreshold", "type": "int"},
         "export_policy": {"key": "properties.exportPolicy", "type": "VolumePatchPropertiesExportPolicy"},
+        "protocol_types": {"key": "properties.protocolTypes", "type": "[str]"},
         "throughput_mibps": {"key": "properties.throughputMibps", "type": "float"},
         "data_protection": {"key": "properties.dataProtection", "type": "VolumePatchPropertiesDataProtection"},
         "is_default_quota_enabled": {"key": "properties.isDefaultQuotaEnabled", "type": "bool"},
@@ -5982,6 +5985,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         service_level: Union[str, "_models.ServiceLevel"] = "Premium",
         usage_threshold: int = 107374182400,
         export_policy: Optional["_models.VolumePatchPropertiesExportPolicy"] = None,
+        protocol_types: Optional[List[str]] = None,
         throughput_mibps: Optional[float] = None,
         data_protection: Optional["_models.VolumePatchPropertiesDataProtection"] = None,
         is_default_quota_enabled: bool = False,
@@ -6010,6 +6014,8 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+        :keyword protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+        :paramtype protocol_types: list[str]
         :keyword throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
          this will be accepted as input only for manual qosType volume.
         :paramtype throughput_mibps: float
@@ -6068,6 +6074,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.service_level = service_level
         self.usage_threshold = usage_threshold
         self.export_policy = export_policy
+        self.protocol_types = protocol_types
         self.throughput_mibps = throughput_mibps
         self.data_protection = data_protection
         self.is_default_quota_enabled = is_default_quota_enabled
