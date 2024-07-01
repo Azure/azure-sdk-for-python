@@ -123,3 +123,16 @@ After a few moments, the security principal is assigned the role at the selected
 ![Screenshot of role assignment list after assigning role.](images/rg-role-assignments.png)
 
 - If you don't see the description for the role assignment, click **Edit columns** to add the **Description** column.
+
+# Conclusion
+
+Congratulations! You have successfully registered your application and assigned Azure roles. These steps ensure your application can securely interact with Azure resources, and users have the appropriate access levels to perform their tasks.
+
+For further information on managing applications and roles, you can explore the following resources:
+
+- [Azure Active Directory Documentation](https://learn.microsoft.com/entra/identity/)
+- [Azure Role-Based Access Control (RBAC) Documentation](https://learn.microsoft.com/azure/role-based-access-control/)
+
+Remember to periodically review and update your application registrations and role assignments to align with your organization’s security policies and evolving requirements.
+
+Thank you for following this guide, and happy developing!
