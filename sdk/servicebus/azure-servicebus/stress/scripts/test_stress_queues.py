@@ -354,7 +354,7 @@ if __name__ == '__main__':
     UAMQP_TRANSPORT = args.uamqp_mode
     HOSTNAME = args.hostname
 
-    sb_admin_client = ServiceBusAdministrationClient.from_connection_string(SERVICE_BUS_CONNECTION_STR)
+    sb_admin_client = ServiceBusAdministrationClient(HOSTNAME, credential)
 
     if args.method == "send_receive":
         test_stress_queue_send_and_receive(args)    
