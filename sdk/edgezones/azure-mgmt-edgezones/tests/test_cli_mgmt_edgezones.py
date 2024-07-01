@@ -19,8 +19,8 @@ class TestMgmtEdgeZones(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_subscription(self):
-        assert list(self.client.extended_zones.list_by_subscription()) == []
-
+        assert list(self.client.extended_zones.list_by_subscription())
+        
     @recorded_by_proxy
     def test_list_operations(self):
         assert list(self.client.operations.list())
