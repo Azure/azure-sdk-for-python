@@ -209,336 +209,6 @@ function Get-python-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "Python" -campaignId "UA-62780441-36"
 }
 
-function ValidatePackage
-{
-  Param(
-    [Parameter(Mandatory=$true)]
-    [string]$packageName,
-    [Parameter(Mandatory=$true)]
-    [string]$packageVersion,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride,
-    [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId
-  )
-  $installValidationFolder = Join-Path ([System.IO.Path]::GetTempPath()) "validation"
-  if (!(Test-Path $installValidationFolder)) {
-    New-Item -ItemType Directory -Force -Path $installValidationFolder | Out-Null
-  }
-  # Add more validation by replicating as much of the docs CI process as
-  # possible
-  # https://github.com/Azure/azure-sdk-for-python/issues/20109
-  $result = $true
-  if (!$DocValidationImageId) {
-    Write-Host "Validating using pip command directly on $packageName."
-    $result = FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $installValidationFolder -PackageSourceOverride $PackageSourceOverride
-  } else {
-    Write-Host "Validating using $DocValidationImageId on $packageName."
-    $result = DockerValidation -packageName "$packageName" -packageVersion "$packageVersion" `
-        -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
-  }
-
-  return $result
-}
-function DockerValidation{
-  Param(
-    [Parameter(Mandatory=$true)]
-    [string]$packageName,
-    [Parameter(Mandatory=$true)]
-    [string]$packageVersion,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride,
-    [Parameter(Mandatory=$false)]
-    [string]$DocValidationImageId,
-    [Parameter(Mandatory=$false)]
-    [string]$workingDirectory
-  )
-  if ($PackageSourceOverride) {
-    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId"
-    $commandLine = docker run -v "${workingDirectory}:/workdir/out" -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion `
-       -e EXTRA_INDEX_URL=$PackageSourceOverride -t $DocValidationImageId 2>&1
-  }
-  else {
-    Write-Host "docker run -v ${workingDirectory}:/workdir/out -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId"
-    $commandLine = docker run -v "${workingDirectory}:/workdir/out" `
-      -e TARGET_PACKAGE=$packageName -e TARGET_VERSION=$packageVersion -t $DocValidationImageId 2>&1
-  }
-  # The docker exit codes: https://docs.docker.com/engine/reference/run/#exit-status
-  # If the docker failed because of docker itself instead of the application,
-  # we should skip the validation and keep the packages.
-
-  if ($LASTEXITCODE -eq 125 -Or $LASTEXITCODE -eq 126 -Or $LASTEXITCODE -eq 127) {
-    $commandLine | ForEach-Object { Write-Debug $_ }
-    LogWarning "The `docker` command does not work with exit code $LASTEXITCODE. Fall back to npm install $packageName directly."
-    FallbackValidation -packageName "$packageName" -packageVersion "$packageVersion" -workingDirectory $workingDirectory -PackageSourceOverride $PackageSourceOverride
-  }
-  elseif ($LASTEXITCODE -ne 0) {
-    $commandLine | ForEach-Object { Write-Debug $_ }
-    LogWarning "Package $packageName ref docs validation failed."
-    return $false
-  }
-  return $true
-}
-
-function FallbackValidation
-{
-  Param(
-    [Parameter(Mandatory=$true)]
-    [string]$packageName,
-    [Parameter(Mandatory=$true)]
-    [string]$packageVersion,
-    [Parameter(Mandatory=$true)]
-    [string]$workingDirectory,
-    [Parameter(Mandatory=$false)]
-    [string]$PackageSourceOverride
-  )
-  $installTargetFolder = Join-Path $workingDirectory $packageName
-  New-Item -ItemType Directory -Force -Path $installTargetFolder | Out-Null
-  $packageExpression = "$packageName$packageVersion"
-  try {
-    $pipInstallOutput = ""
-    if ($PackageSourceOverride) {
-      Write-Host "python -m pip install $packageExpression --no-cache-dir --target $installTargetFolder --extra-index-url=$PackageSourceOverride"
-      $pipInstallOutput = python -m pip `
-        install `
-        $packageExpression `
-        --no-cache-dir `
-        --target $installTargetFolder `
-        --extra-index-url=$PackageSourceOverride 2>&1
-    }
-    else {
-      Write-Host "python -m pip install $packageExpression --no-cache-dir --target $installTargetFolder"
-      $pipInstallOutput = python -m pip `
-        install `
-        $packageExpression `
-        --no-cache-dir `
-        --target $installTargetFolder 2>&1
-    }
-    if ($LASTEXITCODE -ne 0) {
-      LogWarning "python -m pip install failed for $packageExpression"
-      Write-Host $pipInstallOutput
-      return $false
-    }
-  } catch {
-    LogWarning "python -m pip install failed for $packageExpression with exception"
-    LogWarning $_.Exception
-    LogWarning $_.Exception.StackTrace
-    return $false
-  }
-
-  return $true
-}
-
-$PackageExclusions = @{
-  'azure-mgmt-videoanalyzer' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21563';
-  'azure-mgmt-quota' = 'Unsupported doc directives: https://github.com/Azure/azure-sdk-for-python/issues/21366';
-  'azure-mgmt-apimanagement' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18084';
-  'azure-mgmt-reservations' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18077';
-  'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
-  'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
-  'azure-mgmt-network' = 'Manual process used to build';
-  'azureml-fsspec' = 'Build issues related to Python requirements: https://github.com/Azure/azure-sdk-for-python/issues/30565';
-  'mltable' = 'Build issues related to Python requirements: https://github.com/Azure/azure-sdk-for-python/issues/30565';
-
-  'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-mgmt-notificationhubs' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-servicebus' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-mgmt-web' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
-  'azure-ai-ml' = 'Docs CI build issues https://github.com/Azure/azure-sdk-for-python/issues/30774';
-
-  'azure-keyvault' = 'Metapackages should not be documented';
-}
-
-function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
-  Write-Host "Excluded packages:"
-  foreach ($excludedPackage in $PackageExclusions.Keys) {
-    Write-Host "  $excludedPackage - $($PackageExclusions[$excludedPackage])"
-  }
-
-  $FilteredMetadata = $DocsMetadata.Where({ !($PackageExclusions.ContainsKey($_.Package)) })
-
-  UpdateDocsMsPackages `
-    (Join-Path $DocsRepoLocation 'ci-configs/packages-preview.json') `
-    'preview' `
-    $FilteredMetadata `
-    $PackageSourceOverride `
-    $DocValidationImageId
-
-  UpdateDocsMsPackages `
-    (Join-Path $DocsRepoLocation 'ci-configs/packages-latest.json') `
-    'latest' `
-    $FilteredMetadata `
-    $PackageSourceOverride `
-    $DocValidationImageId
-}
-
-function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {
-  Write-Host "Updating configuration: $DocConfigFile with mode: $Mode"
-  $packageConfig = Get-Content $DocConfigFile -Raw | ConvertFrom-Json
-
-  $outputPackages = @()
-  foreach ($package in $packageConfig.packages) {
-    $packageName = $package.package_info.name
-    if (!$packageName) {
-      Write-Host "Keeping package with no name: $($package.package_info)"
-      $outputPackages += $package
-      continue
-    }
-
-    if ($package.package_info.install_type -ne 'pypi') {
-      Write-Host "Keeping package with install_type not 'pypi': $($package.package_info.name)"
-      $outputPackages += $package
-      continue
-    }
-
-    if ($package.package_info.name.EndsWith("-nspkg")) {
-      Write-Host "Skipping $($package.package_info.name) because it's a namespace package."
-      continue
-    }
-
-    # Do not filter by GA/Preview status because we want differentiate between
-    # tracked and non-tracked packages
-    $matchingPublishedPackageArray = $DocsMetadata.Where( { $_.Package -eq $packageName })
-
-    # If this package does not match any published packages keep it in the list.
-    # This handles packages which are not tracked in metadata but still need to
-    # be built in Docs CI.
-    if ($matchingPublishedPackageArray.Count -eq 0) {
-      Write-Host "Keep non-tracked package: $packageName"
-      $outputPackages += $package
-      continue
-    }
-
-    if ($matchingPublishedPackageArray.Count -gt 1) {
-      LogWarning "Found more than one matching published package in metadata for $packageName; only updating first entry"
-    }
-    $matchingPublishedPackage = $matchingPublishedPackageArray[0]
-
-    if ($Mode -eq 'preview' -and !$matchingPublishedPackage.VersionPreview.Trim()) {
-      # If we are in preview mode and the package does not have a superseding
-      # preview version, remove the package from the list.
-      Write-Host "Remove superseded preview package: $packageName"
-      continue
-    }
-
-    if ($Mode -eq 'latest' -and !$matchingPublishedPackage.VersionGA.Trim()) {
-      LogWarning "Metadata is missing GA version for GA package $packageName. Keeping existing package."
-      $outputPackages += $package
-      continue
-    }
-
-    $packageVersion = "==$($matchingPublishedPackage.VersionGA)"
-    if ($Mode -eq 'preview') {
-      if (!$matchingPublishedPackage.VersionPreview.Trim()) {
-        LogWarning "Metadata is missing preview version for preview package $packageName. Keeping existing package."
-        $outputPackages += $package
-        continue
-      }
-      $packageVersion = "==$($matchingPublishedPackage.VersionPreview)"
-    }
-
-    # If upgrading the package, run basic sanity checks against the package
-    if ($package.package_info.version -ne $packageVersion) {
-      Write-Host "New version detected for $packageName ($packageVersion)"
-      if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
-        LogWarning "Package is not valid: $packageName. Keeping old version."
-        $outputPackages += $package
-        continue
-      }
-
-      $package.package_info = Add-Member `
-        -InputObject $package.package_info `
-        -MemberType NoteProperty `
-        -Name 'version' `
-        -Value $packageVersion `
-        -PassThru `
-        -Force
-      if ($PackageSourceOverride) {
-        $package.package_info = Add-Member `
-          -InputObject $package.package_info `
-          -MemberType NoteProperty `
-          -Name 'extra_index_url' `
-          -Value $PackageSourceOverride `
-          -PassThru `
-          -Force
-      }
-    }
-
-    Write-Host "Keeping tracked package: $packageName."
-    $outputPackages += $package
-  }
-
-  $outputPackagesHash = @{}
-  foreach ($package in $outputPackages) {
-    # In some cases there is no $package.package_info.name, only hash if the
-    # name is set.
-    if ($package.package_info.name) {
-      $outputPackagesHash[$package.package_info.name] = $true
-    }
-  }
-
-  $remainingPackages = @()
-  if ($Mode -eq 'preview') {
-    $remainingPackages = $DocsMetadata.Where({
-      $_.VersionPreview.Trim() `
-      -and !$outputPackagesHash.ContainsKey($_.Package) `
-      -and !$_.Package.EndsWith("-nspkg")
-    })
-  } else {
-    $remainingPackages = $DocsMetadata.Where({
-      $_.VersionGA.Trim() `
-      -and !$outputPackagesHash.ContainsKey($_.Package) `
-      -and !$_.Package.EndsWith("-nspkg")
-    })
-  }
-
-  # Add packages that exist in the metadata but are not onboarded in docs config
-  foreach ($package in $remainingPackages) {
-    $packageName = $package.Package
-    $packageVersion = "==$($package.VersionGA)"
-    if ($Mode -eq 'preview') {
-      $packageVersion = "==$($package.VersionPreview)"
-    }
-    if (!(ValidatePackage -packageName $packageName -packageVersion $packageVersion -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId)) {
-      LogWarning "Package is not valid: $packageName. Cannot onboard."
-      continue
-    }
-
-    Write-Host "Add new package from metadata: $packageName"
-    if ($PackageSourceOverride) {
-      $package = [ordered]@{
-        package_info = [ordered]@{
-          name = $packageName;
-          install_type = 'pypi';
-          prefer_source_distribution = 'true';
-          version = $packageVersion;
-          extra_index_url = $PackageSourceOverride
-        };
-        exclude_path = @("test*","example*","sample*","doc*");
-      }
-    } else {
-      $package = [ordered]@{
-          package_info = [ordered]@{
-            name = $packageName;
-            install_type = 'pypi';
-            prefer_source_distribution = 'true';
-            version = $packageVersion;
-          };
-          exclude_path = @("test*","example*","sample*","doc*");
-      }
-    }
-    $outputPackages += $package
-  }
-
-  $packageConfig.packages = $outputPackages
-  $packageConfig | ConvertTo-Json -Depth 100 | Set-Content $DocConfigFile
-  Write-Host "Onboarding configuration written to: $DocConfigFile"
-}
-
 # function is used to auto generate API View
 function Find-python-Artifacts-For-Apireview($artifactDir, $artifactName)
 {
@@ -651,33 +321,132 @@ function Import-Dev-Cert-python
   python $pathToScript
 }
 
+# The package info format required by py2docfx to verify a single library.
+# The format can be found at https://github.com/MicrosoftDocs/azure-docs-sdk-python/blob/main/ci-configs/packages-latest.json
+# which is a file that contains all of package_info objects. For verifying a single library
+# the same format is used but there's only a single package_info object in the packages list.
+# This is an example:
+# {
+#   "packages": [
+#       {
+#           "package_info": {
+#             "name": "azure-core",
+#             "install_type": "pypi",
+#             "prefer_source_distribution": "true",
+#             "version": "==1.29.6a20231207001",
+#             "extra_index_url": "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+#           },
+#           "exclude_path": [
+#             "test*",
+#             "example*",
+#             "sample*",
+#             "doc*"
+#           ]
+#         }
+#       ]
+#   }
+# The above example contains the common settings for Python track 2 libraries.
+# There are a few things of note:
+# 1. install_type can be something other than pypi. source_code or dist_file are two examples of this
+#    but those are for track 1 or libraries released by other teams and not through our engineering system.
+# 2. extra_index_url only needs to exist on the object if PackageSourceOverride is set
+# 3. The reason this needs to be done using a json file instead of just a command line is because py2docfx
+#    doesn't handle the autodoc_default_options on the
+function Get-SinglePackageJsonForDocsValidation($PackageInfo, $PackageSourceOverride)
+{
+
+  $packageArr = @()
+  $packageSpec = [ordered]@{
+      package_info = [ordered]@{
+          name = $PackageInfo.Name
+          install_type = 'pypi'
+          prefer_source_distribution = 'true'
+          version = "==$($PackageInfo.Version)"
+      }
+      exclude_path = @("test*","example*","sample*","doc*")
+  }
+  if ($PackageSourceOverride) {
+      $packageSpec['package_info']['extra_index_url'] = $PackageSourceOverride
+  }
+  # Data-plane packages (not mgmt packages, and not manually added '00`packages)
+  # should document inherited members
+  if ($PackageInfo.Name -notlike 'azure-mgmt-*' -and $PackageInfo.Name -notlike '*-00-*') {
+      $packageSpec['extension_config'] = @{ 'autodoc_default_options' = @{ 'inherited-members' = 1 } }
+  }
+  $packageArr += $packageSpec
+
+  # "packages" must be an array of packages even if there's only a single package in it.
+  # There are other top level elements, required_packages, target_repo etc. that aren't
+  # required for validation of a single package.
+  $docsConfigPackage = [ordered]@{
+      packages = $packageArr
+  }
+
+  # Return the JSon string
+  return $docsConfigPackage | ConvertTo-Json -Depth 10
+}
+
 # Defined in common.ps1 as:
 # $ValidateDocsMsPackagesFn = "Validate-${Language}-DocMsPackages"
-function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
+function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSourceOverride, $DocValidationImageId)
 {
   # While eng/common/scripts/Update-DocsMsMetadata.ps1 is still passing a single packageInfo, process as a batch
   if (!$PackageInfos) {
     $PackageInfos =  @($PackageInfo)
   }
-
+  #
+  $tempDirs = @()
   $allSucceeded = $true
-  foreach ($item in $PackageInfos) {
-    # If the Version is IGNORE that means it's a source install and those aren't run through ValidatePackage
-    if ($item.Version -eq 'IGNORE') {
-      continue
-    }
+  try {
+    foreach ($packageInfo in $PackageInfos) {
+      # Some packages won't have a version and this is the case when they're being onboarded manually
+      # and there's no version, only a repository and a SHA. In that case package we skip traditional
+      # package validation since the library doesn't exist yet outside of source and there's nothing
+      # the verification tools can do with this.
+      if ($packageInfo.Version -eq 'IGNORE') {
+        continue
+      }
 
-    $result = ValidatePackage `
-      -packageName $item.Name `
-      -packageVersion "==$($item.Version)" `
-      -PackageSourceOverride $PackageSourceOverride `
-      -DocValidationImageId $DocValidationImageId
+      # Create a temporary directory. The json file being passed to py2docfx will be in the root and
+      # the docs will be generated to a docsOutput subdirectory.
+      $outputRoot = New-Item `
+      -ItemType Directory `
+      -Path (Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName()))
 
-    if (!$result) {
-      $allSucceeded = $false
+      $tempDirs += $outputRoot
+
+      # Create the JSON file
+      $outputJsonFile = New-Item `
+      -ItemType File `
+      -Path (Join-Path $outputRoot ($packageInfo.Name + ".json"))
+
+      ## Write out the json file and echo the contents
+      $JsonString = Get-SinglePackageJsonForDocsValidation $packageInfo $PackageSourceOverride
+      $JsonString | Out-File $outputJsonFile
+      Write-Host "$JsonString"
+
+      # Create the docs output subdirectory. This is where the tool will generate its docs
+      $outputDocsDir = New-Item `
+      -ItemType Directory `
+      -Path (Join-Path $outputRoot "docsOutput")
+
+      # Because this would be running on a lab image, a virtual environment shouldn't be required
+      Write-Host "Executing: python -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir --no-venv-required"
+      #$py2docfxOutput = python -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir --no-venv-required 2>&1
+      python -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir --no-venv-required
+      if ($LASTEXITCODE -ne 0) {
+        LogWarning "py2docfx command failed, see output above."
+        $allSucceeded = $false
+      }
     }
   }
-
+  finally {
+    # Clean up any temp directories
+    foreach ($tempDir in $tempDirs)
+    {
+      Remove-Item -Force -Recurse $tempDir | Out-Null
+    }
+  }
   return $allSucceeded
 }
 

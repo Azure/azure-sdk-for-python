@@ -1,0 +1,9 @@
+steps:
+  - pwsh: |
+      $py2docfxVer = Get-Content eng/scripts/docs/py2docfx.version.txt
+      Write-Host "python -m pip install py2docfx==$py2docfxVer"
+      python -m pip install py2docfx==$py2docfxVer
+      # After install py2docfx,
+      Write-Host "Testing the install. Running python -m py2docfx -h to display the help"
+      python -m py2docfx -h
+    displayName: Install py2docfx for package validation
