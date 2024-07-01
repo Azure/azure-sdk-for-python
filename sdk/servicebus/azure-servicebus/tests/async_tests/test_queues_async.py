@@ -68,9 +68,8 @@ from tests.servicebus_preparer import (
     ServiceBusQueuePreparer,
     CachedServiceBusResourceGroupPreparer
 )
-from tests.utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
-from tests.utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, print_message, sleep_until_expired_async, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
@@ -1210,7 +1209,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 finally:
                     await receiver.complete_message(messages[0])
                     await receiver.complete_message(messages[1])
-                    sleep_until_expired(messages[2])
+                    await sleep_until_expired_async(messages[2])
                     with pytest.raises(MessageLockLostError):
                         await receiver.complete_message(messages[2])
 
@@ -1252,7 +1251,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message._lock_expired
                         await asyncio.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
-                        sleep_until_expired(message)
+                        await sleep_until_expired_async(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message._lock_expired
                         try:
@@ -1311,7 +1310,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message._lock_expired
                         await asyncio.sleep(15) #generate autolockrenewtimeout error by going one iteration past.
-                        sleep_until_expired(message)
+                        await sleep_until_expired_async(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message._lock_expired
                         try:
