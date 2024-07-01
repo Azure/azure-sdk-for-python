@@ -19,6 +19,7 @@ from .._pyamqp import (
     __version__,
 )
 from .._pyamqp.error import (
+    AMQPLinkError,
     ErrorCondition,
     AMQPException,
     AMQPError,
@@ -26,6 +27,7 @@ from .._pyamqp.error import (
     AMQPConnectionError,
     AuthenticationException,
     MessageException,
+    AMQPLinkError
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
@@ -678,6 +680,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         try:
             receiver._receive_context.set()
             receiver._open()
+            if receiver._handler._link.current_link_credit <= 0:
+                receiver._amqp_transport.reset_link_credit(receiver._handler, link_credit=receiver._handler._link_credit)
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(
@@ -718,7 +722,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._handler._received_messages.put((frame, message))
         else:
             # If receive_message or receive iterator is not being called, release message passed to callback.
-            receiver._handler.settle_messages(frame[1], 'released')
+            receiver._handler.settle_messages(frame[1], frame[2], 'released')
 
     @staticmethod
     def build_received_message(
@@ -759,15 +763,23 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def reset_link_credit(
-        handler: "ReceiveClient", link_credit: int
+        handler: "ReceiveClient", link_credit: int, *, drain: bool = False
     ) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClient handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit) # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        if drain:
+            link_credit_needed = 0
+        elif handler._link.current_link_credit <= 0:
+            link_credit_needed = link_credit
+        else:
+            link_credit_needed = link_credit - handler._link.current_link_credit
+        # if link_credit_needed > 0:
+        handler._link.flow(link_credit=link_credit_needed, drain=drain)
 
     @staticmethod
     def settle_message_via_receiver_link(
@@ -779,11 +791,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         # pylint: disable=protected-access
         try:
+            if handler._link._is_closed:
+                raise AMQPLinkError("Link is closed.")
             if settle_operation == MESSAGE_COMPLETE:
-                return handler.settle_messages(message._delivery_id, 'accepted')
+                return handler.settle_messages(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=False
@@ -791,6 +806,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'rejected',
                     error=AMQPError(
                         condition=DEADLETTERNAME,
@@ -804,6 +820,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if settle_operation == MESSAGE_DEFER:
                 return handler.settle_messages(
                     message._delivery_id,
+                    message._delivery_tag,
                     'modified',
                     delivery_failed=True,
                     undeliverable_here=True
@@ -811,8 +828,24 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
+        except AMQPLinkError as le:
+            # Remove all Dispositions sent because we have lost the link sent on
+            message._receiver._handler._link._remove_pending_deliveries()
+            if (
+                le.condition == ErrorCondition.InternalError
+                and isinstance(le.description, str)
+                and le.description.startswith("Delivery tag")
+            ):
+                raise RuntimeError("Link error occurred during settle operation.") from le
+            
+            # TODO: fix logger
+            import logging
+            raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
+
+            # raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
+
         except AMQPConnectionError as e:
-            raise RuntimeError("Connection lost during settle operation.") from e
+            raise ServiceBusConnectionError(message="Connection lost during settle operation.") from e
 
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
@@ -1053,3 +1086,92 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
         return exception
+
+    @staticmethod
+    def receive_loop(
+        receiver: "ServiceBusReceiver",
+        amqp_receive_client: "ReceiveClient",
+        max_message_count: int,
+        batch: List["Message"],
+        abs_timeout,
+        timeout,
+        **kwargs: Any
+    ) -> List["ServiceBusReceivedMessage"]:
+        receive_drain_timeout = 2 # 200 ms
+        first_message_received = expired = False
+        receiving = True
+        sent_drain = False
+        time_sent = time.time()
+        # If we have sent a drain, but have not yet received the drain response, we should continue to receive
+        while receiving and not expired and len(batch) < max_message_count:
+            while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
+                if (
+                    abs_timeout
+                    and receiver._amqp_transport.get_current_time(amqp_receive_client)
+                    > abs_timeout
+                ):
+                    # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
+                    if not sent_drain:
+                        receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
+                        sent_drain = True
+                        time_sent = time.time()
+                        break
+
+                    # If we have sent a drain and we havent received messages in X time or gotten back the responding flow, lets close the link
+                    if (not receiver._handler._link._received_drain_response and sent_drain) and (time.time() - time_sent > receive_drain_timeout):
+                        expired = True
+                        receiver._handler._link.detach(close=True, error="Have not received back drain response in time")
+                        break
+
+                    # if you have received the drain -> break out of the loop
+                    if receiver._handler._link._received_drain_response:
+                        expired = True
+                        break
+        
+                before = amqp_receive_client._received_messages.qsize()
+                receiving = amqp_receive_client.do_work()
+                received = amqp_receive_client._received_messages.qsize() - before
+                if (
+                    not first_message_received
+                    and amqp_receive_client._received_messages.qsize() > 0
+                    and received > 0
+                ):
+                    # first message(s) received, continue receiving for some time
+                    first_message_received = True
+                    abs_timeout = (
+                        receiver._amqp_transport.get_current_time(amqp_receive_client)
+                        + receiver._further_pull_receive_timeout
+                    )
+            while (
+                not amqp_receive_client._received_messages.empty()
+                and len(batch) < max_message_count
+            ):
+                batch.append(amqp_receive_client._received_messages.get())
+                amqp_receive_client._received_messages.task_done()
+
+            # if time.time() - time_sent > receive_drain_timeout:
+            #     print("DRAIN TIMEOUT HIT, closing receiver link.")
+            #     expired = True
+            #     # Close the receiver link because it is dead and reopen a new one.
+            #     # All settlements of current messages will be done by the mgmt link.
+            #     receiver._handler._link.detach(close=True)
+            #     # receiver._handler._link = None
+            #     # receiver._handler._client_ready()
+            #     # Set receive context to False to stop receiving messages.
+            #     receiver._receive_context.clear()
+            #     break
+
+        # Before we return batch, if prefetch is set, receive those messages as well.
+        # sent_drain = False
+        # if receiver._prefetch_count > 0:
+        #     while sent_drain == receiver._handler._link._drain_state:
+        #         if not sent_drain:
+        #             receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
+        #             sent_drain = True
+
+        #         # this prevents us from sending a new Flow frame if we have already sent a Drain frame
+        #         if sent_drain != receiver._handler._link._drain_state:
+        #             break
+        #         receiving = amqp_receive_client.do_work()
+              
+        return [receiver._build_received_message(message) for message in batch]

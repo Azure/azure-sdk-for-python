@@ -347,10 +347,11 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             # failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
                 self._session._lock_lost = True  # type: ignore
-                self._close_handler()
+                # self._close_handler()
                 raise error
         except AttributeError:
             pass
+
 
         if error._shutdown_handler:
             self._close_handler()
@@ -377,13 +378,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # we are not able to receive the detach frame by calling uamqp connection.work(),
         # Eventually this should be a fix in the uamqp library.
         # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
-        try:
-            if self._session and (
-                self._session._lock_lost or self._session._lock_expired
-            ):
-                raise SessionLockLostError(error=self._session.auto_renew_error)
-        except AttributeError:
-            pass
+        # try:
+        #     if self._session and (
+        #         self._session._lock_lost or self._session._lock_expired
+        #     ):
+        #         raise SessionLockLostError(error=self._session.auto_renew_error)
+        # except AttributeError:
+        #     pass
 
     def _do_retryable_operation( # pylint: disable=inconsistent-return-statements
         self,

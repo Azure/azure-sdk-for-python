@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
+from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast, List
 
 try:
     from uamqp import (
@@ -20,6 +20,7 @@ try:
     from .._async_utils import get_running_loop
     from ..._common.tracing import get_receive_links, receive_trace_context_manager
     from ..._common.constants import ServiceBusReceiveMode
+    from ...exceptions import MessageLockLostError
 
     if TYPE_CHECKING:
         from uamqp import AMQPClientAsync, Message
@@ -247,7 +248,7 @@ try:
 
         @staticmethod
         async def reset_link_credit_async(
-            handler: "ReceiveClientAsync", link_credit: int
+            handler: "ReceiveClientAsync", link_credit: int,  *, drain = False
         ) -> None:
             """
             Resets the link credit on the link.
@@ -265,6 +266,14 @@ try:
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
+        # uamqp doesn't have the ability to wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+            if not handler._session and message._lock_expired:
+                raise MessageLockLostError(
+                    message="The lock on the message lock has expired.",
+                    error=message.auto_renew_error,
+                )
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(
@@ -348,5 +357,48 @@ try:
                 timeout=timeout * UamqpTransportAsync.TIMEOUT_FACTOR if timeout else None,
                 callback=functools.partial(callback, amqp_transport=UamqpTransportAsync)
             )
+        
+        @staticmethod
+        async def receive_loop_async(
+            receiver,
+            amqp_receive_client: "ReceiveClientAsync",
+            max_message_count: int,
+            batch,
+            abs_timeout,
+            timeout,
+            **kwargs: Any
+        ) -> List["ServiceBusReceivedMessage"]:
+            first_message_received = expired = False
+            receiving = True
+            drain_receive = False
+            while receiving and not expired and len(batch) < max_message_count:
+                while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
+                    if (
+                        abs_timeout
+                        and receiver._amqp_transport.get_current_time(amqp_receive_client)
+                        > abs_timeout
+                    ):
+                        expired = True
+                        break
+                    before = amqp_receive_client._received_messages.qsize()
+                    receiving = await amqp_receive_client.do_work_async()
+                    received = amqp_receive_client._received_messages.qsize() - before
+                    if (
+                        not first_message_received
+                        and amqp_receive_client._received_messages.qsize() > 0
+                        and received > 0
+                    ):
+                        # first message(s) received, continue receiving for some time
+                        first_message_received = True
+                        abs_timeout = (
+                            receiver._amqp_transport.get_current_time(amqp_receive_client)
+                            + receiver._further_pull_receive_timeout
+                        )
+                while (
+                    not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count
+                ):
+                    batch.append(amqp_receive_client._received_messages.get())
+                    amqp_receive_client._received_messages.task_done()
+            return [receiver._build_received_message(message) for message in batch]
 except ImportError:
     pass
