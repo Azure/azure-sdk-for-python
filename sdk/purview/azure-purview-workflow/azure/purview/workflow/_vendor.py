@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from ._serialization import Deserializer, Serializer
 
 
-def _format_url_section(template, **kwargs):
+def _format_url_section(template, **kwargs):  # pylint: disable=inconsistent-return-statements
     components = template.split("/")
     while components:
         try:
