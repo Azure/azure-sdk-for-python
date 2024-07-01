@@ -5392,7 +5392,7 @@ class OcrSkill(SearchIndexerSkill):
      "os", "ps", "fa", "pl", "pt", "pa", "ksh", "ro", "rm", "ru", "sck", "sm", "sa", "sat", "sco",
      "gd", "sr", "sr-Cyrl", "sr-Latn", "xsr", "srx", "sms", "sk", "sl", "so", "sma", "es", "sw",
      "sv", "tg", "tt", "tet", "thf", "to", "tr", "tk", "tyv", "hsb", "ur", "ug", "uz-arab",
-     "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu", and "unk".
+     "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu", "unk", and "is".
     :vartype default_language_code: str or ~azure.search.documents.indexes.models.OcrSkillLanguage
     :ivar should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
@@ -5459,7 +5459,7 @@ class OcrSkill(SearchIndexerSkill):
          "no", "oc", "os", "ps", "fa", "pl", "pt", "pa", "ksh", "ro", "rm", "ru", "sck", "sm", "sa",
          "sat", "sco", "gd", "sr", "sr-Cyrl", "sr-Latn", "xsr", "srx", "sms", "sk", "sl", "so", "sma",
          "es", "sw", "sv", "tg", "tt", "tet", "thf", "to", "tr", "tk", "tyv", "hsb", "ur", "ug",
-         "uz-arab", "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu" and "unk".
+         "uz-arab", "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu", "unk", and "is".
         :paramtype default_language_code: str or
          ~azure.search.documents.indexes.models.OcrSkillLanguage
         :keyword should_detect_orientation: A value indicating to turn orientation detection on or not.
@@ -8888,7 +8888,7 @@ class SplitSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attri
     :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
      Known values are: "am", "bs", "cs", "da", "de", "en", "es", "et", "fi", "fr", "he", "hi", "hr",
      "hu", "id", "is", "it", "ja", "ko", "lv", "nb", "nl", "pl", "pt", "pt-br", "ru", "sk", "sl",
-     "sr", "sv", "tr", "ur", and "zh".
+     "sr", "sv", "tr", "ur", "zh", and "is".
     :vartype default_language_code: str or
      ~azure.search.documents.indexes.models.SplitSkillLanguage
     :ivar text_split_mode: A value indicating which split mode to perform. Known values are:
@@ -8962,7 +8962,7 @@ class SplitSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attri
         :keyword default_language_code: A value indicating which language code to use. Default is
          ``en``. Known values are: "am", "bs", "cs", "da", "de", "en", "es", "et", "fi", "fr", "he",
          "hi", "hr", "hu", "id", "is", "it", "ja", "ko", "lv", "nb", "nl", "pl", "pt", "pt-br", "ru",
-         "sk", "sl", "sr", "sv", "tr", "ur", and "zh".
+         "sk", "sl", "sr", "sv", "tr", "ur", "zh", and "is".
         :paramtype default_language_code: str or
          ~azure.search.documents.indexes.models.SplitSkillLanguage
         :keyword text_split_mode: A value indicating which split mode to perform. Known values are:
@@ -9519,7 +9519,7 @@ class TextTranslationSkill(SearchIndexerSkill):
      "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
      "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
      "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
-     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
     :vartype default_to_language_code: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     :ivar default_from_language_code: The language code to translate documents from for documents
@@ -9528,7 +9528,7 @@ class TextTranslationSkill(SearchIndexerSkill):
      "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
      "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
      "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
-     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
     :vartype default_from_language_code: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     :ivar suggested_from: The language code to translate documents from when neither the
@@ -9538,7 +9538,8 @@ class TextTranslationSkill(SearchIndexerSkill):
      "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
      "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
      "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
-     "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+     "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and
+     "is".
     :vartype suggested_from: str or
      ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
     """
@@ -9599,7 +9600,7 @@ class TextTranslationSkill(SearchIndexerSkill):
          "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
          "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
          "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
-         "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+         "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
         :paramtype default_to_language_code: str or
          ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
         :keyword default_from_language_code: The language code to translate documents from for
@@ -9608,7 +9609,7 @@ class TextTranslationSkill(SearchIndexerSkill):
          "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
          "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
          "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
-         "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+         "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
         :paramtype default_from_language_code: str or
          ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
         :keyword suggested_from: The language code to translate documents from when neither the
@@ -9618,7 +9619,8 @@ class TextTranslationSkill(SearchIndexerSkill):
          "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
          "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
          "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
-         "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
+         "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and
+         "is".
         :paramtype suggested_from: str or
          ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
         """
@@ -9973,32 +9975,12 @@ class WebApiParameters(_serialization.Model):
         self.auth_identity = auth_identity
 
 
-class WebApiSkill(SearchIndexerSkill, WebApiParameters):  # pylint: disable=too-many-instance-attributes
+class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attributes
     """A skill that can call a Web API endpoint, allowing you to extend a skillset by having it call
     your custom code.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar uri: The URI of the Web API providing the vectorizer.
-    :vartype uri: str
-    :ivar http_headers: The headers required to make the HTTP request.
-    :vartype http_headers: dict[str, str]
-    :ivar http_method: The method for the HTTP request.
-    :vartype http_method: str
-    :ivar timeout: The desired timeout for the request. Default is 30 seconds.
-    :vartype timeout: ~datetime.timedelta
-    :ivar auth_resource_id: Applies to custom endpoints that connect to external code in an Azure
-     function or some other application that provides the transformations. This value should be the
-     application ID created for the function or app when it was registered with Azure Active
-     Directory. When specified, the vectorization connects to the function or app using a managed ID
-     (either system or user-assigned) of the search service and the access token of the function or
-     app, using this value as the resource id for creating the scope of the access token.
-    :vartype auth_resource_id: str
-    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
-     authResourceId is provided and it's not specified, the system-assigned managed identity is
-     used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
-     If set to "none", the value of this property is cleared.
-    :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar odata_type: A URI fragment specifying the type of skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
@@ -10017,34 +9999,55 @@ class WebApiSkill(SearchIndexerSkill, WebApiParameters):  # pylint: disable=too-
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+    :ivar uri: The url for the Web API. Required.
+    :vartype uri: str
+    :ivar http_headers: The headers required to make the http request.
+    :vartype http_headers: dict[str, str]
+    :ivar http_method: The method for the http request.
+    :vartype http_method: str
+    :ivar timeout: The desired timeout for the request. Default is 30 seconds.
+    :vartype timeout: ~datetime.timedelta
     :ivar batch_size: The desired batch size which indicates number of documents.
     :vartype batch_size: int
     :ivar degree_of_parallelism: If set, the number of parallel calls that can be made to the Web
      API.
     :vartype degree_of_parallelism: int
+    :ivar auth_resource_id: Applies to custom skills that connect to external code in an Azure
+     function or some other application that provides the transformations. This value should be the
+     application ID created for the function or app when it was registered with Azure Active
+     Directory. When specified, the custom skill connects to the function or app using a managed ID
+     (either system or user-assigned) of the search service and the access token of the function or
+     app, using this value as the resource id for creating the scope of the access token.
+    :vartype auth_resource_id: str
+    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+     authResourceId is provided and it's not specified, the system-assigned managed identity is
+     used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
+     If set to "none", the value of this property is cleared.
+    :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     """
 
     _validation = {
         "odata_type": {"required": True},
         "inputs": {"required": True},
         "outputs": {"required": True},
+        "uri": {"required": True},
     }
 
     _attribute_map = {
-        "uri": {"key": "uri", "type": "str"},
-        "http_headers": {"key": "httpHeaders", "type": "{str}"},
-        "http_method": {"key": "httpMethod", "type": "str"},
-        "timeout": {"key": "timeout", "type": "duration"},
-        "auth_resource_id": {"key": "authResourceId", "type": "str"},
-        "auth_identity": {"key": "authIdentity", "type": "SearchIndexerDataIdentity"},
         "odata_type": {"key": "@odata\\.type", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "context": {"key": "context", "type": "str"},
         "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
         "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
+        "uri": {"key": "uri", "type": "str"},
+        "http_headers": {"key": "httpHeaders", "type": "{str}"},
+        "http_method": {"key": "httpMethod", "type": "str"},
+        "timeout": {"key": "timeout", "type": "duration"},
         "batch_size": {"key": "batchSize", "type": "int"},
         "degree_of_parallelism": {"key": "degreeOfParallelism", "type": "int"},
+        "auth_resource_id": {"key": "authResourceId", "type": "str"},
+        "auth_identity": {"key": "authIdentity", "type": "SearchIndexerDataIdentity"},
     }
 
     def __init__(
@@ -10052,40 +10055,20 @@ class WebApiSkill(SearchIndexerSkill, WebApiParameters):  # pylint: disable=too-
         *,
         inputs: List["_models.InputFieldMappingEntry"],
         outputs: List["_models.OutputFieldMappingEntry"],
-        uri: Optional[str] = None,
-        http_headers: Optional[Dict[str, str]] = None,
-        http_method: Optional[str] = None,
-        timeout: Optional[datetime.timedelta] = None,
-        auth_resource_id: Optional[str] = None,
-        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        uri: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
+        http_headers: Optional[Dict[str, str]] = None,
+        http_method: Optional[str] = None,
+        timeout: Optional[datetime.timedelta] = None,
         batch_size: Optional[int] = None,
         degree_of_parallelism: Optional[int] = None,
+        auth_resource_id: Optional[str] = None,
+        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword uri: The URI of the Web API providing the vectorizer.
-        :paramtype uri: str
-        :keyword http_headers: The headers required to make the HTTP request.
-        :paramtype http_headers: dict[str, str]
-        :keyword http_method: The method for the HTTP request.
-        :paramtype http_method: str
-        :keyword timeout: The desired timeout for the request. Default is 30 seconds.
-        :paramtype timeout: ~datetime.timedelta
-        :keyword auth_resource_id: Applies to custom endpoints that connect to external code in an
-         Azure function or some other application that provides the transformations. This value should
-         be the application ID created for the function or app when it was registered with Azure Active
-         Directory. When specified, the vectorization connects to the function or app using a managed ID
-         (either system or user-assigned) of the search service and the access token of the function or
-         app, using this value as the resource id for creating the scope of the access token.
-        :paramtype auth_resource_id: str
-        :keyword auth_identity: The user-assigned managed identity used for outbound connections. If an
-         authResourceId is provided and it's not specified, the system-assigned managed identity is
-         used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
-         If set to "none", the value of this property is cleared.
-        :paramtype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
          prefixed with the character '#'.
@@ -10103,40 +10086,42 @@ class WebApiSkill(SearchIndexerSkill, WebApiParameters):  # pylint: disable=too-
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
+        :keyword uri: The url for the Web API. Required.
+        :paramtype uri: str
+        :keyword http_headers: The headers required to make the http request.
+        :paramtype http_headers: dict[str, str]
+        :keyword http_method: The method for the http request.
+        :paramtype http_method: str
+        :keyword timeout: The desired timeout for the request. Default is 30 seconds.
+        :paramtype timeout: ~datetime.timedelta
         :keyword batch_size: The desired batch size which indicates number of documents.
         :paramtype batch_size: int
         :keyword degree_of_parallelism: If set, the number of parallel calls that can be made to the
          Web API.
         :paramtype degree_of_parallelism: int
+        :keyword auth_resource_id: Applies to custom skills that connect to external code in an Azure
+         function or some other application that provides the transformations. This value should be the
+         application ID created for the function or app when it was registered with Azure Active
+         Directory. When specified, the custom skill connects to the function or app using a managed ID
+         (either system or user-assigned) of the search service and the access token of the function or
+         app, using this value as the resource id for creating the scope of the access token.
+        :paramtype auth_resource_id: str
+        :keyword auth_identity: The user-assigned managed identity used for outbound connections. If an
+         authResourceId is provided and it's not specified, the system-assigned managed identity is
+         used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
+         If set to "none", the value of this property is cleared.
+        :paramtype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         """
-        super().__init__(
-            name=name,
-            description=description,
-            context=context,
-            inputs=inputs,
-            outputs=outputs,
-            uri=uri,
-            http_headers=http_headers,
-            http_method=http_method,
-            timeout=timeout,
-            auth_resource_id=auth_resource_id,
-            auth_identity=auth_identity,
-            **kwargs
-        )
+        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type: str = "#Microsoft.Skills.Custom.WebApiSkill"
         self.uri = uri
         self.http_headers = http_headers
         self.http_method = http_method
         self.timeout = timeout
-        self.auth_resource_id = auth_resource_id
-        self.auth_identity = auth_identity
-        self.odata_type: str = "#Microsoft.Skills.Custom.WebApiSkill"
         self.batch_size = batch_size
         self.degree_of_parallelism = degree_of_parallelism
-        self.name = name
-        self.description = description
-        self.context = context
-        self.inputs = inputs
-        self.outputs = outputs
+        self.auth_resource_id = auth_resource_id
+        self.auth_identity = auth_identity
 
 
 class WebApiVectorizer(VectorSearchVectorizer):
