@@ -303,7 +303,7 @@ class SchemaRegistryClient:
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client._get_schema_by_version(  # type: ignore
+            http_response, schema_properties = self._generated_client._get_schema_by_version( # pylint:disable=protected-access # type: ignore
                 group_name=group_name,
                 schema_name=name,
                 schema_version=version,
