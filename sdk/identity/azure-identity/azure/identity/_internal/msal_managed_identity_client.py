@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Dict, cast
+from typing import Any, Optional, Dict, cast, Union
 import abc
 import time
 import logging
@@ -55,13 +55,15 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         error_message = self.get_unavailable_message(error_desc)
         raise CredentialUnavailableError(error_message)
 
-    def get_managed_identity(self, **kwargs: Any) -> msal.ManagedIdentity:
+    def get_managed_identity(
+        self, **kwargs: Any
+    ) -> Union[msal.UserAssignedManagedIdentity, msal.SystemAssignedManagedIdentity]:
         """
         Get the managed identity configuration.
         :keyword str client_id: The client ID of the user-assigned managed identity.
         :keyword dict identity_config: The identity configuration.
 
-        :rtype: msal.ManagedIdentity
+        :rtype: msal.UserAssignedManagedIdentity or msal.SystemAssignedManagedIdentity
         :return: The managed identity configuration.
         """
         if "client_id" in kwargs and kwargs["client_id"]:
