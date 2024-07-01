@@ -1,4 +1,4 @@
-t -e ../../../tools/azure-sdk-tools
+-e ../../../tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
 ../../core/azure-mgmt-core
