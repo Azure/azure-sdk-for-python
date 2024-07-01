@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import msal
 import functools
 import os
 from typing import Optional, Dict, Any

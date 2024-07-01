@@ -104,7 +104,10 @@ class ImdsCredential(MsalManagedIdentityClient):
             # 400 in response to a token request indicates managed identity is disabled,
             # or the identity with the specified client_id is not available
             if ex.status_code == 400:
-                error_message = "ManagedIdentityCredential authentication unavailable. No identity has been assigned to this resource."
+                error_message = (
+                    "ManagedIdentityCredential authentication unavailable. "
+                    "No identity has been assigned to this resource."
+                )
 
                 if ex.message:
                     error_message += f" Error: {ex.message}"

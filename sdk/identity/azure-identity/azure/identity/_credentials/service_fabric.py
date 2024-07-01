@@ -9,8 +9,6 @@ from typing import Dict, Optional, Any
 from azure.core.pipeline.transport import HttpRequest
 
 from .._constants import EnvironmentVariables
-from .._internal.managed_identity_base import ManagedIdentityBase
-from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 

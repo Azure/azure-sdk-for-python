@@ -18,9 +18,10 @@ from .._exceptions import CredentialUnavailableError
 _LOGGER = logging.getLogger(__name__)
 
 
-class MsalManagedIdentityClient(abc.ABC):  # pylint: disable=too-many-instance-attributes
+class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-version-keyword
     """Base class for managed identity client wrapping MSAL ManagedIdentityClient."""
 
+    # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(self, **kwargs: Any) -> None:
         self._settings = kwargs
         self._client = MsalClient(**kwargs)
@@ -41,7 +42,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint: disable=too-many-instance-a
     def close(self) -> None:
         self.__exit__()
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
@@ -124,13 +125,13 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint: disable=too-many-instance-a
             )
             raise
 
-    def __getstate__(self) -> Dict[str, Any]:
+    def __getstate__(self) -> Dict[str, Any]:  # pylint:disable=client-method-name-no-double-underscore
         state = self.__dict__.copy()
         # Remove the non-picklable entries
         del state["_msal_client"]
         return state
 
-    def __setstate__(self, state: Dict[str, Any]) -> None:
+    def __setstate__(self, state: Dict[str, Any]) -> None:  # pylint:disable=client-method-name-no-double-underscore
         self.__dict__.update(state)
         # Re-create the unpickable entries
         managed_identity = self.get_managed_identity(**self._settings)
