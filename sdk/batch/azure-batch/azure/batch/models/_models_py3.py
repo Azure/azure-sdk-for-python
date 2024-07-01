@@ -24,7 +24,8 @@ class AccountListPoolNodeCountsOptions(Model):
      Default value: 10 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -69,7 +70,8 @@ class AccountListSupportedImagesOptions(Model):
      A maximum of 1000 results will be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -134,7 +136,8 @@ class ApplicationGetOptions(Model):
     """Additional parameters for get operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -171,7 +174,8 @@ class ApplicationListOptions(Model):
      A maximum of 1000 applications can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -285,6 +289,43 @@ class AuthenticationTokenSettings(Model):
     def __init__(self, *, access=None, **kwargs) -> None:
         super(AuthenticationTokenSettings, self).__init__(**kwargs)
         self.access = access
+
+
+class AutomaticOSUpgradePolicy(Model):
+    """The configuration parameters used for performing automatic OS upgrade.
+
+    :param disable_automatic_rollback: Whether OS image rollback feature
+     should be disabled.
+    :type disable_automatic_rollback: bool
+    :param enable_automatic_os_upgrade: Indicates whether OS upgrades should
+     automatically be applied to scale set instances in a rolling fashion when
+     a newer version of the OS image becomes available. <br /><br /> If this is
+     set to true for Windows based pools,
+     [WindowsConfiguration.enableAutomaticUpdates](https://learn.microsoft.com/en-us/rest/api/batchservice/pool/add?tabs=HTTP#windowsconfiguration)
+     cannot be set to true.
+    :type enable_automatic_os_upgrade: bool
+    :param use_rolling_upgrade_policy: Indicates whether rolling upgrade
+     policy should be used during Auto OS Upgrade. Auto OS Upgrade will
+     fallback to the default policy if no policy is defined on the VMSS.
+    :type use_rolling_upgrade_policy: bool
+    :param os_rolling_upgrade_deferral: Defer OS upgrades on the TVMs if they
+     are running tasks.
+    :type os_rolling_upgrade_deferral: bool
+    """
+
+    _attribute_map = {
+        'disable_automatic_rollback': {'key': 'disableAutomaticRollback', 'type': 'bool'},
+        'enable_automatic_os_upgrade': {'key': 'enableAutomaticOSUpgrade', 'type': 'bool'},
+        'use_rolling_upgrade_policy': {'key': 'useRollingUpgradePolicy', 'type': 'bool'},
+        'os_rolling_upgrade_deferral': {'key': 'osRollingUpgradeDeferral', 'type': 'bool'},
+    }
+
+    def __init__(self, *, disable_automatic_rollback: bool=None, enable_automatic_os_upgrade: bool=None, use_rolling_upgrade_policy: bool=None, os_rolling_upgrade_deferral: bool=None, **kwargs) -> None:
+        super(AutomaticOSUpgradePolicy, self).__init__(**kwargs)
+        self.disable_automatic_rollback = disable_automatic_rollback
+        self.enable_automatic_os_upgrade = enable_automatic_os_upgrade
+        self.use_rolling_upgrade_policy = use_rolling_upgrade_policy
+        self.os_rolling_upgrade_deferral = os_rolling_upgrade_deferral
 
 
 class AutoPoolSpecification(Model):
@@ -667,7 +708,8 @@ class CertificateAddOptions(Model):
     """Additional parameters for add operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -742,7 +784,8 @@ class CertificateCancelDeletionOptions(Model):
     """Additional parameters for cancel_deletion operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -776,7 +819,8 @@ class CertificateDeleteOptions(Model):
     """Additional parameters for delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -812,7 +856,8 @@ class CertificateGetOptions(Model):
     :param select: An OData $select clause.
     :type select: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -857,7 +902,8 @@ class CertificateListOptions(Model):
      A maximum of 1000 Certificates can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -1420,6 +1466,9 @@ class CloudPool(Model):
      'simplified'
     :vartype current_node_communication_mode: str or
      ~azure.batch.models.NodeCommunicationMode
+    :param upgrade_policy: The upgrade policy for the Pool. Describes an
+     upgrade policy - automatic, manual, or rolling.
+    :type upgrade_policy: ~azure.batch.models.UpgradePolicy
     :param resource_tags: The user-defined tags to be associated with the
      Azure Batch Pool. When specified, these tags are propagated to the backing
      Azure resources associated with the pool. This property can only be
@@ -1471,10 +1520,11 @@ class CloudPool(Model):
         'identity': {'key': 'identity', 'type': 'BatchPoolIdentity'},
         'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
         'current_node_communication_mode': {'key': 'currentNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'upgrade_policy': {'key': 'upgradePolicy', 'type': 'UpgradePolicy'},
         'resource_tags': {'key': 'resourceTags', 'type': '{str}'},
     }
 
-    def __init__(self, *, id: str=None, display_name: str=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes: int=None, current_low_priority_nodes: int=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None, mount_configuration=None, identity=None, target_node_communication_mode=None, resource_tags=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, display_name: str=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes: int=None, current_low_priority_nodes: int=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None, mount_configuration=None, identity=None, target_node_communication_mode=None, upgrade_policy=None, resource_tags=None, **kwargs) -> None:
         super(CloudPool, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -1514,6 +1564,7 @@ class CloudPool(Model):
         self.identity = identity
         self.target_node_communication_mode = target_node_communication_mode
         self.current_node_communication_mode = None
+        self.upgrade_policy = upgrade_policy
         self.resource_tags = resource_tags
 
 
@@ -1778,7 +1829,7 @@ class ComputeNode(Model):
      rescheduled when another Compute Node becomes available. Possible values
      include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
      'creating', 'starting', 'waitingForStartTask', 'startTaskFailed',
-     'unknown', 'leavingPool', 'offline', 'preempted'
+     'unknown', 'leavingPool', 'offline', 'preempted', 'upgradingOS'
     :type state: str or ~azure.batch.models.ComputeNodeState
     :param scheduling_state: Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or ~azure.batch.models.SchedulingState
@@ -1919,7 +1970,8 @@ class ComputeNodeAddUserOptions(Model):
     """Additional parameters for add_user operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -1953,7 +2005,8 @@ class ComputeNodeDeleteUserOptions(Model):
     """Additional parameters for delete_user operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -1987,7 +2040,8 @@ class ComputeNodeDisableSchedulingOptions(Model):
     """Additional parameters for disable_scheduling operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2021,7 +2075,8 @@ class ComputeNodeEnableSchedulingOptions(Model):
     """Additional parameters for enable_scheduling operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2103,7 +2158,8 @@ class ComputeNodeExtensionGetOptions(Model):
     :param select: An OData $select clause.
     :type select: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2144,7 +2200,8 @@ class ComputeNodeExtensionListOptions(Model):
      A maximum of 1000 Compute Nodes can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2184,7 +2241,8 @@ class ComputeNodeGetOptions(Model):
     :param select: An OData $select clause.
     :type select: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2220,7 +2278,8 @@ class ComputeNodeGetRemoteDesktopOptions(Model):
     """Additional parameters for get_remote_desktop operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2254,7 +2313,8 @@ class ComputeNodeGetRemoteLoginSettingsOptions(Model):
     """Additional parameters for get_remote_login_settings operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2378,7 +2438,8 @@ class ComputeNodeListOptions(Model):
      A maximum of 1000 Compute Nodes can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2418,7 +2479,8 @@ class ComputeNodeRebootOptions(Model):
     """Additional parameters for reboot operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2452,7 +2514,8 @@ class ComputeNodeReimageOptions(Model):
     """Additional parameters for reimage operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2486,7 +2549,8 @@ class ComputeNodeUpdateUserOptions(Model):
     """Additional parameters for update_user operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2520,7 +2584,8 @@ class ComputeNodeUploadBatchServiceLogsOptions(Model):
     """Additional parameters for upload_batch_service_logs operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -2966,7 +3031,8 @@ class FileDeleteFromComputeNodeOptions(Model):
     """Additional parameters for delete_from_compute_node operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3000,7 +3066,8 @@ class FileDeleteFromTaskOptions(Model):
     """Additional parameters for delete_from_task operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3034,7 +3101,8 @@ class FileGetFromComputeNodeOptions(Model):
     """Additional parameters for get_from_compute_node operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3086,7 +3154,8 @@ class FileGetFromTaskOptions(Model):
     """Additional parameters for get_from_task operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3138,7 +3207,8 @@ class FileGetPropertiesFromComputeNodeOptions(Model):
     """Additional parameters for get_properties_from_compute_node operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3185,7 +3255,8 @@ class FileGetPropertiesFromTaskOptions(Model):
     """Additional parameters for get_properties_from_task operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3239,7 +3310,8 @@ class FileListFromComputeNodeOptions(Model):
      A maximum of 1000 files can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3284,7 +3356,8 @@ class FileListFromTaskOptions(Model):
      A maximum of 1000 files can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3650,7 +3723,8 @@ class JobAddOptions(Model):
     """Additional parameters for add operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3854,7 +3928,8 @@ class JobDeleteOptions(Model):
     """Additional parameters for delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3915,7 +3990,8 @@ class JobDisableOptions(Model):
     """Additional parameters for disable operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -3999,7 +4075,8 @@ class JobEnableOptions(Model):
     """Additional parameters for enable operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -4124,7 +4201,8 @@ class JobGetOptions(Model):
     :param expand: An OData $expand clause.
     :type expand: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -4189,7 +4267,8 @@ class JobGetTaskCountsOptions(Model):
     """Additional parameters for get_task_counts operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -4234,7 +4313,8 @@ class JobListFromJobScheduleOptions(Model):
      A maximum of 1000 Jobs can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -4287,7 +4367,8 @@ class JobListOptions(Model):
      A maximum of 1000 Jobs can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -4339,7 +4420,8 @@ class JobListPreparationAndReleaseTaskStatusOptions(Model):
      A maximum of 1000 Tasks can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -4592,7 +4674,8 @@ class JobPatchOptions(Model):
     """Additional parameters for patch operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5146,7 +5229,8 @@ class JobScheduleAddOptions(Model):
     """Additional parameters for add operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5229,7 +5313,8 @@ class JobScheduleDeleteOptions(Model):
     """Additional parameters for delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5290,7 +5375,8 @@ class JobScheduleDisableOptions(Model):
     """Additional parameters for disable operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5351,7 +5437,8 @@ class JobScheduleEnableOptions(Model):
     """Additional parameters for enable operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5443,7 +5530,8 @@ class JobScheduleExistsOptions(Model):
     """Additional parameters for exists operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5508,7 +5596,8 @@ class JobScheduleGetOptions(Model):
     :param expand: An OData $expand clause.
     :type expand: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5584,7 +5673,8 @@ class JobScheduleListOptions(Model):
      A maximum of 1000 Job Schedules can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5626,7 +5716,8 @@ class JobSchedulePatchOptions(Model):
     """Additional parameters for patch operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5820,7 +5911,8 @@ class JobScheduleTerminateOptions(Model):
     """Additional parameters for terminate operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -5881,7 +5973,8 @@ class JobScheduleUpdateOptions(Model):
     """Additional parameters for update operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -6249,7 +6342,8 @@ class JobTerminateOptions(Model):
     """Additional parameters for terminate operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -6326,7 +6420,8 @@ class JobUpdateOptions(Model):
     """Additional parameters for update operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -6872,6 +6967,9 @@ class NodeCounts(Model):
     :param waiting_for_start_task: Required. The number of Compute Nodes in
      the waitingForStartTask state.
     :type waiting_for_start_task: int
+    :param upgrading_os: Required. The number of Compute Nodes in the
+     upgradingOS state.
+    :type upgrading_os: int
     :param total: Required. The total number of Compute Nodes.
     :type total: int
     """
@@ -6890,6 +6988,7 @@ class NodeCounts(Model):
         'unknown': {'required': True},
         'unusable': {'required': True},
         'waiting_for_start_task': {'required': True},
+        'upgrading_os': {'required': True},
         'total': {'required': True},
     }
 
@@ -6907,10 +7006,11 @@ class NodeCounts(Model):
         'unknown': {'key': 'unknown', 'type': 'int'},
         'unusable': {'key': 'unusable', 'type': 'int'},
         'waiting_for_start_task': {'key': 'waitingForStartTask', 'type': 'int'},
+        'upgrading_os': {'key': 'upgradingOS', 'type': 'int'},
         'total': {'key': 'total', 'type': 'int'},
     }
 
-    def __init__(self, *, creating: int, idle: int, offline: int, preempted: int, rebooting: int, reimaging: int, running: int, starting: int, start_task_failed: int, leaving_pool: int, unknown: int, unusable: int, waiting_for_start_task: int, total: int, **kwargs) -> None:
+    def __init__(self, *, creating: int, idle: int, offline: int, preempted: int, rebooting: int, reimaging: int, running: int, starting: int, start_task_failed: int, leaving_pool: int, unknown: int, unusable: int, waiting_for_start_task: int, upgrading_os: int, total: int, **kwargs) -> None:
         super(NodeCounts, self).__init__(**kwargs)
         self.creating = creating
         self.idle = idle
@@ -6925,6 +7025,7 @@ class NodeCounts(Model):
         self.unknown = unknown
         self.unusable = unusable
         self.waiting_for_start_task = waiting_for_start_task
+        self.upgrading_os = upgrading_os
         self.total = total
 
 
@@ -7317,7 +7418,8 @@ class PoolAddOptions(Model):
     """Additional parameters for add operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -7482,6 +7584,9 @@ class PoolAddParameter(Model):
      include: 'default', 'classic', 'simplified'
     :type target_node_communication_mode: str or
      ~azure.batch.models.NodeCommunicationMode
+    :param upgrade_policy: The upgrade policy for the Pool. Describes an
+     upgrade policy - automatic, manual, or rolling.
+    :type upgrade_policy: ~azure.batch.models.UpgradePolicy
     :param resource_tags: The user-defined tags to be associated with the
      Azure Batch Pool. When specified, these tags are propagated to the backing
      Azure resources associated with the pool. This property can only be
@@ -7519,10 +7624,11 @@ class PoolAddParameter(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
         'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'upgrade_policy': {'key': 'upgradePolicy', 'type': 'UpgradePolicy'},
         'resource_tags': {'key': 'resourceTags', 'type': '{str}'},
     }
 
-    def __init__(self, *, id: str, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, resource_tags=None, **kwargs) -> None:
+    def __init__(self, *, id: str, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, upgrade_policy=None, resource_tags=None, **kwargs) -> None:
         super(PoolAddParameter, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -7547,6 +7653,7 @@ class PoolAddParameter(Model):
         self.metadata = metadata
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
+        self.upgrade_policy = upgrade_policy
         self.resource_tags = resource_tags
 
 
@@ -7554,7 +7661,8 @@ class PoolDeleteOptions(Model):
     """Additional parameters for delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -7615,7 +7723,8 @@ class PoolDisableAutoScaleOptions(Model):
     """Additional parameters for disable_auto_scale operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -7649,7 +7758,8 @@ class PoolEnableAutoScaleOptions(Model):
     """Additional parameters for enable_auto_scale operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -7768,7 +7878,8 @@ class PoolEvaluateAutoScaleOptions(Model):
     """Additional parameters for evaluate_auto_scale operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -7829,7 +7940,8 @@ class PoolExistsOptions(Model):
     """Additional parameters for exists operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -7894,7 +8006,8 @@ class PoolGetOptions(Model):
     :param expand: An OData $expand clause.
     :type expand: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8003,7 +8116,8 @@ class PoolListOptions(Model):
      A maximum of 1000 Pools can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8062,7 +8176,8 @@ class PoolListUsageMetricsOptions(Model):
      A maximum of 1000 results will be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8135,7 +8250,8 @@ class PoolPatchOptions(Model):
     """Additional parameters for patch operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8259,7 +8375,8 @@ class PoolRemoveNodesOptions(Model):
     """Additional parameters for remove_nodes operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8320,7 +8437,8 @@ class PoolResizeOptions(Model):
     """Additional parameters for resize operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8541,6 +8659,8 @@ class PoolSpecification(Model):
      include: 'default', 'classic', 'simplified'
     :type target_node_communication_mode: str or
      ~azure.batch.models.NodeCommunicationMode
+    :param upgrade_policy: The upgrade policy for the pool.
+    :type upgrade_policy: ~azure.batch.models.UpgradePolicy
     :param resource_tags: The user-defined tags to be associated with the
      Azure Batch Pool. When specified, these tags are propagated to the backing
      Azure resources associated with the pool. This property can only be
@@ -8576,10 +8696,11 @@ class PoolSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
         'target_node_communication_mode': {'key': 'targetNodeCommunicationMode', 'type': 'NodeCommunicationMode'},
+        'upgrade_policy': {'key': 'upgradePolicy', 'type': 'UpgradePolicy'},
         'resource_tags': {'key': 'resourceTags', 'type': '{str}'},
     }
 
-    def __init__(self, *, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, task_slots_per_node: int=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, resource_tags=None, **kwargs) -> None:
+    def __init__(self, *, vm_size: str, display_name: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, task_slots_per_node: int=None, task_scheduling_policy=None, resize_timeout=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, user_accounts=None, metadata=None, mount_configuration=None, target_node_communication_mode=None, upgrade_policy=None, resource_tags=None, **kwargs) -> None:
         super(PoolSpecification, self).__init__(**kwargs)
         self.display_name = display_name
         self.vm_size = vm_size
@@ -8603,6 +8724,7 @@ class PoolSpecification(Model):
         self.metadata = metadata
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
+        self.upgrade_policy = upgrade_policy
         self.resource_tags = resource_tags
 
 
@@ -8653,7 +8775,8 @@ class PoolStopResizeOptions(Model):
     """Additional parameters for stop_resize operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -8714,7 +8837,8 @@ class PoolUpdatePropertiesOptions(Model):
     """Additional parameters for update_properties operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -9099,6 +9223,80 @@ class ResourceStatistics(Model):
         self.network_write_gi_b = network_write_gi_b
 
 
+class RollingUpgradePolicy(Model):
+    """The configuration parameters used while performing a rolling upgrade.
+
+    :param enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when
+     constructing upgrade batches. Take into consideration the Update Domain
+     and maxBatchInstancePercent to determine the batch size. This field is
+     able to be set to true or false only when using NodePlacementConfiguration
+     as Zonal.
+    :type enable_cross_zone_upgrade: bool
+    :param max_batch_instance_percent: The maximum percent of total virtual
+     machine instances that will be upgraded simultaneously by the rolling
+     upgrade in one batch. As this is a maximum, unhealthy instances in
+     previous or future batches can cause the percentage of instances in a
+     batch to decrease to ensure higher reliability. The value of this field
+     should be between 5 and 100, inclusive. If both maxBatchInstancePercent
+     and maxUnhealthyInstancePercent are assigned with value, the value of
+     maxBatchInstancePercent should not be more than
+     maxUnhealthyInstancePercent.
+    :type max_batch_instance_percent: int
+    :param max_unhealthy_instance_percent: The maximum percentage of the total
+     virtual machine instances in the scale set that can be simultaneously
+     unhealthy, either as a result of being upgraded, or by being found in an
+     unhealthy state by the virtual machine health checks before the rolling
+     upgrade aborts. This constraint will be checked prior to starting any
+     batch. The value of this field should be between 5 and 100, inclusive. If
+     both maxBatchInstancePercent and maxUnhealthyInstancePercent are assigned
+     with value, the value of maxBatchInstancePercent should not be more than
+     maxUnhealthyInstancePercent.
+    :type max_unhealthy_instance_percent: int
+    :param max_unhealthy_upgraded_instance_percent: The maximum percentage of
+     upgraded virtual machine instances that can be found to be in an unhealthy
+     state. This check will happen after each batch is upgraded. If this
+     percentage is ever exceeded, the rolling update aborts. The value of this
+     field should be between 0 and 100, inclusive.
+    :type max_unhealthy_upgraded_instance_percent: int
+    :param pause_time_between_batches: The wait time between completing the
+     update for all virtual machines in one batch and starting the next batch.
+     The time duration should be specified in ISO 8601 format.
+    :type pause_time_between_batches: timedelta
+    :param prioritize_unhealthy_instances: Upgrade all unhealthy instances in
+     a scale set before any healthy instances.
+    :type prioritize_unhealthy_instances: bool
+    :param rollback_failed_instances_on_policy_breach: Rollback failed
+     instances to previous model if the Rolling Upgrade policy is violated.
+    :type rollback_failed_instances_on_policy_breach: bool
+    """
+
+    _validation = {
+        'max_batch_instance_percent': {'maximum': 100, 'minimum': 5},
+        'max_unhealthy_instance_percent': {'maximum': 100, 'minimum': 5},
+        'max_unhealthy_upgraded_instance_percent': {'maximum': 100, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'enable_cross_zone_upgrade': {'key': 'enableCrossZoneUpgrade', 'type': 'bool'},
+        'max_batch_instance_percent': {'key': 'maxBatchInstancePercent', 'type': 'int'},
+        'max_unhealthy_instance_percent': {'key': 'maxUnhealthyInstancePercent', 'type': 'int'},
+        'max_unhealthy_upgraded_instance_percent': {'key': 'maxUnhealthyUpgradedInstancePercent', 'type': 'int'},
+        'pause_time_between_batches': {'key': 'pauseTimeBetweenBatches', 'type': 'duration'},
+        'prioritize_unhealthy_instances': {'key': 'prioritizeUnhealthyInstances', 'type': 'bool'},
+        'rollback_failed_instances_on_policy_breach': {'key': 'rollbackFailedInstancesOnPolicyBreach', 'type': 'bool'},
+    }
+
+    def __init__(self, *, enable_cross_zone_upgrade: bool=None, max_batch_instance_percent: int=None, max_unhealthy_instance_percent: int=None, max_unhealthy_upgraded_instance_percent: int=None, pause_time_between_batches=None, prioritize_unhealthy_instances: bool=None, rollback_failed_instances_on_policy_breach: bool=None, **kwargs) -> None:
+        super(RollingUpgradePolicy, self).__init__(**kwargs)
+        self.enable_cross_zone_upgrade = enable_cross_zone_upgrade
+        self.max_batch_instance_percent = max_batch_instance_percent
+        self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
+        self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent
+        self.pause_time_between_batches = pause_time_between_batches
+        self.prioritize_unhealthy_instances = prioritize_unhealthy_instances
+        self.rollback_failed_instances_on_policy_breach = rollback_failed_instances_on_policy_breach
+
+
 class Schedule(Model):
     """The schedule according to which Jobs will be created. All times are fixed
     respective to UTC and are not impacted by daylight saving time.
@@ -9479,7 +9677,8 @@ class TaskAddCollectionOptions(Model):
     """Additional parameters for add_collection operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 2 minutes. If the value is larger than
+     120, the default will be used instead. Default value: 120 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -9501,7 +9700,7 @@ class TaskAddCollectionOptions(Model):
         'ocp_date': {'key': '', 'type': 'rfc-1123'},
     }
 
-    def __init__(self, *, timeout: int=30, client_request_id: str=None, return_client_request_id: bool=False, ocp_date=None, **kwargs) -> None:
+    def __init__(self, *, timeout: int=120, client_request_id: str=None, return_client_request_id: bool=False, ocp_date=None, **kwargs) -> None:
         super(TaskAddCollectionOptions, self).__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
@@ -9555,7 +9754,8 @@ class TaskAddOptions(Model):
     """Additional parameters for add operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -9971,7 +10171,8 @@ class TaskDeleteOptions(Model):
     """Additional parameters for delete operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10192,7 +10393,8 @@ class TaskGetOptions(Model):
     :param expand: An OData $expand clause.
     :type expand: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10344,7 +10546,8 @@ class TaskListOptions(Model):
      A maximum of 1000 Tasks can be returned. Default value: 1000 .
     :type max_results: int
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10388,7 +10591,8 @@ class TaskListSubtasksOptions(Model):
     :param select: An OData $select clause.
     :type select: str
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10424,7 +10628,8 @@ class TaskReactivateOptions(Model):
     """Additional parameters for reactivate operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10630,7 +10835,8 @@ class TaskTerminateOptions(Model):
     """Additional parameters for terminate operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10691,7 +10897,8 @@ class TaskUpdateOptions(Model):
     """Additional parameters for update operation.
 
     :param timeout: The maximum time that the server can spend processing the
-     request, in seconds. The default is 30 seconds. Default value: 30 .
+     request, in seconds. The default is 30 seconds. If the value is larger
+     than 30, the default will be used instead. Default value: 30 .
     :type timeout: int
     :param client_request_id: The caller-generated request identity, in the
      form of a GUID with no decoration such as curly braces, e.g.
@@ -10787,6 +10994,42 @@ class UefiSettings(Model):
         super(UefiSettings, self).__init__(**kwargs)
         self.secure_boot_enabled = secure_boot_enabled
         self.v_tpm_enabled = v_tpm_enabled
+
+
+class UpgradePolicy(Model):
+    """Describes an upgrade policy - automatic, manual, or rolling.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param mode: Required. Possible values include: 'automatic', 'manual',
+     'rolling'
+    :type mode: str or ~azure.batch.models.UpgradeMode
+    :param automatic_os_upgrade_policy: Configuration parameters used for
+     performing automatic OS Upgrade. The configuration parameters used for
+     performing automatic OS upgrade.
+    :type automatic_os_upgrade_policy:
+     ~azure.batch.models.AutomaticOSUpgradePolicy
+    :param rolling_upgrade_policy: The configuration parameters used while
+     performing a rolling upgrade. This property is only supported on Pools
+     with the virtualMachineConfiguration property.
+    :type rolling_upgrade_policy: ~azure.batch.models.RollingUpgradePolicy
+    """
+
+    _validation = {
+        'mode': {'required': True},
+    }
+
+    _attribute_map = {
+        'mode': {'key': 'mode', 'type': 'UpgradeMode'},
+        'automatic_os_upgrade_policy': {'key': 'automaticOSUpgradePolicy', 'type': 'AutomaticOSUpgradePolicy'},
+        'rolling_upgrade_policy': {'key': 'rollingUpgradePolicy', 'type': 'RollingUpgradePolicy'},
+    }
+
+    def __init__(self, *, mode, automatic_os_upgrade_policy=None, rolling_upgrade_policy=None, **kwargs) -> None:
+        super(UpgradePolicy, self).__init__(**kwargs)
+        self.mode = mode
+        self.automatic_os_upgrade_policy = automatic_os_upgrade_policy
+        self.rolling_upgrade_policy = rolling_upgrade_policy
 
 
 class UploadBatchServiceLogsConfiguration(Model):

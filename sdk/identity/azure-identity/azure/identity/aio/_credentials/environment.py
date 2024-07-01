@@ -66,6 +66,9 @@ class EnvironmentCredential(AsyncContextManager):
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
+                send_certificate_chain=bool(
+                    os.environ.get(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, False)
+                ),
                 **kwargs
             )
 
@@ -104,7 +107,7 @@ class EnvironmentCredential(AsyncContextManager):
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.

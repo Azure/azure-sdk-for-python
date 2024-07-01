@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
+
 from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING
@@ -33,6 +34,11 @@ class ChangeFeedClient(object):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_single_get_size:
@@ -79,18 +85,13 @@ class ChangeFeedClient(object):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or
+            str or dict[str, str] or None
         :returns: A change feed client.
         :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the BlobServiceClient using account_key as credential.
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:

@@ -262,6 +262,7 @@ async def execute_item_batch(database):
 
     # For error handling, you should use try/ except with CosmosBatchOperationError and use the information in the
     # error returned for your application debugging, making it easy to pinpoint the failing operation
+    # [START handle_batch_error]
     batch_operations = [create_item_operation, create_item_operation]
     try:
         await container.execute_item_batch(batch_operations, partition_key="Account1")
@@ -270,6 +271,7 @@ async def execute_item_batch(database):
         error_operation_response = e.operation_responses[error_operation_index]
         error_operation = batch_operations[error_operation_index]
         print("\nError operation: {}, error operation response: {}\n".format(error_operation, error_operation_response))
+    # [END handle_batch_error]
 
 
 async def delete_item(container, doc_id):

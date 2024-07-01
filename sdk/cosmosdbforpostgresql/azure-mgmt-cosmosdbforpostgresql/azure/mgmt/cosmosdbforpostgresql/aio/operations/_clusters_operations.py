@@ -1250,7 +1250,11 @@ class ClustersOperations:
     }
 
     async def _promote_read_replica_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        promote_request: Optional[Union[_models.PromoteRequest, IO]] = None,
+        **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -1260,17 +1264,32 @@ class ClustersOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(promote_request, (IOBase, bytes)):
+            _content = promote_request
+        else:
+            if promote_request is not None:
+                _json = self._serialize.body(promote_request, "PromoteRequest")
+            else:
+                _json = None
 
         request = build_promote_read_replica_request(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
             template_url=self._promote_read_replica_initial.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1303,9 +1322,15 @@ class ClustersOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/serverGroupsv2/{clusterName}/promote"
     }
 
-    @distributed_trace_async
+    @overload
     async def begin_promote_read_replica(
-        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        promote_request: Optional[_models.PromoteRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Promotes read replica cluster to an independent read-write cluster.
 
@@ -1314,6 +1339,12 @@ class ClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
+        :param promote_request: The parameter for enabling geo-redundant backup while promoting read
+         replica. Default value is None.
+        :type promote_request: ~azure.mgmt.cosmosdbforpostgresql.models.PromoteRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -1326,10 +1357,81 @@ class ClustersOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    async def begin_promote_read_replica(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        promote_request: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Promotes read replica cluster to an independent read-write cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param promote_request: The parameter for enabling geo-redundant backup while promoting read
+         replica. Default value is None.
+        :type promote_request: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_promote_read_replica(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        promote_request: Optional[Union[_models.PromoteRequest, IO]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Promotes read replica cluster to an independent read-write cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param promote_request: The parameter for enabling geo-redundant backup while promoting read
+         replica. Is either a PromoteRequest type or a IO type. Default value is None.
+        :type promote_request: ~azure.mgmt.cosmosdbforpostgresql.models.PromoteRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1338,7 +1440,9 @@ class ClustersOperations:
             raw_result = await self._promote_read_replica_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
+                promote_request=promote_request,
                 api_version=api_version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,

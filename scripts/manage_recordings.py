@@ -46,7 +46,10 @@ TOOL_ENV_VAR = "PROXY_PID"
 #   * restore: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
 #   * reset: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 #
-# For more information about how recording asset synchronization, please refer to
+# For documentation on test recording management in Python, please refer to
+# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings
+#
+# For more information about how recording asset synchronization works more generally, please refer to
 # https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md.
 
 

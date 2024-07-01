@@ -2,7 +2,7 @@
   "matrix": {
     "Agent": {
       "ubuntu-20.04": {
-        "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt",
+        "OSVmImage": "env:LINUXVMIMAGE",
         "Pool": "env:LINUXPOOL",
         "os": "linux"
       }

@@ -13,9 +13,8 @@ from conftest import (
     configure,
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
-    ENV_AZURE_OPENAI_API_VERSION,
+    LATEST,
     ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT,
-    ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY,
     ENV_AZURE_OPENAI_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_EMBEDDINGS_NAME,
@@ -31,11 +30,11 @@ audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 class TestModuleClient(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_env_vars_key(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_env_vars_key(self, client, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
             os.environ["OPENAI_API_TYPE"] = "azure"
 
@@ -59,11 +58,11 @@ class TestModuleClient(AzureRecordedTestCase):
                 del os.environ["OPENAI_API_TYPE"]
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_env_vars_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_env_vars_token(self, client, api_type, api_version, **kwargs):
         with reload():
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["OPENAI_API_VERSION"] = LATEST
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
             os.environ["OPENAI_API_TYPE"] = "azure"
 
@@ -87,13 +86,13 @@ class TestModuleClient(AzureRecordedTestCase):
                 del os.environ["OPENAI_API_TYPE"]
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_ad_token_provider(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_api_key(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
+            openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
             assert completion.id
@@ -110,13 +109,13 @@ class TestModuleClient(AzureRecordedTestCase):
 
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_ad_token(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_ad_token(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.azure_ad_token = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
             assert completion.id
@@ -133,13 +132,13 @@ class TestModuleClient(AzureRecordedTestCase):
 
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_completions(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.api_version = LATEST
 
             completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
             assert completion.id
@@ -155,13 +154,13 @@ class TestModuleClient(AzureRecordedTestCase):
             assert completion.choices[0].text is not None
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_chat_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_chat_completions(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.api_version = LATEST
 
             messages = [
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -183,13 +182,13 @@ class TestModuleClient(AzureRecordedTestCase):
             assert completion.choices[0].message.role
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_embeddings(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_embeddings(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.api_version = LATEST
 
             embedding = openai.embeddings.create(input="hello world", model=ENV_AZURE_OPENAI_EMBEDDINGS_NAME)
             assert embedding.object == "list"
@@ -202,13 +201,13 @@ class TestModuleClient(AzureRecordedTestCase):
             assert len(embedding.data[0].embedding) > 0
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_models(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_models(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.api_version = LATEST
 
             models = openai.models.list()
             for model in models:
@@ -218,13 +217,13 @@ class TestModuleClient(AzureRecordedTestCase):
             assert model.id
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE])
-    def test_module_client_audio(self, client, azure_openai_creds, api_type, **kwargs):
+    @pytest.mark.parametrize("api_type, api_version", [(AZURE, LATEST)])
+    def test_module_client_audio(self, client, api_type, api_version, **kwargs):
         with reload():
             openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY)
-            openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+            openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+            openai.api_version = LATEST
 
             result = openai.audio.transcriptions.create(
                 file=open(audio_test_file, "rb"),

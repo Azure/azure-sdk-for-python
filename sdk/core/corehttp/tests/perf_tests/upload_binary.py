@@ -5,7 +5,7 @@
 
 from time import time
 from wsgiref.handlers import format_date_time
-from devtools_testutils.perfstress_tests import RandomStream, AsyncRandomStream
+from devtools_testutils.perfstress_tests import RandomStream, AsyncRandomStream, AsyncIteratorRandomStream
 
 from corehttp.rest import HttpRequest
 from corehttp.exceptions import (
@@ -29,7 +29,14 @@ class UploadBinaryDataTest(_BlobTest):
         blob_name = "uploadtest"
         self.blob_endpoint = f"{self.account_endpoint}{self.container_name}/{blob_name}"
         self.upload_stream = RandomStream(self.args.size)
-        self.upload_stream_async = AsyncRandomStream(self.args.size)
+
+        # The AsyncIteratorRandomStream is used for upload stream scenario, since the
+        # async httpx transport requires the request body stream to be type AsyncIterable (i.e. have an __aiter__ method rather than __iter__).
+        # Specific check in httpx here: https://github.com/encode/httpx/blob/7df47ce4d93a06f2c3310cd692b4c2336d7663ba/httpx/_content.py#L116.
+        if self.args.transport == "httpx":
+            self.upload_stream_async = AsyncIteratorRandomStream(self.args.size)
+        else:
+            self.upload_stream_async = AsyncRandomStream(self.args.size)
 
     def run_sync(self):
         self.upload_stream.reset()

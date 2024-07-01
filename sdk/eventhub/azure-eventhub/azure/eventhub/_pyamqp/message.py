@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List
+from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List, Iterable
 from typing_extensions import TypedDict
 
 from .types import AMQPTypes, FieldDefinition
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
         message_annotations: Optional[Dict[Union[str, bytes], Any]]
         properties: Optional["Properties"]
         application_properties: Optional[Dict[Union[str, bytes], Any]]
-        data: Optional[bytes]
+        data: Optional[Union[bytes, Iterable[bytes]]]
         sequence: Optional[List[Any]]
         value: Optional[Any]
         footer: Optional[Dict[Any, Any]]
@@ -62,7 +62,7 @@ if _CAN_ADD_DOCSTRING:
         This field contains the relative Message priority. Higher numbers indicate higher priority Messages.
         Messages with higher priorities MAY be delivered before those with lower priorities. An AMQP intermediary
         implementing distinct priority levels MUST do so in the following manner:
-        
+
             - If n distince priorities are implemented and n is less than 10 - priorities 0 to (5 - ceiling(n/2))
               MUST be treated equivalently and MUST be the lowest effective priority. The priorities (4 + fioor(n/2))
               and above MUST be treated equivalently and MUST be the highest effective priority. The priorities
@@ -184,8 +184,8 @@ class Message(NamedTuple):
     delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = None
     message_annotations: Optional[Dict[Union[str, bytes], Any]] = None
     properties: Optional[Properties] = None
-    application_properties: Optional[Dict[Union[str, bytes], Any]] = None   # TODO: make not read-only
-    data: Optional[bytes] = None
+    application_properties: Optional[Dict[Union[str, bytes], Any]] = None
+    data: Optional[Union[bytes, Iterable[bytes]]] = None
     sequence: Optional[List[Any]] = None
     value: Optional[Any] = None
     footer: Optional[Dict[Any, Any]] = None

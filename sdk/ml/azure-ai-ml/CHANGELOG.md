@@ -1,16 +1,78 @@
 # Release History
 
-## 1.15.0 (unreleased)
+## 1.18.0 (unreleased)
 
 ### Features Added
 
 ### Bugs Fixed
+- InputTypes exported in constants module
 
 ### Breaking Changes
 
 ### Other Changes
 
-## 1.14.0 (unreleased)
+## 1.17.0 (2024-06-18)
+
+## 1.16.0 (2024-05-14)
+
+### Features Added
+- Add experimental support for working with Promptflow evaluators: `ml_client.evaluators`.
+- Many changes to the Connection entity class and its associated operations.
+- Workspace Connection `list`, `get`, and `create_or_update` operations now include an optional `populate_secrets` input, which causes the operations to try making a secondary call to fill in the returned connections' credential info if possible. Only works with api key-based credentials for now.
+- Many workspace connection subtypes added. The full list of subclasses is now:
+  - `AzureBlobStoreConnection`
+  - `AzureBlobStoreConnection`
+  - `MicrosoftOneLakeConnection`
+  - `AzureOpenAIConnection`
+  - `AzureAIServicesConnection`
+  - `AzureAISearchConnection`
+  - `AzureContentSafetyConnection`
+  - `AzureSpeechServicesConnection`
+  - `APIKeyConnection`
+  - `OpenAIConnection`
+  - `SerpConnection`
+  - `ServerlessConnection`
+- Many workspace connections only accept api keys or entra ids for credentials. Since Entra IDs require not inputs, these have been refactored to not required a full credential object. Instead they only accept an api_key as a top-level input, and default to an entra credential otherwise. Their YAML schemas have been similarly altered.
+- Client-side credential-type validation added for some workspace connection types.
+- Added new credential type: `AadCredentialConfiguration`
+- Renamed WorkspaceHub class as Hub.
+- Added Project entity class and YAML support.
+- Project and Hub operations supported by workspace operations.
+- workspace list operation supports type filtering.
+- Add support for Microsoft Entra token (`aad_token`) auth in `invoke` and `get-credentials` operations.
+- Add experimental support for working with indexes: `ml_client.indexes`
+
+### Bugs Fixed
+
+### Breaking Changes
+
+- Removed WorkspaceHubConfig entity, and renamed WorkspaceHub to Hub.
+- workspace_hub input of Workspace class hidden, renamed to hub_id, and re-surfaced in child class Project.
+- Removed Workspace Hub Operations from ML Client.
+
+### Other Changes
+
+## 1.15.0 (2024-03-26)
+
+### Other Changes
+
+- The following classes will still be able to be imported from `azure.ai.ml`, but the import is deprecated and emits a warning. Instead, please import them from `azure.ai.ml.entities`.
+  - `AmlTokenConfiguration`
+  - `ManagedIdentityConfiguration`
+  - `UserIdentityConfiguration`
+- The following classes will still be able to be imported from `azure.ai.ml.entities`, but the import is deprecated and emits a warning. Instead, please import them from `azure.ai.ml.sweep`.
+  - `Choice`
+  - `Uniform`
+  - `LogUniform`
+  - `QLogUniform`
+  - `QUniform`
+  - `QLogNormal`
+  - `QNormal`
+  - `LogNormal`
+  - `Normal`
+  - `Randint`
+
+## 1.14.0 (2024-03-11)
 
 ### Features Added
 - Remove `experimental` tag for  `ml_client.jobs.validate`.
@@ -92,7 +154,7 @@
 
 ### Other Changes
 
-- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance.
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
 - Removed references to deprecated "feature_store" workspace connection type.
 

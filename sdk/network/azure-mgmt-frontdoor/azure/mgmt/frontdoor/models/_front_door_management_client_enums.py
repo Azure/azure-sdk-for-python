@@ -18,6 +18,7 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOG = "Log"
     REDIRECT = "Redirect"
     ANOMALY_SCORING = "AnomalyScoring"
+    JS_CHALLENGE = "JSChallenge"
 
 
 class AggregationInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -259,9 +260,8 @@ class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     If not present, defaults to Continue.
     """
 
-    CONTINUE = "Continue"
-    STOP = "Stop"
     CONTINUE_ENUM = "Continue"
+    STOP = "Stop"
 
 
 class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -419,6 +419,34 @@ class RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RATE_LIMIT_RULE = "RateLimitRule"
 
 
+class ScrubbingRuleEntryMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When matchVariable is a collection, operate on the selector to specify which elements in the
+    collection this rule applies to.
+    """
+
+    EQUALS_ANY = "EqualsAny"
+    EQUALS = "Equals"
+
+
+class ScrubbingRuleEntryMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The variable to be scrubbed from the logs."""
+
+    REQUEST_IP_ADDRESS = "RequestIPAddress"
+    REQUEST_URI = "RequestUri"
+    QUERY_STRING_ARG_NAMES = "QueryStringArgNames"
+    REQUEST_HEADER_NAMES = "RequestHeaderNames"
+    REQUEST_COOKIE_NAMES = "RequestCookieNames"
+    REQUEST_BODY_POST_ARG_NAMES = "RequestBodyPostArgNames"
+    REQUEST_BODY_JSON_ARG_NAMES = "RequestBodyJsonArgNames"
+
+
+class ScrubbingRuleEntryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the state of a log scrubbing rule. Default value is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class SessionAffinityEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether to allow session affinity on this host. Valid options are 'Enabled' or 'Disabled'."""
 
@@ -477,3 +505,18 @@ class TransformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     URL_DECODE = "UrlDecode"
     URL_ENCODE = "UrlEncode"
     REMOVE_NULLS = "RemoveNulls"
+
+
+class VariableName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the supported variable for group by."""
+
+    SOCKET_ADDR = "SocketAddr"
+    GEO_LOCATION = "GeoLocation"
+    NONE = "None"
+
+
+class WebApplicationFirewallScrubbingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the log scrubbing config. Default value is Enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

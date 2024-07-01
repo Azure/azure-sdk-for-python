@@ -53,7 +53,7 @@ class ManagementLockObject(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID of the lock.
     :vartype id: str

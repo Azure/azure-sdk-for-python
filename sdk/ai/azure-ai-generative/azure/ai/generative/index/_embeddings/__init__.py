@@ -2,6 +2,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: skip-file
 """Embeddings generation and management tools."""
 import contextlib
 import copy

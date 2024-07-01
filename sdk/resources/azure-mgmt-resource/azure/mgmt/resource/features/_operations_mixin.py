@@ -24,7 +24,6 @@ class FeatureClientOperationsMixin(object):
     ) -> Iterable["_models.Operation"]:
         """Lists all of the available Microsoft.Features REST API operations.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Operation or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.resource.features.v2021_07_01.models.Operation]

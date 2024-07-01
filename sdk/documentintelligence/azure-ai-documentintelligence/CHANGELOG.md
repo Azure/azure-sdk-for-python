@@ -1,6 +1,21 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2024-04-09)
+
+### Other Changes
+- Changed the default polling interval from 5s to 1s.
+
+## 1.0.0b2 (2024-03-07)
 
 ### Features Added
 
@@ -15,8 +30,7 @@
 ### Breaking Changes
 
 - Changed property name from `items` to `items_property` in model `DocumentFieldSchema` and `DocumentList`.
-
-### Bugs Fixed
+- Changed property name from `base64_source` to `bytes_source` in model `AnalyzeDocumentRequest` and `ClassifyDocumentRequest`.
 
 ### Other Changes
 

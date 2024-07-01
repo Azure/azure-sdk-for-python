@@ -1,14 +1,39 @@
 ## Release History
 
-### 4.5.2b6 (Unreleased)
+### 4.7.1 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR 35731](https://github.com/Azure/azure-sdk-for-python/pull/35731)
 
 #### Other Changes
+
+### 4.7.0 (2024-05-15)
+
+#### Features Added
+* Adds vector embedding policy and vector indexing policy. See [PR 34882](https://github.com/Azure/azure-sdk-for-python/pull/34882).
+* Adds support for vector search non-streaming order by queries. See [PR 35468](https://github.com/Azure/azure-sdk-for-python/pull/35468).
+* Adds support for using the start time option for change feed query API. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
+
+#### Bugs Fixed
+* Fixed a bug where change feed query in Async client was not returning all pages due to case-sensitive response headers. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
+* Fixed a bug when a retryable exception occurs in the first page of a query execution causing query to return 0 results. See [PR 35090](https://github.com/Azure/azure-sdk-for-python/pull/35090).
+
+### 4.6.1 (2024-05-15)
+
+### 4.6.0 (2024-03-14)
+
+#### Features Added
+* GA release of hierarchical partitioning, index metrics and transactional batch.
+
+#### Bugs Fixed
+* Keyword arguments were not being passed down for `create_container_if_not_exists()` methods. See [PR 34286](https://github.com/Azure/azure-sdk-for-python/pull/34286).
+
+#### Other Changes
+* Made several updates to the type hints used throughout the SDK for greater detail. See [PR 33269](https://github.com/Azure/azure-sdk-for-python/pull/33269), [PR 33341](https://github.com/Azure/azure-sdk-for-python/pull/33341), [PR 33738](https://github.com/Azure/azure-sdk-for-python/pull/33738).
 
 ### 4.5.2b5 (2024-03-02)
 

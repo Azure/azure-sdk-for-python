@@ -238,7 +238,7 @@ class TestCustomForms(FormRecognizerTest):
         )
         result = poller.result()
         assert result is not None
-        initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+        initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @pytest.mark.live_test_only
     @skip_flaky_test

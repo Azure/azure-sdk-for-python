@@ -44,6 +44,12 @@ class BillingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEWRELIC = "NEWRELIC"
 
 
+class ConfigurationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ConfigurationName."""
+
+    DEFAULT = "default"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -108,6 +114,16 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
+
+
+class PatchOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation for the patch on the resource."""
+
+    ADD_BEGIN = "AddBegin"
+    ADD_COMPLETE = "AddComplete"
+    DELETE_BEGIN = "DeleteBegin"
+    DELETE_COMPLETE = "DeleteComplete"
+    ACTIVE = "Active"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -182,6 +198,15 @@ class SingleSignOnStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLE = "Enable"
     DISABLE = "Disable"
     EXISTING = "Existing"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of monitoring."""
+
+    IN_PROGRESS = "InProgress"
+    ACTIVE = "Active"
+    FAILED = "Failed"
+    DELETING = "Deleting"
 
 
 class TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):

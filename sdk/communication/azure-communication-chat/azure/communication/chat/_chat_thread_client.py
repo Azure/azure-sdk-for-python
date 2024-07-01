@@ -373,7 +373,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
         :keyword ~datetime.datetime start_time: The earliest point in time to get messages up to.
-        The timestamp should be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+            The timestamp should be in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :return: An iterator like instance of ChatMessage
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.chat.ChatMessage]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

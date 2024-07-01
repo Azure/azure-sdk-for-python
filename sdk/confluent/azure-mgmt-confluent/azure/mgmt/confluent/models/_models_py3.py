@@ -17,6 +17,47 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AccessCreateRoleBindingRequestModel(_serialization.Model):
+    """Create role binding request model.
+
+    :ivar principal: The principal User or Group to bind the role to.
+    :vartype principal: str
+    :ivar role_name: The name of the role to bind to the principal.
+    :vartype role_name: str
+    :ivar crn_pattern: A CRN that specifies the scope and resource patterns necessary for the role
+     to bind.
+    :vartype crn_pattern: str
+    """
+
+    _attribute_map = {
+        "principal": {"key": "principal", "type": "str"},
+        "role_name": {"key": "role_name", "type": "str"},
+        "crn_pattern": {"key": "crn_pattern", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        principal: Optional[str] = None,
+        role_name: Optional[str] = None,
+        crn_pattern: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword principal: The principal User or Group to bind the role to.
+        :paramtype principal: str
+        :keyword role_name: The name of the role to bind to the principal.
+        :paramtype role_name: str
+        :keyword crn_pattern: A CRN that specifies the scope and resource patterns necessary for the
+         role to bind.
+        :paramtype crn_pattern: str
+        """
+        super().__init__(**kwargs)
+        self.principal = principal
+        self.role_name = role_name
+        self.crn_pattern = crn_pattern
+
+
 class AccessInvitedUserDetails(_serialization.Model):
     """Details of the user being invited.
 
@@ -90,13 +131,13 @@ class AccessInviteUserAccountModel(_serialization.Model):
 
 
 class AccessListClusterSuccessResponse(_serialization.Model):
-    """List cluster success response.
+    """Details of the clusters returned on successful response.
 
     :ivar kind: Type of response.
     :vartype kind: str
     :ivar metadata: Metadata of the list.
     :vartype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
-    :ivar data: Data of the environments list.
+    :ivar data: List of clusters.
     :vartype data: list[~azure.mgmt.confluent.models.ClusterRecord]
     """
 
@@ -119,7 +160,7 @@ class AccessListClusterSuccessResponse(_serialization.Model):
         :paramtype kind: str
         :keyword metadata: Metadata of the list.
         :paramtype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
-        :keyword data: Data of the environments list.
+        :keyword data: List of clusters.
         :paramtype data: list[~azure.mgmt.confluent.models.ClusterRecord]
         """
         super().__init__(**kwargs)
@@ -129,13 +170,13 @@ class AccessListClusterSuccessResponse(_serialization.Model):
 
 
 class AccessListEnvironmentsSuccessResponse(_serialization.Model):
-    """List environments success response.
+    """Details of the environments returned on successful response.
 
     :ivar kind: Type of response.
     :vartype kind: str
-    :ivar metadata: Metadata of the list.
+    :ivar metadata: Metadata of the  environment list.
     :vartype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
-    :ivar data: Data of the environments list.
+    :ivar data: Environment list data.
     :vartype data: list[~azure.mgmt.confluent.models.EnvironmentRecord]
     """
 
@@ -156,9 +197,9 @@ class AccessListEnvironmentsSuccessResponse(_serialization.Model):
         """
         :keyword kind: Type of response.
         :paramtype kind: str
-        :keyword metadata: Metadata of the list.
+        :keyword metadata: Metadata of the  environment list.
         :paramtype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
-        :keyword data: Data of the environments list.
+        :keyword data: Environment list data.
         :paramtype data: list[~azure.mgmt.confluent.models.EnvironmentRecord]
         """
         super().__init__(**kwargs)
@@ -207,13 +248,13 @@ class AccessListInvitationsSuccessResponse(_serialization.Model):
 
 
 class AccessListRoleBindingsSuccessResponse(_serialization.Model):
-    """List cluster success response.
+    """Details of the role bindings returned on successful response.
 
     :ivar kind: Type of response.
     :vartype kind: str
     :ivar metadata: Metadata of the list.
     :vartype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
-    :ivar data: Data of the environments list.
+    :ivar data: List of role binding.
     :vartype data: list[~azure.mgmt.confluent.models.RoleBindingRecord]
     """
 
@@ -236,7 +277,7 @@ class AccessListRoleBindingsSuccessResponse(_serialization.Model):
         :paramtype kind: str
         :keyword metadata: Metadata of the list.
         :paramtype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
-        :keyword data: Data of the environments list.
+        :keyword data: List of role binding.
         :paramtype data: list[~azure.mgmt.confluent.models.RoleBindingRecord]
         """
         super().__init__(**kwargs)
@@ -321,6 +362,243 @@ class AccessListUsersSuccessResponse(_serialization.Model):
         self.kind = kind
         self.metadata = metadata
         self.data = data
+
+
+class AccessRoleBindingNameListSuccessResponse(_serialization.Model):
+    """Details of the role binding names returned on successful response.
+
+    :ivar kind: Type of response.
+    :vartype kind: str
+    :ivar metadata: Metadata of the list.
+    :vartype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
+    :ivar data: List of role binding names.
+    :vartype data: list[str]
+    """
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "metadata": {"key": "metadata", "type": "ConfluentListMetadata"},
+        "data": {"key": "data", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        metadata: Optional["_models.ConfluentListMetadata"] = None,
+        data: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Type of response.
+        :paramtype kind: str
+        :keyword metadata: Metadata of the list.
+        :paramtype metadata: ~azure.mgmt.confluent.models.ConfluentListMetadata
+        :keyword data: List of role binding names.
+        :paramtype data: list[str]
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.metadata = metadata
+        self.data = data
+
+
+class APIKeyOwnerEntity(_serialization.Model):
+    """API Key Owner details which can be a user or service account.
+
+    :ivar id: API Key owner id.
+    :vartype id: str
+    :ivar related: API URL for accessing or modifying the referred object.
+    :vartype related: str
+    :ivar resource_name: CRN reference to the referred resource.
+    :vartype resource_name: str
+    :ivar kind: Type of the owner service or user account.
+    :vartype kind: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "related": {"key": "related", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        related: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        kind: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: API Key owner id.
+        :paramtype id: str
+        :keyword related: API URL for accessing or modifying the referred object.
+        :paramtype related: str
+        :keyword resource_name: CRN reference to the referred resource.
+        :paramtype resource_name: str
+        :keyword kind: Type of the owner service or user account.
+        :paramtype kind: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.related = related
+        self.resource_name = resource_name
+        self.kind = kind
+
+
+class APIKeyRecord(_serialization.Model):
+    """Details API key.
+
+    :ivar kind: Type of api key.
+    :vartype kind: str
+    :ivar id: Id of the api key.
+    :vartype id: str
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    :ivar spec: Specification of the API Key.
+    :vartype spec: ~azure.mgmt.confluent.models.APIKeySpecEntity
+    """
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "SCMetadataEntity"},
+        "spec": {"key": "properties.spec", "type": "APIKeySpecEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        spec: Optional["_models.APIKeySpecEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Type of api key.
+        :paramtype kind: str
+        :keyword id: Id of the api key.
+        :paramtype id: str
+        :keyword metadata: Metadata of the record.
+        :paramtype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+        :keyword spec: Specification of the API Key.
+        :paramtype spec: ~azure.mgmt.confluent.models.APIKeySpecEntity
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.id = id
+        self.metadata = metadata
+        self.spec = spec
+
+
+class APIKeyResourceEntity(_serialization.Model):
+    """API Key Resource details which can be kafka cluster or schema registry cluster.
+
+    :ivar id: Id of the resource.
+    :vartype id: str
+    :ivar environment: The environment of the api key.
+    :vartype environment: str
+    :ivar related: API URL for accessing or modifying the api key resource object.
+    :vartype related: str
+    :ivar resource_name: CRN reference to the referred resource.
+    :vartype resource_name: str
+    :ivar kind: Type of the owner which can be service or user account.
+    :vartype kind: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "environment": {"key": "environment", "type": "str"},
+        "related": {"key": "related", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        environment: Optional[str] = None,
+        related: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        kind: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Id of the resource.
+        :paramtype id: str
+        :keyword environment: The environment of the api key.
+        :paramtype environment: str
+        :keyword related: API URL for accessing or modifying the api key resource object.
+        :paramtype related: str
+        :keyword resource_name: CRN reference to the referred resource.
+        :paramtype resource_name: str
+        :keyword kind: Type of the owner which can be service or user account.
+        :paramtype kind: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.environment = environment
+        self.related = related
+        self.resource_name = resource_name
+        self.kind = kind
+
+
+class APIKeySpecEntity(_serialization.Model):
+    """Spec of the API Key record.
+
+    :ivar description: The description of the API Key.
+    :vartype description: str
+    :ivar name: The name of the API Key.
+    :vartype name: str
+    :ivar secret: API Key Secret.
+    :vartype secret: str
+    :ivar resource: Specification of the cluster.
+    :vartype resource: ~azure.mgmt.confluent.models.APIKeyResourceEntity
+    :ivar owner: Specification of the cluster.
+    :vartype owner: ~azure.mgmt.confluent.models.APIKeyOwnerEntity
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "secret": {"key": "secret", "type": "str"},
+        "resource": {"key": "resource", "type": "APIKeyResourceEntity"},
+        "owner": {"key": "owner", "type": "APIKeyOwnerEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        name: Optional[str] = None,
+        secret: Optional[str] = None,
+        resource: Optional["_models.APIKeyResourceEntity"] = None,
+        owner: Optional["_models.APIKeyOwnerEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The description of the API Key.
+        :paramtype description: str
+        :keyword name: The name of the API Key.
+        :paramtype name: str
+        :keyword secret: API Key Secret.
+        :paramtype secret: str
+        :keyword resource: Specification of the cluster.
+        :paramtype resource: ~azure.mgmt.confluent.models.APIKeyResourceEntity
+        :keyword owner: Specification of the cluster.
+        :paramtype owner: ~azure.mgmt.confluent.models.APIKeyOwnerEntity
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.name = name
+        self.secret = secret
+        self.resource = resource
+        self.owner = owner
 
 
 class ClusterByokEntity(_serialization.Model):
@@ -475,15 +753,15 @@ class ClusterNetworkEntity(_serialization.Model):
 
 
 class ClusterRecord(_serialization.Model):
-    """Record of the environment.
+    """Details of cluster record.
 
-    :ivar kind: Type of environment.
+    :ivar kind: Type of cluster.
     :vartype kind: str
-    :ivar id: Id of the environment.
+    :ivar id: Id of the cluster.
     :vartype id: str
     :ivar metadata: Metadata of the record.
     :vartype metadata: ~azure.mgmt.confluent.models.MetadataEntity
-    :ivar display_name: Display name of the user.
+    :ivar display_name: Display name of the cluster.
     :vartype display_name: str
     :ivar spec: Specification of the cluster.
     :vartype spec: ~azure.mgmt.confluent.models.ClusterSpecEntity
@@ -512,13 +790,13 @@ class ClusterRecord(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword kind: Type of environment.
+        :keyword kind: Type of cluster.
         :paramtype kind: str
-        :keyword id: Id of the environment.
+        :keyword id: Id of the cluster.
         :paramtype id: str
         :keyword metadata: Metadata of the record.
         :paramtype metadata: ~azure.mgmt.confluent.models.MetadataEntity
-        :keyword display_name: Display name of the user.
+        :keyword display_name: Display name of the cluster.
         :paramtype display_name: str
         :keyword spec: Specification of the cluster.
         :paramtype spec: ~azure.mgmt.confluent.models.ClusterSpecEntity
@@ -850,8 +1128,34 @@ class ConfluentListMetadata(_serialization.Model):
         self.total_size = total_size
 
 
+class CreateAPIKeyModel(_serialization.Model):
+    """Create API Key model.
+
+    :ivar name: Name of the API Key.
+    :vartype name: str
+    :ivar description: Description of the API Key.
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the API Key.
+        :paramtype name: str
+        :keyword description: Description of the API Key.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.description = description
+
+
 class EnvironmentRecord(_serialization.Model):
-    """Record of the environment.
+    """Details about environment name, metadata and environment id of an environment.
 
     :ivar kind: Type of environment.
     :vartype kind: str
@@ -932,6 +1236,38 @@ class ErrorResponseBody(_serialization.Model):
         self.message = None
         self.target = None
         self.details = None
+
+
+class GetEnvironmentsResponse(_serialization.Model):
+    """Result of GET request to list Confluent operations.
+
+    :ivar value: List of environments in a confluent organization.
+    :vartype value: list[~azure.mgmt.confluent.models.SCEnvironmentRecord]
+    :ivar next_link: URL to get the next set of environment records if there are any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SCEnvironmentRecord]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SCEnvironmentRecord"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of environments in a confluent organization.
+        :paramtype value: list[~azure.mgmt.confluent.models.SCEnvironmentRecord]
+        :keyword next_link: URL to get the next set of environment records if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class InvitationRecord(_serialization.Model):
@@ -1052,6 +1388,88 @@ class ListAccessRequestModel(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.search_filters = search_filters
+
+
+class ListClustersSuccessResponse(_serialization.Model):
+    """Result of GET request to list clusters in the environment of a confluent organization.
+
+    :ivar value: List of clusters in an environment of a confluent organization.
+    :vartype value: list[~azure.mgmt.confluent.models.SCClusterRecord]
+    :ivar next_link: URL to get the next set of cluster records if there are any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SCClusterRecord]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.SCClusterRecord"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of clusters in an environment of a confluent organization.
+        :paramtype value: list[~azure.mgmt.confluent.models.SCClusterRecord]
+        :keyword next_link: URL to get the next set of cluster records if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ListRegionsSuccessResponse(_serialization.Model):
+    """Result of POST request to list regions supported by confluent.
+
+    :ivar data: List of regions supported by confluent.
+    :vartype data: list[~azure.mgmt.confluent.models.RegionRecord]
+    """
+
+    _attribute_map = {
+        "data": {"key": "data", "type": "[RegionRecord]"},
+    }
+
+    def __init__(self, *, data: Optional[List["_models.RegionRecord"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword data: List of regions supported by confluent.
+        :paramtype data: list[~azure.mgmt.confluent.models.RegionRecord]
+        """
+        super().__init__(**kwargs)
+        self.data = data
+
+
+class ListSchemaRegistryClustersResponse(_serialization.Model):
+    """Result of GET request to list schema registry clusters in the environment of a confluent
+    organization.
+
+    :ivar value: List of schema registry clusters in an environment of a confluent organization.
+    :vartype value: list[~azure.mgmt.confluent.models.SchemaRegistryClusterRecord]
+    :ivar next_link: URL to get the next set of schema registry cluster records if there are any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SchemaRegistryClusterRecord]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.SchemaRegistryClusterRecord"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of schema registry clusters in an environment of a confluent organization.
+        :paramtype value: list[~azure.mgmt.confluent.models.SchemaRegistryClusterRecord]
+        :keyword next_link: URL to get the next set of schema registry cluster records if there are
+         any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class MetadataEntity(_serialization.Model):
@@ -1473,6 +1891,98 @@ class OrganizationResourceUpdate(_serialization.Model):
         self.tags = tags
 
 
+class RegionRecord(_serialization.Model):
+    """Details of region record.
+
+    :ivar kind: Kind of the cluster.
+    :vartype kind: str
+    :ivar id: Id of the cluster.
+    :vartype id: str
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    :ivar spec: Specification of the region.
+    :vartype spec: ~azure.mgmt.confluent.models.RegionSpecEntity
+    """
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "SCMetadataEntity"},
+        "spec": {"key": "properties.spec", "type": "RegionSpecEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        spec: Optional["_models.RegionSpecEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Kind of the cluster.
+        :paramtype kind: str
+        :keyword id: Id of the cluster.
+        :paramtype id: str
+        :keyword metadata: Metadata of the record.
+        :paramtype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+        :keyword spec: Specification of the region.
+        :paramtype spec: ~azure.mgmt.confluent.models.RegionSpecEntity
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.id = id
+        self.metadata = metadata
+        self.spec = spec
+
+
+class RegionSpecEntity(_serialization.Model):
+    """Region spec details.
+
+    :ivar name: Display Name of the region.
+    :vartype name: str
+    :ivar cloud: Cloud provider name.
+    :vartype cloud: str
+    :ivar region_name: Region name.
+    :vartype region_name: str
+    :ivar packages:
+    :vartype packages: list[str]
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
+        "region_name": {"key": "regionName", "type": "str"},
+        "packages": {"key": "packages", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        cloud: Optional[str] = None,
+        region_name: Optional[str] = None,
+        packages: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Display Name of the region.
+        :paramtype name: str
+        :keyword cloud: Cloud provider name.
+        :paramtype cloud: str
+        :keyword region_name: Region name.
+        :paramtype region_name: str
+        :keyword packages:
+        :paramtype packages: list[str]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.cloud = cloud
+        self.region_name = region_name
+        self.packages = packages
+
+
 class ResourceProviderDefaultErrorResponse(_serialization.Model):
     """Default error response for resource provider.
 
@@ -1497,11 +2007,11 @@ class ResourceProviderDefaultErrorResponse(_serialization.Model):
 
 
 class RoleBindingRecord(_serialization.Model):
-    """Record of the environment.
+    """Details on principal, role name and crn pattern of a role binding.
 
     :ivar kind: The type of the resource.
     :vartype kind: str
-    :ivar id: Id of the role.
+    :ivar id: Id of the role binding.
     :vartype id: str
     :ivar metadata: Metadata of the record.
     :vartype metadata: ~azure.mgmt.confluent.models.MetadataEntity
@@ -1537,7 +2047,7 @@ class RoleBindingRecord(_serialization.Model):
         """
         :keyword kind: The type of the resource.
         :paramtype kind: str
-        :keyword id: Id of the role.
+        :keyword id: Id of the role binding.
         :paramtype id: str
         :keyword metadata: Metadata of the record.
         :paramtype metadata: ~azure.mgmt.confluent.models.MetadataEntity
@@ -1556,6 +2066,580 @@ class RoleBindingRecord(_serialization.Model):
         self.principal = principal
         self.role_name = role_name
         self.crn_pattern = crn_pattern
+
+
+class SCClusterByokEntity(_serialization.Model):
+    """The network associated with this object.
+
+    :ivar id: ID of the referred resource.
+    :vartype id: str
+    :ivar related: API URL for accessing or modifying the referred object.
+    :vartype related: str
+    :ivar resource_name: CRN reference to the referred resource.
+    :vartype resource_name: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "related": {"key": "related", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        related: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: ID of the referred resource.
+        :paramtype id: str
+        :keyword related: API URL for accessing or modifying the referred object.
+        :paramtype related: str
+        :keyword resource_name: CRN reference to the referred resource.
+        :paramtype resource_name: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.related = related
+        self.resource_name = resource_name
+
+
+class SCClusterNetworkEnvironmentEntity(_serialization.Model):
+    """The environment or the network to which cluster belongs.
+
+    :ivar id: ID of the referred resource.
+    :vartype id: str
+    :ivar environment: Environment of the referred resource.
+    :vartype environment: str
+    :ivar related: API URL for accessing or modifying the referred object.
+    :vartype related: str
+    :ivar resource_name: CRN reference to the referred resource.
+    :vartype resource_name: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "environment": {"key": "environment", "type": "str"},
+        "related": {"key": "related", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        environment: Optional[str] = None,
+        related: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: ID of the referred resource.
+        :paramtype id: str
+        :keyword environment: Environment of the referred resource.
+        :paramtype environment: str
+        :keyword related: API URL for accessing or modifying the referred object.
+        :paramtype related: str
+        :keyword resource_name: CRN reference to the referred resource.
+        :paramtype resource_name: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.environment = environment
+        self.related = related
+        self.resource_name = resource_name
+
+
+class SCClusterRecord(_serialization.Model):
+    """Details of cluster record.
+
+    :ivar kind: Type of cluster.
+    :vartype kind: str
+    :ivar id: Id of the cluster.
+    :vartype id: str
+    :ivar name: Display name of the cluster.
+    :vartype name: str
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    :ivar spec: Specification of the cluster.
+    :vartype spec: ~azure.mgmt.confluent.models.SCClusterSpecEntity
+    :ivar status: Specification of the cluster status.
+    :vartype status: ~azure.mgmt.confluent.models.ClusterStatusEntity
+    """
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "SCMetadataEntity"},
+        "spec": {"key": "properties.spec", "type": "SCClusterSpecEntity"},
+        "status": {"key": "properties.status", "type": "ClusterStatusEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        spec: Optional["_models.SCClusterSpecEntity"] = None,
+        status: Optional["_models.ClusterStatusEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Type of cluster.
+        :paramtype kind: str
+        :keyword id: Id of the cluster.
+        :paramtype id: str
+        :keyword name: Display name of the cluster.
+        :paramtype name: str
+        :keyword metadata: Metadata of the record.
+        :paramtype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+        :keyword spec: Specification of the cluster.
+        :paramtype spec: ~azure.mgmt.confluent.models.SCClusterSpecEntity
+        :keyword status: Specification of the cluster status.
+        :paramtype status: ~azure.mgmt.confluent.models.ClusterStatusEntity
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.id = id
+        self.name = name
+        self.metadata = metadata
+        self.spec = spec
+        self.status = status
+
+
+class SCClusterSpecEntity(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Spec of the cluster record.
+
+    :ivar name: The name of the cluster.
+    :vartype name: str
+    :ivar availability: The availability zone configuration of the cluster.
+    :vartype availability: str
+    :ivar cloud: The cloud service provider.
+    :vartype cloud: str
+    :ivar zone: type of zone availability.
+    :vartype zone: str
+    :ivar region: The cloud service provider region.
+    :vartype region: str
+    :ivar kafka_bootstrap_endpoint: The bootstrap endpoint used by Kafka clients to connect to the
+     cluster.
+    :vartype kafka_bootstrap_endpoint: str
+    :ivar http_endpoint: The cluster HTTP request URL.
+    :vartype http_endpoint: str
+    :ivar api_endpoint: The Kafka API cluster endpoint.
+    :vartype api_endpoint: str
+    :ivar config: Specification of the cluster configuration.
+    :vartype config: ~azure.mgmt.confluent.models.ClusterConfigEntity
+    :ivar environment: Specification of the cluster environment.
+    :vartype environment: ~azure.mgmt.confluent.models.SCClusterNetworkEnvironmentEntity
+    :ivar network: Specification of the cluster network.
+    :vartype network: ~azure.mgmt.confluent.models.SCClusterNetworkEnvironmentEntity
+    :ivar byok: Specification of the cluster byok.
+    :vartype byok: ~azure.mgmt.confluent.models.SCClusterByokEntity
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "availability": {"key": "availability", "type": "str"},
+        "cloud": {"key": "cloud", "type": "str"},
+        "zone": {"key": "zone", "type": "str"},
+        "region": {"key": "region", "type": "str"},
+        "kafka_bootstrap_endpoint": {"key": "kafkaBootstrapEndpoint", "type": "str"},
+        "http_endpoint": {"key": "httpEndpoint", "type": "str"},
+        "api_endpoint": {"key": "apiEndpoint", "type": "str"},
+        "config": {"key": "config", "type": "ClusterConfigEntity"},
+        "environment": {"key": "environment", "type": "SCClusterNetworkEnvironmentEntity"},
+        "network": {"key": "network", "type": "SCClusterNetworkEnvironmentEntity"},
+        "byok": {"key": "byok", "type": "SCClusterByokEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        availability: Optional[str] = None,
+        cloud: Optional[str] = None,
+        zone: Optional[str] = None,
+        region: Optional[str] = None,
+        kafka_bootstrap_endpoint: Optional[str] = None,
+        http_endpoint: Optional[str] = None,
+        api_endpoint: Optional[str] = None,
+        config: Optional["_models.ClusterConfigEntity"] = None,
+        environment: Optional["_models.SCClusterNetworkEnvironmentEntity"] = None,
+        network: Optional["_models.SCClusterNetworkEnvironmentEntity"] = None,
+        byok: Optional["_models.SCClusterByokEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the cluster.
+        :paramtype name: str
+        :keyword availability: The availability zone configuration of the cluster.
+        :paramtype availability: str
+        :keyword cloud: The cloud service provider.
+        :paramtype cloud: str
+        :keyword zone: type of zone availability.
+        :paramtype zone: str
+        :keyword region: The cloud service provider region.
+        :paramtype region: str
+        :keyword kafka_bootstrap_endpoint: The bootstrap endpoint used by Kafka clients to connect to
+         the cluster.
+        :paramtype kafka_bootstrap_endpoint: str
+        :keyword http_endpoint: The cluster HTTP request URL.
+        :paramtype http_endpoint: str
+        :keyword api_endpoint: The Kafka API cluster endpoint.
+        :paramtype api_endpoint: str
+        :keyword config: Specification of the cluster configuration.
+        :paramtype config: ~azure.mgmt.confluent.models.ClusterConfigEntity
+        :keyword environment: Specification of the cluster environment.
+        :paramtype environment: ~azure.mgmt.confluent.models.SCClusterNetworkEnvironmentEntity
+        :keyword network: Specification of the cluster network.
+        :paramtype network: ~azure.mgmt.confluent.models.SCClusterNetworkEnvironmentEntity
+        :keyword byok: Specification of the cluster byok.
+        :paramtype byok: ~azure.mgmt.confluent.models.SCClusterByokEntity
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.availability = availability
+        self.cloud = cloud
+        self.zone = zone
+        self.region = region
+        self.kafka_bootstrap_endpoint = kafka_bootstrap_endpoint
+        self.http_endpoint = http_endpoint
+        self.api_endpoint = api_endpoint
+        self.config = config
+        self.environment = environment
+        self.network = network
+        self.byok = byok
+
+
+class SCConfluentListMetadata(_serialization.Model):
+    """Metadata of the list.
+
+    :ivar first: First page of the list.
+    :vartype first: str
+    :ivar last: Last page of the list.
+    :vartype last: str
+    :ivar prev: Previous page of the list.
+    :vartype prev: str
+    :ivar next: Next page of the list.
+    :vartype next: str
+    :ivar total_size: Total size of the list.
+    :vartype total_size: int
+    """
+
+    _attribute_map = {
+        "first": {"key": "first", "type": "str"},
+        "last": {"key": "last", "type": "str"},
+        "prev": {"key": "prev", "type": "str"},
+        "next": {"key": "next", "type": "str"},
+        "total_size": {"key": "totalSize", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        first: Optional[str] = None,
+        last: Optional[str] = None,
+        prev: Optional[str] = None,
+        next: Optional[str] = None,
+        total_size: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword first: First page of the list.
+        :paramtype first: str
+        :keyword last: Last page of the list.
+        :paramtype last: str
+        :keyword prev: Previous page of the list.
+        :paramtype prev: str
+        :keyword next: Next page of the list.
+        :paramtype next: str
+        :keyword total_size: Total size of the list.
+        :paramtype total_size: int
+        """
+        super().__init__(**kwargs)
+        self.first = first
+        self.last = last
+        self.prev = prev
+        self.next = next
+        self.total_size = total_size
+
+
+class SCEnvironmentRecord(_serialization.Model):
+    """Details about environment name, metadata and environment id of an environment.
+
+    :ivar kind: Type of environment.
+    :vartype kind: str
+    :ivar id: Id of the environment.
+    :vartype id: str
+    :ivar name: Display name of the environment.
+    :vartype name: str
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    """
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "SCMetadataEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Type of environment.
+        :paramtype kind: str
+        :keyword id: Id of the environment.
+        :paramtype id: str
+        :keyword name: Display name of the environment.
+        :paramtype name: str
+        :keyword metadata: Metadata of the record.
+        :paramtype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.id = id
+        self.name = name
+        self.metadata = metadata
+
+
+class SchemaRegistryClusterEnvironmentRegionEntity(_serialization.Model):
+    """The environment associated with this object.
+
+    :ivar id: ID of the referred resource.
+    :vartype id: str
+    :ivar related: API URL for accessing or modifying the referred object.
+    :vartype related: str
+    :ivar resource_name: CRN reference to the referred resource.
+    :vartype resource_name: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "related": {"key": "related", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        related: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: ID of the referred resource.
+        :paramtype id: str
+        :keyword related: API URL for accessing or modifying the referred object.
+        :paramtype related: str
+        :keyword resource_name: CRN reference to the referred resource.
+        :paramtype resource_name: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.related = related
+        self.resource_name = resource_name
+
+
+class SchemaRegistryClusterRecord(_serialization.Model):
+    """Details of schema registry cluster record.
+
+    :ivar kind: Kind of the cluster.
+    :vartype kind: str
+    :ivar id: Id of the cluster.
+    :vartype id: str
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    :ivar spec: Specification of the schema registry cluster.
+    :vartype spec: ~azure.mgmt.confluent.models.SchemaRegistryClusterSpecEntity
+    :ivar status: Specification of the cluster status.
+    :vartype status: ~azure.mgmt.confluent.models.SchemaRegistryClusterStatusEntity
+    """
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "SCMetadataEntity"},
+        "spec": {"key": "properties.spec", "type": "SchemaRegistryClusterSpecEntity"},
+        "status": {"key": "properties.status", "type": "SchemaRegistryClusterStatusEntity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        spec: Optional["_models.SchemaRegistryClusterSpecEntity"] = None,
+        status: Optional["_models.SchemaRegistryClusterStatusEntity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Kind of the cluster.
+        :paramtype kind: str
+        :keyword id: Id of the cluster.
+        :paramtype id: str
+        :keyword metadata: Metadata of the record.
+        :paramtype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+        :keyword spec: Specification of the schema registry cluster.
+        :paramtype spec: ~azure.mgmt.confluent.models.SchemaRegistryClusterSpecEntity
+        :keyword status: Specification of the cluster status.
+        :paramtype status: ~azure.mgmt.confluent.models.SchemaRegistryClusterStatusEntity
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.id = id
+        self.metadata = metadata
+        self.spec = spec
+        self.status = status
+
+
+class SchemaRegistryClusterSpecEntity(_serialization.Model):
+    """Details of schema registry cluster spec.
+
+    :ivar name: Name of the schema registry cluster.
+    :vartype name: str
+    :ivar http_endpoint: Http endpoint of the cluster.
+    :vartype http_endpoint: str
+    :ivar package: Type of the cluster package Advanced, essentials.
+    :vartype package: str
+    :ivar region: Region details of the schema registry cluster.
+    :vartype region: ~azure.mgmt.confluent.models.SchemaRegistryClusterEnvironmentRegionEntity
+    :ivar environment: Environment details of the schema registry cluster.
+    :vartype environment: ~azure.mgmt.confluent.models.SchemaRegistryClusterEnvironmentRegionEntity
+    :ivar cloud: The cloud service provider.
+    :vartype cloud: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "http_endpoint": {"key": "httpEndpoint", "type": "str"},
+        "package": {"key": "package", "type": "str"},
+        "region": {"key": "region", "type": "SchemaRegistryClusterEnvironmentRegionEntity"},
+        "environment": {"key": "environment", "type": "SchemaRegistryClusterEnvironmentRegionEntity"},
+        "cloud": {"key": "cloud", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        http_endpoint: Optional[str] = None,
+        package: Optional[str] = None,
+        region: Optional["_models.SchemaRegistryClusterEnvironmentRegionEntity"] = None,
+        environment: Optional["_models.SchemaRegistryClusterEnvironmentRegionEntity"] = None,
+        cloud: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the schema registry cluster.
+        :paramtype name: str
+        :keyword http_endpoint: Http endpoint of the cluster.
+        :paramtype http_endpoint: str
+        :keyword package: Type of the cluster package Advanced, essentials.
+        :paramtype package: str
+        :keyword region: Region details of the schema registry cluster.
+        :paramtype region: ~azure.mgmt.confluent.models.SchemaRegistryClusterEnvironmentRegionEntity
+        :keyword environment: Environment details of the schema registry cluster.
+        :paramtype environment:
+         ~azure.mgmt.confluent.models.SchemaRegistryClusterEnvironmentRegionEntity
+        :keyword cloud: The cloud service provider.
+        :paramtype cloud: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.http_endpoint = http_endpoint
+        self.package = package
+        self.region = region
+        self.environment = environment
+        self.cloud = cloud
+
+
+class SchemaRegistryClusterStatusEntity(_serialization.Model):
+    """Status of the schema registry cluster record.
+
+    :ivar phase: The lifecycle phase of the cluster.
+    :vartype phase: str
+    """
+
+    _attribute_map = {
+        "phase": {"key": "phase", "type": "str"},
+    }
+
+    def __init__(self, *, phase: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword phase: The lifecycle phase of the cluster.
+        :paramtype phase: str
+        """
+        super().__init__(**kwargs)
+        self.phase = phase
+
+
+class SCMetadataEntity(_serialization.Model):
+    """Metadata of the data record.
+
+    :ivar self_property: Self lookup url.
+    :vartype self_property: str
+    :ivar resource_name: Resource name of the record.
+    :vartype resource_name: str
+    :ivar created_timestamp: Created Date Time.
+    :vartype created_timestamp: str
+    :ivar updated_timestamp: Updated Date time.
+    :vartype updated_timestamp: str
+    :ivar deleted_timestamp: Deleted Date time.
+    :vartype deleted_timestamp: str
+    """
+
+    _attribute_map = {
+        "self_property": {"key": "self", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "created_timestamp": {"key": "createdTimestamp", "type": "str"},
+        "updated_timestamp": {"key": "updatedTimestamp", "type": "str"},
+        "deleted_timestamp": {"key": "deletedTimestamp", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        self_property: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        created_timestamp: Optional[str] = None,
+        updated_timestamp: Optional[str] = None,
+        deleted_timestamp: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword self_property: Self lookup url.
+        :paramtype self_property: str
+        :keyword resource_name: Resource name of the record.
+        :paramtype resource_name: str
+        :keyword created_timestamp: Created Date Time.
+        :paramtype created_timestamp: str
+        :keyword updated_timestamp: Updated Date time.
+        :paramtype updated_timestamp: str
+        :keyword deleted_timestamp: Deleted Date time.
+        :paramtype deleted_timestamp: str
+        """
+        super().__init__(**kwargs)
+        self.self_property = self_property
+        self.resource_name = resource_name
+        self.created_timestamp = created_timestamp
+        self.updated_timestamp = updated_timestamp
+        self.deleted_timestamp = deleted_timestamp
 
 
 class ServiceAccountRecord(_serialization.Model):

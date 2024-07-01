@@ -122,15 +122,15 @@ class AnalyzeDocumentRequest(_model_base.Model):
 
     :ivar url_source: Document URL to analyze.  Either urlSource or base64Source must be specified.
     :vartype url_source: str
-    :ivar base64_source: Base64 encoding of the document to analyze.  Either urlSource or
+    :ivar bytes_source: Base64 encoding of the document to analyze.  Either urlSource or
      base64Source
      must be specified.
-    :vartype base64_source: bytes
+    :vartype bytes_source: bytes
     """
 
     url_source: Optional[str] = rest_field(name="urlSource")
     """Document URL to analyze.  Either urlSource or base64Source must be specified."""
-    base64_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
+    bytes_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
     """Base64 encoding of the document to analyze.  Either urlSource or base64Source
      must be specified."""
 
@@ -139,7 +139,7 @@ class AnalyzeDocumentRequest(_model_base.Model):
         self,
         *,
         url_source: Optional[str] = None,
-        base64_source: Optional[bytes] = None,
+        bytes_source: Optional[bytes] = None,
     ):
         ...
 
@@ -642,15 +642,15 @@ class ClassifyDocumentRequest(_model_base.Model):
     :ivar url_source: Document URL to classify.  Either urlSource or base64Source must be
      specified.
     :vartype url_source: str
-    :ivar base64_source: Base64 encoding of the document to classify.  Either urlSource or
+    :ivar bytes_source: Base64 encoding of the document to classify.  Either urlSource or
      base64Source
      must be specified.
-    :vartype base64_source: bytes
+    :vartype bytes_source: bytes
     """
 
     url_source: Optional[str] = rest_field(name="urlSource")
     """Document URL to classify.  Either urlSource or base64Source must be specified."""
-    base64_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
+    bytes_source: Optional[bytes] = rest_field(name="base64Source", format="base64")
     """Base64 encoding of the document to classify.  Either urlSource or base64Source
      must be specified."""
 
@@ -659,7 +659,7 @@ class ClassifyDocumentRequest(_model_base.Model):
         self,
         *,
         url_source: Optional[str] = None,
-        base64_source: Optional[bytes] = None,
+        bytes_source: Optional[bytes] = None,
     ):
         ...
 

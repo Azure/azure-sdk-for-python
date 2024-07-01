@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -25,7 +25,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import ApiManagementClientMixinABC, _convert_request, _format_url_section
+from .._vendor import ApiManagementClientMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -68,7 +68,7 @@ def build_regenerate_primary_key_request(
         "accessName": _SERIALIZER.url("access_name", access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -113,7 +113,7 @@ def build_regenerate_secondary_key_request(
         "accessName": _SERIALIZER.url("access_name", access_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -157,7 +157,6 @@ class TenantAccessGitOperations:
         :param access_name: The identifier of the Access configuration. Known values are: "access" and
          "gitAccess". Required.
         :type access_name: str or ~azure.mgmt.apimanagement.models.AccessIdName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -176,22 +175,21 @@ class TenantAccessGitOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_regenerate_primary_key_request(
+        _request = build_regenerate_primary_key_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             access_name=access_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.regenerate_primary_key.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -202,11 +200,7 @@ class TenantAccessGitOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    regenerate_primary_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}/git/regeneratePrimaryKey"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def regenerate_secondary_key(  # pylint: disable=inconsistent-return-statements
@@ -222,7 +216,6 @@ class TenantAccessGitOperations:
         :param access_name: The identifier of the Access configuration. Known values are: "access" and
          "gitAccess". Required.
         :type access_name: str or ~azure.mgmt.apimanagement.models.AccessIdName
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -241,22 +234,21 @@ class TenantAccessGitOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_regenerate_secondary_key_request(
+        _request = build_regenerate_secondary_key_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             access_name=access_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.regenerate_secondary_key.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -267,8 +259,4 @@ class TenantAccessGitOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    regenerate_secondary_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/tenant/{accessName}/git/regenerateSecondaryKey"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

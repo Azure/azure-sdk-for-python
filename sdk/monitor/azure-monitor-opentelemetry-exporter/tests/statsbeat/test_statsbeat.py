@@ -28,9 +28,12 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
     _DEFAULT_STATS_LONG_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+    _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME,
+    _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
@@ -110,7 +113,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         with mock.patch.dict(
             os.environ, {
-                "APPLICATION_INSIGHTS_STATS_CONNECTION_STRING": "",
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
             }):
             _statsbeat.collect_statsbeat_metrics(exporter)
         self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
@@ -141,7 +144,7 @@ class TestStatsbeat(unittest.TestCase):
         self.assertIsNone(_statsbeat._STATSBEAT_METRICS)
         with mock.patch.dict(
             os.environ, {
-                "APPLICATION_INSIGHTS_STATS_CONNECTION_STRING": "",
+                _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
             }):
             _statsbeat.collect_statsbeat_metrics(exporter)
         self.assertIsNotNone(_statsbeat._STATSBEAT_METRICS)
@@ -162,8 +165,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch.dict(
         "os.environ",
         {
-            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
-            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
+            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
         },
     )
     def test_collect_statsbeat_metrics_aad(
@@ -195,8 +198,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch.dict(
         "os.environ",
         {
-            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
-            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
+            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
         },
     )
     def test_collect_statsbeat_metrics_no_aad(
@@ -227,8 +230,8 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch.dict(
         "os.environ",
         {
-            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
-            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+            _APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME: "",
+            _APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME: "",
         },
     )
     def test_collect_statsbeat_metrics_distro_version(
@@ -317,6 +320,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["SHUTDOWN"] = False
         _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
 
     def test_statsbeat_metric_init(self):
@@ -748,11 +752,12 @@ class TestStatsbeatMetrics(unittest.TestCase):
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
 
     # pylint: disable=protected-access
-    def test_get_feature_metric_custom_events_init(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_custom_events_feature_set")
+    def test_get_feature_metric_custom_events(self, feature_mock):
+        feature_mock.return_value = True
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
         metric = _StatsbeatMetrics(
             mp,
             ikey,
@@ -770,11 +775,15 @@ class TestStatsbeatMetrics(unittest.TestCase):
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
 
+
     # pylint: disable=protected-access
-    def test_get_feature_metric_custom_events_runtime(self):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics.get_statsbeat_live_metrics_feature_set")
+    def test_get_feature_metric_live_metrics(self, feature_mock):
+        feature_mock.return_value = True
         mp = MeterProvider()
         ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
         endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
         metric = _StatsbeatMetrics(
             mp,
             ikey,
@@ -785,16 +794,13 @@ class TestStatsbeatMetrics(unittest.TestCase):
         )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 0)
+        self.assertEqual(attributes["feature"], 16)
         self.assertEqual(attributes["type"], _FEATURE_TYPES.FEATURE)
-        _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = True
         observations = metric._get_feature_metric(options=None)
-        attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-        self.assertEqual(attributes["feature"], 4)
-        self.assertEqual(metric._feature, 4)
         for obs in observations:
             self.assertEqual(obs.value, 1)
             self.assertEqual(obs.attributes, attributes)
+        _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
 
     # pylint: disable=protected-access
     def test_get_feature_metric_distro(self):

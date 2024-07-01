@@ -1,6 +1,6 @@
 # Microsoft OpenTelemetry exporter for Azure Monitor
 
-The exporter for Azure Monitor allows Python applications to export data from the OpenTelemetry SDK to Azure Monitor. The exporter is intended for users who require advanced configuration or has more complicated telemetry needs that require all of distributed tracing, logging and metrics. If you have simpler configuration requirements, we recommend using the [Azure Monitor OpenTelemetry Distro](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python) instead for a simpler one-line setup.
+The exporter for Azure Monitor allows Python applications to export data from the OpenTelemetry SDK to Azure Monitor. The exporter is intended for users who require advanced configuration or have more complicated telemetry needs that require all of distributed tracing, logging and metrics. If you have simpler configuration requirements, we recommend using the [Azure Monitor OpenTelemetry Distro](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python) instead for a simpler one-line setup.
 
 Prior to using this SDK, please read and understand [Data Collection Basics](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-overview?tabs=python), especially the section on [telemetry types](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-overview?tabs=python#telemetry-types). OpenTelemetry terminology differs from Application Insights terminology so it is important to understand the way the telemetry types map to each other.
 
@@ -154,6 +154,14 @@ The following sections provide several code snippets covering some of the most c
 
 Review the [OpenTelemetry Logging SDK][ot_logging_sdk] to learn how to use OpenTelemetry components to collect logs.
 
+When integrating the `AzureMonitorLogExporter`, it's **strongly advised to utilize a named logger** rather
+than the root logger.
+This recommendation stems from the exporter's dependency on `azure-core` for constructing and dispatching requests.
+Since `azure-core` itself uses a Python logger, attaching the handler to the root logger would
+inadvertently capture and export these internal log messages as well.
+This triggers a recursive loop of logging and exporting, leading to an unnecessary proliferation of log data.
+To avoid this, configure a named logger for your application's logging needs or set up your logging handler to filter out logs originating from the SDK library.
+
 #### Export Hello World Log
 
 ```python
@@ -181,13 +189,12 @@ exporter = AzureMonitorLogExporter(
 )
 
 logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
+
+# Attach LoggingHandler to namespaced logger
 handler = LoggingHandler()
-
-# Attach LoggingHandler to root logger
-logging.getLogger().addHandler(handler)
-logging.getLogger().setLevel(logging.NOTSET)
-
 logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.NOTSET)
 
 logger.warning("Hello World!")
 
@@ -226,13 +233,12 @@ exporter = AzureMonitorLogExporter(
 )
 
 logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
+
+# Attach LoggingHandler to namespaced logger
 handler = LoggingHandler()
-
-# Attach LoggingHandler to root logger
-logging.getLogger().addHandler(handler)
-logging.getLogger().setLevel(logging.NOTSET)
-
 logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.NOTSET)
 
 logger.info("INFO: Outside of span")
 with tracer.start_as_current_span("foo"):
@@ -266,13 +272,12 @@ exporter = AzureMonitorLogExporter(
 )
 
 logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
+
+# Attach LoggingHandler to namespaced logger
 handler = LoggingHandler()
-
-# Attach LoggingHandler to root logger
-logging.getLogger().addHandler(handler)
-logging.getLogger().setLevel(logging.NOTSET)
-
 logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.NOTSET)
 
 # Custom properties
 logger.debug("DEBUG: Debug with properties", extra={"debug": "true"})

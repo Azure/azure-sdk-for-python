@@ -37,6 +37,13 @@ class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnum
     DYNAMIC_RANGE = "DynamicRange"
 
 
+class AmazonRdsForSqlAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+
+
 class AvroCompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AvroCompressionCodec."""
 
@@ -64,6 +71,33 @@ class AzureSearchIndexWriteBehaviorType(str, Enum, metaclass=CaseInsensitiveEnum
 
     MERGE = "Merge"
     UPLOAD = "Upload"
+
+
+class AzureSqlDatabaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlDWAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlMIAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class AzureStorageAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -271,6 +305,16 @@ class ExpressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXPRESSION = "Expression"
 
 
+class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of expressions supported by the system. Type: string."""
+
+    CONSTANT = "Constant"
+    FIELD = "Field"
+    UNARY = "Unary"
+    BINARY = "Binary"
+    N_ARY = "NAry"
+
+
 class FactoryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type."""
 
@@ -299,7 +343,7 @@ class GlobalParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT = "Int"
+    INT_ENUM = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
@@ -318,6 +362,13 @@ class GoogleBigQueryAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The OAuth 2.0 authentication mechanism used for authentication. ServiceAuthentication can only
     be used on self-hosted IR.
     """
+
+    SERVICE_AUTHENTICATION = "ServiceAuthentication"
+    USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OAuth 2.0 authentication mechanism used for authentication."""
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
@@ -537,7 +588,7 @@ class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Notebook parameter type."""
 
     STRING = "string"
-    INT = "int"
+    INT_ENUM = "int"
     FLOAT = "float"
     BOOL = "bool"
 
@@ -587,7 +638,7 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT = "Int"
+    INT_ENUM = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
@@ -677,9 +728,8 @@ class RunQueryFilterOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
-    IN = "In"
-    NOT_IN = "NotIn"
     IN_ENUM = "In"
+    NOT_IN = "NotIn"
 
 
 class RunQueryOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -794,7 +844,7 @@ class ScriptActivityParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the query. Type: string."""
+    """The type of the ScriptActivityScriptBlock."""
 
     QUERY = "Query"
     NON_QUERY = "NonQuery"
@@ -813,6 +863,13 @@ class SelfHostedIntegrationRuntimeNodeStatus(str, Enum, metaclass=CaseInsensitiv
 
 
 class ServiceNowAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+
+
+class ServiceNowV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type to use."""
 
     BASIC = "Basic"
@@ -902,6 +959,13 @@ class SqlPartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC_RANGE = "DynamicRange"
 
 
+class SqlServerAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+
+
 class SqlWriteBehaviorEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify the write behavior when copying data into sql."""
 
@@ -938,7 +1002,7 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Stored procedure parameter type."""
 
     STRING = "String"
-    INT = "Int"
+    INT_ENUM = "Int"
     INT64 = "Int64"
     DECIMAL = "Decimal"
     GUID = "Guid"

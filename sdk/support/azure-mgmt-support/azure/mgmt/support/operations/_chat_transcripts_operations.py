@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,7 +40,7 @@ def build_list_request(support_ticket_name: str, subscription_id: str, **kwargs:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -120,7 +120,6 @@ class ChatTranscriptsOperations:
 
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChatTranscriptDetails or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.support.models.ChatTranscriptDetails]
@@ -143,16 +142,15 @@ class ChatTranscriptsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     support_ticket_name=support_ticket_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -164,13 +162,13 @@ class ChatTranscriptsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ChatTranscriptsListResult", pipeline_response)
@@ -180,11 +178,11 @@ class ChatTranscriptsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -197,10 +195,6 @@ class ChatTranscriptsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/chatTranscripts"
-    }
-
     @distributed_trace
     def get(self, support_ticket_name: str, chat_transcript_name: str, **kwargs: Any) -> _models.ChatTranscriptDetails:
         """Returns chatTranscript details for a support ticket under a subscription.
@@ -209,7 +203,6 @@ class ChatTranscriptsOperations:
         :type support_ticket_name: str
         :param chat_transcript_name: ChatTranscript name. Required.
         :type chat_transcript_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ChatTranscriptDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.ChatTranscriptDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -228,21 +221,20 @@ class ChatTranscriptsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatTranscriptDetails] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             support_ticket_name=support_ticket_name,
             chat_transcript_name=chat_transcript_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -255,10 +247,6 @@ class ChatTranscriptsOperations:
         deserialized = self._deserialize("ChatTranscriptDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Support/supportTickets/{supportTicketName}/chatTranscripts/{chatTranscriptName}"
-    }
+        return deserialized  # type: ignore

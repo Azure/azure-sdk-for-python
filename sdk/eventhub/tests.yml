@@ -1,6 +1,6 @@
 trigger: none
 
-extemds:
+extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventhub

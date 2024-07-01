@@ -1,8 +1,7 @@
 -e ../../../tools/azure-sdk-tools
--e ../../../tools/azure-devtools
 pytest
 django
-fastapi
+fastapi-slim
 flask
 psycopg2
 requests

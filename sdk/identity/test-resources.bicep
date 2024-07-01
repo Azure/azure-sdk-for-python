@@ -27,8 +27,9 @@ param adminUserName string = 'azureuser'
 param provisionLiveResources bool = false
 
 // See https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-var blobContributor = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor
+var blobReader = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1') // Storage Blob Data Reader
 var websiteContributor = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'de139f84-1756-47ae-9be6-808fbbe84772') // Website Contributor
+var acrPull = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // ACR Pull
 
 // Cluster parameters
 var kubernetesVersion = latestAksVersion
@@ -40,50 +41,50 @@ resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 resource blobRoleWeb 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
-  name: guid(resourceGroup().id, blobContributor)
+  name: guid(resourceGroup().id, blobReader)
   properties: {
     principalId: provisionLiveResources ? web.identity.principalId : ''
-    roleDefinitionId: blobContributor
+    roleDefinitionId: blobReader
     principalType: 'ServicePrincipal'
   }
 }
 
 resource blobRoleFunc 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
-  name: guid(resourceGroup().id, blobContributor, 'azureFunction')
+  name: guid(resourceGroup().id, blobReader, 'azureFunction')
   properties: {
     principalId: provisionLiveResources ? azureFunction.identity.principalId : ''
-    roleDefinitionId: blobContributor
+    roleDefinitionId: blobReader
     principalType: 'ServicePrincipal'
   }
 }
 
 resource blobRoleCluster 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
-  name: guid(resourceGroup().id, blobContributor, 'kubernetes')
+  name: guid(resourceGroup().id, blobReader, 'kubernetes')
   properties: {
     principalId: provisionLiveResources ? kubernetesCluster.identity.principalId : ''
-    roleDefinitionId: blobContributor
+    roleDefinitionId: blobReader
     principalType: 'ServicePrincipal'
   }
 }
 
 resource vmRoleCluster 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount
-  name: guid(resourceGroup().id, blobContributor, 'vm')
+  name: guid(resourceGroup().id, blobReader, 'vm')
   properties: {
     principalId: provisionLiveResources ? virtualMachine.identity.principalId : ''
-    roleDefinitionId: blobContributor
+    roleDefinitionId: blobReader
     principalType: 'ServicePrincipal'
   }
 }
 
 resource blobRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
   scope: storageAccount2
-  name: guid(resourceGroup().id, blobContributor, userAssignedIdentity.id)
+  name: guid(resourceGroup().id, blobReader, userAssignedIdentity.id)
   properties: {
     principalId: provisionLiveResources ? userAssignedIdentity.properties.principalId : ''
-    roleDefinitionId: blobContributor
+    roleDefinitionId: blobReader
     principalType: 'ServicePrincipal'
   }
 }
@@ -104,6 +105,16 @@ resource webRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (pro
   properties: {
     principalId: testApplicationOid
     roleDefinitionId: websiteContributor
+    principalType: 'ServicePrincipal'
+  }
+}
+
+resource acrPullContainerInstance 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (provisionLiveResources) {
+  scope: acrResource
+  name: guid(resourceGroup().id, acrPull, 'containerInstance')
+  properties: {
+    principalId: provisionLiveResources ? userAssignedIdentity.properties.principalId : ''
+    roleDefinitionId: acrPull
     principalType: 'ServicePrincipal'
   }
 }
@@ -418,10 +429,13 @@ output IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID string = provisionLiveResources 
 output IDENTITY_USER_DEFINED_IDENTITY_NAME string = provisionLiveResources ? userAssignedIdentity.name : ''
 output IDENTITY_STORAGE_NAME_1 string = provisionLiveResources ? storageAccount.name : ''
 output IDENTITY_STORAGE_NAME_2 string = provisionLiveResources ? storageAccount2.name : ''
+output IDENTITY_STORAGE_ID_1 string = provisionLiveResources ? storageAccount.id : ''
+output IDENTITY_STORAGE_ID_2 string = provisionLiveResources ? storageAccount2.id : ''
 output IDENTITY_FUNCTION_NAME string = provisionLiveResources ? azureFunction.name : ''
 output IDENTITY_AKS_CLUSTER_NAME string = provisionLiveResources ? kubernetesCluster.name : ''
 output IDENTITY_AKS_POD_NAME string = provisionLiveResources ? 'python-test-app' : ''
 output IDENTITY_ACR_NAME string = provisionLiveResources ? acrResource.name : ''
+output IDENTITY_CONTAINER_INSTANCE_NAME string = provisionLiveResources ? 'python-container-app' : ''
 output IDENTITY_ACR_LOGIN_SERVER string = provisionLiveResources ? acrResource.properties.loginServer : ''
 output IDENTITY_VM_NAME string = provisionLiveResources ? virtualMachine.name : ''
 output IDENTITY_LIVE_RESOURCES_PROVISIONED string = provisionLiveResources ? 'true' : ''

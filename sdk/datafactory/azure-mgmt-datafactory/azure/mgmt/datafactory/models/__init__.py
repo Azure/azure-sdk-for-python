@@ -22,6 +22,7 @@ from ._models_py3 import AmazonRdsForOraclePartitionSettings
 from ._models_py3 import AmazonRdsForOracleSource
 from ._models_py3 import AmazonRdsForOracleTableDataset
 from ._models_py3 import AmazonRdsForSqlServerLinkedService
+from ._models_py3 import AmazonRdsForSqlServerLinkedServiceTypeProperties
 from ._models_py3 import AmazonRdsForSqlServerSource
 from ._models_py3 import AmazonRdsForSqlServerTableDataset
 from ._models_py3 import AmazonRedshiftLinkedService
@@ -107,9 +108,12 @@ from ._models_py3 import AzureSearchIndexDataset
 from ._models_py3 import AzureSearchIndexSink
 from ._models_py3 import AzureSearchLinkedService
 from ._models_py3 import AzureSqlDWLinkedService
+from ._models_py3 import AzureSqlDWLinkedServiceTypeProperties
 from ._models_py3 import AzureSqlDWTableDataset
 from ._models_py3 import AzureSqlDatabaseLinkedService
+from ._models_py3 import AzureSqlDatabaseLinkedServiceTypeProperties
 from ._models_py3 import AzureSqlMILinkedService
+from ._models_py3 import AzureSqlMILinkedServiceTypeProperties
 from ._models_py3 import AzureSqlMITableDataset
 from ._models_py3 import AzureSqlSink
 from ._models_py3 import AzureSqlSource
@@ -268,6 +272,7 @@ from ._models_py3 import ExposureControlBatchResponse
 from ._models_py3 import ExposureControlRequest
 from ._models_py3 import ExposureControlResponse
 from ._models_py3 import Expression
+from ._models_py3 import ExpressionV2
 from ._models_py3 import Factory
 from ._models_py3 import FactoryGitHubConfiguration
 from ._models_py3 import FactoryIdentity
@@ -307,6 +312,9 @@ from ._models_py3 import GoogleAdWordsSource
 from ._models_py3 import GoogleBigQueryLinkedService
 from ._models_py3 import GoogleBigQueryObjectDataset
 from ._models_py3 import GoogleBigQuerySource
+from ._models_py3 import GoogleBigQueryV2LinkedService
+from ._models_py3 import GoogleBigQueryV2ObjectDataset
+from ._models_py3 import GoogleBigQueryV2Source
 from ._models_py3 import GoogleCloudStorageLinkedService
 from ._models_py3 import GoogleCloudStorageLocation
 from ._models_py3 import GoogleCloudStorageReadSettings
@@ -409,7 +417,6 @@ from ._models_py3 import MagentoLinkedService
 from ._models_py3 import MagentoObjectDataset
 from ._models_py3 import MagentoSource
 from ._models_py3 import ManagedIdentityCredential
-from ._models_py3 import ManagedIdentityCredentialResource
 from ._models_py3 import ManagedIntegrationRuntime
 from ._models_py3 import ManagedIntegrationRuntimeError
 from ._models_py3 import ManagedIntegrationRuntimeNode
@@ -530,6 +537,9 @@ from ._models_py3 import PolybaseSettings
 from ._models_py3 import PostgreSqlLinkedService
 from ._models_py3 import PostgreSqlSource
 from ._models_py3 import PostgreSqlTableDataset
+from ._models_py3 import PostgreSqlV2LinkedService
+from ._models_py3 import PostgreSqlV2Source
+from ._models_py3 import PostgreSqlV2TableDataset
 from ._models_py3 import PowerQuerySink
 from ._models_py3 import PowerQuerySinkMapping
 from ._models_py3 import PowerQuerySource
@@ -638,6 +648,9 @@ from ._models_py3 import SelfHostedIntegrationRuntimeStatus
 from ._models_py3 import ServiceNowLinkedService
 from ._models_py3 import ServiceNowObjectDataset
 from ._models_py3 import ServiceNowSource
+from ._models_py3 import ServiceNowV2LinkedService
+from ._models_py3 import ServiceNowV2ObjectDataset
+from ._models_py3 import ServiceNowV2Source
 from ._models_py3 import ServicePrincipalCredential
 from ._models_py3 import SetVariableActivity
 from ._models_py3 import SftpLocation
@@ -673,7 +686,9 @@ from ._models_py3 import SqlDWUpsertSettings
 from ._models_py3 import SqlMISink
 from ._models_py3 import SqlMISource
 from ._models_py3 import SqlPartitionSettings
+from ._models_py3 import SqlServerBaseLinkedServiceTypeProperties
 from ._models_py3 import SqlServerLinkedService
+from ._models_py3 import SqlServerLinkedServiceTypeProperties
 from ._models_py3 import SqlServerSink
 from ._models_py3 import SqlServerSource
 from ._models_py3 import SqlServerStoredProcedureActivity
@@ -776,9 +791,13 @@ from ._models_py3 import ZohoSource
 from ._data_factory_management_client_enums import ActivityOnInactiveMarkAs
 from ._data_factory_management_client_enums import ActivityState
 from ._data_factory_management_client_enums import AmazonRdsForOraclePartitionOption
+from ._data_factory_management_client_enums import AmazonRdsForSqlAuthenticationType
 from ._data_factory_management_client_enums import AvroCompressionCodec
 from ._data_factory_management_client_enums import AzureFunctionActivityMethod
 from ._data_factory_management_client_enums import AzureSearchIndexWriteBehaviorType
+from ._data_factory_management_client_enums import AzureSqlDWAuthenticationType
+from ._data_factory_management_client_enums import AzureSqlDatabaseAuthenticationType
+from ._data_factory_management_client_enums import AzureSqlMIAuthenticationType
 from ._data_factory_management_client_enums import AzureStorageAuthenticationType
 from ._data_factory_management_client_enums import BigDataPoolReferenceType
 from ._data_factory_management_client_enums import BlobEventTypes
@@ -803,12 +822,14 @@ from ._data_factory_management_client_enums import DynamicsDeploymentType
 from ._data_factory_management_client_enums import DynamicsSinkWriteBehavior
 from ._data_factory_management_client_enums import EventSubscriptionStatus
 from ._data_factory_management_client_enums import ExpressionType
+from ._data_factory_management_client_enums import ExpressionV2Type
 from ._data_factory_management_client_enums import FactoryIdentityType
 from ._data_factory_management_client_enums import FrequencyType
 from ._data_factory_management_client_enums import FtpAuthenticationType
 from ._data_factory_management_client_enums import GlobalParameterType
 from ._data_factory_management_client_enums import GoogleAdWordsAuthenticationType
 from ._data_factory_management_client_enums import GoogleBigQueryAuthenticationType
+from ._data_factory_management_client_enums import GoogleBigQueryV2AuthenticationType
 from ._data_factory_management_client_enums import HBaseAuthenticationType
 from ._data_factory_management_client_enums import HDInsightActivityDebugInfoOption
 from ._data_factory_management_client_enums import HdiNodeTypes
@@ -866,6 +887,7 @@ from ._data_factory_management_client_enums import ScriptActivityParameterType
 from ._data_factory_management_client_enums import ScriptType
 from ._data_factory_management_client_enums import SelfHostedIntegrationRuntimeNodeStatus
 from ._data_factory_management_client_enums import ServiceNowAuthenticationType
+from ._data_factory_management_client_enums import ServiceNowV2AuthenticationType
 from ._data_factory_management_client_enums import ServicePrincipalCredentialType
 from ._data_factory_management_client_enums import SftpAuthenticationType
 from ._data_factory_management_client_enums import SnowflakeAuthenticationType
@@ -877,6 +899,7 @@ from ._data_factory_management_client_enums import SparkThriftTransportProtocol
 from ._data_factory_management_client_enums import SqlAlwaysEncryptedAkvAuthType
 from ._data_factory_management_client_enums import SqlDWWriteBehaviorEnum
 from ._data_factory_management_client_enums import SqlPartitionOption
+from ._data_factory_management_client_enums import SqlServerAuthenticationType
 from ._data_factory_management_client_enums import SqlWriteBehaviorEnum
 from ._data_factory_management_client_enums import SsisLogLocationType
 from ._data_factory_management_client_enums import SsisObjectMetadataType
@@ -917,6 +940,7 @@ __all__ = [
     "AmazonRdsForOracleSource",
     "AmazonRdsForOracleTableDataset",
     "AmazonRdsForSqlServerLinkedService",
+    "AmazonRdsForSqlServerLinkedServiceTypeProperties",
     "AmazonRdsForSqlServerSource",
     "AmazonRdsForSqlServerTableDataset",
     "AmazonRedshiftLinkedService",
@@ -1002,9 +1026,12 @@ __all__ = [
     "AzureSearchIndexSink",
     "AzureSearchLinkedService",
     "AzureSqlDWLinkedService",
+    "AzureSqlDWLinkedServiceTypeProperties",
     "AzureSqlDWTableDataset",
     "AzureSqlDatabaseLinkedService",
+    "AzureSqlDatabaseLinkedServiceTypeProperties",
     "AzureSqlMILinkedService",
+    "AzureSqlMILinkedServiceTypeProperties",
     "AzureSqlMITableDataset",
     "AzureSqlSink",
     "AzureSqlSource",
@@ -1163,6 +1190,7 @@ __all__ = [
     "ExposureControlRequest",
     "ExposureControlResponse",
     "Expression",
+    "ExpressionV2",
     "Factory",
     "FactoryGitHubConfiguration",
     "FactoryIdentity",
@@ -1202,6 +1230,9 @@ __all__ = [
     "GoogleBigQueryLinkedService",
     "GoogleBigQueryObjectDataset",
     "GoogleBigQuerySource",
+    "GoogleBigQueryV2LinkedService",
+    "GoogleBigQueryV2ObjectDataset",
+    "GoogleBigQueryV2Source",
     "GoogleCloudStorageLinkedService",
     "GoogleCloudStorageLocation",
     "GoogleCloudStorageReadSettings",
@@ -1304,7 +1335,6 @@ __all__ = [
     "MagentoObjectDataset",
     "MagentoSource",
     "ManagedIdentityCredential",
-    "ManagedIdentityCredentialResource",
     "ManagedIntegrationRuntime",
     "ManagedIntegrationRuntimeError",
     "ManagedIntegrationRuntimeNode",
@@ -1425,6 +1455,9 @@ __all__ = [
     "PostgreSqlLinkedService",
     "PostgreSqlSource",
     "PostgreSqlTableDataset",
+    "PostgreSqlV2LinkedService",
+    "PostgreSqlV2Source",
+    "PostgreSqlV2TableDataset",
     "PowerQuerySink",
     "PowerQuerySinkMapping",
     "PowerQuerySource",
@@ -1533,6 +1566,9 @@ __all__ = [
     "ServiceNowLinkedService",
     "ServiceNowObjectDataset",
     "ServiceNowSource",
+    "ServiceNowV2LinkedService",
+    "ServiceNowV2ObjectDataset",
+    "ServiceNowV2Source",
     "ServicePrincipalCredential",
     "SetVariableActivity",
     "SftpLocation",
@@ -1568,7 +1604,9 @@ __all__ = [
     "SqlMISink",
     "SqlMISource",
     "SqlPartitionSettings",
+    "SqlServerBaseLinkedServiceTypeProperties",
     "SqlServerLinkedService",
+    "SqlServerLinkedServiceTypeProperties",
     "SqlServerSink",
     "SqlServerSource",
     "SqlServerStoredProcedureActivity",
@@ -1670,9 +1708,13 @@ __all__ = [
     "ActivityOnInactiveMarkAs",
     "ActivityState",
     "AmazonRdsForOraclePartitionOption",
+    "AmazonRdsForSqlAuthenticationType",
     "AvroCompressionCodec",
     "AzureFunctionActivityMethod",
     "AzureSearchIndexWriteBehaviorType",
+    "AzureSqlDWAuthenticationType",
+    "AzureSqlDatabaseAuthenticationType",
+    "AzureSqlMIAuthenticationType",
     "AzureStorageAuthenticationType",
     "BigDataPoolReferenceType",
     "BlobEventTypes",
@@ -1697,12 +1739,14 @@ __all__ = [
     "DynamicsSinkWriteBehavior",
     "EventSubscriptionStatus",
     "ExpressionType",
+    "ExpressionV2Type",
     "FactoryIdentityType",
     "FrequencyType",
     "FtpAuthenticationType",
     "GlobalParameterType",
     "GoogleAdWordsAuthenticationType",
     "GoogleBigQueryAuthenticationType",
+    "GoogleBigQueryV2AuthenticationType",
     "HBaseAuthenticationType",
     "HDInsightActivityDebugInfoOption",
     "HdiNodeTypes",
@@ -1760,6 +1804,7 @@ __all__ = [
     "ScriptType",
     "SelfHostedIntegrationRuntimeNodeStatus",
     "ServiceNowAuthenticationType",
+    "ServiceNowV2AuthenticationType",
     "ServicePrincipalCredentialType",
     "SftpAuthenticationType",
     "SnowflakeAuthenticationType",
@@ -1771,6 +1816,7 @@ __all__ = [
     "SqlAlwaysEncryptedAkvAuthType",
     "SqlDWWriteBehaviorEnum",
     "SqlPartitionOption",
+    "SqlServerAuthenticationType",
     "SqlWriteBehaviorEnum",
     "SsisLogLocationType",
     "SsisObjectMetadataType",

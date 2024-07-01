@@ -13,6 +13,9 @@ bandit = false
 # these can be any number of suppressions. note that * present means that ALL warnings will be suppressed for this package
 suppressed_skip_warnings = ["*"]
 
+[build-system]
+requires = ["setuptools", "wheel", "cibuildwheel"]
+
 [tool.cibuildwheel]
 build = ["cp38*", "pp38*", "pp39*", "pp310*"]
 test-requires = "pytest"

@@ -45,7 +45,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -55,7 +55,9 @@ def build_get_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
@@ -84,7 +86,7 @@ def build_regenerate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,7 +96,9 @@ def build_regenerate_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "searchServiceName": _SERIALIZER.url("search_service_name", search_service_name, "str"),
+        "searchServiceName": _SERIALIZER.url(
+            "search_service_name", search_service_name, "str", pattern=r"^(?=.{2,60}$)[a-z0-9][a-z0-9]+(-[a-z0-9]+)*$"
+        ),
         "keyKind": _SERIALIZER.url("key_kind", key_kind, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
@@ -139,7 +143,7 @@ class AdminKeysOperations:
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.AdminKeyResult:
-        """Gets the primary and secondary admin API keys for the specified Azure Cognitive Search service.
+        """Gets the primary and secondary admin API keys for the specified Azure AI Search service.
 
         .. seealso::
            - https://aka.ms/search-manage
@@ -147,7 +151,7 @@ class AdminKeysOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param search_management_request_options: Parameter group. Default value is None.
@@ -229,7 +233,7 @@ class AdminKeysOperations:
         :param resource_group_name: The name of the resource group within the current subscription. You
          can obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param search_service_name: The name of the Azure Cognitive Search service associated with the
+        :param search_service_name: The name of the Azure AI Search service associated with the
          specified resource group. Required.
         :type search_service_name: str
         :param key_kind: Specifies which key to regenerate. Valid values include 'primary' and

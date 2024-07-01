@@ -35,6 +35,15 @@ class AllowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FALSE = "false"
 
 
+class AuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates how to apply the authentication configuration operations."""
+
+    OPT_IN_ALL_AUTH = "optInAllAuth"
+    """Default authentication configuration according to the authentication type."""
+    OPT_OUT_ALL_AUTH = "optOutAllAuth"
+    """Skip all authentication configuration such as enabling managed identity and granting RBAC roles"""
+
+
 class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication type."""
 
@@ -45,6 +54,7 @@ class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECRET = "secret"
     ACCESS_KEY = "accessKey"
     USER_ACCOUNT = "userAccount"
+    EASY_AUTH_MICROSOFT_ENTRA_ID = "easyAuthMicrosoftEntraID"
 
 
 class AzureResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -67,6 +77,8 @@ class ClientType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NODEJS = "nodejs"
     SPRING_BOOT = "springBoot"
     KAFKA_SPRING_BOOT = "kafka-springBoot"
+    JMS_SPRING_BOOT = "jms-springBoot"
+    DAPR = "dapr"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -76,6 +88,20 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class DaprBindingComponentDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction supported by the dapr binding component."""
+
+    INPUT = "input"
+    OUTPUT = "output"
+
+
+class DaprMetadataRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The value indicating whether the metadata is required or not."""
+
+    TRUE = "true"
+    FALSE = "false"
 
 
 class DeleteOrUpdateBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -108,6 +134,17 @@ class DryrunPreviewOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONFIG_AUTH = "configAuth"
 
 
+class LinkerConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of configuration to determine whether the configuration can be modified after creation.
+    KeyvaultSecret means the configuration references a key vault secret, such as App Service/ACA
+    key vault reference. Default means the configuration is real value, such as user name, raw
+    secret, etc.
+    """
+
+    DEFAULT = "Default"
+    KEY_VAULT_SECRET = "KeyVaultSecret"
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -116,6 +153,13 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
+
+
+class SecretSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of secret source."""
+
+    RAW_VALUE = "rawValue"
+    KEY_VAULT_SECRET = "keyVaultSecret"
 
 
 class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

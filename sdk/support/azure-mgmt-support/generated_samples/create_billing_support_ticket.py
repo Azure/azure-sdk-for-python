@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.support import MicrosoftSupport
 
 """
@@ -33,6 +36,7 @@ def main():
         support_ticket_name="testticket",
         create_support_ticket_parameters={
             "properties": {
+                "advancedDiagnosticConsent": "No",
                 "contactDetails": {
                     "country": "usa",
                     "firstName": "abc",
@@ -55,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2022-09-01-preview/examples/CreateBillingSupportTicket.json
+# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/stable/2024-04-01/examples/CreateBillingSupportTicket.json
 if __name__ == "__main__":
     main()

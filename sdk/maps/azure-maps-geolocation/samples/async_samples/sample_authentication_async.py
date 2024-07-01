@@ -31,7 +31,7 @@ async def authentication_maps_service_client_with_subscription_key_credential_as
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.geolocation.aio import MapsGeolocationClient
 
-    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+    subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
     maps_geolocation_client = MapsGeolocationClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_geolocation_service_client_with_key_async]

@@ -248,7 +248,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                     assert prompt.qna_id
                     assert prompt.display_text
 
-
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_query_knowledgebase_with_dictparams(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         query_params = {
@@ -276,6 +276,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
         assert len(confident_answers) == 1
         assert confident_answers[0].source == "surface-book-user-guide-EN.pdf"
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_query_knowledgebase_overload(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         with client:
@@ -298,6 +299,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
         assert len(confident_answers) == 1
         assert confident_answers[0].source == "surface-book-user-guide-EN.pdf"
 
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_query_knowledgebase_with_followup(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         with client:

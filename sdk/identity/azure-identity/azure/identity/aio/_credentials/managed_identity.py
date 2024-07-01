@@ -23,11 +23,11 @@ class ManagedIdentityCredential(AsyncContextManager):
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
     the keyword arguments. See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`__ for more
+    <https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview>`__ for more
     information about configuring managed identity for applications.
 
-    :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
-        AD app registration. This argument is supported in all hosting environments.
+    :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of a
+        Microsoft Entra app registration. This argument is supported in all hosting environments.
     :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
         learn what values it expects.
@@ -123,7 +123,7 @@ class ManagedIdentityCredential(AsyncContextManager):
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+            https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
         :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: not used by this credential; any value provided will be ignored.
 

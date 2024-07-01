@@ -300,9 +300,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                 file.write("\n")
 
         if in_ci():
-            replace_dev_reqs(destination_dev_req, package_dir)
-            replace_dev_reqs(test_tools_path, package_dir)
-            replace_dev_reqs(dependency_tools_path, package_dir)
+            replace_dev_reqs(destination_dev_req, package_dir, parsed_args.wheel_dir)
+            replace_dev_reqs(test_tools_path, package_dir, parsed_args.wheel_dir)
+            replace_dev_reqs(dependency_tools_path, package_dir, parsed_args.wheel_dir)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
 
         inject_custom_reqs(destination_dev_req, parsed_args.injected_packages, package_dir)

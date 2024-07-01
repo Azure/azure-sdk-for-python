@@ -164,7 +164,8 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders, uam
                 consumer._handler.do_work()
                 assert consumer._handler._connection._state == uamqp.c_uamqp.ConnectionState.DISCARDING
             else:
-                consumer._handler.do_work()
+                with pytest.raises(error.AMQPConnectionError):
+                    consumer._handler.do_work()
                 assert consumer._handler._connection.state == constants.ConnectionState.END
 
             duration = 10

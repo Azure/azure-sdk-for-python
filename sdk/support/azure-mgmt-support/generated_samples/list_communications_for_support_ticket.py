@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.support import MicrosoftSupport
 
 """
@@ -29,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.support_ticket_communications_no_subscription.list(
+    response = client.communications_no_subscription.list(
         support_ticket_name="testticket",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/preview/2022-09-01-preview/examples/ListCommunicationsForSupportTicket.json
+# x-ms-original-file: specification/support/resource-manager/Microsoft.Support/stable/2024-04-01/examples/ListCommunicationsForSupportTicket.json
 if __name__ == "__main__":
     main()

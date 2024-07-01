@@ -32,7 +32,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         def check_poll_value(poll):
             if self.is_live:
-                assert poll == 5
+                assert poll == 1
             else:
                 assert poll == 0
         check_poll_value(client._client._config.polling_interval)
@@ -251,7 +251,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             poller = await client.begin_build_document_model("template", blob_container_url=None, continuation_token=cont_token)
             result = await poller.result()
             assert result
-            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @skip_flaky_test
     @FormRecognizerPreparer()

@@ -24,12 +24,13 @@ Cosmos database service.
 """
 
 import json
+import os
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos._execution_context import multi_execution_aggregator
+from azure.cosmos._execution_context import endpoint_component, multi_execution_aggregator
+from azure.cosmos._execution_context import non_streaming_order_by_aggregator
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
-from azure.cosmos._execution_context import endpoint_component
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
@@ -111,7 +112,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         return self._execution_context.fetch_next_block()
 
     def _create_pipelined_execution_context(self, query_execution_info):
-
         assert self._resource_link, "code bug, resource_link is required."
         if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
             if self._options and ("enableCrossPartitionQuery" in self._options
@@ -119,7 +119,24 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 raise CosmosHttpResponseError(StatusCodes.BAD_REQUEST,
                                   "Cross partition query only supports 'VALUE <AggregateFunc>' for aggregates")
 
-        execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
+        # throw exception here for vector search query without limit filter or limit > max_limit
+        if query_execution_info.get_non_streaming_order_by():
+            total_item_number = query_execution_info.get_top() or query_execution_info.get_limit()
+            if total_item_number is None:
+                raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
+                                 " RUs very fast and have long runtimes. Please ensure you are using one" +
+                                 " of the two filters with your vector search query.")
+            if total_item_number > os.environ.get('AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH', 50000):
+                raise ValueError("Executing a vector search query with more items than the max is not allowed." +
+                                 "Please ensure you are using a limit smaller than the max, or change the max.")
+            execution_context_aggregator =\
+                non_streaming_order_by_aggregator._NonStreamingOrderByContextAggregator(self._client,
+                                                                                        self._resource_link,
+                                                                                        self._query,
+                                                                                        self._options,
+                                                                                        query_execution_info)
+        else:
+            execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,
                                                                                                    self._query,
                                                                                                    self._options,
@@ -147,7 +164,9 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         self._endpoint = endpoint_component._QueryExecutionEndpointComponent(execution_context)
 
         order_by = query_execution_info.get_order_by()
-        if order_by:
+        if query_execution_info.get_non_streaming_order_by():
+            self._endpoint = endpoint_component._QueryExecutionNonStreamingEndpointComponent(self._endpoint)
+        elif order_by:
             self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
 
         aggregates = query_execution_info.get_aggregates()

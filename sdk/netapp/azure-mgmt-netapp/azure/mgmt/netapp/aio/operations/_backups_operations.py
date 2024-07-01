@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,7 +36,7 @@ from ...operations._backups_operations import (
     build_delete_request,
     build_get_latest_status_request,
     build_get_request,
-    build_get_volume_restore_status_request,
+    build_get_volume_latest_restore_status_request,
     build_list_by_vault_request,
     build_update_request,
 )
@@ -81,7 +81,6 @@ class BackupsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupStatus or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.BackupStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -100,23 +99,22 @@ class BackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.BackupStatus] = kwargs.pop("cls", None)
 
-        request = build_get_latest_status_request(
+        _request = build_get_latest_status_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_latest_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -129,21 +127,17 @@ class BackupsOperations:
         deserialized = self._deserialize("BackupStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_latest_status.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/latestBackupStatus/current"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_volume_restore_status(
+    async def get_volume_latest_restore_status(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> _models.RestoreStatus:
-        """Get volume's restore status.
+        """Get the latest restore status of a volume.
 
-        Get the status of the restore for a volume.
+        Get the latest status of the restore for a volume.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -154,7 +148,6 @@ class BackupsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RestoreStatus or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.RestoreStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -173,41 +166,37 @@ class BackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.RestoreStatus] = kwargs.pop("cls", None)
 
-        request = build_get_volume_restore_status_request(
+        _request = build_get_volume_latest_restore_status_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_volume_restore_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("RestoreStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_volume_restore_status.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/restoreStatus"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_vault(
@@ -232,7 +221,6 @@ class BackupsOperations:
         :param filter: An option to specify the VolumeResourceId. If present, then only returns the
          backups under the specified volume. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Backup or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.Backup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -254,19 +242,18 @@ class BackupsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_vault_request(
+                _request = build_list_by_vault_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     backup_vault_name=backup_vault_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_by_vault.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -278,13 +265,13 @@ class BackupsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("BackupsList", pipeline_response)
@@ -294,11 +281,11 @@ class BackupsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -310,10 +297,6 @@ class BackupsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_vault.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups"
-    }
 
     @distributed_trace_async
     async def get(
@@ -332,7 +315,6 @@ class BackupsOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Backup or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.Backup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -351,23 +333,22 @@ class BackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Backup] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             backup_vault_name=backup_vault_name,
             backup_name=backup_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -380,13 +361,9 @@ class BackupsOperations:
         deserialized = self._deserialize("Backup", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_initial(
         self,
@@ -394,7 +371,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.Backup, IO],
+        body: Union[_models.Backup, IO[bytes]],
         **kwargs: Any
     ) -> _models.Backup:
         error_map = {
@@ -420,7 +397,7 @@ class BackupsOperations:
         else:
             _json = self._serialize.body(body, "Backup")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             backup_vault_name=backup_vault_name,
@@ -430,16 +407,15 @@ class BackupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -459,10 +435,6 @@ class BackupsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
 
     @overload
     async def begin_create(
@@ -494,14 +466,6 @@ class BackupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Backup or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Backup]
@@ -515,7 +479,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: IO,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -534,18 +498,10 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Required.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Backup or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Backup]
@@ -559,7 +515,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.Backup, IO],
+        body: Union[_models.Backup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Backup]:
         """Create a backup.
@@ -576,19 +532,8 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Is either a Backup type or a
-         IO type. Required.
-        :type body: ~azure.mgmt.netapp.models.Backup or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Backup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Backup or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Backup]
@@ -622,7 +567,7 @@ class BackupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Backup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -635,17 +580,15 @@ class BackupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Backup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
+        return AsyncLROPoller[_models.Backup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _update_initial(
         self,
@@ -653,7 +596,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[Union[_models.BackupPatch, IO]] = None,
+        body: Optional[Union[_models.BackupPatch, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Backup:
         error_map = {
@@ -682,7 +625,7 @@ class BackupsOperations:
             else:
                 _json = None
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             backup_vault_name=backup_vault_name,
@@ -692,16 +635,15 @@ class BackupsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -724,10 +666,6 @@ class BackupsOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
 
     @overload
     async def begin_update(
@@ -759,14 +697,6 @@ class BackupsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Backup or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Backup]
@@ -780,7 +710,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[IO] = None,
+        body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -799,18 +729,10 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Default value is None.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Backup or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Backup]
@@ -824,7 +746,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[Union[_models.BackupPatch, IO]] = None,
+        body: Optional[Union[_models.BackupPatch, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Backup]:
         """Patch a backup.
@@ -841,19 +763,8 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Is either a BackupPatch type
-         or a IO type. Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BackupPatch or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BackupPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Backup or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Backup]
@@ -887,7 +798,7 @@ class BackupsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Backup", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -899,17 +810,15 @@ class BackupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Backup].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
+        return AsyncLROPoller[_models.Backup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, account_name: str, backup_vault_name: str, backup_name: str, **kwargs: Any
@@ -928,23 +837,22 @@ class BackupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             backup_vault_name=backup_vault_name,
             backup_name=backup_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -959,11 +867,7 @@ class BackupsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -982,14 +886,6 @@ class BackupsOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1018,7 +914,7 @@ class BackupsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1029,14 +925,10 @@ class BackupsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

@@ -39,7 +39,7 @@ class OfferingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.quantum.aio.AzureQuantumManagementClient`'s
+        :class:`~azure.mgmt.quantum.aio.AzureQuantumMgmtClient`'s
         :attr:`offerings` attribute.
     """
 

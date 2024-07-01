@@ -5,11 +5,9 @@
 from typing import Optional
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ComputeRuntimeDto as RestComputeRuntimeDto
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class ComputeRuntime(RestTranslatableMixin):
     """Spark compute runtime configuration.
 

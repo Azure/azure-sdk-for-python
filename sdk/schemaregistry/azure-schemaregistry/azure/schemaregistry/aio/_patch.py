@@ -30,12 +30,12 @@ from .._patch import (
     get_http_request_kwargs,
     get_case_insensitive_format,
     get_content_type,
-    SchemaFormat,
     Schema,
     SchemaProperties,
     prepare_schema_result,
     prepare_schema_properties_result,
 )
+from ..models._patch import SchemaFormat
 from ._client import SchemaRegistryClient as GeneratedServiceClient
 
 if TYPE_CHECKING:
@@ -45,6 +45,7 @@ if TYPE_CHECKING:
 
 
 ###### Wrapper Class ######
+
 
 class SchemaRegistryClient(object):
     """
@@ -76,8 +77,6 @@ class SchemaRegistryClient(object):
     ) -> None:
         # using composition (not inheriting from generated client) to allow
         # calling different operations conditionally within one method
-        if "https://" not in fully_qualified_namespace:
-            fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         self._generated_client = GeneratedServiceClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
@@ -135,9 +134,9 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = await self._generated_client._register_schema(   # pylint:disable=protected-access
+        ] = await self._generated_client._register_schema(  # pylint:disable=protected-access
             group_name=group_name,
-            name=name,
+            schema_name=name,
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
@@ -152,9 +151,7 @@ class SchemaRegistryClient(object):
         ...
 
     @overload
-    async def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs: Any
-    ) -> Schema:
+    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
         ...
 
     @distributed_trace_async
@@ -206,7 +203,10 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = await self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
+            (
+                http_response,
+                schema_properties,
+            ) = await self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
@@ -229,9 +229,9 @@ class SchemaRegistryClient(object):
                     """or `group_name`, `name`, `version."""
                 )
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = await self._generated_client.get_schema_by_version(  # type: ignore
+            http_response, schema_properties = await self._generated_client._get_schema_by_version(  # type: ignore
                 group_name=group_name,
-                name=name,
+                schema_name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
@@ -286,9 +286,9 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = await self._generated_client._get_schema_id_by_content(  # pylint:disable=protected-access
+        ] = await self._generated_client._get_schema_properties_by_content(  # pylint:disable=protected-access
             group_name=group_name,
-            name=name,
+            schema_name=name,
             schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
@@ -299,6 +299,7 @@ class SchemaRegistryClient(object):
 
 
 ###### Encoder Protocols ######
+
 
 class SchemaEncoder(Protocol):
     """

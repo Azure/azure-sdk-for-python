@@ -41,7 +41,6 @@ from azure.storage.blob import BlobServiceClient, BlobClient, generate_container
 
 
 class SampleTranslationWithAzureBlob:
-
     def __init__(self):
         self.endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
         self.key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -50,26 +49,22 @@ class SampleTranslationWithAzureBlob:
         self.storage_key = os.environ["AZURE_STORAGE_SOURCE_KEY"]
         self.storage_source_container_name = os.getenv("AZURE_STORAGE_SOURCE_CONTAINER_NAME", None)  # Optional
         self.storage_target_container_name = os.getenv("AZURE_STORAGE_TARGET_CONTAINER_NAME", None)  # Optional
-        self.document_name = os.getenv("AZURE_DOCUMENT_NAME", None)  # Optional document in same directory as this sample
+        self.document_name = os.getenv(
+            "AZURE_DOCUMENT_NAME", None
+        )  # Optional document in same directory as this sample
 
     def sample_translation_with_azure_blob(self):
 
-        translation_client = DocumentTranslationClient(
-            self.endpoint, AzureKeyCredential(self.key)
-        )
+        translation_client = DocumentTranslationClient(self.endpoint, AzureKeyCredential(self.key))
 
-        blob_service_client = BlobServiceClient(
-            self.storage_endpoint,
-            credential=self.storage_key
-        )
+        blob_service_client = BlobServiceClient(self.storage_endpoint, credential=self.storage_key)
 
         source_container = self.create_container(
             blob_service_client,
             container_name=self.storage_source_container_name or "translation-source-container",
         )
         target_container = self.create_container(
-            blob_service_client,
-            container_name=self.storage_target_container_name or "translation-target-container"
+            blob_service_client, container_name=self.storage_target_container_name or "translation-target-container"
         )
 
         if self.document_name:
@@ -79,7 +74,7 @@ class SampleTranslationWithAzureBlob:
             self.document_name = "example_document.txt"
             source_container.upload_blob(
                 name=self.document_name,
-                data=b"This is an example translation with the document translation client library"
+                data=b"This is an example translation with the document translation client library",
             )
         print(f"Uploaded document {self.document_name} to storage container {source_container.container_name}")
 
@@ -103,11 +98,11 @@ class SampleTranslationWithAzureBlob:
                 print(f"Translated to language: {document.translated_to}\n")
 
                 blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
-                with open("translated_"+self.document_name, "wb") as my_blob:
+                with open("translated_" + self.document_name, "wb") as my_blob:
                     download_stream = blob_client.download_blob()
                     my_blob.write(download_stream.readall())
 
-                print("Downloaded {} locally".format("translated_"+self.document_name))
+                print("Downloaded {} locally".format("translated_" + self.document_name))
             elif document.error:
                 print("\nThere was a problem translating your document.")
                 print(f"Document Error Code: {document.error.code}, Message: {document.error.message}\n")
@@ -127,7 +122,7 @@ class SampleTranslationWithAzureBlob:
             container_name=container.container_name,
             account_key=self.storage_key,
             permission=permissions,
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=1),
         )
 
         container_sas_url = self.storage_endpoint + container.container_name + "?" + sas_token
@@ -135,6 +130,6 @@ class SampleTranslationWithAzureBlob:
         return container_sas_url
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = SampleTranslationWithAzureBlob()
     sample.sample_translation_with_azure_blob()
