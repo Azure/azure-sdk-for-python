@@ -43,7 +43,7 @@ from tests.servicebus_preparer import (
     ServiceBusSubscriptionPreparer,
     CachedServiceBusResourceGroupPreparer
 )
-from tests.utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync, sleep_until_expired_async
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
@@ -657,7 +657,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=10) as receiver:
                 session = receiver.session
                 renewer.register(receiver, session, max_lock_renewal_duration=5, on_lock_renew_failure=lock_lost_callback)
-            await asyncio.sleep(max(0,(session.locked_until_utc - utc_now()).total_seconds()+1)) # If this pattern repeats make sleep_until_expired_async
+            await sleep_until_expired_async(session)
             assert not results
 
             await renewer.close()
@@ -740,7 +740,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                                                     prefetch_count=10,
                                                     auto_lock_renewer=renewer) as receiver:
                 session = receiver.session
-            await asyncio.sleep(max(0,(session.locked_until_utc - utc_now()).total_seconds()+1)) # If this pattern repeats make sleep_until_expired_async
+            await sleep_until_expired_async(session)
             assert not results
 
             await renewer.close()
