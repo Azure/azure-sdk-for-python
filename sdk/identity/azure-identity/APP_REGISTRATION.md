@@ -71,9 +71,9 @@ The following shows an example of the Access control (IAM) page for a resource g
 
 ![Screenshot of Access control (IAM) page for a resource group.](images/rg-access-control.png)
 
-- Click the **Role assignments** tab to view the role assignments at this scope.
+- Select the **Role assignments** tab to view the role assignments at this scope.
 
-- Click **Add** > **Add role assignment**.
+- Select **Add** > **Add role assignment**.
 
 If you don't have permissions to assign roles, the Add role assignment option will be disabled.
 
