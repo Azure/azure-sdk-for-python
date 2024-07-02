@@ -100,11 +100,11 @@ def get_datastore_info(
     )
 
     if isinstance(datastore.credentials, SasTokenConfiguration):
-        datastore_info["credential"] = operations._list_secrets(name=name, expirable_secret=True)
+        datastore_info["credential"] = operations._list_secrets(name=name, expirable_secret=True).sas_token
     elif isinstance(datastore.credentials, NoneCredentialConfiguration):
         datastore_info["credential"] = operations._credential
     else:
-        datastore_info["credential"] = operations._list_secrets(name=name)
+        datastore_info["credential"] = operations._list_secrets(name=name).sas_token
 
     if datastore.type == DatastoreType.AZURE_BLOB:
         datastore_info["container_name"] = str(datastore.container_name)
