@@ -1683,13 +1683,10 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert share_props.paid_bursting_max_bandwidth_mibps == max_mibps
         assert share_props.paid_bursting_max_iops == max_iops
 
-        shares = None
+        shares = []
         async for share in self.fsc.list_shares():
-            if shares is None:
-                shares = []
             shares.append(share)
 
-        assert shares is not None
         assert len(shares) == 1
         assert shares[0] is not None
         assert shares[0].paid_bursting_enabled
