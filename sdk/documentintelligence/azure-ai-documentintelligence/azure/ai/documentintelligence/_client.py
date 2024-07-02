@@ -36,12 +36,12 @@ class DocumentIntelligenceClient(
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-29-preview". Note that overriding this default value may result in unsupported
+     "2024-07-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -94,7 +94,7 @@ class DocumentIntelligenceClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -118,12 +118,12 @@ class DocumentIntelligenceAdministrationClient(
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-29-preview". Note that overriding this default value may result in unsupported
+     "2024-07-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -178,7 +178,7 @@ class DocumentIntelligenceAdministrationClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -103,8 +103,7 @@ class AddressValue(_model_base.Model):  # pylint: disable=too-many-instance-attr
         suburb: Optional[str] = None,
         house: Optional[str] = None,
         level: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -140,8 +139,7 @@ class AnalyzeDocumentRequest(_model_base.Model):
         *,
         url_source: Optional[str] = None,
         bytes_source: Optional[bytes] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -192,6 +190,8 @@ class AnalyzeResult(_model_base.Model):  # pylint: disable=too-many-instance-att
     :vartype languages: list[~azure.ai.documentintelligence.models.DocumentLanguage]
     :ivar documents: Extracted documents.
     :vartype documents: list[~azure.ai.documentintelligence.models.Document]
+    :ivar warnings: List of warnings encountered.
+    :vartype warnings: list[~azure.ai.documentintelligence.models.Warning]
     """
 
     api_version: str = rest_field(name="apiVersion")
@@ -226,6 +226,8 @@ class AnalyzeResult(_model_base.Model):  # pylint: disable=too-many-instance-att
     """Detected languages."""
     documents: Optional[List["_models.Document"]] = rest_field()
     """Extracted documents."""
+    warnings: Optional[List["_models.Warning"]] = rest_field()
+    """List of warnings encountered."""
 
     @overload
     def __init__(
@@ -246,8 +248,8 @@ class AnalyzeResult(_model_base.Model):  # pylint: disable=too-many-instance-att
         styles: Optional[List["_models.DocumentStyle"]] = None,
         languages: Optional[List["_models.DocumentLanguage"]] = None,
         documents: Optional[List["_models.Document"]] = None,
-    ):
-        ...
+        warnings: Optional[List["_models.Warning"]] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -300,8 +302,7 @@ class AnalyzeResultOperation(_model_base.Model):
         last_updated_date_time: datetime.datetime,
         error: Optional["_models.Error"] = None,
         analyze_result: Optional["_models.AnalyzeResult"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -341,8 +342,7 @@ class AuthorizeCopyRequest(_model_base.Model):
         model_id: str,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -377,8 +377,7 @@ class AzureBlobContentSource(_model_base.Model):
         *,
         container_url: str,
         prefix: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -414,8 +413,7 @@ class AzureBlobFileListContentSource(_model_base.Model):
         *,
         container_url: str,
         file_list: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -456,8 +454,7 @@ class BoundingRegion(_model_base.Model):
         *,
         page_number: int,
         polygon: List[float],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -484,6 +481,8 @@ class BuildDocumentClassifierRequest(_model_base.Model):
     :ivar doc_types: List of document types to classify against. Required.
     :vartype doc_types: dict[str,
      ~azure.ai.documentintelligence.models.ClassifierDocumentTypeDetails]
+    :ivar allow_overwrite: Allow overwriting an existing classifier with the same name.
+    :vartype allow_overwrite: bool
     """
 
     classifier_id: str = rest_field(name="classifierId")
@@ -494,6 +493,8 @@ class BuildDocumentClassifierRequest(_model_base.Model):
     """Base classifierId on top of which to train the classifier."""
     doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"] = rest_field(name="docTypes")
     """List of document types to classify against. Required."""
+    allow_overwrite: Optional[bool] = rest_field(name="allowOverwrite")
+    """Allow overwriting an existing classifier with the same name."""
 
     @overload
     def __init__(
@@ -503,8 +504,8 @@ class BuildDocumentClassifierRequest(_model_base.Model):
         doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"],
         description: Optional[str] = None,
         base_classifier_id: Optional[str] = None,
-    ):
-        ...
+        allow_overwrite: Optional[bool] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -526,8 +527,8 @@ class BuildDocumentModelRequest(_model_base.Model):
     :vartype model_id: str
     :ivar description: Document model description.
     :vartype description: str
-    :ivar build_mode: Custom document model build mode. Required. Known values are: "template" and
-     "neural".
+    :ivar build_mode: Custom document model build mode. Required. Known values are: "template",
+     "neural", and "generative".
     :vartype build_mode: str or ~azure.ai.documentintelligence.models.DocumentBuildMode
     :ivar azure_blob_source: Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified.
@@ -539,6 +540,11 @@ class BuildDocumentModelRequest(_model_base.Model):
      ~azure.ai.documentintelligence.models.AzureBlobFileListContentSource
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
+    :ivar max_training_hours: Max number of V100-equivalent GPU hours to use for model training.
+     Default=0.5.
+    :vartype max_training_hours: float
+    :ivar allow_overwrite: Allow overwriting an existing model with the same name.
+    :vartype allow_overwrite: bool
     """
 
     model_id: str = rest_field(name="modelId")
@@ -546,7 +552,8 @@ class BuildDocumentModelRequest(_model_base.Model):
     description: Optional[str] = rest_field()
     """Document model description."""
     build_mode: Union[str, "_models.DocumentBuildMode"] = rest_field(name="buildMode")
-    """Custom document model build mode. Required. Known values are: \"template\" and \"neural\"."""
+    """Custom document model build mode. Required. Known values are: \"template\", \"neural\", and
+     \"generative\"."""
     azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(name="azureBlobSource")
     """Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
@@ -557,6 +564,10 @@ class BuildDocumentModelRequest(_model_base.Model):
      azureBlobSource or azureBlobFileListSource must be specified."""
     tags: Optional[Dict[str, str]] = rest_field()
     """List of key-value tag attributes associated with the document model."""
+    max_training_hours: Optional[float] = rest_field(name="maxTrainingHours")
+    """Max number of V100-equivalent GPU hours to use for model training.  Default=0.5."""
+    allow_overwrite: Optional[bool] = rest_field(name="allowOverwrite")
+    """Allow overwriting an existing model with the same name."""
 
     @overload
     def __init__(
@@ -568,8 +579,9 @@ class BuildDocumentModelRequest(_model_base.Model):
         azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
         azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
         tags: Optional[Dict[str, str]] = None,
-    ):
-        ...
+        max_training_hours: Optional[float] = None,
+        allow_overwrite: Optional[bool] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -622,8 +634,7 @@ class ClassifierDocumentTypeDetails(_model_base.Model):
         source_kind: Optional[Union[str, "_models.ContentSourceKind"]] = None,
         azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
         azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -660,8 +671,7 @@ class ClassifyDocumentRequest(_model_base.Model):
         *,
         url_source: Optional[str] = None,
         bytes_source: Optional[bytes] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -679,20 +689,30 @@ class ComponentDocumentModelDetails(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar model_id: Unique document model name. Required.
+    :ivar doc_type: Document type.
+    :vartype doc_type: str
+    :ivar model_id: Document model to use for analyzing documents with specified type. Required.
     :vartype model_id: str
+    :ivar max_documents_to_analyze: Maximum number of documents of specified type to analyze.
+     Default=all.
+    :vartype max_documents_to_analyze: int
     """
 
+    doc_type: Optional[str] = rest_field(name="docType")
+    """Document type."""
     model_id: str = rest_field(name="modelId")
-    """Unique document model name. Required."""
+    """Document model to use for analyzing documents with specified type. Required."""
+    max_documents_to_analyze: Optional[int] = rest_field(name="maxDocumentsToAnalyze")
+    """Maximum number of documents of specified type to analyze.  Default=all."""
 
     @overload
     def __init__(
         self,
         *,
         model_id: str,
-    ):
-        ...
+        doc_type: Optional[str] = None,
+        max_documents_to_analyze: Optional[int] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -719,6 +739,10 @@ class ComposeDocumentModelRequest(_model_base.Model):
      list[~azure.ai.documentintelligence.models.ComponentDocumentModelDetails]
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
+    :ivar classifier_id: Custom classifier to split and classify the input file.
+    :vartype classifier_id: str
+    :ivar split: File splitting behavior. Known values are: "auto", "none", and "perPage".
+    :vartype split: str or ~azure.ai.documentintelligence.models.SplitMode
     """
 
     model_id: str = rest_field(name="modelId")
@@ -729,6 +753,10 @@ class ComposeDocumentModelRequest(_model_base.Model):
     """List of component document models to compose. Required."""
     tags: Optional[Dict[str, str]] = rest_field()
     """List of key-value tag attributes associated with the document model."""
+    classifier_id: Optional[str] = rest_field(name="classifierId")
+    """Custom classifier to split and classify the input file."""
+    split: Optional[Union[str, "_models.SplitMode"]] = rest_field()
+    """File splitting behavior. Known values are: \"auto\", \"none\", and \"perPage\"."""
 
     @overload
     def __init__(
@@ -738,8 +766,9 @@ class ComposeDocumentModelRequest(_model_base.Model):
         component_models: List["_models.ComponentDocumentModelDetails"],
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-    ):
-        ...
+        classifier_id: Optional[str] = None,
+        split: Optional[Union[str, "_models.SplitMode"]] = None,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -799,8 +828,7 @@ class CopyAuthorization(_model_base.Model):
         target_model_location: str,
         access_token: str,
         expiration_date_time: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -840,8 +868,7 @@ class CurrencyValue(_model_base.Model):
         amount: float,
         currency_symbol: Optional[str] = None,
         currency_code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -877,8 +904,7 @@ class CustomDocumentModelsDetails(_model_base.Model):
         *,
         count: int,
         limit: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -928,8 +954,7 @@ class Document(_model_base.Model):
         confidence: float,
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         fields: Optional[Dict[str, "_models.DocumentField"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -989,8 +1014,7 @@ class DocumentBarcode(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1035,8 +1059,7 @@ class DocumentCaption(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1053,7 +1076,8 @@ class OperationDetails(_model_base.Model):
     """Operation info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DocumentClassifierBuildOperationDetails, DocumentModelComposeOperationDetails,
+    DocumentClassifierBuildOperationDetails, DocumentClassifierCopyToOperationDetails,
+    DocumentModelBuildOperationDetails, DocumentModelComposeOperationDetails,
     DocumentModelCopyToOperationDetails
 
     All required parameters must be populated in order to send to server.
@@ -1070,7 +1094,8 @@ class OperationDetails(_model_base.Model):
     :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
     :vartype last_updated_date_time: ~datetime.datetime
     :ivar kind: Type of operation. Required. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo", and "documentClassifierBuild".
+     "documentModelCompose", "documentModelCopyTo", "documentClassifierCopyTo", and
+     "documentClassifierBuild".
     :vartype kind: str or ~azure.ai.documentintelligence.models.OperationKind
     :ivar resource_location: URL of the resource targeted by this operation. Required.
     :vartype resource_location: str
@@ -1096,7 +1121,8 @@ class OperationDetails(_model_base.Model):
     """Date and time (UTC) when the status was last updated. Required."""
     kind: str = rest_discriminator(name="kind")
     """Type of operation. Required. Known values are: \"documentModelBuild\",
-     \"documentModelCompose\", \"documentModelCopyTo\", and \"documentClassifierBuild\"."""
+     \"documentModelCompose\", \"documentModelCopyTo\", \"documentClassifierCopyTo\", and
+     \"documentClassifierBuild\"."""
     resource_location: str = rest_field(name="resourceLocation")
     """URL of the resource targeted by this operation. Required."""
     api_version: Optional[str] = rest_field(name="apiVersion")
@@ -1120,8 +1146,7 @@ class OperationDetails(_model_base.Model):
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1185,8 +1210,7 @@ class DocumentClassifierBuildOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentClassifierDetails"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1197,6 +1221,74 @@ class DocumentClassifierBuildOperationDetails(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=OperationKind.DOCUMENT_CLASSIFIER_BUILD, **kwargs)
+
+
+class DocumentClassifierCopyToOperationDetails(
+    OperationDetails, discriminator="documentClassifierCopyTo"
+):  # pylint: disable=too-many-instance-attributes
+    """Get Operation response object.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar operation_id: Operation ID. Required.
+    :vartype operation_id: str
+    :ivar status: Operation status.  notStarted, running, completed, or failed. Required. Known
+     values are: "notStarted", "running", "failed", "succeeded", "completed", and "canceled".
+    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :ivar percent_completed: Operation progress (0-100).
+    :vartype percent_completed: int
+    :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar resource_location: URL of the resource targeted by this operation. Required.
+    :vartype resource_location: str
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
+    :ivar tags: List of key-value tag attributes associated with the document model.
+    :vartype tags: dict[str, str]
+    :ivar error: Encountered error.
+    :vartype error: ~azure.ai.documentintelligence.models.Error
+    :ivar result: Operation result upon success.
+    :vartype result: ~azure.ai.documentintelligence.models.DocumentClassifierDetails
+    :ivar kind: Type of operation. Required. Copy an existing document classifier to potentially a
+     different resource, region, or
+     subscription.
+    :vartype kind: str or ~azure.ai.documentintelligence.models.DOCUMENT_CLASSIFIER_COPY_TO
+    """
+
+    result: Optional["_models.DocumentClassifierDetails"] = rest_field()
+    """Operation result upon success."""
+    kind: Literal[OperationKind.DOCUMENT_CLASSIFIER_COPY_TO] = rest_discriminator(name="kind")  # type: ignore
+    """Type of operation. Required. Copy an existing document classifier to potentially a different
+     resource, region, or
+     subscription."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        status: Union[str, "_models.OperationStatus"],
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        resource_location: str,
+        percent_completed: Optional[int] = None,
+        api_version: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        error: Optional["_models.Error"] = None,
+        result: Optional["_models.DocumentClassifierDetails"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=OperationKind.DOCUMENT_CLASSIFIER_COPY_TO, **kwargs)
 
 
 class DocumentClassifierDetails(_model_base.Model):
@@ -1253,8 +1345,7 @@ class DocumentClassifierDetails(_model_base.Model):
         expiration_date_time: Optional[datetime.datetime] = None,
         base_classifier_id: Optional[str] = None,
         warnings: Optional[List["_models.Warning"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1387,8 +1478,7 @@ class DocumentField(_model_base.Model):  # pylint: disable=too-many-instance-att
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         spans: Optional[List["_models.DocumentSpan"]] = None,
         confidence: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1443,8 +1533,7 @@ class DocumentFieldSchema(_model_base.Model):
         example: Optional[str] = None,
         items_property: Optional["_models.DocumentFieldSchema"] = None,
         properties: Optional[Dict[str, "_models.DocumentFieldSchema"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1472,6 +1561,8 @@ class DocumentFigure(_model_base.Model):
     :vartype caption: ~azure.ai.documentintelligence.models.DocumentCaption
     :ivar footnotes: List of footnotes associated with the figure.
     :vartype footnotes: list[~azure.ai.documentintelligence.models.DocumentFootnote]
+    :ivar id: Figure ID.
+    :vartype id: str
     """
 
     bounding_regions: Optional[List["_models.BoundingRegion"]] = rest_field(name="boundingRegions")
@@ -1484,6 +1575,8 @@ class DocumentFigure(_model_base.Model):
     """Caption associated with the figure."""
     footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field()
     """List of footnotes associated with the figure."""
+    id: Optional[str] = rest_field()
+    """Figure ID."""
 
     @overload
     def __init__(
@@ -1494,8 +1587,8 @@ class DocumentFigure(_model_base.Model):
         elements: Optional[List[str]] = None,
         caption: Optional["_models.DocumentCaption"] = None,
         footnotes: Optional[List["_models.DocumentFootnote"]] = None,
-    ):
-        ...
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1540,8 +1633,7 @@ class DocumentFootnote(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1597,8 +1689,7 @@ class DocumentFormula(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1639,8 +1730,7 @@ class DocumentKeyValueElement(_model_base.Model):
         content: str,
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1681,8 +1771,7 @@ class DocumentKeyValuePair(_model_base.Model):
         key: "_models.DocumentKeyValueElement",
         confidence: float,
         value: Optional["_models.DocumentKeyValueElement"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1726,8 +1815,7 @@ class DocumentLanguage(_model_base.Model):
         locale: str,
         spans: List["_models.DocumentSpan"],
         confidence: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1774,8 +1862,7 @@ class DocumentLine(_model_base.Model):
         content: str,
         spans: List["_models.DocumentSpan"],
         polygon: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1810,8 +1897,7 @@ class DocumentList(_model_base.Model):
         *,
         spans: List["_models.DocumentSpan"],
         items_property: List["_models.DocumentListItem"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1861,8 +1947,7 @@ class DocumentListItem(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1875,7 +1960,9 @@ class DocumentListItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DocumentModelBuildOperationDetails(OperationDetails):  # pylint: disable=too-many-instance-attributes
+class DocumentModelBuildOperationDetails(
+    OperationDetails, discriminator="documentModelBuild"
+):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
 
     All required parameters must be populated in order to send to server.
@@ -1907,7 +1994,7 @@ class DocumentModelBuildOperationDetails(OperationDetails):  # pylint: disable=t
 
     result: Optional["_models.DocumentModelDetails"] = rest_field()
     """Operation result upon success."""
-    kind: Literal[OperationKind.DOCUMENT_MODEL_BUILD] = rest_field()
+    kind: Literal[OperationKind.DOCUMENT_MODEL_BUILD] = rest_discriminator(name="kind")  # type: ignore
     """Type of operation. Required. Build a new custom document model."""
 
     @overload
@@ -1919,14 +2006,12 @@ class DocumentModelBuildOperationDetails(OperationDetails):  # pylint: disable=t
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
         resource_location: str,
-        kind: Literal[OperationKind.DOCUMENT_MODEL_BUILD],
         percent_completed: Optional[int] = None,
         api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1936,7 +2021,7 @@ class DocumentModelBuildOperationDetails(OperationDetails):  # pylint: disable=t
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, kind=OperationKind.DOCUMENT_MODEL_BUILD, **kwargs)
 
 
 class DocumentModelComposeOperationDetails(
@@ -1991,8 +2076,7 @@ class DocumentModelComposeOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2060,8 +2144,7 @@ class DocumentModelCopyToOperationDetails(
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2077,6 +2160,8 @@ class DocumentModelCopyToOperationDetails(
 class DocumentModelDetails(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Document model info.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
@@ -2091,7 +2176,8 @@ class DocumentModelDetails(_model_base.Model):  # pylint: disable=too-many-insta
     :vartype api_version: str
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
-    :ivar build_mode: Custom document model build mode. Known values are: "template" and "neural".
+    :ivar build_mode: Custom document model build mode. Known values are: "template", "neural", and
+     "generative".
     :vartype build_mode: str or ~azure.ai.documentintelligence.models.DocumentBuildMode
     :ivar azure_blob_source: Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified.
@@ -2105,52 +2191,52 @@ class DocumentModelDetails(_model_base.Model):  # pylint: disable=too-many-insta
     :vartype doc_types: dict[str, ~azure.ai.documentintelligence.models.DocumentTypeDetails]
     :ivar warnings: List of warnings encountered while building the model.
     :vartype warnings: list[~azure.ai.documentintelligence.models.Warning]
+    :ivar training_hours: Number of V100-equivalent GPU hours consumed for model training.
+    :vartype training_hours: float
     """
 
     model_id: str = rest_field(name="modelId", visibility=["read", "create"])
     """Unique document model name. Required."""
     description: Optional[str] = rest_field()
     """Document model description."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """Date and time (UTC) when the document model was created. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    expiration_date_time: Optional[datetime.datetime] = rest_field(
+        name="expirationDateTime", visibility=["read"], format="rfc3339"
+    )
     """Date and time (UTC) when the document model will expire."""
-    api_version: Optional[str] = rest_field(name="apiVersion")
+    api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
     """API version used to create this document model."""
     tags: Optional[Dict[str, str]] = rest_field()
     """List of key-value tag attributes associated with the document model."""
-    build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(name="buildMode")
-    """Custom document model build mode. Known values are: \"template\" and \"neural\"."""
-    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(name="azureBlobSource")
+    build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(name="buildMode", visibility=["read"])
+    """Custom document model build mode. Known values are: \"template\", \"neural\", and
+     \"generative\"."""
+    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(
+        name="azureBlobSource", visibility=["read"]
+    )
     """Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
     azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = rest_field(
-        name="azureBlobFileListSource"
+        name="azureBlobFileListSource", visibility=["read"]
     )
     """Azure Blob Storage file list specifying the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
-    doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = rest_field(name="docTypes")
+    doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = rest_field(name="docTypes", visibility=["read"])
     """Supported document types."""
-    warnings: Optional[List["_models.Warning"]] = rest_field()
+    warnings: Optional[List["_models.Warning"]] = rest_field(visibility=["read"])
     """List of warnings encountered while building the model."""
+    training_hours: Optional[float] = rest_field(name="trainingHours", visibility=["read"])
+    """Number of V100-equivalent GPU hours consumed for model training."""
 
     @overload
     def __init__(
         self,
         *,
         model_id: str,
-        created_date_time: datetime.datetime,
         description: Optional[str] = None,
-        expiration_date_time: Optional[datetime.datetime] = None,
-        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = None,
-        azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
-        azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
-        doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = None,
-        warnings: Optional[List["_models.Warning"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2236,8 +2322,7 @@ class DocumentPage(_model_base.Model):  # pylint: disable=too-many-instance-attr
         lines: Optional[List["_models.DocumentLine"]] = None,
         barcodes: Optional[List["_models.DocumentBarcode"]] = None,
         formulas: Optional[List["_models.DocumentFormula"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2285,8 +2370,7 @@ class DocumentParagraph(_model_base.Model):
         spans: List["_models.DocumentSpan"],
         role: Optional[Union[str, "_models.ParagraphRole"]] = None,
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2321,8 +2405,7 @@ class DocumentSection(_model_base.Model):
         *,
         spans: List["_models.DocumentSpan"],
         elements: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2375,8 +2458,7 @@ class DocumentSelectionMark(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2412,8 +2494,7 @@ class DocumentSpan(_model_base.Model):
         *,
         offset: int,
         length: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2482,8 +2563,7 @@ class DocumentStyle(_model_base.Model):
         font_weight: Optional[Union[str, "_models.FontWeight"]] = None,
         color: Optional[str] = None,
         background_color: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2543,8 +2623,7 @@ class DocumentTable(_model_base.Model):
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         caption: Optional["_models.DocumentCaption"] = None,
         footnotes: Optional[List["_models.DocumentFootnote"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2616,8 +2695,7 @@ class DocumentTableCell(_model_base.Model):
         column_span: Optional[int] = None,
         bounding_regions: Optional[List["_models.BoundingRegion"]] = None,
         elements: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2637,7 +2715,8 @@ class DocumentTypeDetails(_model_base.Model):
 
     :ivar description: Document model description.
     :vartype description: str
-    :ivar build_mode: Custom document model build mode. Known values are: "template" and "neural".
+    :ivar build_mode: Custom document model build mode. Known values are: "template", "neural", and
+     "generative".
     :vartype build_mode: str or ~azure.ai.documentintelligence.models.DocumentBuildMode
     :ivar field_schema: Description of the document semantic schema using a JSON Schema style
      syntax. Required.
@@ -2649,7 +2728,8 @@ class DocumentTypeDetails(_model_base.Model):
     description: Optional[str] = rest_field()
     """Document model description."""
     build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(name="buildMode")
-    """Custom document model build mode. Known values are: \"template\" and \"neural\"."""
+    """Custom document model build mode. Known values are: \"template\", \"neural\", and
+     \"generative\"."""
     field_schema: Dict[str, "_models.DocumentFieldSchema"] = rest_field(name="fieldSchema")
     """Description of the document semantic schema using a JSON Schema style syntax. Required."""
     field_confidence: Optional[Dict[str, float]] = rest_field(name="fieldConfidence")
@@ -2663,8 +2743,7 @@ class DocumentTypeDetails(_model_base.Model):
         description: Optional[str] = None,
         build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = None,
         field_confidence: Optional[Dict[str, float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2717,8 +2796,7 @@ class DocumentWord(_model_base.Model):
         span: "_models.DocumentSpan",
         confidence: float,
         polygon: Optional[List[float]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2769,8 +2847,7 @@ class Error(_model_base.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.Error"]] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2800,8 +2877,7 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: "_models.Error",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2839,49 +2915,7 @@ class InnerError(_model_base.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class QuotaDetails(_model_base.Model):
-    """Quota used, limit, and next reset date/time.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar used: Amount of the resource quota used. Required.
-    :vartype used: int
-    :ivar quota: Resource quota limit. Required.
-    :vartype quota: int
-    :ivar quota_reset_date_time: Date/time when the resource quota usage will be reset. Required.
-    :vartype quota_reset_date_time: ~datetime.datetime
-    """
-
-    used: int = rest_field()
-    """Amount of the resource quota used. Required."""
-    quota: int = rest_field()
-    """Resource quota limit. Required."""
-    quota_reset_date_time: datetime.datetime = rest_field(name="quotaResetDateTime", format="rfc3339")
-    """Date/time when the resource quota usage will be reset. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        used: int,
-        quota: int,
-        quota_reset_date_time: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2902,25 +2936,17 @@ class ResourceDetails(_model_base.Model):
     :ivar custom_document_models: Details regarding custom document models. Required.
     :vartype custom_document_models:
      ~azure.ai.documentintelligence.models.CustomDocumentModelsDetails
-    :ivar custom_neural_document_model_builds: Quota used, limit, and next reset date/time.
-     Required.
-    :vartype custom_neural_document_model_builds:
-     ~azure.ai.documentintelligence.models.QuotaDetails
     """
 
     custom_document_models: "_models.CustomDocumentModelsDetails" = rest_field(name="customDocumentModels")
     """Details regarding custom document models. Required."""
-    custom_neural_document_model_builds: "_models.QuotaDetails" = rest_field(name="customNeuralDocumentModelBuilds")
-    """Quota used, limit, and next reset date/time. Required."""
 
     @overload
     def __init__(
         self,
         *,
         custom_document_models: "_models.CustomDocumentModelsDetails",
-        custom_neural_document_model_builds: "_models.QuotaDetails",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2960,8 +2986,7 @@ class Warning(_model_base.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

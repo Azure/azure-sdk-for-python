@@ -27,6 +27,7 @@ from ._models import Document
 from ._models import DocumentBarcode
 from ._models import DocumentCaption
 from ._models import DocumentClassifierBuildOperationDetails
+from ._models import DocumentClassifierCopyToOperationDetails
 from ._models import DocumentClassifierDetails
 from ._models import DocumentField
 from ._models import DocumentFieldSchema
@@ -57,10 +58,10 @@ from ._models import Error
 from ._models import ErrorResponse
 from ._models import InnerError
 from ._models import OperationDetails
-from ._models import QuotaDetails
 from ._models import ResourceDetails
 from ._models import Warning
 
+from ._enums import AnalyzeOutputOption
 from ._enums import ContentFormat
 from ._enums import ContentSourceKind
 from ._enums import DocumentAnalysisFeature
@@ -105,6 +106,7 @@ __all__ = [
     "DocumentBarcode",
     "DocumentCaption",
     "DocumentClassifierBuildOperationDetails",
+    "DocumentClassifierCopyToOperationDetails",
     "DocumentClassifierDetails",
     "DocumentField",
     "DocumentFieldSchema",
@@ -135,9 +137,9 @@ __all__ = [
     "ErrorResponse",
     "InnerError",
     "OperationDetails",
-    "QuotaDetails",
     "ResourceDetails",
     "Warning",
+    "AnalyzeOutputOption",
     "ContentFormat",
     "ContentSourceKind",
     "DocumentAnalysisFeature",

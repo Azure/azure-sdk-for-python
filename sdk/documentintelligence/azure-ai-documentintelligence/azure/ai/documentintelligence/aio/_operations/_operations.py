@@ -61,6 +61,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinABC):  # pylint: disable=name-too-long
+
     async def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
@@ -72,6 +73,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> None:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -106,6 +108,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             features=features,
             query_fields=query_fields,
             output_content_format=output_content_format,
+            output=output,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -113,7 +116,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -150,6 +153,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -179,6 +183,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
         :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -574,7 +580,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -912,6 +919,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -928,6 +944,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -957,6 +974,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
         :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1343,7 +1362,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -1681,6 +1701,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -1697,6 +1726,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -1726,6 +1756,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
         :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2112,7 +2144,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -2450,6 +2483,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -2466,6 +2508,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         features: Optional[List[Union[str, _models.DocumentAnalysisFeature]]] = None,
         query_fields: Optional[List[str]] = None,
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
+        output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
         # pylint: disable=line-too-long
@@ -2496,6 +2539,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
         :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
+        :keyword output: Additional outputs to generate during analysis. Default value is None.
+        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -2888,7 +2933,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -3226,6 +3272,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -3247,6 +3302,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 features=features,
                 query_fields=query_fields,
                 output_content_format=output_content_format,
+                output=output,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -3269,7 +3325,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -3299,6 +3355,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -3326,6 +3383,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             classifier_id=classifier_id,
             string_index_type=string_index_type,
             split=split,
+            pages=pages,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3333,7 +3391,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3366,6 +3424,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -3382,6 +3441,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3777,7 +3839,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -4115,6 +4178,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -4127,6 +4199,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -4143,6 +4216,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4529,7 +4605,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -4867,6 +4944,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -4879,6 +4965,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
@@ -4895,6 +4982,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5281,7 +5371,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -5619,6 +5710,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -5631,6 +5731,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         *,
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
+        pages: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:
         # pylint: disable=line-too-long
@@ -5648,6 +5749,9 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
+        :keyword pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
+         None.
+        :paramtype pages: str
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -6040,7 +6144,8 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                           the footnote.
                                     ]
                                 }
-                            ]
+                            ],
+                            "id": "str"  # Optional. Figure ID.
                         }
                     ],
                     "keyValuePairs": [
@@ -6378,6 +6483,15 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                 }
                             ]
                         }
+                    ],
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
                     ]
                 }
         """
@@ -6395,6 +6509,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 classify_request=classify_request,
                 string_index_type=string_index_type,
                 split=split,
+                pages=pages,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -6417,7 +6532,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -6444,6 +6559,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
     DocumentIntelligenceAdministrationClientMixinABC
 ):
+
     async def _build_document_model_initial(  # pylint: disable=inconsistent-return-statements
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
@@ -6476,7 +6592,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6525,8 +6641,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 # JSON input template you can fill out and use as your body input.
                 build_request = {
                     "buildMode": "str",  # Custom document model build mode. Required. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "modelId": "str",  # Unique document model name. Required.
+                    "allowOverwrite": bool,  # Optional. Allow overwriting an existing model with
+                      the same name.
                     "azureBlobFileListSource": {
                         "containerUrl": "str",  # Azure Blob Storage container URL. Required.
                         "fileList": "str"  # Path to a JSONL file within the container
@@ -6537,6 +6655,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "description": "str",  # Optional. Document model description.
+                    "maxTrainingHours": 0.0,  # Optional. Max number of V100-equivalent GPU hours
+                      to use for model training.  Default=0.5.
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
@@ -6560,7 +6680,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -6582,7 +6702,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -6597,6 +6717,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -6647,7 +6769,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -6669,7 +6791,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -6684,6 +6806,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -6734,7 +6858,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -6756,7 +6880,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -6771,6 +6895,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -6806,8 +6932,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 # JSON input template you can fill out and use as your body input.
                 build_request = {
                     "buildMode": "str",  # Custom document model build mode. Required. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "modelId": "str",  # Unique document model name. Required.
+                    "allowOverwrite": bool,  # Optional. Allow overwriting an existing model with
+                      the same name.
                     "azureBlobFileListSource": {
                         "containerUrl": "str",  # Azure Blob Storage container URL. Required.
                         "fileList": "str"  # Path to a JSONL file within the container
@@ -6818,6 +6946,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "description": "str",  # Optional. Document model description.
+                    "maxTrainingHours": 0.0,  # Optional. Max number of V100-equivalent GPU hours
+                      to use for model training.  Default=0.5.
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
@@ -6841,7 +6971,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -6863,7 +6993,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -6878,6 +7008,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -6922,7 +7054,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -6977,7 +7109,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7031,11 +7163,19 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 compose_request = {
                     "componentModels": [
                         {
-                            "modelId": "str"  # Unique document model name. Required.
+                            "modelId": "str",  # Document model to use for analyzing
+                              documents with specified type. Required.
+                            "docType": "str",  # Optional. Document type.
+                            "maxDocumentsToAnalyze": 0  # Optional. Maximum number of
+                              documents of specified type to analyze.  Default=all.
                         }
                     ],
                     "modelId": "str",  # Unique document model name. Required.
+                    "classifierId": "str",  # Optional. Custom classifier to split and classify
+                      the input file.
                     "description": "str",  # Optional. Document model description.
+                    "split": "str",  # Optional. File splitting behavior. Known values are:
+                      "auto", "none", and "perPage".
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
@@ -7059,7 +7199,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7081,7 +7221,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7096,6 +7236,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -7146,7 +7288,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7168,7 +7310,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7183,6 +7325,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -7233,7 +7377,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7255,7 +7399,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7270,6 +7414,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -7306,11 +7452,19 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 compose_request = {
                     "componentModels": [
                         {
-                            "modelId": "str"  # Unique document model name. Required.
+                            "modelId": "str",  # Document model to use for analyzing
+                              documents with specified type. Required.
+                            "docType": "str",  # Optional. Document type.
+                            "maxDocumentsToAnalyze": 0  # Optional. Maximum number of
+                              documents of specified type to analyze.  Default=all.
                         }
                     ],
                     "modelId": "str",  # Unique document model name. Required.
+                    "classifierId": "str",  # Optional. Custom classifier to split and classify
+                      the input file.
                     "description": "str",  # Optional. Document model description.
+                    "split": "str",  # Optional. File splitting behavior. Known values are:
+                      "auto", "none", and "perPage".
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
@@ -7334,7 +7488,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7356,7 +7510,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7371,6 +7525,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -7415,7 +7571,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -7629,7 +7785,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7690,7 +7846,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7774,7 +7930,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7796,7 +7952,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7811,6 +7967,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -7863,7 +8021,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7885,7 +8043,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7900,6 +8058,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -7952,7 +8112,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -7974,7 +8134,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -7989,6 +8149,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -8054,7 +8216,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -8076,7 +8238,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -8091,6 +8253,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -8136,7 +8300,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -8190,7 +8354,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -8212,7 +8376,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -8227,6 +8391,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -8258,7 +8424,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8321,7 +8487,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "prefix": "str"  # Optional. Blob name prefix.
                     },
                     "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
+                      values are: "template", "neural", and "generative".
                     "description": "str",  # Optional. Document model description.
                     "docTypes": {
                         "str": {
@@ -8343,7 +8509,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                 }
                             },
                             "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
+                              mode. Known values are: "template", "neural", and "generative".
                             "description": "str",  # Optional. Document model
                               description.
                             "fieldConfidence": {
@@ -8358,6 +8524,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
                     },
+                    "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU hours
+                      consumed for model training.
                     "warnings": [
                         {
                             "code": "str",  # One of a server-defined set of warning
@@ -8391,9 +8559,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8411,9 +8577,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8478,7 +8642,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8506,7 +8670,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace_async
     async def get_resource_info(self, **kwargs: Any) -> _models.ResourceDetails:
-        # pylint: disable=line-too-long
         """Return information about the current resource.
 
         :return: ResourceDetails. The ResourceDetails is compatible with MutableMapping
@@ -8523,12 +8686,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                           resource. Required.
                         "limit": 0  # Maximum number of custom document models supported in
                           the current resource. Required.
-                    },
-                    "customNeuralDocumentModelBuilds": {
-                        "quota": 0,  # Resource quota limit. Required.
-                        "quotaResetDateTime": "2020-02-20 00:00:00",  # Date/time when the
-                          resource quota usage will be reset. Required.
-                        "used": 0  # Amount of the resource quota used. Required.
                     }
                 }
         """
@@ -8551,7 +8708,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8674,6 +8831,191 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     }
                 }
 
+                # JSON input template for discriminator value "documentClassifierCopyTo":
+                operation_details = {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      operation was created. Required.
+                    "kind": "documentClassifierCopyTo",
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      status was last updated. Required.
+                    "operationId": "str",  # Operation ID. Required.
+                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
+                      Required.
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
+                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "result": {
+                        "apiVersion": "str",  # API version used to create this document
+                          classifier. Required.
+                        "classifierId": "str",  # Unique document classifier name. Required.
+                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
+                          the document classifier was created. Required.
+                        "docTypes": {
+                            "str": {
+                                "azureBlobFileListSource": {
+                                    "containerUrl": "str",  # Azure Blob Storage
+                                      container URL. Required.
+                                    "fileList": "str"  # Path to a JSONL file
+                                      within the container specifying a subset of documents. Required.
+                                },
+                                "azureBlobSource": {
+                                    "containerUrl": "str",  # Azure Blob Storage
+                                      container URL. Required.
+                                    "prefix": "str"  # Optional. Blob name
+                                      prefix.
+                                },
+                                "sourceKind": "str"  # Optional. Type of training
+                                  data source. Known values are: "url", "base64", "azureBlob", and
+                                  "azureBlobFileList".
+                            }
+                        },
+                        "baseClassifierId": "str",  # Optional. Base classifierId on top of
+                          which the classifier was trained.
+                        "description": "str",  # Optional. Document classifier description.
+                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
+                          time (UTC) when the document classifier will expire.
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. List of key-value tag attributes associated
+                          with the document model.
+                    }
+                }
+
+                # JSON input template for discriminator value "documentModelBuild":
+                operation_details = {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      operation was created. Required.
+                    "kind": "documentModelBuild",
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      status was last updated. Required.
+                    "operationId": "str",  # Operation ID. Required.
+                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
+                      Required.
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
+                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "result": {
+                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
+                          the document model was created. Required.
+                        "modelId": "str",  # Unique document model name. Required.
+                        "apiVersion": "str",  # Optional. API version used to create this
+                          document model.
+                        "azureBlobFileListSource": {
+                            "containerUrl": "str",  # Azure Blob Storage container URL.
+                              Required.
+                            "fileList": "str"  # Path to a JSONL file within the
+                              container specifying a subset of documents. Required.
+                        },
+                        "azureBlobSource": {
+                            "containerUrl": "str",  # Azure Blob Storage container URL.
+                              Required.
+                            "prefix": "str"  # Optional. Blob name prefix.
+                        },
+                        "buildMode": "str",  # Optional. Custom document model build mode.
+                          Known values are: "template", "neural", and "generative".
+                        "description": "str",  # Optional. Document model description.
+                        "docTypes": {
+                            "str": {
+                                "fieldSchema": {
+                                    "str": {
+                                        "type": "str",  # Semantic data type
+                                          of the field value. Required. Known values are: "string",
+                                          "date", "time", "phoneNumber", "number", "integer",
+                                          "selectionMark", "countryRegion", "signature", "array",
+                                          "object", "currency", "address", "boolean", and
+                                          "selectionGroup".
+                                        "description": "str",  # Optional.
+                                          Field description.
+                                        "example": "str",  # Optional.
+                                          Example field content.
+                                        "items": ...,
+                                        "properties": {
+                                            "str": ...
+                                        }
+                                    }
+                                },
+                                "buildMode": "str",  # Optional. Custom document
+                                  model build mode. Known values are: "template", "neural", and
+                                  "generative".
+                                "description": "str",  # Optional. Document model
+                                  description.
+                                "fieldConfidence": {
+                                    "str": 0.0  # Optional. Estimated confidence
+                                      for each field.
+                                }
+                            }
+                        },
+                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
+                          time (UTC) when the document model will expire.
+                        "tags": {
+                            "str": "str"  # Optional. List of key-value tag attributes
+                              associated with the document model.
+                        },
+                        "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU
+                          hours consumed for model training.
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. List of key-value tag attributes associated
+                          with the document model.
+                    }
+                }
+
                 # JSON input template for discriminator value "documentModelCompose":
                 operation_details = {
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
@@ -8724,7 +9066,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "prefix": "str"  # Optional. Blob name prefix.
                         },
                         "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
+                          Known values are: "template", "neural", and "generative".
                         "description": "str",  # Optional. Document model description.
                         "docTypes": {
                             "str": {
@@ -8747,7 +9089,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                     }
                                 },
                                 "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
+                                  model build mode. Known values are: "template", "neural", and
+                                  "generative".
                                 "description": "str",  # Optional. Document model
                                   description.
                                 "fieldConfidence": {
@@ -8762,6 +9105,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
                         },
+                        "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU
+                          hours consumed for model training.
                         "warnings": [
                             {
                                 "code": "str",  # One of a server-defined set of
@@ -8828,7 +9173,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "prefix": "str"  # Optional. Blob name prefix.
                         },
                         "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
+                          Known values are: "template", "neural", and "generative".
                         "description": "str",  # Optional. Document model description.
                         "docTypes": {
                             "str": {
@@ -8851,7 +9196,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                     }
                                 },
                                 "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
+                                  model build mode. Known values are: "template", "neural", and
+                                  "generative".
                                 "description": "str",  # Optional. Document model
                                   description.
                                 "fieldConfidence": {
@@ -8866,6 +9212,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
                         },
+                        "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU
+                          hours consumed for model training.
                         "warnings": [
                             {
                                 "code": "str",  # One of a server-defined set of
@@ -8905,7 +9253,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9032,6 +9380,191 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     }
                 }
 
+                # JSON input template for discriminator value "documentClassifierCopyTo":
+                operation_details = {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      operation was created. Required.
+                    "kind": "documentClassifierCopyTo",
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      status was last updated. Required.
+                    "operationId": "str",  # Operation ID. Required.
+                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
+                      Required.
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
+                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "result": {
+                        "apiVersion": "str",  # API version used to create this document
+                          classifier. Required.
+                        "classifierId": "str",  # Unique document classifier name. Required.
+                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
+                          the document classifier was created. Required.
+                        "docTypes": {
+                            "str": {
+                                "azureBlobFileListSource": {
+                                    "containerUrl": "str",  # Azure Blob Storage
+                                      container URL. Required.
+                                    "fileList": "str"  # Path to a JSONL file
+                                      within the container specifying a subset of documents. Required.
+                                },
+                                "azureBlobSource": {
+                                    "containerUrl": "str",  # Azure Blob Storage
+                                      container URL. Required.
+                                    "prefix": "str"  # Optional. Blob name
+                                      prefix.
+                                },
+                                "sourceKind": "str"  # Optional. Type of training
+                                  data source. Known values are: "url", "base64", "azureBlob", and
+                                  "azureBlobFileList".
+                            }
+                        },
+                        "baseClassifierId": "str",  # Optional. Base classifierId on top of
+                          which the classifier was trained.
+                        "description": "str",  # Optional. Document classifier description.
+                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
+                          time (UTC) when the document classifier will expire.
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. List of key-value tag attributes associated
+                          with the document model.
+                    }
+                }
+
+                # JSON input template for discriminator value "documentModelBuild":
+                operation_details = {
+                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      operation was created. Required.
+                    "kind": "documentModelBuild",
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
+                      status was last updated. Required.
+                    "operationId": "str",  # Operation ID. Required.
+                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
+                      Required.
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
+                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "error": {
+                        "code": "str",  # One of a server-defined set of error codes.
+                          Required.
+                        "message": "str",  # A human-readable representation of the error.
+                          Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",  # Optional. One of a server-defined set of
+                              error codes.
+                            "innererror": ...,
+                            "message": "str"  # Optional. A human-readable representation
+                              of the error.
+                        },
+                        "target": "str"  # Optional. The target of the error.
+                    },
+                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "result": {
+                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
+                          the document model was created. Required.
+                        "modelId": "str",  # Unique document model name. Required.
+                        "apiVersion": "str",  # Optional. API version used to create this
+                          document model.
+                        "azureBlobFileListSource": {
+                            "containerUrl": "str",  # Azure Blob Storage container URL.
+                              Required.
+                            "fileList": "str"  # Path to a JSONL file within the
+                              container specifying a subset of documents. Required.
+                        },
+                        "azureBlobSource": {
+                            "containerUrl": "str",  # Azure Blob Storage container URL.
+                              Required.
+                            "prefix": "str"  # Optional. Blob name prefix.
+                        },
+                        "buildMode": "str",  # Optional. Custom document model build mode.
+                          Known values are: "template", "neural", and "generative".
+                        "description": "str",  # Optional. Document model description.
+                        "docTypes": {
+                            "str": {
+                                "fieldSchema": {
+                                    "str": {
+                                        "type": "str",  # Semantic data type
+                                          of the field value. Required. Known values are: "string",
+                                          "date", "time", "phoneNumber", "number", "integer",
+                                          "selectionMark", "countryRegion", "signature", "array",
+                                          "object", "currency", "address", "boolean", and
+                                          "selectionGroup".
+                                        "description": "str",  # Optional.
+                                          Field description.
+                                        "example": "str",  # Optional.
+                                          Example field content.
+                                        "items": ...,
+                                        "properties": {
+                                            "str": ...
+                                        }
+                                    }
+                                },
+                                "buildMode": "str",  # Optional. Custom document
+                                  model build mode. Known values are: "template", "neural", and
+                                  "generative".
+                                "description": "str",  # Optional. Document model
+                                  description.
+                                "fieldConfidence": {
+                                    "str": 0.0  # Optional. Estimated confidence
+                                      for each field.
+                                }
+                            }
+                        },
+                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
+                          time (UTC) when the document model will expire.
+                        "tags": {
+                            "str": "str"  # Optional. List of key-value tag attributes
+                              associated with the document model.
+                        },
+                        "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU
+                          hours consumed for model training.
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
+                    },
+                    "tags": {
+                        "str": "str"  # Optional. List of key-value tag attributes associated
+                          with the document model.
+                    }
+                }
+
                 # JSON input template for discriminator value "documentModelCompose":
                 operation_details = {
                     "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
@@ -9082,7 +9615,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "prefix": "str"  # Optional. Blob name prefix.
                         },
                         "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
+                          Known values are: "template", "neural", and "generative".
                         "description": "str",  # Optional. Document model description.
                         "docTypes": {
                             "str": {
@@ -9105,7 +9638,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                     }
                                 },
                                 "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
+                                  model build mode. Known values are: "template", "neural", and
+                                  "generative".
                                 "description": "str",  # Optional. Document model
                                   description.
                                 "fieldConfidence": {
@@ -9120,6 +9654,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
                         },
+                        "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU
+                          hours consumed for model training.
                         "warnings": [
                             {
                                 "code": "str",  # One of a server-defined set of
@@ -9186,7 +9722,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "prefix": "str"  # Optional. Blob name prefix.
                         },
                         "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
+                          Known values are: "template", "neural", and "generative".
                         "description": "str",  # Optional. Document model description.
                         "docTypes": {
                             "str": {
@@ -9209,7 +9745,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                     }
                                 },
                                 "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
+                                  model build mode. Known values are: "template", "neural", and
+                                  "generative".
                                 "description": "str",  # Optional. Document model
                                   description.
                                 "fieldConfidence": {
@@ -9224,6 +9761,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
                         },
+                        "trainingHours": 0.0,  # Optional. Number of V100-equivalent GPU
+                          hours consumed for model training.
                         "warnings": [
                             {
                                 "code": "str",  # One of a server-defined set of
@@ -9265,9 +9804,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9285,9 +9822,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9352,7 +9887,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9423,6 +9958,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "allowOverwrite": bool,  # Optional. Allow overwriting an existing classifier
+                      with the same name.
                     "baseClassifierId": "str",  # Optional. Base classifierId on top of which to
                       train the classifier.
                     "description": "str"  # Optional. Document classifier description.
@@ -9637,6 +10174,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "allowOverwrite": bool,  # Optional. Allow overwriting an existing classifier
+                      with the same name.
                     "baseClassifierId": "str",  # Optional. Base classifierId on top of which to
                       train the classifier.
                     "description": "str"  # Optional. Document classifier description.
@@ -9716,7 +10255,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -9815,7 +10354,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9924,9 +10463,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9944,9 +10481,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -10011,7 +10546,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
