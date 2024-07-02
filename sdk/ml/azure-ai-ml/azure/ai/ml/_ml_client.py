@@ -526,7 +526,6 @@ class MLClient:
             operation_config=self._operation_config,
             serviceclient_2024_07_01_preview=self._service_client_07_2024_preview,
             serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
-            serviceclient_2023_04_01_preview=self._service_client_04_2023_preview,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
