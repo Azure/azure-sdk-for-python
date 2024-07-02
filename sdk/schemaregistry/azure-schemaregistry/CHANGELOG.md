@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated azure-core minimum dependency to 1.28.0.
+
 ## 1.3.0b3 (2023-11-09)
 
 ### Features Added

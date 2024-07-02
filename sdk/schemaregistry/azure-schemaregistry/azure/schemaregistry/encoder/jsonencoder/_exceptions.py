@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, Dict
 
+
 class InvalidContentError(ValueError):
     """Error during encoding or decoding content with a schema.
 
@@ -36,12 +37,7 @@ class InvalidContentError(ValueError):
      information like: `schema_id`, `schema_definition`, `message_content`.
     """
 
-    def __init__(
-        self,
-        message: str,
-        *args: Any,
-        details: Optional[Dict[str, str]] = None
-    ) -> None:
+    def __init__(self, message: str, *args: Any, details: Optional[Dict[str, str]] = None) -> None:
         self.message: str = str(message)
         self.details: Dict[str, str] = details or {}
         super(InvalidContentError, self).__init__(self.message, *args)
