@@ -42,10 +42,10 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, SasTokenConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
@@ -99,10 +99,10 @@ def get_datastore_info(
         datastore.account_name, storage_endpoint
     )
 
-    credential = operations._list_secrets(name=name, expirable_secret=True)
-    if isinstance(credential, SasTokenConfiguration):
+    try:
+        credential = operations._list_secrets(name=name, expirable_secret=True)
         datastore_info["credential"] = credential.sas_token
-    else:
+    except HttpResponseError:
         datastore_info["credential"] = operations._credential
 
     if datastore.type == DatastoreType.AZURE_BLOB:
