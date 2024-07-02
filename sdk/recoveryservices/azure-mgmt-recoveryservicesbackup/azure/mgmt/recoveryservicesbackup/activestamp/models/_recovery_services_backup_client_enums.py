@@ -215,7 +215,7 @@ class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HTTP Status Code of the operation."""
 
-    CONTINUE = "Continue"
+    CONTINUE_ENUM = "Continue"
     SWITCHING_PROTOCOLS = "SwitchingProtocols"
     OK = "OK"
     CREATED = "Created"
@@ -262,7 +262,6 @@ class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_UNAVAILABLE = "ServiceUnavailable"
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
-    CONTINUE_ENUM = "Continue"
 
 
 class IAASVMPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -271,6 +270,12 @@ class IAASVMPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     V1 = "V1"
     V2 = "V2"
+
+
+class IaasVMSnapshotConsistencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IaasVMSnapshotConsistencyType."""
+
+    ONLY_CRASH_CONSISTENT = "OnlyCrashConsistent"
 
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

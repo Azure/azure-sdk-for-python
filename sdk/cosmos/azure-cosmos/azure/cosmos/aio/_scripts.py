@@ -109,7 +109,7 @@ class ScriptsProxy:
 
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -282,7 +282,7 @@ class ScriptsProxy:
             feed_options["maxItemCount"] = max_item_count
         return self.client_connection.QueryTriggers(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -408,7 +408,7 @@ class ScriptsProxy:
 
         return self.client_connection.QueryUserDefinedFunctions(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )

@@ -143,7 +143,7 @@ class _ChunkIterator(object):
         self._current_content = content
         self._iter_downloader = downloader
         self._iter_chunks = None
-        self._complete = (size == 0)
+        self._complete = size == 0
 
     def __len__(self):
         return self.size

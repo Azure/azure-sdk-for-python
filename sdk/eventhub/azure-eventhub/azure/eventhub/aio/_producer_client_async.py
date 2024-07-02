@@ -188,6 +188,7 @@ class EventHubProducerClient(
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
+        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
         self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
@@ -252,10 +253,13 @@ class EventHubProducerClient(
             )
             await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
-    async def _batch_preparer(self, event_data_batch, **kwargs):
-        partition_id = kwargs.pop("partition_id", None)
-        partition_key = kwargs.pop("partition_key", None)
-
+    async def _batch_preparer(
+            self,
+            event_data_batch: Union[EventDataBatch, SendEventTypes],
+            *,
+            partition_id: Optional[str] = None,
+            partition_key: Optional[str] = None,
+        ):
         if isinstance(event_data_batch, EventDataBatch):
             if partition_id or partition_key:
                 raise TypeError(
@@ -277,13 +281,24 @@ class EventHubProducerClient(
             partition_key,
         )
 
-    async def _buffered_send_batch(self, event_data_batch, **kwargs):
-        batch, pid, pkey = await self._batch_preparer(event_data_batch, **kwargs)
+    async def _buffered_send_batch( # pylint: disable=unused-argument
+        self,
+        event_data_batch: Union[EventDataBatch, SendEventTypes],
+        *,
+        timeout: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        **kwargs: Any
+    ):
+        batch, pid, pkey = await self._batch_preparer(
+            event_data_batch,
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
 
         if len(batch) == 0:
             return
 
-        timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         await self._buffered_send(
             event_data_batch,
@@ -292,14 +307,20 @@ class EventHubProducerClient(
             timeout_time=timeout_time,
         )
 
-    async def _buffered_send_event(self, event, **kwargs):
-        partition_key = kwargs.get("partition_key")
+    async def _buffered_send_event(
+        self,  # pylint: disable=unused-argument
+        event: Union[EventData, AmqpAnnotatedMessage],
+        *,
+        timeout: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        **kwargs: Any # pylint: disable=unused-argument
+    ):
         set_event_partition_key(event, partition_key, self._amqp_transport)
-        timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         await self._buffered_send(
             event,
-            partition_id=kwargs.get("partition_id"),
+            partition_id=partition_id,
             partition_key=partition_key,
             timeout_time=timeout_time,
         )
@@ -410,11 +431,11 @@ class EventHubProducerClient(
         *,
         eventhub_name: Optional[str] = None,
         buffered_mode: bool = False,
-        on_error: Optional[
-            Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]
-        ] = None,
         on_success: Optional[
             Callable[[SendEventTypes, Optional[str]], Awaitable[None]]
+        ] = None,
+        on_error: Optional[
+            Callable[[SendEventTypes, Optional[str], Exception], Awaitable[None]]
         ] = None,
         max_buffer_length: Optional[int] = None,
         max_wait_time: Optional[float] = None,
@@ -423,7 +444,14 @@ class EventHubProducerClient(
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
+        retry_backoff_factor: Optional[float] = 0.8,
+        retry_backoff_max: Optional[float] = 120,
+        retry_mode: Literal["exponential", "fixed"] = "exponential",
+        idle_timeout: Optional[float] = None,
         transport_type: TransportType = TransportType.Amqp,
+        custom_endpoint_address: Optional[str] = None,
+        connection_verify: Optional[str] = None,
+        uamqp_transport: bool = False,
         **kwargs: Any
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
@@ -504,6 +532,7 @@ class EventHubProducerClient(
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
+        :returns: An EventHubProducerClient instance.
         :rtype: ~azure.eventhub.aio.EventHubProducerClient
 
         .. admonition:: Example:
@@ -528,13 +557,26 @@ class EventHubProducerClient(
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
+            retry_backoff_factor=retry_backoff_factor,
+            retry_backoff_max=retry_backoff_max,
+            retry_mode=retry_mode,
+            idle_timeout=idle_timeout,
             transport_type=transport_type,
+            custom_endpoint_address=custom_endpoint_address,
+            connection_verify=connection_verify,
+            uamqp_transport=uamqp_transport,
             **kwargs
         )
         return cls(**constructor_args)
 
     async def send_event(
-        self, event_data: Union[EventData, AmqpAnnotatedMessage], **kwargs: Any
+        self,  # pylint: disable=unused-argument
+        event_data: Union[EventData, AmqpAnnotatedMessage],
+        *,
+        timeout: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        **kwargs: Any # pylint: disable=unused-argument
     ) -> None:
         """
         Sends an event data.
@@ -582,10 +624,8 @@ class EventHubProducerClient(
         :raises OperationTimeoutError: If the value specified by the timeout parameter elapses before the event can be
          sent in non-buffered mode or the events can not be enqueued into the buffered in buffered mode.
         """
-        input_pid = kwargs.get("partition_id")
+        input_pid = partition_id
         pid = input_pid or ALL_PARTITIONS
-        partition_key = kwargs.get("partition_key")
-        timeout = kwargs.get("timeout")
         try:
             try:
                 await cast(EventHubProducer, self._producers[pid]).send(
@@ -604,8 +644,14 @@ class EventHubProducerClient(
             else:
                 raise
 
-    async def send_batch(
-        self, event_data_batch: Union[EventDataBatch, SendEventTypes], **kwargs: Any
+    async def send_batch( # pylint: disable=unused-argument
+        self,
+        event_data_batch: Union[EventDataBatch, SendEventTypes],
+        *,
+        timeout: Optional[float] = None,
+        partition_id: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         # pylint: disable=protected-access
         """
@@ -675,14 +721,16 @@ class EventHubProducerClient(
                 :caption: Asynchronously sends event data
 
         """
-        batch, pid, pkey = await self._batch_preparer(event_data_batch, **kwargs)
+        batch, pid, pkey = await self._batch_preparer(
+            event_data_batch,
+            partition_id=partition_id,
+            partition_key=partition_key
+        )
 
         if len(batch) == 0:
             return
 
         partition_id = pid or ALL_PARTITIONS
-        timeout = kwargs.pop("timeout", None)
-
         try:
             try:
                 await cast(EventHubProducer, self._producers[partition_id]).send(
@@ -808,7 +856,7 @@ class EventHubProducerClient(
             EventHubProducerClient, self
         )._get_partition_properties_async(partition_id)
 
-    async def flush(self, **kwargs: Any) -> None:
+    async def flush(self, *, timeout: Optional[float] = None, **kwargs: Any) -> None: # pylint:disable=unused-argument
         """
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
@@ -821,13 +869,12 @@ class EventHubProducerClient(
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 await self._buffered_producer_dispatcher.flush(
                     timeout_time=timeout_time
                 )
 
-    async def close(self, *, flush: bool = True, **kwargs: Any) -> None:
+    async def close(self, *, flush: bool = True, timeout: Optional[float] = None, **kwargs: Any) -> None: # pylint:disable=unused-argument
         """Close the Producer client underlying AMQP connection and links.
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
@@ -851,7 +898,6 @@ class EventHubProducerClient(
         """
         async with self._lock:
             if self._buffered_mode and self._buffered_producer_dispatcher:
-                timeout = kwargs.get("timeout")
                 timeout_time = time.time() + timeout if timeout else None
                 await self._buffered_producer_dispatcher.close(
                     flush=flush, timeout_time=timeout_time, raise_error=True

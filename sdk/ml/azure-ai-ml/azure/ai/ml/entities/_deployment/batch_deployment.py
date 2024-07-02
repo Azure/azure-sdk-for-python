@@ -287,10 +287,12 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
             model=modelId,
             environment=deployment.properties.environment_id,
             code_configuration=code_configuration,
-            output_file_name=deployment.properties.output_file_name
-            if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
-            == BatchDeploymentOutputAction.APPEND_ROW
-            else None,
+            output_file_name=(
+                deployment.properties.output_file_name
+                if cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action)
+                == BatchDeploymentOutputAction.APPEND_ROW
+                else None
+            ),
             output_action=cls._rest_output_action_to_yaml_output_action(deployment.properties.output_action),
             error_threshold=deployment.properties.error_threshold,
             retry_settings=BatchRetrySettings._from_rest_object(deployment.properties.retry_settings),

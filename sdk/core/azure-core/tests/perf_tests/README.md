@@ -1,6 +1,6 @@
 # Core Python client performance tests
 
-In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements.txt` installation. Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
+In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements.txt` installation. Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.8.
 
 ### Setup for test resources
 The following environment variables will need to be set for the tests to access the live resources:

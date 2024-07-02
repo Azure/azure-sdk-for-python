@@ -87,6 +87,8 @@ class TestQuickpulse(unittest.TestCase):
             role_name="test_role_name",
             machine_name="test_machine_name",
             stream_id="test_stream_id",
+            is_web_app=False,
+            performance_collection_supported=True,
         )
         cls._exporter = _QuickpulseExporter(
             "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
@@ -105,7 +107,6 @@ class TestQuickpulse(unittest.TestCase):
         self.assertEqual(exporter._live_endpoint, "https://eastus.livediagnostics.monitor.azure.com/")
         self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
         self.assertTrue(isinstance(exporter._client, QuickpulseClient))
-        self.assertEqual(exporter._client._config.host, "https://eastus.livediagnostics.monitor.azure.com/")
 
 
     def test_export_missing_data_point(self):
@@ -113,7 +114,7 @@ class TestQuickpulse(unittest.TestCase):
         self.assertEqual(result, MetricExportResult.FAILURE)
 
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
     def test_export_subscribed_false(self, convert_mock, post_mock):
         post_response = _Response(
@@ -132,7 +133,7 @@ class TestQuickpulse(unittest.TestCase):
         self.assertEqual(result, MetricExportResult.FAILURE)
 
     
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
     def test_export_subscribed_none(self, convert_mock, post_mock):
         post_response = None
@@ -153,7 +154,7 @@ class TestQuickpulse(unittest.TestCase):
         )
         convert_mock.return_value = [self._data_point]
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post",
+            "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish",
             throw(Exception),
         ):  # noqa: E501
             result = self._exporter.export(
@@ -162,7 +163,7 @@ class TestQuickpulse(unittest.TestCase):
             )
             self.assertEqual(result, MetricExportResult.FAILURE)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.post")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
     def test_export_subscribed_true(self, convert_mock, post_mock):
         post_response = _Response(
@@ -180,7 +181,7 @@ class TestQuickpulse(unittest.TestCase):
         )
         self.assertEqual(result, MetricExportResult.SUCCESS)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.ping")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.is_subscribed")
     def test_ping(self, ping_mock):
         ping_response = _Response(
             mock.Mock(),
@@ -197,7 +198,7 @@ class TestQuickpulse(unittest.TestCase):
 
     def test_ping_exception(self):
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.ping",
+            "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.is_subscribed",
             throw(HttpResponseError),
         ):  # noqa: E501
             response = self._exporter._ping(

@@ -16,7 +16,7 @@ class TestWebpubsubClientSendConcurrently(WebpubsubClientTest):
     def test_send_concurrently(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
         with client:
-            group_name = "test"
+            group_name = "test_send_concurrently"
             client.join_group(group_name)
 
             def send(idx):

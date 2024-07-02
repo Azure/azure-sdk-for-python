@@ -501,9 +501,8 @@ class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     If not present, defaults to Continue.
     """
 
-    CONTINUE = "Continue"
-    STOP = "Stop"
     CONTINUE_ENUM = "Continue"
+    STOP = "Stop"
 
 
 class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -732,6 +731,13 @@ class ProfileResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PENDING_MIGRATION_COMMIT = "PendingMigrationCommit"
     COMMITTING_MIGRATION = "CommittingMigration"
     ABORTING_MIGRATION = "AbortingMigration"
+
+
+class ProfileScrubbingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the log scrubbing config. Default value is Enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -977,6 +983,29 @@ class RuleQueryStringCachingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMet
     USE_QUERY_STRING = "UseQueryString"
     IGNORE_SPECIFIED_QUERY_STRINGS = "IgnoreSpecifiedQueryStrings"
     INCLUDE_SPECIFIED_QUERY_STRINGS = "IncludeSpecifiedQueryStrings"
+
+
+class ScrubbingRuleEntryMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When matchVariable is a collection, operate on the selector to specify which elements in the
+    collection this rule applies to.
+    """
+
+    EQUALS_ANY = "EqualsAny"
+
+
+class ScrubbingRuleEntryMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The variable to be scrubbed from the logs."""
+
+    REQUEST_IP_ADDRESS = "RequestIPAddress"
+    REQUEST_URI = "RequestUri"
+    QUERY_STRING_ARG_NAMES = "QueryStringArgNames"
+
+
+class ScrubbingRuleEntryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the state of a log scrubbing rule. Default value is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

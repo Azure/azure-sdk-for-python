@@ -165,7 +165,7 @@ Callers should wait for the operation to complete by calling result() on the pol
 
 ### Convert an asset
 
-We assume that a RemoteRenderingClient has been constructed as described in the [Authenticate the Client](#authenticate-the-client) section.
+We assume that a RemoteRenderingClient has been constructed as described in the [Authenticate the Client](#create-and-authenticate-the-client) section.
 The following snippet describes how to request that "box.fbx", found at at a path of "/input/box/box.fbx" of the blob container at the given storage container URI, gets converted.
 
 Converting an asset can take anywhere from seconds to hours.
@@ -227,7 +227,7 @@ In this example, we list all conversions and print id and creation ad as well as
 
 ### Create a session
 
-We assume that a RemoteRenderingClient has been constructed as described in the [Authenticate the Client](#authenticate-the-client) section.
+We assume that a RemoteRenderingClient has been constructed as described in the [Authenticate the Client](#create-and-authenticate-the-client) section.
 The following snippet describes how to request that a new rendering session be started.
 
 ```python

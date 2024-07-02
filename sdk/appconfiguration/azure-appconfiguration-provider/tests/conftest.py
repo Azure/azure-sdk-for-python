@@ -4,6 +4,8 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_oauth_response_sanitizer,
     set_custom_default_matcher,
+    remove_batch_sanitizers,
+    add_remove_header_sanitizer,
 )
 import pytest
 
@@ -20,15 +22,6 @@ def add_sanitizers(test_proxy):
         value="fake-connection-string",
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "fake-connection-string"),
     )
-    add_general_regex_sanitizer(
-        value="fake-client-id", regex=os.environ.get("APPCONFIGURATION_CLIENT_ID", "fake-client-id")
-    )
-    add_general_regex_sanitizer(
-        value="fake-client-secret", regex=os.environ.get("APPCONFIGURATION_CLIENT_SECRET", "fake-client-secret")
-    )
-    add_general_regex_sanitizer(
-        value="fake-tenant-id", regex=os.environ.get("APPCONFIGURATION_TENANT_ID", "fake-tenant-id")
-    )
     add_general_string_sanitizer(
         value="https://fake-key-vault.vault.azure.net/",
         target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"),
@@ -38,3 +31,8 @@ def add_sanitizers(test_proxy):
     set_custom_default_matcher(ignored_headers="x-ms-content-sha256, Accept", excluded_headers="Content-Length")
     add_remove_header_sanitizer(headers="Sync-Token")
     add_oauth_response_sanitizer()
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3447: $.key
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3447"])
