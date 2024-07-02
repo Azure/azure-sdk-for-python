@@ -16,5 +16,5 @@ class AppServiceCredential(AsyncManagedIdentityBase):
             return AsyncManagedIdentityClient(**client_args)
         return None
 
-    def get_unavailable_message(self) -> str:
-        return "App Service managed identity configuration not found in environment"
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"App Service managed identity configuration not found in environment. {desc}"

@@ -21,5 +21,5 @@ class CloudShellCredential(AsyncManagedIdentityBase):
             )
         return None
 
-    def get_unavailable_message(self) -> str:
-        return "Cloud Shell managed identity configuration not found in environment"
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"Cloud Shell managed identity configuration not found in environment. {desc}"

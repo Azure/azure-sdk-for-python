@@ -9,19 +9,12 @@ from typing import Optional, Dict
 from azure.core.pipeline.transport import HttpRequest
 
 from .._constants import EnvironmentVariables
-from .._internal.managed_identity_base import ManagedIdentityBase
-from .._internal.managed_identity_client import ManagedIdentityClient
+from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
-class AzureMLCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
-        client_args = _get_client_args(**kwargs)
-        if client_args:
-            return ManagedIdentityClient(**client_args)
-        return None
-
-    def get_unavailable_message(self) -> str:
-        return "Azure ML managed identity configuration not found in environment"
+class AzureMLCredential(MsalManagedIdentityClient):
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"Azure ML managed identity configuration not found in environment. {desc}"
 
 
 def _get_client_args(**kwargs) -> Optional[Dict]:

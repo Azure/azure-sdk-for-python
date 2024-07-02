@@ -27,6 +27,7 @@ class MsalResponse:
 
     def __init__(self, response: PipelineResponse) -> None:
         self._response = response
+        self.headers = response.http_response.headers if response.http_response else {}
 
     @property
     def status_code(self) -> int:
