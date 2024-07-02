@@ -42,7 +42,7 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._credentials import AccountKeyConfiguration
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, SasTokenConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
@@ -53,10 +53,10 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import (
         DataOperations,
         EnvironmentOperations,
+        EvaluatorOperations,
         FeatureSetOperations,
         IndexOperations,
         ModelOperations,
-        EvaluatorOperations,
     )
     from azure.ai.ml.operations._code_operations import CodeOperations
 
@@ -78,8 +78,6 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
 def get_datastore_info(
     operations: DatastoreOperations,
     name: str,
-    *,
-    credential=None,
     **kwargs,
 ) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
     """Get datastore account, type, and auth information.
@@ -88,18 +86,11 @@ def get_datastore_info(
     :type operations: DatastoreOperations
     :param name: Name of the datastore. If not provided, the default datastore will be used.
     :type name: str
-    :keyword credential: Local credential to use for authentication. If not provided, will try to get
-        credentials from the datastore, which requires authorization to perform action
-        'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
-    :paramtype credential: str
     :return: The dictionary with datastore info
-    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
+    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
     """
     datastore_info: Dict = {}
-    if name:
-        datastore = operations.get(name, include_secrets=credential is None)
-    else:
-        datastore = operations.get_default(include_secrets=credential is None)
+    datastore = operations.get(name) if name else operations.get_default()
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
     datastore_info["storage_type"] = datastore.type
@@ -107,21 +98,13 @@ def get_datastore_info(
     datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
         datastore.account_name, storage_endpoint
     )
-    if credential is not None:
-        datastore_info["credential"] = credential
-    else:
-        credential = datastore.credentials
 
-        if isinstance(credential, AccountKeyConfiguration):
-            datastore_info["credential"] = credential.account_key
-        else:
-            try:
-                datastore_info["credential"] = credential.sas_token
-            except Exception as e:  # pylint: disable=W0718
-                if not hasattr(credential, "sas_token"):
-                    datastore_info["credential"] = operations._credential
-                else:
-                    raise e
+    if isinstance(datastore.credentials, SasTokenConfiguration):
+        datastore_info["credential"] = operations._list_secrets(name=name, expirable_secret=True).sas_token
+    elif isinstance(datastore.credentials, NoneCredentialConfiguration):
+        datastore_info["credential"] = operations._credential
+    else:
+        datastore_info["credential"] = operations._list_secrets(name=name).sas_token
 
     if datastore.type == DatastoreType.AZURE_BLOB:
         datastore_info["container_name"] = str(datastore.container_name)

@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
 from typing import Callable, Iterable
-from unittest.mock import Mock, patch
+from unittest.mock import ANY, Mock, patch
 
 import pytest
-from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name, Test_Registry_Name
+from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
 from azure.ai.ml._restclient.v2022_10_01.models._models_py3 import (
@@ -24,23 +24,22 @@ from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DataOperations, DatastoreOperations
-from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
-from unittest.mock import ANY
+from azure.core.paging import ItemPaged
 
 
 @pytest.fixture
 def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_04_01_preview: Mock,
     mock_aml_services_2024_01_01_preview: Mock,
+    mock_aml_services_2024_07_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
+        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
     )
 
 
