@@ -91,7 +91,7 @@ You can search for a role by name or by description. You can also filter roles b
 
 ![Screenshot of Add role assignment page with Role tab.](images/roles.png)
 
-- Click **Next**.
+- Select **Next**.
 
 ## Step 4: Select who needs access
 
