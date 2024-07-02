@@ -30,11 +30,11 @@ from ._enum_meta import CaseInsensitiveEnumMeta
 class AzureClouds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An enum to describe Azure Cloud."""
 
-    AzurePublicCloud = "AzurePublicCloud"
+    AZURE_PUBLIC_CLOUD = "AZURE_PUBLIC_CLOUD"
     """Azure public cloud"""
 
-    AzureChinaCloud = "AzureChinaCloud"
+    AZURE_CHINA = "AZURE_CHINA"
     """Azure China cloud"""
 
-    AzureUSGovernment = "AzureUSGovernment"
+    AZURE_GOVERNMENT = "AZURE_GOVERNMENT"
     """Azure US government cloud"""
