@@ -11,16 +11,17 @@ from typing import Dict, Iterable, Optional, cast
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._restclient.v2024_07_01_preview.models import Datastore as DatastoreData
 from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     DatastoreSecrets,
     NoneDatastoreCredentials,
     SasDatastoreCredentials,
+    SecretExpiry,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview.models import SecretExpiry
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
@@ -58,11 +59,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         serviceclient_2024_01_01_preview: ServiceClient012024Preview,
         serviceclient_2024_07_01_preview: ServiceClient072024Preview,
+        serviceclient_2023_04_01_preview: ServiceClient042023Preview,
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation = serviceclient_2024_07_01_preview.datastores
+        self._credential_operation = serviceclient_2024_07_01_preview.datastores
+        self._operation = serviceclient_2023_04_01_preview.datastores
         self._compute_operation = serviceclient_2024_01_01_preview.compute
         self._credential = serviceclient_2024_07_01_preview._config.credential
         self._init_kwargs = kwargs
@@ -103,7 +106,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(ops_logger, "Datastore.ListSecrets", ActivityType.PUBLICAPI)
     def _list_secrets(self, name: str, expirable_secret: bool = False) -> DatastoreSecrets:
-        return self._operation.list_secrets(
+        return self._credential_operation.list_secrets(
             name=name,
             body=SecretExpiry(expirable_secret=expirable_secret),
             resource_group_name=self._operation_scope.resource_group_name,
