@@ -365,7 +365,7 @@ class TargetResourceConfigurations(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    ## removed visibility=["read", "create"] from below 
+    # removed visibility=["read", "create"]
     kind: str = rest_discriminator(name="kind")
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 

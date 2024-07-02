@@ -7,7 +7,7 @@
 import os
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
-from azure.developer.loadtesting import LoadTestAdministrationClient, LoadTestRunClient
+from azure.developer.loadtesting import LoadTestAdministrationClient, LoadTestRunClient, TestProfileAdministrationClient, TestProfileRunClient
 
 
 class LoadtestingTest(AzureRecordedTestCase):
@@ -27,6 +27,22 @@ class LoadtestingTest(AzureRecordedTestCase):
             credential=credential,
             endpoint=endpoint,
         )
+    
+    def create_test_profile_client(self,endpoint):
+        credential = self.get_credential(TestProfileAdministrationClient)
+        return self.create_client_from_credential (
+            TestProfileAdministrationClient,
+            credential=credential,
+            endpoint=endpoint,
+            )
+    
+    def create_test_profile_run_client(self,endpoint):
+        credential = self.get_credential(TestProfileRunClient)
+        return self.create_client_from_credential (
+            TestProfileRunClient,
+            credential=credential,
+            endpoint=endpoint,
+            )
 
 
 LoadtestingPowerShellPreparer = functools.partial(
@@ -39,4 +55,7 @@ LoadtestingPowerShellPreparer = functools.partial(
     loadtesting_app_component="000",
     loadtesting_subscription_id="000",
     loadtesting_resource_id="000",
+    loadtesting_test_profile_id="000",
+    loadtesting_target_resource_id ="000",
+    loadtesting_test_profile_run_id = "000"
 )
