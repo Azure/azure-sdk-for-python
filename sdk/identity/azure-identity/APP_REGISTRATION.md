@@ -15,7 +15,7 @@ Follow these steps to create the app registration:
 1. Sign in to the [Microsoft Entra admin center](https://entra.microsoft.com) as at least a [Cloud Application Administrator](https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference#cloud-application-administrator). 
 1. If you have access to multiple tenants, use the **Settings** ![icon](images/admin-center-settings-icon.png) in the top menu to switch to the tenant in which you want to register the application from the **Directories + subscriptions** menu.
 1. Browse to **Identity** > **Applications** > **App registrations** and select **New registration**.
-1. Enter a display **Name** for your application. Users of your application might see the display name when they use the app, for example during sign-in.
+1. Enter a display **Name** for your application. Users of your application might see the display name when they use the app. For example, during sign-in.
    You can change the display name at any time and multiple app registrations can share the same name. The app registration's automatically generated Application (client) ID, not its display name, uniquely identifies your app within the identity platform.
 1. Specify who can use the application, sometimes called its *sign-in audience*.
 
