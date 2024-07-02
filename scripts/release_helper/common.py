@@ -364,7 +364,7 @@ class IssueProcess:
         issue_body = self.get_issue_body()
         for line in issue_body:
             if "Requested by" in line:
-                self.owner = line.split('@')[-1].strip(', *')
+                self.owner = line.split('@')[-1].strip(', *\r\n')
                 break
 
     def run(self) -> None:
