@@ -75,17 +75,17 @@
           "properties": "[variables('healthInsightsProperties')]"
       },
       {
-       "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
-      "name": "[format('{0}/Microsoft.Authorization/{1}', variables('textAnalyticsName'), guid(variables('textAnalyticsName')))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
-      ],
-      "properties": {
-        "principalId": "[parameters('testApplicationOid')]",
-        "roleDefinitionId": "[variables('textAnalyticsContributorRole')]"
-      }
-    },
+        "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[format('{0}/Microsoft.Authorization/{1}', variables('textAnalyticsName'), guid(variables('textAnalyticsName')))]",
+        "dependsOn": [
+         "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
+        ],
+        "properties": {
+         "principalId": "[parameters('testApplicationOid')]",
+         "roleDefinitionId": "[variables('textAnalyticsContributorRole')]"
+        }
+      },
       {
         "apiVersion": "2017-04-18",
         "name": "[variables('textAnalyticsName')]",
