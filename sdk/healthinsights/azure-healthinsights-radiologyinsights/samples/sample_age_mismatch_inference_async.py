@@ -12,12 +12,17 @@ from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_age_mismatch_inference_async.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+The sample_age_mismatch_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Result description.     
+submit it to the client, RadiologyInsightsClient, and display 
+-the Age Mismatch patient ID,
+-the Age Mismatch url extension,
+-the Age Mismatch offset extension,
+-the Age Mismatch length extension, and
+-the Age Mismatch evidence
 
 
 USAGE:
@@ -26,8 +31,7 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
 
-2. python sample_critical_result_inference_async.py
-   
+2. python sample_age_mismatch_inference_async.py
 """
 
 
@@ -121,26 +125,45 @@ class HealthInsightsSamples:
             )
             inference_result = await poller.result()
             radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
-            self.display_critical_results(radiology_insights_result)            
+            self.display_age_mismatch(radiology_insights_result, doc_content1)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
-        # [START display_critical_results]
+    def display_age_mismatch(self, radiology_insights_result, doc_content1):
+        # [START display_age_mismatch]
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.AGE_MISMATCH:
+                    print(f"Age Mismatch Inference found")
+                    print(f"Age Mismatch: Patient ID: {patient_result.patient_id}")
+                    Tokens = ""
+                    for extension in ri_inference.extension:
+                        for attribute in dir(extension):
+                            if attribute == "extension":
+                                offset = -1
+                                length = -1
+                                for sub_extension in extension.extension:
+                                    for sub_attribute in dir(sub_extension):
+                                        if sub_attribute == "url":
+                                            if sub_extension.url.startswith("http"):
+                                                continue
+                                            elif sub_extension.url == "offset":
+                                                offset = sub_extension.value_integer
+                                            elif sub_extension.url == "length":
+                                                length = sub_extension.value_integer
+                                        if offset > 0 and length > 0:
+                                            evidence = doc_content1[offset : offset + length]
+                                            if not evidence in Tokens:
+                                                Tokens = Tokens + " " + evidence
+                    print(f"Age Mismatch: Evidence: {Tokens}")
 
-    # [END display_critical_results]
+    # [END display_age_mismatch]
 
 
 async def main():
     async with HealthInsightsSamples() as sample:
         await sample.radiology_insights_async()
-
 
 if __name__ == "__main__":
     asyncio.run(main())

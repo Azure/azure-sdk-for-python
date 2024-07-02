@@ -22,7 +22,6 @@ from ._models import DocumentAuthor
 from ._models import DocumentContent
 from ._models import DomainResource
 from ._models import Element
-from ._models import Encounter
 from ._models import Error
 from ._models import Extension
 from ._models import FindingInference
@@ -31,7 +30,8 @@ from ._models import FollowupCommunicationInference
 from ._models import FollowupRecommendationInference
 from ._models import FollowupRecommendationOptions
 from ._models import GenericProcedureRecommendation
-from ._models import HealthInsightsOperationStatus
+from ._models import HealthInsightsErrorResponse
+from ._models import HealthInsightsErrorResponseRequestId
 from ._models import Identifier
 from ._models import ImagingProcedure
 from ._models import ImagingProcedureRecommendation
@@ -46,6 +46,7 @@ from ._models import ObservationReferenceRange
 from ._models import OrderedProcedure
 from ._models import PatientDetails
 from ._models import PatientDocument
+from ._models import PatientEncounter
 from ._models import PatientRecord
 from ._models import Period
 from ._models import ProcedureRecommendation
@@ -55,14 +56,15 @@ from ._models import RadiologyInsightsData
 from ._models import RadiologyInsightsInference
 from ._models import RadiologyInsightsInferenceOptions
 from ._models import RadiologyInsightsInferenceResult
+from ._models import RadiologyInsightsJob
 from ._models import RadiologyInsightsModelConfiguration
 from ._models import RadiologyInsightsPatientResult
-from ._models import RadiologyInsightsResult
 from ._models import RadiologyProcedureInference
 from ._models import Range
 from ._models import Ratio
 from ._models import RecommendationFinding
 from ._models import Reference
+from ._models import RequestIdResponseHeader
 from ._models import ResearchStudy
 from ._models import ResearchStudyArm
 from ._models import ResearchStudyObjective
@@ -84,7 +86,6 @@ from ._enums import ObservationStatusCodeType
 from ._enums import PatientSex
 from ._enums import RadiologyInsightsInferenceType
 from ._enums import RecommendationFindingStatusType
-from ._enums import RepeatabilityResult
 from ._enums import ResearchStudyStatusCodeType
 from ._enums import SpecialtyType
 from ._patch import __all__ as _patch_all
@@ -108,7 +109,6 @@ __all__ = [
     "DocumentContent",
     "DomainResource",
     "Element",
-    "Encounter",
     "Error",
     "Extension",
     "FindingInference",
@@ -117,7 +117,8 @@ __all__ = [
     "FollowupRecommendationInference",
     "FollowupRecommendationOptions",
     "GenericProcedureRecommendation",
-    "HealthInsightsOperationStatus",
+    "HealthInsightsErrorResponse",
+    "HealthInsightsErrorResponseRequestId",
     "Identifier",
     "ImagingProcedure",
     "ImagingProcedureRecommendation",
@@ -132,6 +133,7 @@ __all__ = [
     "OrderedProcedure",
     "PatientDetails",
     "PatientDocument",
+    "PatientEncounter",
     "PatientRecord",
     "Period",
     "ProcedureRecommendation",
@@ -141,14 +143,15 @@ __all__ = [
     "RadiologyInsightsInference",
     "RadiologyInsightsInferenceOptions",
     "RadiologyInsightsInferenceResult",
+    "RadiologyInsightsJob",
     "RadiologyInsightsModelConfiguration",
     "RadiologyInsightsPatientResult",
-    "RadiologyInsightsResult",
     "RadiologyProcedureInference",
     "Range",
     "Ratio",
     "RecommendationFinding",
     "Reference",
+    "RequestIdResponseHeader",
     "ResearchStudy",
     "ResearchStudyArm",
     "ResearchStudyObjective",
@@ -169,7 +172,6 @@ __all__ = [
     "PatientSex",
     "RadiologyInsightsInferenceType",
     "RecommendationFindingStatusType",
-    "RepeatabilityResult",
     "ResearchStudyStatusCodeType",
     "SpecialtyType",
 ]

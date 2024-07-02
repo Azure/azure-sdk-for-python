@@ -1,23 +1,25 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import asyncio
 import datetime
 import os
 import uuid
 
 
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_complete_order_discrepancy_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
-It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Result description.     
+The sample_complete_order_discrepancy_inference.py module processes a sample radiology document with the Radiology Insights service.
+It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
+submit it to the client, RadiologyInsightsClient, and display
+-the Complete Order Discrepancy order type,
+-the missing body parts, and
+-the missing body part measurements     
 
 
 USAGE:
@@ -26,30 +28,20 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
 
-2. python sample_critical_result_inference_async.py
+2. python sample_complete_order_discrepancy_inference.py
    
 """
 
 
-class HealthInsightsSamples:
-    async def __aenter__(self):
-        print("Opening connection...")
-        # Open connection here
-        return self
-    
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        print("Closing connection...")
-        # Close connection here
-
-    async def radiology_insights_async(self) -> None:
-        # [START create_radiology_insights_client]
+class HealthInsightsSyncSamples:
+    def radiology_insights_sync(self) -> None:
         KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
         job_id = str(uuid.uuid4())
 
         radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
-        # [END create_radiology_insights_client]
+
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
         COMPARISON:   
@@ -114,33 +106,48 @@ class HealthInsightsSamples:
         # Construct the request with the patient and configuration
         patient_data = models.RadiologyInsightsJob(job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration))
 
+        # Health Insights Radiology Insights
         try:
-            poller = await radiology_insights_client.begin_infer_radiology_insights(
+            poller = radiology_insights_client.begin_infer_radiology_insights(
                 id=job_id,
                 resource=patient_data,
             )
-            inference_result = await poller.result()
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
-            self.display_critical_results(radiology_insights_result)            
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
+            self.display_complete_order_discrepancy(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
-        # [START display_critical_results]
+    def display_complete_order_discrepancy(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY:
+                    print(f"Complete Order Discrepancy Inference found")
+                    ordertype = ri_inference.order_type
+                    for coding in ordertype.coding:
+                        print(f"Complete Order Discrepancy: Order Type: {coding.system} {coding.code} {coding.display}")
+                    if not ri_inference.missing_body_parts:
+                        print(f"Complete Order Discrepancy: Missing Body Parts: empty list")
+                    else:
+                        for missingbodypart in ri_inference.missing_body_parts:
+                            for coding in missingbodypart.coding:
+                                print(
+                                    f"Complete Order Discrepancy: Missing Body Part: {coding.system} {coding.code} {coding.display}"
+                                )
+                    if not ri_inference.missing_body_part_measurements:
+                        print(f"Complete Order Discrepancy: Missing Body Part Measurements: empty list")
+                    else:
+                        for missingbodypartmeasurement in ri_inference.missing_body_part_measurements:
+                            for coding in missingbodypartmeasurement.coding:
+                                print(
+                                    f"Complete Order Discrepancy: Missing Body Part Measurement: {coding.system} {coding.code} {coding.display}"
+                                )
 
-    # [END display_critical_results]
 
-
-async def main():
-    async with HealthInsightsSamples() as sample:
-        await sample.radiology_insights_async()
+def main():
+    sample = HealthInsightsSyncSamples()
+    sample.radiology_insights_sync()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
