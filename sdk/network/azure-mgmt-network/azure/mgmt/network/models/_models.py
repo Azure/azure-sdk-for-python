@@ -2552,6 +2552,9 @@ class ExpressRouteCircuitAuthorization(SubResource):
      "InUse".
     :vartype authorization_use_status: str or
      ~azure.mgmt.network.models.AuthorizationUseStatus
+    :ivar connection_resource_uri: The reference to the ExpressRoute connection resource using the
+     authorization.
+    :vartype connection_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -2560,6 +2563,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
     _validation = {
         "etag": {"readonly": True},
         "type": {"readonly": True},
+        "connection_resource_uri": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -2570,6 +2574,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
         "type": {"key": "type", "type": "str"},
         "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
         "authorization_use_status": {"key": "properties.authorizationUseStatus", "type": "str"},
+        "connection_resource_uri": {"key": "properties.connectionResourceUri", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -2601,6 +2606,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
         self.type = None
         self.authorization_key = authorization_key
         self.authorization_use_status = authorization_use_status
+        self.connection_resource_uri = None
         self.provisioning_state = None
 
 class ExpressRouteCircuitListResult(_serialization.Model):
@@ -5048,6 +5054,11 @@ class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
      period (in seconds) which allows two full probes before taking the instance out of rotation.
      The default value is 15, the minimum value is 5.
     :vartype interval_in_seconds: int
+    :ivar no_healthy_backends_behavior: Determines how new connections are handled by the load
+     balancer when all backend instances are probed down. Known values are: "AllProbedDown" and
+     "AllProbedUp".
+    :vartype no_healthy_backends_behavior: str or
+     ~azure.mgmt.network.models.ProbeNoHealthyBackendsBehavior
     :ivar number_of_probes: The number of probes where if no response, will result in stopping
      further traffic from being delivered to the endpoint. This values allows endpoints to be taken
      out of rotation faster or slower than the typical times used in Azure.
@@ -5081,6 +5092,7 @@ class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
         "protocol": {"key": "properties.protocol", "type": "str"},
         "port": {"key": "properties.port", "type": "int"},
         "interval_in_seconds": {"key": "properties.intervalInSeconds", "type": "int"},
+        "no_healthy_backends_behavior": {"key": "properties.NoHealthyBackendsBehavior", "type": "str"},
         "number_of_probes": {"key": "properties.numberOfProbes", "type": "int"},
         "probe_threshold": {"key": "properties.probeThreshold", "type": "int"},
         "request_path": {"key": "properties.requestPath", "type": "str"},
@@ -5095,6 +5107,7 @@ class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
         protocol: Optional[Union[str, "_models.ProbeProtocol"]] = None,
         port: Optional[int] = None,
         interval_in_seconds: Optional[int] = None,
+        no_healthy_backends_behavior: Optional[Union[str, "_models.ProbeNoHealthyBackendsBehavior"]] = None,
         number_of_probes: Optional[int] = None,
         probe_threshold: Optional[int] = None,
         request_path: Optional[str] = None,
@@ -5119,6 +5132,11 @@ class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
          timeout period (in seconds) which allows two full probes before taking the instance out of
          rotation. The default value is 15, the minimum value is 5.
         :paramtype interval_in_seconds: int
+        :keyword no_healthy_backends_behavior: Determines how new connections are handled by the load
+         balancer when all backend instances are probed down. Known values are: "AllProbedDown" and
+         "AllProbedUp".
+        :paramtype no_healthy_backends_behavior: str or
+         ~azure.mgmt.network.models.ProbeNoHealthyBackendsBehavior
         :keyword number_of_probes: The number of probes where if no response, will result in stopping
          further traffic from being delivered to the endpoint. This values allows endpoints to be taken
          out of rotation faster or slower than the typical times used in Azure.
@@ -5140,6 +5158,7 @@ class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
         self.protocol = protocol
         self.port = port
         self.interval_in_seconds = interval_in_seconds
+        self.no_healthy_backends_behavior = no_healthy_backends_behavior
         self.number_of_probes = number_of_probes
         self.probe_threshold = probe_threshold
         self.request_path = request_path
@@ -6442,6 +6461,8 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
     :vartype extended_location: ~azure.mgmt.network.models.ExtendedLocation
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :ivar identity: The identity of the virtual network gateway, if configured.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     :ivar auto_scale_configuration: Autoscale configuration for virutal network gateway.
     :vartype auto_scale_configuration:
      ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
@@ -6533,6 +6554,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         "tags": {"key": "tags", "type": "{str}"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "auto_scale_configuration": {
             "key": "properties.autoScaleConfiguration",
             "type": "VirtualNetworkGatewayAutoScaleConfiguration",
@@ -6573,6 +6595,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         auto_scale_configuration: Optional["_models.VirtualNetworkGatewayAutoScaleConfiguration"] = None,
         ip_configurations: Optional[List["_models.VirtualNetworkGatewayIPConfiguration"]] = None,
         gateway_type: Optional[Union[str, "_models.VirtualNetworkGatewayType"]] = None,
@@ -6606,6 +6629,8 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of type local virtual network gateway.
         :paramtype extended_location: ~azure.mgmt.network.models.ExtendedLocation
+        :keyword identity: The identity of the virtual network gateway, if configured.
+        :paramtype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
         :keyword auto_scale_configuration: Autoscale configuration for virutal network gateway.
         :paramtype auto_scale_configuration:
          ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
@@ -6676,6 +6701,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
         self.etag = None
+        self.identity = identity
         self.auto_scale_configuration = auto_scale_configuration
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -10773,6 +10799,8 @@ class FlowLogInformation(_serialization.Model):
      analytics.
     :vartype flow_analytics_configuration:
      ~azure.mgmt.network.models.TrafficAnalyticsProperties
+    :ivar identity: FlowLog resource Managed Identity.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     :ivar storage_id: ID of the storage account which is used to store the flow log. Required.
     :vartype storage_id: str
     :ivar enabled: Flag to enable/disable flow logging. Required.
@@ -10792,6 +10820,7 @@ class FlowLogInformation(_serialization.Model):
     _attribute_map = {
         "target_resource_id": {"key": "targetResourceId", "type": "str"},
         "flow_analytics_configuration": {"key": "flowAnalyticsConfiguration", "type": "TrafficAnalyticsProperties"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "storage_id": {"key": "properties.storageId", "type": "str"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
         "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicyParameters"},
@@ -10805,6 +10834,7 @@ class FlowLogInformation(_serialization.Model):
         storage_id: str,
         enabled: bool,
         flow_analytics_configuration: Optional["_models.TrafficAnalyticsProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         retention_policy: Optional["_models.RetentionPolicyParameters"] = None,
         format: Optional["_models.FlowLogFormatParameters"] = None,
         **kwargs: Any
@@ -10817,6 +10847,8 @@ class FlowLogInformation(_serialization.Model):
          analytics.
         :paramtype flow_analytics_configuration:
          ~azure.mgmt.network.models.TrafficAnalyticsProperties
+        :keyword identity: FlowLog resource Managed Identity.
+        :paramtype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
         :keyword storage_id: ID of the storage account which is used to store the flow log. Required.
         :paramtype storage_id: str
         :keyword enabled: Flag to enable/disable flow logging. Required.
@@ -10829,6 +10861,7 @@ class FlowLogInformation(_serialization.Model):
         super().__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.flow_analytics_configuration = flow_analytics_configuration
+        self.identity = identity
         self.storage_id = storage_id
         self.enabled = enabled
         self.retention_policy = retention_policy
@@ -13224,6 +13257,8 @@ class ServiceEndpointPropertiesFormat(_serialization.Model):
 
     :ivar service: The type of the endpoint service.
     :vartype service: str
+    :ivar network_identifier: SubResource as network identifier.
+    :vartype network_identifier: ~azure.mgmt.network.models.SubResource
     :ivar locations: A list of locations.
     :vartype locations: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint resource. Known values
@@ -13237,19 +13272,30 @@ class ServiceEndpointPropertiesFormat(_serialization.Model):
 
     _attribute_map = {
         "service": {"key": "service", "type": "str"},
+        "network_identifier": {"key": "networkIdentifier", "type": "SubResource"},
         "locations": {"key": "locations", "type": "[str]"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, service: Optional[str] = None, locations: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        service: Optional[str] = None,
+        network_identifier: Optional["_models.SubResource"] = None,
+        locations: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service: The type of the endpoint service.
         :paramtype service: str
+        :keyword network_identifier: SubResource as network identifier.
+        :paramtype network_identifier: ~azure.mgmt.network.models.SubResource
         :keyword locations: A list of locations.
         :paramtype locations: list[str]
         """
         super().__init__(**kwargs)
         self.service = service
+        self.network_identifier = network_identifier
         self.locations = locations
         self.provisioning_state = None
 
@@ -23171,6 +23217,9 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype enable_tunneling: bool
     :ivar enable_kerberos: Enable/Disable Kerberos feature of the Bastion Host resource.
     :vartype enable_kerberos: bool
+    :ivar enable_session_recording: Enable/Disable Session Recording feature of the Bastion Host
+     resource.
+    :vartype enable_session_recording: bool
     """
 
     _validation = {
@@ -23202,6 +23251,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         "enable_shareable_link": {"key": "properties.enableShareableLink", "type": "bool"},
         "enable_tunneling": {"key": "properties.enableTunneling", "type": "bool"},
         "enable_kerberos": {"key": "properties.enableKerberos", "type": "bool"},
+        "enable_session_recording": {"key": "properties.enableSessionRecording", "type": "bool"},
     }
 
     def __init__(
@@ -23223,6 +23273,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         enable_shareable_link: bool = False,
         enable_tunneling: bool = False,
         enable_kerberos: bool = False,
+        enable_session_recording: bool = False,
         **kwargs: Any
     ) -> None:
         """
@@ -23261,6 +23312,9 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype enable_tunneling: bool
         :keyword enable_kerberos: Enable/Disable Kerberos feature of the Bastion Host resource.
         :paramtype enable_kerberos: bool
+        :keyword enable_session_recording: Enable/Disable Session Recording feature of the Bastion Host
+         resource.
+        :paramtype enable_session_recording: bool
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.zones = zones
@@ -23278,6 +23332,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         self.enable_shareable_link = enable_shareable_link
         self.enable_tunneling = enable_tunneling
         self.enable_kerberos = enable_kerberos
+        self.enable_session_recording = enable_session_recording
 
 class BastionHostIPConfiguration(SubResource):
     """IP configuration of an Bastion Host.
@@ -28119,6 +28174,8 @@ class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype tags: dict[str, str]
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :ivar identity: FlowLog resource Managed Identity.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     :ivar target_resource_id: ID of network security group to which flow log will be applied.
     :vartype target_resource_id: str
     :ivar target_resource_guid: Guid of network security group to which flow log will be applied.
@@ -28155,6 +28212,7 @@ class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
         "target_resource_guid": {"key": "properties.targetResourceGuid", "type": "str"},
         "storage_id": {"key": "properties.storageId", "type": "str"},
@@ -28174,6 +28232,7 @@ class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         target_resource_id: Optional[str] = None,
         storage_id: Optional[str] = None,
         enabled: Optional[bool] = None,
@@ -28189,6 +28248,8 @@ class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword identity: FlowLog resource Managed Identity.
+        :paramtype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
         :keyword target_resource_id: ID of network security group to which flow log will be applied.
         :paramtype target_resource_id: str
         :keyword storage_id: ID of the storage account which is used to store the flow log.
@@ -28206,6 +28267,7 @@ class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = None
+        self.identity = identity
         self.target_resource_id = target_resource_id
         self.target_resource_guid = None
         self.storage_id = storage_id
@@ -33440,8 +33502,8 @@ class LoadBalancerVipSwapRequestFrontendIPConfiguration(_serialization.Model):  
 class Sku(_serialization.Model):
     """The sku of this Bastion Host.
 
-    :ivar name: The name of this Bastion Host. Known values are: "Basic", "Standard", and
-     "Developer".
+    :ivar name: The name of the sku of this Bastion Host. Known values are: "Basic", "Standard",
+     "Developer", and "Premium".
     :vartype name: str or ~azure.mgmt.network.models.BastionHostSkuName
     """
 
@@ -33451,8 +33513,8 @@ class Sku(_serialization.Model):
 
     def __init__(self, *, name: Union[str, "_models.BastionHostSkuName"] = "Standard", **kwargs: Any) -> None:
         """
-        :keyword name: The name of this Bastion Host. Known values are: "Basic", "Standard", and
-         "Developer".
+        :keyword name: The name of the sku of this Bastion Host. Known values are: "Basic", "Standard",
+         "Developer", and "Premium".
         :paramtype name: str or ~azure.mgmt.network.models.BastionHostSkuName
         """
         super().__init__(**kwargs)
@@ -39389,11 +39451,9 @@ class FilterItems(_serialization.Model):
         self.field = field
         self.values = values
 
-class FirewallPacketCaptureParameters(SubResource):
-    """Azure Firewall Packet Capture Parameters resource.
+class FirewallPacketCaptureParameters(_serialization.Model):
+    """Azure Firewall Packet Capture Parameters.
 
-    :ivar id: Resource ID.
-    :vartype id: str
     :ivar duration_in_seconds: Duration of packet capture in seconds.
     :vartype duration_in_seconds: int
     :ivar number_of_packets_to_capture: Number of packets to be captured.
@@ -39418,20 +39478,18 @@ class FirewallPacketCaptureParameters(SubResource):
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "duration_in_seconds": {"key": "properties.durationInSeconds", "type": "int"},
-        "number_of_packets_to_capture": {"key": "properties.numberOfPacketsToCapture", "type": "int"},
-        "sas_url": {"key": "properties.sasUrl", "type": "str"},
-        "file_name": {"key": "properties.fileName", "type": "str"},
-        "protocol": {"key": "properties.protocol", "type": "str"},
-        "flags": {"key": "properties.flags", "type": "[AzureFirewallPacketCaptureFlags]"},
-        "filters": {"key": "properties.filters", "type": "[AzureFirewallPacketCaptureRule]"},
+        "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
+        "number_of_packets_to_capture": {"key": "numberOfPacketsToCapture", "type": "int"},
+        "sas_url": {"key": "sasUrl", "type": "str"},
+        "file_name": {"key": "fileName", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "flags": {"key": "flags", "type": "[AzureFirewallPacketCaptureFlags]"},
+        "filters": {"key": "filters", "type": "[AzureFirewallPacketCaptureRule]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         duration_in_seconds: Optional[int] = None,
         number_of_packets_to_capture: Optional[int] = None,
         sas_url: Optional[str] = None,
@@ -39442,8 +39500,6 @@ class FirewallPacketCaptureParameters(SubResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword id: Resource ID.
-        :paramtype id: str
         :keyword duration_in_seconds: Duration of packet capture in seconds.
         :paramtype duration_in_seconds: int
         :keyword number_of_packets_to_capture: Number of packets to be captured.
@@ -39461,7 +39517,7 @@ class FirewallPacketCaptureParameters(SubResource):
         :keyword filters: Rules to filter packet captures.
         :paramtype filters: list[~azure.mgmt.network.models.AzureFirewallPacketCaptureRule]
         """
-        super().__init__(id=id, **kwargs)
+        super().__init__(**kwargs)
         self.duration_in_seconds = duration_in_seconds
         self.number_of_packets_to_capture = number_of_packets_to_capture
         self.sas_url = sas_url

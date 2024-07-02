@@ -1319,11 +1319,12 @@ class VpnNatRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC = "Dynamic"
 
 class BastionHostSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of this Bastion Host."""
+    """The name of the sku of this Bastion Host."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     DEVELOPER = "Developer"
+    PREMIUM = "Premium"
 
 class DeleteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify what happens to the public IP address when the VM using it is deleted."""
@@ -1908,4 +1909,14 @@ class SharingScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TENANT = "Tenant"
     DELEGATED_SERVICES = "DelegatedServices"
+
+class ProbeNoHealthyBackendsBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines how new connections are handled by the load balancer when all backend instances are
+    probed down.
+    """
+
+    ALL_PROBED_DOWN = "AllProbedDown"
+    """No new flows will be sent to the backend pool."""
+    ALL_PROBED_UP = "AllProbedUp"
+    """When all backend instances are probed down, incoming packets will be sent to all instances."""
 
