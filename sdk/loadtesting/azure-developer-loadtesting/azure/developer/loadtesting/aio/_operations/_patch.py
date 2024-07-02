@@ -14,8 +14,8 @@ from typing import List, Optional, Any, IO, Union, Callable, overload, Generic, 
 from azure.core.polling import AsyncPollingMethod, AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
-from ._operations import TestRunOperations as TestRunOperationsGenerated
+from ._operations import LoadTestAdministrationClientOperationsMixin as AdministrationOperationsGenerated, JSON
+from ._operations import LoadTestRunClientOperationsMixin as TestRunOperationsGenerated
 
 logger = logging.getLogger(__name__)
 
@@ -82,13 +82,13 @@ class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class AdministrationOperations(AdministrationOperationsGenerated):
+class  LoadTestAdministrationClientOperationsMixin(AdministrationOperationsGenerated):
     """
     for performing the operations on test
     """
 
     def __init__(self, *args, **kwargs):
-        super(AdministrationOperations, self).__init__(*args, **kwargs)
+        super( LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
 
     @distributed_trace
     async def begin_upload_test_file(
@@ -123,13 +123,13 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         return AsyncLROPoller(command, upload_test_file_operation, lambda *_: None, create_validation_status_polling)
 
 
-class TestRunOperations(TestRunOperationsGenerated):
+class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
     """
     class to perform operations on TestRun
     """
 
     def __init__(self, *args, **kwargs):
-        super(TestRunOperations, self).__init__(*args, **kwargs)
+        super(LoadTestRunClientOperationsMixin, self).__init__(*args, **kwargs)
 
     @distributed_trace
     async def begin_test_run(
@@ -161,7 +161,7 @@ class TestRunOperations(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = await super()._test_run_initial(
+        create_or_update_test_run_operation = await super().begin_test_run(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
 
@@ -171,7 +171,7 @@ class TestRunOperations(TestRunOperationsGenerated):
         return AsyncLROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
 
 
-__all__: List[str] = ["AdministrationOperations", "TestRunOperations"]
+__all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRunClientOperationsMixin"]  
 
 
 # Add all objects you want publicly available to users at this package level
@@ -184,3 +184,4 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+

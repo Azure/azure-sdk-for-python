@@ -6,6 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import List
+
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
 import logging
 import time
 from functools import partial
@@ -15,8 +21,8 @@ from azure.core.polling import PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 
-from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
-from ._operations import TestRunOperations as TestRunOperationsGenerated
+from ._operations import LoadTestAdministrationClientOperationsMixin as AdministrationOperationsGenerated, JSON
+from ._operations import LoadTestRunClientOperationsMixin as TestRunOperationsGenerated
 from .._serialization import Serializer
 
 _SERIALIZER = Serializer()
@@ -89,13 +95,13 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class AdministrationOperations(AdministrationOperationsGenerated):
+class LoadTestAdministrationClientOperationsMixin(AdministrationOperationsGenerated):
     """
     for performing the operations on the Administration Subclient
     """
 
     def __init__(self, *args, **kwargs):
-        super(AdministrationOperations, self).__init__(*args, **kwargs)
+        super(LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
 
     @distributed_trace
     def begin_upload_test_file(
@@ -130,13 +136,13 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         return LROPoller(command, upload_test_file_operation, lambda *_: None, create_validation_status_polling)
 
 
-class TestRunOperations(TestRunOperationsGenerated):
+class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
     """
     class to perform operations on TestRun
     """
 
     def __init__(self, *args, **kwargs):
-        super(TestRunOperations, self).__init__(*args, **kwargs)
+        super(LoadTestRunClientOperationsMixin, self).__init__(*args, **kwargs)
 
     @distributed_trace
     def begin_test_run(
@@ -168,17 +174,16 @@ class TestRunOperations(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = super()._test_run_initial(
+        create_or_update_test_run_operation = super().begin_test_run(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
-
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
         return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
 
 
-__all__: List[str] = ["AdministrationOperations", "TestRunOperations"]
+__all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRunClientOperationsMixin"]
 
 
 # Add all objects you want publicly available to users at this package level

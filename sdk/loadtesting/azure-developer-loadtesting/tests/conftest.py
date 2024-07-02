@@ -30,9 +30,16 @@ import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_body_key_sanitizer, add_header_regex_sanitizer
+from devtools_testutils import (
+    test_proxy,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+)
 
 load_dotenv()
+
+import pytest
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
