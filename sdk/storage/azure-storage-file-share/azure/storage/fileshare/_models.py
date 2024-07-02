@@ -344,6 +344,9 @@ class ShareProperties(DictMixin):
     :ivar bool enable_snapshot_virtual_directory_access:
         Specifies whether the snapshot virtual directory should be accessible at the root of the share
         mount point when NFS is enabled. if not specified, the default is True.
+    :ivar bool paid_bursting_enabled: This property enables paid bursting.
+    :ivar int paid_bursting_max_bandwidth_mips: The maximum throughput the file share can support.
+    :ivar int paid_bursting_max_iops: The maximum IOPS the file share can support.
     """
 
     def __init__(self, **kwargs):
@@ -369,6 +372,10 @@ class ShareProperties(DictMixin):
         self.root_squash = kwargs.get('x-ms-root-squash', None)
         self.enable_snapshot_virtual_directory_access = \
             kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
+        self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
+        self.paid_bursting_max_bandwidth_mips = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
+        self.paid_bursting_max_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
+
     @classmethod
     def _from_generated(cls, generated):
         props = cls()
@@ -393,7 +400,9 @@ class ShareProperties(DictMixin):
             if generated.properties.enabled_protocols else None
         props.root_squash = generated.properties.root_squash
         props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
-
+        props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
+        props.paid_bursting_max_bandwidth_mips = generated.properties.paid_bursting_max_bandwidth_mibps
+        props.paid_bursting_max_iops = generated.properties.paid_bursting_max_iops
         return props
 
 

@@ -1650,3 +1650,51 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert len(resp) == 2
         await self._delete_shares(share.share_name)
 
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_share_paid_bursting(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        # Arrange
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+        max_mips = 10340
+        max_iops = 102400
+
+        # Act / Assert
+        share = await self._create_share(
+            paid_bursting_enabled=True,
+            paid_bursting_max_bandwidth_mips=5000,
+            paid_bursting_max_iops=1000
+        )
+        share_props = await share.get_share_properties()
+        assert share_props.paid_bursting_enabled
+        assert share_props.paid_bursting_max_bandwidth_mips == 5000
+        assert share_props.paid_bursting_max_iops == 1000
+
+        await share.set_share_properties(
+            root_squash="NoRootSquash",
+            paid_bursting_enabled=True,
+            paid_bursting_max_bandwidth_mips=max_mips,
+            paid_bursting_max_iops=max_iops
+        )
+        share_props = await share.get_share_properties()
+        assert share_props.paid_bursting_enabled
+        assert share_props.paid_bursting_max_bandwidth_mips == max_mips
+        assert share_props.paid_bursting_max_iops == max_iops
+
+        shares = None
+        async for share in self.fsc.list_shares():
+            if shares is None:
+                shares = []
+            shares.append(share)
+
+        assert shares is not None
+        assert len(shares) == 1
+        assert shares[0] is not None
+        assert shares[0].paid_bursting_enabled
+        assert shares[0].paid_bursting_max_bandwidth_mips == max_mips
+        assert shares[0].paid_bursting_max_iops == max_iops
+
+        await self._delete_shares()
+

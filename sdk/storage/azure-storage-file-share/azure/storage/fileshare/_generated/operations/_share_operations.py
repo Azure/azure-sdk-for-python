@@ -49,13 +49,16 @@ def build_create_request(
     enabled_protocols: Optional[str] = None,
     root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
     enable_snapshot_virtual_directory_access: Optional[bool] = None,
+    paid_bursting_enabled: Optional[bool] = None,
+    paid_bursting_max_bandwidth_mips: Optional[int] = None,
+    paid_bursting_max_iops: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -87,6 +90,18 @@ def build_create_request(
         _headers["x-ms-enable-snapshot-virtual-directory-access"] = _SERIALIZER.header(
             "enable_snapshot_virtual_directory_access", enable_snapshot_virtual_directory_access, "bool"
         )
+    if paid_bursting_enabled is not None:
+        _headers["x-ms-share-paid-bursting-enabled"] = _SERIALIZER.header(
+            "paid_bursting_enabled", paid_bursting_enabled, "bool"
+        )
+    if paid_bursting_max_bandwidth_mips is not None:
+        _headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = _SERIALIZER.header(
+            "paid_bursting_max_bandwidth_mips", paid_bursting_max_bandwidth_mips, "int"
+        )
+    if paid_bursting_max_iops is not None:
+        _headers["x-ms-share-paid-bursting-max-iops"] = _SERIALIZER.header(
+            "paid_bursting_max_iops", paid_bursting_max_iops, "int"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -104,7 +119,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -144,7 +159,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -189,7 +204,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -237,7 +252,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -283,7 +298,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -330,7 +345,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -376,7 +391,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -417,7 +432,7 @@ def build_create_snapshot_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -456,7 +471,7 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -497,7 +512,7 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -533,6 +548,9 @@ def build_set_properties_request(
     lease_id: Optional[str] = None,
     root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
     enable_snapshot_virtual_directory_access: Optional[bool] = None,
+    paid_bursting_enabled: Optional[bool] = None,
+    paid_bursting_max_bandwidth_mips: Optional[int] = None,
+    paid_bursting_max_iops: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -540,7 +558,7 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -571,6 +589,18 @@ def build_set_properties_request(
         _headers["x-ms-enable-snapshot-virtual-directory-access"] = _SERIALIZER.header(
             "enable_snapshot_virtual_directory_access", enable_snapshot_virtual_directory_access, "bool"
         )
+    if paid_bursting_enabled is not None:
+        _headers["x-ms-share-paid-bursting-enabled"] = _SERIALIZER.header(
+            "paid_bursting_enabled", paid_bursting_enabled, "bool"
+        )
+    if paid_bursting_max_bandwidth_mips is not None:
+        _headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = _SERIALIZER.header(
+            "paid_bursting_max_bandwidth_mips", paid_bursting_max_bandwidth_mips, "int"
+        )
+    if paid_bursting_max_iops is not None:
+        _headers["x-ms-share-paid-bursting-max-iops"] = _SERIALIZER.header(
+            "paid_bursting_max_iops", paid_bursting_max_iops, "int"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -589,7 +619,7 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -625,7 +655,7 @@ def build_get_access_policy_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -660,7 +690,7 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -696,7 +726,7 @@ def build_get_statistics_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -736,7 +766,7 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2024-11-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-11-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -797,6 +827,9 @@ class ShareOperations:
         enabled_protocols: Optional[str] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
         enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_bandwidth_mips: Optional[int] = None,
+        paid_bursting_max_iops: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -822,6 +855,17 @@ class ShareOperations:
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         :param enable_snapshot_virtual_directory_access: Default value is None.
         :type enable_snapshot_virtual_directory_access: bool
+        :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
+         property enables paid bursting. Default value is None.
+        :type paid_bursting_enabled: bool
+        :param paid_bursting_max_bandwidth_mips: Optional. Integer. Default if not specified is the
+         maximum throughput the file share can support. Current maximum for a file share is 10,340
+         MiB/sec. Default value is None.
+        :type paid_bursting_max_bandwidth_mips: int
+        :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
+         the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
+         None.
+        :type paid_bursting_max_iops: int
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -849,6 +893,9 @@ class ShareOperations:
             enabled_protocols=enabled_protocols,
             root_squash=root_squash,
             enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
+            paid_bursting_enabled=paid_bursting_enabled,
+            paid_bursting_max_bandwidth_mips=paid_bursting_max_bandwidth_mips,
+            paid_bursting_max_iops=paid_bursting_max_iops,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -986,6 +1033,15 @@ class ShareOperations:
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
         response_headers["x-ms-enable-snapshot-virtual-directory-access"] = self._deserialize(
             "bool", response.headers.get("x-ms-enable-snapshot-virtual-directory-access")
+        )
+        response_headers["x-ms-share-paid-bursting-enabled"] = self._deserialize(
+            "bool", response.headers.get("x-ms-share-paid-bursting-enabled")
+        )
+        response_headers["x-ms-share-paid-bursting-max-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-paid-bursting-max-iops")
+        )
+        response_headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-paid-bursting-max-bandwidth-mibps")
         )
 
         if cls:
@@ -1820,6 +1876,9 @@ class ShareOperations:
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
         enable_snapshot_virtual_directory_access: Optional[bool] = None,
+        paid_bursting_enabled: Optional[bool] = None,
+        paid_bursting_max_bandwidth_mips: Optional[int] = None,
+        paid_bursting_max_iops: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1840,6 +1899,17 @@ class ShareOperations:
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         :param enable_snapshot_virtual_directory_access: Default value is None.
         :type enable_snapshot_virtual_directory_access: bool
+        :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
+         property enables paid bursting. Default value is None.
+        :type paid_bursting_enabled: bool
+        :param paid_bursting_max_bandwidth_mips: Optional. Integer. Default if not specified is the
+         maximum throughput the file share can support. Current maximum for a file share is 10,340
+         MiB/sec. Default value is None.
+        :type paid_bursting_max_bandwidth_mips: int
+        :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
+         the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
+         None.
+        :type paid_bursting_max_iops: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
@@ -1873,6 +1943,9 @@ class ShareOperations:
             lease_id=_lease_id,
             root_squash=root_squash,
             enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
+            paid_bursting_enabled=paid_bursting_enabled,
+            paid_bursting_max_bandwidth_mips=paid_bursting_max_bandwidth_mips,
+            paid_bursting_max_iops=paid_bursting_max_iops,
             restype=restype,
             comp=comp,
             version=self._config.version,
