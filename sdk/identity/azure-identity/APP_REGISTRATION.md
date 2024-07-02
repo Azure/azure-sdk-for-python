@@ -65,7 +65,7 @@ The following shows an example resource group.
 
 **Access control (IAM)** is the page that you typically use to assign roles to grant access to Azure resources. It's also known as identity and access management (IAM) and appears in several locations in the Azure portal.
 
-- Click **Access control (IAM)**.
+- Select **Access control (IAM)**.
 
 The following shows an example of the Access control (IAM) page for a resource group.
 
