@@ -42,7 +42,12 @@ class ManagedIdentityBase(GetTokenMixin):
         self.__exit__()
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,  # pylint:disable=unused-argument
+        **kwargs: Any
     ) -> AccessToken:
         if not self._client:
             raise CredentialUnavailableError(message=self.get_unavailable_message())

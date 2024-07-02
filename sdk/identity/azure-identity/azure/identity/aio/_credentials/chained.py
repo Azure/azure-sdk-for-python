@@ -51,7 +51,12 @@ class ChainedTokenCredential(AsyncContextManager):
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 
@@ -66,6 +71,8 @@ class ChainedTokenCredential(AsyncContextManager):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token if the underlying credential supports it. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -75,7 +82,9 @@ class ChainedTokenCredential(AsyncContextManager):
         history = []
         for credential in self.credentials:
             try:
-                token = await credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                token = await credential.get_token(
+                    *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                )
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 within_credential_chain.set(False)
