@@ -176,10 +176,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         if datastore_resource.name and not isinstance(
             datastore_resource.properties.credentials, NoneDatastoreCredentials
         ):
-            if isinstance(datastore_resource.properties.credentials, SasDatastoreCredentials):
-                secrets = self._list_secrets(name=datastore_resource.name, expirable_secret=True)
-            else:
-                secrets = self._list_secrets(datastore_resource.name)
+            secrets = self._list_secrets(name=datastore_resource.name, expirable_secret=True)
             datastore_resource.properties.credentials.secrets = secrets
 
     @monitor_with_activity(ops_logger, "Datastore.GetDefault", ActivityType.PUBLICAPI)
