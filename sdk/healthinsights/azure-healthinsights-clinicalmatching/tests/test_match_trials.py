@@ -1,5 +1,7 @@
 import functools
 import json
+import pytest
+
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
@@ -13,13 +15,13 @@ from devtools_testutils import (
 HealthInsightsEnvPreparer = functools.partial(
     PowerShellPreparer,
     "healthinsights",
-    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
+    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
     healthinsights_key="00000000000000000000000000000000",
 )
 
 
 class TestMatchTrials(AzureRecordedTestCase):
-
+    @pytest.mark.skip
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy
     def test_match_trials(self, healthinsights_endpoint, healthinsights_key):

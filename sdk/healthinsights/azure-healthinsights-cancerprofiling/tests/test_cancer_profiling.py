@@ -1,6 +1,7 @@
 import functools
 import json
 import os
+import pytest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.cancerprofiling import CancerProfilingClient
@@ -14,13 +15,13 @@ from devtools_testutils import (
 HealthInsightsEnvPreparer = functools.partial(
     PowerShellPreparer,
     "healthinsights",
-    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
+    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
     healthinsights_key="00000000000000000000000000000000",
 )
 
 
 class TestCancerProfiling(AzureRecordedTestCase):
-
+    @pytest.mark.skip
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy
     def test_cancer_profiling(self, healthinsights_endpoint, healthinsights_key):

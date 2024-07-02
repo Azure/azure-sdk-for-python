@@ -3,8 +3,10 @@
 
 import datetime
 import os
+import uuid
 
-from azure.core.credentials import AzureKeyCredential
+
+from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
@@ -14,21 +16,28 @@ FILE: sample_critical_result_inference.py
 DESCRIPTION:
 The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, build a Radiology Insights job request with the sample document,
-submit it to the client and display the Critical Results description extracted by the Radiology Insights service.     
+submit it to the client, RadiologyInsightsClient, and display the Critical Results description.     
 
 
 USAGE:
+
+1. Set the environment variables with your own values before running the sample:
+    - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
+    - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
+
+2. python sample_critical_result_inference.py
    
 """
 
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
-        KEY = os.environ["AZURE_HEALTH_INSIGHTS_API_KEY"]
+        credential = DefaultAzureCredential()
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
-        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
+        job_id = str(uuid.uuid4())
+
+        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -54,7 +63,7 @@ class HealthInsightsSyncSamples:
         # Create encounter
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
-        encounter = models.Encounter(
+        encounter = models.PatientEncounter(
             id="encounter2",
             class_property=models.EncounterClass.IN_PATIENT,
             period=models.TimePeriod(start=start, end=end),
@@ -71,7 +80,7 @@ class HealthInsightsSyncSamples:
             clinical_type=models.ClinicalDocumentType.RADIOLOGY_REPORT,
             id="doc2",
             content=models.DocumentContent(source_type=models.DocumentContentSourceType.INLINE, value=doc_content1),
-            created_date_time=create_date_time,
+            created_at=create_date_time,
             specialty_type=models.SpecialtyType.RADIOLOGY,
             administrative_metadata=models.DocumentAdministrativeMetadata(
                 ordered_procedures=[ordered_procedure], encounter_id="encounter2"
@@ -83,7 +92,7 @@ class HealthInsightsSyncSamples:
         # Construct patient
         patient1 = models.PatientRecord(
             id="patient_id2",
-            info=patient_info,
+            details=patient_info,
             encounters=[encounter],
             patient_documents=[patient_document1],
         )
@@ -92,14 +101,17 @@ class HealthInsightsSyncSamples:
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
         # Construct the request with the patient and configuration
-        radiology_insights_data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+        patient_data = models.RadiologyInsightsJob(
+            job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
+        )
 
         # Health Insights Radiology Insights
         try:
             poller = radiology_insights_client.begin_infer_radiology_insights(
-                radiology_insights_data,
+                id=job_id,
+                resource=patient_data,
             )
-            radiology_insights_result = poller.result()
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
             self.display_critical_results(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
