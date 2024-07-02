@@ -373,7 +373,7 @@ class ShareProperties(DictMixin):
         self.enable_snapshot_virtual_directory_access = \
             kwargs.get('x-ms-enable-snapshot-virtual-directory-access')
         self.paid_bursting_enabled = kwargs.get('x-ms-share-paid-bursting-enabled')
-        self.paid_bursting_max_bandwidth_mips = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
+        self.paid_bursting_max_bandwidth_mibps = kwargs.get('x-ms-share-paid-bursting-max-bandwidth-mibps')
         self.paid_bursting_max_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
 
     @classmethod
@@ -401,7 +401,7 @@ class ShareProperties(DictMixin):
         props.root_squash = generated.properties.root_squash
         props.enable_snapshot_virtual_directory_access = generated.properties.enable_snapshot_virtual_directory_access
         props.paid_bursting_enabled = generated.properties.paid_bursting_enabled
-        props.paid_bursting_max_bandwidth_mips = generated.properties.paid_bursting_max_bandwidth_mibps
+        props.paid_bursting_max_bandwidth_mibps = generated.properties.paid_bursting_max_bandwidth_mibps
         props.paid_bursting_max_iops = generated.properties.paid_bursting_max_iops
         return props
 

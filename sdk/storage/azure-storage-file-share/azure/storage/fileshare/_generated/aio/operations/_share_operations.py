@@ -84,7 +84,7 @@ class ShareOperations:
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
         enable_snapshot_virtual_directory_access: Optional[bool] = None,
         paid_bursting_enabled: Optional[bool] = None,
-        paid_bursting_max_bandwidth_mips: Optional[int] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
         paid_bursting_max_iops: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -114,10 +114,10 @@ class ShareOperations:
         :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
          property enables paid bursting. Default value is None.
         :type paid_bursting_enabled: bool
-        :param paid_bursting_max_bandwidth_mips: Optional. Integer. Default if not specified is the
+        :param paid_bursting_max_bandwidth_mibps: Optional. Integer. Default if not specified is the
          maximum throughput the file share can support. Current maximum for a file share is 10,340
          MiB/sec. Default value is None.
-        :type paid_bursting_max_bandwidth_mips: int
+        :type paid_bursting_max_bandwidth_mibps: int
         :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
          the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
          None.
@@ -150,7 +150,7 @@ class ShareOperations:
             root_squash=root_squash,
             enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             paid_bursting_enabled=paid_bursting_enabled,
-            paid_bursting_max_bandwidth_mips=paid_bursting_max_bandwidth_mips,
+            paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
             restype=restype,
             version=self._config.version,
@@ -1133,7 +1133,7 @@ class ShareOperations:
         root_squash: Optional[Union[str, _models.ShareRootSquash]] = None,
         enable_snapshot_virtual_directory_access: Optional[bool] = None,
         paid_bursting_enabled: Optional[bool] = None,
-        paid_bursting_max_bandwidth_mips: Optional[int] = None,
+        paid_bursting_max_bandwidth_mibps: Optional[int] = None,
         paid_bursting_max_iops: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
@@ -1158,10 +1158,10 @@ class ShareOperations:
         :param paid_bursting_enabled: Optional. Boolean. Default if not specified is false. This
          property enables paid bursting. Default value is None.
         :type paid_bursting_enabled: bool
-        :param paid_bursting_max_bandwidth_mips: Optional. Integer. Default if not specified is the
+        :param paid_bursting_max_bandwidth_mibps: Optional. Integer. Default if not specified is the
          maximum throughput the file share can support. Current maximum for a file share is 10,340
          MiB/sec. Default value is None.
-        :type paid_bursting_max_bandwidth_mips: int
+        :type paid_bursting_max_bandwidth_mibps: int
         :param paid_bursting_max_iops: Optional. Integer. Default if not specified is the maximum IOPS
          the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
          None.
@@ -1200,7 +1200,7 @@ class ShareOperations:
             root_squash=root_squash,
             enable_snapshot_virtual_directory_access=enable_snapshot_virtual_directory_access,
             paid_bursting_enabled=paid_bursting_enabled,
-            paid_bursting_max_bandwidth_mips=paid_bursting_max_bandwidth_mips,
+            paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
             restype=restype,
             comp=comp,

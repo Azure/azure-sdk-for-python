@@ -227,7 +227,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Specifies whether the snapshot virtual directory should be accessible at the root of the share
             mount point when NFS is enabled. Default value is True.
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
-        :keyword int paid_bursting_max_bandwidth_mips: The maximum throughput the file share can support.
+        :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support.
             Current maximum for a file share is 10,340 MiB/sec.
         :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
             Current maximum for a file share is 102,400 IOPS.
@@ -500,7 +500,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
-        :keyword int paid_bursting_max_bandwidth_mips: The maximum throughput the file share can support.
+        :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support.
             Current maximum for a file share is 10,340 MiB/sec.
         :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
             Current maximum for a file share is 102,400 IOPS.

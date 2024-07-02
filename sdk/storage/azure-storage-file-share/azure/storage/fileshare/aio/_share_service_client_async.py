@@ -241,7 +241,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
-        :keyword int paid_bursting_max_bandwidth_mips: The maximum throughput the file share can support.
+        :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support.
             Current maximum for a file share is 10,340 MiB/sec.
         :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
             Current maximum for a file share is 102,400 IOPS.
