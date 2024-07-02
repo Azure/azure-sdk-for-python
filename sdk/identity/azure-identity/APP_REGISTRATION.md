@@ -55,7 +55,7 @@ When you assign roles, you must specify a scope. Scope is the set of resources t
 
 - In the Search box at the top, search for the scope you want to grant access to. For example, search for **Management groups**, **Subscriptions**, **Resource groups**, or a specific resource.
 
-- Click the specific resource for that scope.
+- Select the specific resource for that scope.
 
 The following shows an example resource group.
 
