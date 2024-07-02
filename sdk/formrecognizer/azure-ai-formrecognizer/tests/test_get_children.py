@@ -8,22 +8,21 @@ import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentLine, AnalyzeResult
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
+get_da_client = functools.partial(get_sync_client, DocumentAnalysisClient)
 
 
 class TestGetChildren(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_line_get_words(self, client, **kwargs):
+    def test_document_line_get_words(self, **kwargs):
+        client = get_da_client()
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
@@ -36,9 +35,9 @@ class TestGetChildren(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
-    def test_document_line_get_words_error(self, client, **kwargs):
+    def test_document_line_get_words_error(self, **kwargs):
+        client = get_da_client()
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
 
