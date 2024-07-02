@@ -43,7 +43,11 @@ Your application's code, or more typically an authentication library used in you
 
 ## Step 1: Identify the needed scope
 
-When you assign roles, you must specify a scope. Scope is the set of resources the access applies to. In Azure, you can specify a scope at four levels from broad to narrow: [management group](https://learn.microsoft.com/azure/governance/management-groups/overview), subscription, [resource group](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#resource-groups), and resource.
+When you assign roles, you must specify a scope. Scope is the set of resources the access applies to. In Azure, you can specify a scope at four levels, from broad to narrow:
+- [management group](https://learn.microsoft.com/azure/governance/management-groups/overview)
+- subscription
+- [resource group](https://learn.microsoft.com/azure/azure-resource-manager/management/overview#resource-groups)
+- resource
 
 ![Diagram that shows the scope levels for Azure RBAC.](images/scope-levels.png)
 
