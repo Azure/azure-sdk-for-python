@@ -41,7 +41,7 @@ BLOB_STORAGE_CLIENT_NAME = "BlobStorageClient"
 GEN2_STORAGE_CLIENT_NAME = "Gen2StorageClient"
 DEFAULT_CONNECTION_TIMEOUT = 14400
 STORAGE_URI_REGEX = (
-    r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/(.*)"
+    r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/?(.*)"
 )
 
 WORKSPACE_MANAGED_DATASTORE_WITH_SLASH = "azureml://datastores/workspacemanageddatastore/"
