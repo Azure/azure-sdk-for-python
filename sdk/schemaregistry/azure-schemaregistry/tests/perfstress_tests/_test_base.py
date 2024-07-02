@@ -18,9 +18,7 @@ class _SchemaRegistryTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
 
-        self.fully_qualified_namespace = self.get_from_env(
-            "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE"
-        )
+        self.fully_qualified_namespace = self.get_from_env("SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE")
         self.group_name = self.get_from_env("SCHEMAREGISTRY_GROUP")
         self.name = "your-schema-name"
         self.format = "Avro"
@@ -117,9 +115,7 @@ class _GetSchemaTest(_SchemaRegistryTest):
 
     def _preregister_schema(self):
         with self.sync_client as client:
-            schema_properties = client.register_schema(
-                self.group_name, self.name, self.definition, self.format
-            )
+            schema_properties = client.register_schema(self.group_name, self.name, self.definition, self.format)
             return schema_properties.id
 
     async def global_setup(self):
