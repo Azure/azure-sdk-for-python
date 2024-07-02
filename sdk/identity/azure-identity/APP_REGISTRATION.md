@@ -139,4 +139,3 @@ For further information on managing applications and roles, explore the followin
 
 Remember to periodically review and update your application registrations and role assignments to align with your organization’s security policies and evolving requirements.
 
-Thank you for following this guide, and happy developing!
