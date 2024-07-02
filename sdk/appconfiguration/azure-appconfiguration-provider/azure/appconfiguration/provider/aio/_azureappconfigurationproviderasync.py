@@ -52,11 +52,11 @@ from .._constants import (
     TARGETING_FILTER_KEY,
 )
 from .._azureappconfigurationprovider import (
-    _is_json_content_type,
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
     _delay_failure,
+    _is_json_content_type,
 )
 from .._user_agent import USER_AGENT
 
@@ -220,7 +220,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    headers = _get_headers("Startup", **kwargs)
+    headers = _get_headers("Startup", 0, **kwargs)
     provider = _buildprovider(
         connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
     )
@@ -418,6 +418,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         updated_sentinel_keys = dict(self._refresh_on)
         headers = _get_headers(
             "Watch",
+            0,
             uses_key_vault=self._uses_key_vault,
             feature_filters_used=self._feature_filter_usage,
             uses_feature_flags=self._feature_flag_enabled,
@@ -445,6 +446,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags)
         headers = _get_headers(
             "Watch",
+            0,
             uses_key_vault=self._uses_key_vault,
             feature_filters_used=self._feature_filter_usage,
             uses_feature_flags=self._feature_flag_enabled,

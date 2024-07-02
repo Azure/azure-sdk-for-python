@@ -6,6 +6,7 @@ from devtools_testutils import (
     set_custom_default_matcher,
     remove_batch_sanitizers,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
 )
 import pytest
 
@@ -15,17 +16,21 @@ import pytest
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
-        value="https://fake-endpoint.azconfig.io",
-        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://fake-endpoint.azconfig.io"),
+        value="https://Sanitized.azconfig.io",
+        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://Sanitized.azconfig.io"),
     )
     add_general_regex_sanitizer(
-        value="fake-connection-string",
-        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "fake-connection-string"),
+        value="Sanitized",
+        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "Sanitized"),
     )
+    add_uri_string_sanitizer()
     add_general_string_sanitizer(
-        value="https://fake-key-vault.vault.azure.net/",
-        target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"),
+        value="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+        target=os.environ.get(
+            "APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://Sanitized.vault.azure.net/secrets/fake-secret/"
+        ),
     )
+    add_remove_header_sanitizer(headers="Correlation-Context")
 
     add_general_regex_sanitizer(value="api-version=1970-01-01", regex="api-version=.+")
     set_custom_default_matcher(ignored_headers="x-ms-content-sha256, Accept", excluded_headers="Content-Length")
