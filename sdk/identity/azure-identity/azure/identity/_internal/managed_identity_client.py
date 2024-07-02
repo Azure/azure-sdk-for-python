@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource
+from .._internal import _scopes_to_resource, create_access_token
 from .._internal.pipeline import build_pipeline
 
 
@@ -70,7 +70,7 @@ class ManagedIdentityClientBase(abc.ABC):
         expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         content["expires_on"] = expires_on
 
-        token = AccessToken(content["access_token"], content["expires_on"])
+        token = create_access_token(content["access_token"], content["expires_on"], content)
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
@@ -86,7 +86,7 @@ class ManagedIdentityClientBase(abc.ABC):
         for token in tokens:
             expires_on = int(token["expires_on"])
             if expires_on > time.time():
-                return AccessToken(token["secret"], expires_on)
+                return create_access_token(token["secret"], expires_on, token)
         return None
 
     @abc.abstractmethod

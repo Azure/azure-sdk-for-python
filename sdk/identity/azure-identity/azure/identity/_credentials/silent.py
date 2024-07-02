@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, validate_tenant_id, within_dac
+from .._internal import resolve_tenant, validate_tenant_id, within_dac, create_access_token
 from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
@@ -149,7 +149,7 @@ class SilentAuthenticationCredential:
                 list(scopes), account=account, claims_challenge=kwargs.get("claims")
             )
             if result and "access_token" in result and "expires_in" in result:
-                return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                return create_access_token(result["access_token"], now + int(result["expires_in"]), result)
 
         # if we get this far, the cache contained a matching account but MSAL failed to authenticate it silently
         if result:

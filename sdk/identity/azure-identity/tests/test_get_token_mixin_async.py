@@ -101,6 +101,20 @@ async def test_cached_token_within_refresh_window():
     assert token.token == MockCredential.NEW_TOKEN.token
 
 
+async def test_cached_token_with_refresh_on_time():
+    """A credential should refresh a token when it has a cached token with a refresh_on time that has passed"""
+    if not hasattr(AccessToken, "refresh_on"):
+        pytest.skip("This test requires a newer version of azure-core.")
+
+    now = time.time()
+    credential = MockCredential(cached_token=AccessToken(CACHED_TOKEN, now + DEFAULT_REFRESH_OFFSET + 1, now - 1))
+    token = await credential.get_token(SCOPE)
+
+    credential.acquire_token_silently.assert_called_once_with(SCOPE, claims=None, enable_cae=False, tenant_id=None)
+    credential.request_token.assert_called_once_with(SCOPE, claims=None, enable_cae=False, tenant_id=None)
+    assert token.token == MockCredential.NEW_TOKEN.token
+
+
 async def test_retry_delay():
     """A credential should wait between requests when trying to refresh a token"""
 

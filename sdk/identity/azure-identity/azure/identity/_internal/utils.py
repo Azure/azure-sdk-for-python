@@ -4,12 +4,14 @@
 # ------------------------------------
 import os
 import logging
+import time
 from contextvars import ContextVar
 from string import ascii_letters, digits
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from urllib.parse import urlparse
 
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
@@ -118,3 +120,15 @@ def resolve_tenant(
         'when creating the credential, or add "*" to additionally_allowed_tenants to allow '
         "acquiring tokens for any tenant.".format(tenant_id)
     )
+
+
+def create_access_token(token: str, expires_on: int, content: Optional[Dict[str, Any]] = None) -> AccessToken:
+    if hasattr(AccessToken, "refresh_on") and content:
+        refresh_on = None
+        if "refresh_on" in content:
+            refresh_on = int(content["refresh_on"])
+        elif "refresh_in" in content:
+            now = int(time.time())
+            refresh_on = now + int(content["refresh_in"])
+        return AccessToken(token, expires_on, refresh_on)
+    return AccessToken(token, expires_on)

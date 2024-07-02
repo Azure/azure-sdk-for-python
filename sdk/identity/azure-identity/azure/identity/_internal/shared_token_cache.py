@@ -12,7 +12,7 @@ import msal
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
-from .._internal import get_default_authority, normalize_authority, wrap_exceptions
+from .._internal import get_default_authority, normalize_authority, wrap_exceptions, create_access_token
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 from .._internal import AadClientBase
 
@@ -238,7 +238,8 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
             for token in cache_entries:
                 expires_on = int(token["expires_on"])
                 if expires_on - 300 > int(time.time()):
-                    return AccessToken(token["secret"], expires_on)
+                    return create_access_token(token["secret"], expires_on, token)
+
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
             raise CredentialUnavailableError(message=message) from ex

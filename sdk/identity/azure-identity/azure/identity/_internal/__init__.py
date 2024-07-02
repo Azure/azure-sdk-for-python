@@ -9,6 +9,7 @@ from .aadclient_certificate import AadClientCertificate
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
 from .utils import (
+    create_access_token,
     get_default_authority,
     normalize_authority,
     resolve_tenant,
@@ -44,6 +45,7 @@ __all__ = [
     "AadClientBase",
     "AuthCodeRedirectServer",
     "AadClientCertificate",
+    "create_access_token",
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",

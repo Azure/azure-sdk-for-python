@@ -47,6 +47,8 @@ class GetTokenMixin(abc.ABC):
 
     def _should_refresh(self, token: AccessToken) -> bool:
         now = int(time.time())
+        if hasattr(token, "refresh_on") and token.refresh_on is not None and token.refresh_on <= now:
+            return True
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
             return False
         if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:

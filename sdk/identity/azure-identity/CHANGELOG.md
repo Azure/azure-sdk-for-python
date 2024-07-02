@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `refresh_on` information is now set on the `AccessToken` if available. ([#36348](https://github.com/Azure/azure-sdk-for-python/pull/36348))
+
 ### Breaking Changes
 
 ### Bugs Fixed

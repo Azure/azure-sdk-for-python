@@ -19,7 +19,7 @@ from .msal_credentials import MsalCredential
 from .._auth_record import AuthenticationRecord
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
-from .._internal import wrap_exceptions
+from .._internal import wrap_exceptions, create_access_token
 
 ABC = abc.ABC
 
@@ -184,7 +184,7 @@ class InteractiveCredential(MsalCredential, ABC):
             raise
 
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
+        return create_access_token(result["access_token"], now + int(result["expires_in"]), result)
 
     def authenticate(
         self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
@@ -226,7 +226,7 @@ class InteractiveCredential(MsalCredential, ABC):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                    return create_access_token(result["access_token"], now + int(result["expires_in"]), result)
 
         # if we get this far, result is either None or the content of a Microsoft Entra ID error response
         if result:

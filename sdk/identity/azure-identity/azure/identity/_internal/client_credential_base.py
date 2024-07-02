@@ -9,7 +9,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .get_token_mixin import GetTokenMixin
 
-from . import wrap_exceptions
+from . import wrap_exceptions, create_access_token
 from .msal_credentials import MsalCredential
 
 
@@ -30,7 +30,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
             list(scopes), account=None, claims_challenge=kwargs.pop("claims", None), **_get_known_kwargs(kwargs)
         )
         if result and "access_token" in result and "expires_in" in result:
-            return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+            return create_access_token(result["access_token"], request_time + int(result["expires_in"]), result)
         return None
 
     @wrap_exceptions
@@ -42,4 +42,4 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
             message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
             raise ClientAuthenticationError(message=message)
 
-        return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        return create_access_token(result["access_token"], request_time + int(result["expires_in"]), result)

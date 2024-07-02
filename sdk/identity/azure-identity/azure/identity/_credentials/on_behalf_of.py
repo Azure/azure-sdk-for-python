@@ -11,6 +11,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .certificate import get_client_credential
+from .._internal import create_access_token
 from .._internal.decorators import wrap_exceptions
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.interactive import _build_auth_record
@@ -126,7 +127,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                    return create_access_token(result["access_token"], now + int(result["expires_in"]), result)
 
         return None
 
@@ -145,4 +146,4 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         except ClientAuthenticationError:
             pass  # non-fatal; we'll use the assertion again next time instead of a refresh token
 
-        return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        return create_access_token(result["access_token"], request_time + int(result["expires_in"]), result)

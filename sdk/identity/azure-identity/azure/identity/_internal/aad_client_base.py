@@ -16,7 +16,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .utils import get_default_authority, normalize_authority, resolve_tenant, create_access_token
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
 
@@ -95,7 +95,7 @@ class AadClientBase(abc.ABC):
         for token in tokens:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
-                return AccessToken(token["secret"], expires_on)
+                return create_access_token(token["secret"], expires_on, token)
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
@@ -168,7 +168,7 @@ class AadClientBase(abc.ABC):
             _scrub_secrets(content)
             raise ClientAuthenticationError(message="Unexpected response from Microsoft Entra ID: {}".format(content))
 
-        token = AccessToken(content["access_token"], expires_on)
+        token = create_access_token(content["access_token"], expires_on, content)
 
         # caching is the final step because 'add' mutates 'content'
         cache.add(
