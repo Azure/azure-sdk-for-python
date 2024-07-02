@@ -109,7 +109,8 @@ To select who needs access, follow these steps:
 
 - In the **Description** box enter an optional description for this role assignment.
 
-Later you can show this description in the role assignments list.
+Later, you can show this description in the role assignments list.
+
 - Click **Next**.
 
 ## Step 5: Assign role
