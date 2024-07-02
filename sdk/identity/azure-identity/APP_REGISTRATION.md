@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- An Azure account that has an active subscription. [Create an account for free](https://azure.microsoft.com/free/python).
+- An Azure account that has an active subscription. [Create an account for free](https://azure.microsoft.com/free/).
 - The Azure account must be at least a [Cloud Application Administrator](https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference#cloud-application-administrator).
 - Completion of the [Set up a tenant](https://learn.microsoft.com/entra/identity-platform/quickstart-create-new-tenant) quickstart.
 
