@@ -1,6 +1,6 @@
 # Release History
 
-## 1.18.0 (unreleased)
+## 1.18.0 (2024-07-09)
 
 ### Features Added
 
@@ -9,8 +9,6 @@ Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address
 ### Bugs Fixed
 - InputTypes exported in constants module
 - WorkspaceConnection tags are now listed as deprecated, and the erroneously-deprecated metadata field has been un-deprecated and added as a initialization field. These two fields still point to the same underlying object property, and actual API usage of this value is unchanged.
-
-### Breaking Changes
 
 ### Other Changes
 - WorkspaceConnections are officially GA'd and no longer experimental. But its much newer subclasses remain experimental.
