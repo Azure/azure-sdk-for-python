@@ -4,6 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
+import hashlib
+import base64
 from threading import Lock
 import datetime
 import logging
@@ -43,6 +45,11 @@ from .._constants import (
     FEATURE_FLAG_KEY,
     FEATURE_FLAG_PREFIX,
     EMPTY_LABEL,
+    TELEMETRY_KEY,
+    METADATA_KEY,
+    ETAG_KEY,
+    FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_ID_KEY,
     PERCENTAGE_FILTER_NAMES,
     TIME_WINDOW_FILTER_NAMES,
     TARGETING_FILTER_NAMES,
@@ -82,7 +89,10 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -139,7 +149,10 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -274,7 +287,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     if endpoint is not None and credential is not None:
@@ -284,7 +297,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     raise ValueError("Please pass either endpoint and credential, or a connection string.")
@@ -534,6 +547,16 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
+    @staticmethod
+    def _calculate_feature_id(key, label):
+        basic_value = f"{key}\n"
+        if label and not label.isspace():
+            basic_value += f"{label}"
+        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
+        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
+
     async def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
@@ -541,11 +564,28 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         kwargs.pop("sentinel_keys", None)
         filters_used = {}
         for select in self._feature_flag_selectors:
+            endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
             async for feature_flag in feature_flags:
-                loaded_feature_flags.append(json.loads(feature_flag.value))
+                feature_flag_value = json.loads(feature_flag.value)
+                if TELEMETRY_KEY in feature_flag_value:
+                    if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+                        feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+                    if not endpoint.endswith("/"):
+                        endpoint += "/"
+
+                    feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
+                    if feature_flag.label and not feature_flag.label.isspace():
+                        feature_flag_reference += f"?label={feature_flag.label}"
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                        feature_flag.key, feature_flag.label
+                    )
+                loaded_feature_flags.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
