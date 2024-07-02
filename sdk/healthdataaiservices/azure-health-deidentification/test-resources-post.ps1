@@ -15,15 +15,15 @@ param (
 )
 
 # Retrieve the connection string from environment variables
-$connectionString = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_ACCOUNT_CONNECTION_STRING']
+$storageAccountName = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME']
 $containerName = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME']
 
 # Set the local folder path to upload
 $localFolderPath = "tests\data\example_patient_1"
 
 # Check if the connection string is present
-if ([string]::IsNullOrWhiteSpace($connectionString)) {
-    Write-Host "Error: Azure Storage connection string not found in environment variables."
+if ([string]::IsNullOrWhiteSpace($storageAccountName)) {
+    Write-Host "Error: Azure Storage Name string not found in environment variables."
     exit 1
 }
 
@@ -31,7 +31,7 @@ if ([string]::IsNullOrWhiteSpace($connectionString)) {
 Import-Module Az.Storage
 
 # Connect to the storage account
-$storageContext = New-AzStorageContext -ConnectionString $connectionString
+$storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
 Get-AzStorageContainer -Name $containerName -Context $storageContext
 
 # Upload the folder and its contents to the container

@@ -58,9 +58,21 @@ resource storageRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-
   scope: storageAccount
 }
 
-resource testDeidService 'microsoft.healthdataaiservices/deidservices@2023-06-01-preview' = {
+resource testDeidService 'microsoft.healthdataaiservices/deidservices@2024-02-28-preview' = {
   name: deidServiceName
   location: deidLocation
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
+resource storageMIRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+  name: guid(resourceGroup().id, storageAccount.id, testDeidService.id, storageBlobDataContributor)
+  properties: {
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', storageBlobDataContributor)
+    principalId: testDeidService.identity.principalId
+  }
+  scope: storageAccount
 }
 
 resource realtimeRole 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = {
@@ -81,18 +93,6 @@ resource batchRole 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' 
   }
 }
 
-// https://learn.microsoft.com/en-us/rest/api/storagerp/storage-accounts/list-account-sas?view=rest-storagerp-2023-01-01&tabs=HTTP
-var blobStorageSASUri = listAccountSAS(storageAccount.name, '2023-01-01', {
-  signedProtocol: 'https'
-  signedResourceTypes: 'sco'
-  signedPermission: 'rwlca'
-  signedServices: 'b'
-  signedExpiry: dateTimeAdd(deploymentTime, 'PT4H')
-}).accountSasToken
-
-var blobStorageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-
 output HEALTHDATAAISERVICES_DEID_SERVICE_ENDPOINT string = testDeidService.properties.serviceUrl
-output HEALTHDATAAISERVICES_STORAGE_ACCOUNT_CONNECTION_STRING string = blobStorageConnectionString
-output HEALTHDATAAISERVICES_STORAGE_ACCOUNT_SAS_URI string = '${storageAccount.properties.primaryEndpoints.blob}${blobContainerName}?${blobStorageSASUri}'
+output HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME string = storageAccount.name
 output HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME string = container.name
