@@ -134,7 +134,7 @@ Congratulations! You have successfully registered your application and assigned 
 
 For further information on managing applications and roles, explore the following resources:
 
-- [Azure Active Directory Documentation](https://learn.microsoft.com/entra/identity/)
+- [Microsoft Entra documentation](https://learn.microsoft.com/entra/identity/)
 - [Azure Role-Based Access Control (RBAC) Documentation](https://learn.microsoft.com/azure/role-based-access-control/)
 
 Remember to periodically review and update your application registrations and role assignments to align with your organization’s security policies and evolving requirements.
