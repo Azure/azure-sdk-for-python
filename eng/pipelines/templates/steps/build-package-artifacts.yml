@@ -115,7 +115,7 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - script: |
-      pip install twine==4.0.2 importlib-metadata==7.2.1
+      pip install -r eng/release_requirements.txt
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
