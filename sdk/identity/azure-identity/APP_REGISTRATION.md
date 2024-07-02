@@ -132,7 +132,7 @@ After a few moments, the security principal is assigned the role at the selected
 
 Congratulations! You have successfully registered your application and assigned Azure roles. These steps ensure your application can securely interact with Azure resources, and users have the appropriate access levels to perform their tasks.
 
-For further information on managing applications and roles, you can explore the following resources:
+For further information on managing applications and roles, explore the following resources:
 
 - [Azure Active Directory Documentation](https://learn.microsoft.com/entra/identity/)
 - [Azure Role-Based Access Control (RBAC) Documentation](https://learn.microsoft.com/azure/role-based-access-control/)
