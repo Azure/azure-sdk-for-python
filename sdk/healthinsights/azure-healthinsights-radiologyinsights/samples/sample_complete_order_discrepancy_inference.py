@@ -11,12 +11,15 @@ from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference.py
+FILE: sample_complete_order_discrepancy_inference.py
 
 DESCRIPTION:
-The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
+The sample_complete_order_discrepancy_inference.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Results description.     
+submit it to the client, RadiologyInsightsClient, and display
+-the Complete Order Discrepancy order type,
+-the missing body parts, and
+-the missing body part measurements     
 
 
 USAGE:
@@ -25,7 +28,7 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
 
-2. python sample_critical_result_inference.py
+2. python sample_complete_order_discrepancy_inference.py
    
 """
 
@@ -112,17 +115,35 @@ class HealthInsightsSyncSamples:
                 resource=patient_data,
             )
             radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
-            self.display_critical_results(radiology_insights_result)
+            self.display_complete_order_discrepancy(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
             return
 
-    def display_critical_results(self, radiology_insights_result):
+    def display_complete_order_discrepancy(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
             for ri_inference in patient_result.inferences:
-                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                    critical_result = ri_inference.result
-                    print(f"Critical Result Inference found: {critical_result.description}")
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY:
+                    print(f"Complete Order Discrepancy Inference found")
+                    ordertype = ri_inference.order_type
+                    for coding in ordertype.coding:
+                        print(f"Complete Order Discrepancy: Order Type: {coding.system} {coding.code} {coding.display}")
+                    if not ri_inference.missing_body_parts:
+                        print(f"Complete Order Discrepancy: Missing Body Parts: empty list")
+                    else:
+                        for missingbodypart in ri_inference.missing_body_parts:
+                            for coding in missingbodypart.coding:
+                                print(
+                                    f"Complete Order Discrepancy: Missing Body Part: {coding.system} {coding.code} {coding.display}"
+                                )
+                    if not ri_inference.missing_body_part_measurements:
+                        print(f"Complete Order Discrepancy: Missing Body Part Measurements: empty list")
+                    else:
+                        for missingbodypartmeasurement in ri_inference.missing_body_part_measurements:
+                            for coding in missingbodypartmeasurement.coding:
+                                print(
+                                    f"Complete Order Discrepancy: Missing Body Part Measurement: {coding.system} {coding.code} {coding.display}"
+                                )
 
 
 def main():

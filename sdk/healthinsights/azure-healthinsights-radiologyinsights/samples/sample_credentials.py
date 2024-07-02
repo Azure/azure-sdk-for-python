@@ -2,19 +2,19 @@
 # Licensed under the MIT License.
 
 import datetime
+from http import client
 import os
 import uuid
-
 
 from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
 """
-FILE: sample_critical_result_inference.py
+FILE: sample_credentials.py
 
 DESCRIPTION:
-The sample_critical_result_inference.py module processes a sample radiology document with the Radiology Insights service.
+The sample_credentials.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
 submit it to the client, RadiologyInsightsClient, and display the Critical Results description.     
 
@@ -22,22 +22,27 @@ submit it to the client, RadiologyInsightsClient, and display the Critical Resul
 USAGE:
 
 1. Set the environment variables with your own values before running the sample:
-    - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
+    - AZURE_CLIENT_ID - the client ID of your Azure AD application.
+    - AZURE_TENANT_ID - the tenant ID of your Azure AD tenant.
+    - AZURE_CLIENT_SECRET - the client secret of your Azure AD application.
 
-2. python sample_critical_result_inference.py
+2. python sample_credentials.py
+    - This is an example how to use DefaultAzureCredential to authenticate the RadiologyInsightsClient.
    
 """
 
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
+        # [START credentials]
         credential = DefaultAzureCredential()
         ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
-        job_id = str(uuid.uuid4())
+        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+        # [END credentials]
 
-        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+        job_id = str(uuid.uuid4())
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.

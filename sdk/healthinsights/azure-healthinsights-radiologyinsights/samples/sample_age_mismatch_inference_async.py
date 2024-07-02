@@ -1,14 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-
 """
-FILE: sample_critical_result_inference_async.py
+FILE: sample_age_mismatch_inference_async.py
 
 DESCRIPTION:
-The sample_critical_result_inference_async.py module processes a sample radiology document with the Radiology Insights service.
+The sample_age_mismatch_inference_async.py module processes a sample radiology document with the Radiology Insights service.
 It will initialize an asynchronous RadiologyInsightsClient, build a Radiology Insights request with the sample document,
-submit it to the client, RadiologyInsightsClient, and display the Critical Result description.     
+submit it to the client, RadiologyInsightsClient, and display 
+-the Age Mismatch patient ID,
+-the Age Mismatch url extension,
+-the Age Mismatch offset extension,
+-the Age Mismatch length extension, and
+-the Age Mismatch evidence
 
 
 USAGE:
@@ -17,15 +21,13 @@ USAGE:
     - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
 
-2. python sample_critical_result_inference_async.py
-   
+2. python sample_age_mismatch_inference_async.py
 """
 
 import asyncio
 import datetime
 import os
 import uuid
-
 from azure.healthinsights.radiologyinsights import models
 
 
@@ -34,13 +36,16 @@ async def radiology_insights_async() -> None:
     from azure.identity import DefaultAzureCredential
     from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 
+    # [START create_radiology_insights_client]
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+    # [END create_radiology_insights_client]
 
+    # [START create_radiology_insights_request]
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
     COMPARISON:   
@@ -106,6 +111,7 @@ async def radiology_insights_async() -> None:
     patient_data = models.RadiologyInsightsJob(
         job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
     )
+    # [END create_radiology_insights_request]
 
     try:
         async with radiology_insights_client:
@@ -115,22 +121,42 @@ async def radiology_insights_async() -> None:
             )
             inference_result = await poller.result()
             radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
-            display_critical_results(radiology_insights_result)
+            display_age_mismatch(radiology_insights_result, doc_content1)
     except Exception as ex:
         print(str(ex))
         return
 
 
-def display_critical_results(radiology_insights_result):
-    # [START display_critical_result]
+def display_age_mismatch(radiology_insights_result, doc_content1):
+    # [START display_age_mismatch]
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
-            if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
-                critical_result = ri_inference.result
-                print(f"Critical Result Inference found: {critical_result.description}")
+            if ri_inference.kind == models.RadiologyInsightsInferenceType.AGE_MISMATCH:
+                print(f"Age Mismatch Inference found")
+                print(f"Age Mismatch: Patient ID: {patient_result.patient_id}")
+                Tokens = ""
+                for extension in ri_inference.extension:
+                    for attribute in dir(extension):
+                        if attribute == "extension":
+                            offset = -1
+                            length = -1
+                            for sub_extension in extension.extension:
+                                for sub_attribute in dir(sub_extension):
+                                    if sub_attribute == "url":
+                                        if sub_extension.url.startswith("http"):
+                                            continue
+                                        elif sub_extension.url == "offset":
+                                            offset = sub_extension.value_integer
+                                        elif sub_extension.url == "length":
+                                            length = sub_extension.value_integer
+                                    if offset > 0 and length > 0:
+                                        evidence = doc_content1[offset : offset + length]
+                                        if not evidence in Tokens:
+                                            Tokens = Tokens + " " + evidence
+                print(f"Age Mismatch: Evidence: {Tokens}")
 
 
-# [END display_critical_result]
+# [END display_age_mismatch]
 
 
 if __name__ == "__main__":
