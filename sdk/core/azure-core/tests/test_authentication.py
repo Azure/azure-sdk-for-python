@@ -305,6 +305,33 @@ def test_key_vault_regression(http_request):
     assert policy._token.token == token
 
 
+def test_need_new_token():
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = AccessToken("", now - 1200)
+    assert policy._need_new_token
+
+    # Token is about to expire within 300 seconds.
+    policy._token = AccessToken("", now + 299)
+    assert policy._need_new_token
+
+    # Token still has more than 300 seconds to live.
+    policy._token = AccessToken("", now + 305)
+    assert not policy._need_new_token
+
+    # Token has both expires_on and refresh_on set well into the future.
+    policy._token = AccessToken("", now + 1200, now + 1200)
+    assert not policy._need_new_token
+
+    # Token is not close to expiring, but refresh_on is in the past.
+    policy._token = AccessToken("", now + 1200, now - 1)
+    assert policy._need_new_token
+
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_azure_key_credential_policy(http_request):
     """Tests to see if we can create an AzureKeyCredentialPolicy"""
