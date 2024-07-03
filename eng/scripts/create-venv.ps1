@@ -16,4 +16,4 @@ else {
     Write-Host "Virtual environment $VenvName already exists. Skipping creation."
 }
 
-Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION;]$venvPath"
+Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION]$venvPath"

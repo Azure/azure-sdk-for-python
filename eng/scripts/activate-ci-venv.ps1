@@ -29,6 +29,7 @@ $ErrorActionPreference = "Stop"
 
 $venvPath = Join-Path $RepoRoot $VenvName
 $venvBinPath = Join-Path $venvPath "bin"
+$env:VIRTUAL_ENV = $venvPath
 
 if (-not (Test-Path $venvPath)) {
     Write-Error "Virtual environment '$venvPath' does not exist at $venvPath"
@@ -37,11 +38,12 @@ if (-not (Test-Path $venvPath)) {
 
 if ($IsWindows) {
     $venvBinPath = Join-Path $venvPath "Scripts"
+    $env:PATH = "$venvBinPath;$($env:PATH)"
+}
+else {
+    $env:PATH = "$venvBinPath:$($env:PATH)"
 }
 
-$env:VIRTUAL_ENV = $venvPath
-$env:PATH = "$venvBinPath;$($env:PATH)"
-
 Write-Host "Activating virtual environment '$VenvName' at $venvPath via AzDO to the value '$($env:PATH)'"
-Write-Host "##vso[task.setvariable variable=VIRTUAL_ENV;]$($env:VIRTUAL_ENV)"
+Write-Host "##vso[task.setvariable variable=VIRTUAL_ENV]$($env:VIRTUAL_ENV)"
 Write-Host "##vso[task.prependpath]$($env:PATH)"
