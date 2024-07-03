@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0 (Unreleased)
+
+### Features Added
+- Change API version to `2024-01-01`
+- Added a `client_type` option to specify the type of client endpoint when generating token. This is used to generate token and client connection URL for a specific client endpoint type
+
 ## 1.1.0 (2024-04-24)
 
 ### Bugs Fixed
