@@ -28,9 +28,7 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
                 location=storage_location,
                 prefix="example_patient_1",
             ),
-            target_location=TargetStorageLocation(
-                location=storage_location, prefix=self.OUTPUT_PATH
-            ),
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )
