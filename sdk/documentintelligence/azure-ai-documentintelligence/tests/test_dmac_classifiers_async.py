@@ -26,7 +26,6 @@ DocumentModelAdministrationClientPreparer = functools.partial(
 
 
 class TestClassifiersAsync(AsyncDocumentIntelligenceTest):
-    @pytest.skip("Skip due to container permission issue")
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -109,7 +108,6 @@ class TestClassifiersAsync(AsyncDocumentIntelligenceTest):
 
         return recorded_variables
 
-    @pytest.skip("Skip due to container permission issue")
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
