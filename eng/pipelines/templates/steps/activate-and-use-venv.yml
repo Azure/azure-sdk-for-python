@@ -14,8 +14,7 @@ steps:
 
   - template: use-venv.yml
     parameters:
-      VirtualEnvironmentName: 
-
+      VirtualEnvironmentName: ${{ parameters.VirtualEnvironmentName }}
 
   - pwsh: |
       Get-ChildItem $Env:
