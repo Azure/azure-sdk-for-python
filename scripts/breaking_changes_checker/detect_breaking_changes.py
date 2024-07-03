@@ -286,7 +286,13 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
+def test_compare_reports(
+        pkg_dir: str,
+        changelog: bool,
+        ignore: Dict = {},
+        source_report: str = "stable.json",
+        target_report: str = "current.json"
+    ) -> None:
     package_name = os.path.basename(pkg_dir)
 
     with open(os.path.join(pkg_dir, source_report), "r") as fd:
@@ -295,9 +301,9 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    checker = BreakingChangesTracker(stable, current, diff, package_name)
+    checker = BreakingChangesTracker(stable, current, diff, package_name, ignore=ignore)
     if changelog:
-        checker = ChangelogTracker(stable, current, diff, package_name)
+        checker = ChangelogTracker(stable, current, diff, package_name, ignore=ignore)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
@@ -327,6 +333,7 @@ def main(
         code_report: bool,
         source_report: Path,
         target_report: Path,
+        ignore: list = {}
     ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
@@ -338,7 +345,7 @@ def main(
 
     # If source_report and target_report are provided, compare the two reports
     if source_report and target_report:
-        test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
+        test_compare_reports(pkg_dir, changelog, ignore, str(source_report), str(target_report))
         return
 
     # For default behavior, find the latest stable version on PyPi
@@ -399,7 +406,7 @@ def main(
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare_reports(pkg_dir, changelog)
+        test_compare_reports(pkg_dir, changelog, ignore)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
@@ -472,6 +479,12 @@ if __name__ == "__main__":
         help="Path to the code report for the new package version.",
     )
 
+    parser.add_argument(
+        "--suppression-config",
+        dest="suppression_config",
+        help="Path to the config file for suppressions.",
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -482,6 +495,17 @@ if __name__ == "__main__":
     pkg_dir = os.path.abspath(args.target_package)
     package_name = os.path.basename(pkg_dir)
     changelog = args.changelog
+    suppression_config = args.suppression_config
+    ignore = {}
+
+    if suppression_config:
+        spec = importlib.util.spec_from_file_location("user_suppressions", suppression_config)
+
+        # Load the module
+        user_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(user_module)
+        ignore = user_module.IGNORE_BREAKING_CHANGES
+
     logging.basicConfig(level=logging.INFO)
 
     # We dont need to block for code report generation
@@ -505,4 +529,4 @@ if __name__ == "__main__":
             _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
             exit(1)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.source_report, args.target_report)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.source_report, args.target_report, ignore)

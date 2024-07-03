@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from breaking_changes_tracker import RegexSuppression
 
 RUN_BREAKING_CHANGES_PACKAGES = []
 
@@ -16,6 +17,7 @@ IGNORE_BREAKING_CHANGES = {
         # Changes due to latest dpg design + need to support overloads in this tool
         ("ChangedParameterOrdering", "*", "*", "__init__"),
         # Changes due to latest dpg design
+        ("RemovedOrRenamedClass", "*", RegexSuppression("ListResult$")),
         ("ChangedParameterKind", "*", "*", "*", "top"),
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),

@@ -10,7 +10,13 @@ import re
 from enum import Enum
 from typing import Any, Dict, List, Union, Optional, NamedTuple
 from copy import deepcopy
-from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
+
+
+class RegexSuppression(NamedTuple):
+    value: str
+    
+    def match(self, compare_value: str) -> bool:
+        return re.search(self.value, compare_value)
 
 
 class Suppression(NamedTuple):
@@ -573,6 +579,11 @@ class BreakingChangesTracker:
         for b, i in zip(bc, ignored):
             if i == "*":
                 continue
+            if isinstance(i, RegexSuppression) and b is not None:
+                if i.match(b):
+                    continue
+                else:
+                    return False
             if b != i:
                 return False
         return True
@@ -605,7 +616,7 @@ class BreakingChangesTracker:
                     break
 
     def report_changes(self) -> None:
-        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
+        ignore_changes = self.ignore if self.ignore else {}
         self.get_reportable_breaking_changes(ignore_changes)
 
         # If there are no breaking changes after the ignore check, return early
