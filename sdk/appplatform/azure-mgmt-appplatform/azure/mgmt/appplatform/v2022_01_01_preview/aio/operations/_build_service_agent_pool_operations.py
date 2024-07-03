@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -37,6 +38,10 @@ from ...operations._build_service_agent_pool_operations import (
     build_update_put_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -74,7 +79,6 @@ class BuildServiceAgentPoolOperations:
         :type service_name: str
         :param build_service_name: The name of the build service resource. Required.
         :type build_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BuildServiceAgentPoolResource or the result of
          cls(response)
         :rtype:
@@ -89,7 +93,7 @@ class BuildServiceAgentPoolOperations:
         )
         cls: ClsType[_models.BuildServiceAgentPoolResourceCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -100,18 +104,17 @@ class BuildServiceAgentPoolOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     build_service_name=build_service_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -122,14 +125,14 @@ class BuildServiceAgentPoolOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("BuildServiceAgentPoolResourceCollection", pipeline_response)
@@ -139,11 +142,11 @@ class BuildServiceAgentPoolOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -154,10 +157,6 @@ class BuildServiceAgentPoolOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/agentPools"
-    }
 
     @distributed_trace_async
     async def get(
@@ -174,12 +173,11 @@ class BuildServiceAgentPoolOperations:
         :type build_service_name: str
         :param agent_pool_name: The name of the build service agent pool resource. Required.
         :type agent_pool_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BuildServiceAgentPoolResource or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_01_01_preview.models.BuildServiceAgentPoolResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -195,23 +193,22 @@ class BuildServiceAgentPoolOperations:
         )
         cls: ClsType[_models.BuildServiceAgentPoolResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             agent_pool_name=agent_pool_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -223,13 +220,9 @@ class BuildServiceAgentPoolOperations:
         deserialized = self._deserialize("BuildServiceAgentPoolResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/agentPools/{agentPoolName}"
-    }
+        return deserialized  # type: ignore
 
     async def _update_put_initial(
         self,
@@ -237,10 +230,10 @@ class BuildServiceAgentPoolOperations:
         service_name: str,
         build_service_name: str,
         agent_pool_name: str,
-        agent_pool_resource: Union[_models.BuildServiceAgentPoolResource, IO],
+        agent_pool_resource: Union[_models.BuildServiceAgentPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.BuildServiceAgentPoolResource:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -265,7 +258,7 @@ class BuildServiceAgentPoolOperations:
         else:
             _json = self._serialize.body(agent_pool_resource, "BuildServiceAgentPoolResource")
 
-        request = build_update_put_request(
+        _request = build_update_put_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
@@ -275,16 +268,15 @@ class BuildServiceAgentPoolOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_put_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -303,10 +295,6 @@ class BuildServiceAgentPoolOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _update_put_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/agentPools/{agentPoolName}"
-    }
 
     @overload
     async def begin_update_put(
@@ -337,14 +325,6 @@ class BuildServiceAgentPoolOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BuildServiceAgentPoolResource or the
          result of cls(response)
         :rtype:
@@ -359,7 +339,7 @@ class BuildServiceAgentPoolOperations:
         service_name: str,
         build_service_name: str,
         agent_pool_name: str,
-        agent_pool_resource: IO,
+        agent_pool_resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -376,18 +356,10 @@ class BuildServiceAgentPoolOperations:
         :param agent_pool_name: The name of the build service agent pool resource. Required.
         :type agent_pool_name: str
         :param agent_pool_resource: Parameters for the update operation. Required.
-        :type agent_pool_resource: IO
+        :type agent_pool_resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BuildServiceAgentPoolResource or the
          result of cls(response)
         :rtype:
@@ -402,7 +374,7 @@ class BuildServiceAgentPoolOperations:
         service_name: str,
         build_service_name: str,
         agent_pool_name: str,
-        agent_pool_resource: Union[_models.BuildServiceAgentPoolResource, IO],
+        agent_pool_resource: Union[_models.BuildServiceAgentPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BuildServiceAgentPoolResource]:
         """Create or update build service agent pool.
@@ -417,20 +389,9 @@ class BuildServiceAgentPoolOperations:
         :param agent_pool_name: The name of the build service agent pool resource. Required.
         :type agent_pool_name: str
         :param agent_pool_resource: Parameters for the update operation. Is either a
-         BuildServiceAgentPoolResource type or a IO type. Required.
+         BuildServiceAgentPoolResource type or a IO[bytes] type. Required.
         :type agent_pool_resource:
-         ~azure.mgmt.appplatform.v2022_01_01_preview.models.BuildServiceAgentPoolResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2022_01_01_preview.models.BuildServiceAgentPoolResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either BuildServiceAgentPoolResource or the
          result of cls(response)
         :rtype:
@@ -467,7 +428,7 @@ class BuildServiceAgentPoolOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("BuildServiceAgentPoolResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -480,14 +441,12 @@ class BuildServiceAgentPoolOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.BuildServiceAgentPoolResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update_put.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/agentPools/{agentPoolName}"
-    }
+        return AsyncLROPoller[_models.BuildServiceAgentPoolResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

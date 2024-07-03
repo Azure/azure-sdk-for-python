@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -50,6 +51,10 @@ from ...operations._deployments_operations import (
     build_update_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -89,12 +94,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeploymentResource or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -110,23 +114,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.DeploymentResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -138,13 +141,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("DeploymentResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
@@ -152,10 +151,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        deployment_resource: Union[_models.DeploymentResource, IO],
+        deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeploymentResource:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -180,7 +179,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(deployment_resource, "DeploymentResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
@@ -190,16 +189,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -221,10 +219,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -255,14 +249,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentResource or the result of
          cls(response)
         :rtype:
@@ -277,7 +263,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        deployment_resource: IO,
+        deployment_resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -294,18 +280,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param deployment_resource: Parameters for the create or update operation. Required.
-        :type deployment_resource: IO
+        :type deployment_resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentResource or the result of
          cls(response)
         :rtype:
@@ -320,7 +298,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        deployment_resource: Union[_models.DeploymentResource, IO],
+        deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentResource]:
         """Create a new Deployment or update an exiting Deployment.
@@ -335,20 +313,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param deployment_resource: Parameters for the create or update operation. Is either a
-         DeploymentResource type or a IO type. Required.
+         DeploymentResource type or a IO[bytes] type. Required.
         :type deployment_resource:
-         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DeploymentResource or the result of
          cls(response)
         :rtype:
@@ -385,7 +352,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DeploymentResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -395,22 +362,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DeploymentResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
+        return AsyncLROPoller[_models.DeploymentResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -426,23 +391,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -452,11 +416,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -473,14 +433,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -511,7 +463,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -520,17 +472,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _update_initial(
         self,
@@ -538,10 +486,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        deployment_resource: Union[_models.DeploymentResource, IO],
+        deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeploymentResource:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -566,7 +514,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(deployment_resource, "DeploymentResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
@@ -576,16 +524,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -604,10 +551,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
 
     @overload
     async def begin_update(
@@ -638,14 +581,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentResource or the result of
          cls(response)
         :rtype:
@@ -660,7 +595,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        deployment_resource: IO,
+        deployment_resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -677,18 +612,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param deployment_resource: Parameters for the update operation. Required.
-        :type deployment_resource: IO
+        :type deployment_resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DeploymentResource or the result of
          cls(response)
         :rtype:
@@ -703,7 +630,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        deployment_resource: Union[_models.DeploymentResource, IO],
+        deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentResource]:
         """Operation to update an exiting Deployment.
@@ -718,20 +645,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param deployment_resource: Parameters for the update operation. Is either a DeploymentResource
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type deployment_resource:
-         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either DeploymentResource or the result of
          cls(response)
         :rtype:
@@ -768,7 +684,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DeploymentResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -778,17 +694,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.DeploymentResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}"
-    }
+        return AsyncLROPoller[_models.DeploymentResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def list(
@@ -813,7 +727,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type version: list[str]
         :param expand: The expand expression to apply on the operation. Default value is None.
         :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource]
@@ -827,7 +740,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.DeploymentResourceCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -838,7 +751,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     app_name=app_name,
@@ -846,12 +759,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     version=version,
                     expand=expand,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -862,14 +774,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentResourceCollection", pipeline_response)
@@ -879,11 +791,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -894,10 +806,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments"
-    }
 
     @distributed_trace
     def list_for_cluster(
@@ -919,7 +827,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type version: list[str]
         :param expand: The expand expression to apply on the operation. Default value is None.
         :type expand: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeploymentResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appplatform.v2023_11_01_preview.models.DeploymentResource]
@@ -933,7 +840,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.DeploymentResourceCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -944,19 +851,18 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_for_cluster_request(
+                _request = build_list_for_cluster_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
                     version=version,
                     expand=expand,
                     api_version=api_version,
-                    template_url=self.list_for_cluster.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -967,14 +873,14 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DeploymentResourceCollection", pipeline_response)
@@ -984,11 +890,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1000,14 +906,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_for_cluster.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/deployments"
-    }
-
     async def _start_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1023,23 +925,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_start_request(
+        _request = build_start_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._start_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1049,11 +950,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _start_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/start"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_start(
@@ -1070,14 +967,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1108,7 +997,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1117,22 +1006,18 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/start"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _stop_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1148,23 +1033,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_request(
+        _request = build_stop_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._stop_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1174,11 +1058,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _stop_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/stop"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_stop(
@@ -1195,14 +1075,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1233,7 +1105,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1242,22 +1114,18 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/stop"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _restart_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1273,23 +1141,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_restart_request(
+        _request = build_restart_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._restart_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1299,11 +1166,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _restart_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/restart"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_restart(
@@ -1320,14 +1183,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1358,7 +1213,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -1367,17 +1222,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_restart.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/restart"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _enable_remote_debugging_initial(
         self,
@@ -1385,10 +1236,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        remote_debugging_payload: Optional[Union[_models.RemoteDebuggingPayload, IO]] = None,
+        remote_debugging_payload: Optional[Union[_models.RemoteDebuggingPayload, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.RemoteDebugging:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1416,7 +1267,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             else:
                 _json = None
 
-        request = build_enable_remote_debugging_request(
+        _request = build_enable_remote_debugging_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
@@ -1426,16 +1277,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._enable_remote_debugging_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1454,10 +1304,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _enable_remote_debugging_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/enableRemoteDebugging"
-    }
 
     @overload
     async def begin_enable_remote_debugging(
@@ -1488,14 +1334,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RemoteDebugging or the result of
          cls(response)
         :rtype:
@@ -1510,7 +1348,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        remote_debugging_payload: Optional[IO] = None,
+        remote_debugging_payload: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1527,18 +1365,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param remote_debugging_payload: Parameters for enable remote debugging. Default value is None.
-        :type remote_debugging_payload: IO
+        :type remote_debugging_payload: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RemoteDebugging or the result of
          cls(response)
         :rtype:
@@ -1553,7 +1383,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        remote_debugging_payload: Optional[Union[_models.RemoteDebuggingPayload, IO]] = None,
+        remote_debugging_payload: Optional[Union[_models.RemoteDebuggingPayload, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RemoteDebugging]:
         """Enable remote debugging.
@@ -1568,20 +1398,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param remote_debugging_payload: Parameters for enable remote debugging. Is either a
-         RemoteDebuggingPayload type or a IO type. Default value is None.
+         RemoteDebuggingPayload type or a IO[bytes] type. Default value is None.
         :type remote_debugging_payload:
-         ~azure.mgmt.appplatform.v2023_11_01_preview.models.RemoteDebuggingPayload or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2023_11_01_preview.models.RemoteDebuggingPayload or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either RemoteDebugging or the result of
          cls(response)
         :rtype:
@@ -1618,7 +1437,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("RemoteDebugging", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1628,22 +1447,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.RemoteDebugging].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_enable_remote_debugging.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/enableRemoteDebugging"
-    }
+        return AsyncLROPoller[_models.RemoteDebugging](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     async def _disable_remote_debugging_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> _models.RemoteDebugging:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1659,23 +1476,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.RemoteDebugging] = kwargs.pop("cls", None)
 
-        request = build_disable_remote_debugging_request(
+        _request = build_disable_remote_debugging_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._disable_remote_debugging_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1695,10 +1511,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    _disable_remote_debugging_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/disableRemoteDebugging"
-    }
-
     @distributed_trace_async
     async def begin_disable_remote_debugging(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
@@ -1714,14 +1526,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RemoteDebugging or the result of
          cls(response)
         :rtype:
@@ -1755,7 +1559,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("RemoteDebugging", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1765,17 +1569,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.RemoteDebugging].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_disable_remote_debugging.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/disableRemoteDebugging"
-    }
+        return AsyncLROPoller[_models.RemoteDebugging](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_remote_debugging_config(
@@ -1792,12 +1594,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RemoteDebugging or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2023_11_01_preview.models.RemoteDebugging
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1813,23 +1614,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.RemoteDebugging] = kwargs.pop("cls", None)
 
-        request = build_get_remote_debugging_config_request(
+        _request = build_get_remote_debugging_config_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_remote_debugging_config.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1841,13 +1641,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("RemoteDebugging", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_remote_debugging_config.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/getRemoteDebuggingConfig"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_log_file_url(
@@ -1864,12 +1660,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LogFileUrlResponse or None or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2023_11_01_preview.models.LogFileUrlResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1885,23 +1680,22 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[Optional[_models.LogFileUrlResponse]] = kwargs.pop("cls", None)
 
-        request = build_get_log_file_url_request(
+        _request = build_get_log_file_url_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
             deployment_name=deployment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_log_file_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1915,13 +1709,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("LogFileUrlResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_log_file_url.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/getLogFileUrl"
-    }
+        return deserialized  # type: ignore
 
     async def _generate_heap_dump_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -1929,10 +1719,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: Union[_models.DiagnosticParameters, IO],
+        diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1957,7 +1747,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(diagnostic_parameters, "DiagnosticParameters")
 
-        request = build_generate_heap_dump_request(
+        _request = build_generate_heap_dump_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
@@ -1967,16 +1757,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._generate_heap_dump_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1986,11 +1775,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _generate_heap_dump_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/generateHeapDump"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_generate_heap_dump(
@@ -2021,14 +1806,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2041,7 +1818,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: IO,
+        diagnostic_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2058,18 +1835,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param diagnostic_parameters: Parameters for the diagnostic operation. Required.
-        :type diagnostic_parameters: IO
+        :type diagnostic_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2082,7 +1851,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: Union[_models.DiagnosticParameters, IO],
+        diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Generate Heap Dump.
@@ -2097,20 +1866,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param diagnostic_parameters: Parameters for the diagnostic operation. Is either a
-         DiagnosticParameters type or a IO type. Required.
+         DiagnosticParameters type or a IO[bytes] type. Required.
         :type diagnostic_parameters:
-         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DiagnosticParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DiagnosticParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2144,7 +1902,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -2153,17 +1911,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_generate_heap_dump.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/generateHeapDump"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _generate_thread_dump_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -2171,10 +1925,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: Union[_models.DiagnosticParameters, IO],
+        diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2199,7 +1953,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(diagnostic_parameters, "DiagnosticParameters")
 
-        request = build_generate_thread_dump_request(
+        _request = build_generate_thread_dump_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
@@ -2209,16 +1963,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._generate_thread_dump_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2228,11 +1981,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _generate_thread_dump_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/generateThreadDump"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_generate_thread_dump(
@@ -2263,14 +2012,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2283,7 +2024,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: IO,
+        diagnostic_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2300,18 +2041,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param diagnostic_parameters: Parameters for the diagnostic operation. Required.
-        :type diagnostic_parameters: IO
+        :type diagnostic_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2324,7 +2057,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: Union[_models.DiagnosticParameters, IO],
+        diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Generate Thread Dump.
@@ -2339,20 +2072,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param diagnostic_parameters: Parameters for the diagnostic operation. Is either a
-         DiagnosticParameters type or a IO type. Required.
+         DiagnosticParameters type or a IO[bytes] type. Required.
         :type diagnostic_parameters:
-         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DiagnosticParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DiagnosticParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2386,7 +2108,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -2395,17 +2117,13 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_generate_thread_dump.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/generateThreadDump"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _start_jfr_initial(  # pylint: disable=inconsistent-return-statements
         self,
@@ -2413,10 +2131,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: Union[_models.DiagnosticParameters, IO],
+        diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2441,7 +2159,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(diagnostic_parameters, "DiagnosticParameters")
 
-        request = build_start_jfr_request(
+        _request = build_start_jfr_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             app_name=app_name,
@@ -2451,16 +2169,15 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._start_jfr_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2470,11 +2187,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _start_jfr_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/startJFR"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def begin_start_jfr(
@@ -2505,14 +2218,6 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2525,7 +2230,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: IO,
+        diagnostic_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2542,18 +2247,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param diagnostic_parameters: Parameters for the diagnostic operation. Required.
-        :type diagnostic_parameters: IO
+        :type diagnostic_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2566,7 +2263,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         deployment_name: str,
-        diagnostic_parameters: Union[_models.DiagnosticParameters, IO],
+        diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Start JFR.
@@ -2581,20 +2278,9 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the Deployment resource. Required.
         :type deployment_name: str
         :param diagnostic_parameters: Parameters for the diagnostic operation. Is either a
-         DiagnosticParameters type or a IO type. Required.
+         DiagnosticParameters type or a IO[bytes] type. Required.
         :type diagnostic_parameters:
-         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DiagnosticParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.appplatform.v2023_11_01_preview.models.DiagnosticParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2628,7 +2314,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -2637,14 +2323,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_start_jfr.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/startJFR"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
