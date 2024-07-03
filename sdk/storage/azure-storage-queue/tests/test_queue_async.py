@@ -896,7 +896,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        token_credential = self.get_credential(QueueServiceClient)
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
 
         # Action 1: make sure token works
         service = QueueServiceClient(
@@ -1391,7 +1391,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         await qsc.get_service_properties()
 
         # Act
-        token_credential = self.get_credential(QueueServiceClient)
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
             audience=f'https://{storage_account_name}.queue.core.windows.net'
@@ -1412,7 +1412,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         await qsc.get_service_properties()
 
         # Act
-        token_credential = self.get_credential(QueueServiceClient)
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
             audience=f'https://badaudience.queue.core.windows.net'
@@ -1433,7 +1433,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         await queue.create_queue()
 
         # Act
-        token_credential = self.get_credential(QueueServiceClient)
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
         queue = QueueClient(
             self.account_url(storage_account_name, "queue"), queue_name, credential=token_credential,
             audience=f'https://{storage_account_name}.queue.core.windows.net'
@@ -1455,7 +1455,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         await queue.create_queue()
 
         # Act
-        token_credential = self.get_credential(QueueServiceClient)
+        token_credential = self.get_credential(QueueServiceClient, is_async=True)
         queue = QueueClient(
             self.account_url(storage_account_name, "queue"), queue_name, credential=token_credential,
             audience=f'https://badaudience.queue.core.windows.net'

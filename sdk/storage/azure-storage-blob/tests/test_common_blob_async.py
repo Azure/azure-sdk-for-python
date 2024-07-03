@@ -170,7 +170,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         source_blob_client = await self._create_source_blob(data=source_blob_data)
         # Create destination blob
         destination_blob_client = await self._create_blob()
-        access_token = self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         with pytest.raises(HttpResponseError):
@@ -1758,7 +1758,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.get_credential(BlobServiceClient)
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -2359,7 +2359,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
 
         # Action 1: make sure token works
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
@@ -2386,7 +2386,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
         blob_data = b'Helloworld'
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
 
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
         container = service.get_container_client(container_name)
@@ -2411,7 +2411,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Setup
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
         async with BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential) as service:
             container = service.get_container_client(container_name)
             try:
@@ -3038,7 +3038,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.get_credential(BlobServiceClient)
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3090,7 +3090,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.get_credential(BlobServiceClient)
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3133,7 +3133,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(versioned_storage_account_name, versioned_storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.get_credential(BlobServiceClient)
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3185,7 +3185,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(versioned_storage_account_name, versioned_storage_account_key)
         container_name = self.get_resource_name('vlwcontainer')
         if self.is_live:
-            token_credential = self.get_credential(BlobServiceClient)
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
@@ -3321,7 +3321,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         self.bsc.list_containers()
 
         # Act
-        token_credential = self.get_credential(BlobServiceClient)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"), credential=token_credential,
             audience=f'https://{storage_account_name}.blob.core.windows.net'
@@ -3344,7 +3344,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob.exists()
 
         # Act
-        token_credential = self.get_credential(BlobClient)
+        token_credential = self.get_credential(BlobClient, is_async=True)
         blob = BlobClient(
             self.bsc.url, container_name=self.container_name, blob_name=blob_name,
             credential=token_credential, audience=f'https://{storage_account_name}.blob.core.windows.net'
