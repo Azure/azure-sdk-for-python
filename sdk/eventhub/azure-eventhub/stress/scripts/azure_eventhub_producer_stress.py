@@ -15,7 +15,7 @@ from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyC
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
-from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
+from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync, DefaultAzureCredential as DefaultAzureCredentialAsync
 
 from logger import get_logger
 from process_monitor import ProcessMonitor
@@ -198,7 +198,7 @@ class StressTestRunner:
                 client = client_class(
                     fully_qualified_namespace=self.args.hostname,
                     eventhub_name=self.args.eventhub,
-                    credential=DefaultAzureCredential(),
+                    credential=DefaultAzureCredentialAsync(),
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
@@ -225,17 +225,30 @@ class StressTestRunner:
                 **retry_options
                 )
         else:
-            client = client_class(
-                fully_qualified_namespace=self.args.hostname,
-                eventhub_name=self.args.eventhub,
-                credential=DefaultAzureCredential(),
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.pyamqp_logging_enable,
-                uamqp_transport=self.args.uamqp_mode,
-                **retry_options 
-            )
+            if is_async:
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=DefaultAzureCredentialAsync(),
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    uamqp_transport=self.args.uamqp_mode,
+                    **retry_options 
+                )
+            else:
+                client = client_class(
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=DefaultAzureCredential(),
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    uamqp_transport=self.args.uamqp_mode,
+                    **retry_options 
+                )
 
         return client
 
