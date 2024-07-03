@@ -23,7 +23,7 @@ class IterStreamer(IOBase):
     def __init__(self, iterable: Iterable[bytes], encoding: str = "UTF-8"):
         self.iterable = iterable
         self.iterator = iter(iterable)
-        self.leftover = b""
+        self.leftover = bytearray()
         self.encoding = encoding
 
     def __len__(self):
@@ -49,16 +49,17 @@ class IterStreamer(IOBase):
                 chunk = self.__next__()
                 if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
-                data += chunk
+                data.extend(chunk)
                 count += len(chunk)
         # This means count < size and what's leftover will be returned in this call.
         except StopIteration:
-            self.leftover = b""
+            self.leftover = bytearray()
 
         if count >= size:
             self.leftover = data[size:]
 
-        return data[:size]
+        data_view = memoryview(data)
+        return bytes(data_view[:size])
 
 
 class StructuredMessageError(Exception):
