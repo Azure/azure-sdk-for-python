@@ -18,7 +18,10 @@ from azure.communication.callautomation import (
     MediaStreamingTransportType,
     MediaStreamingAudioChannelType,
     TranscriptionOptions,
-    TranscriptionTransportType
+    TranscriptionTransportType,
+    TextSource,
+    RecognizeInputType,
+    RecognitionChoice
 )
 from callautomation_test_case import CallAutomationRecordedTestCase
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
@@ -317,6 +320,414 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("call_connection_properties.transcription_subscription is None")
         if call_connection_properties.transcription_subscription.state!='inactive':
             raise ValueError("transcription subscription state is invalid for TranscriptionStopped event")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_play_multiple_source_with_play_media(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+ 
+        play_mutlitple_text_source = [
+            TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test three", voice_name="en-US-NancyNeural")
+        ]
+        
+        call_connection.play_media_to_all(
+            play_source=play_mutlitple_text_source
+        )
+
+        # check for PlayCompleted event
+        play_completed_event_text_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_text_source is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        call_connection._play_media(
+            play_source=play_mutlitple_text_source,
+            play_to=target
+        )
+        
+        # check for PlayCompleted event
+        play_completed_event_text_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_text_source_to_target is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        play_multiple_file_source = [
+            FileSource(url=self.file_source_url),
+            FileSource(url=self.file_source_url),
+            FileSource(url=self.file_source_url)
+        ]
+        
+        call_connection.play_media_to_all(
+            play_source=play_multiple_file_source
+        )
+        
+        # check for PlayCompleted event
+        play_completed_event_file_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_file_source is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        call_connection._play_media(
+            play_source=play_multiple_file_source,
+            play_to=target
+        )
+        
+        # check for PlayCompleted event
+        play_completed_event_file_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_file_source_to_target is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        play_multiple_source = [
+            FileSource(url=self.file_source_url),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.play_media_to_all(
+            play_source=play_multiple_source
+        )
+        
+        # check for PlayCompleted event
+        play_completed_event_multiple_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_multiple_source is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        call_connection._play_media(
+            play_source=play_multiple_source,
+            play_to=target
+        )
+
+         # check for PlayCompleted event
+        play_completed_event_multiple_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_multiple_source_to_target is None:
+            raise ValueError("PlayCompleted event is None")
+
+        file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
+        
+        call_connection.play_media_to_all(
+            play_source=file_prompt
+        )
+        
+        play_failed_event = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_failed_event is None:
+            raise ValueError("PlayFailed event is None")
+        
+        call_connection._play_media(
+            play_source=file_prompt,
+            play_to=target
+        )
+        
+        play_failed_event_to_target = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_failed_event_to_target is None:
+            raise ValueError("PlayFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_dtmf_recognize_with_multiple_play_source(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_mutlitple_text_source = [
+            TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            dtmf_max_tones_to_collect=1, 
+            input_type=RecognizeInputType.DTMF, 
+            target_participant=target, 
+            initial_silence_timeout=30, 
+            play_prompt=play_mutlitple_text_source, 
+            dtmf_inter_tone_timeout=5, 
+            interrupt_prompt=True, 
+            dtmf_stop_tones=[ DtmfTone.Pound ])
+        
+        recognize_failed_event_text_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_text_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_multiple_source = [
+            FileSource(url=self.file_source_url),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            dtmf_max_tones_to_collect=1, 
+            input_type=RecognizeInputType.DTMF, 
+            target_participant=target, 
+            initial_silence_timeout=30, 
+            play_prompt=play_multiple_source, 
+            dtmf_inter_tone_timeout=5, 
+            interrupt_prompt=True, 
+            dtmf_stop_tones=[ DtmfTone.Pound ])
+        
+        recognize_failed_event_multiple_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_prompts = [
+            FileSource(url="https://dummy.com/dummyurl.wav"),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            dtmf_max_tones_to_collect=1, 
+            input_type=RecognizeInputType.DTMF, 
+            target_participant=target, 
+            initial_silence_timeout=30, 
+            play_prompt=play_prompts, 
+            dtmf_inter_tone_timeout=5, 
+            interrupt_prompt=True, 
+            dtmf_stop_tones=[ DtmfTone.Pound ])
+        
+        recognize_failed_event_multiple_prompts = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_prompts is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_speech_recognize_with_multiple_play_source(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_mutlitple_text_source = [
+            TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            input_type=RecognizeInputType.SPEECH, 
+            target_participant=target, 
+            end_silence_timeout=1, 
+            play_prompt=play_mutlitple_text_source) 
+        
+        recognize_failed_event_text_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_text_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_multiple_source = [
+            FileSource(url=self.file_source_url),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            input_type=RecognizeInputType.SPEECH, 
+            target_participant=target, 
+            end_silence_timeout=1, 
+            play_prompt=play_multiple_source) 
+        
+        recognize_failed_event_multiple_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_prompts = [
+            FileSource(url="https://dummy.com/dummyurl.wav"),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            input_type=RecognizeInputType.SPEECH, 
+            target_participant=target, 
+            end_silence_timeout=1, 
+            play_prompt=play_prompts) 
+        
+        recognize_failed_event_multiple_prompts = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_prompts is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_choice_recognize_with_multiple_play_source(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        choices = [ 
+            RecognitionChoice( 
+                label="Confirm", 
+                phrases=[ "Confirm", "First", "One" ], 
+                tone=DtmfTone.ONE 
+            ), 
+            RecognitionChoice( 
+                label="Cancel", 
+                phrases=[ "Cancel", "Second", "Two" ], 
+                tone=DtmfTone.TWO 
+            ) 
+        ] 
+        
+        play_mutlitple_text_source = [
+            TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            input_type=RecognizeInputType.CHOICES, 
+            target_participant=target, 
+            choices=choices, 
+            interrupt_prompt=True, 
+            initial_silence_timeout=10, 
+            play_prompt=play_mutlitple_text_source)  
+        
+        recognize_failed_event_text_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_text_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_multiple_source = [
+            FileSource(url=self.file_source_url),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            input_type=RecognizeInputType.CHOICES, 
+            target_participant=target, 
+            choices=choices, 
+            interrupt_prompt=True, 
+            initial_silence_timeout=10, 
+            play_prompt=play_multiple_source)  
+        
+        recognize_failed_event_multiple_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_prompts = [
+            FileSource(url="https://dummy.com/dummyurl.wav"),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            input_type=RecognizeInputType.CHOICES, 
+            target_participant=target, 
+            choices=choices, 
+            interrupt_prompt=True, 
+            initial_silence_timeout=10, 
+            play_prompt=play_prompts)  
+        
+        recognize_failed_event_multiple_prompts = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_prompts is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_speech_or_dtmf_recognize_with_multiple_play_source(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_mutlitple_text_source = [
+            TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            dtmf_max_tones_to_collect=1, 
+            input_type=RecognizeInputType.SPEECH_OR_DTMF, 
+            target_participant=target, 
+            end_silence_timeout=1, 
+            play_prompt=play_mutlitple_text_source, 
+            initial_silence_timeout=10, 
+            interrupt_prompt=True)   
+        
+        recognize_failed_event_text_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_text_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_multiple_source = [
+            FileSource(url=self.file_source_url),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            dtmf_max_tones_to_collect=1, 
+            input_type=RecognizeInputType.SPEECH_OR_DTMF, 
+            target_participant=target, 
+            end_silence_timeout=1, 
+            play_prompt=play_multiple_source, 
+            initial_silence_timeout=10, 
+            interrupt_prompt=True)   
+        
+        recognize_failed_event_multiple_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_source is None:
+            raise ValueError("RecognizeFailed event is None")
+        
+        play_prompts = [
+            FileSource(url="https://dummy.com/dummyurl.wav"),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+        
+        call_connection.start_recognizing_media( 
+            dtmf_max_tones_to_collect=1, 
+            input_type=RecognizeInputType.SPEECH_OR_DTMF, 
+            target_participant=target, 
+            end_silence_timeout=1, 
+            play_prompt=play_prompts, 
+            initial_silence_timeout=10, 
+            interrupt_prompt=True)   
+        
+        recognize_failed_event_multiple_prompts = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if recognize_failed_event_multiple_prompts is None:
+            raise ValueError("RecognizeFailed event is None")
         
         self.terminate_call(unique_id)
         return

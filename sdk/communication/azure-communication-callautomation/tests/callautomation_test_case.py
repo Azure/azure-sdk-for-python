@@ -189,7 +189,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             thread.start()
 
         # create a call
-        create_call_result = call_automation_client_caller.create_call(target_participant=target, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
+        create_call_result = call_automation_client_caller.create_call(
+            target_participant=target,
+            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
+            cognitive_services_endpoint = (self.cognitive_service_endpoint.strip() if self.cognitive_service_endpoint and self.cognitive_service_endpoint.strip() else None))
 
         if create_call_result is None:
             raise ValueError("Invalid create_call_result")
