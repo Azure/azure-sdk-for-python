@@ -2,7 +2,8 @@ stages:
 - stage:
   displayName: Investigate
   variables:
-    - template: ../image.yml
+    - template: ../variables/image.yml
+
   jobs:
     - job: Test Activation LInux
       displayName: Build on ${{ matrix.imageName }}
