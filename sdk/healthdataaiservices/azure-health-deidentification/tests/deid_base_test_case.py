@@ -2,6 +2,7 @@ import functools
 import inspect
 import random
 import datetime
+import uuid
 from azure.health.deidentification import DeidentificationClient
 
 
@@ -44,12 +45,15 @@ class DeidBaseTestCase(AzureRecordedTestCase):
     def generate_job_name(self) -> str:
         caller_function_name = inspect.stack()[1].function
         jobname = self.create_random_name(caller_function_name)
-        if self.in_recording:
-            print("Recording")
-            pass
-        elif self.is_live:
-            random.seed(str(datetime.now()))
-            jobname += random.randint(0, 100000)
+        jobname = jobname[:32]
+        if self.is_live:
+            jobname += str(uuid.uuid4())[:4]
 
-        jobname += "2"
         return jobname
+
+    def get_storage_location(self, kwargs):
+        storage_name: str = kwargs.pop("healthdataaiservices_storage_account_name")
+        container_name: str = kwargs.pop("healthdataaiservices_storage_container_name")
+        # storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
+        storage_location: str = kwargs.pop("healthdataaiservices_sas_uri")
+        return storage_location
