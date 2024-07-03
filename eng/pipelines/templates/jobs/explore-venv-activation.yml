@@ -15,7 +15,7 @@ stages:
       steps:
         - template: ../steps/activate-and-use-venv.yml
           parameters:
-            VirtualEnvironmentName: TESTVENV
+            VirtualEnvironmentName: TESTVENV_LINUX
 
     - job: Test_Activation_Windows
       displayName: Build on Windows
@@ -27,7 +27,7 @@ stages:
       steps:
         - template: ../steps/activate-and-use-venv.yml
           parameters:
-            VirtualEnvironmentName: TESTVENV
+            VirtualEnvironmentName: TESTVENV_WINDOWS
 
     - job: Test_Activation_Mac
       displayName: Build on Mac
@@ -39,4 +39,4 @@ stages:
       steps:
         - template: ../steps/activate-and-use-venv.yml
           parameters:
-            VirtualEnvironmentName: TESTVENV
+            VirtualEnvironmentName: TESTVENV_MAC
