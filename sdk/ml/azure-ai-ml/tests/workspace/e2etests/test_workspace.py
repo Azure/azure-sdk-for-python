@@ -125,6 +125,7 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace = client.workspaces.get(wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
+        assert workspace.application_insights is not None
 
         workspace.tags = {
             WORKSPACE_PATCH_REJECTED_KEYS[0]: "should be removed",

@@ -14,6 +14,8 @@
 ### Bugs Fixed
 - InputTypes exported in constants module
 - WorkspaceConnection tags are now listed as deprecated, and the erroneously-deprecated metadata field has been un-deprecated and added as a initialization field. These two fields still point to the same underlying object property, and actual API usage of this value is unchanged.
+- Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
+- Project create operations works in general.
 
 
 ### Other Changes
