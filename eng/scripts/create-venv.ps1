@@ -2,8 +2,12 @@
 .SYNOPSIS
 Creates a virtual environment for a CI machine.
 
+.DESCRIPTION
+If the virtual environment directory already exists, it will skip the creation. The location of the virtual environment will be stored in a variable
+named <VenvName>_LOCATION. The location will be RepoRoot + VenvName.
+
 .PARAMETER VenvName
-The name of the virtual environment to activate.
+The name of the virtual environment which will be created.
 
 .PARAMETER RepoRoot
 The root of the repository.
