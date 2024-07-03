@@ -93,15 +93,6 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2018-09-01-preview",
-            "name": "[guid(resourceGroup().id)]",
-            "properties": {
-                "principalId": "[parameters('testApplicationOid')]",
-                "roleDefinitionId": "[variables('cognitiveServiceUserRoleId')]"
-            }
-        },
-        {
             "type": "Microsoft.CognitiveServices/accounts",
             "name": "[parameters('baseName')]",
             "apiVersion": "[variables('apiVersion')]",
