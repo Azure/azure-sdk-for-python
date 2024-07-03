@@ -73,7 +73,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -280,7 +280,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 resource = {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -334,7 +334,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -414,7 +414,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -494,7 +494,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -572,7 +572,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 resource = {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -626,7 +626,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -759,7 +759,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -1037,7 +1037,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 response == {
                     "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
                       created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
                     "name": "str",  # The name of a job. Required.
                     "operation": "str",  # Operation to perform on the input documents. Required.
                       Known values are: "Redact", "Surrogate", and "Tag".
@@ -1219,7 +1219,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "dataType": "str",  # Data type of the input. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input. Required. "Plaintext"
                     "inputText": "str",  # Input text to deidentify. Required.
                     "operation": "str",  # Operation to perform on the input. Required. Known
                       values are: "Redact", "Surrogate", and "Tag".
@@ -1386,7 +1386,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "dataType": "str",  # Data type of the input. Required. "PlainText"
+                    "dataType": "str",  # Data type of the input. Required. "Plaintext"
                     "inputText": "str",  # Input text to deidentify. Required.
                     "operation": "str",  # Operation to perform on the input. Required. Known
                       values are: "Redact", "Surrogate", and "Tag".

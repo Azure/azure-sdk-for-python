@@ -13,7 +13,7 @@ from azure.core import CaseInsensitiveEnumMeta
 class DocumentDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of supported Data Types."""
 
-    PLAIN_TEXT = "PlainText"
+    PLAINTEXT = "Plaintext"
     """Plain text data type."""
 
 

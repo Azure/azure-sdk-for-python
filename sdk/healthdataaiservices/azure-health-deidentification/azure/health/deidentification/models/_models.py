@@ -28,7 +28,7 @@ class DeidentificationContent(_model_base.Model):
     :ivar operation: Operation to perform on the input. Required. Known values are: "Redact",
      "Surrogate", and "Tag".
     :vartype operation: str or ~azure.health.deidentification.models.OperationType
-    :ivar data_type: Data type of the input. Required. "PlainText"
+    :ivar data_type: Data type of the input. Required. "Plaintext"
     :vartype data_type: str or ~azure.health.deidentification.models.DocumentDataType
     :ivar string_index_type: Requested Encoding of the tag response indices. Known values are:
      "TextElement_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
@@ -43,7 +43,7 @@ class DeidentificationContent(_model_base.Model):
     """Operation to perform on the input. Required. Known values are: \"Redact\", \"Surrogate\", and
      \"Tag\"."""
     data_type: Union[str, "_models.DocumentDataType"] = rest_field(name="dataType")
-    """Data type of the input. Required. \"PlainText\""""
+    """Data type of the input. Required. \"Plaintext\""""
     string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(name="stringIndexType")
     """Requested Encoding of the tag response indices. Known values are: \"TextElement_v8\",
      \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
@@ -88,7 +88,7 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
     :ivar operation: Operation to perform on the input documents. Required. Known values are:
      "Redact", "Surrogate", and "Tag".
     :vartype operation: str or ~azure.health.deidentification.models.OperationType
-    :ivar data_type: Data type of the input documents. Required. "PlainText"
+    :ivar data_type: Data type of the input documents. Required. "Plaintext"
     :vartype data_type: str or ~azure.health.deidentification.models.DocumentDataType
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
     :vartype redaction_format: str
@@ -121,7 +121,7 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
     """Operation to perform on the input documents. Required. Known values are: \"Redact\",
      \"Surrogate\", and \"Tag\"."""
     data_type: Union[str, "_models.DocumentDataType"] = rest_field(name="dataType")
-    """Data type of the input documents. Required. \"PlainText\""""
+    """Data type of the input documents. Required. \"Plaintext\""""
     redaction_format: Optional[str] = rest_field(name="redactionFormat")
     """Format of the redacted output. Only valid when Operation is Redact."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])

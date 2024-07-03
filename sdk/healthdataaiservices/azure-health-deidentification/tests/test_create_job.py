@@ -12,7 +12,10 @@ class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
     @recorded_by_proxy
     def test_create_job(self, **kwargs):
         endpoint = kwargs.pop("healthdataaiservices_deid_service_endpoint")
-        storage_location = kwargs.pop("healthdataaiservices_storage_account_sas_uri")
+        storage_name = kwargs.pop("healthdataaiservices_storage_account_name")
+        container_name = kwargs.pop("healthdataaiservices_storage_container_name")
+        # storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
+        storage_location = kwargs.pop("healthdataaiservices_sas_uri")
         client = self.make_client(endpoint)
         assert client is not None
 
@@ -24,9 +27,7 @@ class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
                 location=storage_location,
                 prefix="example_patient_1",
             ),
-            target_location=TargetStorageLocation(
-                location=storage_location, prefix=self.OUTPUT_PATH
-            ),
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAIN_TEXT,
         )
