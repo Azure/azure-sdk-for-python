@@ -6,8 +6,8 @@ param(
     [string] $RepoRoot
 )
 
-$venvPath = Join-Path $RepoRoot $VenvName)
-if (-not (Test-Path ($venvPath)) {
+$venvPath = Join-Path ($RepoRoot $VenvName)
+if (!(Test-Path $venvPath) {
     Write-Host "Creating virtual environment $VenvName"
     python -m venv "$RepoRoot\$VenvName"
     Write-Host "Virtual environment $VenvName created."
