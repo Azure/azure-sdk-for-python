@@ -2,6 +2,11 @@
 
 ## 1.19.0 (unreleased)
 
+### Bugs Fixed
+
+- Workspace Create operation works without an application insights being provided.
+- Project create operations works in general.
+
 ## 1.18.0 (2024-07-09)
 
 ### Features Added
