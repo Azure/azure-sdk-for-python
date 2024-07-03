@@ -152,7 +152,7 @@ steps:
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
-  - ${{ else }}: 
+  - ${{ else }}:
     - task: PythonScript@0
       displayName: 'Test Samples'
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
