@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.2.0 (2024-07-03)
 
 ### Features Added
 - Change API version to `2024-01-01`
