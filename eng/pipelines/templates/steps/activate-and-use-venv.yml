@@ -12,15 +12,17 @@ steps:
     parameters:
       VirtualEnvironmentName: ${{ parameters.VirtualEnvironmentName }}
 
+  - template: use-venv.yml
+    parameters:
+      VirtualEnvironmentName: ${{ parameters.VirtualEnvironmentName }}
+
   - script: |
-      source $(${{ parameters.VirtualEnvironmentName }}_LOCATION)/bin/activate || source $(${{ parameters.VirtualEnvironmentName }}_LOCATION)/Scripts/activate
       which python
       python -m pip freeze
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Set up Python environment'
 
   - script: |
-      source $(${{ parameters.VirtualEnvironmentName }}_LOCATION)/bin/activate || source $(${{ parameters.VirtualEnvironmentName }}_LOCATION)/Scripts/activate
       which python
       python -m pip freeze
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "azure*" --service=appconfiguration --inactive

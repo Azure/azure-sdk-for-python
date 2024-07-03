@@ -1,0 +1,11 @@
+parameters:
+  - name: VirtualEnvironmentName
+    type: string
+
+steps:
+
+  - pwsh: |
+      $(Build.SourcesDirectory)/eng/scripts/activate-ci-venv.ps1 `
+        -VenvName "${{ parameters.VirtualEnvironmentName }}" `
+        -RepoRoot "$(Build.SourcesDirectory)"
+    displayName: Use ${{ parameters.VirtualEnvironmentName }} Virtual Environment

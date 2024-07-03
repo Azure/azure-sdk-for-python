@@ -5,7 +5,7 @@ parameters:
 steps:
   - pwsh: |
       Write-Host "Creating virtual environment ${{ parameters.VirtualEnvironmentName }}"
-      $(Build.SourcesDirectory)/eng/pipelines/templates/steps/create-venv.ps1 `
+      $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
         -VenvName "${{ parameters.VirtualEnvironmentName }}" `
         -RepoRoot "$(Build.SourcesDirectory)"
     displayName: Create virtual environment
