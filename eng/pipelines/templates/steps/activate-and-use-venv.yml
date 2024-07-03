@@ -17,7 +17,7 @@ steps:
       VirtualEnvironmentName: ${{ parameters.VirtualEnvironmentName }}
 
   - pwsh: |
-      Get-ChildItem $Env:
+      Get-ChildItem Env:
       Get-ChildItem -R (Join-Path "$(Build.SourcesDirectory)" "${{ parameters.VirtualEnvironmentName }}")
     displayName: 'Dump Environment + Files'
 
