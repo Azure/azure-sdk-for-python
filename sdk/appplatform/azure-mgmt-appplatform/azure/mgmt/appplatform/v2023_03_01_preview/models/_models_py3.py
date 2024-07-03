@@ -30,7 +30,7 @@ class AcceleratorAuthSetting(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AcceleratorBasicAuthSetting, AcceleratorPublicSetting, AcceleratorSshSetting
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The type of the auth setting. Required.
     :vartype auth_type: str
@@ -61,7 +61,7 @@ class AcceleratorAuthSetting(_serialization.Model):
 class AcceleratorBasicAuthSetting(AcceleratorAuthSetting):
     """Auth setting for basic auth.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The type of the auth setting. Required.
     :vartype auth_type: str
@@ -106,7 +106,7 @@ class AcceleratorBasicAuthSetting(AcceleratorAuthSetting):
 class AcceleratorGitRepository(_serialization.Model):
     """AcceleratorGitRepository.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: Git repository URL for the accelerator. Required.
     :vartype url: str
@@ -175,7 +175,7 @@ class AcceleratorGitRepository(_serialization.Model):
 class AcceleratorPublicSetting(AcceleratorAuthSetting):
     """Auth setting for public url.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The type of the auth setting. Required.
     :vartype auth_type: str
@@ -205,7 +205,7 @@ class AcceleratorPublicSetting(AcceleratorAuthSetting):
 class AcceleratorSshSetting(AcceleratorAuthSetting):
     """Auth setting for SSH auth.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The type of the auth setting. Required.
     :vartype auth_type: str
@@ -344,24 +344,6 @@ class ProxyResource(Resource):
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.appplatform.v2023_03_01_preview.models.SystemData
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
 
 
 class ApiPortalCustomDomainResource(ProxyResource):
@@ -1436,7 +1418,7 @@ class CustomPersistentDiskProperties(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureFileVolume
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the underlying resource to mount as a persistent disk. Required.
      "AzureFileVolume"
@@ -1498,7 +1480,7 @@ class CustomPersistentDiskProperties(_serialization.Model):
 class AzureFileVolume(CustomPersistentDiskProperties):
     """The properties of the Azure File volume. Azure File shares are mounted as volumes.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the underlying resource to mount as a persistent disk. Required.
      "AzureFileVolume"
@@ -2371,7 +2353,7 @@ class UserSourceInfo(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BuildResultUserSourceInfo, CustomContainerUserSourceInfo, UploadedUserSourceInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -2409,7 +2391,7 @@ class UserSourceInfo(_serialization.Model):
 class BuildResultUserSourceInfo(UserSourceInfo):
     """Reference to a build result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -2794,7 +2776,7 @@ class CertificateProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the certificate source. Required.
     :vartype type: str
@@ -3090,7 +3072,7 @@ class ClusterResourceProperties(_serialization.Model):  # pylint: disable=too-ma
 class ConfigServerGitProperty(_serialization.Model):
     """Property of git.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar repositories: Repositories of git.
     :vartype repositories:
@@ -3389,7 +3371,7 @@ class ConfigurationServiceGitProperty(_serialization.Model):
         self.repositories = repositories
 
 
-class ConfigurationServiceGitPropertyValidateResult(_serialization.Model):
+class ConfigurationServiceGitPropertyValidateResult(_serialization.Model):  # pylint: disable=name-too-long
     """Validation result for configuration service settings.
 
     :ivar is_valid: Indicate if the configuration service settings are valid.
@@ -3426,7 +3408,7 @@ class ConfigurationServiceGitPropertyValidateResult(_serialization.Model):
 class ConfigurationServiceGitRepository(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Git repository property payload for Application Configuration Service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the repository. Required.
     :vartype name: str
@@ -3738,7 +3720,7 @@ class ConfigurationServiceSettings(_serialization.Model):
         self.git_property = git_property
 
 
-class ConfigurationServiceSettingsValidateResult(_serialization.Model):
+class ConfigurationServiceSettingsValidateResult(_serialization.Model):  # pylint: disable=name-too-long
     """Validation result for configuration service settings.
 
     :ivar git_property_validation_result: Validation result for configuration service settings.
@@ -3794,7 +3776,7 @@ class ContainerRegistryCredentials(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ContainerRegistryBasicCredentials
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The credential type of the container registry credentials. Required.
     :vartype type: str
@@ -3819,7 +3801,7 @@ class ContainerRegistryCredentials(_serialization.Model):
 class ContainerRegistryBasicCredentials(ContainerRegistryCredentials):
     """The basic authentication properties for the container registry resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The credential type of the container registry credentials. Required.
     :vartype type: str
@@ -3866,7 +3848,7 @@ class ContainerRegistryProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar credentials: The credentials of the container registry resource. Required.
     :vartype credentials:
@@ -3980,7 +3962,7 @@ class ContentCertificateProperties(CertificateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the certificate source. Required.
     :vartype type: str
@@ -4112,7 +4094,7 @@ class CustomContainer(_serialization.Model):
 class CustomContainerUserSourceInfo(UserSourceInfo):
     """Custom container user source info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -4270,7 +4252,7 @@ class CustomDomainResourceCollection(_serialization.Model):
 class CustomDomainValidatePayload(_serialization.Model):
     """Custom domain validate payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name to be validated. Required.
     :vartype name: str
@@ -4324,7 +4306,7 @@ class CustomizedAcceleratorProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: State of the customized accelerator. Known values are: "Creating",
      "Updating", "Succeeded", "Failed", and "Deleting".
@@ -4517,7 +4499,7 @@ class CustomizedAcceleratorValidateResult(_serialization.Model):
 class CustomPersistentDiskResource(_serialization.Model):
     """Custom persistent disk resource payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar custom_persistent_disk_properties: Properties of the custom persistent disk resource
      payload.
@@ -5370,7 +5352,7 @@ class ProbeAction(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ExecAction, HTTPGetAction, TCPSocketAction
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the action to take to perform the health check. Required. Known values
      are: "HTTPGetAction", "TCPSocketAction", and "ExecAction".
@@ -5398,7 +5380,7 @@ class ProbeAction(_serialization.Model):
 class ExecAction(ProbeAction):
     """ExecAction describes a "run in container" action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the action to take to perform the health check. Required. Known values
      are: "HTTPGetAction", "TCPSocketAction", and "ExecAction".
@@ -5438,15 +5420,16 @@ class GatewayApiMetadataProperties(_serialization.Model):
     """API metadata property for Spring Cloud Gateway.
 
     :ivar title: Title describing the context of the APIs available on the Gateway instance
-     (default: ``Spring Cloud Gateway for K8S``\ ).
+     (default: ``Spring Cloud Gateway for K8S``\\ ).
     :vartype title: str
     :ivar description: Detailed description of the APIs available on the Gateway instance (default:
-     ``Generated OpenAPI 3 document that describes the API routes configured.``\ ).
+     ``Generated OpenAPI 3 document that describes the API routes configured.``\\ ).
     :vartype description: str
     :ivar documentation: Location of additional documentation for the APIs available on the Gateway
      instance.
     :vartype documentation: str
-    :ivar version: Version of APIs available on this Gateway instance (default: ``unspecified``\ ).
+    :ivar version: Version of APIs available on this Gateway instance (default: ``unspecified``\\
+     ).
     :vartype version: str
     :ivar server_url: Base URL that API consumers will use to access APIs on the Gateway instance.
     :vartype server_url: str
@@ -5472,16 +5455,16 @@ class GatewayApiMetadataProperties(_serialization.Model):
     ) -> None:
         """
         :keyword title: Title describing the context of the APIs available on the Gateway instance
-         (default: ``Spring Cloud Gateway for K8S``\ ).
+         (default: ``Spring Cloud Gateway for K8S``\\ ).
         :paramtype title: str
         :keyword description: Detailed description of the APIs available on the Gateway instance
-         (default: ``Generated OpenAPI 3 document that describes the API routes configured.``\ ).
+         (default: ``Generated OpenAPI 3 document that describes the API routes configured.``\\ ).
         :paramtype description: str
         :keyword documentation: Location of additional documentation for the APIs available on the
          Gateway instance.
         :paramtype documentation: str
-        :keyword version: Version of APIs available on this Gateway instance (default: ``unspecified``\
-         ).
+        :keyword version: Version of APIs available on this Gateway instance (default:
+         ``unspecified``\\ ).
         :paramtype version: str
         :keyword server_url: Base URL that API consumers will use to access APIs on the Gateway
          instance.
@@ -5604,7 +5587,7 @@ class GatewayCorsProperties(_serialization.Model):
      clients.
     :vartype max_age: int
     :ivar allow_credentials: Whether user credentials are supported on cross-site requests. Valid
-     values: ``true``\ , ``false``.
+     values: ``true``\\ , ``false``.
     :vartype allow_credentials: bool
     :ivar exposed_headers: HTTP response headers to expose for cross-site requests.
     :vartype exposed_headers: list[str]
@@ -5644,7 +5627,7 @@ class GatewayCorsProperties(_serialization.Model):
          clients.
         :paramtype max_age: int
         :keyword allow_credentials: Whether user credentials are supported on cross-site requests.
-         Valid values: ``true``\ , ``false``.
+         Valid values: ``true``\\ , ``false``.
         :paramtype allow_credentials: bool
         :keyword exposed_headers: HTTP response headers to expose for cross-site requests.
         :paramtype exposed_headers: list[str]
@@ -6184,8 +6167,8 @@ class GatewayRouteConfigProperties(_serialization.Model):
      "HTTPS".
     :vartype protocol: str or
      ~azure.mgmt.appplatform.v2023_03_01_preview.models.GatewayRouteConfigProtocol
-    :ivar routes: Array of API routes, each route contains properties such as ``title``\ , ``uri``\
-     , ``ssoEnabled``\ , ``predicates``\ , ``filters``.
+    :ivar routes: Array of API routes, each route contains properties such as ``title``\\ ,
+     ``uri``\\ , ``ssoEnabled``\\ , ``predicates``\\ , ``filters``.
     :vartype routes: list[~azure.mgmt.appplatform.v2023_03_01_preview.models.GatewayApiRoute]
     :ivar sso_enabled: Enable Single Sign-On in app level.
     :vartype sso_enabled: bool
@@ -6237,8 +6220,8 @@ class GatewayRouteConfigProperties(_serialization.Model):
          and "HTTPS".
         :paramtype protocol: str or
          ~azure.mgmt.appplatform.v2023_03_01_preview.models.GatewayRouteConfigProtocol
-        :keyword routes: Array of API routes, each route contains properties such as ``title``\ ,
-         ``uri``\ , ``ssoEnabled``\ , ``predicates``\ , ``filters``.
+        :keyword routes: Array of API routes, each route contains properties such as ``title``\\ ,
+         ``uri``\\ , ``ssoEnabled``\\ , ``predicates``\\ , ``filters``.
         :paramtype routes: list[~azure.mgmt.appplatform.v2023_03_01_preview.models.GatewayApiRoute]
         :keyword sso_enabled: Enable Single Sign-On in app level.
         :paramtype sso_enabled: bool
@@ -6345,7 +6328,7 @@ class GatewayRouteConfigResourceCollection(_serialization.Model):
 class GitPatternRepository(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Git repository property payload for config server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the repository. Required.
     :vartype name: str
@@ -6447,7 +6430,7 @@ class GitPatternRepository(_serialization.Model):  # pylint: disable=too-many-in
 class HTTPGetAction(ProbeAction):
     """HTTPGetAction describes an action based on HTTP Get requests.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the action to take to perform the health check. Required. Known values
      are: "HTTPGetAction", "TCPSocketAction", and "ExecAction".
@@ -6675,7 +6658,7 @@ class UploadedUserSourceInfo(UserSourceInfo):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     JarUploadedUserSourceInfo, NetCoreZipUploadedUserSourceInfo, SourceUploadedUserSourceInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -6718,7 +6701,7 @@ class UploadedUserSourceInfo(UserSourceInfo):
 class JarUploadedUserSourceInfo(UploadedUserSourceInfo):
     """Uploaded Jar binary for a deployment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -6774,7 +6757,7 @@ class KeyVaultCertificateProperties(CertificateProperties):  # pylint: disable=t
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the certificate source. Required.
     :vartype type: str
@@ -6868,7 +6851,7 @@ class KeyVaultCertificateProperties(CertificateProperties):  # pylint: disable=t
 class LoadedCertificate(_serialization.Model):
     """Loaded certificate payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_id: Resource Id of loaded certificate. Required.
     :vartype resource_id: str
@@ -6902,7 +6885,7 @@ class LoadedCertificate(_serialization.Model):
 class LogFileUrlResponse(_serialization.Model):
     """Log file URL payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: URL of the log file. Required.
     :vartype url: str
@@ -7356,7 +7339,7 @@ class NameAvailability(_serialization.Model):
 class NameAvailabilityParameters(_serialization.Model):
     """Name availability parameters payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the resource to check name availability. Required.
     :vartype type: str
@@ -7389,7 +7372,7 @@ class NameAvailabilityParameters(_serialization.Model):
 class NetCoreZipUploadedUserSourceInfo(UploadedUserSourceInfo):
     """Uploaded Jar binary for a deployment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -7874,7 +7857,7 @@ class Probe(_serialization.Model):
     """Probe describes a health check to be performed against an App Instance to determine whether it
     is alive or ready to receive traffic.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar probe_action: The action of the probe.
     :vartype probe_action: ~azure.mgmt.appplatform.v2023_03_01_preview.models.ProbeAction
@@ -7995,7 +7978,7 @@ class QueueScaleRule(_serialization.Model):
 class RegenerateTestKeyRequestPayload(_serialization.Model):
     """Regenerate test key request payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_type: Type of the test key. Required. Known values are: "Primary" and "Secondary".
     :vartype key_type: str or ~azure.mgmt.appplatform.v2023_03_01_preview.models.TestKeyType
@@ -9038,7 +9021,7 @@ class Sku(_serialization.Model):
 class SkuCapacity(_serialization.Model):
     """The SKU capacity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar minimum: Gets or sets the minimum. Required.
     :vartype minimum: int
@@ -9112,7 +9095,7 @@ class SkuObject(_serialization.Model):
 class SourceUploadedUserSourceInfo(UploadedUserSourceInfo):
     """Uploaded Java source code binary for a deployment.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the source uploaded. Required.
     :vartype type: str
@@ -9253,7 +9236,7 @@ class StorageProperties(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     StorageAccount
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_type: The type of the storage. Required. "StorageAccount"
     :vartype storage_type: str or ~azure.mgmt.appplatform.v2023_03_01_preview.models.StorageType
@@ -9278,7 +9261,7 @@ class StorageProperties(_serialization.Model):
 class StorageAccount(StorageProperties):
     """storage resource of type Azure Storage Account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_type: The type of the storage. Required. "StorageAccount"
     :vartype storage_type: str or ~azure.mgmt.appplatform.v2023_03_01_preview.models.StorageType
@@ -9739,7 +9722,7 @@ class TcpScaleRule(_serialization.Model):
 class TCPSocketAction(ProbeAction):
     """TCPSocketAction describes an action based on opening a socket.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the action to take to perform the health check. Required. Known values
      are: "HTTPGetAction", "TCPSocketAction", and "ExecAction".
