@@ -33,6 +33,8 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
