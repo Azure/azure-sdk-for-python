@@ -1,6 +1,9 @@
 @description('The base resource name.')
 param baseName string = resourceGroup().name
 
+@description('The client OID to grant access to test resources.')
+param testApplicationOid string
+
 @description('The location of the resources. By default, this is the same as the resource group.')
 param location string = resourceGroup().location
 
@@ -8,6 +11,8 @@ param location string = resourceGroup().location
 param storageEndpointSuffix string = 'core.windows.net'
 
 var ehVersion = '2017-04-01'
+var contributorRoleId = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+var eventHubsDataOwnerRoleId = 'f526a384-b230-433a-b45c-95f59c4a2dec'
 var eventHubsNamespace_var = 'eh-${baseName}'
 var eventHubName = 'eh-${baseName}-hub'
 var eventHubAuthRuleName = 'eh-${baseName}-hub-auth-rule'
@@ -73,6 +78,23 @@ resource storageAccount_default_containerName 'Microsoft.Storage/storageAccounts
   ]
 }
 
+resource id_name_baseName_eventHubsDataOwnerRoleId_testApplicationOid 'Microsoft.Authorization/roleAssignments@2019-04-01-preview' = {
+  name: guid(resourceGroup().id, deployment().name, baseName, eventHubsDataOwnerRoleId, testApplicationOid)
+  properties: {
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', eventHubsDataOwnerRoleId)
+    principalId: testApplicationOid
+    scope: resourceGroup().id
+  }
+}
+
+resource id_name_baseName_contributorRoleId_testApplicationOid 'Microsoft.Authorization/roleAssignments@2019-04-01-preview' = {
+  name: guid(resourceGroup().id, deployment().name, baseName, contributorRoleId, testApplicationOid)
+  properties: {
+    roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', contributorRoleId)
+    principalId: testApplicationOid
+    scope: resourceGroup().id
+  }
+}
 
 output EVENT_HUB_NAMESPACE string = eventHubsNamespace_var
 output EVENT_HUB_HOSTNAME string = '${eventHubsNamespace_var}.servicebus.windows.net'
