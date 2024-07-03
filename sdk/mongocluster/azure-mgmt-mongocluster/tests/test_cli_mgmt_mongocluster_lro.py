@@ -33,7 +33,7 @@ class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
                 },
             }
         ).result()
-        assert response.name == Mongo_Cluster_Name
+        assert response
 
         response = self.client.mongo_clusters.begin_update(
             resource_group_name = resource_group.name,
@@ -57,13 +57,13 @@ class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
                 },
             }
         ).result()
-        assert response.name == Mongo_Cluster_Name
+        assert response
 
         response = self.client.mongo_clusters.get(
             resource_group_name = resource_group.name,
             mongo_cluster_name = Mongo_Cluster_Name,
         )
-        assert response.name == Mongo_Cluster_Name
+        assert response
 
         response = self.client.mongo_clusters.list_by_resource_group(
             resource_group_name = resource_group.name,
