@@ -340,14 +340,14 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
  
-        play_mutlitple_text_source = [
+        play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test three", voice_name="en-US-NancyNeural")
         ]
         
         call_connection.play_media_to_all(
-            play_source=play_mutlitple_text_source
+            play_source=play_multiple_text_source
         )
 
         # check for PlayCompleted event
@@ -356,7 +356,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("PlayCompleted event is None")
         
         call_connection._play_media(
-            play_source=play_mutlitple_text_source,
+            play_source=play_multiple_text_source,
             play_to=target
         )
         
@@ -452,7 +452,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        play_mutlitple_text_source = [
+        play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
         ]
@@ -462,7 +462,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             input_type=RecognizeInputType.DTMF, 
             target_participant=target, 
             initial_silence_timeout=30, 
-            play_prompt=play_mutlitple_text_source, 
+            play_prompt=play_multiple_text_source, 
             dtmf_inter_tone_timeout=5, 
             interrupt_prompt=True, 
             dtmf_stop_tones=[ DtmfTone.Pound ])
@@ -528,7 +528,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        play_mutlitple_text_source = [
+        play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
         ]
@@ -537,7 +537,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             input_type=RecognizeInputType.SPEECH, 
             target_participant=target, 
             end_silence_timeout=1, 
-            play_prompt=play_mutlitple_text_source) 
+            play_prompt=play_multiple_text_source) 
         
         recognize_failed_event_text_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
         if recognize_failed_event_text_source is None:
@@ -605,7 +605,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             ) 
         ] 
         
-        play_mutlitple_text_source = [
+        play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
         ]
@@ -616,7 +616,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             choices=choices, 
             interrupt_prompt=True, 
             initial_silence_timeout=10, 
-            play_prompt=play_mutlitple_text_source)  
+            play_prompt=play_multiple_text_source)  
         
         recognize_failed_event_text_source = self.check_for_event('RecognizeFailed', call_connection._call_connection_id, timedelta(seconds=30))
         if recognize_failed_event_text_source is None:
@@ -675,7 +675,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
         
-        play_mutlitple_text_source = [
+        play_multiple_text_source = [
             TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
             TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
         ]
@@ -685,7 +685,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
             input_type=RecognizeInputType.SPEECH_OR_DTMF, 
             target_participant=target, 
             end_silence_timeout=1, 
-            play_prompt=play_mutlitple_text_source, 
+            play_prompt=play_multiple_text_source, 
             initial_silence_timeout=10, 
             interrupt_prompt=True)   
         
