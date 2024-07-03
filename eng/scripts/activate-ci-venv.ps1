@@ -42,6 +42,6 @@ if ($IsWindows) {
 $env:VIRTUAL_ENV = $venvPath
 $env:PATH = "$venvBinPath;$($env:PATH)"
 
-Write-Host "Activating virtual environment '$VenvName' at $venvPath via AzDO."
+Write-Host "Activating virtual environment '$VenvName' at $venvPath via AzDO to the value '$($env:PATH)'"
 Write-Host "##vso[task.setvariable variable=PATH;]$($env:PATH)"
 Write-Host "##vso[task.setvariable variable=VIRTUAL_ENV;]$($env:VIRTUAL_ENV)"
