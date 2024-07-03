@@ -1,25 +1,17 @@
 parameters:
   - name: VirtualEnvironmentName
     type: string
+    default: "venv"
 
 steps:
   - pwsh: |
-      Write-Host $env:PATH
-    displayName: Dump Path Before Activation
+      $(Build.SourcesDirectory)/eng/scripts/create-venv.ps1 `
+        -VenvName "${{ parameters.VirtualEnvironmentName }}" `
+        -RepoRoot "$(Build.SourcesDirectory)"
+    displayName: Create virtual environment
 
   - pwsh: |
-      $(Build.SourcesDirectory)/eng/scripts/activate-ci-venv.ps1 `
+      $(Build.SourcesDirectory)/eng/scripts/activate-venv.ps1 `
         -VenvName "${{ parameters.VirtualEnvironmentName }}" `
         -RepoRoot "$(Build.SourcesDirectory)"
     displayName: Use ${{ parameters.VirtualEnvironmentName }} Virtual Environment
-
-  - pwsh: |
-      Write-Host $env:PATH
-    displayName: Dump Path After Activation
-
-  - script: |
-      which python
-      python -m pip freeze
-
-      $(Build.SourcesDirectory)/${{ parameters.VirtualEnvironmentName }}/bin/python --version || $(Build.SourcesDirectory)/${{ parameters.VirtualEnvironmentName }}/bin/python --version
-    displayName: "Which Python will be used? Is it even there?"
