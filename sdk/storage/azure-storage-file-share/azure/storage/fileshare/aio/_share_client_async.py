@@ -226,6 +226,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword bool enable_snapshot_virtual_directory_access:
             Specifies whether the snapshot virtual directory should be accessible at the root of the share
             mount point when NFS is enabled. Default value is True.
+        :keyword bool paid_bursting_enabled: This property enables paid bursting.
+        :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
+        :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
 
@@ -494,6 +497,9 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword lease:
             Required if the share has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
+        :keyword bool paid_bursting_enabled: This property enables paid bursting.
+        :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
+        :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
 
