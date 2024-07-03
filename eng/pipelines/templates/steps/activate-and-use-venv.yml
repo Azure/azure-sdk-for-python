@@ -14,17 +14,23 @@ steps:
 
   - template: use-venv.yml
     parameters:
-      VirtualEnvironmentName: ${{ parameters.VirtualEnvironmentName }}
+      VirtualEnvironmentName: 
+
+
+  - pwsh: |
+      Get-ChildItem $Env:
+      Get-ChildItem -R (Join-Path "$(Build.SourcesDirectory)" "${{ parameters.VirtualEnvironmentName }}")
+    displayName: 'Dump Environment + Files'
 
   - script: |
       which python
       python -m pip freeze
       python -m pip install -r eng/ci_tools.txt
-    displayName: 'Set up Python environment'
+    displayName: 'Install Requirements'
 
   - script: |
       which python
       python -m pip freeze
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "azure*" --service=appconfiguration --inactive
-    displayName: 'Set up Python environment'
+    displayName: 'Test Usage'
 

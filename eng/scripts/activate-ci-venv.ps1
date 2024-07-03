@@ -5,11 +5,11 @@ Activates a virtual environment for a CI machine. Any further usages of "python"
 .DESCRIPTION
 When activating a virtual environment, only a few things are actually functionally changed on the machine.
 
-# when activating a virtual environment, only 3 variables are actually affected
 # 1. PATH = path to the bin directory of the virtual env. "Scripts" on windows machines
 # 2. VIRTUAL_ENV = path to root of the virtual env
 # 3. VIRTUAL_ENV_PROMPT = the prompt that is displayed next to the CLI cursor when the virtual env is active
 # within a CI machine, we only need the PATH and VIRTUAL_ENV variables to be set.
+# 4. (optional and inconsistently) _OLD_VIRTUAL_PATH = the PATH before the virtual env was activated. This is not set in this script. 
 
 .PARAMETER VenvName
 The name of the virtual environment to activate.
