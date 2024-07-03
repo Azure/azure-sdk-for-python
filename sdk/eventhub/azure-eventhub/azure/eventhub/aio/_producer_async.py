@@ -116,7 +116,7 @@ class EventHubProducer(
             {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
         )
 
-    def _create_handler(
+    async def _create_handler(
         self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
         self._handler = self._amqp_transport.create_send_client(

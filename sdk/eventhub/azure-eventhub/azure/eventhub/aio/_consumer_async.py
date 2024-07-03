@@ -136,9 +136,20 @@ class EventHubConsumer(
         self._last_callback_called_time = None
         self._callback_task_run = None
 
-    def _create_handler(
+    async def _create_handler(
         self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
+            
+        checkpoint_updated = await self._client._checkpoint_store.list_checkpoints(
+            self._client._address.hostname,
+            self._client.eventhub_name,
+            self._client._consumer_group
+        )
+        for i in checkpoint_updated:
+            if i["partition_id"] == self._partition:
+                self._offset = i["offset"]
+                break
+
         source = self._amqp_transport.create_source(
             self._source,
             self._offset,
