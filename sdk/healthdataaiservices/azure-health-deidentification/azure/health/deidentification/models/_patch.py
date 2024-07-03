@@ -8,7 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import TYPE_CHECKING, List, Optional, Union
 from ._models import DeidentificationContent as DeidentificationContentGenerated
-from models import StringIndexType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -16,6 +15,22 @@ if TYPE_CHECKING:
 
 
 class DeidentificationContent(DeidentificationContentGenerated):
+    """Request for synchronous De-Identify operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar input_text: Input text to deidentify. Required.
+    :vartype input_text: str
+    :ivar operation: Operation to perform on the input. Required. Known values are: "Redact",
+     "Surrogate", and "Tag".
+    :vartype operation: str or ~azure.health.deidentification.models.OperationType
+    :ivar data_type: Data type of the input. Required. "Plaintext"
+    :vartype data_type: str or ~azure.health.deidentification.models.DocumentDataType
+    :ivar redaction_format: Format of the redacted output. Only valid when OperationType is Redact.
+    :vartype redaction_format: str
+    """
+
+    # This isn't a perfect solution as it still allows customers to update the stringIndexType manually without the constructor.
     def __init__(
         self,
         *,
@@ -28,7 +43,7 @@ class DeidentificationContent(DeidentificationContentGenerated):
             input_text=input_text,
             operation=operation,
             data_type=data_type,
-            string_index_type=StringIndexType.UNICODE_CODE_POINT,
+            string_index_type=_models.StringIndexType.UNICODE_CODE_POINT,
             redaction_format=redaction_format,
         )
 

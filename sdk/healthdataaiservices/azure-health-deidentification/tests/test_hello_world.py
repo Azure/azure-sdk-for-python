@@ -17,7 +17,7 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         content = DeidentificationContent(
             input_text="Hello, my name is John Smith.",
             operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAIN_TEXT,
+            data_type=DocumentDataType.PLAINTEXT,
         )
 
         result: DeidentificationResult = client.deidentify(content)
