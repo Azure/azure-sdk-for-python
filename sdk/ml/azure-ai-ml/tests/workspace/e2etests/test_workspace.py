@@ -125,6 +125,7 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace = client.workspaces.get(wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
+        assert workspace.application_insights is not None
 
         param_image_build_compute = "compute"
         param_display_name = "Test display name"

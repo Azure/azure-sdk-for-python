@@ -589,6 +589,14 @@ class WorkspaceOperationsBase(ABC):
                 param["applicationInsightsResourceGroupName"],
                 group_name,
             )
+        elif workspace._kind and workspace._kind.lower() in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}:
+            _set_val(param["applicationInsightsOption"], "none")
+            # Set empty values because arm templates whine over unset values.
+            _set_val(param["applicationInsightsName"], "ignoredButCantBeEmpty")
+            _set_val(
+                param["applicationInsightsResourceGroupName"],
+                "ignoredButCantBeEmpty",
+            )
         else:
             log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)
             _set_val(param["logAnalyticsName"], log_analytics)
