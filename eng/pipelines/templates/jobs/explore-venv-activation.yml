@@ -32,7 +32,7 @@ stages:
     - job: Test_Activation_Mac
       displayName: Build on Mac
       pool:
-        osVmImage: $(MACVMIMAGE)
+        vmImage: $(MACVMIMAGE)
         os: 'macOS'
         name: $(MACPOOL)
 
