@@ -1,0 +1,41 @@
+stages:
+- stage:
+  displayName: Investigate
+  variables:
+    - template: ../image.yml
+  jobs:
+    - job: Test Activation LInux
+      displayName: Build on ${{ matrix.imageName }}
+      pool:
+        image: $(LINUXVMIMAGE)
+        os: linux
+        name: $(LINUXPOOL)
+
+      steps:
+        - template: ../steps/activate-and-use-venv.yml
+          parameters:
+            VirtualEnvironmentName: TESTVENV
+
+    - job: Test Activation Windows
+      displayName: Build on ${{ matrix.imageName }}
+      pool:
+        image: $(WINDOWSVMIMAGE)
+        os: windows
+        name: $(WINDOWSPOOL)
+
+      steps:
+        - template: ../steps/activate-and-use-venv.yml
+          parameters:
+            VirtualEnvironmentName: TESTVENV
+
+    - job: Test Activation Mac
+      displayName: Build on ${{ matrix.imageName }}
+      pool:
+        osVmImage: $(MACVMIMAGE)
+        os: 'macOS'
+        name: $(MACPOOL)
+
+      steps:
+        - template: ../steps/activate-and-use-venv.yml
+          parameters:
+            VirtualEnvironmentName: TESTVENV

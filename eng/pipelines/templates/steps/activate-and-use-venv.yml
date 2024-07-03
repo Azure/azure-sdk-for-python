@@ -1,0 +1,17 @@
+parameters:
+  VirtualEnvironmentName: ""
+
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.9'
+      addToPath: true
+
+  - script: |
+      source $(${{ parameters.VirtualEnvironmentName }}_LOCATION)/bin/activate || source $(${{ parameters.VirtualEnvironmentName }}_LOCATION)/Scripts/activate
+      which python
+      python -m pip freeze
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "azure*" --service=appconfiguration --inactive
+    displayName: 'Set up Python environment'
+
