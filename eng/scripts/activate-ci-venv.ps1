@@ -41,7 +41,7 @@ if ($IsWindows) {
     $env:PATH = "$venvBinPath;$($env:PATH)"
 }
 else {
-    $env:PATH = "$venvBinPath:$($env:PATH)"
+    $env:PATH = "$venvBinPath`:$($env:PATH)"
 }
 
 Write-Host "Activating virtual environment '$VenvName' at $venvPath via AzDO to the value '$($env:PATH)'"
