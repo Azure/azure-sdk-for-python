@@ -139,16 +139,17 @@ class EventHubConsumer(
     async def _create_handler(
         self, auth: Union["uamqp_JWTTokenAsync", JWTTokenAuthAsync]
     ) -> None:
-            
-        checkpoint_updated = await self._client._checkpoint_store.list_checkpoints(
-            self._client._address.hostname,
-            self._client.eventhub_name,
-            self._client._consumer_group
-        )
-        for i in checkpoint_updated:
-            if i["partition_id"] == self._partition:
-                self._offset = i["offset"]
-                break
+        # TODO: what happens if consumer has event position set and checkpoint store is used?
+        if self._client._checkpoint_store: # this is needed if no checkpoint store will fail
+            checkpoint_updated = await self._client._checkpoint_store.list_checkpoints(
+                self._client._address.hostname,
+                self._client.eventhub_name,
+                self._client._consumer_group
+            )
+            for i in checkpoint_updated:
+                if i["partition_id"] == self._partition:
+                    self._offset = i["offset"]
+                    break
 
         source = self._amqp_transport.create_source(
             self._source,
