@@ -109,6 +109,7 @@ jobs:
           TestPipeline: ${{ parameters.TestPipeline }}
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: linux
+          UseVirtualEnvironment: false
 
     - job: 'Build_Windows'
       timeoutInMinutes: 90
@@ -130,6 +131,7 @@ jobs:
           TestPipeline: ${{ parameters.TestPipeline }}
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: windows
+          UseVirtualEnvironment: false
 
     - job: 'Build_MacOS'
       timeoutInMinutes: 90
@@ -151,6 +153,7 @@ jobs:
           TestPipeline: ${{ parameters.TestPipeline }}
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: mac
+          UseVirtualEnvironment: false
 
     - job: 'CoalesceBuildArtifacts'
       displayName: Combine Built Artifacts

@@ -21,6 +21,7 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchIndexerClientTest(AzureRecordedTestCase):
+    @pytest.mark.skip("fails because connection string of storage is disabled")
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
