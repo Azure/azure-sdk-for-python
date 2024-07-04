@@ -78,16 +78,17 @@ def start_testserver():
         os.environ["LANG"] = "C.UTF-8"
     cmd = "flask run -p {}".format(port)
     if os.name == "nt":  # On windows, subprocess creation works without being in the shell
-        child_process = subprocess.Popen(cmd, env=dict(os.environ))
+        child_process = subprocess.Popen(cmd, env=dict(os.environ), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     else:
         # On linux, have to set shell=True
-        child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid, env=dict(os.environ))
+        child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid, env=dict(os.environ), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     count = 5
     for _ in range(count):
         if not is_port_available(port):
             return child_process
         time.sleep(1)
-    raise ValueError("Didn't start!")
+    stdout, stderr = child_process.communicate()
+    raise ValueError(f"Didn't start! Stdout: {stdout.decode()} Stderr: {stderr.decode()}")
 
 
 def terminate_testserver(process):
