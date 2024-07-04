@@ -65,10 +65,11 @@ def del_outdated_generated_files(readme: str):
         _LOGGER.info(f"delete outdated generated files except _patch.py successfully")
 
     # remove outdated generated samples
-    generated_samples_dir = Path(service_dir) / package_dir / "generated_samples"
-    if generated_samples_dir.exists():
-        shutil.rmtree(generated_samples_dir)
-        _LOGGER.info(f"delete outdated generated samples successfully")
+    for item in ["generated_samples", "generated_tests"]:
+        generated_dir = Path(service_dir) / package_dir / item
+        if generated_dir.exists():
+            shutil.rmtree(generated_dir)
+            _LOGGER.info(f"delete outdated {item} successfully")
 
 
 def check_api_version_in_subfolder(sdk_code_path: str):
