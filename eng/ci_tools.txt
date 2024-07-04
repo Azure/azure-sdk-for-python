@@ -1,5 +1,5 @@
 # requirements leveraged by ci tools
-setuptools==67.6.0; python_version >= '3.5'
+setuptools==70.2.0; python_version >= '3.5'
 virtualenv==20.24.3
 wheel==0.43.0
 packaging==23.1
@@ -12,6 +12,7 @@ pip==24.0
 typing-extensions<=4.6.3
 pyproject-api<1.6
 cibuildwheel==2.16.5
+importlib-metadata==8.0.0
 
 # requirements leveraged for testing
 pytest==7.3.1
