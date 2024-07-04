@@ -1,7 +1,7 @@
 import functools
 import datetime
 
-from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
