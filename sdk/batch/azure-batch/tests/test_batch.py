@@ -1117,13 +1117,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
 
         now = datetime.datetime.now(datetime.timezone.utc)
-        # stamp = mktime(now.timetuple())
-        # currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
 
         response = await async_wrapper(client.create_job(job=job_param, ocpdate=now))
-
-        # response = client.create_job(job=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
-        # response = client.create_job(job=job_param,ocp_date=datetime.datetime.utcnow())
         assert response is None
 
         # Test Update Job

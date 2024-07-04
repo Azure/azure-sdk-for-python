@@ -34,7 +34,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     async def create_task_collection(
         self,
         job_id: str,
-        task_collection: _models.BatchTaskAddCollectionResult or List[_models.BatchTaskCreateContent],
+        task_collection: List[_models.BatchTaskCreateContent],
         concurrencies: Optional[int] = 0,
         *,
         time_out_in_seconds: Optional[int] = None,
