@@ -40,7 +40,7 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
-      Get-Command python
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       python -m pip freeze
