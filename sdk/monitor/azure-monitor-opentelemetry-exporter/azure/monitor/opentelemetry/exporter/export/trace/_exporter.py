@@ -71,7 +71,11 @@ _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
 
-    def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
+    def __init__(self, **kwargs: Any):
+        self._tracer_provider = kwargs.pop("tracer_provider", None)
+        super().__init__(**kwargs)
+
+    def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult:  # pylint: disable=unused-argument
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
@@ -83,8 +87,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         if spans and self._should_collect_otel_resource_metric():
             resource = None
             try:
-                tracer_provider = get_tracer_provider()
-                resource = tracer_provider.resource # type: ignore
+                tracer_provider = self._tracer_provider or get_tracer_provider()
+                resource = tracer_provider.resource  # type: ignore
                 envelopes.append(self._get_otel_resource_envelope(resource))
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)
