@@ -35,16 +35,16 @@ if LOGGING_ENABLED:
 
 ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
-    "chat_completions",
-    chat_completions_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
-    chat_completions_key="00000000000000000000000000000000",
+    "azure_ai_chat_completions",
+    azure_ai_chat_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    azure_ai_chat_key="00000000000000000000000000000000",
 )
 
 ServicePreparerEmbeddings = functools.partial(
     EnvironmentVariableLoader,
-    "embeddings",
-    embeddings_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
-    embeddings_key="00000000000000000000000000000000",
+    "azure_ai_embeddings",
+    azure_ai_embeddings_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    azure_ai_embeddings_key="00000000000000000000000000000000",
 )
 
 
@@ -60,16 +60,55 @@ class ModelClientTestBase(AzureRecordedTestCase):
         r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^[0-9a-fA-F]{32}$|^Sanitized$"
     )
 
+    # A couple of tool definitions to use in the tests
+    TOOL1 = sdk.models.ChatCompletionsFunctionToolDefinition(
+        function=sdk.models.FunctionDefinition(
+            name="my-first-function-name",
+            description="My first function description",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "first_argument": {
+                        "type": "string",
+                        "description": "First argument description",
+                    },
+                    "second_argument": {
+                        "type": "string",
+                        "description": "Second argument description",
+                    },
+                },
+                "required": ["first_argument", "second_argument"],
+            },
+        )
+    )
+
+    TOOL2 = sdk.models.ChatCompletionsFunctionToolDefinition(
+        function=sdk.models.FunctionDefinition(
+            name="my-second-function-name",
+            description="My second function description",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "first_argument": {
+                        "type": "int",
+                        "description": "First argument description",
+                    },
+                },
+                "required": ["first_argument"],
+            },
+        )
+    )
+
     # Methods to load credentials from environment variables
     def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
-        endpoint = kwargs.pop("chat_completions_endpoint")
-        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("chat_completions_key")
+        endpoint = kwargs.pop("azure_ai_chat_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_chat_key")
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
     def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
-        endpoint = kwargs.pop("embeddings_endpoint")
-        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("embeddings_key")
+        endpoint = kwargs.pop("azure_ai_embeddings_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_embeddings_key")
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
@@ -108,8 +147,8 @@ class ModelClientTestBase(AzureRecordedTestCase):
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
     def _create_embeddings_client_with_chat_completions_credentials(self, **kwargs) -> sdk.EmbeddingsClient:
-        endpoint = kwargs.pop("chat_completions_endpoint")
-        key = kwargs.pop("chat_completions_key")
+        endpoint = kwargs.pop("azure_ai_chat_endpoint")
+        key = kwargs.pop("azure_ai_chat_key")
         credential = AzureKeyCredential(key)
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 

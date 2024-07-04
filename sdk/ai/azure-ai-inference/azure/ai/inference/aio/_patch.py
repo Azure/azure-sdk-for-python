@@ -133,7 +133,53 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         self._model_info: Optional[_models.ModelInfo] = None
+        self._model_extras: Optional[Dict[str, Any]] = None
+        self._frequency_penalty: Optional[float] = None
+        self._presence_penalty: Optional[float] = None
+        self._temperature: Optional[float] = None
+        self._top_p: Optional[float] = None
+        self._max_tokens: Optional[int] = None
+        self._response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None
+        self._stop: Optional[List[str]] = None
+        self._tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None
+        self._tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None
+        self._seed: Optional[int] = None
+        self._model: Optional[str] = None
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
+    def with_defaults(
+        self,
+        *,
+        model_extras: Optional[Dict[str, Any]] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        stop: Optional[List[str]] = None,
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = None,
+        seed: Optional[int] = None,
+        model: Optional[str] = None,
+    ) -> "ChatCompletionsClient":
+        self._model_extras = model_extras
+        self._frequency_penalty = frequency_penalty
+        self._presence_penalty = presence_penalty
+        self._temperature = temperature
+        self._top_p = top_p
+        self._max_tokens = max_tokens
+        self._response_format = response_format
+        self._stop = stop
+        self._tools = tools
+        self._tool_choice = tool_choice
+        self._seed = seed
+        self._model = model
+        return self
 
     @overload
     async def complete(
@@ -475,23 +521,26 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             if messages is _Unset:
                 raise TypeError("missing required argument: messages")
             body = {
-                "frequency_penalty": frequency_penalty,
-                "max_tokens": max_tokens,
+                "frequency_penalty": frequency_penalty if frequency_penalty is not None else self._frequency_penalty,
+                "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
                 "messages": messages,
-                "model": model,
-                "presence_penalty": presence_penalty,
-                "response_format": response_format,
-                "seed": seed,
-                "stop": stop,
+                "model": model if model is not None else self._model,
+                "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
+                "response_format": response_format if response_format is not None else self._response_format,
+                "seed": seed if seed is not None else self._seed,
+                "stop": stop if stop is not None else self._stop,
                 "stream": stream,
-                "temperature": temperature,
-                "tool_choice": tool_choice,
-                "tools": tools,
-                "top_p": top_p,
+                "temperature": temperature if temperature is not None else self._temperature,
+                "tool_choice": tool_choice if tool_choice is not None else self._tool_choice,
+                "tools": tools if tools is not None else self._tools,
+                "top_p": top_p if top_p is not None else self._top_p,
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
                 _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+            elif self._model_extras is not None and bool(self._model_extras):
+                body.update(self._model_extras)
+                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access                
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
