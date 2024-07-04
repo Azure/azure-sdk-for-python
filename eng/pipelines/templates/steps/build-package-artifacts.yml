@@ -52,7 +52,7 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - ${{ if parameters.UseVirtualEnvironment }}:
+  - ${{ if eq(parameters.UseVirtualEnvironment, true) }}:
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - pwsh: |
