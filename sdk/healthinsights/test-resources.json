@@ -44,7 +44,7 @@
         "healthApiVersion": "2023-10-01-preview",
         "textAnalyticsName": "[format('textanalytics-{0}', parameters('baseName'))]",
         "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",
-        "textAnalyticsContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "textAnalyticsContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
         "HealthInsightsName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
         "healthInsightsProperties": {
             "customSubDomainName": "[toLower(variables('HealthInsightsName'))]",
@@ -63,16 +63,25 @@
     },
     "resources": [
       {
+          "type": "Microsoft.CognitiveServices/accounts",
           "apiVersion": "[variables('healthApiVersion')]",
           "name": "[variables('HealthInsightsName')]",
           "location": "[parameters('location')]",
-          "type": "Microsoft.CognitiveServices/accounts",
-          "kind": "HealthInsights",
           "sku":{
             "name": "S0"
           },
+          "kind": "HealthInsights",
           "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
           "properties": "[variables('healthInsightsProperties')]"
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[guid(resourceGroup().id)]",
+        "properties": {
+          "roleDefinitionId": "[variables('textAnalyticsContributorRole')]",
+          "principalId": "[parameters('testApplicationOid')]"
+        }
       },
       {
         "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
