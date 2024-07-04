@@ -1,5 +1,12 @@
 # Release History
 
+
+## 1.17.1 (2024-07-09)
+
+### Bugs Fixed
+- Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
+- Project create operations works in general.
+
 ## 1.17.0 (2024-06-18)
 
 ### Bugs Fixed
