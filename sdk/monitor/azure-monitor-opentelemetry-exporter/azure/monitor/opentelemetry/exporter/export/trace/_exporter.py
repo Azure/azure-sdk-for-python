@@ -75,7 +75,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         self._tracer_provider = kwargs.pop("tracer_provider", None)
         super().__init__(**kwargs)
 
-    def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult:  # pylint: disable=unused-argument
+    def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
         """Export span data.
 
         :param spans: Open Telemetry Spans to export.
@@ -88,7 +88,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             resource = None
             try:
                 tracer_provider = self._tracer_provider or get_tracer_provider()
-                resource = tracer_provider.resource  # type: ignore
+                resource = tracer_provider.resource # type: ignore
                 envelopes.append(self._get_otel_resource_envelope(resource))
             except AttributeError as e:
                 _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)
