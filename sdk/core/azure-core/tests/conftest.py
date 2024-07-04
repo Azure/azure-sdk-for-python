@@ -89,6 +89,7 @@ def start_testserver():
         time.sleep(1)
     raise ValueError(f"Didn't start!")
 
+
 def terminate_testserver(process):
     if os.name == "nt":
         process.kill()
