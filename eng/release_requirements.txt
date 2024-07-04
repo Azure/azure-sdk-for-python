@@ -1,3 +1,2 @@
-twine==4.0.2; python_version >= '3.6'
-importlib-metadata==7.2.1
+twine==5.1.1
 tools/azure-sdk-tools
