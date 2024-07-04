@@ -106,9 +106,6 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         if isinstance(to, str):
             to = [to]
 
-        enable_delivery_report = kwargs.pop('enable_delivery_report', False)
-        tag = kwargs.pop('tag', None)
-
         sms_send_options = SmsSendOptions(
             enable_delivery_report=enable_delivery_report,
             tag=tag
