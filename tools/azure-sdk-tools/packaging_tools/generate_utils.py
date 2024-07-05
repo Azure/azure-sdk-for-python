@@ -65,10 +65,11 @@ def del_outdated_generated_files(readme: str):
         _LOGGER.info(f"delete outdated generated files except _patch.py successfully")
 
     # remove outdated generated samples
-    generated_samples_dir = Path(service_dir) / package_dir / "generated_samples"
-    if generated_samples_dir.exists():
-        shutil.rmtree(generated_samples_dir)
-        _LOGGER.info(f"delete outdated generated samples successfully")
+    for item in ["generated_samples", "generated_tests"]:
+        generated_dir = Path(service_dir) / package_dir / item
+        if generated_dir.exists():
+            shutil.rmtree(generated_dir)
+            _LOGGER.info(f"delete outdated {item} successfully")
 
 
 def check_api_version_in_subfolder(sdk_code_path: str):
@@ -435,7 +436,6 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
 
 def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
-    autorest_python = "@autorest/python"
     # call scirpt to generate sdk
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
@@ -448,13 +448,10 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
         _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
 
-    # get version of codegen used in generation
-    autorest_python_version = getoutput(f"npm show {autorest_python} version")
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
         npm_package_verstion = {
             typespec_python: data["dependencies"][typespec_python],
-            autorest_python: autorest_python_version,
         }
 
     return npm_package_verstion
