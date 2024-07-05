@@ -101,13 +101,10 @@ def get_datastore_info(
     )
 
     try:
-        if isinstance(datastore.credentials, NoneCredentialConfiguration):
-            credential = operations._list_secrets(name=name, expirable_secret=False)
-            datastore_info["credential"] = credential.key
-        else:
-            credential = operations._list_secrets(name=name, expirable_secret=True)
-            datastore_info["credential"] = credential.sas_token
-    except HttpResponseError:
+        credential = operations._list_secrets(name=name, expirable_secret=True)
+        if not hasattr(credential, "sas_token"):
+            raise Exception("Credential does not have a SAS token. Falling back on MLClient credential.")
+    except Exception as e:  # pylint: disable=W0718
         datastore_info["credential"] = operations._credential
 
     if datastore.type == DatastoreType.AZURE_BLOB:
