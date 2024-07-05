@@ -96,7 +96,7 @@ class ErrorResponse(_model_base.Model):
 
 
 class Resource(_model_base.Model):
-    """Common properties for all Azure Resource Manager resources.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -126,7 +126,8 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The base proxy resource.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -165,7 +166,7 @@ class ExtendedZone(ProxyResource):
     :vartype properties: ~azure.mgmt.edgezones.models.ExtendedZoneProperties
     """
 
-    properties: Optional["_models.ExtendedZoneProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ExtendedZoneProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -191,7 +192,6 @@ class ExtendedZoneProperties(_model_base.Model):  # pylint: disable=too-many-ins
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: Status of the last operation performed by the subscription on the
      Edge Zone resource. Known values are: "Succeeded", "Failed", "Canceled", "Provisioning",
@@ -363,39 +363,55 @@ class OperationDisplay(_model_base.Model):
 class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.edgezones.models.CreatedByType
-    :ivar created_at: The type of identity that created the resource.
-    :vartype created_at: ~datetime.date
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.edgezones.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.date
+    :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    created_by: Optional[str] = rest_field(name="createdBy")
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="createdByType", visibility=["read"]
-    )
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.date] = rest_field(name="createdAt", visibility=["read"])
-    """The type of identity that created the resource."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="lastModifiedByType", visibility=["read"]
-    )
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.date] = rest_field(name="lastModifiedAt", visibility=["read"])
+    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
     """The timestamp of resource last modification (UTC)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
