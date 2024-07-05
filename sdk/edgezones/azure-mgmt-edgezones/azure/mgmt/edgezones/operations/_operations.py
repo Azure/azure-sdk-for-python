@@ -181,7 +181,6 @@ class Operations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
-        # pylint: disable=line-too-long
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -193,30 +192,16 @@ class Operations:
 
                 # response body for status code(s): 200
                 response == {
-                    "actionType": "str",  # Optional. Extensible enum. Indicates the action type.
-                      "Internal" refers to actions that are for internal only APIs. "Internal"
+                    "actionType": "str",
                     "display": {
-                        "description": "str",  # Optional. The short, localized friendly
-                          description of the operation; suitable for tool tips and detailed views.
-                        "operation": "str",  # Optional. The concise, localized friendly name
-                          for the operation; suitable for dropdowns. E.g. "Create or Update Virtual
-                          Machine", "Restart Virtual Machine".
-                        "provider": "str",  # Optional. The localized friendly form of the
-                          resource provider name, e.g. "Microsoft Monitoring Insights" or "Microsoft
-                          Compute".
-                        "resource": "str"  # Optional. The localized friendly name of the
-                          resource type related to this operation. E.g. "Virtual Machines" or "Job
-                          Schedule Collections".
+                        "description": "str",
+                        "operation": "str",
+                        "provider": "str",
+                        "resource": "str"
                     },
-                    "isDataAction": bool,  # Optional. Whether the operation applies to
-                      data-plane. This is "true" for data-plane operations and "false" for Azure
-                      Resource Manager/control-plane operations.
-                    "name": "str",  # Optional. The name of the operation, as per Resource-Based
-                      Access Control (RBAC). Examples: "Microsoft.Compute/virtualMachines/write",
-                      "Microsoft.Compute/virtualMachines/capture/action".
-                    "origin": "str"  # Optional. The intended executor of the operation; as in
-                      Resource Based Access Control (RBAC) and audit logs UX. Default value is
-                      "user,system". Known values are: "user", "system", and "user,system".
+                    "isDataAction": bool,
+                    "name": "str",
+                    "origin": "str"
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -276,8 +261,6 @@ class Operations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -306,7 +289,6 @@ class ExtendedZonesOperations:
 
     @distributed_trace
     def get(self, extended_zone_name: str, **kwargs: Any) -> _models.ExtendedZone:
-        # pylint: disable=line-too-long
         """Gets an Azure Extended Zone for a subscription.
 
         :param extended_zone_name: The name of the ExtendedZone. Required.
@@ -320,54 +302,30 @@ class ExtendedZonesOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
-                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-                    "name": "str",  # Optional. The name of the resource.
+                    "id": "str",
+                    "name": "str",
                     "properties": {
-                        "displayName": "str",  # Display name of the Azure Extended Zone.
-                          Required.
-                        "geography": "str",  # Geography of the Azure Extended Zone.
-                          Required.
-                        "geographyGroup": "str",  # The Geography Group of the Azure Extended
-                          Zone. Required.
-                        "homeLocation": "str",  # The Home Location of the Azure Extended
-                          Zone. Required.
-                        "latitude": "str",  # The Latitude of the Azure Extended Zone.
-                          Required.
-                        "longitude": "str",  # The Longitude of the Azure Extended Zone.
-                          Required.
-                        "regionCategory": "str",  # Category of region for the Azure Extended
-                          Zone. Required.
-                        "regionType": "str",  # Type of region for the Azure Extended Zone.
-                          Required.
-                        "regionalDisplayName": "str",  # Regional display name of the Azure
-                          Extended Zone. Required.
-                        "provisioningState": "str",  # Optional. Status of the last operation
-                          performed by the subscription on the Edge Zone resource. Known values are:
-                          "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
-                          and "Accepted".
-                        "registrationState": "str"  # Optional. Indicates the Azure Extended
-                          Zone registration"u2019s approval status. Known values are: "NotRegistered",
-                          "PendingRegister", "Registered", and "PendingUnregister".
+                        "displayName": "str",
+                        "geography": "str",
+                        "geographyGroup": "str",
+                        "homeLocation": "str",
+                        "latitude": "str",
+                        "longitude": "str",
+                        "regionCategory": "str",
+                        "regionType": "str",
+                        "regionalDisplayName": "str",
+                        "provisioningState": "str",
+                        "registrationState": "str"
                     },
                     "systemData": {
-                        "createdAt": "2020-02-20",  # Optional. The type of identity that
-                          created the resource.
-                        "createdBy": "str",  # Optional. The identity that created the
-                          resource.
-                        "createdByType": "str",  # Optional. The type of identity that
-                          created the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
-                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
-                          resource last modification (UTC).
-                        "lastModifiedBy": "str",  # Optional. The identity that last modified
-                          the resource.
-                        "lastModifiedByType": "str"  # Optional. The type of identity that
-                          last modified the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
                     },
-                    "type": "str"  # Optional. The type of the resource. E.g.
-                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                    "type": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -418,7 +376,6 @@ class ExtendedZonesOperations:
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.ExtendedZone"]:
-        # pylint: disable=line-too-long
         """Lists the Azure Extended Zones available to a subscription.
 
         :return: An iterator like instance of ExtendedZone
@@ -430,54 +387,30 @@ class ExtendedZonesOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
-                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-                    "name": "str",  # Optional. The name of the resource.
+                    "id": "str",
+                    "name": "str",
                     "properties": {
-                        "displayName": "str",  # Display name of the Azure Extended Zone.
-                          Required.
-                        "geography": "str",  # Geography of the Azure Extended Zone.
-                          Required.
-                        "geographyGroup": "str",  # The Geography Group of the Azure Extended
-                          Zone. Required.
-                        "homeLocation": "str",  # The Home Location of the Azure Extended
-                          Zone. Required.
-                        "latitude": "str",  # The Latitude of the Azure Extended Zone.
-                          Required.
-                        "longitude": "str",  # The Longitude of the Azure Extended Zone.
-                          Required.
-                        "regionCategory": "str",  # Category of region for the Azure Extended
-                          Zone. Required.
-                        "regionType": "str",  # Type of region for the Azure Extended Zone.
-                          Required.
-                        "regionalDisplayName": "str",  # Regional display name of the Azure
-                          Extended Zone. Required.
-                        "provisioningState": "str",  # Optional. Status of the last operation
-                          performed by the subscription on the Edge Zone resource. Known values are:
-                          "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
-                          and "Accepted".
-                        "registrationState": "str"  # Optional. Indicates the Azure Extended
-                          Zone registration"u2019s approval status. Known values are: "NotRegistered",
-                          "PendingRegister", "Registered", and "PendingUnregister".
+                        "displayName": "str",
+                        "geography": "str",
+                        "geographyGroup": "str",
+                        "homeLocation": "str",
+                        "latitude": "str",
+                        "longitude": "str",
+                        "regionCategory": "str",
+                        "regionType": "str",
+                        "regionalDisplayName": "str",
+                        "provisioningState": "str",
+                        "registrationState": "str"
                     },
                     "systemData": {
-                        "createdAt": "2020-02-20",  # Optional. The type of identity that
-                          created the resource.
-                        "createdBy": "str",  # Optional. The identity that created the
-                          resource.
-                        "createdByType": "str",  # Optional. The type of identity that
-                          created the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
-                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
-                          resource last modification (UTC).
-                        "lastModifiedBy": "str",  # Optional. The identity that last modified
-                          the resource.
-                        "lastModifiedByType": "str"  # Optional. The type of identity that
-                          last modified the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
                     },
-                    "type": "str"  # Optional. The type of the resource. E.g.
-                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                    "type": "str"
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -538,8 +471,6 @@ class ExtendedZonesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -550,7 +481,6 @@ class ExtendedZonesOperations:
 
     @distributed_trace
     def register(self, extended_zone_name: str, **kwargs: Any) -> _models.ExtendedZone:
-        # pylint: disable=line-too-long
         """Registers a subscription for an Extended Zone.
 
         :param extended_zone_name: The name of the ExtendedZone. Required.
@@ -564,54 +494,30 @@ class ExtendedZonesOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
-                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-                    "name": "str",  # Optional. The name of the resource.
+                    "id": "str",
+                    "name": "str",
                     "properties": {
-                        "displayName": "str",  # Display name of the Azure Extended Zone.
-                          Required.
-                        "geography": "str",  # Geography of the Azure Extended Zone.
-                          Required.
-                        "geographyGroup": "str",  # The Geography Group of the Azure Extended
-                          Zone. Required.
-                        "homeLocation": "str",  # The Home Location of the Azure Extended
-                          Zone. Required.
-                        "latitude": "str",  # The Latitude of the Azure Extended Zone.
-                          Required.
-                        "longitude": "str",  # The Longitude of the Azure Extended Zone.
-                          Required.
-                        "regionCategory": "str",  # Category of region for the Azure Extended
-                          Zone. Required.
-                        "regionType": "str",  # Type of region for the Azure Extended Zone.
-                          Required.
-                        "regionalDisplayName": "str",  # Regional display name of the Azure
-                          Extended Zone. Required.
-                        "provisioningState": "str",  # Optional. Status of the last operation
-                          performed by the subscription on the Edge Zone resource. Known values are:
-                          "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
-                          and "Accepted".
-                        "registrationState": "str"  # Optional. Indicates the Azure Extended
-                          Zone registration"u2019s approval status. Known values are: "NotRegistered",
-                          "PendingRegister", "Registered", and "PendingUnregister".
+                        "displayName": "str",
+                        "geography": "str",
+                        "geographyGroup": "str",
+                        "homeLocation": "str",
+                        "latitude": "str",
+                        "longitude": "str",
+                        "regionCategory": "str",
+                        "regionType": "str",
+                        "regionalDisplayName": "str",
+                        "provisioningState": "str",
+                        "registrationState": "str"
                     },
                     "systemData": {
-                        "createdAt": "2020-02-20",  # Optional. The type of identity that
-                          created the resource.
-                        "createdBy": "str",  # Optional. The identity that created the
-                          resource.
-                        "createdByType": "str",  # Optional. The type of identity that
-                          created the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
-                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
-                          resource last modification (UTC).
-                        "lastModifiedBy": "str",  # Optional. The identity that last modified
-                          the resource.
-                        "lastModifiedByType": "str"  # Optional. The type of identity that
-                          last modified the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
                     },
-                    "type": "str"  # Optional. The type of the resource. E.g.
-                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                    "type": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -662,7 +568,6 @@ class ExtendedZonesOperations:
 
     @distributed_trace
     def unregister(self, extended_zone_name: str, **kwargs: Any) -> _models.ExtendedZone:
-        # pylint: disable=line-too-long
         """Unregisters a subscription for an Extended Zone.
 
         :param extended_zone_name: The name of the ExtendedZone. Required.
@@ -676,54 +581,30 @@ class ExtendedZonesOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # Optional. Fully qualified resource ID for the resource. Ex -
-                      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-                    "name": "str",  # Optional. The name of the resource.
+                    "id": "str",
+                    "name": "str",
                     "properties": {
-                        "displayName": "str",  # Display name of the Azure Extended Zone.
-                          Required.
-                        "geography": "str",  # Geography of the Azure Extended Zone.
-                          Required.
-                        "geographyGroup": "str",  # The Geography Group of the Azure Extended
-                          Zone. Required.
-                        "homeLocation": "str",  # The Home Location of the Azure Extended
-                          Zone. Required.
-                        "latitude": "str",  # The Latitude of the Azure Extended Zone.
-                          Required.
-                        "longitude": "str",  # The Longitude of the Azure Extended Zone.
-                          Required.
-                        "regionCategory": "str",  # Category of region for the Azure Extended
-                          Zone. Required.
-                        "regionType": "str",  # Type of region for the Azure Extended Zone.
-                          Required.
-                        "regionalDisplayName": "str",  # Regional display name of the Azure
-                          Extended Zone. Required.
-                        "provisioningState": "str",  # Optional. Status of the last operation
-                          performed by the subscription on the Edge Zone resource. Known values are:
-                          "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
-                          and "Accepted".
-                        "registrationState": "str"  # Optional. Indicates the Azure Extended
-                          Zone registration"u2019s approval status. Known values are: "NotRegistered",
-                          "PendingRegister", "Registered", and "PendingUnregister".
+                        "displayName": "str",
+                        "geography": "str",
+                        "geographyGroup": "str",
+                        "homeLocation": "str",
+                        "latitude": "str",
+                        "longitude": "str",
+                        "regionCategory": "str",
+                        "regionType": "str",
+                        "regionalDisplayName": "str",
+                        "provisioningState": "str",
+                        "registrationState": "str"
                     },
                     "systemData": {
-                        "createdAt": "2020-02-20",  # Optional. The type of identity that
-                          created the resource.
-                        "createdBy": "str",  # Optional. The identity that created the
-                          resource.
-                        "createdByType": "str",  # Optional. The type of identity that
-                          created the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
-                        "lastModifiedAt": "2020-02-20",  # Optional. The timestamp of
-                          resource last modification (UTC).
-                        "lastModifiedBy": "str",  # Optional. The identity that last modified
-                          the resource.
-                        "lastModifiedByType": "str"  # Optional. The type of identity that
-                          last modified the resource. Known values are: "User", "Application",
-                          "ManagedIdentity", and "Key".
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str"
                     },
-                    "type": "str"  # Optional. The type of the resource. E.g.
-                      "Microsoft.Compute/virtualMachines" or "Microsoft.Storage/storageAccounts".
+                    "type": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
