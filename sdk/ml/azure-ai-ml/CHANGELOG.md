@@ -1,10 +1,5 @@
 # Release History
 
-## 1.19.0 (unreleased)
-
-### Bugs Fixed
-- Workspace update no longer broken for older workspaces due to deprecated tags.
-
 ## 1.18.0 (2024-07-09)
 
 ### Features Added
@@ -17,7 +12,6 @@
 - WorkspaceConnection tags are now listed as deprecated, and the erroneously-deprecated metadata field has been un-deprecated and added as a initialization field. These two fields still point to the same underlying object property, and actual API usage of this value is unchanged.
 - Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
 - Project create operations works in general.
-
 
 ### Other Changes
 - WorkspaceConnections are officially GA'd and no longer experimental. But its much newer subclasses remain experimental.
