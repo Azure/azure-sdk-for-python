@@ -17662,6 +17662,31 @@ class IdleShutdownSetting(msrest.serialization.Model):
         self.idle_time_before_shutdown = idle_time_before_shutdown
 
 
+class SsoSetting(msrest.serialization.Model):
+    """Single sign-on settings of the compute instance.
+
+    :ivar enable_sso: The value of sso settings.
+    :vartype enable_sso: bool
+    """
+
+    _attribute_map = {
+        'enable_sso': {'key': 'enableSSO', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable_sso: Optional[bool] = True,
+        **kwargs
+    ):
+        """
+        :keyword enable_sso: The value of sso settings.
+        :paramtype enable_sso: bool
+        """
+        super(SsoSetting, self).__init__(**kwargs)
+        self.enable_sso = enable_sso
+
+
 class Image(msrest.serialization.Model):
     """Image.
 
