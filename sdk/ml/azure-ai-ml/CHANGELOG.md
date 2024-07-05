@@ -1,5 +1,10 @@
 # Release History
 
+## 1.19.0 (unreleased)
+
+### Bugs Fixed
+- Workspace update no longer broken for older workspaces due to deprecated tags.
+
 ## 1.18.0 (2024-07-09)
 
 ### Features Added
