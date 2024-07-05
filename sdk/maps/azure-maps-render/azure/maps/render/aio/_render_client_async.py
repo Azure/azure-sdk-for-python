@@ -5,26 +5,16 @@
 # ---------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import AsyncIterator, Any, Union, Tuple, List
+from typing import Any, Union, List, MutableMapping
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+import datetime
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
 
 from ._base_client_async import AsyncMapsRenderClientBase
-from .._generated.models import Copyright
-
-from ..models import (
-    LatLon,
-    BoundingBox,
-    TilesetID,
-    MapTileset,
-    MapAttribution,
-    CopyrightCaption,
-    RasterTileFormat,
-    ImagePushpinStyle,
-    ImagePathStyle
-)
 
 
 # By default, use the latest supported API version

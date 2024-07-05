@@ -7,7 +7,7 @@ from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.maps.render.aio import MapsRenderClient
+from ._client import MapsRenderClient
 from .._version import API_VERSION
 
 def _authentication_policy(credential):

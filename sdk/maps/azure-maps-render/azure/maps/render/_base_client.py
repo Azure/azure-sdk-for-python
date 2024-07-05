@@ -6,7 +6,7 @@
 from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.maps.render import MapsRenderClient
+from ._client import MapsRenderClient
 
 from ._version import API_VERSION
 

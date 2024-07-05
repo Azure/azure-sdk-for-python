@@ -4,25 +4,14 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING, overload, Union, Any, List, Optional, Iterator, Tuple
+from typing import Union, Any, List, Optional, Iterator, MutableMapping
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.polling import LROPoller
 from ._base_client import MapsRenderClientBase
-from ._generated.models import Copyright
+import datetime
 
-from .models import (
-    LatLon,
-    BoundingBox,
-    TilesetID,
-    MapTileset,
-    CopyrightCaption,
-    RasterTileFormat,
-    MapAttribution,
-    ImagePushpinStyle,
-    ImagePathStyle
-)
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
 
 class MapsRenderClient(MapsRenderClientBase):
     """Azure Maps Render REST APIs.
