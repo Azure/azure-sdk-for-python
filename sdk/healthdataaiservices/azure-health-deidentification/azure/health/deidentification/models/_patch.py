@@ -8,6 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import TYPE_CHECKING, List, Optional, Union
 from ._models import DeidentificationContent as DeidentificationContentGenerated
+from ._enums import StringIndexType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -43,7 +44,7 @@ class DeidentificationContent(DeidentificationContentGenerated):
             input_text=input_text,
             operation=operation,
             data_type=data_type,
-            string_index_type=_models.StringIndexType.UNICODE_CODE_POINT,
+            string_index_type=StringIndexType.UNICODE_CODE_POINT,
             redaction_format=redaction_format,
         )
 

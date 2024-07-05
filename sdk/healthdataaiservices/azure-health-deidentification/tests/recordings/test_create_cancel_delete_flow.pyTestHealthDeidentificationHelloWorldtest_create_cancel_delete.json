@@ -1,0 +1,517 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "769",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": {
+        "sourceLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net/containername?sp=racwdl&st=Sanitized&se=Sanitized&skoid=e5278efd-93fc-41e8-9769-f84170bb73a8&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-07-05T20:22:34Z&ske=2024-07-06T04:22:34Z&sks=b&skv=2022-11-02&spr=https&sv=Sanitized&sr=c&sig=Sanitized",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net/containername?sp=racwdl&st=Sanitized&se=Sanitized&skoid=e5278efd-93fc-41e8-9769-f84170bb73a8&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-07-05T20:22:34Z&ske=2024-07-06T04:22:34Z&sks=b&skv=2022-11-02&spr=https&sv=Sanitized&sr=c&sig=Sanitized",
+          "prefix": "_output"
+        },
+        "operation": "Surrogate",
+        "dataType": "Plaintext"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:29 GMT",
+        "operation-id": "test_create_cancel_delete5a5840df906",
+        "operation-location": "https://deid-service-endpoint.com/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "b035e294-d261-4313-a015-7fb90d76b308"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:29 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "1b08766c-dfea-4d3c-809e-14acb54a6ad9"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:30 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "1e5cc354-f284-4496-bf06-6948133c8d07"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:32 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "2",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "3de3f158-5768-4c9d-961f-6c8e5e668707"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:34 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "2",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "34503710-1705-4761-a030-af74fe6841cf"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:36 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "3",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "fb673b4c-e5e9-4ec0-ba6e-8b08bc6f3c4f"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:39 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "3",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "243d0c9b-3b25-47c6-9fb3-3b13b1e5a26a"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:41 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "3",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "829dfbf7-d563-454c-8019-67cff1fe1b86"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "lastUpdatedAt": "2024-07-05T20:49:29.77681Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:43 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "4a4367b6-3115-4137-94e4-04500d280303"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "Running",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "startedAt": "2024-07-05T20:49:43.2576081Z",
+        "lastUpdatedAt": "2024-07-05T20:49:43.5162509Z",
+        "summary": {
+          "successful": 0,
+          "failed": 0,
+          "canceled": 0,
+          "total": 2,
+          "bytesProcessed": 0
+        },
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906:cancel?api-version=2024-01-16-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:43 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "0dfb51ab-c115-4975-9d23-3f25deadc06b"
+      },
+      "ResponseBody": {
+        "name": "test_create_cancel_delete5a5840df906",
+        "status": "Canceled",
+        "createdAt": "2024-07-05T20:49:29.7768099Z",
+        "startedAt": "2024-07-05T20:49:43.2576081Z",
+        "lastUpdatedAt": "2024-07-05T20:49:44.6827583Z",
+        "summary": {
+          "successful": 0,
+          "failed": 0,
+          "canceled": 0,
+          "total": 2,
+          "bytesProcessed": 0
+        },
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Date": "Fri, 05 Jul 2024 20:49:44 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "30926071-178b-4dda-bfdd-2e7f4da169ff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Cache-Control": "no-store, no-cache",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:49:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "b249264e-4642-4c48-ba1f-0c47dbb103e0",
+        "x-ms-error-code": "JobNotFound"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "JobNotFound",
+          "message": "Job not found."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

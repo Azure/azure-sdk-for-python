@@ -1,0 +1,742 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish1c1b3194e?api-version=2024-01-16-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "763",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": {
+        "sourceLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net/containername?sp=racwdl&st=Sanitized&se=Sanitized&skoid=e5278efd-93fc-41e8-9769-f84170bb73a8&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-07-05T20:22:34Z&ske=2024-07-06T04:22:34Z&sks=b&skv=2022-11-02&spr=https&sv=Sanitized&sr=c&sig=Sanitized",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net/containername?sp=racwdl&st=Sanitized&se=Sanitized&skoid=e5278efd-93fc-41e8-9769-f84170bb73a8&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-07-05T20:22:34Z&ske=2024-07-06T04:22:34Z&sks=b&skv=2022-11-02&spr=https&sv=Sanitized&sr=c&sig=Sanitized",
+          "prefix": "_output"
+        },
+        "operation": "Tag",
+        "dataType": "Plaintext"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:50:39 GMT",
+        "operation-id": "test_create_job_wait_finish1c1b3194e",
+        "operation-location": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish1c1b3194e?api-version=2024-01-16-preview",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "1b0372e4-b258-4f5c-81ed-ab0264d0abec"
+      },
+      "ResponseBody": {
+        "name": "test_create_job_wait_finish1c1b3194e",
+        "status": "NotStarted",
+        "createdAt": "2024-07-05T20:50:40.03739Z",
+        "lastUpdatedAt": "2024-07-05T20:50:40.03739Z",
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Tag"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized/jobs?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:50:39 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "53c130b0-60a4-4925-acc7-8d348f802554"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "name": "test_create_job_wait_finish1c1b3194e",
+            "status": "NotStarted",
+            "createdAt": "2024-07-05T20:50:40.03739Z",
+            "lastUpdatedAt": "2024-07-05T20:50:40.03739Z",
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Tag"
+          },
+          {
+            "name": "test_create_job_wait_finish359940744",
+            "status": "Succeeded",
+            "createdAt": "2024-07-05T20:49:51.1423218Z",
+            "startedAt": "2024-07-05T20:50:05.6251562Z",
+            "lastUpdatedAt": "2024-07-05T20:50:33.7859623Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job_wait_finish35994f06b",
+            "status": "Succeeded",
+            "createdAt": "2024-07-05T20:43:04.4025465Z",
+            "startedAt": "2024-07-05T20:43:14.0012422Z",
+            "lastUpdatedAt": "2024-07-05T20:43:41.8768218Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_exception_throws3d683c534f77",
+            "status": "Failed",
+            "error": {
+              "code": "JobValidationError",
+              "message": "Unable to access the Source or Target Storage."
+            },
+            "createdAt": "2024-07-05T20:27:07.4446226Z",
+            "startedAt": "2024-07-05T20:27:22.0177315Z",
+            "lastUpdatedAt": "2024-07-05T20:27:23.9013132Z",
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job_wait_finish1c1b348fe",
+            "status": "Succeeded",
+            "createdAt": "2024-07-05T20:27:01.7486475Z",
+            "startedAt": "2024-07-05T20:27:07.8618931Z",
+            "lastUpdatedAt": "2024-07-05T20:27:23.0262931Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Tag"
+          },
+          {
+            "name": "test_create_job_wait_finish359943610",
+            "status": "Succeeded",
+            "createdAt": "2024-07-05T20:25:51.9050482Z",
+            "startedAt": "2024-07-05T20:26:14.9967193Z",
+            "lastUpdatedAt": "2024-07-05T20:26:50.0099365Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_exception_throws3d683c530d7b",
+            "status": "Failed",
+            "error": {
+              "code": "JobValidationError",
+              "message": "Unable to access the Source or Target Storage."
+            },
+            "createdAt": "2024-07-03T23:18:55.4221629Z",
+            "startedAt": "2024-07-03T23:19:14.8745117Z",
+            "lastUpdatedAt": "2024-07-03T23:19:15.2768914Z",
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job_wait_finish1c1b3a478",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T23:18:49.3469518Z",
+            "startedAt": "2024-07-03T23:18:59.2671109Z",
+            "lastUpdatedAt": "2024-07-03T23:19:15.0577654Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Tag"
+          },
+          {
+            "name": "test_create_job_wait_finish35994ba3f",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T23:17:14.1252595Z",
+            "startedAt": "2024-07-03T23:17:33.5709825Z",
+            "lastUpdatedAt": "2024-07-03T23:18:40.1577216Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_exception_throws3d683c536a9c",
+            "status": "Failed",
+            "error": {
+              "code": "JobValidationError",
+              "message": "Unable to access the Source or Target Storage."
+            },
+            "createdAt": "2024-07-03T23:06:04.9174502Z",
+            "startedAt": "2024-07-03T23:06:17.6789671Z",
+            "lastUpdatedAt": "2024-07-03T23:06:17.9722796Z",
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job_wait_finish1c1b308c3",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T23:05:58.334385Z",
+            "startedAt": "2024-07-03T23:06:04.8471281Z",
+            "lastUpdatedAt": "2024-07-03T23:06:17.6096314Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Tag"
+          },
+          {
+            "name": "test_create_job_wait_finish35994aa8d",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T23:05:14.0458566Z",
+            "startedAt": "2024-07-03T23:05:20.7989014Z",
+            "lastUpdatedAt": "2024-07-03T23:05:52.1445685Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job_wait_finish1c1b358e0",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T21:26:05.8442206Z",
+            "startedAt": "2024-07-03T21:26:21.1471562Z",
+            "lastUpdatedAt": "2024-07-03T21:27:19.695737Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Tag"
+          },
+          {
+            "name": "test_create_job_wait_finish35994d429",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T21:17:57.4418148Z",
+            "startedAt": "2024-07-03T21:18:09.8941543Z",
+            "lastUpdatedAt": "2024-07-03T21:19:06.2553081Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job_wait_finish359944acc",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T21:16:02.1757359Z",
+            "startedAt": "2024-07-03T21:16:16.1260306Z",
+            "lastUpdatedAt": "2024-07-03T21:16:43.5621036Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_exception_throws3d683c5398",
+            "status": "Failed",
+            "error": {
+              "code": "JobValidationError",
+              "message": "Unable to access the Source or Target Storage."
+            },
+            "createdAt": "2024-07-03T21:07:57.343499Z",
+            "startedAt": "2024-07-03T21:08:06.2267284Z",
+            "lastUpdatedAt": "2024-07-03T21:08:06.680561Z",
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_exception_throws3d683c53147",
+            "status": "Failed",
+            "error": {
+              "code": "JobValidationError",
+              "message": "Unable to access the Source or Target Storage."
+            },
+            "createdAt": "2024-07-03T21:04:48.61857Z",
+            "startedAt": "2024-07-03T21:04:54.2092625Z",
+            "lastUpdatedAt": "2024-07-03T21:04:54.5989662Z",
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_exception_throws3d683c53148",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T21:02:37.0423475Z",
+            "startedAt": "2024-07-03T21:03:27.5620796Z",
+            "lastUpdatedAt": "2024-07-03T21:04:15.0498171Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_cancel_delete5a5840d6197",
+            "status": "Canceled",
+            "createdAt": "2024-07-03T20:54:55.7155319Z",
+            "startedAt": "2024-07-03T20:55:16.6237411Z",
+            "lastUpdatedAt": "2024-07-03T20:55:19.4853701Z",
+            "summary": {
+              "successful": 0,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 0
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_cancel_delete5a5840d6146",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T20:53:57.8636626Z",
+            "startedAt": "2024-07-03T20:54:15.1520939Z",
+            "lastUpdatedAt": "2024-07-03T20:54:46.5370604Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_cancel_delete5a5840d6693",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T20:53:36.7700895Z",
+            "startedAt": "2024-07-03T20:53:48.0398608Z",
+            "lastUpdatedAt": "2024-07-03T20:54:12.7707608Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job2248363828331",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T20:40:02.746507Z",
+            "startedAt": "2024-07-03T20:40:23.7345654Z",
+            "lastUpdatedAt": "2024-07-03T20:40:51.0524095Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job2248363870768",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T20:38:29.5190889Z",
+            "startedAt": "2024-07-03T20:38:44.1071622Z",
+            "lastUpdatedAt": "2024-07-03T20:39:26.8724414Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job2248363831018",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T20:36:22.5981598Z",
+            "startedAt": "2024-07-03T20:36:45.8582135Z",
+            "lastUpdatedAt": "2024-07-03T20:37:11.1057228Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          },
+          {
+            "name": "test_create_job2248363816359",
+            "status": "Succeeded",
+            "createdAt": "2024-07-03T20:34:08.0377726Z",
+            "startedAt": "2024-07-03T20:34:23.887996Z",
+            "lastUpdatedAt": "2024-07-03T20:35:15.8535532Z",
+            "summary": {
+              "successful": 2,
+              "failed": 0,
+              "canceled": 0,
+              "total": 2,
+              "bytesProcessed": 814
+            },
+            "sourceLocation": {
+              "extensions": [
+                "*"
+              ],
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "example_patient_1"
+            },
+            "targetLocation": {
+              "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+              "prefix": "_output"
+            },
+            "dataType": "Plaintext",
+            "operation": "Surrogate"
+          }
+        ],
+        "nextLink": "https://deid-service-endpoint.com:443/jobs?api-version=2024-01-16-preview&continuationToken=W3siY29tcG9zaXRlVG9rZW4iOnsidG9rZW4iOiIrUklEOn5kMFFnQUp6aTQtcEdBQUFBQUFBQUFBPT0jUlQ6MSNUUkM6MjUjUlREOkhQSkptS1QxdVpxbEJCbkd5TlNPQk1IWjBWdXhFQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6OCNGUEM6QWdFQUFBQWlBQkRBcXFvRVFWQkFRRUJBUUFBQkFSRUFBUVJVUUVCQVFBRUJCUVFVUUFBRUJBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiJGRiJ9fSwib3JkZXJCeUl0ZW1zIjpbeyJpdGVtIjoxNzIwMDM4OTE2fV0sInJpZCI6ImQwUWdBSnppNC1wR0FBQUFBQUFBQUE9PSIsInNraXBDb3VudCI6MCwiZmlsdGVyIjoidHJ1ZSJ9XQ%3d%3d"
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,38 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized/deid?api-version=2024-01-16-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "136",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": {
+        "inputText": "Hello, my name is John Smith.",
+        "operation": "Surrogate",
+        "dataType": "Plaintext",
+        "stringIndexType": "UnicodeCodePoint"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 20:51:23 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "347f0a5d-5e55-4578-a401-51f2b33edf61"
+      },
+      "ResponseBody": {
+        "outputText": "Hello, my name is Thanh Joaquin."
+      }
+    }
+  ],
+  "Variables": {}
+}

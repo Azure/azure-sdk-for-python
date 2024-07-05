@@ -14,13 +14,13 @@ from devtools_testutils import (
 RealtimeEnv = functools.partial(
     EnvironmentVariableLoader,
     "healthdataaiservices",
-    healthdataaiservices_deid_service_endpoint="https://deid-service-endpoint.com",
+    healthdataaiservices_deid_service_endpoint="deid-service-endpoint.com",
 )
 
 BatchEnv = functools.partial(
     EnvironmentVariableLoader,
     "healthdataaiservices",
-    healthdataaiservices_deid_service_endpoint="https://deid-service-endpoint.com",
+    healthdataaiservices_deid_service_endpoint="deid-service-endpoint.com",
     healthdataaiservices_storage_account_name="blobstorageaccount",
     healthdataaiservices_storage_container_name="containername",
     healthdataaiservices_sas_uri="TESTINGONLY REMOVE",
