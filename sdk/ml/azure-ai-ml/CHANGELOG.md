@@ -18,6 +18,7 @@
 - Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
 - Project create operations works in general.
 
+
 ### Other Changes
 - WorkspaceConnections are officially GA'd and no longer experimental. But its much newer subclasses remain experimental.
 
