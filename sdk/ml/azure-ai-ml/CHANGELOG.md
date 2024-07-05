@@ -10,6 +10,7 @@
 ### Features Added
 
 - Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
+- Support `update_sso_settings` in `ComputeOperations`, to enable or disable single sign-on settings of a compute instance.
 
 ### Bugs Fixed
 - InputTypes exported in constants module
