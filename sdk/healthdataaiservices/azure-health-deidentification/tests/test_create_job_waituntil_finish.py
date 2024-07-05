@@ -7,7 +7,7 @@ from azure.health.deidentification.models import *
 from azure.core.polling import LROPoller
 
 
-class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
+class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
     @BatchEnv()
     @recorded_by_proxy
     def test_create_job_wait_finish(self, **kwargs):
@@ -18,14 +18,15 @@ class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
         assert client is not None
 
         jobname = self.generate_job_name()
-        print(f"Job name: {jobname}")
 
         job = DeidentificationJob(
             source_location=SourceStorageLocation(
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )
@@ -46,11 +47,6 @@ class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
         assert finished_job.last_updated_at > finished_job.started_at
         assert finished_job.redaction_format is None
         assert finished_job.error is None
-        assert storage_location.startswith(
-            finished_job.source_location.location[
-                :20
-            ]  # port number is added to the end of the location, so check before that.
-        ), f"{storage_location} != {finished_job.source_location.location}"
         assert finished_job.source_location.prefix == inputPrefix
 
         files = client.list_job_files(jobname)

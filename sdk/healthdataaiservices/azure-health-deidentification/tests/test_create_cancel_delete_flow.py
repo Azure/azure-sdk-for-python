@@ -1,5 +1,4 @@
 from datetime import time
-from time import sleep
 from azure.core.exceptions import ResourceNotFoundError
 
 import pytest
@@ -11,7 +10,7 @@ from devtools_testutils import (
 from azure.health.deidentification.models import *
 
 
-class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
+class TestHealthDeidentificationCreateCancelDelete(DeidBaseTestCase):
     @BatchEnv()
     @recorded_by_proxy
     def test_create_cancel_delete(self, **kwargs):
@@ -21,14 +20,15 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         assert client is not None
 
         jobname = self.generate_job_name()
-        print(f"Job name: {jobname}")
 
         job = DeidentificationJob(
             source_location=SourceStorageLocation(
                 location=storage_location,
                 prefix="example_patient_1",
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )
@@ -37,7 +37,7 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
 
         job = client.get_job(jobname)
         while job.status == JobStatus.NOT_STARTED:
-            sleep(2)
+            self.sleep(2)
             job = client.get_job(jobname)
 
         assert job.error is None, "Job should not have an error"

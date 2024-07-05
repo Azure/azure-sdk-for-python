@@ -1,5 +1,6 @@
 import functools
 import inspect
+import os
 import random
 import datetime
 import uuid
@@ -23,7 +24,7 @@ BatchEnv = functools.partial(
     healthdataaiservices_deid_service_endpoint="deid-service-endpoint.com",
     healthdataaiservices_storage_account_name="blobstorageaccount",
     healthdataaiservices_storage_container_name="containername",
-    healthdataaiservices_sas_uri="TESTINGONLY REMOVE",
+    healthdataaiservices_sas_uri="https://blobstorageaccount.blob.core.windows.net:443/containername",  # Rely on SASURI sanitizer instead
 )
 
 
@@ -44,12 +45,9 @@ class DeidBaseTestCase(AzureRecordedTestCase):
 
     def generate_job_name(self) -> str:
         caller_function_name = inspect.stack()[1].function
-        jobname = self.create_random_name(caller_function_name)
-        jobname = jobname[:32]
-        if self.is_live:
-            jobname += str(uuid.uuid4())[:4]
-
-        return jobname
+        uniquifier = os.environ.get("HEALTHDATAAISERVICES_UNIQUIFIER", "")
+        job_name = f"{caller_function_name}-{uniquifier}"
+        return job_name
 
     def get_storage_location(self, kwargs):
         storage_name: str = kwargs.pop("healthdataaiservices_storage_account_name")

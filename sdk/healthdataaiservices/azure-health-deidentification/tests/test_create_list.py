@@ -7,10 +7,10 @@ from azure.health.deidentification.models import *
 from azure.core.polling import LROPoller
 
 
-class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
+class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
     @BatchEnv()
     @recorded_by_proxy
-    def test_create_job_wait_finish(self, **kwargs):
+    def test_create_list(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         inputPrefix = "example_patient_1"
         storage_location: str = self.get_storage_location(kwargs)
@@ -18,14 +18,15 @@ class TestHealthDeidentificationCreateJob(DeidBaseTestCase):
         assert client is not None
 
         jobname = self.generate_job_name()
-        print(f"Job name: {jobname}")
 
         job = DeidentificationJob(
             source_location=SourceStorageLocation(
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.TAG,
             data_type=DocumentDataType.PLAINTEXT,
         )

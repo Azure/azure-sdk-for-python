@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized/deid?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/deid?api-version=2024-01-16-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -22,15 +22,15 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:51:23 GMT",
+        "Date": "Fri, 05 Jul 2024 22:09:25 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "347f0a5d-5e55-4578-a401-51f2b33edf61"
+        "x-ms-correlation-id": "08904168-a164-42f5-9806-79a211cf18ee"
       },
       "ResponseBody": {
-        "outputText": "Hello, my name is Thanh Joaquin."
+        "outputText": "Hello, my name is Larkin Schwarzer."
       }
     }
   ],

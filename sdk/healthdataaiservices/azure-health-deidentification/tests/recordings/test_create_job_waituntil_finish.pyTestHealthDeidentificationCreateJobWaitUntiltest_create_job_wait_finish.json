@@ -1,23 +1,23 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "769",
+        "Content-Length": "294",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
       },
       "RequestBody": {
         "sourceLocation": {
-          "location": "https://blobstorageaccount.blob.core.windows.net/containername?sp=racwdl&st=Sanitized&se=Sanitized&skoid=e5278efd-93fc-41e8-9769-f84170bb73a8&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-07-05T20:22:34Z&ske=2024-07-06T04:22:34Z&sks=b&skv=2022-11-02&spr=https&sv=Sanitized&sr=c&sig=Sanitized",
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
           "prefix": "example_patient_1"
         },
         "targetLocation": {
-          "location": "https://blobstorageaccount.blob.core.windows.net/containername?sp=racwdl&st=Sanitized&se=Sanitized&skoid=e5278efd-93fc-41e8-9769-f84170bb73a8&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2024-07-05T20:22:34Z&ske=2024-07-06T04:22:34Z&sks=b&skv=2022-11-02&spr=https&sv=Sanitized&sr=c&sig=Sanitized",
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
           "prefix": "_output"
         },
         "operation": "Surrogate",
@@ -28,20 +28,20 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:49:50 GMT",
-        "operation-id": "test_create_job_wait_finish359940744",
-        "operation-location": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+        "Date": "Fri, 05 Jul 2024 22:07:08 GMT",
+        "operation-id": "test_create_job_wait_finish-229eff",
+        "operation-location": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "444e1138-0388-415f-a46b-8ebe1095d542"
+        "x-ms-correlation-id": "34bafb2b-cfc0-4fe9-bae7-b63b6ae4a1b1"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
         "status": "NotStarted",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "lastUpdatedAt": "2024-07-05T20:49:51.1423218Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "lastUpdatedAt": "2024-07-05T22:07:08.807104Z",
         "sourceLocation": {
           "extensions": [
             "*"
@@ -58,7 +58,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -72,18 +72,18 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:49:50 GMT",
+        "Date": "Fri, 05 Jul 2024 22:07:08 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "02005320-732b-4851-b265-38e4ab295091"
+        "x-ms-correlation-id": "54a25eb4-aafb-4b07-943e-aeeb008aed6a"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
         "status": "NotStarted",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "lastUpdatedAt": "2024-07-05T20:49:51.1423218Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "lastUpdatedAt": "2024-07-05T22:07:08.807104Z",
         "sourceLocation": {
           "extensions": [
             "*"
@@ -100,7 +100,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_cancel_delete5a5840df906?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_cancel_delete-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -115,13 +115,13 @@
         "api-supported-versions": "2024-01-16-preview",
         "Cache-Control": "no-store, no-cache",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:49:59 GMT",
+        "Date": "Fri, 05 Jul 2024 22:07:19 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "aa820067-403b-433b-a520-c41d02960f78",
+        "x-ms-correlation-id": "96e270cb-de3d-4ac4-bac7-9afb2a0273af",
         "x-ms-error-code": "JobNotFound"
       },
       "ResponseBody": {
@@ -132,7 +132,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -146,20 +146,20 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:50:20 GMT",
+        "Date": "Fri, 05 Jul 2024 22:07:38 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Retry-After": "4",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "c0f1de37-392a-4ba9-81cb-22a3b7b76062"
+        "x-ms-correlation-id": "06587dfe-193e-45b5-917a-66895d492193"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
         "status": "Running",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "startedAt": "2024-07-05T20:50:05.6251562Z",
-        "lastUpdatedAt": "2024-07-05T20:50:05.9910439Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
         "summary": {
           "successful": 0,
           "failed": 0,
@@ -183,7 +183,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -197,20 +197,20 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:50:25 GMT",
+        "Date": "Fri, 05 Jul 2024 22:07:42 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Retry-After": "4",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "1a011146-1a47-44e4-8c93-ce010dfaee68"
+        "x-ms-correlation-id": "e34da79c-fb88-46dd-8497-496d8da2046f"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
         "status": "Running",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "startedAt": "2024-07-05T20:50:05.6251562Z",
-        "lastUpdatedAt": "2024-07-05T20:50:05.9910439Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
         "summary": {
           "successful": 0,
           "failed": 0,
@@ -234,7 +234,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -248,20 +248,20 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:50:29 GMT",
+        "Date": "Fri, 05 Jul 2024 22:07:47 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Retry-After": "4",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "d0d3dd2a-178c-4180-9bc7-920b7bcf5608"
+        "x-ms-correlation-id": "8a00242a-00e1-4409-a987-ac4edb63f292"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
         "status": "Running",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "startedAt": "2024-07-05T20:50:05.6251562Z",
-        "lastUpdatedAt": "2024-07-05T20:50:05.9910439Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
         "summary": {
           "successful": 0,
           "failed": 0,
@@ -285,7 +285,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -299,19 +299,224 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:50:33 GMT",
+        "Date": "Fri, 05 Jul 2024 22:07:51 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "4",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "81a7794d-083a-4a50-a235-0a263092c177"
+        "x-ms-correlation-id": "ae92e9c3-ecab-4de0-b498-dc12c82e5c31"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
+        "status": "Running",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
+        "summary": {
+          "successful": 0,
+          "failed": 0,
+          "canceled": 0,
+          "total": 2,
+          "bytesProcessed": 0
+        },
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 22:07:55 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "5",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "08110e38-0a1c-4eaa-bf18-a7019ec3d236"
+      },
+      "ResponseBody": {
+        "name": "test_create_job_wait_finish-229eff",
+        "status": "Running",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
+        "summary": {
+          "successful": 0,
+          "failed": 0,
+          "canceled": 0,
+          "total": 2,
+          "bytesProcessed": 0
+        },
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 22:08:00 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "5",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "0032b31b-971c-4afd-851e-12849975d020"
+      },
+      "ResponseBody": {
+        "name": "test_create_job_wait_finish-229eff",
+        "status": "Running",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
+        "summary": {
+          "successful": 0,
+          "failed": 0,
+          "canceled": 0,
+          "total": 2,
+          "bytesProcessed": 0
+        },
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 22:08:05 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "5",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "1b915e6d-a05e-4de9-a8cd-9459229e2247"
+      },
+      "ResponseBody": {
+        "name": "test_create_job_wait_finish-229eff",
+        "status": "Running",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:07:22.581867Z",
+        "summary": {
+          "successful": 0,
+          "failed": 0,
+          "canceled": 0,
+          "total": 2,
+          "bytesProcessed": 0
+        },
+        "sourceLocation": {
+          "extensions": [
+            "*"
+          ],
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "dataType": "Plaintext",
+        "operation": "Surrogate"
+      }
+    },
+    {
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-deprecated-versions": "1",
+        "api-supported-versions": "2024-01-16-preview",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 05 Jul 2024 22:08:10 GMT",
+        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "2",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "56680ca7-8e39-4518-912a-30f12451e822"
+      },
+      "ResponseBody": {
+        "name": "test_create_job_wait_finish-229eff",
         "status": "Succeeded",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "startedAt": "2024-07-05T20:50:05.6251562Z",
-        "lastUpdatedAt": "2024-07-05T20:50:33.7859623Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:08:08.0790053Z",
         "summary": {
           "successful": 2,
           "failed": 0,
@@ -335,7 +540,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -349,19 +554,20 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:50:33 GMT",
+        "Date": "Fri, 05 Jul 2024 22:08:10 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
+        "Retry-After": "2",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "faf43bc1-c4c4-4daa-be87-108f4432c5e9"
+        "x-ms-correlation-id": "41072e1c-a65d-4f46-82e7-de29e274589c"
       },
       "ResponseBody": {
-        "name": "test_create_job_wait_finish359940744",
+        "name": "test_create_job_wait_finish-229eff",
         "status": "Succeeded",
-        "createdAt": "2024-07-05T20:49:51.1423218Z",
-        "startedAt": "2024-07-05T20:50:05.6251562Z",
-        "lastUpdatedAt": "2024-07-05T20:50:33.7859623Z",
+        "createdAt": "2024-07-05T22:07:08.8071039Z",
+        "startedAt": "2024-07-05T22:07:22.4021997Z",
+        "lastUpdatedAt": "2024-07-05T22:08:08.0790053Z",
         "summary": {
           "successful": 2,
           "failed": 0,
@@ -385,7 +591,7 @@
       }
     },
     {
-      "RequestUri": "https://Sanitized/jobs/test_create_job_wait_finish359940744/files?api-version=2024-01-16-preview",
+      "RequestUri": "https://deid-service-endpoint.com/jobs/test_create_job_wait_finish-229eff/files?api-version=2024-01-16-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -399,36 +605,36 @@
         "api-deprecated-versions": "1",
         "api-supported-versions": "2024-01-16-preview",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 20:50:33 GMT",
+        "Date": "Fri, 05 Jul 2024 22:08:11 GMT",
         "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
         "Server": "Kestrel",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "a786d11f-6680-40a6-bafa-189b020d72a2"
+        "x-ms-correlation-id": "807de0c0-21f0-4a7e-98ab-5245feefdd82"
       },
       "ResponseBody": {
         "value": [
           {
-            "id": "c7ecde67-2288-4a57-91b8-44dc12f511ec",
+            "id": "4978ef83-69e5-4486-9bad-05c56c216f6c",
             "input": {
               "path": "example_patient_1/doctor_dictation.txt",
               "eTag": "0x8DC9AE7FB040F14"
             },
             "output": {
-              "path": "_output/test_create_job_wait_finish359940744/example_patient_1/doctor_dictation.txt",
-              "eTag": "0x8DC9D3418A74548"
+              "path": "_output/test_create_job_wait_finish-229eff/example_patient_1/doctor_dictation.txt",
+              "eTag": "0x8DC9D3EF0A8A234"
             },
             "status": "Succeeded"
           },
           {
-            "id": "a102f6be-729f-4a60-a038-ac0b70a5e354",
+            "id": "ae5c1707-9b0e-432f-b4d9-52c59b2d9cf2",
             "input": {
               "path": "example_patient_1/visit_summary.txt",
               "eTag": "0x8DC9AE7FB272253"
             },
             "output": {
-              "path": "_output/test_create_job_wait_finish359940744/example_patient_1/visit_summary.txt",
-              "eTag": "0x8DC9D3418A74548"
+              "path": "_output/test_create_job_wait_finish-229eff/example_patient_1/visit_summary.txt",
+              "eTag": "0x8DC9D3EF0A3C0ED"
             },
             "status": "Succeeded"
           }

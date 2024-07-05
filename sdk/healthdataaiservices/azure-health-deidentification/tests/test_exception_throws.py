@@ -12,7 +12,7 @@ from azure.health.deidentification.models import *
 from azure.core.polling import LROPoller
 
 
-class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
+class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
     @BatchEnv()
     @recorded_by_proxy
     def test_exception_throws(self, **kwargs):
@@ -22,14 +22,15 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         assert client is not None
 
         jobname = self.generate_job_name()
-        print(f"Job name: {jobname}")
 
         job = DeidentificationJob(
             source_location=SourceStorageLocation(
                 location=disfunctional_storage_location,
                 prefix="example_patient_1",
             ),
-            target_location=TargetStorageLocation(location=disfunctional_storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=disfunctional_storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )
