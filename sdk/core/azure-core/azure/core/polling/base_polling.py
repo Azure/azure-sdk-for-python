@@ -631,12 +631,8 @@ class _SansIOLROBasePolling(
         poller_response = self._lro_response_type(
             self._initial_response.http_response,
             poller_request,
-            None,
             self._initial_response.http_response.status_code,
-            None,
-            None,
             self._initial_response.http_response.headers,
-            None,
         )
         continuation_token = PipelineResponse(poller_request, poller_response, self._initial_response.context) # in async
         return base64.b64encode(pickle.dumps(continuation_token)).decode("ascii")
@@ -866,19 +862,20 @@ class LROBasePolling(
         )
 
 class LROResponse(HttpResponseImpl):
-    def __init__(self, response, request, internal_response, status_code, reason, content_type, headers, stream_download_generator):
+    """
+        This Response contains just enough information for a poller to be reanimated.
+    """
+    def __init__(self, response, request, status_code, headers):
         super(LROResponse, self).__init__(
             request=request,
-            internal_response=internal_response,
+            internal_response=None,
             status_code=status_code,
-            reason=reason,
-            content_type=content_type, 
+            reason=None,
+            content_type=None, 
             headers=headers,
-            stream_download_generator=stream_download_generator,
+            stream_download_generator=None,
         )
-        self._content = response.body()
-
-
+        #self._content = _get_content(response)
 
 __all__ = [
     "BadResponse",
