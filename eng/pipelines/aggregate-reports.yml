@@ -80,6 +80,7 @@ stages:
           - template: /eng/common/pipelines/templates/steps/policheck.yml
             parameters:
               PublishAnalysisLogs: false
+              ExclusionDataBaseFileName: PythonPoliCheckExclusion.mdb
 
           - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
             displayName: 'Publish Security Analysis Logs'
