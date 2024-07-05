@@ -96,6 +96,8 @@ steps:
 
   - pwsh: |
       which python
+      python --version
+      Write-Host "Invoking with '$(TargetingString)'"
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     timeoutInMinutes: 80

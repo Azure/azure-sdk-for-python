@@ -33,12 +33,12 @@ steps:
     - ${{ else }}:
       - pwsh: |
           Write-Host "We are in a PR, but a run that doesn't generate it. This is what we see!"
-          cat $(Build.ArtifactStagingDirectory)/packages/diff/diff.json
           Write-Host "##vso[task.setvariable variable=PRDiffJson;]$(Build.ArtifactStagingDirectory)/packages/diff/diff.json"
         displayName: Coalesce targeting string for PR Builds
 
     - pwsh: |
         python -m pip install tools/azure-sdk-tools[build]
+        cat "$(PRDiffJson)"
         python $(Build.SourcesDirectory)/scripts/devops_tasks/calculate_targeted_packages.py "$(PRDiffJson)"
       displayName: Resolve Targeted Packages
 
