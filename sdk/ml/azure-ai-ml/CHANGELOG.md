@@ -7,7 +7,7 @@
 ### Features Added
 
  - Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
- - Uploads to identity-based access system-defined datastores (e.g. workspaceblobstore) will be authorized via a call to `DatastoreOperations._list_secrets` to retrieve a SAS token or fall back to user identity authentication. Key-based authentication for uploads for such datastores is no longer supported. Account key-based datastores will still default to key-based authentication for uploads.
+ - Uploads to identity-based access system-defined datastores (e.g. workspaceblobstore) will be authorized via a call to `DatastoreOperations._list_secrets` to retrieve a SAS token or fall back to user identity authentication. Key-based authentication for uploads for such datastores is no longer supported. Account key-based datastores will use user identity authentication.
 
 ### Bugs Fixed
 - InputTypes exported in constants module
