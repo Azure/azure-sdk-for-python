@@ -48,7 +48,7 @@ from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS, create_http_request
 from azure.core.pipeline._tools import is_rest
 from rest_client import MockRestClient
 
@@ -142,7 +142,7 @@ def deserialization_cb():
 
 @pytest.fixture
 def polling_response():
-    def _callback(http_response, headers={}):
+    def _callback(http_response, http_request = None, headers={}):
         polling = LROBasePolling()
 
         response = Response()
@@ -154,16 +154,21 @@ def polling_response():
             None,
             response,
         )
-        polling._pipeline_response = PipelineResponse(None, response, PipelineContext(None))
+        response.status_code = 200
+        if http_request:
+            request = create_http_request(http_request, "PUT", "http://example.org/polling", {"x-ms-client-request-id":"testid"})
+        else:
+            request = None
+        polling._pipeline_response = PipelineResponse(request, response, PipelineContext(None))
         polling._initial_response = polling._pipeline_response
         return polling
 
     return _callback
 
 
-@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
-def test_base_polling_continuation_token(client, polling_response, http_response):
-    polling = polling_response(http_response)
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_base_polling_continuation_token(client, polling_response, http_request, http_response):
+    polling = polling_response(http_response, http_request)
 
     continuation_token = polling.get_continuation_token()
     assert isinstance(continuation_token, str)
@@ -179,7 +184,7 @@ def test_base_polling_continuation_token(client, polling_response, http_response
 
 @pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
 def test_delay_extraction_int(polling_response, http_response):
-    polling = polling_response(http_response, {"Retry-After": "10"})
+    polling = polling_response(http_response, None, {"Retry-After": "10"})
     assert polling._extract_delay() == 10
 
 
@@ -189,7 +194,7 @@ def test_delay_extraction_int(polling_response, http_response):
 )
 @pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
 def test_delay_extraction_httpdate(polling_response, http_response):
-    polling = polling_response(http_response, {"Retry-After": "Mon, 20 Nov 1995 19:12:08 -0500"})
+    polling = polling_response(http_response, None, {"Retry-After": "Mon, 20 Nov 1995 19:12:08 -0500"})
 
     from datetime import datetime as basedatetime
 
