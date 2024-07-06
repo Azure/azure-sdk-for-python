@@ -28,7 +28,6 @@ if TYPE_CHECKING:
         from jsonschema.protocols import Validator
     except ImportError:
         pass
-    from ._constants import JsonSchemaDraftIdentifier
     from ..._patch import SchemaContentValidate
 
 # TypeVar ties the return type to the exact MessageType class, rather than the "MessageType" Protocol
@@ -37,13 +36,7 @@ if TYPE_CHECKING:
 MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
 
 
-def get_jsonschema_validator(draft_identifier: Union[str, "JsonSchemaDraftIdentifier"]) -> "Validator":
-    # get draft identifier string
-    try:
-        draft_identifier = cast("JsonSchemaDraftIdentifier", draft_identifier)
-        draft_identifier = draft_identifier.value
-    except AttributeError:
-        pass
+def get_jsonschema_validator(draft_identifier: str) -> "Validator":
 
     # get validator
     try:
@@ -56,8 +49,9 @@ def get_jsonschema_validator(draft_identifier: Union[str, "JsonSchemaDraftIdenti
 
     if not validator:
         raise ValueError(
-            f"{draft_identifier} is not a supported identifier. Please provide a supported "
-            "JsonSchemaDraftIdentifier value."
+            f"{draft_identifier} is not a supported `jsonschema` meta-schema `$schema` value. "
+            "Please pass in a `$schema` value from the list of supported `jsonschema` validators: "
+            "https://python-jsonschema.readthedocs.io/en/stable/api/jsonschema/validators/index.html"
         )
 
     return partial(jsonschema_validate, validator=validator)
@@ -78,7 +72,7 @@ def jsonschema_validate(validator: "Validator", schema: Mapping[str, Any], conte
 
 
 def get_loaded_schema(
-    schema: Union[str, Callable],  # TODO: for next beta: check if we want to allow schema generation
+    schema: Union[str, Callable],
     content: Mapping[str, Any],
 ) -> Tuple[str, str, Mapping[str, Any]]:
     """Returns the tuple: (schema name, schema string, schema dict).

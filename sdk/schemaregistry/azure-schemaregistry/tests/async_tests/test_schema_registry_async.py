@@ -62,7 +62,8 @@ JSON_SCHEMA = {
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
 CUSTOM_SCHEMA_STR = "My favorite color is yellow."
 current_path = os.getcwd()
-current_folder = current_path.split("\\")[-1]
+# "\\" for Windows, "/" for Linux
+current_folder = current_path.split("\\")[-1].split("/")[-1]
 if current_folder == "tests":
     proto_file = os.path.join(os.getcwd(), "person.proto")
 elif current_folder == "async_tests":

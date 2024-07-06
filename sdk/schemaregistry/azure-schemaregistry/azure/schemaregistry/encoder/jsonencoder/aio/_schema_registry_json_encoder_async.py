@@ -37,7 +37,6 @@ from .._utils import (
     get_jsonschema_validator,
     MessageType,
 )
-from .._constants import JsonSchemaDraftIdentifier
 from ._async_lru import alru_cache  # pylint: disable=import-error
 
 if TYPE_CHECKING:
@@ -56,12 +55,12 @@ class JsonSchemaEncoder(object):
      and retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.aio.SchemaRegistryClient
     :keyword validate: Required. Used for validation in encode and decode.
-     If a JsonSchemaDraftIdentifier value or equivalent string is provided, the corresponding validator from
-     `jsonschema` will be used. In this case, `jsonschema` MUST be installed separately or by installing the
-     package with `jsonencoder` extras.
-     If callable is provided, passes the schema and content for validation.
-    :paramtype validate: ~azure.schemaregistry.encoder.jsonencoder.JsonSchemaDraftVersion or str
-     or ~azure.schemaregistry.SchemaContentValidate
+     If a JSON Schema meta-schema `$schema` string is provided, for example `"https://json-schema.org/draft/2020-12/schema"`,
+     the corresponding validator from `jsonschema` will be used. In this case, `jsonschema` must be installed with `jsonencoder` extras:
+     `pip install azure-schemaregistry[jsonencoder]`. For a list of supported `jsonschema` validators, please refer to the
+     `jsonschema` documentation: https://python-jsonschema.readthedocs.io/en/stable/api/jsonschema/validators/index.html
+     If a callable is provided, the schema and content will be passed in for validation.
+    :paramtype validate: str or ~azure.schemaregistry.SchemaContentValidate
     :keyword Optional[str] group_name: Schema group under which schema should be registered.
      Required if `schema`, not `schema_id`, is provided to `encode`.
     """
@@ -70,11 +69,11 @@ class JsonSchemaEncoder(object):
         self,
         *,
         client: "azure.schemaregistry.aio.SchemaRegistryClient",
-        validate: Union[JsonSchemaDraftIdentifier, str, "SchemaContentValidate"],
+        validate: Union[str, "SchemaContentValidate"],
         group_name: Optional[str] = None,
     ) -> None:
         self._schema_registry_client = client
-        if isinstance(validate, (str, JsonSchemaDraftIdentifier)):
+        if isinstance(validate, str):
             self._validate = get_jsonschema_validator(validate)
         else:
             self._validate = validate

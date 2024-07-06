@@ -55,7 +55,6 @@ from typing import cast, List
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry import MessageContent
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 from azure.eventhub import EventData
 
@@ -116,7 +115,7 @@ async def main():
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+        client=schema_registry, group_name=GROUP_NAME, validate=SCHEMA_JSON["$schema"]
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)

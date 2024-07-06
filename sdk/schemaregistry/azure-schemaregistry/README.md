@@ -27,20 +27,20 @@ _Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. 
 Install the Azure Schema Registry client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-schemaregistry==1.3.0b2
+pip install azure-schemaregistry
 ```
 
 To use the built-in `jsonschema` validators with the JSON Schema Encoder, install `jsonencoder` extras:
 
 ```Bash
-pip install azure-schemaregistry[jsonencoder]==1.3.0b2
+pip install azure-schemaregistry[jsonencoder]
 ```
 
 ### Prerequisites:
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
-* Python 3.7 or later - [Install Python][python]
+* Python 3.8 or later - [Install Python][python]
 
 ### Authenticate the client
 
@@ -253,8 +253,9 @@ The `encode` method automatically retrieves the schema from the Schema Registry 
 
 ```python
 import os
+import json
 from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 from azure.eventhub import EventData
 
@@ -262,6 +263,7 @@ token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMAREGISTRY_GROUP']
 format = SchemaFormat.JSON
+DRAFT2020_12_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 schema = {
     "$id": "https://example.com/person.schema.json",
@@ -291,7 +293,7 @@ schema_properties = schema_registry_client.register_schema(group_name, name, def
 schema_id = schema_properties.id
 
 # group_name only needed if passing `schema` to encode
-encoder = JsonSchemaEncoder(client=schema_registry_client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12, group_name=group_name)
+encoder = JsonSchemaEncoder(client=schema_registry_client, validate=DRAFT2020_12_SCHEMA_IDENTIFIER, group_name=group_name)
 
 with encoder:
     dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
@@ -317,15 +319,16 @@ The `decode` method automatically retrieves the schema from the Schema Registry 
 ```python
 import os
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ["SCHEMAREGISTRY_GROUP"]
+DRAFT2020_12_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-encoder = JsonSchemaEncoder(client=schema_registry_client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+encoder = JsonSchemaEncoder(client=schema_registry_client, validate=DRAFT2020_12_SCHEMA_IDENTIFIER)
 
 with encoder:
     # event_data is an EventData object with encoded body
@@ -345,7 +348,7 @@ Integration with [Event Hubs][eventhubs_repo] to send an `EventData` object with
 import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
@@ -355,9 +358,10 @@ eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
 
 schema_id = os.environ['PERSON_JSON_SCHEMA_ID']
+DRAFT2020_12_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-json_schema_encoder = JsonSchemaEncoder(client=schema_registry_client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+json_schema_encoder = JsonSchemaEncoder(client=schema_registry_client, validate=DRAFT2020_12_SCHEMA_IDENTIFIER)
 
 eventhub_producer = EventHubProducerClient.from_connection_string(
     conn_str=eventhub_connection_str,
@@ -380,17 +384,18 @@ Integration with [Event Hubs][eventhubs_repo] to receive an `EventData` object a
 import os
 from azure.eventhub import EventHubConsumerClient
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 token_credential = DefaultAzureCredential()
-fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
+fully_qualified_namespace = os.environ['SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMAREGISTRY_GROUP']
 eventhub_connection_str = os.environ['EVENT_HUB_CONN_STR']
 eventhub_name = os.environ['EVENT_HUB_NAME']
+DRAFT2020_12_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, token_credential)
-json_schema_encoder = JsonSchemaEncoder(client=schema_registry_client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+json_schema_encoder = JsonSchemaEncoder(client=schema_registry_client, validate=DRAFT2020_12_SCHEMA_IDENTIFIER)
 
 eventhub_consumer = EventHubConsumerClient.from_connection_string(
     conn_str=eventhub_connection_str,
@@ -427,7 +432,7 @@ import sys
 import os
 import logging
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.identity import DefaultAzureCredential
 
 # Create a logger for the SDK
@@ -440,10 +445,11 @@ logger.addHandler(handler)
 
 fully_qualified_namespace = os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 group_name = os.environ['SCHEMAREGISTRY_GROUP']
+DRAFT2020_12_SCHEMA_IDENTIFIER = "https://json-schema.org/draft/2020-12/schema"
 credential = DefaultAzureCredential()
 # This client will log detailed information about its HTTP sessions, at DEBUG level
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace, credential, logging_enable=True)
-encoder = JsonSchemaEncoder(client=schema_registry_client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+encoder = JsonSchemaEncoder(client=schema_registry_client, validate=DRAFT2020_12_SCHEMA_IDENTIFIER)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,

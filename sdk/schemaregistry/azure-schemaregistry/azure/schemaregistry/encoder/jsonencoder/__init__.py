@@ -29,7 +29,6 @@ __version__ = VERSION
 
 from ._schema_registry_json_encoder import JsonSchemaEncoder  # pylint: disable=import-error
 from ._exceptions import InvalidContentError  # pylint: disable=import-error
-from ._constants import JsonSchemaDraftIdentifier
 
 
-__all__ = ["JsonSchemaEncoder", "InvalidContentError", "JsonSchemaDraftIdentifier"]
+__all__ = ["JsonSchemaEncoder", "InvalidContentError"]
