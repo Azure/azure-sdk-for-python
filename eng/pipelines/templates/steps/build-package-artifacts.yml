@@ -17,6 +17,9 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: ''
+  - name: UseVirtualEnvironment
+    type: boolean
+    default: true
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -49,27 +52,14 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - bash: |
-      python -m venv $(Build.SourcesDirectory)/venv
-      source $(Build.SourcesDirectory)/venv/bin/activate
-      which python
-      python -m pip install --force -r eng/ci_tools.txt
-      python -m pip freeze --all
-      echo "##vso[task.setvariable variable=PATH]$PATH"
-    displayName: 'Prep Environment Linux/Mac'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+  - ${{ if eq(parameters.UseVirtualEnvironment, true) }}:
+    - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - pwsh: |
-      python -m venv $(Build.SourcesDirectory)/venv
-      ./venv/Scripts/Activate.ps1
       which python
       python -m pip install --force -r eng\ci_tools.txt
       python -m pip freeze --all
-
-      $path = $env:PATH
-      Write-Host "##vso[task.setvariable variable=PATH]$path"
-    displayName: 'Prep Environment Windows'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Prep Environment'
 
   - template: set-dev-build.yml@self
     parameters:
@@ -94,28 +84,16 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - bash: |
-      source $(Build.SourcesDirectory)/venv/bin/activate
-      which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Linux/Mac'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    timeoutInMinutes: 80
-    env:
-      CIBW_BUILD_VERBOSITY: 3
-
   - pwsh: |
-      ./venv/Scripts/Activate.ps1
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Windows'
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Generate Packages'
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
 
   - script: |
-      pip install -r eng/release_requirements.txt
+      python -m pip install -r eng/release_requirements.txt
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
