@@ -1,7 +1,7 @@
 
 
 # Azure Health Deidentification client library for Python
-<!-- write necessary description of service -->
+Azure.Health.Deidentification is a managed service that enables users to tag, redact, or surrogate health data.
 
 ## Getting started
 
