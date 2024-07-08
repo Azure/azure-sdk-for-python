@@ -29,6 +29,10 @@ steps:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    parameters:
+      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"

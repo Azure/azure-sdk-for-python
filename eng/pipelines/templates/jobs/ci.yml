@@ -209,10 +209,6 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
     - template: ../steps/build-extended-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -235,37 +231,6 @@ jobs:
       os: linux
 
     steps:
-    - task: DownloadPipelineArtifact@2
-      condition: succeededOrFailed()
-      inputs:
-        artifactName: 'packages_extended'
-        targetPath: $(Build.ArtifactStagingDirectory)
-
-    - pwsh: |
-        $source = "$(Build.ArtifactStagingDirectory)/packages_extended"
-        $destination = "$(Build.ArtifactStagingDirectory)/packages"
-        if (Test-Path $source) {
-          Rename-Item -Path $source -NewName $destination
-        }
-      displayName: Move packages_extended to packages
-
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-    - template: /eng/common/pipelines/templates/steps/check-spelling.yml
-      parameters:
-        ContinueOnError: false
-
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
-
     - template: ../steps/analyze.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
