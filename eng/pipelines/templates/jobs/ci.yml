@@ -284,9 +284,15 @@ jobs:
             Selection: sparse
             GenerateVMJobs: true
       PreGenerationSteps:
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            artifactName: 'packages'
+            targetPath: $(Build.ArtifactStagingDirectory)
+            
         - pwsh: |
             python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
+
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:
             BuildTargetingString: ${{ parameters.BuildTargetingString }}
