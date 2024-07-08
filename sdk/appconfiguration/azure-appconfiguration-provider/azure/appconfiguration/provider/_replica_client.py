@@ -237,7 +237,7 @@ class ReplicaClient:
         :rtype: ConfigurationSetting
         """
         return self._client.get_configuration_setting(key=key, label=label, **kwargs)
-    
+
     def is_active(self) -> bool:
         """
         Checks if the client is active and can be used.
@@ -304,13 +304,14 @@ class ReplicaClientManager:
         return min_backoff_milliseconds + (
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
         )
-    
+
     def __eq__(self, other):
         if len(self._replica_clients) != len(other._replica_clients):
             return False
         for i in range(len(self._replica_clients)):  # pylint:disable=consider-using-enumerate
             if self._replica_clients[i] != other._replica_clients[i]:
                 return False
+        return True
 
     def close(self):
         for client in self._replica_clients:
