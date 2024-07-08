@@ -865,6 +865,7 @@
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
+/.github/workflows/                                                  @Azure/azure-sdk-eng
 
 /tools/                                                              @scbedd @mccoyp
 
