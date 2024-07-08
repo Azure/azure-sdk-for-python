@@ -31,11 +31,7 @@ class ImageUrl(ImageUrlGenerated):
 
     @classmethod
     def load(
-        cls,
-        *,
-        image_file: str,
-        image_format: str,
-        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None
+        cls, *, image_file: str, image_format: str, detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None
     ) -> Self:
         """
         Create an ImageUrl object from a local image file. The method reads the image

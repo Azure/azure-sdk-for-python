@@ -237,30 +237,47 @@ for page in result.pages:
             words = get_words(page, line)
             print(
                 f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{line.polygon}'"
+                f"within bounding polygon '{format_polygon(line.polygon)}'"
             )
 
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+    if page.words:
+        for word in page.words:
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
+
+if result.paragraphs:
+    print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+    # Sort all paragraphs by span's offset to read in the right order.
+    result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+    print("-----Print sorted paragraphs-----")
+    for paragraph in result.paragraphs:
+        print(
+            f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
+        )
+        print(f"...with content: '{paragraph.content}'")
+        print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
 if result.tables:
     for table_idx, table in enumerate(result.tables):
         print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
-                    print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+                    print(
+                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
+                    )
 
 print("----------------------------------------")
 ```
@@ -302,11 +319,14 @@ print("----Key-value pairs found in document----")
 if result.key_value_pairs:
     for kv_pair in result.key_value_pairs:
         if kv_pair.key:
-            print(f"Key '{kv_pair.key.content}' found within " f"'{kv_pair.key.bounding_regions}' bounding regions")
+            print(
+                f"Key '{kv_pair.key.content}' found within "
+                f"'{format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+            )
         if kv_pair.value:
             print(
                 f"Value '{kv_pair.value.content}' found within "
-                f"'{kv_pair.value.bounding_regions}' bounding regions\n"
+                f"'{format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
             )
 
 for page in result.pages:
@@ -318,17 +338,18 @@ for page in result.pages:
             words = get_words(page.words, line)
             print(
                 f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
-                f"bounding polygon '{line.polygon}'"
+                f"bounding polygon '{format_polygon(line.polygon)}'"
             )
 
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+    if page.words:
+        for word in page.words:
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of "
                 f"{selection_mark.confidence}"
             )
 
@@ -337,13 +358,15 @@ if result.tables:
         print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
                     print(
-                        f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"
                     )
 print("----------------------------------------")
 ```
@@ -530,23 +553,23 @@ if result.documents:
 
     # Extract table cell values
     SYMBOL_OF_TABLE_TYPE = "array"
+    SYMBOL_OF_OBJECT_TYPE = "object"
     KEY_OF_VALUE_OBJECT = "valueObject"
     KEY_OF_CELL_CONTENT = "content"
 
     for doc in result.documents:
         if not doc.fields is None:
             for field_name, field_value in doc.fields.items():
-                # "MaintenanceLog" is the table field name which you labeled. Table cell information store as array in document field.
+                # Dynamic Table cell information store as array in document field.
                 if (
-                    field_name == "MaintenanceLog"
-                    and field_value.type == SYMBOL_OF_TABLE_TYPE
+                    field_value.type == SYMBOL_OF_TABLE_TYPE
                     and field_value.value_array
                 ):
                     col_names = []
                     sample_obj = field_value.value_array[0]
                     if KEY_OF_VALUE_OBJECT in sample_obj:
                         col_names = list(sample_obj[KEY_OF_VALUE_OBJECT].keys())
-                    print("----Extracting Table Cell Values----")
+                    print("----Extracting Dynamic Table Cell Values----")
                     table_rows = []
                     for obj in field_value.value_array:
                         if KEY_OF_VALUE_OBJECT in obj:
@@ -559,6 +582,44 @@ if result.documents:
                             row_data = list(map(extract_value_by_col_name, col_names))
                             table_rows.append(row_data)
                     print_table(col_names, table_rows)
+                
+                elif (
+                    field_value.type == SYMBOL_OF_OBJECT_TYPE
+                    and KEY_OF_VALUE_OBJECT in field_value
+                    and field_value[KEY_OF_VALUE_OBJECT] is not None
+                ):
+                    rows_by_columns = list(field_value[KEY_OF_VALUE_OBJECT].values())
+                    is_fixed_table = all(
+                        (
+                            rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
+                            and Counter(
+                                list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys())
+                            )
+                            == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
+                        )
+                        for rows_of_column in rows_by_columns
+                    )
+
+                    # Fixed Table cell information store as object in document field.
+                    if is_fixed_table:
+                        print("----Extracting Fixed Table Cell Values----")
+                        col_names = list(field_value[KEY_OF_VALUE_OBJECT].keys())
+                        row_dict: dict = {}
+                        for rows_of_column in rows_by_columns:
+                            rows = rows_of_column[KEY_OF_VALUE_OBJECT]
+                            for row_key in list(rows.keys()):
+                                if row_key in row_dict:
+                                    row_dict[row_key].append(
+                                        rows[row_key].get(KEY_OF_CELL_CONTENT)
+                                    )
+                                else:
+                                    row_dict[row_key] = [
+                                        row_key,
+                                        rows[row_key].get(KEY_OF_CELL_CONTENT),
+                                    ]
+
+                        col_names.insert(0, "")
+                        print_table(col_names, list(row_dict.values()))
 
 print("------------------------------------")
 ```

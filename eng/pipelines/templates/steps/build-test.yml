@@ -33,17 +33,20 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       python -m pip freeze
       python -m pip install pip==23.2.1
-      python -m pip install setuptools==67.6.0
-      python -m pip install wheel==0.37.0
+      python -m pip install wheel==0.43.0 --force-reinstall
+      python -m pip install setuptools==70.2.0 --force-reinstall
       python -m pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
@@ -66,13 +69,19 @@ steps:
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
-      env: ${{ parameters.EnvVars }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
         azureSubscription: ${{ parameters.ServiceConnection }}
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
@@ -124,13 +133,19 @@ steps:
     - task: AzurePowerShell@5
       displayName: Test Samples (AzurePowerShell@5)
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-      env: ${{ parameters.EnvVars }}
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
         azureSubscription: ${{ parameters.ServiceConnection }}
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
           scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           --service="${{ parameters.ServiceDirectory }}"
@@ -138,7 +153,7 @@ steps:
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
-  - ${{ else }}: 
+  - ${{ else }}:
     - task: PythonScript@0
       displayName: 'Test Samples'
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))

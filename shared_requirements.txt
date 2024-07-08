@@ -67,5 +67,4 @@ uamqp
 yarl
 azure-identity
 openai
-wrapt
 dnspython

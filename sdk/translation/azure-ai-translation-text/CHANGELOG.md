@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.0.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.1 (2024-06-24)
+
+### Bugs Fixed
+  - Fixed a bug where Entra Id authentication couldn't be used with custom endpoint.
 
 ## 1.0.0 (2024-05-23)
 

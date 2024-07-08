@@ -69,7 +69,12 @@ class _BearerTokenCredentialPolicyBase:
 
     @property
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        now = time.time()
+        return (
+            not self._token
+            or (self._token.refresh_on is not None and self._token.refresh_on <= now)
+            or self._token.expires_on - now < 300
+        )
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):

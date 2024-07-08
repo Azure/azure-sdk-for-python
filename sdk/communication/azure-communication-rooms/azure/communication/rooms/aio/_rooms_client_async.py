@@ -31,12 +31,12 @@ class RoomsClient(object):
     This client provides operations to manage rooms.
 
     :param str endpoint:
-        The endpoint url for Azure Communication Service resource.
-    param Union[AsyncTokenCredential, AzureKeyCredential] credential:
-        The access key we use to authenticate against the service.
+     The endpoint url for Azure Communication Service resource.
+    :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
+     The access key we use to authenticate against the service.
     :keyword api_version: Azure Communication Rooms API version.
-        Default value is "2023-06-14".
-        Note that overriding this default value may result in unsupported behavior.
+     Default value is "2023-06-14".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
     def __init__(
@@ -75,15 +75,15 @@ class RoomsClient(object):
         """Create RoomsClient from a Connection String.
 
         :param str conn_str:
-            A connection string to an Azure Communication Service resource.
+         A connection string to an Azure Communication Service resource.
         :returns: Instance of RoomsClient.
         :rtype: ~azure.communication.room.RoomsClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/Rooms_sample.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
+            .. literalinclude:: ../samples/rooms_client_sample_async.py
+                :start-after: [START auth_from_connection_string_async]
+                :end-before: [END auth_from_connection_string_async]
                 :language: python
                 :dedent: 8
                 :caption: Creating the RoomsClient from a connection string.
@@ -107,7 +107,7 @@ class RoomsClient(object):
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
         :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call,
-        dial out to a PSTN number is enabled in a particular room. Optional.
+         dial out to a PSTN number is enabled in a particular room. Optional.
         :keyword List[RoomParticipant] participants: Collection of identities invited to the room. Optional.
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
@@ -173,7 +173,7 @@ class RoomsClient(object):
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
         :keyword bool pstn_dial_out_enabled: Optional. Set this flag to true if, at the time of the call,
-        dial out to a PSTN number is enabled in a particular room. By default, this flag is set to false.
+         dial out to a PSTN number is enabled in a particular room. By default, this flag is set to false.
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -200,7 +200,6 @@ class RoomsClient(object):
         :returns: Room with current attributes.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
-
         """
         get_room_response = await self._rooms_service_client.rooms.get(room_id=room_id, **kwargs)
         return CommunicationRoom(get_room_response)
@@ -233,9 +232,10 @@ class RoomsClient(object):
         """Update participants to a room. It looks for the room participants based on their
         communication identifier and replace those participants with the value passed in
         this API.
+
         :keyword str room_id: Required. Id of room to be updated
         :keyword List[RoomParticipant] participants:
-            Required. Collection of identities invited to be updated
+         Required. Collection of identities invited to be updated
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -255,9 +255,10 @@ class RoomsClient(object):
         **kwargs
     ) -> None:
         """Remove participants from a room
+
         :keyword str room_id: Required. Id of room to be updated
         :keyword List[Union[RoomParticipant, CommunicationIdentifier]] participants:
-            Required. Collection of identities to be removed from the room.
+         Required. Collection of identities to be removed from the room.
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -280,6 +281,7 @@ class RoomsClient(object):
         **kwargs
     ) -> AsyncItemPaged[RoomParticipant]:
         """Get participants of a room
+
         :param room_id: Required. Id of room whose participants to be fetched.
         :type room_id: str
         :returns: An iterator like instance of RoomParticipant.
