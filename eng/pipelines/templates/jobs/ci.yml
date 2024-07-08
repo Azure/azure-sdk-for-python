@@ -216,6 +216,7 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
