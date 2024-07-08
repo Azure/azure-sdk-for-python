@@ -286,10 +286,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
-            print("ADDING TO QUEUE")
             receiver._handler._received_messages.put((frame, message))
         else:
-            print("RELEASING")
             await receiver._handler.settle_messages_async(frame[1], frame[2], 'released')
 
     @staticmethod
@@ -369,7 +367,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
 
         except AMQPLinkError as le:
-            print("AMQP LINK ERROR")
             # Remove all Dispositions sent because we have lost the link sent on
             await message._receiver._handler._link._remove_pending_deliveries()
             if (
@@ -384,7 +381,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             # raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
 
         except AMQPConnectionError as e:
-            print("AMQP CONNECTION ERROR")
             raise ServiceBusConnectionError(message="Connection lost during settle operation.") from e
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"

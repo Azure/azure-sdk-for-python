@@ -107,7 +107,6 @@ class ReceiverLink(Link):
             self._received_payload.extend(frame[11])
         if not frame[5]:
             self._received_messages.add(self._first_frame[2])
-            print(f"Received message with delivery tag: {self._first_frame[2]}")
             if self._received_payload:
                 message = decode_payload(memoryview(self._received_payload))
                 self._received_payload = bytearray()
