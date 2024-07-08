@@ -136,8 +136,8 @@ if __name__ == "__main__":
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
     with schema_registry_client:
-        #schema_properties = register_schema(schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT)
-        schema_str = get_schema_by_id(schema_registry_client, "jsonid1232")
-        #schema_str = get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
-        #schema_str = get_old_schema_by_version(schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION)
-        #schema_id = get_schema_id(schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT)
+        schema_properties = register_schema(schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT)
+        schema_str = get_schema_by_id(schema_registry_client, schema_properties.id)
+        schema_str = get_schema_by_version(schema_registry_client, GROUP_NAME, NAME, schema_properties.version)
+        schema_str = get_old_schema_by_version(schema_registry_client, GROUP_NAME, NAME, NEW_DEFINITION)
+        schema_id = get_schema_id(schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT)
