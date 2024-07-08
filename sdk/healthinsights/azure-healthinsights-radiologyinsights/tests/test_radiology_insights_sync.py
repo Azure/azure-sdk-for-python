@@ -1,7 +1,6 @@
 import functools
 import datetime
 
-from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
@@ -9,20 +8,20 @@ from devtools_testutils import (
     AzureRecordedTestCase,
     EnvironmentVariableLoader,
     recorded_by_proxy,
+    get_credential,
 )
 
 HealthInsightsEnvPreparer = functools.partial(
     EnvironmentVariableLoader,
     "healthinsights",
     healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
-    healthinsights_key="00000000000000000000000000000000",
 )
 
 
 class TestRadiologyInsightsClient(AzureRecordedTestCase):
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy
-    def test_sync(self, healthinsights_endpoint, healthinsights_key):
+    def test_sync(self, healthinsights_endpoint):
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -86,7 +85,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         jobdata = models.RadiologyInsightsJob(job_data=data)
 
         radiology_insights_client = RadiologyInsightsClient(
-            healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
+            healthinsights_endpoint, get_credential()
         )
 
         poller = radiology_insights_client.begin_infer_radiology_insights(

@@ -2,28 +2,27 @@ import functools
 import datetime
 import asyncio
 
-from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from devtools_testutils import (
-    AzureRecordedTestCase,
+    AzureRecordedTestCase, 
     EnvironmentVariableLoader,
+    get_credential,
 )
 
 HealthInsightsEnvPreparer = functools.partial(
     EnvironmentVariableLoader,
     "healthinsights",
     healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
-    healthinsights_key="00000000000000000000000000000000",
 )
 
 
 class TestRadiologyInsightsClient(AzureRecordedTestCase):
     @HealthInsightsEnvPreparer()
     @recorded_by_proxy_async
-    async def test_async(self, healthinsights_endpoint, healthinsights_key):
+    async def test_async(self, healthinsights_endpoint):
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -86,7 +85,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         jobdata = models.RadiologyInsightsJob(job_data=data)
         radiology_insights_client = RadiologyInsightsClient(
-            healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
+            healthinsights_endpoint, AzureRecordedTestCase.get_credential(self, RadiologyInsightsClient, is_async=True)
         )
 
         poller = await radiology_insights_client.begin_infer_radiology_insights(
