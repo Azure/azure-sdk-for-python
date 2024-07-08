@@ -196,7 +196,7 @@ def create_package(
         generated_sdist_name = os.path.join(dist, f"{normalized_package_name}-{setup_parsed.version}.tar.gz")
         destination = generated_sdist_name.replace(normalized_package_name, setup_parsed.name)
 
-        # in cases where there is no reformatting necessary (sdk/core/corehttpp is a good example)
+        # in cases where there is no reformatting necessary (sdk/core/corehttp is a good example)
         # skip this effort
         if generated_sdist_name != destination:
             if os.path.exists(generated_sdist_name):
