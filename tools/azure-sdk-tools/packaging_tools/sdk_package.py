@@ -52,7 +52,7 @@ def main(generate_input, generate_output):
                             "/simple/"], cwd=package_path, timeout=300)
                 check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
                 for file in os.listdir(package_path):
-                    if "_python.json" in file:
+                    if "_python.json" in file and package_name in file:
                         package["apiViewArtifact"] = str(Path(package_path, file))
             except Exception as e:
                 _LOGGER.error(f"Fail to generate ApiView token file for {package_name}: {e}")
