@@ -24,7 +24,6 @@ def get_map_static_image():
     # [START get_map_static_image]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
-    from azure.maps.render import StaticMapLayer
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
