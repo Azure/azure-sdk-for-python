@@ -283,7 +283,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
-            print("ADDING TO QUEUE")
             receiver._handler._received_messages.put((frame, message))
         else:
             await receiver._handler.settle_messages_async(frame[1], 'released')
@@ -365,7 +364,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             import logging
             raise PyamqpTransport.create_servicebus_exception(logging.getLogger(__name__), le)
         except AMQPConnectionError as e:
-            print("AMQP CONNECTION ERROR")
             raise ServiceBusConnectionError(message="Connection lost during settle operation.") from e
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
