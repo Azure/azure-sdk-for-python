@@ -52,7 +52,7 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = MapsRenderClientConfiguration(
-            credential=credential, accept=accept, client_id=client_id, **kwargs
+            credential=credential, client_id=client_id, **kwargs
         )
         _policies = kwargs.pop("policies", None)
         if _policies is None:

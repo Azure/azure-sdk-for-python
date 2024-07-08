@@ -35,7 +35,7 @@ async def get_copyright_for_tile_async():
         result = await maps_render_client.get_copyright_for_tile(z=6, x=9, y=22)
 
     print("Get copyright for tile result:")
-    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
+    print(result or "no copyright")
     # [END get_copyright_for_tile_async]
 
 if __name__ == '__main__':

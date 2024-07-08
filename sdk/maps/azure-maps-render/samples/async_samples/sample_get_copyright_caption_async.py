@@ -34,7 +34,7 @@ async def get_copyright_caption_async():
         result = await maps_render_client.get_copyright_caption()
 
     print("Get copyright caption result:")
-    print(result.copyrights_caption)
+    print(result)
     # [END get_copyright_caption_async]
 
 if __name__ == '__main__':

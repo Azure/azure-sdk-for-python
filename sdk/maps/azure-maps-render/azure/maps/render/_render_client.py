@@ -4,11 +4,11 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
+import datetime
 from typing import Union, Any, List, Optional, Iterator, MutableMapping
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from ._base_client import MapsRenderClientBase
-import datetime
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 

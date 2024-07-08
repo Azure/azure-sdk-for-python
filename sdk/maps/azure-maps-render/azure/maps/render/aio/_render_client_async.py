@@ -5,16 +5,14 @@
 # ---------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import Any, Union, List, MutableMapping
+import datetime
+from typing import Any, Union, List, MutableMapping, Optional, AsyncIterator
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-import datetime
+from ._base_client_async import AsyncMapsRenderClientBase
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
-
-
-from ._base_client_async import AsyncMapsRenderClientBase
 
 
 # By default, use the latest supported API version
@@ -65,7 +63,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             language: Optional[str] = None,
             localized_map_view: Optional[str] = None,
             **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> AsyncIterator[bytes]:
         """Use to request map tiles in vector or raster format.
 
         The ``Get Map Tiles`` API in an HTTP GET request that allows users to request map tiles in
@@ -151,8 +149,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
          to see the available Views. Known values are: "AE", "AR", "BH", "IN", "IQ", "JO", "KW", "LB",
          "MA", "OM", "PK", "PS", "QA", "SA", "SY", "YE", "Auto", and "Unified". Default value is None.
         :paramtype localized_map_view: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -243,7 +241,14 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         )
 
     @distributed_trace_async
-    async def get_map_state_tile(self, *, z: int, x: int, y: int, stateset_id: str, **kwargs: Any) -> Iterator[bytes]:
+    async def get_map_state_tile(
+            self,
+            *,
+            z: int,
+            x: int,
+            y: int,
+            stateset_id: str,
+            **kwargs: Any) -> AsyncIterator[bytes]:
         """Use to get state tiles in vector format that can then be used to display feature state
         information in an indoor map.
 
@@ -272,8 +277,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :paramtype y: int
         :keyword stateset_id: The stateset id. Required.
         :paramtype stateset_id: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -326,7 +331,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             pins: Optional[List[str]] = None,
             path: Optional[List[str]] = None,
             **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> AsyncIterator[bytes]:
         """This rendering API produces static, rasterized map views of a user-defined area. It's suitable
         for lightweight web applications, when the desired user experience doesn't require interactive
         map controls, or when bandwidth is limited. This API is also useful for embedding maps in
@@ -613,8 +618,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
 
 
         :paramtype path: list[str]
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -666,7 +671,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return self._render_client.get_copyright_from_bounding_box(
+        return await self._render_client.get_copyright_from_bounding_box(
             format,
             south_west=south_west,
             north_east=north_east,

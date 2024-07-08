@@ -27,7 +27,7 @@ def get_map_tile():
     # [START get_map_tile]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
-    from azure.maps.render.models import TilesetID
+    from azure.maps.render import TilesetID
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 

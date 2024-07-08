@@ -51,7 +51,7 @@ async def authentication_maps_service_client_with_aad_credential_async():
     from azure.maps.render.aio import MapsRenderClient
 
     credential = DefaultAzureCredential()
-    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID", "your client id")
+    maps_client_id = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
     maps_render_client = MapsRenderClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_render_service_client_with_aad_async]

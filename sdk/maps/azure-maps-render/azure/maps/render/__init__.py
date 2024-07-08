@@ -8,9 +8,29 @@
 
 from ._render_client import MapsRenderClient
 from ._version import VERSION
+from ._enums import (
+    TilesetID,
+    StaticMapLayer,
+    ResponseFormat,
+    RasterTileFormat,
+    MapTileSize,
+    MapImageStyle,
+    LocalizedMapView,
+    IncludeText,
+)
 
 __version__ = VERSION
-__all__ = ['MapsRenderClient']
+__all__ = [
+    'MapsRenderClient',
+    'TilesetID',
+    'StaticMapLayer',
+    'ResponseFormat',
+    'RasterTileFormat',
+    'MapTileSize',
+    'MapImageStyle',
+    'LocalizedMapView',
+    'IncludeText',
+]
 
 try:
     from ._patch import patch_sdk  # type: ignore
