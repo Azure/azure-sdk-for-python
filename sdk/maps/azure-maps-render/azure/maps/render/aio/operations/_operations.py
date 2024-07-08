@@ -895,10 +895,6 @@ class RenderOperations:
 
          ``pins=custom||-122 45||http://contoso.com/pushpins/red.png``
 
-         After URL encoding, this would look like
-
-         ``pins=custom%7C%7C-122+45%7C%7Chttp%3A%2F%2Fcontoso.com%2Fpushpins%2Fred.png``
-
          By default, custom pushpin images are drawn centered at the pin coordinates. This usually
          isn't ideal as it obscures
          the location that you're trying to highlight. To override the anchor location of the pin
