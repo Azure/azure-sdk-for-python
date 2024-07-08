@@ -4,13 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_list_job_files.py
+FILE: sample_list_jobs_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to create a job, wait for it to finish, and then list the files associated with the job.
+    This sample demonstrates how to list the latest 5 jobs in the Deidentification Service resource.
+    It will create a job and then list it using the list_jobs method.
 
 USAGE:
-    python sample_list_job_files.py
+    python sample_list_jobs_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the endpoint to your Deidentification Service resource.
@@ -18,16 +19,15 @@ USAGE:
         This can be either a URL (which is configured with Managed Identity) or a SasURI.
     3) INPUT_PREFIX - the prefix of the input files in the storage account.
 """
-
-
+import asyncio
 import uuid
 
 
-def sample_list_job_files():
-    # [START sample_list_job_files]
+async def sample_list_jobs_async():
+    # [START sample_list_jobs_async]
     import os
     from azure.identity import DefaultAzureCredential
-    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.aio import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationJob,
         SourceStorageLocation,
@@ -67,25 +67,26 @@ def sample_list_job_files():
     )
 
     print(f"Creating job with name: {jobname}")
-    poller: LROPoller = client.begin_create_job(jobname, job)
-    poller.wait(timeout=60)
 
-    job = poller.result()
-    print(f"Job Status: {job.status}")
+    async with client:
+        await client.begin_create_job(jobname, job)
+        jobs = client.list_jobs()
 
-    files = client.list_job_files(job.name)
+        print("Listing latest 5 jobs:")
+        jobsToLookThrough = 5
+        async for j in jobs:
+            print(f"Job Name: {j.name}")
 
-    print("Completed files (Max 10):")
-    filesToLookThrough = 10
-    for f in files:
-        print(f"\t - {f.input.path}")
+            jobsToLookThrough -= 1
+            if jobsToLookThrough <= 0:
+                break
 
-        filesToLookThrough -= 1
-        if filesToLookThrough <= 0:
-            break
+    # [END sample_list_jobs_async]
 
-    # [END sample_list_job_files]
+
+async def main():
+    await sample_list_jobs_async()
 
 
 if __name__ == "__main__":
-    sample_list_job_files()
+    asyncio.run(main())

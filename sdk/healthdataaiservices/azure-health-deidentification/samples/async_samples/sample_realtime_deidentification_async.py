@@ -23,7 +23,7 @@ async def sample_realtime_deidentification_async():
     # [START realtime_deidentification]
     import os
     from azure.identity import DefaultAzureCredential
-    from azure.health.deidentification import DeidentificationClient
+    from azure.health.deidentification.aio import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationResult,
         DeidentificationContent,
@@ -33,12 +33,14 @@ async def sample_realtime_deidentification_async():
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     endpoint = endpoint.replace("https://", "")
-    # uri decode
-    print(endpoint)
 
     credential = DefaultAzureCredential()
 
-    client = DeidentificationClient(endpoint, DefaultAzureCredential())
+    client = DeidentificationClient(
+        endpoint,
+        DefaultAzureCredential(),
+        connection_verify="localhost" not in endpoint,
+    )
 
     body = DeidentificationContent(
         input_text="Hello, my name is John Smith.",
@@ -46,7 +48,8 @@ async def sample_realtime_deidentification_async():
         data_type=DocumentDataType.PLAINTEXT,
     )
 
-    result: DeidentificationResult = await client.deidentify(body)
+    async with client:
+        result: DeidentificationResult = await client.deidentify(body)
 
     print(f'Original Text:     "{body.input_text}"')
     print(f'Deidentified Text: "{result.output_text}"')
