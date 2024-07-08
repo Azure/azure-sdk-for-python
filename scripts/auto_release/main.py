@@ -356,26 +356,11 @@ class CodegenTestPR:
         self.calculate_next_version()
         self.edit_all_version_file()
 
-    def edit_changelog_for_new_service(self):
-        def edit_changelog_for_new_service_proc(content: List[str]):
-            for i in range(0, len(content)):
-                if '##' in content[i]:
-                    content[i] = f'## {self.next_version} ({self.target_release_date})\n'
-                    break
-
-        modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
-
-    def edit_changelog(self):
+    def check_changelog_file(self):
         def edit_changelog_proc(content: List[str]):
             content[1:1] = ['\n', f'## {self.next_version}{self.version_suggestion} ({self.target_release_date})\n\n', self.get_changelog(), '\n']
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
-
-    def check_changelog_file(self):
-        if self.next_version == '1.0.0b1':
-            self.edit_changelog_for_new_service()
-        else:
-            self.edit_changelog()
 
     def check_dev_requirement(self):
         file = Path(f'sdk/{self.sdk_folder}/{self.whole_package_name}/dev_requirements.txt')
