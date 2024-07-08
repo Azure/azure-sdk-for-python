@@ -37,7 +37,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
         job = None
         jobsToLookThrough = 10
         for j in jobs:
-            jobsToLookThrough += 1
+            jobsToLookThrough -= 1
             if j.name == jobname:
                 job = j
                 break

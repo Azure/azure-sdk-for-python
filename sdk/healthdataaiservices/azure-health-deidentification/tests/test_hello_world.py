@@ -2,6 +2,7 @@ from deid_base_test_case import DeidBaseTestCase, RealtimeEnv
 from devtools_testutils import (
     recorded_by_proxy,
 )
+import pytest
 
 from azure.health.deidentification.models import *
 
@@ -13,7 +14,6 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
         client = self.make_client(healthdataaiservices_deid_service_endpoint)
         assert client is not None
 
-        # TODO: NEED TO OVERRIDE StringIndexType
         content = DeidentificationContent(
             input_text="Hello, my name is John Smith.",
             operation=OperationType.SURROGATE,
