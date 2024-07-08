@@ -1144,30 +1144,5 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             ):
                 batch.append(amqp_receive_client._received_messages.get())
                 amqp_receive_client._received_messages.task_done()
-
-            # if time.time() - time_sent > receive_drain_timeout:
-            #     print("DRAIN TIMEOUT HIT, closing receiver link.")
-            #     expired = True
-            #     # Close the receiver link because it is dead and reopen a new one.
-            #     # All settlements of current messages will be done by the mgmt link.
-            #     receiver._handler._link.detach(close=True)
-            #     # receiver._handler._link = None
-            #     # receiver._handler._client_ready()
-            #     # Set receive context to False to stop receiving messages.
-            #     receiver._receive_context.clear()
-            #     break
-
-        # Before we return batch, if prefetch is set, receive those messages as well.
-        # sent_drain = False
-        # if receiver._prefetch_count > 0:
-        #     while sent_drain == receiver._handler._link._drain_state:
-        #         if not sent_drain:
-        #             receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
-        #             sent_drain = True
-
-        #         # this prevents us from sending a new Flow frame if we have already sent a Drain frame
-        #         if sent_drain != receiver._handler._link._drain_state:
-        #             break
-        #         receiving = amqp_receive_client.do_work()
               
         return [receiver._build_received_message(message) for message in batch]

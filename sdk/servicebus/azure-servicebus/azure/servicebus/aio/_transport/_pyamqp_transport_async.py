@@ -286,7 +286,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
-            print("ADDING TO QUEUE")
             receiver._handler._received_messages.put((frame, message))
         else:
             await receiver._handler.settle_messages_async(frame[1], frame[2], 'released')
