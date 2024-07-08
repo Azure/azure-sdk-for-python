@@ -189,3 +189,17 @@ def create_package(
 
     if enable_sdist:
         run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)
+
+        # The file normalization changes in setuptools 67.3.0 intends source distribution file names to have the
+        # formatting a whl distributions. This patch avoids that for now.
+        normalized_package_name = setup_parsed.name.replace("-", "_")
+        package_for_adjustments = [f for f in os.listdir(dist) if normalized_package_name in f and f.endswith("tar.gz")]
+
+        if package_for_adjustments:
+            source = os.path.join(dist, package_for_adjustments[0])
+            destination = source.replace(normalized_package_name, setup_parsed.name)
+
+            os.rename(source, destination)
+        else:
+            logger.log(level=logging.ERROR, msg=f"Unable to find a source distribution for {setup_parsed.name} that could be renamed to un-normalized title.")
+
