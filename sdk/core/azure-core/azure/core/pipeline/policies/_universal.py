@@ -46,6 +46,7 @@ from ..transport import HttpRequest as LegacyHttpRequest
 from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
 from ...rest import HttpRequest
 from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
+from ...utils._utils import CaseInsensitiveSet
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -433,8 +434,8 @@ class HttpLoggingPolicy(
     def __init__(self, logger: Optional[logging.Logger] = None, **kwargs: Any):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         additional_allowed_query_params: Iterable[str] = kwargs.get("additional_allowed_query_params", {})
-        self.allowed_query_params: Set[str] = set(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST) | set(
-            additional_allowed_query_params
+        self.allowed_query_params: Set[str] = CaseInsensitiveSet(
+            self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST | set(additional_allowed_query_params)
         )
         self.allowed_header_names: Set[str] = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 

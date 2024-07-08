@@ -31,6 +31,7 @@ import urllib.parse
 from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Set, Iterable
 from types import TracebackType
 
+from azure.core.utils._utils import CaseInsensitiveSet
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.policies._utils import sanitize_url_query_params
@@ -89,8 +90,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
         additional_allowed_query_params: Iterable[str] = kwargs.get("additional_allowed_query_params", {})
-        self.allowed_query_params: Set[str] = set(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST) | set(
-            additional_allowed_query_params
+        self.allowed_query_params: Set[str] = CaseInsensitiveSet(
+            set(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST) | set(additional_allowed_query_params)
         )
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:

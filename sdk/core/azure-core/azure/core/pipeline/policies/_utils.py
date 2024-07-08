@@ -36,7 +36,7 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, AsyncHttpResponse, HttpRequest
 
 
-from ...utils._utils import _FixedOffset, case_insensitive_dict
+from ...utils._utils import _FixedOffset, case_insensitive_dict, CaseInsensitiveSet
 from .. import PipelineResponse
 
 AllHttpResponseType = Union[HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse]
@@ -116,11 +116,14 @@ def sanitize_url_query_params(url: str, allowed_query_params: Set[str], placehol
     :rtype: str
     :return: The sanitized URL.
     """
-    # Canonicalize the allowed query parameters to lowercase for case-insensitive comparison.
-    lowercase_allowed = {q.lower() for q in allowed_query_params}
+    allowed = allowed_query_params
+    # In the majority of cases, the allowed query parameters will be a CaseInsensitiveSet. If it's not,
+    # we'll convert it to one to maintain the case-insensitive membership check.
+    if not isinstance(allowed_query_params, CaseInsensitiveSet):
+        allowed = CaseInsensitiveSet(allowed_query_params)
 
     scheme, netloc, path, params, query, fragment = urlparse(url)
     parsed_qp = parse_qsl(query, keep_blank_values=True)
-    filtered_qp = ((key, value if key.lower() in lowercase_allowed else placeholder) for key, value in parsed_qp)
+    filtered_qp = ((key, value if key in allowed else placeholder) for key, value in parsed_qp)
     query = "&".join(f"{k}={v}" for k, v in filtered_qp)
     return urlunparse((scheme, netloc, path, params, query, fragment))
