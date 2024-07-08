@@ -27,7 +27,6 @@
   - `azure.search.documents.indexes.models.AzureMachineLearningSkill`
   - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer`
   - `azure.search.documents.indexes.models.CustomVectorizer`
-  - `azure.search.documents.indexes.models.CustomWebApiParameters`
   - `azure.search.documents.indexes.models.CustomNormalizer`
   - `azure.search.documents.indexes.models.DocumentKeysOrIds`
   - `azure.search.documents.indexes.models.IndexingMode`
