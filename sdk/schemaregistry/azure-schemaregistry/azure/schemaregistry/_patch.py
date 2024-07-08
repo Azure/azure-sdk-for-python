@@ -62,16 +62,18 @@ def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]
 
 def _get_format(content_type: str) -> SchemaFormat:
     # pylint:disable=redefined-builtin
+    # Exception cases may be due to forward compatibility.
+    # i.e. Getting a schema with a content type from a future API version.
+    # In this case, we default to CUSTOM format.
     try:
         format = content_type.split("serialization=")[1]
         try:
-            return SchemaFormat(format)
-        except ValueError:
             return SchemaFormat(format.capitalize())
+        except ValueError:
+            pass
     except IndexError:
-        if "protobuf" in content_type:
-            return SchemaFormat.PROTOBUF
-        return SchemaFormat.CUSTOM
+        pass
+    return SchemaFormat.CUSTOM
 
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
@@ -110,8 +112,6 @@ def get_http_request_kwargs(kwargs):
 def get_content_type(format: str):  # pylint:disable=redefined-builtin
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
         return "text/plain; charset=utf-8"
-    if format.lower() == SchemaFormat.PROTOBUF.value.lower():
-        return "text/vnd.ms.protobuf"
     return f"application/json; serialization={format}"
 
 
@@ -386,11 +386,11 @@ class SchemaProperties:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.pop("id")
-        self.format = kwargs.pop("format")
-        self.group_name = kwargs.pop("group_name")
-        self.name = kwargs.pop("name")
-        self.version = kwargs.pop("version")
+        self.id: str = kwargs.pop("id")
+        self.format: SchemaFormat = kwargs.pop("format")
+        self.group_name: str = kwargs.pop("group_name")
+        self.name: str = kwargs.pop("name")
+        self.version: int = kwargs.pop("version")
 
     def __repr__(self):
         return (
@@ -410,8 +410,8 @@ class Schema:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.definition = kwargs.pop("definition")
-        self.properties = kwargs.pop("properties")
+        self.definition: str = kwargs.pop("definition")
+        self.properties: SchemaProperties = kwargs.pop("properties")
 
     def __repr__(self):
         return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]

@@ -21,8 +21,6 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the JSON schema format."""
     CUSTOM = "Custom"
     """Represents a custom schema format."""
-    PROTOBUF = "Protobuf"
-    """Represents a protobuf schema format."""
 
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level

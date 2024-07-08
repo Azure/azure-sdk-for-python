@@ -128,7 +128,6 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        schema_id: None = None,
         message_type: Type["MessageType"],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
@@ -144,8 +143,6 @@ class JsonSchemaEncoder(object):
         :keyword schema: Required. The pre-registered schema used to validate the content. `schema_id`
          must not be passed.
         :paramtype schema: str
-        :keyword schema_id: None.
-        :paramtype schema_id: None
         :keyword message_type: The message class to construct the message. Must be a subtype of the
          azure.schemaregistry.MessageType protocol.
         :paramtype message_type: type[MessageType]
@@ -165,7 +162,6 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema_id: str,
-        schema: None = None,
         message_type: Type["MessageType"],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
@@ -179,8 +175,6 @@ class JsonSchemaEncoder(object):
 
         :param content: The content to be encoded.
         :type content: mapping[str, any]
-        :keyword schema: None.
-        :paramtype schema: None
         :keyword schema_id: Required. The schema ID corresponding to the pre-registered schema to be used
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
@@ -203,8 +197,6 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        schema_id: None = None,
-        message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> "MessageContent":
@@ -216,10 +208,6 @@ class JsonSchemaEncoder(object):
         :keyword schema: Required. The pre-registered schema used to validate the content. `schema_id`
          must not be passed.
         :paramtype schema: str
-        :keyword schema_id: None.
-        :paramtype schema_id: None
-        :keyword message_type: None.
-        :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: TypedDict of encoded content and content type.
@@ -236,8 +224,6 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema_id: str,
-        schema: None = None,
-        message_type: None = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> "MessageContent":
@@ -247,13 +233,9 @@ class JsonSchemaEncoder(object):
 
         :param content: The content to be encoded.
         :type content: mapping[str, any]
-        :keyword schema: None.
-        :paramtype schema: None
         :keyword schema_id: Required. The schema ID corresponding to the pre-registered schema to be used
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
-        :keyword message_type: None.
-        :paramtype message_type: None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: TypedDict of encoded content and content type.
