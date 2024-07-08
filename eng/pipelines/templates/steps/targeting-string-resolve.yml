@@ -33,8 +33,7 @@ steps:
     - ${{ else }}:
       - pwsh: |
           Write-Host "We are in a PR, but a run that doesn't generate it. This is what we see!"
-          Get-ChildItem -Recurse -Force $(Build.ArtifactStagingDirectory)/packages | % { $_.FullName }
-          cat "$(Build.ArtifactStagingDirectory)/packages/diff/diff.json"
+          Get-ChildItem -Recurse -Force "$(Build.ArtifactStagingDirectory)" | % { $_.FullName }
           Write-Host "##vso[task.setvariable variable=PRDiffJson;]$(Build.ArtifactStagingDirectory)/packages/diff/diff.json"
         displayName: Coalesce targeting string for PR Builds
 
