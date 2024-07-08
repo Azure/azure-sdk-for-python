@@ -337,7 +337,7 @@ def _buildprovider(
             )
         provider._replica_client_manager.set_clients(clients)
         return provider
-    if endpoint is not None and credential is not None:
+    if endpoint and credential:
         clients.append(
             ReplicaClient.from_credential(endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs)
         )
@@ -350,7 +350,7 @@ def _buildprovider(
             )
         provider._replica_client_manager.set_clients(clients)
         return provider
-    raise ValueError("Please pass either endpoint and credential, or a connection string.")
+    raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
 
 def _resolve_keyvault_reference(
@@ -752,12 +752,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return False
         if self._trim_prefixes != other._trim_prefixes:
             return False
-        if len(self._replica_client_manager._replica_clients) != len(other._replica_client_manager._replica_clients):
-            return False
-        for i in range(len(self._replica_client_manager._replica_clients)):  # pylint:disable=consider-using-enumerate
-            if self._replica_client_manager._replica_clients[i] != other._replica_client_manager._replica_clients[i]:
-                return False
-        return True
+        return self._replica_client_manager == other._replica_client_manager
 
     def __ne__(self, other: Any) -> bool:
         return not self == other

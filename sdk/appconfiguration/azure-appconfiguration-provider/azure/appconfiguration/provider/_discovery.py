@@ -9,6 +9,7 @@ import time
 from dataclasses import dataclass
 import dns.resolver
 from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
+from dns.rdatatype import SRV
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
 
@@ -77,7 +78,7 @@ def _request_record(request):
     now = time.time()
     while time.time() - now < 5:
         try:
-            return dns.resolver.resolve(request, "SRV")
+            return dns.resolver.resolve(request, SRV)
         except NXDOMAIN:  # cspell:disable-line
             break
         except (LifetimeTimeout, NoNameservers):
