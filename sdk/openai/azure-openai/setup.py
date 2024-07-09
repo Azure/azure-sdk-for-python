@@ -50,7 +50,6 @@ setup(
     packages=find_packages(
         exclude=[
             "tests",
-            "snippets",
             # Exclude packages that will be covered by PEP420 or nspkg
             # This means any folder structure that only consists of a __init__.py.
             # For example, for storage, this would mean adding 'azure.storage'
