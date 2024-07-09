@@ -1004,10 +1004,6 @@ class CopyProperties(DictMixin):
     """Contains the number of bytes copied and the total bytes in the source in the last
         attempted Copy File operation where this file was the destination file. Can show
         between 0 and Content-Length bytes copied."""
-    datetime: Optional["datetime"] = None
-    """Conclusion time of the last attempted Copy File operation where this file was the
-        destination file. This value can specify the time of a completed, aborted, or
-        failed copy attempt."""
     status_description: Optional[str] = None
     """Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
         or non-fatal copy operation failure."""
@@ -1019,6 +1015,10 @@ class CopyProperties(DictMixin):
     """Included if the file is incremental copy or incremental copy snapshot,
         if x-ms-copy-status is success. Snapshot time of the last successful
         incremental copy snapshot for this file."""
+    datetime: Optional["datetime"] = None
+    """Conclusion time of the last attempted Copy File operation where this file was the
+        destination file. This value can specify the time of a completed, aborted, or
+        failed copy attempt."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get('x-ms-copy-id')
