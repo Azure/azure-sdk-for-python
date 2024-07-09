@@ -1,6 +1,6 @@
 # Release History
 
-## 11.5.0 (Unreleased)
+## 11.5.0 (2024-07-16)
 
 ### Breaking Changes
 
