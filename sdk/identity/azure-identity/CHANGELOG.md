@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that `SharedTokenCacheCredential` was not picklable.
+
 ### Other Changes
 
 ## 1.17.1 (2024-06-21)
