@@ -19,6 +19,8 @@ if __name__ == "__main__":
     targeted_services = diff["ChangedServices"]
     all_packages = []
 
+    # todo, iterate across the changed files and find affected packages
+
     for service in targeted_services:
         packages_for_service = discover_targeted_packages("*", target_root_dir=os.path.join(root_dir, "sdk", service), filter_type="Build", include_inactive=True)
         all_packages.extend([os.path.basename(p) for p in packages_for_service])

@@ -50,7 +50,15 @@ else {
     Write-Host "Services that have changed: $changedServices"
 }
 
-# todo, handle exit 1 on Save-Package-Properties.ps1 failure
 foreach ($service in $changedServices) {
   & $PSScriptRoot/Save-Package-Properties.ps1 -ServiceDirectory $service -OutDirectory $outDirectory
+
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to save package properties for $service"
+    $error = $true
+  }
+}
+
+if ($error) {
+  exit 1
 }

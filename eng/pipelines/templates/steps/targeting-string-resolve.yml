@@ -12,6 +12,7 @@ parameters:
     type: string
 
 steps:
+  # if triggered for a PR, handle PR diff side
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
     - ${{ if parameters.GeneratePRDiff }}:
 
@@ -32,7 +33,6 @@ steps:
           Write-Host "##vso[task.setvariable variable=PRDiffJson;]${{ parameters.PRDiffFolder }}/diff.json"
         displayName: Coalesce targeting string for PR Builds
 
-    # assume that the targeted packages are present in the "packages" artifact under the `diff` folder
     - ${{ else }}:
       - pwsh: |
           Write-Host "We are in a PR, but a run that doesn't generate it. This is what we see!"
@@ -46,6 +46,8 @@ steps:
         python $(Build.SourcesDirectory)/scripts/devops_tasks/calculate_targeted_packages.py "$(PRDiffJson)"
       displayName: Resolve Targeted Packages
 
+  # if not triggered for a PR, simply attempt to locate the targeted packages from the parameter and variable. This will likely
+  # not match very much.
   - ${{ else }}:
     - pwsh: |
         $setting = "${{ parameters.BuildTargetingString }}"
