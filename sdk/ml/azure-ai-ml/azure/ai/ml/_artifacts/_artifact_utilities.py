@@ -78,6 +78,8 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
 def get_datastore_info(
     operations: DatastoreOperations,
     name: str,
+    *,
+    credential=None,
     **kwargs,
 ) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
     """Get datastore account, type, and auth information.
@@ -86,6 +88,10 @@ def get_datastore_info(
     :type operations: DatastoreOperations
     :param name: Name of the datastore. If not provided, the default datastore will be used.
     :type name: str
+    :keyword credential: Local credential to use for authentication. This argument is no longer used as of 1.18.0.
+        Instead, a SAS token will be requested from the datastore, and the MLClient credential will be used as backup,
+        if necessary.
+    :paramtype credential: str
     :return: The dictionary with datastore info
     :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
     """
