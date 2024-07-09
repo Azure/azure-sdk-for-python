@@ -71,9 +71,15 @@ jobs:
 
     # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
     steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages'
+          targetPath: $(Build.ArtifactStagingDirectory)
+
       - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
 
       - task: UsePythonVersion@0
         displayName: 'Use Python 3.9'
@@ -82,10 +88,6 @@ jobs:
     
       - template: /eng/pipelines/templates/steps/use-venv.yml
 
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: 'packages'
-          targetPath: $(Build.ArtifactStagingDirectory)
 
       - pwsh: |
           mkdir -p $(TEST_PROXY_FOLDER)
