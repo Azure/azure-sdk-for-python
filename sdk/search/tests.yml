@@ -8,20 +8,22 @@ extends:
       # https://github.com/Azure/azure-sdk-tools/issues/2216
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
+      UseFederatedAuth: true
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'eastus2'
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          ServiceConnection: azure-sdk-tests
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           Location: chinanorth3
+          ServiceConnection: usgov_azure-sdk-tests
       ServiceDirectory: search
       EnvVars:
-        AZURE_CLIENT_ID: $(SEARCH_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(SEARCH_CLIENT_SECRET)
-        AZURE_TENANT_ID: $(SEARCH_TENANT_ID)
-        AZURE_CLIENT_OID: $(SEARCH_CLIENT_OID)
         AZURE_TEST_RUN_LIVE: 'True'
         AZURE_SKIP_LIVE_RECORDING: 'True'

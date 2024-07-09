@@ -19,6 +19,7 @@ Here we run the breaking changes tool against azure-storage-blob, for example:
 
 `C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking`
 
+For more advanced usage scenarios see [Advanced scenarios](#advanced-scenarios).
 
 ## Ignore a reported breaking change
 
@@ -77,3 +78,28 @@ IGNORE_BREAKING_CHANGES = {
 | ChangedParameterKind                                 | `def my_function(a, b, c)  -->  def my_function(a, b, *, c)`                                                           | ("ChangedParameterKind", "module-name", "class-name", "function-name")
 | ChangedFunctionKind                                  | `async def my_function(param) ->  def my_function(param)`                                                              | ("ChangedFunctionKind", "module-name", "class-name", "function-name")
 
+## Advanced scenarios
+
+### Generating code reports
+
+The breaking changes tools also supports generating a code report for a given library which can later be used as an input for breaking changes comparison.
+
+To get a code report pass the `--code-report` flag. 
+
+Example:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --code-report
+```
+
+This command will generate a `code_report.json` file in the library directory.
+
+### Get breaking changes with specific code report files
+
+To use previously generated code reports for breaking changes comparison you will need to provide a source code report and a target code report, using the `--source-report <path to the source code report file>` and the `--target-report <path to the target code report file>`. The target report will be compared against the source report.
+
+Example:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --source-report ./source_code_report.json --target-report ./target_code_report.json
+```

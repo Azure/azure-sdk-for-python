@@ -24,6 +24,7 @@ from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
+from pathlib import Path
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -285,16 +286,16 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
-def test_compare_reports(pkg_dir: str, version: str, changelog: bool) -> None:
+def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json") -> None:
     package_name = os.path.basename(pkg_dir)
 
-    with open(os.path.join(pkg_dir, "stable.json"), "r") as fd:
+    with open(os.path.join(pkg_dir, source_report), "r") as fd:
         stable = json.load(fd)
-    with open(os.path.join(pkg_dir, "current.json"), "r") as fd:
+    with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    checker = BreakingChangesTracker(stable, current, diff, package_name, previous_version=version)
+    checker = BreakingChangesTracker(stable, current, diff, package_name)
     if changelog:
         checker = ChangelogTracker(stable, current, diff, package_name)
     checker.run_checks()
@@ -316,7 +317,42 @@ def remove_json_files(pkg_dir: str) -> None:
     _LOGGER.info("cleaning up")
 
 
-def main(package_name: str, target_module: str, version: str, in_venv: Union[bool, str], pkg_dir: str, changelog: bool):
+def main(
+        package_name: str,
+        target_module: str,
+        version: str,
+        in_venv: Union[bool, str],
+        pkg_dir: str,
+        changelog: bool,
+        code_report: bool,
+        source_report: Path,
+        target_report: Path,
+    ):
+    # If code_report is set, only generate a code report for the package and return
+    if code_report:
+        public_api = build_library_report(target_module)
+        with open("code_report.json", "w") as fd:
+            json.dump(public_api, fd, indent=2)
+        _LOGGER.info("code_report.json is written.")
+        return
+
+    # If source_report and target_report are provided, compare the two reports
+    if source_report and target_report:
+        test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
+        return
+
+    # For default behavior, find the latest stable version on PyPi
+    if not version:
+
+        from pypi_tools.pypi import PyPIClient
+        client = PyPIClient()
+
+        try:
+            version = str(client.get_relevant_versions(package_name)[1])
+        except IndexError:
+            _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
+            exit(0)
+
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
@@ -363,7 +399,7 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
-        test_compare_reports(pkg_dir, version, changelog)
+        test_compare_reports(pkg_dir, changelog)
 
     except Exception as err:  # catch any issues with capturing the public API and building the report
         print("\n*****See aka.ms/azsdk/breaking-changes-tool to resolve any build issues*****\n")
@@ -416,6 +452,26 @@ if __name__ == "__main__":
         default=False,
     )
 
+    parser.add_argument(
+        "--code-report",
+        dest="code_report",
+        help="Output a code report for a package.",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--source-report",
+        dest="source_report",
+        help="Path to the code report for the previous package version.",
+    )
+
+    parser.add_argument(
+        "--target-report",
+        dest="target_report",
+        help="Path to the code report for the new package version.",
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -427,25 +483,26 @@ if __name__ == "__main__":
     package_name = os.path.basename(pkg_dir)
     changelog = args.changelog
     logging.basicConfig(level=logging.INFO)
-    if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES):
-        _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
-                     f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
-        exit(0)
+
+    # We dont need to block for code report generation
+    if not args.code_report:
+        if package_name not in RUN_BREAKING_CHANGES_PACKAGES and not any(bool(re.findall(p, package_name)) for p in RUN_BREAKING_CHANGES_PACKAGES):
+            _LOGGER.info(f"{package_name} opted out of breaking changes checks. "
+                        f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
+            exit(0)
 
     if not target_module:
         from ci_tools.parsing import ParsedSetup
         pkg_details = ParsedSetup.from_path(pkg_dir)
         target_module = pkg_details.namespace
 
-    if not stable_version:
+    if args.source_report:
+        if not args.target_report:
+            _LOGGER.exception("If providing the `--source-report` flag, the `--target-report` flag is also required.")
+            exit(1)
+    if args.target_report:
+        if not args.source_report:
+            _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
+            exit(1)
 
-        from pypi_tools.pypi import PyPIClient
-        client = PyPIClient()
-
-        try:
-            stable_version = str(client.get_relevant_versions(package_name)[1])
-        except IndexError:
-            _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
-            exit(0)
-
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.source_report, args.target_report)
