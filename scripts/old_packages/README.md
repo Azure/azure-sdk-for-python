@@ -16,6 +16,8 @@ verify_status_by = 2025-07-09
 - requests
 - PePy API key ([PePy API](https://www.pepy.tech/pepy-api))
 
+Set the `PEPY_API_KEY` environment variable to your PePy API key.
+
 ## Usage
 
 1. Defaults to packages that have not released in the past 2 years. Omits already Inactive released packages.
