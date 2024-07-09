@@ -975,18 +975,78 @@ class DirectoryPropertiesPaged(PageIterator):
         return self._response.next_marker or None, self.current_page
 
 
-class FileProperties(DictMixin):
-    """File's properties class.
-
-    :ivar bool server_encrypted:
-        Whether encryption is enabled.
-    :ivar copy:
-        The copy properties.
-    :vartype copy: ~azure.storage.fileshare.CopyProperties
-    :ivar content_settings:
-        The content settings for the file.
-    :vartype content_settings: ~azure.storage.fileshare.ContentSettings
+class CopyProperties(DictMixin):
+    """File Copy Properties.
+    
+    These properties will be `None` if this file has never been the destination in a Copy
+    File operation, or if this file has been modified after a concluded Copy File operation.
     """
+
+    id: Optional[str] = None
+    """String identifier for the last attempted Copy File operation where this file
+        was the destination file. This header does not appear if this file has never
+        been the destination in a Copy File operation, or if this file has been
+        modified after a concluded Copy File operation."""
+    source: Optional[str] = None
+    """URL up to 2 KB in length that specifies the source file used in the last attempted
+        Copy File operation where this file was the destination file."""
+    status: Optional[str] = None
+    """State of the copy operation identified by Copy ID, with these values:
+            success:
+                Copy completed successfully.
+            pending:
+                Copy is in progress. Check copy_status_description if intermittent,
+                non-fatal errors impede copy progress but don't cause failure.
+            aborted:
+                Copy was ended by Abort Copy File.
+            failed:
+                Copy failed. See copy_status_description for failure details."""
+    progress: Optional[str] = None
+    """Contains the number of bytes copied and the total bytes in the source in the last
+        attempted Copy File operation where this file was the destination file. Can show
+        between 0 and Content-Length bytes copied."""
+    datetime: Optional["datetime"] = None
+    """Conclusion time of the last attempted Copy File operation where this file was the
+        destination file. This value can specify the time of a completed, aborted, or
+        failed copy attempt."""
+    status_description: Optional[str] = None
+    """Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
+        or non-fatal copy operation failure."""
+    incremental_copy: Optional[bool] = None
+    """Copies the snapshot of the source file to a destination file.
+        The snapshot is copied such that only the differential changes between
+        the previously copied snapshot are transferred to the destination."""
+    destination_snapshot: Optional["datetime"] = None
+    """Included if the file is incremental copy or incremental copy snapshot,
+        if x-ms-copy-status is success. Snapshot time of the last successful
+        incremental copy snapshot for this file."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get('x-ms-copy-id')
+        self.source = kwargs.get('x-ms-copy-source')
+        self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
+        self.progress = kwargs.get('x-ms-copy-progress')
+        self.completion_time = kwargs.get('x-ms-copy-completion_time')
+        self.status_description = kwargs.get('x-ms-copy-status-description')
+        self.incremental_copy = kwargs.get('x-ms-incremental-copy')
+        self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
+
+    @classmethod
+    def _from_generated(cls, generated):
+        copy = cls()
+        copy.id = generated.properties.copy_id or None
+        copy.status = get_enum_value(generated.properties.copy_status) or None
+        copy.source = generated.properties.copy_source or None
+        copy.progress = generated.properties.copy_progress or None
+        copy.completion_time = generated.properties.copy_completion_time or None
+        copy.status_description = generated.properties.copy_status_description or None
+        copy.incremental_copy = generated.properties.incremental_copy or None
+        copy.destination_snapshot = generated.properties.destination_snapshot or None
+        return copy
+
+
+class FileProperties(DictMixin):
+    """File's properties class."""
 
     name: Optional[str] = None
     """The name of the file."""
@@ -1011,20 +1071,46 @@ class FileProperties(DictMixin):
     content_range: Optional[str] = None
     """Indicates the range of bytes returned in the event that the client
         requested a subset of the file."""
+    server_encrypted: bool
+    """Whether encryption is enabled."""
+    copy: CopyProperties
+    """The copy properties."""
+    content_settings: ContentSettings
+    """The content settings for the file."""
+    lease: LeaseProperties
+    """File lease properties."""
+    change_time: Optional[Union[str, "datetime"]] = None
+    """Change time for the file."""
+    creation_time: Optional[Union[str, "datetime"]] = None
+    """Creation time for the file."""
+    last_write_time: Optional[Union[str, "datetime"]] = None
+    """Last write time for the file."""
+    last_access_time: Optional["datetime"] = None
+    """Last access time for the file."""
+    file_attributes: Union[str, NTFSAttributes]
+    """The file system attributes for files and directories."""
+    permission_key: str
+    """Key of the permission to be set for the directory/file."""
+    file_id: str
+    """FileId uniquely identifies the file or directory."""
+    parent_id: Optional[str] = None
+    """ParentId uniquely identifies the parent directory of the object."""
+    is_directory: bool = False
+    """Whether input is a directory."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')
         self.path = None
         self.share = None
         self.snapshot = None
-        self.content_length = kwargs.get('Content-Length')
-        self.metadata = kwargs.get('metadata')
-        self.file_type = kwargs.get('x-ms-type')
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
-        self.size = kwargs.get('Content-Length')
+        self.content_length = kwargs.get('Content-Length')  # type: ignore [assignment]
+        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
+        self.file_type = kwargs.get('x-ms-type')  # type: ignore [assignment]
+        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
+        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.size = kwargs.get('Content-Length')  # type: ignore [assignment]
         self.content_range = kwargs.get('Content-Range')
-        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
         self.lease = LeaseProperties(**kwargs)
@@ -1032,9 +1118,9 @@ class FileProperties(DictMixin):
         self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
         self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
         self.last_access_time = None
-        self.file_attributes = kwargs.get('x-ms-file-attributes')
-        self.permission_key = kwargs.get('x-ms-file-permission-key')
-        self.file_id = kwargs.get('x-ms-file-id')
+        self.file_attributes = kwargs.get('x-ms-file-attributes')  # type: ignore [assignment]
+        self.permission_key = kwargs.get('x-ms-file-permission-key')  # type: ignore [assignment]
+        self.file_id = kwargs.get('x-ms-file-id')  # type: ignore [assignment]
         self.parent_id = kwargs.get('x-ms-file-parent-id')
         self.is_directory = False
 
@@ -1061,82 +1147,12 @@ class ShareProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NFS = "NFS"
 
 
-class CopyProperties(DictMixin):
-    """File Copy Properties.
-
-    :ivar str id:
-        String identifier for the last attempted Copy File operation where this file
-        was the destination file. This header does not appear if this file has never
-        been the destination in a Copy File operation, or if this file has been
-        modified after a concluded Copy File operation.
-    :ivar str source:
-        URL up to 2 KB in length that specifies the source file used in the last attempted
-        Copy File operation where this file was the destination file. This header does not
-        appear if this file has never been the destination in a Copy File operation, or if
-        this file has been modified after a concluded Copy File operation.
-    :ivar str status:
-        State of the copy operation identified by Copy ID, with these values:
-            success:
-                Copy completed successfully.
-            pending:
-                Copy is in progress. Check copy_status_description if intermittent,
-                non-fatal errors impede copy progress but don't cause failure.
-            aborted:
-                Copy was ended by Abort Copy File.
-            failed:
-                Copy failed. See copy_status_description for failure details.
-    :ivar str progress:
-        Contains the number of bytes copied and the total bytes in the source in the last
-        attempted Copy File operation where this file was the destination file. Can show
-        between 0 and Content-Length bytes copied.
-    :ivar datetime completion_time:
-        Conclusion time of the last attempted Copy File operation where this file was the
-        destination file. This value can specify the time of a completed, aborted, or
-        failed copy attempt.
-    :ivar str status_description:
-        Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal
-        or non-fatal copy operation failure.
-    :ivar bool incremental_copy:
-        Copies the snapshot of the source file to a destination file.
-        The snapshot is copied such that only the differential changes between
-        the previously copied snapshot are transferred to the destination
-    :ivar datetime destination_snapshot:
-        Included if the file is incremental copy or incremental copy snapshot,
-        if x-ms-copy-status is success. Snapshot time of the last successful
-        incremental copy snapshot for this file.
-    """
-
-    def __init__(self, **kwargs):
-        self.id = kwargs.get('x-ms-copy-id')
-        self.source = kwargs.get('x-ms-copy-source')
-        self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
-        self.progress = kwargs.get('x-ms-copy-progress')
-        self.completion_time = kwargs.get('x-ms-copy-completion_time')
-        self.status_description = kwargs.get('x-ms-copy-status-description')
-        self.incremental_copy = kwargs.get('x-ms-incremental-copy')
-        self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
-
-    @classmethod
-    def _from_generated(cls, generated):
-        copy = cls()
-        copy.id = generated.properties.copy_id or None
-        copy.status = get_enum_value(generated.properties.copy_status) or None
-        copy.source = generated.properties.copy_source or None
-        copy.progress = generated.properties.copy_progress or None
-        copy.completion_time = generated.properties.copy_completion_time or None
-        copy.status_description = generated.properties.copy_status_description or None
-        copy.incremental_copy = generated.properties.incremental_copy or None
-        copy.destination_snapshot = generated.properties.destination_snapshot or None
-        return copy
-
-
 class FileSasPermissions(object):
     """FileSasPermissions class to be used with
     generating shared access signature operations.
 
     :param bool read:
-        Read the content, properties, metadata. Use the file as the source of a copy
-        operation.
+        Read the content, properties, metadata. Use the file as the source of a copy operation.
     :param bool create:
         Create a new file or copy a file to a new file.
     :param bool write:
@@ -1145,7 +1161,23 @@ class FileSasPermissions(object):
     :param bool delete:
         Delete the file.
     """
-    def __init__(self, read=False, create=False, write=False, delete=False):
+
+    read: bool = False
+    """Read the content, properties, metadata. Use the file as the source of a copy operation."""
+    create: bool = False
+    """Create a new file or copy a file to a new file."""
+    write: bool = False
+    """Create or write content, properties, metadata. Resize the file. Use the file
+        as the destination of a copy operation within the same account."""
+    delete: bool = False
+    """Delete the file."""
+
+    def __init__(
+        self, read: bool = False,
+        create: bool = False,
+        write: bool = False,
+        delete: bool = False
+    ) -> None:
         self.read = read
         self.create = create
         self.write = write
