@@ -17,17 +17,15 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus._common.constants import ServiceBusReceiveMode
 from app_insights_metric import AzureMonitorMetric
-from azure.identity.aio import DefaultAzureCredential
 
 from stress_test_base import StressTestRunnerAsync, ReceiveType
 
 ENV_FILE = os.environ.get('ENV_FILE')
 
-credential = DefaultAzureCredential()
 
 async def test_stress_queue_send_and_receive(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -41,8 +39,8 @@ async def test_stress_queue_send_and_receive(args):
     print(f"Total received {result.total_received}")
 
 async def test_stress_queue_send_and_pull_receive(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -57,8 +55,8 @@ async def test_stress_queue_send_and_pull_receive(args):
     print(f"Total received {result.total_received}")
 
 async def test_stress_queue_batch_send_and_receive(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=5, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -73,8 +71,8 @@ async def test_stress_queue_batch_send_and_receive(args):
     print(f"Total received {result.total_received}")
 
 async def test_stress_queue_slow_send_and_receive(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential,logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -89,8 +87,8 @@ async def test_stress_queue_slow_send_and_receive(args):
     print(f"Total received {result.total_received}")
 
 async def test_stress_queue_receive_and_delete(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -105,8 +103,8 @@ async def test_stress_queue_receive_and_delete(args):
     print(f"Total received {result.total_received}")
 
 async def test_stress_queue_unsettled_messages(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -123,8 +121,8 @@ async def test_stress_queue_unsettled_messages(args):
     print(f"Total received {result.total_received}")
 
 async def test_stress_queue_receive_large_batch_size(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  StressTestRunnerAsync(senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=50, max_wait_time=10)],
                                     admin_client = sb_admin_client,
@@ -147,8 +145,8 @@ class ReceiverTimeoutStressTestRunner(StressTestRunnerAsync):
             time.sleep(self.max_wait_time + 5)
 
 async def test_stress_queue_pull_receive_timeout(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test =  ReceiverTimeoutStressTestRunner(
         senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
         receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
@@ -172,8 +170,8 @@ class LongRenewStressTestRunner(StressTestRunnerAsync):
         time.sleep(300)
 
 async def test_stress_queue_long_renew_send_and_receive(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test = LongRenewStressTestRunner(
                                     senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
@@ -197,8 +195,8 @@ class LongSessionRenewStressTestRunner(StressTestRunnerAsync):
         renewer.register(receiver, receiver.session, max_lock_renewal_duration=600, on_lock_renew_failure=on_fail)
 
 async def test_stress_queue_long_renew_session_send_and_receive(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     session_id = 'test_stress_queue_long_renew_send_and_receive'
 
     stress_test = LongSessionRenewStressTestRunner(
@@ -222,8 +220,8 @@ class Peekon_receiveStressTestRunner(StressTestRunnerAsync):
         assert receiver.peek_messages()[0]
 
 async def test_stress_queue_peek_messages(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test = Peekon_receiveStressTestRunner(
                                     senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
@@ -255,8 +253,8 @@ class RestartHandlerStressTestRunner(StressTestRunnerAsync):
             sender.__enter__()
 
 async def test_stress_queue_close_and_reopen(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test = RestartHandlerStressTestRunner(
                                     senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
@@ -303,8 +301,8 @@ class DroppedMessageCheckerStressTestRunner(StressTestRunnerAsync):
         return str(body)
 
 async def test_stress_queue_check_for_dropped_messages(args):
-    sb_client = ServiceBusClient(
-        HOSTNAME, credential, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
+    sb_client = ServiceBusClient.from_connection_string(
+        SERVICE_BUS_CONNECTION_STR, logging_enable=LOGGING_ENABLE, transport_type=TRANSPORT_TYPE, uamqp_transport=UAMQP_TRANSPORT)
     stress_test = DroppedMessageCheckerStressTestRunner(
                                     senders = [sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
                                     receivers = [sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, max_wait_time=10)],
@@ -367,8 +365,6 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--conn_str", help="ServiceBus connection string",
         default=os.environ.get('SERVICEBUS_CONNECTION_STRING'))
-    parser.add_argument("--hostname", help="ServiceBus hostname",
-        default=os.environ.get('SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE'))
     parser.add_argument("--queue_name", help="The queue name.", default='testQueue')
     parser.add_argument("--method", type=str)
     parser.add_argument("--duration", type=int, default=259200)
@@ -396,9 +392,8 @@ if __name__ == '__main__':
     LOGGING_ENABLE = args.logging_enable
     LOGGING_LEVEL = getattr(logging, args.debug_level.upper(), None)
     UAMQP_TRANSPORT = args.uamqp_mode
-    HOSTNAME = args.hostname
 
-    sb_admin_client = ServiceBusAdministrationClient(HOSTNAME, credential)
+    sb_admin_client = ServiceBusAdministrationClient.from_connection_string(SERVICE_BUS_CONNECTION_STR)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(run(args))
 
