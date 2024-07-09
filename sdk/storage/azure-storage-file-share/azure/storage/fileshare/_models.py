@@ -468,7 +468,7 @@ class ContentSettings(DictMixin):
 class ShareProperties(DictMixin):
     """Share's properties class."""
 
-    name: Optional[str] = None
+    name: str
     """The name of the share."""
     last_modified: "datetime"
     """A datetime object representing the last time the share was modified."""
@@ -515,7 +515,7 @@ class ShareProperties(DictMixin):
         mount point when NFS is enabled. if not specified, the default is True."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = None
+        self.name = None  # type: ignore [assignment]
         self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
         self.etag = kwargs.get('ETag')  # type: ignore [assignment]
         self.quota = kwargs.get('x-ms-share-quota')  # type: ignore [assignment]
