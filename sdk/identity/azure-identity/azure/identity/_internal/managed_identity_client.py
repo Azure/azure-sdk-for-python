@@ -72,7 +72,7 @@ class ManagedIdentityClientBase(abc.ABC):
 
         expires_in = int(content.get("expires_in") or expires_on - request_time)
         if "refresh_in" not in content and expires_in >= 7200:
-            # MSAL Cache expects "refresh_in"
+            # MSAL TokenCache expects "refresh_in"
             content["refresh_in"] = expires_in // 2
 
         token = create_access_token(content["access_token"], content["expires_on"], content)
@@ -88,9 +88,18 @@ class ManagedIdentityClientBase(abc.ABC):
     def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
         resource = _scopes_to_resource(*scopes)
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
+        now = int(time.time())
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if expires_on > time.time():
+            expires_in = expires_on - now
+
+            # Handle cases where refresh_on info isn't available for MI credentials. We still want to default to
+            # half the token's lifetime for refreshes if the token is long-lived.
+            if "refresh_on" not in token and expires_in >= 7200:
+                token["refresh_on"] = now + expires_in // 2
+
+            # If refresh_on is not available, just set the value to infinity to avoid refreshing the token.
+            if expires_on > now and token.get("refresh_on", float("inf")) > now:
                 return create_access_token(token["secret"], expires_on, token)
         return None
 
