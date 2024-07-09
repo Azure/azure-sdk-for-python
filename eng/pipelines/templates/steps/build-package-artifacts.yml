@@ -71,7 +71,7 @@ steps:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-All-Package-Properties.ps1
         # inputDiffJson populated by targeting-string-resolve.yml
         arguments: >
-          -inputDiffJson $(Build.ArtifactStagingDirectory)/packages/diff/diff.json
+          -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
           -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)

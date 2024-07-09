@@ -81,7 +81,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -104,7 +104,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -128,7 +128,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -152,7 +152,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
