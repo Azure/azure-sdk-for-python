@@ -198,6 +198,7 @@
     "contosodataset",
     "centralus",
     "centraluseuap",
+    "corehttp",
     "creds",
     "ctoring",
     "ctxt",
@@ -1007,6 +1008,16 @@
         "semconv",
         "updown",
         "uvicorn"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/**/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday",
+        "Nify"
       ]
     },
     {

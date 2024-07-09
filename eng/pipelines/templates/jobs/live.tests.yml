@@ -104,6 +104,8 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
+      - ${{ parameters.PreSteps }}
+
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
           AgentImage: ${{ parameters.OSName }}
@@ -158,8 +160,6 @@ jobs:
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
             ${{ insert }}: ${{ parameters.EnvVars }}
-          PreSteps: ${{ parameters.PreSteps }}
-          PostSteps: ${{ parameters.PostSteps }}
           PythonVersion: $(PythonVersion)
           OSVmImage: $(OSVmImage)
           ToxTestEnv: ${{ parameters.ToxTestEnv }}
@@ -189,3 +189,5 @@ jobs:
             UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
             ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
             SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
+
+      - ${{ parameters.PostSteps }}
