@@ -42,8 +42,10 @@ class ContainerRecreateRetryPolicy:
         self.container_rid = None
         self.container_link = None
         self.link = None
-        if args and len(args) >= 4 and self._intended_headers in args[3].headers:
-            self.container_rid = args[3].headers[self._intended_headers]
+        self._http_request = args[3] if len(args) >= 4 else None
+        self._headers = self._http_request.headers if self._http_request else None
+        if self._headers and self._intended_headers in self._headers:
+            self.container_rid = self._headers[self._intended_headers]
             if container_caches:
                 self.container_link = self.__find_container_link_with_rid(container_caches, self.container_rid)
         self.client = client
@@ -84,8 +86,8 @@ class ContainerRecreateRetryPolicy:
     def should_extract_partition_key(self, headers: Dict[str, Any], container_cache: Optional[Dict[str, Any]]) -> bool:
         if headers and http_constants.HttpHeaders.PartitionKey in headers:
             current_partition_key = headers[http_constants.HttpHeaders.PartitionKey]
-            partition_key_definition = container_cache["partitionKey"]
-            if partition_key_definition["kind"] == "MultiHash":
+            partition_key_definition = container_cache["partitionKey"] if container_cache else None
+            if partition_key_definition and partition_key_definition["kind"] == "MultiHash":
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
                 return 'null' in current_partition_key
@@ -96,19 +98,19 @@ class ContainerRecreateRetryPolicy:
 
     def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
             -> str:
-        partition_key_definition = container_cache["partitionKey"]
+        partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
         new_partition_key = _Undefined
         if body_dict:
-            options = client._AddPartitionKey(self.container_link, body_dict, {})
+            options = client._AddPartitionKey(self.container_link, body_dict, {}) if client else []
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-            if isinstance(options["partitionKey"], _Undefined):
+            if options and isinstance(options["partitionKey"], _Undefined):
                 new_partition_key = [{}]
             # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-            elif isinstance(options["partitionKey"], _Empty):
+            elif options and isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])

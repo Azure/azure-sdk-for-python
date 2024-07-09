@@ -427,6 +427,9 @@ class SubStatusCodes:
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
+    # Client Side substatus codes
+    THROUGHPUT_OFFER_NOT_FOUND = 10004
+
 
 class ResourceType:
     """Types of resources in Azure Cosmos

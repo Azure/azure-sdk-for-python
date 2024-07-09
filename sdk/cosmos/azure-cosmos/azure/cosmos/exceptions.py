@@ -55,6 +55,16 @@ class CosmosHttpResponseError(HttpResponseError):
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
     """An HTTP error response with status code 404."""
+    def __init__(self, status_code=None, message=None, response=None, sub_status=None, **kwargs):
+        if sub_status and not response:
+            self.http_error_message = message
+            self.sub_status = sub_status
+            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status_code, self.sub_status, str(message))
+            super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
+            self.status_code = status_code
+        else:
+            super(CosmosResourceNotFoundError, self).__init__(status_code, message, response, **kwargs)
+
 
 
 class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
@@ -136,6 +146,6 @@ def _container_recreate_exception(e):
             or (e.status_code == http_constants.StatusCodes.NOT_FOUND
                 and e.sub_status == http_constants.SubStatusCodes.OWNER_RESOURCE_NOT_FOUND) \
             or (e.status_code == http_constants.StatusCodes.NOT_FOUND
-                and "Could not find ThroughputProperties" in e.message):
+                and e.sub_status == http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND):
         return True
     return False
