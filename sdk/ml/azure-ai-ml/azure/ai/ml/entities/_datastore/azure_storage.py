@@ -49,7 +49,7 @@ class AzureFileDatastore(Datastore):
     :type protocol: str
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
+    :param credentials: Credentials to use for Azure ML workspace to connect to the storage. Defaults to None.
     :type credentials: Union[~azure.ai.ml.entities.AccountKeyConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
