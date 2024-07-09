@@ -81,6 +81,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -103,6 +104,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -126,6 +128,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -149,6 +152,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           GeneratePRDiff: true
+          PRDiffFolder: $(Build.ArtifactStagingDirectory)/packages/diff
 
       - template: ../steps/build-package-artifacts.yml
         parameters:
@@ -296,6 +300,9 @@ jobs:
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:
             BuildTargetingString: ${{ parameters.BuildTargetingString }}
+            PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
+
+
         - task: PythonScript@0
           displayName: 'Ensure service coverage'
           inputs:
