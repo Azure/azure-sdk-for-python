@@ -7,6 +7,13 @@
 > These changes do not impact the API of stable versions such as 11.4.0.
 > Only code written against a beta version such as 11.6.0b4 may be affected.
 
+- Below models are renamed
+  - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
+  - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
+  - `azure.search.documents.indexes.models.ScalarQuantizationCompressionConfiguration` -> `azure.search.documents.indexes.models.ScalarQuantizationCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionConfiguration` -> `azure.search.documents.indexes.models.VectorSearchCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionTargetDataType` -> `azure.search.documents.indexes.models.VectorSearchCompressionTarget`
+
 - Below models do not exist in this release
   - `azure.search.documents.models.QueryLanguage`
   - `azure.search.documents.models.QuerySpellerType`
