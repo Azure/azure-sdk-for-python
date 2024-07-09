@@ -28,7 +28,7 @@ class SRVRecord:
         self.target = str(answer.target).rstrip(".")
 
 
-def find_auto_failover_endpoints(endpoint):
+def find_auto_failover_endpoints(endpoint: str):
     if os.environ.get(DISABLE_APPCONFIGURATION_DISCOVERY, "").lower() == "true":
         return []
     known_domain = _get_known_domains(endpoint)
