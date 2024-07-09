@@ -5,6 +5,7 @@
 ### Features Added
 - Change API version to `2024-01-01`
 - Added a `client_type` option to specify the type of client endpoint when generating token. This is used to generate token and client connection URL for a specific client endpoint type
+- Added operations `add_connections_to_groups` and `remove_connections_from_groups`
 
 ## 1.1.0 (2024-04-24)
 
