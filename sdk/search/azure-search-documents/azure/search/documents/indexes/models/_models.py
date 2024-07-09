@@ -49,7 +49,7 @@ class SearchIndexerSkillset:
     :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
-    :ivar index_projections: Definition of additional projections to secondary search index(es).
+    :ivar index_projection: Definition of additional projections to secondary search index(es).
     :vartype index_projection: ~azure.search.documents.indexes.models.SearchIndexerIndexProjection
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
