@@ -70,6 +70,7 @@ class WorkspaceConnectionSchema(ResourceSchema):
     )
 
     is_shared = fields.Bool(load_default=True)
+    metadata = fields.Dict(required=False)
 
     @post_load
     def make(self, data, **kwargs):

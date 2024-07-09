@@ -93,22 +93,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class AppResource(ProxyResource):
     """App resource payload.
@@ -485,7 +469,7 @@ class CertificateProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar thumbprint: The thumbprint of certificate.
     :vartype thumbprint: str
@@ -724,7 +708,7 @@ class ClusterResourceProperties(_serialization.Model):
 class ConfigServerGitProperty(_serialization.Model):
     """Property of git.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar repositories: Repositories of git.
     :vartype repositories:
@@ -1165,7 +1149,7 @@ class CustomDomainResourceCollection(_serialization.Model):
 class CustomDomainValidatePayload(_serialization.Model):
     """Custom domain validate payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name to be validated. Required.
     :vartype name: str
@@ -1528,7 +1512,7 @@ class Error(_serialization.Model):
 class GitPatternRepository(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Git repository property payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the repository. Required.
     :vartype name: str
@@ -1656,7 +1640,7 @@ class ImageRegistryCredential(_serialization.Model):
 class LogFileUrlResponse(_serialization.Model):
     """Log file URL payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar url: URL of the log file. Required.
     :vartype url: str
@@ -2058,7 +2042,7 @@ class NameAvailability(_serialization.Model):
 class NameAvailabilityParameters(_serialization.Model):
     """Name availability parameters payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Type of the resource to check name availability. Required.
     :vartype type: str
@@ -2362,7 +2346,7 @@ class PersistentDisk(_serialization.Model):
 class RegenerateTestKeyRequestPayload(_serialization.Model):
     """Regenerate test key request payload.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key_type: Type of the test key. Required. Known values are: "Primary" and "Secondary".
     :vartype key_type: str or ~azure.mgmt.appplatform.v2021_06_01_preview.models.TestKeyType
@@ -2993,7 +2977,7 @@ class Sku(_serialization.Model):
 class SkuCapacity(_serialization.Model):
     """The SKU capacity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar minimum: Gets or sets the minimum. Required.
     :vartype minimum: int
