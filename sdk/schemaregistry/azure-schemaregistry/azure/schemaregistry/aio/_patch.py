@@ -16,13 +16,8 @@ from typing import (
     cast,
     IO,
     Dict,
-    Mapping,
-    Optional,
-    Type,
 )
 from functools import partial
-from typing_extensions import Protocol  # type: ignore
-
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -41,7 +36,7 @@ from ._client import SchemaRegistryClient as GeneratedServiceClient
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.rest import AsyncHttpResponse
-    from .._patch import MessageType, MessageContent, SchemaPropertiesDict
+    from .._patch import SchemaPropertiesDict
 
 
 ###### Wrapper Class ######

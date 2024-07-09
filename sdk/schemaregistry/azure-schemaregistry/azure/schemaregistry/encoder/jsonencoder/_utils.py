@@ -16,7 +16,8 @@ from functools import partial
 
 from ..._patch import (  # pylint: disable=import-error
     MessageContent,
-    MessageType as MessageTypeProtocol,
+    MessageContentGetter as MessageContentGetterProtocol,
+    MessageContentSetter as MessageContentSetterProtocol,
 )
 from ._exceptions import (  # pylint: disable=import-error
     InvalidContentError,
@@ -33,7 +34,8 @@ if TYPE_CHECKING:
 # TypeVar ties the return type to the exact MessageType class, rather than the "MessageType" Protocol
 # Otherwise, mypy will complain that the return type is not compatible with the type annotation when
 # the MessageType object is returned and passed around.
-MessageType = TypeVar("MessageType", bound=MessageTypeProtocol)
+MessageContentGetter = TypeVar("MessageContentGetter", bound=MessageContentGetterProtocol)
+MessageContentSetter = TypeVar("MessageContentSetter", bound=MessageContentSetterProtocol)
 
 
 def get_jsonschema_validator(draft_identifier: str) -> "Validator":
@@ -116,9 +118,9 @@ def create_message_content(
     schema: Mapping[str, Any],
     schema_id: str,
     validate: "Validator",
-    message_type: Type[MessageType],
+    message_type: Type[MessageContentSetter],
     **kwargs: Any,
-) -> MessageType: ...
+) -> MessageContentSetter: ...
 
 
 @overload
@@ -136,9 +138,9 @@ def create_message_content(
     schema: Mapping[str, Any],
     schema_id: str,
     validate: Union["Validator", "SchemaContentValidate"],
-    message_type: Optional[Type[MessageType]] = None,
+    message_type: Optional[Type[MessageContentSetter]] = None,
     **kwargs: Any,
-) -> Union[MessageType, MessageContent]:
+) -> Union[MessageContentSetter, MessageContent]:
     content_type = f"{JSON_MIME_TYPE}+{schema_id}"
     try:
         # validate content
@@ -161,7 +163,7 @@ def create_message_content(
 
     if message_type:
         try:
-            return cast(MessageType, message_type.from_message_content(content_bytes, content_type, **kwargs))
+            return cast(MessageContentSetter, message_type.from_message_content(content_bytes, content_type, **kwargs))
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
@@ -174,9 +176,9 @@ def create_message_content(
     return MessageContent({"content": content_bytes, "content_type": content_type})
 
 
-def parse_message(message: Union[MessageType, MessageContent]):
+def parse_message(message: Union[MessageContentGetter, MessageContent]):
     try:
-        message = cast("MessageType", message)
+        message = cast("MessageContentGetter", message)
         message_content_dict = message.__message_content__()
         content = message_content_dict["content"]
         content_type = message_content_dict["content_type"]

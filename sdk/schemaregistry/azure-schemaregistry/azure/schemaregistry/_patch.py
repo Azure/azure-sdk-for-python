@@ -21,10 +21,8 @@ from typing import (
     Any,
     overload,
     IO,
-    Type,
-    Optional,
 )
-from typing_extensions import Protocol, TypedDict
+from typing_extensions import Protocol, TypedDict, Self
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -159,7 +157,7 @@ class SchemaRegistryClient:
             **kwargs,
         )
 
-    def __enter__(self) -> "SchemaRegistryClient":
+    def __enter__(self) -> Self:
         self._generated_client.__enter__()
         return self
 
@@ -459,26 +457,29 @@ class MessageContent(TypedDict):
     content_type: str
 
 
-class MessageType(Protocol):
-    """Message Types that set and get content and content type values internally."""
+class MessageContentSetter(Protocol):
+    """Protocol for classes that set content and content type values internally."""
 
     @classmethod
-    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> "MessageType":
-        """Creates an object that is a subtype of MessageType, given content type and
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> Self:
+        """Creates an object that is a subtype of MessageContentSetter, given content type and
          a content value to be set on the object.
 
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.schemaregistry.MessageType
-        :returns: The MessageType object with encoded content and content type.
+        :rtype: ~azure.schemaregistry.MessageContentSetter
+        :returns: The MessageContentSetter object with encoded content and content type.
         """
+
+class MessageContentGetter(Protocol):
+    """Message Types that get content and content type values internally."""
 
     def __message_content__(self) -> MessageContent:
         """A MessageContent object, with `content` and `content_type` set to
-         the values of their respective properties on the MessageType object.
+         the values of their respective properties on the MessageContentGetter object.
 
         :rtype: ~azure.schemaregistry.MessageContent
-        :returns: TypedDict of the content and content type from the MessageType object.
+        :returns: TypedDict of the content and content type from the MessageContentGetter object.
         """
 
 
@@ -498,5 +499,6 @@ __all__: List[str] = [
     "SchemaFormat",
     "SchemaContentValidate",
     "MessageContent",
-    "MessageType",
+    "MessageContentSetter",
+    "MessageContentGetter",
 ]  # Add all objects you want publicly available to users at this package level

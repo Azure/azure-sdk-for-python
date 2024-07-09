@@ -122,7 +122,7 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     schema_id = pre_register_schema(schema_registry)
-    encoder = JsonSchemaEncoder(client=schema_registry, validate=SCHEMA_JSON["$schema"])
+    encoder = JsonSchemaEncoder(client=schema_registry, validate=cast(str, SCHEMA_JSON['$schema']))
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder, schema_id)
     decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
     decoded_content_alice = decode_event_data_message(encoder, event_data_alice)

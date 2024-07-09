@@ -97,7 +97,7 @@ async def main():
     schema_id = await pre_register_schema(sr_client)
 
     # create a JsonSchemaEncoder instance
-    json_schema_encoder = JsonSchemaEncoder(client=sr_client, validate=SCHEMA_JSON["$schema"])
+    json_schema_encoder = JsonSchemaEncoder(client=sr_client, validate=cast(str, SCHEMA_JSON['$schema']))
     await send_event_data_batch(eventhub_producer, json_schema_encoder, schema_id)
     await json_schema_encoder.close()
     await azure_credential.close()

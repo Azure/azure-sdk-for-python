@@ -45,7 +45,8 @@ from ._utils import (  # pylint: disable=import-error
     decode_content,
     get_loaded_schema,
     get_jsonschema_validator,
-    MessageType,
+    MessageContentGetter,
+    MessageContentSetter,
 )
 
 if TYPE_CHECKING:
@@ -63,10 +64,12 @@ class JsonSchemaEncoder(object):
     :keyword client: Required. The schema registry client which is used to retrieve schema from the service.
     :paramtype client: ~azure.schemaregistry.SchemaRegistryClient
     :keyword validate: Required. Used for validation in encode and decode.
-     If a JSON Schema meta-schema `$schema` string is provided, for example `"https://json-schema.org/draft/2020-12/schema"`,
-     the corresponding validator from `jsonschema` will be used. In this case, `jsonschema` must be installed with `jsonencoder` extras:
-     `pip install azure-schemaregistry[jsonencoder]`. For a list of supported `jsonschema` validators, please refer to the
-     `jsonschema` documentation: https://python-jsonschema.readthedocs.io/en/stable/api/jsonschema/validators/index.html
+     If a JSON Schema meta-schema `$schema` string is provided, for example
+     `"https://json-schema.org/draft/2020-12/schema"`, the corresponding validator from `jsonschema` will be used.
+     In this case, `jsonschema` must be installed with `jsonencoder` extras:
+     `pip install azure-schemaregistry[jsonencoder]`. For a list of supported `jsonschema` validators,
+     please refer to the `jsonschema` documentation:
+     https://python-jsonschema.readthedocs.io/en/stable/api/jsonschema/validators/index.html
      If a callable is provided, the schema and content will be passed in for validation.
     :paramtype validate: str or ~azure.schemaregistry.SchemaContentValidate
     :keyword Optional[str] group_name: Schema group under which schema should be registered.
@@ -136,10 +139,10 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Type[MessageType],
+        message_type: Type[MessageContentSetter],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageType:
+    ) -> MessageContentSetter:
         """Encodes content after validating against the pre-registered JSON schema. Encoded content and content
          type will be passed to the provided MessageType callback to create message object.
 
@@ -170,10 +173,10 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema_id: str,
-        message_type: Type[MessageType],
+        message_type: Type[MessageContentSetter],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageType:
+    ) -> MessageContentSetter:
         """Encodes content after validating against the pre-registered JSON schema corresponding to
          the provided schema ID. Encoded content and content type will be passed to the provided
          MessageType callback to create message object.
@@ -264,10 +267,10 @@ class JsonSchemaEncoder(object):
         *,
         schema: Optional[str] = None,
         schema_id: Optional[str] = None,
-        message_type: Optional[Type[MessageType]] = None,
+        message_type: Optional[Type[MessageContentSetter]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Union[MessageType, "MessageContent"]:
+    ) -> Union[MessageContentSetter, "MessageContent"]:
         """Encodes content after validating against the provided pre-registered schema or the one corresponding to
          the provided schema ID. If provided with a MessageType subtype, encoded content and content type will be
          passed to create message object. If not provided, the following dict will be returned:
@@ -339,7 +342,7 @@ class JsonSchemaEncoder(object):
 
     def decode(
         self,
-        message: Union["MessageContent", MessageType],
+        message: Union["MessageContent", MessageContentGetter],
         *,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
