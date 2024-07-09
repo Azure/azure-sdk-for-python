@@ -188,7 +188,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -229,10 +229,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -282,10 +282,10 @@ class Fleet(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -490,7 +490,7 @@ class FleetHubProfile(_serialization.Model):
 class FleetListResult(_serialization.Model):
     """The response of a Fleet list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The Fleet items on this page. Required.
     :vartype value: list[~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.Fleet]
@@ -526,7 +526,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -538,24 +538,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class FleetMember(ProxyResource):
     """A member of the Fleet. It contains a reference to an existing Kubernetes cluster on Azure.
@@ -563,7 +545,7 @@ class FleetMember(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -580,7 +562,7 @@ class FleetMember(ProxyResource):
     :vartype e_tag: str
     :ivar cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be a
      valid Azure resource id. e.g.:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.  # pylint: disable=line-too-long
     :vartype cluster_resource_id: str
     :ivar group: The group this member belongs to for multi-cluster update management.
     :vartype group: str
@@ -617,7 +599,7 @@ class FleetMember(ProxyResource):
         """
         :keyword cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be
          a valid Azure resource id. e.g.:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{clusterName}'.  # pylint: disable=line-too-long
         :paramtype cluster_resource_id: str
         :keyword group: The group this member belongs to for multi-cluster update management.
         :paramtype group: str
@@ -632,7 +614,7 @@ class FleetMember(ProxyResource):
 class FleetMemberListResult(_serialization.Model):
     """The response of a FleetMember list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The FleetMember items on this page. Required.
     :vartype value: list[~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.FleetMember]
@@ -726,7 +708,7 @@ class FleetUpdateStrategy(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -784,7 +766,7 @@ class FleetUpdateStrategy(ProxyResource):
 class FleetUpdateStrategyListResult(_serialization.Model):
     """The response of a FleetUpdateStrategy list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The FleetUpdateStrategy items on this page. Required.
     :vartype value:
@@ -820,7 +802,7 @@ class FleetUpdateStrategyListResult(_serialization.Model):
 class ManagedClusterUpdate(_serialization.Model):
     """The update to be applied to the ManagedClusters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar upgrade: The upgrade to apply to the ManagedClusters. Required.
     :vartype upgrade:
@@ -864,12 +846,10 @@ class ManagedClusterUpdate(_serialization.Model):
 class ManagedClusterUpgradeSpec(_serialization.Model):
     """The upgrade to apply to a ManagedCluster.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar type: The upgrade type.
-     Full requires the KubernetesVersion property to be set.
-     NodeImageOnly requires the KubernetesVersion property not to be set. Required. Known values
-     are: "Full" and "NodeImageOnly".
+    :ivar type: ManagedClusterUpgradeType is the type of upgrade to be applied. Required. Known
+     values are: "Full" and "NodeImageOnly".
     :vartype type: str or
      ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.ManagedClusterUpgradeType
     :ivar kubernetes_version: The Kubernetes version to upgrade the member clusters to.
@@ -893,10 +873,8 @@ class ManagedClusterUpgradeSpec(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: The upgrade type.
-         Full requires the KubernetesVersion property to be set.
-         NodeImageOnly requires the KubernetesVersion property not to be set. Required. Known values
-         are: "Full" and "NodeImageOnly".
+        :keyword type: ManagedClusterUpgradeType is the type of upgrade to be applied. Required. Known
+         values are: "Full" and "NodeImageOnly".
         :paramtype type: str or
          ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.ManagedClusterUpgradeType
         :keyword kubernetes_version: The Kubernetes version to upgrade the member clusters to.
@@ -912,7 +890,7 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -927,7 +905,7 @@ class ManagedServiceIdentity(_serialization.Model):
      ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.UserAssignedIdentity]
@@ -961,7 +939,7 @@ class ManagedServiceIdentity(_serialization.Model):
          ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.UserAssignedIdentity]
@@ -1019,7 +997,7 @@ class MemberUpdateStatus(_serialization.Model):
 class NodeImageSelection(_serialization.Model):
     """The node image upgrade to be applied to the target nodes in update run.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The node image upgrade type. Required. Known values are: "Latest" and "Consistent".
     :vartype type: str or
@@ -1287,7 +1265,7 @@ class SystemData(_serialization.Model):
 class UpdateGroup(_serialization.Model):
     """A group to be updated.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of the group.
      It must match a group name of an existing fleet member. Required.
@@ -1352,7 +1330,7 @@ class UpdateRun(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1476,7 +1454,7 @@ class UpdateRun(ProxyResource):
 class UpdateRunListResult(_serialization.Model):
     """The response of a UpdateRun list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The UpdateRun items on this page. Required.
     :vartype value: list[~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.UpdateRun]
@@ -1551,7 +1529,7 @@ class UpdateRunStrategy(_serialization.Model):
 
     A valid strategy contains no duplicate groups within or across stages.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar stages: The list of stages that compose this update run. Min size: 1. Required.
     :vartype stages: list[~azure.mgmt.containerservicefleet.v2023_08_15_preview.models.UpdateStage]
@@ -1579,7 +1557,7 @@ class UpdateStage(_serialization.Model):
     """Defines a stage which contains the groups to update and the steps to take (e.g., wait for a
     time period) before starting the next stage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the stage. Must be unique within the UpdateRun. Required.
     :vartype name: str

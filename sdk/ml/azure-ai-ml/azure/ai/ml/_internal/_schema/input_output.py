@@ -22,6 +22,20 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
 ]
 
 
+SUPPORTED_INTERNAL_SPARK_PARAM_TYPES = [
+    "integer",
+    "Integer",
+    "boolean",
+    "Boolean",
+    "string",
+    "String",
+    "double",
+    "Double",
+    # remove float and add number
+    "number",
+]
+
+
 class InternalInputPortSchema(InputPortSchema):
     # skip client-side validate for type enum & support list
     type = UnionField(
@@ -64,6 +78,14 @@ class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
 class InternalParameterSchema(ParameterSchema):
     type = DumpableEnumField(
         allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
+        required=True,
+        data_key="type",
+    )
+
+
+class InternalSparkParameterSchema(ParameterSchema):
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_SPARK_PARAM_TYPES,
         required=True,
         data_key="type",
     )

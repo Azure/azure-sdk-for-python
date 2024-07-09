@@ -51,7 +51,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
-        audience = kwargs.pop("audience", None)
+        self._audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -59,7 +59,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
+            authentication_policy = get_authentication_policy(credential, audience=self._audience, is_async=True)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
@@ -90,7 +90,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: SearchClient
         :rtype: ~azure.search.documents.aio.SearchClient
         """
-        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
+        return SearchClient(
+            self._endpoint,
+            index_name,
+            self._credential,
+            audience=self._audience,
+            api_version=self._api_version,
+            **kwargs
+        )
 
     @distributed_trace
     def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs) -> AsyncItemPaged[SearchIndex]:
@@ -163,7 +170,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return result.as_dict()
 
     @distributed_trace_async
-    async def delete_index(self, index: Union[str, SearchIndex], **kwargs: Any) -> None:
+    async def delete_index(
+        self,
+        index: Union[str, SearchIndex],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
         """Deletes a search index and all the documents it contains. The model must be
         provided instead of the name to use the access conditions
 
@@ -183,9 +196,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            index, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(index, match_condition)
         kwargs.update(access_condition)
         try:
             index_name = index.name  # type: ignore
@@ -378,8 +389,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param name: The synonym map name or object to delete
-        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
+        :param synonym_map: The synonym map name or object to delete
+        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
 

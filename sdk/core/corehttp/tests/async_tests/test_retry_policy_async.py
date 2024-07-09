@@ -57,7 +57,7 @@ def test_retry_types():
 
 @pytest.mark.parametrize(
     "retry_after_input,http_response",
-    product(["0", "800", "1000", "1200"], ASYNC_HTTP_RESPONSES),
+    product(["0", "800", "1000", "1200", "0.9"], ASYNC_HTTP_RESPONSES),
 )
 def test_retry_after(retry_after_input, http_response):
     retry_policy = AsyncRetryPolicy()

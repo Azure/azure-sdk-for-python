@@ -20,7 +20,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_copyright_from_bounding_box_async():
     # [START get_copyright_from_bounding_box_async]
@@ -41,10 +41,10 @@ async def get_copyright_from_bounding_box_async():
         )
 
     print("Get copyright from bounding box result:")
-    print(result.general_copyrights[0])
+    print(result.general_copyrights and result.general_copyrights[0] or "no copyright")
     print("Result country code:")
-    print(result.regions[0].country.iso3)
-    # [END get_copyright_from_bounding_box]
+    print(result.regions and result.regions[0].country.iso3 or "no regions")
+    # [END get_copyright_from_bounding_box_async]
 
 if __name__ == '__main__':
     asyncio.run(get_copyright_from_bounding_box_async())

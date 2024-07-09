@@ -878,3 +878,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )
         return KeyRotationPolicy._from_generated(result)
+
+    async def __aenter__(self) -> "KeyClient":
+        await self._client.__aenter__()
+        return self

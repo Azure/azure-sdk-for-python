@@ -13,8 +13,9 @@ jobs:
     - job: smoke_test_eligibility
       displayName: Check Smoke Test Eligibility
       pool:
-        name: "azsdk-pool-mms-ubuntu-2004-general"
-        vmImage: "MMSUbuntu20.04"
+        name: azsdk-pool-mms-ubuntu-2004-general
+        image: azsdk-pool-mms-ubuntu-2004-1espt
+        os: linux
       steps:
         - ${{ if and(ne(variables['Skip.Release'], 'true'), ne(parameters.Artifact.skipPublishPackage, 'true')) }}:
           - pwsh: |
@@ -33,8 +34,8 @@ jobs:
           env:
             RunSmokeTests: $(RunSmokeTests)
 
-  - job: run_smoke_test
-    displayName: Run Smoke Test
+  - job: run_smoke_test_linux
+    displayName: Run Smoke Test Linux
     ${{ if eq(parameters.Daily, false) }}:
       dependsOn: smoke_test_eligibility
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
@@ -43,84 +44,48 @@ jobs:
         Python_38_Linux (AzureCloud):
           PythonVersion: '3.8'
           Pool: "azsdk-pool-mms-ubuntu-2004-general"
-          OSVmImage: "MMSUbuntu20.04"
+          OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ArmTemplateParameters: $(azureCloudArmParameters)
         ${{ if eq(parameters.Daily, true) }}:
           Python_27_Linux (AzureCloud):
             PythonVersion: '2.7'
             SkipAsyncInstall: true
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
+            Pool: azsdk-pool-mms-ubuntu-2004-general
+            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_37_Linux (AzureCloud):
             PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
+            Pool: azsdk-pool-mms-ubuntu-2004-general
+            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Linux (AzureCloud Canary):
             PythonVersion: '3.8'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
+            Pool: azsdk-pool-mms-ubuntu-2004-general
+            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
             ArmTemplateParameters: $(azureCloudArmParameters)
             Location: 'eastus2euap'
-          Python_37_Windows (AzureCloud):
-            PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-win-2022-general"
-            OSVmImage: "MMS2022"
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_38_Windows (AzureCloud):
-            PythonVersion: '3.8'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_37_Mac (AzureCloud):
-            PythonVersion: '3.7'
-            Pool: Azure Pipelines
-            OSVmImage: macos-11
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
-          Python_38_Mac (AzureCloud):
-            PythonVersion: '3.8'
-            Pool: Azure Pipelines
-            OSVmImage: macos-11
-            SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-            ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Linux (AzureUSGovernment):
             PythonVersion: '3.8'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu120.04"
-            SubscriptionConfiguration: $(sub-config-gov-test-resources)
-            ArmTemplateParameters: $(azureUSGovernmentArmParameters)
-          Python_37_Windows (AzureUSGovernment):
-            PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
+            Pool: azsdk-pool-mms-ubuntu-2004-general
+            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
             SubscriptionConfiguration: $(sub-config-gov-test-resources)
             ArmTemplateParameters: $(azureUSGovernmentArmParameters)
           Python_38_Linux (AzureChinaCloud):
             PythonVersion: '3.8'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
+            Pool: azsdk-pool-mms-ubuntu-2004-general
+            OSVmImage: azsdk-pool-mms-ubuntu-2004-1espt
             SubscriptionConfiguration: $(sub-config-cn-test-resources)
             Location: 'chinanorth'
             ArmTemplateParameters: $(azureChinaCloudArmParameters)
-          Python_37_Windows (AzureChinaCloud):
-            PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-ubuntu-2004-general"
-            OSVmImage: "MMSUbuntu20.04"
-            SubscriptionConfiguration: $(sub-config-cn-test-resources)
-            Location: 'chinanorth'
-            ArmTemplateParameters: $(azureChinaCloudArmParameters)
-        
+
     pool:
       name: $(Pool)
-      vmImage: $(OSVmImage)
+      image: $(OSVmImage)
+      os: linux
 
     variables:
       - template: /eng/pipelines/templates/variables/globals.yml
@@ -139,107 +104,115 @@ jobs:
           value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
 
     steps:
-      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+      - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
         parameters:
-          AgentImage: $(OSVmImage)
+          Artifact: ${{ parameters.Artifact }}
+          ArtifactName: ${{ parameters.ArtifactName }}
+          Daily: ${{ parameters.Daily }}
 
-      - task: UsePythonVersion@0
-        displayName: "Use Python $(PythonVersion)"
-        inputs:
-          versionSpec: $(PythonVersion)
+  - ${{ if eq(parameters.Daily, true) }}:
+    - job: run_smoke_test_windows
+      displayName: Run Smoke Test Windows
+      ${{ if eq(parameters.Daily, false) }}:
+        dependsOn: smoke_test_eligibility
+        condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
+      strategy:
+        matrix:
+            Python_37_Windows (AzureCloud):
+              PythonVersion: '3.7'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
+            Python_38_Windows (AzureCloud):
+              PythonVersion: '3.8'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
+            Python_37_Windows (AzureUSGovernment):
+              PythonVersion: '3.7'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-gov-test-resources)
+              ArmTemplateParameters: $(azureUSGovernmentArmParameters)
+            Python_37_Windows (AzureChinaCloud):
+              PythonVersion: '3.7'
+              Pool: azsdk-pool-mms-win-2022-general
+              OSVmImage: azsdk-pool-mms-win-2022-1espt
+              SubscriptionConfiguration: $(sub-config-cn-test-resources)
+              Location: 'chinanorth'
+              ArmTemplateParameters: $(azureChinaCloudArmParameters)
+      pool:
+        name: $(Pool)
+        image: $(OSVmImage)
+        os: windows
+      variables:
+        - template: /eng/pipelines/templates/variables/globals.yml
+        - name: Location
+          value: ''
+        - name: azureCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
+        - name: azureUSGovernmentArmParameters
+          value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
+        - name: azureChinaCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
+        - name: requirements
+          ${{ if eq(parameters.Daily, true) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
+          ${{ if eq(parameters.Daily, false) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
+      steps:
+        - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
+          parameters:
+            Artifact: ${{ parameters.Artifact }}
+            ArtifactName: ${{ parameters.ArtifactName }}
+            Daily: ${{ parameters.Daily }}
 
-      - script: |
-          python -m pip install pip==20.0.2
-          pip --version
-        displayName: pip --version
+    - job: run_smoke_test_macos
+      displayName: Run Smoke Test MacOS
+      ${{ if eq(parameters.Daily, false) }}:
+        dependsOn: smoke_test_eligibility
+        condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
+      strategy:
+        matrix:
+            Python_37_Mac (AzureCloud):
+              PythonVersion: '3.7'
+              Pool: Azure Pipelines
+              OSVmImage: macos-latest
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
+            Python_38_Mac (AzureCloud):
+              PythonVersion: '3.8'
+              Pool: Azure Pipelines
+              OSVmImage: macos-latest
+              SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+              ArmTemplateParameters: $(azureCloudArmParameters)
 
-      - ${{ if eq(parameters.Daily, false) }}:
-        - download: current
-          artifact: ${{ parameters.ArtifactName }}
-          timeoutInMinutes: 5
+      pool:
+        name: $(Pool)
+        vmImage: $(OSVmImage)
+        os: macOS
 
-        - pwsh: |
-            $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ parameters.Artifact.name }}/*.tar.gz"
-            Write-Host "Artifacts found:"
-            $artifacts = $packages | ForEach-Object {
-              if ($_.Name -match "([a-zA-Z\-]+)\-(.*).tar.gz") {
-                Write-Host "$($matches[1]): $($matches[2])"
-                return @{ "name" = $matches[1]; "version" = $matches[2] }
-              }
-            }
-            if ($artifacts.name -notcontains "${{parameters.Artifact.name}}") {
-              Write-Host "Can't find package ${{parameters.Artifact.name}}"
-              exit 1
-            }
-            $dependencies = Get-Content $(requirements) | ForEach-Object {
-              $line = $_
-              if ($line -match "([a-zA-Z\-]+)(\W+)(.*)") {
-                  $override = ($artifacts | Where-Object { $_.Name -eq $matches[1] }).Version
-                  if ($override) {
-                      $line = $line -replace '([a-zA-Z\-]+)(\W+)(.*)', ('${1}${2}' + $override)
-                      Write-Host "Overriding dependency to: $line"
-                  }
-              }
-              return $line
-            }
+      variables:
+        - template: /eng/pipelines/templates/variables/globals.yml
+        - name: Location
+          value: ''
+        - name: azureCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.windows.net'; azureCloud = 'AzureCloud'; }"
+        - name: azureUSGovernmentArmParameters
+          value: "@{ storageEndpointSuffix = 'core.usgovcloudapi.net'; azureCloud = 'AzureUSGovernment'; }"
+        - name: azureChinaCloudArmParameters
+          value: "@{ storageEndpointSuffix = 'core.chinacloudapi.cn'; azureCloud = 'AzureChinaCloud'; }"
+        - name: requirements
+          ${{ if eq(parameters.Daily, true) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements.txt
+          ${{ if eq(parameters.Daily, false) }}:
+            value: $(Build.SourcesDirectory)/common/smoketest/requirements-release.txt
 
-            $dependencies | Out-File $(requirements)
-
-          displayName: Override requirements with pipeline build artifact versions
-
-        # Retry for pip install due to delay in package availability after publish
-        # The package is expected to be available for download/installation within 10 minutes 
-        - pwsh: |
-            $ErrorActionPreference = "Continue"
-            while ($retries++ -lt 15) {
-              Write-Host "python -m pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
-              python -m pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
-              if ($LASTEXITCODE) {
-                if ($retries -ge 15) {
-                  exit $LASTEXITCODE
-                }
-                Write-Host "Installation failed, retrying in 1 minute..."
-                sleep 60
-              } else {
-                break
-              }
-            }
-          displayName: Install requirements without dependencies
-
-      - ${{ if eq(parameters.Daily, true) }}:
-        - pwsh: |
-            python -m pip install -r "$(requirements)" --pre --no-deps --upgrade `
-              --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
-
-          displayName: Install requirements from dev feed without dependencies
-
-      - pwsh: python -m pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_async.txt
-        displayName: "Install requirements_async.txt"
-        condition: and(succeeded(), ne(variables['SkipAsyncInstall'], true))
-
-      - pwsh: |
-          python $(Build.SourcesDirectory)/common/smoketest/dependencies.py -r "$(requirements)" `
-            | Out-File $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
-        displayName: Create dependency list from installed packages
-
-      - script: python -m pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
-        displayName: Install package dependencies from PyPI
-
-      - script: python -m pip freeze
-        displayName: Show installed packages (pip freeze)
-
-      - template: /eng/common/TestResources/deploy-test-resources.yml
-        parameters:
-          ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
-          SubscriptionConfiguration: $(SubscriptionConfiguration)
-          Location: $(Location)
-          ArmTemplateParameters: $(ArmTemplateParameters)
-
-      - script: python $(Build.SourcesDirectory)/common/smoketest/program.py
-        displayName: Run Smoke Test
-
-      - template: /eng/common/TestResources/remove-test-resources.yml
-        parameters:
-          ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
-          SubscriptionConfiguration: $(SubscriptionConfiguration)
-
+      steps:
+        - template: /eng/pipelines/templates/steps/smoke-test-steps.yml
+          parameters:
+            Artifact: ${{ parameters.Artifact }}
+            ArtifactName: ${{ parameters.ArtifactName }}
+            Daily: ${{ parameters.Daily }}

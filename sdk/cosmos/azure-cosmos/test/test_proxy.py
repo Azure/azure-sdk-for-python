@@ -1,38 +1,19 @@
 # The MIT License (MIT)
-# Copyright (c) 2014 Microsoft Corporation
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
-import unittest
-import pytest
 import platform
-import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
-import test_config
+import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
+
+import pytest
 from azure.core.exceptions import ServiceRequestError
 
-pytestmark = pytest.mark.cosmosEmulator
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
+import test_config
 
 
-@pytest.mark.usefixtures("teardown")
 class CustomRequestHandler(BaseHTTPRequestHandler):
     database_name = None
 
@@ -67,11 +48,12 @@ class Server(Thread):
         self.httpd.shutdown()
 
 
-class ProxyTests(unittest.TestCase):
+@pytest.mark.cosmosEmulator
+class TestProxy(unittest.TestCase):
     """Proxy Tests.
     """
     host = 'http://localhost:8081'
-    masterKey = test_config._test_config.masterKey
+    masterKey = test_config.TestConfig.masterKey
     testDbName = 'sample database'
     serverPort = 8089
 
@@ -91,7 +73,7 @@ class ProxyTests(unittest.TestCase):
 
     def test_success_with_correct_proxy(self):
         if platform.system() == 'Darwin':
-            pytest.skip("TODO: Connection error raised on OSX")
+            self.skipTest("TODO: Connection error raised on OSX")
         connection_policy.ProxyConfiguration.Port = self.serverPort
         client = cosmos_client.CosmosClient(self.host, self.masterKey, consistency_level="Session",
                                             connection_policy=connection_policy)

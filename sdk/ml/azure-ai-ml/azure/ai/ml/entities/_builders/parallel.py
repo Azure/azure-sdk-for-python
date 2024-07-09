@@ -9,6 +9,7 @@ import json
 import logging
 import os
 import re
+from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
 
 from marshmallow import INCLUDE, Schema
@@ -23,6 +24,8 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+from azure.ai.ml.exceptions import MlException
 
 from ..._schema import PathAwareSchema
 from ..._utils.utils import is_data_binding_expression
@@ -31,7 +34,7 @@ from ...constants._component import NodeType
 from .._component.component import Component
 from .._component.flow import FlowComponent
 from .._component.parallel_component import ParallelComponent
-from .._inputs_outputs import Output
+from .._inputs_outputs import Input, Output
 from .._job.job_resource_configuration import JobResourceConfiguration
 from .._job.parallel.parallel_job import ParallelJob
 from .._job.parallel.parallel_task import ParallelTask
@@ -108,9 +111,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         *,
         component: Union[ParallelComponent, str],
         compute: Optional[str] = None,
-        inputs: Optional[Dict] = None,
+        inputs: Optional[Dict[str, Union[NodeOutput, Input, str, bool, int, float, Enum]]] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
-        retry_settings: Optional[Union[RetrySettings, Dict]] = None,
+        retry_settings: Optional[Union[RetrySettings, Dict[str, str]]] = None,
         logging_level: Optional[str] = None,
         max_concurrency_per_instance: Optional[int] = None,
         error_threshold: Optional[int] = None,
@@ -132,7 +135,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
 
         if isinstance(component, FlowComponent):
             # make input definition fit actual inputs for flow component
-            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            with component._inputs._fit_inputs(inputs):  # type: ignore[attr-defined]
                 BaseNode.__init__(
                     self,
                     type=NodeType.PARALLEL,
@@ -420,7 +424,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             elif isinstance(parallel_attr, dict):
                 rest_attr = parallel_attr
             else:
-                raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
+                msg = f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead."
+                raise MlException(message=msg, no_personal_data_message=msg)
         # TODO: Bug Item number: 2897665
         res: dict = convert_ordered_dict_to_dict(rest_attr)  # type: ignore
         return res
@@ -447,12 +452,10 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
                     "retry_settings": get_rest_dict_for_node_attrs(self.retry_settings),
                     "logging_level": self.logging_level,
                     "mini_batch_size": self.mini_batch_size,
-                    "partition_keys": json.dumps(self.partition_keys)
-                    if self.partition_keys is not None
-                    else self.partition_keys,
-                    "identity": self.identity._to_dict()
-                    if self.identity and not isinstance(self.identity, Dict)
-                    else None,
+                    "partition_keys": (
+                        json.dumps(self.partition_keys) if self.partition_keys is not None else self.partition_keys
+                    ),
+                    "identity": get_rest_dict_for_node_attrs(self.identity),
                     "resources": get_rest_dict_for_node_attrs(self.resources),
                 }
             )
@@ -481,9 +484,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
-
         if "identity" in obj and obj["identity"]:
-            obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
+            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(obj["identity"])
         return obj
 
     def _build_inputs(self) -> Dict:
@@ -541,10 +543,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
             node.environment_variables = copy.deepcopy(self.environment_variables)
             node.identity = copy.deepcopy(self.identity)
             return node
-        raise Exception(
-            f"Parallel can be called as a function only when referenced component is {type(Component)}, "
-            f"currently got {self._component}."
-        )
+        msg = f"Parallel can be called as a function only when referenced component is {type(Component)}, \
+            currently got {self._component}."
+        raise MlException(message=msg, no_personal_data_message=msg)
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":

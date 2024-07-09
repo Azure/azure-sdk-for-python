@@ -23,6 +23,7 @@ from .operations import (
     ClustersOperations,
     Operations,
     ServicesOperations,
+    UnsupportedVmSizesOperations,
 )
 
 if TYPE_CHECKING:
@@ -39,6 +40,9 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
     :vartype cluster_versions: azure.mgmt.servicefabric.aio.operations.ClusterVersionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicefabric.aio.operations.Operations
+    :ivar unsupported_vm_sizes: UnsupportedVmSizesOperations operations
+    :vartype unsupported_vm_sizes:
+     azure.mgmt.servicefabric.aio.operations.UnsupportedVmSizesOperations
     :ivar application_types: ApplicationTypesOperations operations
     :vartype application_types: azure.mgmt.servicefabric.aio.operations.ApplicationTypesOperations
     :ivar application_type_versions: ApplicationTypeVersionsOperations operations
@@ -54,8 +58,8 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -82,6 +86,9 @@ class ServiceFabricManagementClient:  # pylint: disable=client-accepts-api-versi
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.unsupported_vm_sizes = UnsupportedVmSizesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.application_types = ApplicationTypesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

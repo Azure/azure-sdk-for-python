@@ -16,7 +16,8 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Type, Union
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -140,7 +141,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return self._status
 
     @property
-    def log_files(self) -> Optional[Dict]:
+    def log_files(self) -> Optional[Dict[str, str]]:
         """Job output files.
 
         :return: The dictionary of log names and URLs.
@@ -168,8 +169,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             If dest is a file path, a new file will be created.
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -207,6 +206,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
@@ -226,6 +226,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             job_type = AutoMLJob
         elif type_str == JobType.PIPELINE:
             job_type = PipelineJob
+        elif type_str == JobType.FINE_TUNING:
+            job_type = FineTuningJob
         else:
             msg = f"Unsupported job type: {type_str}."
             raise ValidationException(
@@ -256,8 +258,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
         :type params_override: List[Dict]
-        :keyword kwargs: A dictionary of additional configuration parameters.
-        :paramtype kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.
         :rtype: Job
@@ -282,13 +282,14 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
 
     @classmethod
     def _from_rest_object(  # pylint: disable=too-many-return-statements
-        cls, obj: Union[JobBase, JobBase_2308, Run]
+        cls, obj: Union[JobBase, JobBase_2401, Run]
     ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.base_job import _BaseJob
+        from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
         from azure.ai.ml.entities._job.import_job import ImportJob
         from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 
@@ -305,14 +306,20 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                     return ImportJob._load_from_rest(obj)
 
                 res_command: Job = Command._load_from_rest_job(obj)
+                if hasattr(obj, "name"):
+                    res_command._name = obj.name  # type: ignore[attr-defined]
                 return res_command
             if obj.properties.job_type == RestJobType.SPARK:
                 res_spark: Job = Spark._load_from_rest_job(obj)
+                if hasattr(obj, "name"):
+                    res_spark._name = obj.name  # type: ignore[attr-defined]
                 return res_spark
             if obj.properties.job_type == RestJobType.SWEEP:
                 return SweepJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.AUTO_ML:
                 return AutoMLJob._load_from_rest(obj)
+            if obj.properties.job_type == RestJobType_20240101Preview.FINE_TUNING:
+                return FineTuningJob._load_from_rest(obj)
             if obj.properties.job_type == RestJobType.PIPELINE:
                 res_pipeline: Job = PipelineJob._load_from_rest(obj)
                 return res_pipeline
@@ -328,14 +335,13 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                 no_personal_data_message=f"Unable to parse a job resource of type:{type(obj).__name__}",
                 error_category=ErrorCategory.SYSTEM_ERROR,
             ) from ex
-        else:
-            msg = f"Unsupported job type {obj.properties.job_type}"
-            raise JobException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        msg = f"Unsupported job type {obj.properties.job_type}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.JOB,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def _get_telemetry_values(self) -> Dict:  # pylint: disable=arguments-differ
         telemetry_values = {"type": self.type}

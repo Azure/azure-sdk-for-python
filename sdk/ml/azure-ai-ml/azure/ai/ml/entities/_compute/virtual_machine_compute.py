@@ -131,9 +131,11 @@ class VirtualMachineCompute(Compute):
             tags=rest_obj.tags if rest_obj.tags else None,
             public_key_data=credentials.public_key_data if credentials else None,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
             ssh_settings=ssh_settings_param,
         )
         return response

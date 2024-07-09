@@ -91,7 +91,7 @@ class TestQADataGenerator:
         qa_generator = QADataGenerator(model_config)
         qas = list(zip(questions, answers))
         filepath = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
-        output_file = os.path.join(filepath, f"test_{qa_type}_{structure}.jsonl")
+        output_file = os.path.join(filepath, f"test_{qa_type.value}_{structure.value}.jsonl")
         qa_generator.export_to_file(output_file, qa_type, qas, structure)
         
         if qa_type == QAType.CONVERSATION and structure == OutputStructure.CHAT_PROTOCOL:

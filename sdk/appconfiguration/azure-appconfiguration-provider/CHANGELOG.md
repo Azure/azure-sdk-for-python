@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.3.0b1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.2.0 (2024-05-24)
+
+### Features Added
+
+* Enable loading of feature flags with `feature_flag_enabled`
+* Select Feature Flags to load with `feature_flag_selectors`
+* Enable/Disable Feature Flag Refresh with `feature_flag_refresh_enabled`
+
+### Bugs Fixed
+
+* Fixes issue where loading configurations were slower due to returning a copy of the configurations.
 
 ## 1.1.0 (2024-01-29)
 

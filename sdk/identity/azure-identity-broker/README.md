@@ -42,7 +42,7 @@ ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}
 
 ### Authenticate with `InteractiveBrowserBrokerCredential`
 
-This example demonstrates using `InteractiveBrowserBrokerCredential` as a broker-enabled credential for authenticating with the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library. Here, the `win32gui` package is used to get the current window.
+This example demonstrates using `InteractiveBrowserBrokerCredential` as a broker-enabled credential for authenticating with the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library. Here, the `win32gui` module from the `pywin32` package is used to get the current window.
 
 ```python
 import win32gui
@@ -53,7 +53,16 @@ from azure.storage.blob import BlobServiceClient
 current_window_handle = win32gui.GetForegroundWindow()
 
 credential = InteractiveBrowserBrokerCredential(parent_window_handle=current_window_handle)
-client = BlobServiceClient(account_url, credential=default_credential)
+client = BlobServiceClient(account_url, credential=credential)
+```
+
+To bypass the account selection dialog and use the default broker account, set the `use_default_broker_account` argument to `True`. The credential will attempt to silently use the default broker account. If using the default account fails, the credential will fall back to interactive authentication.
+
+```python
+credential = InteractiveBrowserBrokerCredential(
+    parent_window_handle=current_window_handle,
+    use_default_broker_account=True
+)
 ```
 
 ## Troubleshooting

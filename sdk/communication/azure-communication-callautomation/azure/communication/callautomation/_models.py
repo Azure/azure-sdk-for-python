@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import List, Optional, Union, TYPE_CHECKING
+from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
@@ -21,6 +22,7 @@ from ._shared.models import (
     PhoneNumberIdentifier,
 )
 from ._generated.models._enums import PlaySourceType
+from ._generated.models._enums import RecordingStorageKind
 from ._utils import (
     deserialize_phone_identifier,
     deserialize_identifier,
@@ -35,6 +37,7 @@ if TYPE_CHECKING:
         TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
+        RecordingKind,
         VoiceKind,
         DtmfTone
     )
@@ -135,6 +138,39 @@ class GroupCallLocator:
 
     def _to_generated(self):
         return CallLocator(kind=self.kind, group_call_id=self.group_call_id)
+
+    class RecordingStorage:
+        """Recording Storage for the recording.
+        :param kind: Defines the kind of external storage.
+        :type kind: str
+        """
+        kind: str
+        """The recording storage kind"""
+
+    class AzureCommunicationsRecordingStorage(RecordingStorage):
+        """
+        Recording Storage for the recording.
+        :param kind: Defines the kind of external storage.
+        :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+        """
+        kind: Literal[RecordingStorageKind
+                      .AZURE_COMMUNICATION_SERVICES
+                      ] = RecordingStorageKind.AZURE_COMMUNICATION_SERVICES
+        """The kind of recording storage is set to AZURE_COMMUNICATION_SERVICES"""
+
+    class AzureBlobContainerRecordingStorage(RecordingStorage):
+        """Recording Storage for the recording.
+        :param kind: Defines the kind of external storage.
+        :type kind: ~azure.communication.callautomation.RecordingStorageKind or str
+        :param container_url: Defines the kind of external storage. Required.
+        :type container_url: str
+        """
+        kind: Literal[RecordingStorageKind.AZURE_BLOB_STORAGE] = RecordingStorageKind.AZURE_BLOB_STORAGE
+        """The kind of recording storage is set to AZURE_BLOB_STORAGE"""
+        container_url: str
+        """The container url for the AZURE_BLOB_STORAGE type"""
+        def __init__(self, container_url: str):
+            self.container_url = container_url
 
 
 class ChannelAffinity:
@@ -535,27 +571,34 @@ class CallParticipant:
     :paramtype identifier: ~azure.communication.callautomation.CommunicationIdentifier
     :keyword is_muted: Is participant muted.
     :paramtype is_muted: bool
+    :keyword is_on_hold: Is participant on hold.
+    :paramtype is_on_hold: bool
     """
 
     identifier: Optional[CommunicationIdentifier]
     """Communication identifier of the participant."""
     is_muted: bool
     """Is participant muted."""
+    is_on_hold: bool
+    """Is participant on hold."""
 
     def __init__(
         self,
         *,
         identifier: Optional[CommunicationIdentifier] = None,
-        is_muted: bool = False
+        is_muted: bool = False,
+        is_on_hold: bool = False,
     ):
         self.identifier = identifier
         self.is_muted = is_muted
+        self.is_on_hold = is_on_hold
 
     @classmethod
     def _from_generated(cls, call_participant_generated: 'CallParticipantRest'):
         return cls(
             identifier=deserialize_identifier(call_participant_generated.identifier),
-            is_muted=call_participant_generated.is_muted
+            is_muted=call_participant_generated.is_muted,
+            is_on_hold=call_participant_generated.is_on_hold
         )
 
 

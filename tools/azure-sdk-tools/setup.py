@@ -9,17 +9,16 @@ DEPENDENCIES = [
     "packaging",
     "wheel",
     "Jinja2",
-    "MarkupSafe",
     "json-delta>=2.0",
     # Tests
     "pytest-cov",
     "pytest>=3.5.1",
-    "readme_renderer",
-    "pyopenssl",
     "python-dotenv",
     "PyYAML",
     "urllib3",
     "tomli-w==1.0.0",
+    # Perf/Build
+    "ConfigArgParse>=0.12.0",
 ]
 
 setup(
@@ -59,6 +58,6 @@ setup(
         "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel"],
         "conda": ["beautifulsoup4"],
         "systemperf": ["aiohttp>=3.0", "requests>=2.0", "tornado==6.0.3", "httpx>=0.21", "azure-core"],
-        "ghtools": ["PyGithub>=1.59.0"],
+        "ghtools": ["GitPython", "PyGithub>=1.59.0", "requests>=2.0"],
     },
 )

@@ -15,28 +15,34 @@ USAGE:
 """
 
 from typing import Iterable, Union
-from corehttp.runtime import PipelineClient
-from corehttp.rest import HttpRequest, HttpResponse
-from corehttp.runtime.policies import (
-    HTTPPolicy,
-    SansIOHTTPPolicy,
-    HeadersPolicy,
-    UserAgentPolicy,
-    ContentDecodePolicy,
-    RetryPolicy,
-    NetworkTraceLoggingPolicy,
-)
 
-policies: Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]] = [
-    HeadersPolicy(),
-    UserAgentPolicy("myuseragent"),
-    ContentDecodePolicy(),
-    RetryPolicy(),
-    NetworkTraceLoggingPolicy(),
-]
 
-client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient("https://bing.com", policies=policies)
-request = HttpRequest("GET", "https://bing.com")
-response = client.send_request(request)
-pipeline_response = client.pipeline.run(request)
-print(response)
+def sample_pipeline_client():
+    # [START build_pipeline_client]
+    from corehttp.runtime import PipelineClient
+    from corehttp.rest import HttpRequest, HttpResponse
+    from corehttp.runtime.policies import (
+        HTTPPolicy,
+        SansIOHTTPPolicy,
+        HeadersPolicy,
+        UserAgentPolicy,
+        RetryPolicy,
+    )
+
+    policies: Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]] = [
+        HeadersPolicy(),
+        UserAgentPolicy("myuseragent"),
+        RetryPolicy(),
+    ]
+
+    client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient("https://bing.com", policies=policies)
+    request = HttpRequest("GET", "https://bing.com")
+    response = client.send_request(request)
+    # [END build_pipeline_client]
+
+    pipeline_response = client.pipeline.run(request)
+    print(response)
+
+
+if __name__ == "__main__":
+    sample_pipeline_client()

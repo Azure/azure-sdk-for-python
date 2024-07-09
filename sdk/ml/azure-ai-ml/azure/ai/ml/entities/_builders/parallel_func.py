@@ -11,7 +11,7 @@ from azure.ai.ml.entities._credentials import (
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
 )
-from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
 from .command_func import _parse_input, _parse_inputs_outputs, _parse_output
@@ -27,7 +27,7 @@ def parallel_run_function(
     display_name: Optional[str] = None,
     experiment_name: Optional[str] = None,
     compute: Optional[str] = None,
-    retry_settings: Optional[RetrySettings] = None,
+    retry_settings: Optional[BatchRetrySettings] = None,
     environment_variables: Optional[Dict] = None,
     logging_level: Optional[str] = None,
     max_concurrency_per_instance: Optional[int] = None,
@@ -215,7 +215,7 @@ def parallel_run_function(
                 description=description,
                 inputs=component_inputs,
                 outputs=component_outputs,
-                retry_settings=retry_settings,
+                retry_settings=retry_settings,  # type: ignore[arg-type]
                 logging_level=logging_level,
                 max_concurrency_per_instance=max_concurrency_per_instance,
                 error_threshold=error_threshold,
@@ -238,7 +238,7 @@ def parallel_run_function(
                 description=description,
                 inputs=component_inputs,
                 outputs=component_outputs,
-                retry_settings=retry_settings,
+                retry_settings=retry_settings,  # type: ignore[arg-type]
                 logging_level=logging_level,
                 max_concurrency_per_instance=max_concurrency_per_instance,
                 error_threshold=error_threshold,
@@ -266,7 +266,7 @@ def parallel_run_function(
         outputs=job_outputs,
         identity=identity,
         environment_variables=environment_variables,
-        retry_settings=retry_settings,
+        retry_settings=retry_settings,  # type: ignore[arg-type]
         logging_level=logging_level,
         max_concurrency_per_instance=max_concurrency_per_instance,
         error_threshold=error_threshold,

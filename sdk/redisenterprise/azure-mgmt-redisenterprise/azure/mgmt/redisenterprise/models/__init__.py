@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AccessKeys
-from ._models_py3 import Capability
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterList
 from ._models_py3 import ClusterPropertiesEncryption
@@ -23,10 +22,10 @@ from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportClusterParameters
 from ._models_py3 import FlushParameters
+from ._models_py3 import ForceLinkParameters
 from ._models_py3 import ForceUnlinkParameters
 from ._models_py3 import ImportClusterParameters
 from ._models_py3 import LinkedDatabase
-from ._models_py3 import LocationInfo
 from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import Module
 from ._models_py3 import Operation
@@ -42,12 +41,8 @@ from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
-from ._models_py3 import RegionSkuDetail
-from ._models_py3 import RegionSkuDetails
 from ._models_py3 import Resource
 from ._models_py3 import Sku
-from ._models_py3 import SkuDetail
-from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentity
 
@@ -56,7 +51,7 @@ from ._redis_enterprise_management_client_enums import ActionType
 from ._redis_enterprise_management_client_enums import AofFrequency
 from ._redis_enterprise_management_client_enums import ClusteringPolicy
 from ._redis_enterprise_management_client_enums import CmkIdentityType
-from ._redis_enterprise_management_client_enums import CreatedByType
+from ._redis_enterprise_management_client_enums import DeferUpgradeSetting
 from ._redis_enterprise_management_client_enums import EvictionPolicy
 from ._redis_enterprise_management_client_enums import LinkState
 from ._redis_enterprise_management_client_enums import ManagedServiceIdentityType
@@ -75,7 +70,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccessKeys",
-    "Capability",
     "Cluster",
     "ClusterList",
     "ClusterPropertiesEncryption",
@@ -91,10 +85,10 @@ __all__ = [
     "ErrorResponse",
     "ExportClusterParameters",
     "FlushParameters",
+    "ForceLinkParameters",
     "ForceUnlinkParameters",
     "ImportClusterParameters",
     "LinkedDatabase",
-    "LocationInfo",
     "ManagedServiceIdentity",
     "Module",
     "Operation",
@@ -110,12 +104,8 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "RegenerateKeyParameters",
-    "RegionSkuDetail",
-    "RegionSkuDetails",
     "Resource",
     "Sku",
-    "SkuDetail",
-    "SystemData",
     "TrackedResource",
     "UserAssignedIdentity",
     "AccessKeyType",
@@ -123,7 +113,7 @@ __all__ = [
     "AofFrequency",
     "ClusteringPolicy",
     "CmkIdentityType",
-    "CreatedByType",
+    "DeferUpgradeSetting",
     "EvictionPolicy",
     "LinkState",
     "ManagedServiceIdentityType",

@@ -10,6 +10,7 @@ import tempfile
 from flask import (
     Response,
     Blueprint,
+    request,
 )
 
 streams_api = Blueprint("streams_api", __name__)
@@ -59,9 +60,19 @@ def string():
     return Response(streaming_test(), status=200, mimetype="text/plain")
 
 
+@streams_api.route("/plain_header", methods=["GET"])
+def plain_header():
+    return Response(streaming_test(), status=200, mimetype="text/plain", headers={"Content-Encoding": "gzip"})
+
+
 @streams_api.route("/compressed_no_header", methods=["GET"])
 def compressed_no_header():
     return Response(compressed_stream(), status=300)
+
+
+@streams_api.route("/compressed_header", methods=["GET"])
+def compressed_header():
+    return Response(compressed_stream(), status=200, headers={"Content-Encoding": "gzip"})
 
 
 @streams_api.route("/compressed", methods=["GET"])
@@ -81,3 +92,15 @@ def compressed_stream():
 @streams_api.route("/decompress_header", methods=["GET"])
 def decompress_header():
     return Response(compressed_stream(), status=200, headers={"Content-Encoding": "gzip"})
+
+
+@streams_api.route("/upload", methods=["POST"])
+def upload():
+    chunk_size = 1024
+    byte_content = b""
+    while True:
+        chunk = request.stream.read(chunk_size)
+        if len(chunk) == 0:
+            break
+        byte_content += chunk
+    return Response(byte_content, status=200)

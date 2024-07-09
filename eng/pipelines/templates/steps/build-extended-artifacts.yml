@@ -47,6 +47,8 @@ steps:
     inputs:
       versionSpec: '3.11'
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - script: |
       python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
@@ -70,6 +72,7 @@ steps:
         "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
+        --wheel_dir="$(Build.ArtifactStagingDirectory)"
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"
@@ -78,10 +81,11 @@ steps:
   - template: /eng/pipelines/templates/steps/run_apistub.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
@@ -91,20 +95,8 @@ steps:
       Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
     displayName: Check if docs directory exists
   
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
       ArtifactName: 'documentation'
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-      displayName: 'Generate BOM'
-      condition: succeededOrFailed()
-      inputs:
-        BuildDropPath: $(Build.ArtifactStagingDirectory)
-
-    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-      parameters:
-        ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-        ArtifactName: 'extended_manifest'

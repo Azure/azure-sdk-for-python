@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -36,6 +37,10 @@ from ...operations._managed_private_endpoints_operations import (
     build_list_by_factory_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,7 +76,6 @@ class ManagedPrivateEndpointsOperations:
         :type factory_name: str
         :param managed_virtual_network_name: Managed virtual network name. Required.
         :type managed_virtual_network_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedPrivateEndpointResource or the result of
          cls(response)
         :rtype:
@@ -84,7 +88,7 @@ class ManagedPrivateEndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedPrivateEndpointListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -95,18 +99,17 @@ class ManagedPrivateEndpointsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_factory_request(
+                _request = build_list_by_factory_request(
                     resource_group_name=resource_group_name,
                     factory_name=factory_name,
                     managed_virtual_network_name=managed_virtual_network_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_factory.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -118,13 +121,13 @@ class ManagedPrivateEndpointsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedPrivateEndpointListResponse", pipeline_response)
@@ -134,11 +137,11 @@ class ManagedPrivateEndpointsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -149,10 +152,6 @@ class ManagedPrivateEndpointsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_factory.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints"
-    }
 
     @overload
     async def create_or_update(
@@ -186,7 +185,6 @@ class ManagedPrivateEndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpointResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -199,7 +197,7 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        managed_private_endpoint: IO,
+        managed_private_endpoint: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -216,7 +214,7 @@ class ManagedPrivateEndpointsOperations:
         :param managed_private_endpoint_name: Managed private endpoint name. Required.
         :type managed_private_endpoint_name: str
         :param managed_private_endpoint: Managed private endpoint resource definition. Required.
-        :type managed_private_endpoint: IO
+        :type managed_private_endpoint: IO[bytes]
         :param if_match: ETag of the managed private endpoint entity. Should only be specified for
          update, for which it should match existing entity or can be * for unconditional update. Default
          value is None.
@@ -224,7 +222,6 @@ class ManagedPrivateEndpointsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpointResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -237,7 +234,7 @@ class ManagedPrivateEndpointsOperations:
         factory_name: str,
         managed_virtual_network_name: str,
         managed_private_endpoint_name: str,
-        managed_private_endpoint: Union[_models.ManagedPrivateEndpointResource, IO],
+        managed_private_endpoint: Union[_models.ManagedPrivateEndpointResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ManagedPrivateEndpointResource:
@@ -252,22 +249,18 @@ class ManagedPrivateEndpointsOperations:
         :param managed_private_endpoint_name: Managed private endpoint name. Required.
         :type managed_private_endpoint_name: str
         :param managed_private_endpoint: Managed private endpoint resource definition. Is either a
-         ManagedPrivateEndpointResource type or a IO type. Required.
+         ManagedPrivateEndpointResource type or a IO[bytes] type. Required.
         :type managed_private_endpoint: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
-         or IO
+         or IO[bytes]
         :param if_match: ETag of the managed private endpoint entity. Should only be specified for
          update, for which it should match existing entity or can be * for unconditional update. Default
          value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpointResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -290,7 +283,7 @@ class ManagedPrivateEndpointsOperations:
         else:
             _json = self._serialize.body(managed_private_endpoint, "ManagedPrivateEndpointResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             managed_virtual_network_name=managed_virtual_network_name,
@@ -301,16 +294,15 @@ class ManagedPrivateEndpointsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -322,13 +314,9 @@ class ManagedPrivateEndpointsOperations:
         deserialized = self._deserialize("ManagedPrivateEndpointResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -354,12 +342,11 @@ class ManagedPrivateEndpointsOperations:
          get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedPrivateEndpointResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -373,7 +360,7 @@ class ManagedPrivateEndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedPrivateEndpointResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             managed_virtual_network_name=managed_virtual_network_name,
@@ -381,16 +368,15 @@ class ManagedPrivateEndpointsOperations:
             subscription_id=self._config.subscription_id,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -402,13 +388,9 @@ class ManagedPrivateEndpointsOperations:
         deserialized = self._deserialize("ManagedPrivateEndpointResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -429,12 +411,11 @@ class ManagedPrivateEndpointsOperations:
         :type managed_virtual_network_name: str
         :param managed_private_endpoint_name: Managed private endpoint name. Required.
         :type managed_private_endpoint_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -448,23 +429,22 @@ class ManagedPrivateEndpointsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             managed_virtual_network_name=managed_virtual_network_name,
             managed_private_endpoint_name=managed_private_endpoint_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -474,8 +454,4 @@ class ManagedPrivateEndpointsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}/managedPrivateEndpoints/{managedPrivateEndpointName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -20,15 +21,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._build_service_operations import (
     build_create_or_update_build_request,
     build_get_build_request,
@@ -45,6 +44,10 @@ from ...operations._build_service_operations import (
     build_list_supported_stacks_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -80,7 +83,6 @@ class BuildServiceOperations:
         :type resource_group_name: str
         :param service_name: The name of the Service resource. Required.
         :type service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BuildService or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appplatform.v2022_12_01.models.BuildService]
@@ -92,7 +94,7 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.BuildServiceCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -103,17 +105,15 @@ class BuildServiceOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_build_services_request(
+                _request = build_list_build_services_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_build_services.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -124,14 +124,13 @@ class BuildServiceOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("BuildServiceCollection", pipeline_response)
@@ -141,11 +140,11 @@ class BuildServiceOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -156,10 +155,6 @@ class BuildServiceOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_build_services.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices"
-    }
 
     @distributed_trace_async
     async def get_build_service(
@@ -174,12 +169,11 @@ class BuildServiceOperations:
         :type service_name: str
         :param build_service_name: The name of the build service resource. Required.
         :type build_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BuildService or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.BuildService
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -193,22 +187,20 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.BuildService] = kwargs.pop("cls", None)
 
-        request = build_get_build_service_request(
+        _request = build_get_build_service_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_build_service.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -217,16 +209,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BuildService", pipeline_response)
+        deserialized = self._deserialize("BuildService", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_build_service.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_builds(
@@ -241,7 +229,6 @@ class BuildServiceOperations:
         :type service_name: str
         :param build_service_name: The name of the build service resource. Required.
         :type build_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Build or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appplatform.v2022_12_01.models.Build]
@@ -253,7 +240,7 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.BuildCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -264,18 +251,16 @@ class BuildServiceOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_builds_request(
+                _request = build_list_builds_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     build_service_name=build_service_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_builds.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -286,14 +271,13 @@ class BuildServiceOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("BuildCollection", pipeline_response)
@@ -303,11 +287,11 @@ class BuildServiceOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -318,10 +302,6 @@ class BuildServiceOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_builds.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/builds"
-    }
 
     @distributed_trace_async
     async def get_build(
@@ -338,12 +318,11 @@ class BuildServiceOperations:
         :type build_service_name: str
         :param build_name: The name of the build resource. Required.
         :type build_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Build or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.Build
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -357,23 +336,21 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.Build] = kwargs.pop("cls", None)
 
-        request = build_get_build_request(
+        _request = build_get_build_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             build_name=build_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_build.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -382,16 +359,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Build", pipeline_response)
+        deserialized = self._deserialize("Build", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_build.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/builds/{buildName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update_build(
@@ -421,7 +394,6 @@ class BuildServiceOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Build or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.Build
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -434,7 +406,7 @@ class BuildServiceOperations:
         service_name: str,
         build_service_name: str,
         build_name: str,
-        build: IO,
+        build: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -451,11 +423,10 @@ class BuildServiceOperations:
         :param build_name: The name of the build resource. Required.
         :type build_name: str
         :param build: Parameters for the create or update operation. Required.
-        :type build: IO
+        :type build: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Build or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.Build
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -468,7 +439,7 @@ class BuildServiceOperations:
         service_name: str,
         build_service_name: str,
         build_name: str,
-        build: Union[_models.Build, IO],
+        build: Union[_models.Build, IO[bytes]],
         **kwargs: Any
     ) -> _models.Build:
         """Create or update a KPack build.
@@ -482,18 +453,14 @@ class BuildServiceOperations:
         :type build_service_name: str
         :param build_name: The name of the build resource. Required.
         :type build_name: str
-        :param build: Parameters for the create or update operation. Is either a Build type or a IO
-         type. Required.
-        :type build: ~azure.mgmt.appplatform.v2022_12_01.models.Build or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param build: Parameters for the create or update operation. Is either a Build type or a
+         IO[bytes] type. Required.
+        :type build: ~azure.mgmt.appplatform.v2022_12_01.models.Build or IO[bytes]
         :return: Build or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.Build
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,7 +483,7 @@ class BuildServiceOperations:
         else:
             _json = self._serialize.body(build, "Build")
 
-        request = build_create_or_update_build_request(
+        _request = build_create_or_update_build_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
@@ -526,16 +493,14 @@ class BuildServiceOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_build.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -545,19 +510,15 @@ class BuildServiceOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("Build", pipeline_response)
+            deserialized = self._deserialize("Build", pipeline_response.http_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("Build", pipeline_response)
+            deserialized = self._deserialize("Build", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update_build.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/builds/{buildName}"
-    }
 
     @distributed_trace
     def list_build_results(
@@ -574,7 +535,6 @@ class BuildServiceOperations:
         :type build_service_name: str
         :param build_name: The name of the build resource. Required.
         :type build_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BuildResult or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appplatform.v2022_12_01.models.BuildResult]
@@ -586,7 +546,7 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.BuildResultCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -597,19 +557,17 @@ class BuildServiceOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_build_results_request(
+                _request = build_list_build_results_request(
                     resource_group_name=resource_group_name,
                     service_name=service_name,
                     build_service_name=build_service_name,
                     build_name=build_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_build_results.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -620,14 +578,13 @@ class BuildServiceOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("BuildResultCollection", pipeline_response)
@@ -637,11 +594,11 @@ class BuildServiceOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -652,10 +609,6 @@ class BuildServiceOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_build_results.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/builds/{buildName}/results"
-    }
 
     @distributed_trace_async
     async def get_build_result(
@@ -680,12 +633,11 @@ class BuildServiceOperations:
         :type build_name: str
         :param build_result_name: The name of the build result resource. Required.
         :type build_result_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BuildResult or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.BuildResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -699,7 +651,7 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.BuildResult] = kwargs.pop("cls", None)
 
-        request = build_get_build_result_request(
+        _request = build_get_build_result_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
@@ -707,16 +659,14 @@ class BuildServiceOperations:
             build_result_name=build_result_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_build_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -725,16 +675,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BuildResult", pipeline_response)
+        deserialized = self._deserialize("BuildResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_build_result.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/builds/{buildName}/results/{buildResultName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_build_result_log(
@@ -759,12 +705,11 @@ class BuildServiceOperations:
         :type build_name: str
         :param build_result_name: The name of the build result resource. Required.
         :type build_result_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BuildResultLog or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.BuildResultLog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -778,7 +723,7 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.BuildResultLog] = kwargs.pop("cls", None)
 
-        request = build_get_build_result_log_request(
+        _request = build_get_build_result_log_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
@@ -786,16 +731,14 @@ class BuildServiceOperations:
             build_result_name=build_result_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_build_result_log.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -804,16 +747,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BuildResultLog", pipeline_response)
+        deserialized = self._deserialize("BuildResultLog", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_build_result_log.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/builds/{buildName}/results/{buildResultName}/getLogFileUrl"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_resource_upload_url(
@@ -828,12 +767,11 @@ class BuildServiceOperations:
         :type service_name: str
         :param build_service_name: The name of the build service resource. Required.
         :type build_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceUploadDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.ResourceUploadDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -847,22 +785,20 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.ResourceUploadDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_resource_upload_url_request(
+        _request = build_get_resource_upload_url_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_resource_upload_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -871,16 +807,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ResourceUploadDefinition", pipeline_response)
+        deserialized = self._deserialize("ResourceUploadDefinition", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_resource_upload_url.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/getResourceUploadUrl"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_supported_buildpacks(
@@ -895,12 +827,11 @@ class BuildServiceOperations:
         :type service_name: str
         :param build_service_name: The name of the build service resource. Required.
         :type build_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportedBuildpacksCollection or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.SupportedBuildpacksCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -914,22 +845,20 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.SupportedBuildpacksCollection] = kwargs.pop("cls", None)
 
-        request = build_list_supported_buildpacks_request(
+        _request = build_list_supported_buildpacks_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_supported_buildpacks.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -938,16 +867,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SupportedBuildpacksCollection", pipeline_response)
+        deserialized = self._deserialize("SupportedBuildpacksCollection", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_supported_buildpacks.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/supportedBuildpacks"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_supported_buildpack(
@@ -964,12 +889,11 @@ class BuildServiceOperations:
         :type build_service_name: str
         :param buildpack_name: The name of the buildpack resource. Required.
         :type buildpack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportedBuildpackResource or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.SupportedBuildpackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -983,23 +907,21 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.SupportedBuildpackResource] = kwargs.pop("cls", None)
 
-        request = build_get_supported_buildpack_request(
+        _request = build_get_supported_buildpack_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             buildpack_name=buildpack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_supported_buildpack.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1008,16 +930,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SupportedBuildpackResource", pipeline_response)
+        deserialized = self._deserialize("SupportedBuildpackResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_supported_buildpack.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/supportedBuildpacks/{buildpackName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_supported_stacks(
@@ -1032,12 +950,11 @@ class BuildServiceOperations:
         :type service_name: str
         :param build_service_name: The name of the build service resource. Required.
         :type build_service_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportedStacksCollection or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.SupportedStacksCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1051,22 +968,20 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.SupportedStacksCollection] = kwargs.pop("cls", None)
 
-        request = build_list_supported_stacks_request(
+        _request = build_list_supported_stacks_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_supported_stacks.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1075,16 +990,12 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SupportedStacksCollection", pipeline_response)
+        deserialized = self._deserialize("SupportedStacksCollection", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_supported_stacks.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/supportedStacks"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_supported_stack(
@@ -1101,12 +1012,11 @@ class BuildServiceOperations:
         :type build_service_name: str
         :param stack_name: The name of the stack resource. Required.
         :type stack_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportedStackResource or the result of cls(response)
         :rtype: ~azure.mgmt.appplatform.v2022_12_01.models.SupportedStackResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1120,23 +1030,21 @@ class BuildServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-12-01"))
         cls: ClsType[_models.SupportedStackResource] = kwargs.pop("cls", None)
 
-        request = build_get_supported_stack_request(
+        _request = build_get_supported_stack_request(
             resource_group_name=resource_group_name,
             service_name=service_name,
             build_service_name=build_service_name,
             stack_name=stack_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_supported_stack.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1145,13 +1053,9 @@ class BuildServiceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SupportedStackResource", pipeline_response)
+        deserialized = self._deserialize("SupportedStackResource", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_supported_stack.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/supportedStacks/{stackName}"
-    }
+        return deserialized  # type: ignore

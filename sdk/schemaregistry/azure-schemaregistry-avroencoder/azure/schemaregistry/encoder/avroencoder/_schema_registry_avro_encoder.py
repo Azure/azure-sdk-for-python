@@ -52,7 +52,7 @@ from ._message_protocol import (  # pylint: disable=import-error
 )
 
 if TYPE_CHECKING:
-    from azure.schemaregistry import SchemaRegistryClient
+    import azure.schemaregistry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ class AvroEncoder(object):
     def __init__(
         self,
         *,
-        client: "SchemaRegistryClient",
+        client: "azure.schemaregistry.SchemaRegistryClient",
         group_name: Optional[str] = None,
         auto_register: bool = False,
         **kwargs: Any
@@ -239,8 +239,9 @@ class AvroEncoder(object):
         **kwargs: Any,
     ) -> Dict[str, Any]:
         """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
-            1) An object of subtype of the MessageType protocol.
-            2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
+        1) An object of subtype of the MessageType protocol.
+        2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
+
         Content must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
@@ -257,6 +258,7 @@ class AvroEncoder(object):
             Indicates an issue with validating schemas.
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidContentError:
             Indicates an issue with decoding content.
+
         """
         schema_id, content = validate_message(message)
         cache_misses = (

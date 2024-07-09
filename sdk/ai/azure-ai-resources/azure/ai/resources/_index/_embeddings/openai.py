@@ -235,9 +235,11 @@ class OpenAIEmbedder:
         """Embed the given texts."""
         import numpy as np
         import tiktoken
+        from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir
 
         try:
-            encoding = tiktoken.encoding_for_model(self.model)
+            with tiktoken_cache_dir():
+                encoding = tiktoken.encoding_for_model(self.model)
         except KeyError:
             logger.warning("Warning: model not found. Using cl100k_base encoding.")
             model = "cl100k_base"

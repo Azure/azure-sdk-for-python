@@ -14,6 +14,7 @@ from ._models_py3 import AzureADAdministrator
 from ._models_py3 import Backup
 from ._models_py3 import BackupAndExportRequest
 from ._models_py3 import BackupAndExportResponse
+from ._models_py3 import BackupAndExportResponseType
 from ._models_py3 import BackupRequestBase
 from ._models_py3 import BackupSettings
 from ._models_py3 import BackupStoreDetails
@@ -37,9 +38,14 @@ from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import FullBackupStoreDetails
 from ._models_py3 import GetPrivateDnsZoneSuffixResponse
 from ._models_py3 import HighAvailability
+from ._models_py3 import HighAvailabilityValidationEstimation
+from ._models_py3 import ImportFromStorageResponseType
 from ._models_py3 import ImportSourceProperties
 from ._models_py3 import LogFile
 from ._models_py3 import LogFileListResult
+from ._models_py3 import Maintenance
+from ._models_py3 import MaintenanceListResult
+from ._models_py3 import MaintenanceUpdate
 from ._models_py3 import MaintenanceWindow
 from ._models_py3 import MySQLServerIdentity
 from ._models_py3 import MySQLServerSku
@@ -49,16 +55,22 @@ from ._models_py3 import Network
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import OperationProgressResponseType
+from ._models_py3 import OperationProgressResult
 from ._models_py3 import OperationStatusExtendedResult
 from ._models_py3 import OperationStatusResult
 from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import Provisioning
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import Server
 from ._models_py3 import ServerBackup
 from ._models_py3 import ServerBackupListResult
+from ._models_py3 import ServerBackupV2
+from ._models_py3 import ServerBackupV2ListResult
+from ._models_py3 import ServerDetachVNetParameter
 from ._models_py3 import ServerEditionCapability
 from ._models_py3 import ServerEditionCapabilityV2
 from ._models_py3 import ServerForUpdate
@@ -84,6 +96,7 @@ from ._my_sql_management_client_enums import AdvancedThreatProtectionName
 from ._my_sql_management_client_enums import AdvancedThreatProtectionProvisioningState
 from ._my_sql_management_client_enums import AdvancedThreatProtectionState
 from ._my_sql_management_client_enums import BackupFormat
+from ._my_sql_management_client_enums import BackupType
 from ._my_sql_management_client_enums import ConfigurationSource
 from ._my_sql_management_client_enums import CreateMode
 from ._my_sql_management_client_enums import CreatedByType
@@ -95,15 +108,21 @@ from ._my_sql_management_client_enums import ImportSourceStorageType
 from ._my_sql_management_client_enums import IsConfigPendingRestart
 from ._my_sql_management_client_enums import IsDynamicConfig
 from ._my_sql_management_client_enums import IsReadOnly
+from ._my_sql_management_client_enums import MaintenanceProvisioningState
+from ._my_sql_management_client_enums import MaintenanceState
+from ._my_sql_management_client_enums import MaintenanceType
 from ._my_sql_management_client_enums import ManagedServiceIdentityType
+from ._my_sql_management_client_enums import ObjectType
 from ._my_sql_management_client_enums import OperationStatus
 from ._my_sql_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._my_sql_management_client_enums import PrivateEndpointServiceConnectionStatus
+from ._my_sql_management_client_enums import ProvisioningState
 from ._my_sql_management_client_enums import ReplicationRole
 from ._my_sql_management_client_enums import ResetAllToDefault
 from ._my_sql_management_client_enums import ServerSkuTier
 from ._my_sql_management_client_enums import ServerState
 from ._my_sql_management_client_enums import ServerVersion
+from ._my_sql_management_client_enums import StorageRedundancyEnum
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -117,6 +136,7 @@ __all__ = [
     "Backup",
     "BackupAndExportRequest",
     "BackupAndExportResponse",
+    "BackupAndExportResponseType",
     "BackupRequestBase",
     "BackupSettings",
     "BackupStoreDetails",
@@ -140,9 +160,14 @@ __all__ = [
     "FullBackupStoreDetails",
     "GetPrivateDnsZoneSuffixResponse",
     "HighAvailability",
+    "HighAvailabilityValidationEstimation",
+    "ImportFromStorageResponseType",
     "ImportSourceProperties",
     "LogFile",
     "LogFileListResult",
+    "Maintenance",
+    "MaintenanceListResult",
+    "MaintenanceUpdate",
     "MaintenanceWindow",
     "MySQLServerIdentity",
     "MySQLServerSku",
@@ -152,16 +177,22 @@ __all__ = [
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "OperationProgressResponseType",
+    "OperationProgressResult",
     "OperationStatusExtendedResult",
     "OperationStatusResult",
     "PrivateEndpoint",
     "PrivateEndpointConnection",
     "PrivateLinkServiceConnectionState",
+    "Provisioning",
     "ProxyResource",
     "Resource",
     "Server",
     "ServerBackup",
     "ServerBackupListResult",
+    "ServerBackupV2",
+    "ServerBackupV2ListResult",
+    "ServerDetachVNetParameter",
     "ServerEditionCapability",
     "ServerEditionCapabilityV2",
     "ServerForUpdate",
@@ -186,6 +217,7 @@ __all__ = [
     "AdvancedThreatProtectionProvisioningState",
     "AdvancedThreatProtectionState",
     "BackupFormat",
+    "BackupType",
     "ConfigurationSource",
     "CreateMode",
     "CreatedByType",
@@ -197,15 +229,21 @@ __all__ = [
     "IsConfigPendingRestart",
     "IsDynamicConfig",
     "IsReadOnly",
+    "MaintenanceProvisioningState",
+    "MaintenanceState",
+    "MaintenanceType",
     "ManagedServiceIdentityType",
+    "ObjectType",
     "OperationStatus",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
+    "ProvisioningState",
     "ReplicationRole",
     "ResetAllToDefault",
     "ServerSkuTier",
     "ServerState",
     "ServerVersion",
+    "StorageRedundancyEnum",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

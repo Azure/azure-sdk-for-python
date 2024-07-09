@@ -17,6 +17,8 @@
         "Nify",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+		"unhold",
+        "Unhold"
     ]
 }

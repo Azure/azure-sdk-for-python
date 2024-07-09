@@ -44,7 +44,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     :keyword stored_procedure_params: The parameters for the stored procedure.
     :paramtype stored_procedure_params: List
     :keyword connection: The connection string for the database.
-        The credential information should be stored in the workspace connection.
+        The credential information should be stored in the connection.
     :paramtype connection: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the Database object cannot be successfully validated.
         Details will be provided in the error message.
@@ -67,7 +67,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         query: Optional[str] = None,
         table_name: Optional[str] = None,
         stored_procedure: Optional[str] = None,
-        stored_procedure_params: Optional[List] = None,
+        stored_procedure_params: Optional[List[Dict]] = None,
         connection: Optional[str] = None,
     ) -> None:
         # As an annotation, it is not allowed to initialize the name.

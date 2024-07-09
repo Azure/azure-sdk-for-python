@@ -2,6 +2,7 @@ import os
 import ast
 import textwrap
 import re
+import fnmatch
 
 try:
     # py 311 adds this library natively
@@ -102,6 +103,12 @@ class ParsedSetup:
 
     def get_build_config(self) -> Dict[str, Any]:
         return get_build_config(self.folder)
+
+    def get_config_setting(self, setting: str, default: Any = True) -> Any:
+        return get_config_setting(self.folder, setting, default)
+
+    def is_reporting_suppressed(self, setting: str) -> bool:
+        return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
 
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -330,3 +337,10 @@ def get_name_from_specifier(version: str) -> str:
     "azure-core<2.0.0,>=1.11.0" -> azure-core
     """
     return re.split(r"[><=]", version)[0]
+
+
+def compare_string_to_glob_array(string: str, glob_array: List[str]) -> bool:
+    """
+    This function is used to easily compare a string to a set of glob strings, if it matches any of them, returns True.
+    """
+    return any([fnmatch.fnmatch(string, glob) for glob in glob_array])

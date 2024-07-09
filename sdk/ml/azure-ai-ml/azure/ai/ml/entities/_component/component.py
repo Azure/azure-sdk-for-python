@@ -9,7 +9,7 @@ from typing import IO, TYPE_CHECKING, Any, AnyStr, Callable, Dict, Iterable, Opt
 
 from marshmallow import INCLUDE
 
-from ..._restclient.v2023_08_01_preview.models import (
+from ..._restclient.v2024_01_01_preview.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
@@ -101,7 +101,7 @@ class Component(
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         display_name: Optional[str] = None,
-        is_deterministic: Optional[bool] = True,
+        is_deterministic: bool = True,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         yaml_str: Optional[str] = None,
@@ -264,18 +264,20 @@ class Component(
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
-    def _resolve_component_source_from_id(
+    def _resolve_component_source_from_id(  # pylint: disable=docstring-type-do-not-use-class
         id: Optional[Union["Component", str]],
     ) -> Any:
         """Resolve the component source from id.
+
         :param id: The component ID
         :type id: Optional[str]
         :return: The component source
         :rtype: Literal[
-                ComponentSource.CLASS,
-                ComponentSource.REMOTE_REGISTRY,
-                ComponentSource.REMOTE_WORKSPACE_COMPONENT
-            ]
+            ComponentSource.CLASS,
+            ComponentSource.REMOTE_REGISTRY,
+            ComponentSource.REMOTE_WORKSPACE_COMPONENT
+
+        ]
         """
         if id is None:
             return ComponentSource.CLASS
@@ -423,7 +425,7 @@ class Component(
             properties=component_container_details.properties,
             type=NodeType._CONTAINER,
             # Set this field to None as it hold a default True in init.
-            is_deterministic=None,
+            is_deterministic=None,  # type: ignore[arg-type]
         )
         component.latest_version = component_container_details.latest_version
         return component

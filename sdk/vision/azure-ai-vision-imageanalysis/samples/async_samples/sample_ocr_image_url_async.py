@@ -53,7 +53,7 @@ async def sample_ocr_image_file_async():
     )
 
     # Extract text (OCR) from an image URL, asynchronously.
-    result = await client.analyze(
+    result = await client.analyze_from_url(
         image_url="https://aka.ms/azsdk/image-analysis/sample.jpg",
         visual_features=[VisualFeatures.READ]
     )

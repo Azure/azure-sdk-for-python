@@ -78,6 +78,7 @@ def test_tenant_id():
 
 def test_auth_code_credential():
     client_id = "client id"
+    secret = "fake-client-secret"
     tenant_id = "tenant"
     expected_code = "auth code"
     redirect_uri = "https://localhost"
@@ -92,6 +93,7 @@ def test_auth_code_credential():
                 url_substring=tenant_id,
                 required_data={
                     "client_id": client_id,
+                    "client_secret": secret,
                     "code": expected_code,
                     "grant_type": "authorization_code",
                     "redirect_uri": redirect_uri,
@@ -102,6 +104,7 @@ def test_auth_code_credential():
                 url_substring=tenant_id,
                 required_data={
                     "client_id": client_id,
+                    "client_secret": secret,
                     "grant_type": "refresh_token",
                     "refresh_token": expected_refresh_token,
                     "scope": expected_scope,
@@ -114,6 +117,7 @@ def test_auth_code_credential():
 
     credential = AuthorizationCodeCredential(
         client_id=client_id,
+        client_secret=secret,
         tenant_id=tenant_id,
         authorization_code=expected_code,
         redirect_uri=redirect_uri,

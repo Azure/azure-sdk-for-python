@@ -108,7 +108,7 @@ class CloudService(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -359,7 +359,7 @@ class CloudServiceInstanceView(_serialization.Model):
 class CloudServiceListResult(_serialization.Model):
     """CloudServiceListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2020_10_01_preview.models.CloudService]
@@ -646,7 +646,7 @@ class CloudServiceRole(_serialization.Model):
 class CloudServiceRoleListResult(_serialization.Model):
     """CloudServiceRoleListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2020_10_01_preview.models.CloudServiceRole]
@@ -1112,7 +1112,7 @@ class LoadBalancerFrontendIPConfiguration(_serialization.Model):
         self.properties = properties
 
 
-class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):
+class LoadBalancerFrontendIPConfigurationProperties(_serialization.Model):  # pylint: disable=name-too-long
     """Describes a cloud service IP Configuration.
 
     :ivar public_ip_address:
@@ -1261,7 +1261,7 @@ class RoleInstance(_serialization.Model):
 class RoleInstanceListResult(_serialization.Model):
     """RoleInstanceListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstance]
@@ -1351,7 +1351,7 @@ class RoleInstanceProperties(_serialization.Model):
 class RoleInstances(_serialization.Model):
     """Specifies a list of role instances from the cloud service.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar role_instances: List of cloud service role instance names. Value of '*' will signify all
      role instances of the cloud service. Required.
@@ -1496,7 +1496,7 @@ class UpdateDomain(_serialization.Model):
 class UpdateDomainListResult(_serialization.Model):
     """UpdateDomainListResult.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.mgmt.compute.v2020_10_01_preview.models.UpdateDomain]

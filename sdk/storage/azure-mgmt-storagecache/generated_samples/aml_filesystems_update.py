@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagecache import StorageCacheManagementClient
 
 """
@@ -43,6 +46,12 @@ def main():
                     }
                 },
                 "maintenanceWindow": {"dayOfWeek": "Friday", "timeOfDayUTC": "22:00"},
+                "rootSquashSettings": {
+                    "mode": "All",
+                    "noSquashNidLists": "10.0.0.[5-6]@tcp;10.0.1.2@tcp",
+                    "squashGID": 99,
+                    "squashUID": 99,
+                },
             },
             "tags": {"Dept": "ContosoAds"},
         },
@@ -50,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-05-01/examples/amlFilesystems_Update.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2024-03-01/examples/amlFilesystems_Update.json
 if __name__ == "__main__":
     main()

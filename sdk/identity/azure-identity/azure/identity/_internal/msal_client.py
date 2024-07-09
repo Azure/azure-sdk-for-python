@@ -131,3 +131,14 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
             content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
             if content and "error" in content:
                 self._local.error = (content["error"], response.http_response)
+
+    def __getstate__(self) -> Dict[str, Any]:  # pylint:disable=client-method-name-no-double-underscore
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_local"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:  # pylint:disable=client-method-name-no-double-underscore
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        self._local = threading.local()

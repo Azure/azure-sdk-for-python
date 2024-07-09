@@ -12,17 +12,35 @@ It focuses on displaying the logic required to fetch a Microsoft Entra access to
 import time
 import logging
 import redis
+import base64
+import json
 from azure.identity import DefaultAzureCredential
 
-scope = "acca5fbb-b7e4-4009-81f1-37e38fd66d78/.default"  # The current scope is for public preview and may change for GA release.
+scope = "https://redis.azure.com/.default"  # The current scope is for public preview and may change for GA release.
 host = ""  # Required
 port = 6380  # Required
-user_name = ""  # Required
+
+
+def extract_username_from_token(token):
+    parts = token.split(".")
+    base64_str = parts[1]
+
+    if len(base64_str) % 4 == 2:
+        base64_str += "=="
+    elif len(base64_str) % 4 == 3:
+        base64_str += "="
+
+    json_bytes = base64.b64decode(base64_str)
+    json_str = json_bytes.decode("utf-8")
+    jwt = json.loads(json_str)
+
+    return jwt["oid"]
 
 
 def hello_world():
     cred = DefaultAzureCredential()
     token = cred.get_token(scope)
+    user_name = extract_username_from_token(token.token)
     r = redis.Redis(
         host=host,
         port=port,
@@ -40,6 +58,7 @@ def re_authentication():
     _LOGGER = logging.getLogger(__name__)
     cred = DefaultAzureCredential()
     token = cred.get_token(scope)
+    user_name = extract_username_from_token(token.token)
     r = redis.Redis(
         host=host,
         port=port,

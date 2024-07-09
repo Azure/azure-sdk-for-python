@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.apimanagement import ApiManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.named_value.delete(
+    client.named_value.delete(
         resource_group_name="rg1",
         service_name="apimService1",
         named_value_id="testprop2",
         if_match="*",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementDeleteNamedValue.json

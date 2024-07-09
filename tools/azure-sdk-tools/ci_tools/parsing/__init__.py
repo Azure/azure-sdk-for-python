@@ -8,6 +8,7 @@ from .parse_functions import (
     get_build_config,
     get_config_setting,
     update_build_config,
+    compare_string_to_glob_array
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "get_build_config",
     "get_config_setting",
     "update_build_config",
+    "compare_string_to_glob_array"
 ]

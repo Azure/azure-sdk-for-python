@@ -1,5 +1,27 @@
 # Release History
 
+## 30.0.0 (2024-04-22)
+
+### Features Added
+
+  - Model AgentPool has a new parameter windows_profile
+  - Model KubernetesVersion has a new parameter is_default
+  - Model ManagedCluster has a new parameter metrics_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter windows_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter windows_profile
+
+### Breaking Changes
+
+  - Model IstioEgressGateway no longer has parameter node_selector
+
+## 29.1.0 (2024-02-20)
+
+### Features Added
+
+  - Model AgentPoolSecurityProfile has a new parameter enable_secure_boot
+  - Model AgentPoolSecurityProfile has a new parameter enable_vtpm
+  - Model ManagedCluster has a new parameter ingress_profile
+
 ## 29.0.0 (2024-01-22)
 
 ### Breaking Changes

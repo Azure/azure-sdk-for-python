@@ -105,24 +105,22 @@ class BufferedProducer:
             raise OperationTimeoutError(
                 "Failed to enqueue events into buffer due to timeout."
             )
-        try:
-            # add single event into current batch
-            self._cur_batch.add(events)
-        except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
-            # if there are events in cur_batch, enqueue cur_batch to the buffer
-            async with self._lock:
+        async with self._lock:
+            try:
+                # add single event into current batch
+                self._cur_batch.add(events)
+            except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
+                # if there are events in cur_batch, enqueue cur_batch to the buffer
                 if self._cur_batch:
                     self._buffered_queue.put(self._cur_batch)
                 self._buffered_queue.put(events)
-            # create a new batch for incoming events
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
-        except ValueError:
-            # add single event exceeds the cur batch size, create new batch
-            async with self._lock:
+                # create a new batch for incoming events
+                self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            except ValueError:
+                # add single event exceeds the cur batch size, create new batch
                 self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
-            self._cur_batch.add(events)
-        async with self._lock:
+                self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+                self._cur_batch.add(events)
             self._cur_buffered_len += new_events_len
 
     def failsafe_callback(self, callback):
@@ -200,9 +198,6 @@ class BufferedProducer:
                 break
         # after finishing flushing, reset cur batch and put it into the buffer
         self._last_send_time = time.time()
-        #reset curr_buffered
-        self._cur_buffered_len = 0
-        self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     async def check_max_wait_time_worker(self):

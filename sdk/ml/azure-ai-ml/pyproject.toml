@@ -4,13 +4,14 @@ pyright = false
 type_check_samples = false
 verifytypes = false
 pylint = true
-strict_sphinx = false
+strict_sphinx = true
 
 
 [tool.isort]
 profile = "black"
 line_length = 120
 known_first_party = ["azure"]
+filter_files=true
 extend_skip_glob = [
   "*/_vendor/*",
   "*/_generated/*",
@@ -27,9 +28,9 @@ exclude = [
   "azure/ai/ml/_schema/",
   "azure/ai/ml/_arm_deployments/",
   "tests",
+  "downloaded",
   "setup.py",
   "samples",
-  "azure/ai/ml/_logging/",
   "azure/ai/ml/_utils",
   "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_exception_helper.py",

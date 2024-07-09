@@ -12,8 +12,8 @@ from typing import Any, Dict, Generator, List, Optional, Union, cast
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_08_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2024_01_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -488,7 +488,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         :param context: Context of command job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated command component.
         :rtype: Pipeline
         """
@@ -620,9 +619,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
-            if properties.identity
-            else None,
+            identity=(
+                _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None
+            ),
         )
 
         return job
@@ -675,7 +674,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         try:
             res_to_yaml: str = self._to_yaml()
             return res_to_yaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             res: str = super(PipelineJob, self).__str__()
             return res
 
@@ -693,7 +692,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         :param context: Context of pipeline job YAML file.
         :type context: dict
-        :keyword kwargs: Extra arguments.
         :return: Translated pipeline component.
         :rtype: PipelineComponent
         """

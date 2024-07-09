@@ -29,6 +29,8 @@ from azure.communication.callautomation._generated.models import (
     StartTranscriptionRequest,
     StopTranscriptionRequest,
     UpdateTranscriptionRequest,
+    HoldRequest,
+    UnholdRequest
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType,
@@ -87,7 +89,7 @@ class TestCallMediaClient(unittest.TestCase):
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
             play_to=[],
-            play_options=PlayOptions(loop=False)
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=False)
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -97,7 +99,28 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+    
+    def test_play_file_to_all_back_compat_with_barge_in(self):
+        mock_play = Mock()
+        self.call_media_operations.play = mock_play
+        play_source = FileSource(url=self.url)
 
+        self.call_connection_client.play_media_to_all(play_source=play_source, interrupt_call_media_operation=True)
+
+        expected_play_request = PlayRequest(
+            play_sources=[play_source._to_generated()],
+            play_to=[],
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=True)
+        )
+        mock_play.assert_called_once()
+        actual_play_request = mock_play.call_args[0][1]
+
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
+        self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
+        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+            
     def test_play_file_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
@@ -118,7 +141,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_play_request.play_sources[0].play_source_cache_id, actual_play_request.play_sources[0].play_source_cache_id)
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
-
+    
     def test_play_text_to_all(self):
         mock_play = Mock()
         self.call_media_operations.play = mock_play
@@ -354,8 +377,7 @@ class TestCallMediaClient(unittest.TestCase):
 
         expected_hold_request = StartHoldMusicRequest(
             play_source_info=play_source._to_generated(),
-            target_participant=serialize_identifier(self.target_user),
-            loop=True
+            target_participant=serialize_identifier(self.target_user)
         )
         mock_hold.assert_called_once()
         actual_hold_request = mock_hold.call_args[0][1]
@@ -364,7 +386,6 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(expected_hold_request.play_source_info.file.uri, actual_hold_request.play_source_info.file.uri)
         self.assertEqual(expected_hold_request.play_source_info.play_source_cache_id, actual_hold_request.play_source_info.play_source_cache_id)
         self.assertEqual(expected_hold_request.target_participant['raw_id'], actual_hold_request.target_participant['raw_id'])
-        self.assertEqual(expected_hold_request.loop, actual_hold_request.loop)
 
     def test_stop_hold_music(self):
         mock_hold = Mock()
@@ -429,3 +450,83 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(self.call_connection_id, actual_call_connection_id)
         self.assertEqual(expected_update_transcription_request.locale,
                          actual_update_transcription_request.locale)
+
+    def test_hold_with_file_source(self):
+        mock_hold = Mock()
+        self.call_media_operations.hold = mock_hold
+        play_source = FileSource(url=self.url)
+        operation_context='context'
+
+        self.call_connection_client.hold(target_participant=self.target_user,
+                                          play_source=play_source,
+                                          operation_context=operation_context)
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            play_source_info=play_source._to_generated(),
+            operation_context=operation_context
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.play_source_info.file.uri, actual_hold_request.play_source_info.file.uri)
+        self.assertEqual(expected_hold_request.play_source_info.kind, actual_hold_request.play_source_info.kind)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+
+    def test_hold_with_text_source(self):
+        mock_hold = Mock()
+        self.call_media_operations.hold = mock_hold
+        play_source = TextSource(text='test test test')
+        operation_context='with_operation_context'
+
+        self.call_connection_client.hold(target_participant=self.target_user,
+                                          play_source=play_source,
+                                          operation_context=operation_context)
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            play_source_info=play_source._to_generated(),
+            operation_context=operation_context
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.play_source_info.text.text, actual_hold_request.play_source_info.text.text)
+        self.assertEqual(expected_hold_request.play_source_info.kind, actual_hold_request.play_source_info.kind)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+
+    def test_hold_without_text_source(self):
+        mock_hold = Mock()
+        self.call_media_operations.hold = mock_hold
+        operation_context='context'
+
+        self.call_connection_client.hold(target_participant=self.target_user,
+                                          operation_context=operation_context)
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            operation_context=operation_context
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+        self.assertEqual(expected_hold_request.play_source_info, actual_hold_request.play_source_info)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+
+    def test_unhold(self):
+        mock_unhold = Mock()
+        self.call_media_operations.unhold = mock_unhold
+        operation_context='context'
+
+        self.call_connection_client.unhold(target_participant=self.target_user,
+                                          operation_context=operation_context)
+
+        expected_hold_request = UnholdRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            operation_context=operation_context
+        )
+        mock_unhold.assert_called_once()
+        actual_hold_request = mock_unhold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)

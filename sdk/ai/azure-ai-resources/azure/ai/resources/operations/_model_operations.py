@@ -15,11 +15,20 @@ from azure.ai.resources._utils._scoring_script_utils import create_mlmodel_file
 
 
 class ModelOperations():
+    """Operations for model resources
+    
+    You should not instantiate this class directly. Instead, you should
+    create an AIClient instance that instantiates it for you and
+    attaches it as an attribute.
+
+    :param ml_client: The Azure Machine Learning client
+    :type ml_client: ~azure.ai.ml.MLClient
+    """
     def __init__(
         self,
         ml_client: MLClient,
         **kwargs
-    ):
+    ) -> None:
         self._ml_client = ml_client
 
     def package(
@@ -27,6 +36,15 @@ class ModelOperations():
         model: Union[Model, PromptflowModel],
         output: Union[str, Path] = Path.cwd()
     ) -> None:
+        """Package a model for deployment.
+        
+        :param model: The model to package.
+        :type model: Union[~azure.ai.resources.entities.models.Model, ~azure.ai.resources.entities.models.PromptflowModel]
+        :param output: The output directory for the packaged model. Defaults to the current working directory.
+        :type output: Union[str, pathlib.Path]
+        :raises Exception: If the model is not supported for packaging or if neither `chat_module` nor `loader_module` is
+            provided to `Model` if `MLmodel` is not present in `Model.path`.
+        """
         output = Path(output)
         output_path = Path(output/"model_package")
         output_path.mkdir(exist_ok=True)

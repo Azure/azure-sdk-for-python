@@ -17,6 +17,7 @@ azureml-telemetry
 cryptography
 msrestazure
 requests
+psutil
 opencensus
 opencensus-ext-azure
 opencensus-ext-threading
@@ -66,4 +67,3 @@ uamqp
 yarl
 azure-identity
 openai
-wrapt

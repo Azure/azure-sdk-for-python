@@ -50,7 +50,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
-        audience = kwargs.pop("audience", None)
+        self._audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
@@ -58,7 +58,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
+            authentication_policy = get_authentication_policy(credential, audience=self._audience)
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
@@ -90,7 +90,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.search.documents.SearchClient
 
         """
-        return SearchClient(self._endpoint, index_name, self._credential, **kwargs)
+        return SearchClient(
+            self._endpoint,
+            index_name,
+            self._credential,
+            audience=self._audience,
+            api_version=self._api_version,
+            **kwargs
+        )
 
     @distributed_trace
     def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> ItemPaged[SearchIndex]:
@@ -385,8 +392,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param name: The synonym map name or object to delete
-        :type name: str or ~azure.search.documents.indexes.models.SynonymMap
+        :param synonym_map: The synonym map name or object to delete
+        :type synonym_map: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
 

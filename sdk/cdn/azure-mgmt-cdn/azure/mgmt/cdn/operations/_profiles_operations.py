@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import CdnManagementClientMixinABC, _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -43,7 +48,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,7 +72,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -97,7 +102,7 @@ def build_get_request(resource_group_name: str, profile_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +135,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -166,7 +171,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -202,7 +207,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -233,7 +238,7 @@ def build_can_migrate_request(resource_group_name: str, subscription_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -266,7 +271,7 @@ def build_migrate_request(resource_group_name: str, subscription_id: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -301,7 +306,7 @@ def build_migration_commit_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -334,7 +339,7 @@ def build_generate_sso_uri_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -361,13 +366,13 @@ def build_generate_sso_uri_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_supported_optimization_types_request(
+def build_list_supported_optimization_types_request(  # pylint: disable=name-too-long
     resource_group_name: str, profile_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -400,7 +405,7 @@ def build_list_resource_usage_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -451,7 +456,6 @@ class ProfilesOperations:
         """Lists all of the Azure Front Door Standard, Azure Front Door Premium, and CDN profiles within
         an Azure subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Profile or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -462,7 +466,7 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ProfileListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -473,15 +477,14 @@ class ProfilesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -493,13 +496,13 @@ class ProfilesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ProfileListResult", pipeline_response)
@@ -509,11 +512,11 @@ class ProfilesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -525,8 +528,6 @@ class ProfilesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Cdn/profiles"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Profile"]:
@@ -535,7 +536,6 @@ class ProfilesOperations:
 
         :param resource_group_name: Name of the Resource group within the Azure subscription. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Profile or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -546,7 +546,7 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ProfileListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -557,16 +557,15 @@ class ProfilesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -578,13 +577,13 @@ class ProfilesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ProfileListResult", pipeline_response)
@@ -594,11 +593,11 @@ class ProfilesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -610,10 +609,6 @@ class ProfilesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles"
-    }
 
     @distributed_trace
     def get(self, resource_group_name: str, profile_name: str, **kwargs: Any) -> _models.Profile:
@@ -625,12 +620,11 @@ class ProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Profile or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.Profile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -644,21 +638,20 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Profile] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -671,18 +664,14 @@ class ProfilesOperations:
         deserialized = self._deserialize("Profile", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_initial(
-        self, resource_group_name: str, profile_name: str, profile: Union[_models.Profile, IO], **kwargs: Any
+        self, resource_group_name: str, profile_name: str, profile: Union[_models.Profile, IO[bytes]], **kwargs: Any
     ) -> _models.Profile:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -705,7 +694,7 @@ class ProfilesOperations:
         else:
             _json = self._serialize.body(profile, "Profile")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -713,16 +702,15 @@ class ProfilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -749,10 +737,6 @@ class ProfilesOperations:
 
         return deserialized  # type: ignore
 
-    _create_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
-
     @overload
     def begin_create(
         self,
@@ -776,14 +760,6 @@ class ProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Profile or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -794,7 +770,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile: IO,
+        profile: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -808,18 +784,10 @@ class ProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param profile: Profile properties needed to create a new profile. Required.
-        :type profile: IO
+        :type profile: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Profile or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -827,7 +795,7 @@ class ProfilesOperations:
 
     @distributed_trace
     def begin_create(
-        self, resource_group_name: str, profile_name: str, profile: Union[_models.Profile, IO], **kwargs: Any
+        self, resource_group_name: str, profile_name: str, profile: Union[_models.Profile, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.Profile]:
         """Creates a new Azure Front Door Standard or Azure Front Door Premium or CDN profile with a
         profile name under the specified subscription and resource group.
@@ -838,19 +806,8 @@ class ProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param profile: Profile properties needed to create a new profile. Is either a Profile type or
-         a IO type. Required.
-        :type profile: ~azure.mgmt.cdn.models.Profile or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a IO[bytes] type. Required.
+        :type profile: ~azure.mgmt.cdn.models.Profile or IO[bytes]
         :return: An instance of LROPoller that returns either Profile or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -881,7 +838,7 @@ class ProfilesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Profile", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -891,26 +848,24 @@ class ProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Profile].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
+        return LROPoller[_models.Profile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _update_initial(
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_update_parameters: Union[_models.ProfileUpdateParameters, IO],
+        profile_update_parameters: Union[_models.ProfileUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.Profile:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -933,7 +888,7 @@ class ProfilesOperations:
         else:
             _json = self._serialize.body(profile_update_parameters, "ProfileUpdateParameters")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
@@ -941,16 +896,15 @@ class ProfilesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -973,10 +927,6 @@ class ProfilesOperations:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
 
     @overload
     def begin_update(
@@ -1002,14 +952,6 @@ class ProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Profile or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1020,7 +962,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_update_parameters: IO,
+        profile_update_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1035,18 +977,10 @@ class ProfilesOperations:
         :type profile_name: str
         :param profile_update_parameters: Profile properties needed to update an existing profile.
          Required.
-        :type profile_update_parameters: IO
+        :type profile_update_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either Profile or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1057,7 +991,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        profile_update_parameters: Union[_models.ProfileUpdateParameters, IO],
+        profile_update_parameters: Union[_models.ProfileUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Profile]:
         """Updates an existing Azure Front Door Standard or Azure Front Door Premium or CDN profile with
@@ -1069,19 +1003,8 @@ class ProfilesOperations:
          profile which is unique within the resource group. Required.
         :type profile_name: str
         :param profile_update_parameters: Profile properties needed to update an existing profile. Is
-         either a ProfileUpdateParameters type or a IO type. Required.
-        :type profile_update_parameters: ~azure.mgmt.cdn.models.ProfileUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         either a ProfileUpdateParameters type or a IO[bytes] type. Required.
+        :type profile_update_parameters: ~azure.mgmt.cdn.models.ProfileUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns either Profile or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.Profile]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1112,7 +1035,7 @@ class ProfilesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("Profile", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1122,22 +1045,20 @@ class ProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.Profile].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
+        return LROPoller[_models.Profile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, profile_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1151,21 +1072,20 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1180,11 +1100,7 @@ class ProfilesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, profile_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1197,14 +1113,6 @@ class ProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1231,7 +1139,7 @@ class ProfilesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1240,22 +1148,21 @@ class ProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _can_migrate_initial(
-        self, resource_group_name: str, can_migrate_parameters: Union[_models.CanMigrateParameters, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        can_migrate_parameters: Union[_models.CanMigrateParameters, IO[bytes]],
+        **kwargs: Any
     ) -> Optional[_models.CanMigrateResult]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1278,23 +1185,22 @@ class ProfilesOperations:
         else:
             _json = self._serialize.body(can_migrate_parameters, "CanMigrateParameters")
 
-        request = build_can_migrate_request(
+        _request = build_can_migrate_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._can_migrate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1313,13 +1219,9 @@ class ProfilesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _can_migrate_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/canMigrate"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_can_migrate(
@@ -1340,14 +1242,6 @@ class ProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either CanMigrateResult or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.CanMigrateResult]
@@ -1358,7 +1252,7 @@ class ProfilesOperations:
     def begin_can_migrate(
         self,
         resource_group_name: str,
-        can_migrate_parameters: IO,
+        can_migrate_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1369,18 +1263,10 @@ class ProfilesOperations:
         :type resource_group_name: str
         :param can_migrate_parameters: Properties needed to check if cdn profile or classic frontdoor
          can be migrated. Required.
-        :type can_migrate_parameters: IO
+        :type can_migrate_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either CanMigrateResult or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.CanMigrateResult]
@@ -1389,26 +1275,18 @@ class ProfilesOperations:
 
     @distributed_trace
     def begin_can_migrate(
-        self, resource_group_name: str, can_migrate_parameters: Union[_models.CanMigrateParameters, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        can_migrate_parameters: Union[_models.CanMigrateParameters, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.CanMigrateResult]:
         """Checks if CDN profile can be migrated to Azure Frontdoor(Standard/Premium) profile.
 
         :param resource_group_name: Name of the Resource group within the Azure subscription. Required.
         :type resource_group_name: str
         :param can_migrate_parameters: Properties needed to check if cdn profile or classic frontdoor
-         can be migrated. Is either a CanMigrateParameters type or a IO type. Required.
-        :type can_migrate_parameters: ~azure.mgmt.cdn.models.CanMigrateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         can be migrated. Is either a CanMigrateParameters type or a IO[bytes] type. Required.
+        :type can_migrate_parameters: ~azure.mgmt.cdn.models.CanMigrateParameters or IO[bytes]
         :return: An instance of LROPoller that returns either CanMigrateResult or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.CanMigrateResult]
@@ -1439,7 +1317,7 @@ class ProfilesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("CanMigrateResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1451,22 +1329,23 @@ class ProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.CanMigrateResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_can_migrate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/canMigrate"
-    }
+        return LROPoller[_models.CanMigrateResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _migrate_initial(
-        self, resource_group_name: str, migration_parameters: Union[_models.MigrationParameters, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        migration_parameters: Union[_models.MigrationParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.MigrateResult:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1489,23 +1368,22 @@ class ProfilesOperations:
         else:
             _json = self._serialize.body(migration_parameters, "MigrationParameters")
 
-        request = build_migrate_request(
+        _request = build_migrate_request(
             resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._migrate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1529,10 +1407,6 @@ class ProfilesOperations:
 
         return deserialized  # type: ignore
 
-    _migrate_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/migrate"
-    }
-
     @overload
     def begin_migrate(
         self,
@@ -1552,14 +1426,6 @@ class ProfilesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either MigrateResult or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.MigrateResult]
@@ -1570,7 +1436,7 @@ class ProfilesOperations:
     def begin_migrate(
         self,
         resource_group_name: str,
-        migration_parameters: IO,
+        migration_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1581,18 +1447,10 @@ class ProfilesOperations:
         :param resource_group_name: Name of the Resource group within the Azure subscription. Required.
         :type resource_group_name: str
         :param migration_parameters: Properties needed to migrate the profile. Required.
-        :type migration_parameters: IO
+        :type migration_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either MigrateResult or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.MigrateResult]
@@ -1601,7 +1459,10 @@ class ProfilesOperations:
 
     @distributed_trace
     def begin_migrate(
-        self, resource_group_name: str, migration_parameters: Union[_models.MigrationParameters, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        migration_parameters: Union[_models.MigrationParameters, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.MigrateResult]:
         """Migrate the CDN profile to Azure Frontdoor(Standard/Premium) profile. The change need to be
         committed after this.
@@ -1609,19 +1470,8 @@ class ProfilesOperations:
         :param resource_group_name: Name of the Resource group within the Azure subscription. Required.
         :type resource_group_name: str
         :param migration_parameters: Properties needed to migrate the profile. Is either a
-         MigrationParameters type or a IO type. Required.
-        :type migration_parameters: ~azure.mgmt.cdn.models.MigrationParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         MigrationParameters type or a IO[bytes] type. Required.
+        :type migration_parameters: ~azure.mgmt.cdn.models.MigrationParameters or IO[bytes]
         :return: An instance of LROPoller that returns either MigrateResult or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cdn.models.MigrateResult]
@@ -1652,7 +1502,7 @@ class ProfilesOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("MigrateResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1664,22 +1514,20 @@ class ProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.MigrateResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_migrate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/migrate"
-    }
+        return LROPoller[_models.MigrateResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _migration_commit_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, profile_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1693,21 +1541,20 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_migration_commit_request(
+        _request = build_migration_commit_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._migration_commit_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1722,11 +1569,7 @@ class ProfilesOperations:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _migration_commit_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/migrationCommit"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_migration_commit(self, resource_group_name: str, profile_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1737,14 +1580,6 @@ class ProfilesOperations:
         :param profile_name: Name of the CDN profile which is unique within the resource group.
          Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1771,7 +1606,7 @@ class ProfilesOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -1782,17 +1617,13 @@ class ProfilesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_migration_commit.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/migrationCommit"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def generate_sso_uri(self, resource_group_name: str, profile_name: str, **kwargs: Any) -> _models.SsoUri:
@@ -1807,12 +1638,11 @@ class ProfilesOperations:
         :param profile_name: Name of the CDN profile which is unique within the resource group.
          Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SsoUri or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.SsoUri
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1826,21 +1656,20 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SsoUri] = kwargs.pop("cls", None)
 
-        request = build_generate_sso_uri_request(
+        _request = build_generate_sso_uri_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.generate_sso_uri.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1853,13 +1682,9 @@ class ProfilesOperations:
         deserialized = self._deserialize("SsoUri", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    generate_sso_uri.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/generateSsoUri"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_supported_optimization_types(
@@ -1873,12 +1698,11 @@ class ProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportedOptimizationTypesListResult or the result of cls(response)
         :rtype: ~azure.mgmt.cdn.models.SupportedOptimizationTypesListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1892,21 +1716,20 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SupportedOptimizationTypesListResult] = kwargs.pop("cls", None)
 
-        request = build_list_supported_optimization_types_request(
+        _request = build_list_supported_optimization_types_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_supported_optimization_types.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1919,13 +1742,9 @@ class ProfilesOperations:
         deserialized = self._deserialize("SupportedOptimizationTypesListResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_supported_optimization_types.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/getSupportedOptimizationTypes"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_resource_usage(
@@ -1939,7 +1758,6 @@ class ProfilesOperations:
         :param profile_name: Name of the Azure Front Door Standard or Azure Front Door Premium or CDN
          profile which is unique within the resource group. Required.
         :type profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ResourceUsage or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cdn.models.ResourceUsage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1950,7 +1768,7 @@ class ProfilesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ResourceUsageListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1961,17 +1779,16 @@ class ProfilesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_resource_usage_request(
+                _request = build_list_resource_usage_request(
                     resource_group_name=resource_group_name,
                     profile_name=profile_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_resource_usage.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -1983,13 +1800,13 @@ class ProfilesOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ResourceUsageListResult", pipeline_response)
@@ -1999,11 +1816,11 @@ class ProfilesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2015,7 +1832,3 @@ class ProfilesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_resource_usage.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/checkResourceUsage"
-    }

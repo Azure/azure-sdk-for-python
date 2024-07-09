@@ -293,7 +293,9 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             )
 
         _log.debug(
-            "Running lock auto-renew for %r for %r seconds", renewable, max_lock_renewal_duration
+            "Running lock auto-renew for %r for %r seconds",
+            renewable,
+            max_lock_renewal_duration or self._max_lock_renewal_duration
         )
 
         self._init_workers()

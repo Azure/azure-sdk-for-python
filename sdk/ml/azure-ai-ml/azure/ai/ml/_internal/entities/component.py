@@ -103,6 +103,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         ae365exepool: Optional[Dict] = None,
         launcher: Optional[Dict] = None,
         datatransfer: Optional[Dict] = None,
+        aether: Optional[Dict] = None,
         **kwargs,
     ):
         _type, self._type_label = parse_name_label(type)
@@ -115,7 +116,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
             tags=tags,
             properties=properties,
             display_name=display_name,
-            is_deterministic=is_deterministic,
+            is_deterministic=is_deterministic,  # type: ignore[arg-type]
             inputs=inputs,
             outputs=outputs,
             yaml_str=yaml_str,
@@ -141,6 +142,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         self.ae365exepool = ae365exepool
         self.launcher = launcher
         self.datatransfer = datatransfer
+        self.aether = aether
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -187,7 +189,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                     configs = yaml.safe_load(file_content)
                     if isinstance(configs, dict):
                         return configs.get(_ADDITIONAL_INCLUDES_CONFIG_KEY, [])
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     # TODO: check if we should catch yaml.YamlError instead here
                     pass
                 return [line.strip() for line in file_content.splitlines(keepends=False) if len(line.strip()) > 0]
@@ -342,7 +344,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                 tmp_code_dir,
                 additional_includes_file_name=Path(self._source_path)
                 .with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
-                .name  # type: ignore[arg-type]
+                .name,  # type: ignore[arg-type]
                 # TODO: Bug 2881943
             )
 

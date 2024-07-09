@@ -427,7 +427,6 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify public IP sku tier."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 

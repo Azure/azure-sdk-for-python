@@ -24,6 +24,7 @@ from devtools_testutils import (
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
+    remove_batch_sanitizers,
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
@@ -87,7 +88,7 @@ def _query_param_regex(name, *, only_value=True) -> str:
     return rf'{name_regex}{value_regex}(?=[{QUERY_STRING_DELIMETER}"\s]|$)'
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
@@ -95,6 +96,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
         ignored_query_parameters="api-version",
     )
+
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
+
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
@@ -125,6 +130,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(regex=feature_store_name, value="00000")
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
+
+    # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
+    #  - AZSDK3430: $..id
+    #  - AZSDK3493: $..name
+    #  - AZSDK2003: Location
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])
 
 
 def pytest_addoption(parser):
@@ -1101,3 +1112,51 @@ def materialization_identity_client_id(request):
 def default_storage_account(request):
     value = request.config.option.default_storage_account
     return value
+
+
+# Datastore fixtures
+
+
+@pytest.fixture
+def blob_store_file() -> str:
+    return "./tests/test_configs/datastore/blob_store.yml"
+
+
+@pytest.fixture
+def blob_store_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_blob_store.yml"
+
+
+@pytest.fixture
+def file_store_file() -> str:
+    return "./tests/test_configs/datastore/file_store.yml"
+
+
+@pytest.fixture
+def adls_gen1_file() -> str:
+    return "./tests/test_configs/datastore/adls_gen1.yml"
+
+
+@pytest.fixture
+def adls_gen1_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_adls_gen1.yml"
+
+
+@pytest.fixture
+def adls_gen2_file() -> str:
+    return "./tests/test_configs/datastore/adls_gen2.yml"
+
+
+@pytest.fixture
+def adls_gen2_credential_less_file() -> str:
+    return "./tests/test_configs/datastore/credential_less_adls_gen2.yml"
+
+
+@pytest.fixture
+def hdfs_keytab_file() -> str:
+    return "./tests/test_configs/datastore/hdfs_kerberos_keytab.yml"
+
+
+@pytest.fixture
+def hdfs_pw_file() -> str:
+    return "./tests/test_configs/datastore/hdfs_kerberos_pw.yml"

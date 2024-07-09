@@ -35,7 +35,8 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+# see issue https://github.com/open-telemetry/opentelemetry-python/issues/3713
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))  # type: ignore
 
 # Example with Storage SDKs
 import os

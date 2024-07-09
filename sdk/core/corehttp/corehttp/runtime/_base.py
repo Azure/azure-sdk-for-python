@@ -23,11 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any
+from typing import Any, Dict
 from urllib.parse import urlparse
 
 
-def _format_url_section(template, **kwargs):
+def _format_url_section(template, **kwargs: Dict[str, str]) -> str:
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
 
     By default in Python, "format" will raise a KeyError if a template element is not found. Here the section between
@@ -53,6 +53,7 @@ def _format_url_section(template, **kwargs):
                     f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
                 ) from key
             last_template = template
+    return last_template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
@@ -71,7 +72,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     stub_url_path = split_url.pop(0)
     stub_url_query = split_url.pop() if split_url else None
 
-    # Note that _replace is a public API named that way to avoid to avoid conflicts in namedtuple
+    # Note that _replace is a public API named that way to avoid conflicts in namedtuple
     # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
     parsed_base_url = parsed_base_url._replace(
         path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path,

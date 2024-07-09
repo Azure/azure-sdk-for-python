@@ -60,7 +60,7 @@ _COMMON_OPTIONS = {
     'is_query_plan_request': 'isQueryPlanRequest',
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion',
-    'priority_level': 'priorityLevel'
+    'priority': 'priorityLevel'
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -245,7 +245,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
             "responseContinuationTokenLimitInKb"]
 
-    if options.get("priorityLevel") and options["priorityLevel"].lower() in {"low", "high"}:
+    if options.get("priorityLevel"):
         headers[http_constants.HttpHeaders.PriorityLevel] = options["priorityLevel"]
 
     if cosmos_client_connection.master_key:
@@ -291,8 +291,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             if_none_match_value = options["continuation"]
         elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
             if_none_match_value = "*"
+        elif options.get("startTime"):
+            start_time = options.get("startTime")
+            headers[http_constants.HttpHeaders.IfModified_since] = start_time
         if if_none_match_value:
             headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
+
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
     else:
         if options.get("continuation"):
@@ -766,8 +770,7 @@ def _replace_throughput(
             max_throughput = throughput.auto_scale_max_throughput
             increment_percent = throughput.auto_scale_increment_percent
             if max_throughput is not None:
-                new_throughput_properties['content']['offerAutopilotSettings'][
-                    'maxThroughput'] = max_throughput
+                new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
                 if increment_percent:
                     new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
                 if throughput.offer_throughput:
@@ -850,3 +853,10 @@ def _format_batch_operations(
         final_operations.append(operation)
 
     return final_operations
+
+
+def _set_properties_cache(properties: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
+        "partitionKey": properties.get("partitionKey", None)
+    }

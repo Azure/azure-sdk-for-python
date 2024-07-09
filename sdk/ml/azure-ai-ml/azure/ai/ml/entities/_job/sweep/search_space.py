@@ -76,7 +76,7 @@ class Choice(SweepDistribution):
             :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: Optional[List] = None, **kwargs: Any) -> None:
+    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
@@ -109,14 +109,14 @@ class Choice(SweepDistribution):
                         # first assume that any dictionary value is a valid distribution (i.e. normal, uniform, etc)
                         # and try to deserialize it into a the correct SDK distribution object
                         from_rest_dict[k] = SweepDistribution._from_rest_object(v)
-                    except Exception:  # pylint: disable=broad-except
+                    except Exception:  # pylint: disable=W0718
                         # if an exception is raised, assume that the value was not a valid distribution and use the
                         # value as it is for deserialization
                         from_rest_dict[k] = v
                 from_rest_values.append(from_rest_dict)
             else:
                 from_rest_values.append(rest_value)
-        return Choice(values=from_rest_values)
+        return Choice(values=from_rest_values)  # type: ignore[arg-type]
 
 
 class Normal(SweepDistribution):
@@ -267,7 +267,6 @@ class Randint(SweepDistribution):
 
 class Uniform(SweepDistribution):
     """
-    :noindex:
 
     Uniform distribution configuration.
 

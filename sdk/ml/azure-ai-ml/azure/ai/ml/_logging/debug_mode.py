@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import http.client
 import logging
 import os
 import sys
@@ -11,8 +12,6 @@ import time
 import traceback
 from collections import namedtuple
 from typing import List, Optional
-
-import http.client
 
 LOG_FILE = os.path.abspath("azureml.log")
 LOG_FORMAT = "%(asctime)s|%(name)s|%(levelname)s|%(message)s"
@@ -43,7 +42,7 @@ def stack_info() -> list:
 
 def connection_info(gc_objects: list) -> List[ConnectionInfo]:
     connections = [obj for obj in gc_objects if isinstance(obj, http.client.HTTPConnection)]
-    return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]
+    return [ConnectionInfo(host=c.host, port=c.port, hasSocket=c.sock is not None) for c in connections]  # disable
 
 
 # pylint: disable=client-incorrect-naming-convention
@@ -157,6 +156,6 @@ def debug_sdk() -> None:
         # We do the below for strange environments like Revo + Jupyter
         # where root handlers appear to already be set.
         # We don't want to spew to those consoles with DEBUG emissions
-        n_logger.propagate = 0
+        n_logger.propagate = 0  # type: ignore[assignment]
 
     _debugging_enabled = True

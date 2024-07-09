@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -41,7 +41,7 @@ def build_check_name_availability_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -75,7 +75,7 @@ def build_capabilities_request(location: str, subscription_id: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -153,7 +153,6 @@ class RecoveryServicesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -164,7 +163,7 @@ class RecoveryServicesOperations:
         self,
         resource_group_name: str,
         location: str,
-        input: IO,
+        input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -187,11 +186,10 @@ class RecoveryServicesOperations:
         :param location: Location of the resource. Required.
         :type location: str
         :param input: Contains information about Resource type and Resource name. Required.
-        :type input: IO
+        :type input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -202,7 +200,7 @@ class RecoveryServicesOperations:
         self,
         resource_group_name: str,
         location: str,
-        input: Union[_models.CheckNameAvailabilityParameters, IO],
+        input: Union[_models.CheckNameAvailabilityParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """API to check for resource name availability.
@@ -223,12 +221,8 @@ class RecoveryServicesOperations:
         :param location: Location of the resource. Required.
         :type location: str
         :param input: Contains information about Resource type and Resource name. Is either a
-         CheckNameAvailabilityParameters type or a IO type. Required.
-        :type input: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         CheckNameAvailabilityParameters type or a IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityParameters or IO[bytes]
         :return: CheckNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -256,7 +250,7 @@ class RecoveryServicesOperations:
         else:
             _json = self._serialize.body(input, "CheckNameAvailabilityParameters")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             resource_group_name=resource_group_name,
             location=location,
             subscription_id=self._config.subscription_id,
@@ -264,16 +258,15 @@ class RecoveryServicesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -285,13 +278,9 @@ class RecoveryServicesOperations:
         deserialized = self._deserialize("CheckNameAvailabilityResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/locations/{location}/checkNameAvailability"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def capabilities(
@@ -314,7 +303,6 @@ class RecoveryServicesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CapabilitiesResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.CapabilitiesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -322,7 +310,7 @@ class RecoveryServicesOperations:
 
     @overload
     def capabilities(
-        self, location: str, input: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CapabilitiesResponse:
         """API to get details about capabilities provided by Microsoft.RecoveryServices RP.
 
@@ -332,11 +320,10 @@ class RecoveryServicesOperations:
         :type location: str
         :param input: Contains information about Resource type and properties to get capabilities.
          Required.
-        :type input: IO
+        :type input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CapabilitiesResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.CapabilitiesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -344,7 +331,7 @@ class RecoveryServicesOperations:
 
     @distributed_trace
     def capabilities(
-        self, location: str, input: Union[_models.ResourceCapabilities, IO], **kwargs: Any
+        self, location: str, input: Union[_models.ResourceCapabilities, IO[bytes]], **kwargs: Any
     ) -> _models.CapabilitiesResponse:
         """API to get details about capabilities provided by Microsoft.RecoveryServices RP.
 
@@ -353,12 +340,8 @@ class RecoveryServicesOperations:
         :param location: Location of the resource. Required.
         :type location: str
         :param input: Contains information about Resource type and properties to get capabilities. Is
-         either a ResourceCapabilities type or a IO type. Required.
-        :type input: ~azure.mgmt.recoveryservices.models.ResourceCapabilities or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         either a ResourceCapabilities type or a IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservices.models.ResourceCapabilities or IO[bytes]
         :return: CapabilitiesResponse or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservices.models.CapabilitiesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -386,23 +369,22 @@ class RecoveryServicesOperations:
         else:
             _json = self._serialize.body(input, "ResourceCapabilities")
 
-        request = build_capabilities_request(
+        _request = build_capabilities_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.capabilities.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -414,10 +396,6 @@ class RecoveryServicesOperations:
         deserialized = self._deserialize("CapabilitiesResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    capabilities.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{location}/capabilities"
-    }
+        return deserialized  # type: ignore

@@ -13,11 +13,15 @@ class OpenTelemetrySchemaVersion(
 ):  # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
 
     V1_19_0 = "1.19.0"
+    V1_23_1 = "1.23.1"
 
 
 class OpenTelemetrySchema:
 
-    SUPPORTED_VERSIONS = (OpenTelemetrySchemaVersion.V1_19_0,)
+    SUPPORTED_VERSIONS = (
+        OpenTelemetrySchemaVersion.V1_19_0,
+        OpenTelemetrySchemaVersion.V1_23_1,
+    )
 
     # Mappings of attributes potentially reported by Azure SDKs to corresponding ones that follow
     # OpenTelemetry semantic conventions.
@@ -28,7 +32,19 @@ class OpenTelemetrySchema:
             "http.user_agent": "user_agent.original",
             "message_bus.destination": "messaging.destination.name",
             "peer.address": "net.peer.name",
-        }
+        },
+        OpenTelemetrySchemaVersion.V1_23_1: {
+            "x-ms-client-request-id": "az.client_request_id",
+            "x-ms-request-id": "az.service_request_id",
+            "http.user_agent": "user_agent.original",
+            "message_bus.destination": "messaging.destination.name",
+            "peer.address": "server.address",
+            "http.method": "http.request.method",
+            "http.status_code": "http.response.status_code",
+            "net.peer.name": "server.address",
+            "net.peer.port": "server.port",
+            "http.url": "url.full",
+        },
     }
 
     @classmethod

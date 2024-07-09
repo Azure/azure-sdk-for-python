@@ -26,6 +26,7 @@
 from __future__ import annotations
 import logging
 from typing import Generic, TypeVar, Union, Any, List, Optional, Iterable, ContextManager
+from typing_extensions import TypeGuard
 
 from . import (
     PipelineRequest,
@@ -40,6 +41,18 @@ HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def is_http_policy(policy: object) -> TypeGuard[HTTPPolicy]:
+    if hasattr(policy, "send"):
+        return True
+    return False
+
+
+def is_sansio_http_policy(policy: object) -> TypeGuard[SansIOHTTPPolicy]:
+    if hasattr(policy, "on_request") and hasattr(policy, "on_response"):
+        return True
+    return False
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -123,10 +136,14 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         self._transport = transport
 
         for policy in policies or []:
-            if isinstance(policy, SansIOHTTPPolicy):
+            if is_http_policy(policy):
+                self._impl_policies.append(policy)
+            elif is_sansio_http_policy(policy):
                 self._impl_policies.append(_SansIOHTTPPolicyRunner(policy))
             elif policy:
-                self._impl_policies.append(policy)
+                raise AttributeError(
+                    f"'{type(policy)}' object has no attribute 'send' or both 'on_request' and 'on_response'."
+                )
         for index in range(len(self._impl_policies) - 1):
             self._impl_policies[index].next = self._impl_policies[index + 1]
         if self._impl_policies:

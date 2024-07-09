@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/SearchDeleteQueryKey.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/preview/2024-03-01-preview/examples/SearchDeleteQueryKey.json
 if __name__ == "__main__":
     main()

@@ -1242,7 +1242,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert document_result.statistics
                         assert self.document_result_to_action_type(document_result) == action_order[action_idx]
 
-            await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
+            await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @TextAnalyticsPreparer()
     async def test_generic_action_error_no_target_v3_1(

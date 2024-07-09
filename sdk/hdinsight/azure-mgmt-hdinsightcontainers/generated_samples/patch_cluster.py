@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hdinsightcontainers import HDInsightContainersMgmtClient
 
 """
@@ -34,7 +37,6 @@ def main():
         cluster_pool_name="clusterpool1",
         cluster_name="cluster1",
         cluster_patch_request={
-            "location": "West US 2",
             "properties": {
                 "clusterProfile": {
                     "authorizationProfile": {"userIds": ["Testuser1", "Testuser2"]},
@@ -102,12 +104,12 @@ def main():
                     ],
                     "sshProfile": {"count": 2},
                 }
-            },
+            }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-06-01-preview/examples/PatchCluster.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/PatchCluster.json
 if __name__ == "__main__":
     main()

@@ -122,7 +122,8 @@
             "defaultValue": "new",
             "allowedValues": [
                 "new",
-                "existing"
+                "existing",
+                "none"
             ],
             "metadata": {
                 "description": "Determines whether or not new ApplicationInsights should be provisioned."
@@ -162,7 +163,6 @@
             "defaultValue": "none",
             "allowedValues": [
                 "new",
-                "existing",
                 "none"
             ],
             "metadata": {
@@ -623,6 +623,25 @@
             "metadata": {
                 "description": "Whether to grant materialization identity permissions"
             }
+        },
+        "allowRoleAssignmentOnRG": {
+            "type": "string",
+            "defaultValue": "true",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "Unused for projects, but required due to interdependency of normal and project ARM templates."
+            }
+        },
+        
+        "systemDatastoresAuthMode": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Unused for projects, but required due to interdependency of normal and project ARM templates"
+            }
         }
     },
     "variables": {
@@ -664,18 +683,6 @@
     },
     "resources": [
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-08-01",
-            "name": "[parameters('logAnalyticsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web"
-            }
-        },
-        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-08-01-preview",
@@ -690,7 +697,6 @@
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]",
                 "enableDataIsolation": "[parameters('enable_data_isolation')]",
-                "managedNetwork": "[parameters('managedNetwork')]",
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }

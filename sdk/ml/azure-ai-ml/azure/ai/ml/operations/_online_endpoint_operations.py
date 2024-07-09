@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._azure_environments import _resource_to_scopes
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import KeyType, RegenerateEndpointKeysRequest
@@ -23,12 +24,19 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import KEY, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import (
+    AAD_TOKEN,
+    AAD_TOKEN_RESOURCE_ENDPOINT,
+    EMPTY_CREDENTIALS_ERROR,
+    KEY,
+    AzureMLResourceType,
+    LROConfigurations,
+)
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointKeyType
 from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
-from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys, EndpointAuthToken
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAadToken, EndpointAuthKeys, EndpointAuthToken
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -38,7 +46,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
@@ -75,7 +83,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
     def list(self, *, local: bool = False) -> ItemPaged[OnlineEndpoint]:
         """List endpoints of the workspace.
 
@@ -95,8 +103,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
-    def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
+    def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken, EndpointAadToken]:
         """Get the auth credentials.
 
         :param name: The endpoint name
@@ -108,7 +116,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return self._get_online_credentials(name=name)
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -156,7 +164,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return converted_endpoint
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: Optional[str] = None, *, local: bool = False) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
@@ -192,7 +200,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, *, local: bool = False) -> LROPoller[OnlineEndpoint]:
         """Create or update an endpoint.
 
@@ -248,14 +256,14 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
             except Exception as ex:
                 raise ex
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
@@ -290,12 +298,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
         *,
-        request_file: Any = None,
+        request_file: Optional[str] = None,
         deployment_name: Optional[str] = None,
         # pylint: disable=unused-argument
         input_data: Optional[Union[str, Data]] = None,
@@ -315,6 +323,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :paramtype deployment_name: Optional[str]
         :keyword input_data: To use a pre-registered data asset, pass str in format
         :paramtype input_data: Optional[Union[str, Data]]
+        :keyword params_override: A dictionary of payload parameters to override and their desired values.
+        :paramtype params_override: Any
         :keyword local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
         :paramtype local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
@@ -329,7 +339,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
 
-        with open(request_file, "rb") as f:
+        with open(request_file, "rb") as f:  # type: ignore[arg-type]
             data = json.loads(f.read())
         if local:
             return self._local_endpoint_helper.invoke(
@@ -344,7 +354,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         keys = self._get_online_credentials(name=endpoint_name, auth_mode=endpoint.properties.auth_mode)
         if isinstance(keys, EndpointAuthKeys):
             key = keys.primary_key
-        elif isinstance(keys, EndpointAuthToken):
+        elif isinstance(keys, (EndpointAuthToken, EndpointAadToken)):
             key = keys.access_token
         else:
             key = ""
@@ -365,7 +375,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
     def _get_online_credentials(
         self, name: str, auth_mode: Optional[str] = None
-    ) -> Union[EndpointAuthKeys, EndpointAuthToken]:
+    ) -> Union[EndpointAuthKeys, EndpointAuthToken, EndpointAadToken]:
         if not auth_mode:
             endpoint = self._online_operation.get(
                 resource_group_name=self._resource_group_name,
@@ -383,6 +393,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 cls=lambda x, response, z: EndpointAuthKeys._from_rest_object(response),
                 **self._init_kwargs,
             )
+
+        if auth_mode is not None and auth_mode.lower() == AAD_TOKEN:
+            if self._credentials:
+                return EndpointAadToken(self._credentials.get_token(*_resource_to_scopes(AAD_TOKEN_RESOURCE_ENDPOINT)))
+            msg = EMPTY_CREDENTIALS_ERROR
+            raise MlException(message=msg, no_personal_data_message=msg)
 
         return self._online_operation.get_token(
             resource_group_name=self._resource_group_name,

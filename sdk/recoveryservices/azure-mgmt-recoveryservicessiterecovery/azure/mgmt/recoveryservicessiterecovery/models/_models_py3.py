@@ -941,6 +941,10 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):  # pylint
     :vartype recovery_virtual_machine_scale_set_id: str
     :ivar recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
     :vartype recovery_capacity_reservation_group_id: str
+    :ivar auto_protection_of_data_disk: A value indicating whether the auto protection is enabled.
+     Known values are: "Disabled" and "Enabled".
+    :vartype auto_protection_of_data_disk: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.AutoProtectionOfDataDisk
     """
 
     _validation = {
@@ -968,6 +972,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):  # pylint
         "recovery_subnet_name": {"key": "recoverySubnetName", "type": "str"},
         "recovery_virtual_machine_scale_set_id": {"key": "recoveryVirtualMachineScaleSetId", "type": "str"},
         "recovery_capacity_reservation_group_id": {"key": "recoveryCapacityReservationGroupId", "type": "str"},
+        "auto_protection_of_data_disk": {"key": "autoProtectionOfDataDisk", "type": "str"},
     }
 
     def __init__(
@@ -991,6 +996,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):  # pylint
         recovery_subnet_name: Optional[str] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
+        auto_protection_of_data_disk: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1034,6 +1040,10 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):  # pylint
         :paramtype recovery_virtual_machine_scale_set_id: str
         :keyword recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
         :paramtype recovery_capacity_reservation_group_id: str
+        :keyword auto_protection_of_data_disk: A value indicating whether the auto protection is
+         enabled. Known values are: "Disabled" and "Enabled".
+        :paramtype auto_protection_of_data_disk: str or
+         ~azure.mgmt.recoveryservicessiterecovery.models.AutoProtectionOfDataDisk
         """
         super().__init__(**kwargs)
         self.instance_type: str = "A2A"
@@ -1055,6 +1065,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):  # pylint
         self.recovery_subnet_name = recovery_subnet_name
         self.recovery_virtual_machine_scale_set_id = recovery_virtual_machine_scale_set_id
         self.recovery_capacity_reservation_group_id = recovery_capacity_reservation_group_id
+        self.auto_protection_of_data_disk = auto_protection_of_data_disk
 
 
 class EventProviderSpecificDetails(_serialization.Model):
@@ -6848,6 +6859,99 @@ class EncryptionDetails(_serialization.Model):
         self.kek_state = kek_state
         self.kek_cert_thumbprint = kek_cert_thumbprint
         self.kek_cert_expiry_date = kek_cert_expiry_date
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.recoveryservicessiterecovery.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.recoveryservicessiterecovery.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.recoveryservicessiterecovery.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class Event(Resource):

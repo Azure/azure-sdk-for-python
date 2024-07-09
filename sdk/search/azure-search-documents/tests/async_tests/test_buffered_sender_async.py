@@ -10,11 +10,13 @@ from azure.search.documents.aio import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceResponseTimeoutError
 from azure.search.documents.models import IndexingResult
+from test_search_index_client_async import await_prepared_test
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 
 class TestSearchBatchingClientAsync:
+    @await_prepared_test
     async def test_search_indexing_buffered_sender_kwargs(self):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, window=100) as client:
             assert client._batch_action_count == 512
@@ -22,6 +24,7 @@ class TestSearchBatchingClientAsync:
             assert client._auto_flush_interval == 60
             assert client._auto_flush
 
+    @await_prepared_test
     async def test_batch_queue(self):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
             assert client._index_documents_batch
@@ -35,6 +38,7 @@ class TestSearchBatchingClientAsync:
             await client._index_documents_batch.enqueue_actions(actions)
             assert len(client.actions) == 7
 
+    @await_prepared_test
     @mock.patch(
         "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._process_if_needed"
     )
@@ -44,6 +48,7 @@ class TestSearchBatchingClientAsync:
             await client.delete_documents(["delete1", "delete2"])
         assert mock_process_if_needed.called
 
+    @await_prepared_test
     @mock.patch(
         "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._cleanup"
     )
@@ -53,6 +58,7 @@ class TestSearchBatchingClientAsync:
             await client.delete_documents(["delete1", "delete2"])
         assert mock_cleanup.called
 
+    @await_prepared_test
     async def test_flush(self):
         DOCUMENT = {
             "category": "Hotel",
@@ -72,6 +78,7 @@ class TestSearchBatchingClientAsync:
                 await client.flush()
                 assert len(client.actions) == 0
 
+    @await_prepared_test
     async def test_callback_new(self):
         on_new = mock.AsyncMock()
         async with SearchIndexingBufferedSender(
@@ -80,6 +87,7 @@ class TestSearchBatchingClientAsync:
             await client.upload_documents(["upload1"])
             assert on_new.called
 
+    @await_prepared_test
     async def test_callback_error(self):
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
@@ -100,6 +108,7 @@ class TestSearchBatchingClientAsync:
             await client.flush()
             assert on_error.called
 
+    @await_prepared_test
     async def test_callback_error_on_timeout(self):
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
@@ -122,6 +131,7 @@ class TestSearchBatchingClientAsync:
                 await client.flush(timeout=-1)
             assert on_error.call_count == 2
 
+    @await_prepared_test
     async def test_callback_progress(self):
         async def mock_successful_index_documents(actions, timeout=86400):
             if len(actions) > 0:

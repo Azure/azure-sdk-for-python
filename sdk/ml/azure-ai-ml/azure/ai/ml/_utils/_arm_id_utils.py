@@ -451,7 +451,7 @@ def get_resource_name_from_arm_id_safe(resource_id: str) -> str:
     except AttributeError:
         # None or empty string
         return resource_id
-    except Exception:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=W0718
         # unexpected error
         module_logger.warning("Failed to parse resource id: %s", resource_id)
         return resource_id

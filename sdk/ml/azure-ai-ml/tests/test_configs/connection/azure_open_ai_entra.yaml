@@ -1,0 +1,5 @@
+name: azure_open_ai_conn_entra
+type: azure_open_ai
+azure_endpoint: dummy
+metadata:
+  hello: world

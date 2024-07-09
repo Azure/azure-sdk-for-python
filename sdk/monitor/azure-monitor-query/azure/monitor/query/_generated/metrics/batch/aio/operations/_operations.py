@@ -9,7 +9,7 @@
 import datetime
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -465,9 +465,6 @@ class MetricsBatchOperations:
          separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
          and Tacoma rolled up into one timeseries. Default value is None.
         :paramtype rollupby: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -569,7 +566,7 @@ class MetricsBatchOperations:
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

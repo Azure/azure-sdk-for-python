@@ -31,6 +31,7 @@ from .generate_utils import (
     return_origin_path,
     check_api_version_in_subfolder,
     call_build_config,
+    del_outdated_generated_files,
 )
 from .conf import CONF_NAME
 
@@ -90,7 +91,7 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
         _LOGGER.info(f"do not find {toml_file}")
 
 
-def del_outdated_folder(readme: str):
+def del_outdated_samples(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
@@ -268,11 +269,10 @@ def main(generate_input, generate_output):
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
-        is_typespec = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
             update_metadata_for_multiapi_package(spec_folder, input_readme)
-            del_outdated_folder(relative_path_readme)
+            del_outdated_samples(relative_path_readme)
             config = generate(
                 CONFIG_FILE,
                 sdk_folder,
@@ -285,8 +285,8 @@ def main(generate_input, generate_output):
         elif "data-plane" in input_readme:
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
+            del_outdated_generated_files(str(Path(spec_folder, input_readme)))
             config = gen_typespec(input_readme, spec_folder, data["headSha"], data["repoHttpsUrl"])
-            is_typespec = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -309,7 +309,7 @@ def main(generate_input, generate_output):
                 result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
-            init_new_service(package_name, folder_name, is_typespec)
+            init_new_service(package_name, folder_name)
             format_samples(sdk_code_path)
 
             # Update metadata

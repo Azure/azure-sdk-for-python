@@ -47,7 +47,7 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -77,7 +77,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -96,6 +96,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :paramtype local: bool
         :keyword vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :paramtype vscode_debug: bool
+        :keyword skip_script_validation: Whether or not to skip validation of the deployment script. Defaults to False.
+        :paramtype skip_script_validation: bool
         :keyword local_enable_gpu: enable local container to access gpu
         :paramtype local_enable_gpu: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
@@ -155,8 +157,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 not skip_script_validation
                 and deployment
                 and deployment.code_configuration
-                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
-                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)  # type: ignore[union-attr]
+                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)  # type: ignore
             ):
                 validate_scoring_script(deployment)
 
@@ -209,14 +211,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 return poller
             except Exception as ex:
                 raise ex
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=W0718
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -247,7 +249,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
@@ -272,7 +274,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -317,7 +319,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 

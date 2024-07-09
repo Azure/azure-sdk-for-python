@@ -288,7 +288,9 @@ class CapacityReservationGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.CapacityReservationGroupTrackedResourceArmPaginatedResult"]
-        """list_by_subscription.
+        """List CapacityReservationGroups by subscription.
+
+        List CapacityReservationGroups by subscription.
 
         :param skip: Continuation token for pagination.
         :type skip: str
@@ -369,7 +371,9 @@ class CapacityReservationGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.CapacityReservationGroupTrackedResourceArmPaginatedResult"]
-        """list.
+        """Lists CapacityReservationGroups.
+
+        Lists CapacityReservationGroups.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -454,11 +458,13 @@ class CapacityReservationGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """delete.
+        """Delete CapacityReservationGroup.
+
+        Delete CapacityReservationGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param group_id:
+        :param group_id: Group ID.
         :type group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -510,11 +516,13 @@ class CapacityReservationGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CapacityReservationGroup"
-        """get.
+        """Get CapacityReservationGroup.
+
+        Get CapacityReservationGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param group_id:
+        :param group_id: Group ID.
         :type group_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CapacityReservationGroup, or the result of cls(response)
@@ -571,13 +579,15 @@ class CapacityReservationGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CapacityReservationGroup"
-        """update.
+        """Update CapacityReservationGroup.
+
+        Update CapacityReservationGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param group_id:
+        :param group_id: Group ID.
         :type group_id: str
-        :param body:
+        :param body: Capacity Reservation Group payload to update.
         :type body:
          ~azure.mgmt.machinelearningservices.models.PartialMinimalTrackedResourceWithSkuAndIdentity
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -639,13 +649,15 @@ class CapacityReservationGroupsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.CapacityReservationGroup"
-        """create_or_update.
+        """Create or update CapacityReservationGroup.
+
+        Create or update CapacityReservationGroup.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param group_id:
+        :param group_id: Group ID.
         :type group_id: str
-        :param body:
+        :param body: Capacity Reservation Group payload to create.
         :type body: ~azure.mgmt.machinelearningservices.models.CapacityReservationGroup
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CapacityReservationGroup, or the result of cls(response)

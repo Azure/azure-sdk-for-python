@@ -1,15 +1,80 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.6.1 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
 
+## 1.6.0 (2024-06-06)
+
+### Features Added
+
+- Enable views configuration
+    ([#35932](https://github.com/Azure/azure-sdk-for-python/pull/35932))
+- Rework autoinstrumentation: Configure exporters and samplers directly
+    ([#35890](https://github.com/Azure/azure-sdk-for-python/pull/35890))
+
+## 1.5.0 (2024-05-31)
+
+### Features Added
+
+- Enable live metrics feature
+    ([#35566](https://github.com/Azure/azure-sdk-for-python/pull/35566))
+
+## 1.4.2 (2024-05-20)
+
+### Features Added
+
+- Add diagnostics for sdk detection and backoff
+    ([#35610](https://github.com/Azure/azure-sdk-for-python/pull/35610))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.4.1 (2024-04-25)
+
+### Features Added
+
+- Enable sampling for attach
+    ([#35218](https://github.com/Azure/azure-sdk-for-python/pull/35218))
+
+## 1.4.0 (2024-04-09)
+
+### Features Added
+
+- Adding diagnostic warning when distro detects RP attach
+    ([#34971](https://github.com/Azure/azure-sdk-for-python/pull/34971))
+- Added `resource` parameter
+    ([#34900](https://github.com/Azure/azure-sdk-for-python/pull/34900))
+
+### Other Changes
+
+- Updated FastAPI sample
+    ([#34738](https://github.com/Azure/azure-sdk-for-python/pull/34738))
+- Refactored constants and utils
+    ([#35066](https://github.com/Azure/azure-sdk-for-python/pull/35066))
+
+## 1.3.0 (2024-02-29)
+
+### Features Added
+
+- Add custom span processors configuration option
+    ([#34326](https://github.com/Azure/azure-sdk-for-python/pull/34326))
+
+### Other Changes
+
 - Update configure_azure_monitor signature and Django sample
     ([#33834](https://github.com/Azure/azure-sdk-for-python/pull/33834))
+- Remove support for Python 3.7
+    ([#34252](https://github.com/Azure/azure-sdk-for-python/pull/34252))
 
 ## 1.2.0 (2024-01-18)
 
@@ -45,6 +110,8 @@
     ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
 - Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
     ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
+- Add instrumentation_options
+    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Bugs Fixed
 
@@ -57,8 +124,6 @@
 
 - Add Azure resource detectors
     ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
-- Add instrumentation_options
-    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Other Changes
 

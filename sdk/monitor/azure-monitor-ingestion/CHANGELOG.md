@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.4 (Unreleased)
+## 1.0.5 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,12 @@
 
 ### Other Changes
 
-* Bumped minimum dependency on `azure-core` to `>=1.28.0`.
+## 1.0.4 (2024-06-11)
+
+### Other Changes
+
+- Bumped minimum dependency on `azure-core` to `>=1.28.0`.
+- Added additional type validation for the `logs` parameter in the `upload` method to ensure that a string hasn't been passed in. ([#33976](https://github.com/Azure/azure-sdk-for-python/pull/33976))
 
 ## 1.0.3 (2023-11-07)
 

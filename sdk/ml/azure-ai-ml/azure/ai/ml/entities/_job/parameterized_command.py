@@ -92,7 +92,7 @@ class ParameterizedCommand:
         self.environment_variables = dict(environment_variables) if environment_variables else {}
         self.environment = environment
         self.distribution = distribution
-        self.resources = resources
+        self.resources = resources  # type: ignore[assignment]
         self.queue_settings = queue_settings
 
     @property
@@ -137,7 +137,7 @@ class ParameterizedCommand:
         self._distribution = value
 
     @property
-    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
+    def resources(self) -> JobResourceConfiguration:
         """The compute resource configuration for the command component or job.
 
         :return: The compute resource configuration for the command component or job.

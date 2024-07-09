@@ -57,15 +57,15 @@ class NlpSearchSpace(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        gradient_accumulation_steps: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        learning_rate: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        learning_rate_scheduler: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        model_name: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        number_of_epochs: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        training_batch_size: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        validation_batch_size: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        warmup_ratio: Optional[Union[bool, int, float, str, SweepDistribution]] = None,
-        weight_decay: Optional[Union[bool, int, float, str, SweepDistribution]] = None
+        gradient_accumulation_steps: Optional[Union[int, SweepDistribution]] = None,
+        learning_rate: Optional[Union[float, SweepDistribution]] = None,
+        learning_rate_scheduler: Optional[Union[str, SweepDistribution]] = None,
+        model_name: Optional[Union[str, SweepDistribution]] = None,
+        number_of_epochs: Optional[Union[int, SweepDistribution]] = None,
+        training_batch_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_batch_size: Optional[Union[int, SweepDistribution]] = None,
+        warmup_ratio: Optional[Union[float, SweepDistribution]] = None,
+        weight_decay: Optional[Union[float, SweepDistribution]] = None
     ):
         # Since we want customers to be able to specify enums as well rather than just strings, we need to access
         # the enum values here before we serialize them ('NlpModels.BERT_BASE_CASED' vs. 'bert-base-cased').

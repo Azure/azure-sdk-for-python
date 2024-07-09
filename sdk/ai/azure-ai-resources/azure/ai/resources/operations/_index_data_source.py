@@ -46,15 +46,16 @@ class IndexDataSource:
 
 
 # Field bundle for creating an index from files located in a Git repo.
+# TODO Does git_url need to specifically be an SSH or HTTPS style link?
+# TODO What is git connection id?
 class GitSource(IndexDataSource):
     """Config class for creating an ML index from files located in a git repository.
 
-    :param git_url: A link to the repository to use. TODO Does this need to specifically be
-        an SSH or HTTPS style link?
+    :param git_url: A link to the repository to use.
     :type git_url: str
     :param git_branch_name: The name of the branch to use from the target repository.
     :type git_branch_name: str
-    :param git_connection_id: TODO what is this?
+    :param git_connection_id: The connection ID for GitHub
     :type git_connection_id: str
     """
 
@@ -118,7 +119,19 @@ class GitSource(IndexDataSource):
 class ACSSource(IndexDataSource):
     """Config class for creating an ML index from an OpenAI <thing>.
 
-    :param num_docs_to_import: Number of docs to import from the existing ACS index.
+    :param acs_index_name: The name of the ACS index to use as the source.
+    :type acs_index_name: str
+    :param acs_content_key: The key for the content field in the ACS index.
+    :type acs_content_key: str
+    :param acs_embedding_key: The key for the embedding field in the ACS index.
+    :type acs_embedding_key: str
+    :param acs_title_key: The key for the title field in the ACS index.
+    :type acs_title_key: str
+    :param acs_metadata_key: The key for the metadata field in the ACS index.
+    :type acs_metadata_key: str
+    :param acs_connection_id: The connection ID for the ACS index.
+    :type acs_connection_id: str
+    :param num_docs_to_import: Number of documents to import from the existing ACS index. Defaults to 50.
     :type num_docs_to_import: int
     """
 

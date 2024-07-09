@@ -15,9 +15,8 @@ from azure.data.tables import (
     EdmType,
 )
 from azure.data.tables.aio import TableServiceClient
-from azure.identity.aio import DefaultAzureCredential
 
-from devtools_testutils import is_live
+from devtools_testutils import is_live, get_credential
 
 from .testcase import TableTestCase
 
@@ -40,7 +39,7 @@ class AsyncFakeTokenCredential(object):
 class AsyncTableTestCase(TableTestCase):
     def get_token_credential(self):
         if is_live():
-            return DefaultAzureCredential()
+            return get_credential(is_async=True)
         return self.generate_fake_token_credential()
 
     def generate_fake_token_credential(self):

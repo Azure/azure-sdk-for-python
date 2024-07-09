@@ -9,7 +9,7 @@ import threading
 from os import makedirs
 from os.path import exists, join
 
-from azure.monitor.opentelemetry._constants import (
+from azure.monitor.opentelemetry._utils import (
     _EXTENSION_VERSION,
     _IS_DIAGNOSTICS_ENABLED,
     _env_var_or_default,
@@ -28,10 +28,12 @@ _logger = logging.getLogger(__name__)
 _logger.propagate = False
 _logger.setLevel(logging.INFO)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+_DISTRO_DETECTS_ATTACH = "4100"
 _ATTACH_SUCCESS_DISTRO = "4200"
 _ATTACH_SUCCESS_CONFIGURATOR = "4201"
 _ATTACH_FAILURE_DISTRO = "4400"
 _ATTACH_FAILURE_CONFIGURATOR = "4401"
+_ATTACH_DETECTS_SDK = "4402"
 
 
 class AzureDiagnosticLogging:

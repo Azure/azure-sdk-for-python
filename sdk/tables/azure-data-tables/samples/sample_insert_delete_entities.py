@@ -11,7 +11,7 @@ FILE: sample_insert_delete_entities.py
 
 DESCRIPTION:
     These samples demonstrate the following: inserting entities into a table
-    and deleting tables from a table.
+    and deleting entities from a table.
 
 USAGE:
     python sample_insert_delete_entities.py
@@ -81,7 +81,7 @@ class InsertDeleteEntity(object):
                 print(resp)
             except ResourceExistsError:
                 print("Entity already exists")
-        # [END create_entity]
+            # [END create_entity]
 
     def delete_entity(self):
         from azure.data.tables import TableClient
@@ -91,7 +91,7 @@ class InsertDeleteEntity(object):
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
         with TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential) as table_client:
 
-            # Create entity to delete (to showcase etag)
+            # Create an entity to delete (to showcase etag)
             try:
                 table_client.create_entity(entity=self.entity)
             except ResourceExistsError:

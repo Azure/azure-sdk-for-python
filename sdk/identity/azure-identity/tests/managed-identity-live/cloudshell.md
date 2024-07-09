@@ -44,7 +44,7 @@ cd azure-sdk-for-python/sdk/identity/azure-identity
 ```
 
 ## Create virtual environment
-The Azure SDK supports Python 3.7+. Python 3 should be installed in your Cloud Shell.
+The Azure SDK supports Python 3.8+. Python 3 should be installed in your Cloud Shell.
 ```sh
 python -m venv ~/venv
 ```

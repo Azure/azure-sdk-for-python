@@ -171,6 +171,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         socket_timeout=SOCKET_TIMEOUT,
         socket_settings=None,
         raise_on_initial_eintr=True,
+        use_tls: bool =True,
         **kwargs
     ):
         self._quick_recv = None
@@ -185,6 +186,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.socket_timeout = socket_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
+
+        self._use_tls = use_tls
 
     def connect(self):
         try:
@@ -509,7 +512,8 @@ class SSLTransport(_AbstractTransport):
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
-        self.sock = self._wrap_socket(self.sock, **self.sslopts)
+        if self._use_tls:
+            self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self._quick_recv = self.sock.recv
 
     def _wrap_socket(self, sock, context=None, **sslopts):
@@ -599,7 +603,8 @@ class SSLTransport(_AbstractTransport):
         """Unwrap a SSL socket, so we can call shutdown()."""
         if self.sock is not None:
             try:
-                self.sock = self.sock.unwrap()
+                if self._use_tls:
+                    self.sock = self.sock.unwrap()
             except OSError:
                 pass
 
@@ -648,7 +653,11 @@ class SSLTransport(_AbstractTransport):
         """Write a string out to the SSL socket fully.
         :param str s: The string to write.
         """
-        write = self.sock.send
+        try:
+            write = self.sock.send
+        except AttributeError:
+            raise IOError("Socket has already been closed.") from None
+
         while s:
             try:
                 n = write(s)
@@ -659,7 +668,7 @@ class SSLTransport(_AbstractTransport):
                 # None.
                 n = 0
             if not n:
-                raise IOError("Socket closed")
+                raise IOError("Socket closed.")
             s = s[n:]
 
     def negotiate(self):
@@ -733,11 +742,12 @@ class WebSocketTransport(_AbstractTransport):
             ) from None
         try:
             self.sock = create_connection(
-                url="wss://{}".format(self._custom_endpoint or self._host),
+                url="wss://{}".format(self._custom_endpoint or self._host) if self._use_tls
+                    else "ws://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,    # timeout for read/write operations
                 skip_utf8_validation=True,
-                sslopt=self.sslopts,
+                sslopt=self.sslopts if self._use_tls else None,
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
@@ -767,7 +777,7 @@ class WebSocketTransport(_AbstractTransport):
         :return: The data read.
         :rtype: bytearray
         """
-        from websocket import WebSocketTimeoutException
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
             length = 0
             view = buffer or memoryview(bytearray(n))
@@ -790,6 +800,8 @@ class WebSocketTransport(_AbstractTransport):
                 raise IOError("Websocket connection has already been closed.") from None
             except WebSocketTimeoutException as wte:
                 raise TimeoutError('Websocket receive timed out (%s)' % wte) from wte
+            except (WebSocketConnectionClosedException, SSLError) as e:
+                raise ConnectionError('Websocket disconnected: %r' % e) from e
         except:
             self._read_buffer = BytesIO(view[:length])
             raise

@@ -35,7 +35,7 @@ import platform
 import xml.etree.ElementTree as ET
 import types
 import re
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Mapping, TYPE_CHECKING
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, MutableMapping, TYPE_CHECKING
 
 from ... import __version__ as core_version
 from ...exceptions import DecodeError
@@ -172,7 +172,6 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
-
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
@@ -449,12 +448,12 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     Dictionary mapping protocol or protocol and host to the URL of the proxy
     to be used on each Request.
 
-    :param dict proxies: Maps protocol or protocol and hostname to the URL
+    :param MutableMapping proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
     """
 
     def __init__(
-        self, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 

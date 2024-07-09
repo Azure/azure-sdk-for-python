@@ -6,48 +6,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Attributes
-from ._models_py3 import BackupKeyResult
-from ._models_py3 import DeletedKeyBundle
-from ._models_py3 import DeletedKeyItem
-from ._models_py3 import DeletedKeyListResult
-from ._models_py3 import Error
-from ._models_py3 import GetRandomBytesRequest
-from ._models_py3 import JsonWebKey
-from ._models_py3 import KeyAttributes
-from ._models_py3 import KeyBundle
-from ._models_py3 import KeyCreateParameters
-from ._models_py3 import KeyExportParameters
-from ._models_py3 import KeyImportParameters
-from ._models_py3 import KeyItem
-from ._models_py3 import KeyListResult
-from ._models_py3 import KeyOperationResult
-from ._models_py3 import KeyOperationsParameters
-from ._models_py3 import KeyProperties
-from ._models_py3 import KeyReleaseParameters
-from ._models_py3 import KeyReleasePolicy
-from ._models_py3 import KeyReleaseResult
-from ._models_py3 import KeyRestoreParameters
-from ._models_py3 import KeyRotationPolicy
-from ._models_py3 import KeyRotationPolicyAttributes
-from ._models_py3 import KeySignParameters
-from ._models_py3 import KeyUpdateParameters
-from ._models_py3 import KeyVaultError
-from ._models_py3 import KeyVerifyParameters
-from ._models_py3 import KeyVerifyResult
-from ._models_py3 import LifetimeActions
-from ._models_py3 import LifetimeActionsTrigger
-from ._models_py3 import LifetimeActionsType
-from ._models_py3 import RandomBytes
+from ._models import Attributes
+from ._models import BackupKeyResult
+from ._models import DeletedKeyBundle
+from ._models import DeletedKeyItem
+from ._models import Error
+from ._models import GetRandomBytesRequest
+from ._models import JsonWebKey
+from ._models import KeyAttributes
+from ._models import KeyBundle
+from ._models import KeyCreateParameters
+from ._models import KeyExportParameters
+from ._models import KeyImportParameters
+from ._models import KeyItem
+from ._models import KeyOperationResult
+from ._models import KeyOperationsParameters
+from ._models import KeyProperties
+from ._models import KeyReleaseParameters
+from ._models import KeyReleasePolicy
+from ._models import KeyReleaseResult
+from ._models import KeyRestoreParameters
+from ._models import KeyRotationPolicy
+from ._models import KeyRotationPolicyAttributes
+from ._models import KeySignParameters
+from ._models import KeyUpdateParameters
+from ._models import KeyVaultError
+from ._models import KeyVerifyParameters
+from ._models import KeyVerifyResult
+from ._models import LifetimeActions
+from ._models import LifetimeActionsTrigger
+from ._models import LifetimeActionsType
+from ._models import RandomBytes
 
-from ._key_vault_client_enums import ActionType
-from ._key_vault_client_enums import DeletionRecoveryLevel
-from ._key_vault_client_enums import JsonWebKeyCurveName
-from ._key_vault_client_enums import JsonWebKeyEncryptionAlgorithm
-from ._key_vault_client_enums import JsonWebKeyOperation
-from ._key_vault_client_enums import JsonWebKeySignatureAlgorithm
-from ._key_vault_client_enums import JsonWebKeyType
-from ._key_vault_client_enums import KeyEncryptionAlgorithm
+from ._enums import ActionType
+from ._enums import DeletionRecoveryLevel
+from ._enums import JsonWebKeyCurveName
+from ._enums import JsonWebKeyEncryptionAlgorithm
+from ._enums import JsonWebKeyOperation
+from ._enums import JsonWebKeySignatureAlgorithm
+from ._enums import JsonWebKeyType
+from ._enums import KeyEncryptionAlgorithm
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -57,7 +55,6 @@ __all__ = [
     "BackupKeyResult",
     "DeletedKeyBundle",
     "DeletedKeyItem",
-    "DeletedKeyListResult",
     "Error",
     "GetRandomBytesRequest",
     "JsonWebKey",
@@ -67,7 +64,6 @@ __all__ = [
     "KeyExportParameters",
     "KeyImportParameters",
     "KeyItem",
-    "KeyListResult",
     "KeyOperationResult",
     "KeyOperationsParameters",
     "KeyProperties",

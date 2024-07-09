@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 """
@@ -29,15 +32,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.databases.begin_export(
+    client.databases.begin_export(
         resource_group_name="rg1",
         cluster_name="cache1",
         database_name="default",
         parameters={"sasUri": "https://contosostorage.blob.core.window.net/urlToBlobContainer?sasKeyParameters"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2023-03-01-preview/examples/RedisEnterpriseDatabasesExport.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2024-03-01-preview/examples/RedisEnterpriseDatabasesExport.json
 if __name__ == "__main__":
     main()

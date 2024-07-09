@@ -31,7 +31,6 @@ from ._models_py3 import CloudErrorBody
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
-from ._models_py3 import EncryptionMigrationRequest
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -68,7 +67,6 @@ from ._models_py3 import RegionInfoAvailabilityZoneMappingsItem
 from ._models_py3 import RegionInfoResource
 from ._models_py3 import RegionInfosList
 from ._models_py3 import RelocateVolumeRequest
-from ._models_py3 import RemotePath
 from ._models_py3 import Replication
 from ._models_py3 import ReplicationObject
 from ._models_py3 import ReplicationStatus
@@ -180,7 +178,6 @@ __all__ = [
     "DailySchedule",
     "Dimension",
     "EncryptionIdentity",
-    "EncryptionMigrationRequest",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -217,7 +214,6 @@ __all__ = [
     "RegionInfoResource",
     "RegionInfosList",
     "RelocateVolumeRequest",
-    "RemotePath",
     "Replication",
     "ReplicationObject",
     "ReplicationStatus",

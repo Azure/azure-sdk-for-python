@@ -35,10 +35,6 @@ from ._models_py3 import RegenerateKeyParameters
 from ._models_py3 import Resource
 from ._models_py3 import SenderUsernameResource
 from ._models_py3 import SenderUsernameResourceCollection
-from ._models_py3 import SuppressionListAddressResource
-from ._models_py3 import SuppressionListAddressResourceCollection
-from ._models_py3 import SuppressionListResource
-from ._models_py3 import SuppressionListResourceCollection
 from ._models_py3 import SystemData
 from ._models_py3 import TaggedResource
 from ._models_py3 import TrackedResource
@@ -95,10 +91,6 @@ __all__ = [
     "Resource",
     "SenderUsernameResource",
     "SenderUsernameResourceCollection",
-    "SuppressionListAddressResource",
-    "SuppressionListAddressResourceCollection",
-    "SuppressionListResource",
-    "SuppressionListResourceCollection",
     "SystemData",
     "TaggedResource",
     "TrackedResource",

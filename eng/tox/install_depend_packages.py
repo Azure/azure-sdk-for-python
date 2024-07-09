@@ -45,11 +45,12 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "six": "1.12.0",
     "cryptography": "3.3.2",
     "msal": "1.23.0",
+    "azure-storage-file-datalake": "12.2.0",
 }
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {}
 
-# SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by 
+# SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by
 # binding an override to the specific package being processed. As an example, when
 # processing the latest or minimum deps for "azure-eventhub", the minimum version of "azure-core"
 # will be overridden to 1.25.0.
@@ -59,6 +60,8 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
+    "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
+    "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
@@ -92,9 +95,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # dependency type must either be latest or minimum
     # Latest dependency will find latest released package that satisfies requires of given package name
     # Minimum type will find minimum version on PyPI that satisfies requires of given package name
-
     released_packages = find_released_packages(setup_py_file_path, dependency_type)
-
     override_added_packages = []
 
     # new section added to account for difficulties with msrest
@@ -212,7 +213,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
                     v for v in versions if parse_version(v) <= parse_version(restrictions[pkg_name])
                 ]
 
-    # upper bound package-specific 
+    # upper bound package-specific
     if (
         originating_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
         and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name]
@@ -276,7 +277,7 @@ def check_req_against_exclusion(req, req_to_exclude):
     This function evaluates a requirement from a dev_requirements file against a file name. Returns True
     if the requirement is for the same package listed in "req_to_exclude". False otherwise.
 
-    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-devtools",
+    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-sdk-tools",
         "https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'",
         "msrestazure>=0.4.11", "pytest" ]
 

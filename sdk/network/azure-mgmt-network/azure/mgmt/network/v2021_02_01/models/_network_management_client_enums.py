@@ -774,7 +774,6 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a load balancer SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 
@@ -1007,7 +1006,6 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP address SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 
@@ -1021,7 +1019,6 @@ class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP prefix SKU."""
 
     REGIONAL = "Regional"
-    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 

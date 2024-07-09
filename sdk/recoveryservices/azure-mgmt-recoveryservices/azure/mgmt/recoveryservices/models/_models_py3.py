@@ -22,21 +22,41 @@ class AzureMonitorAlertSettings(_serialization.Model):
 
     :ivar alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
     :vartype alerts_for_all_job_failures: str or ~azure.mgmt.recoveryservices.models.AlertsState
+    :ivar alerts_for_all_replication_issues: Known values are: "Enabled" and "Disabled".
+    :vartype alerts_for_all_replication_issues: str or
+     ~azure.mgmt.recoveryservices.models.AlertsState
+    :ivar alerts_for_all_failover_issues: Known values are: "Enabled" and "Disabled".
+    :vartype alerts_for_all_failover_issues: str or ~azure.mgmt.recoveryservices.models.AlertsState
     """
 
     _attribute_map = {
         "alerts_for_all_job_failures": {"key": "alertsForAllJobFailures", "type": "str"},
+        "alerts_for_all_replication_issues": {"key": "alertsForAllReplicationIssues", "type": "str"},
+        "alerts_for_all_failover_issues": {"key": "alertsForAllFailoverIssues", "type": "str"},
     }
 
     def __init__(
-        self, *, alerts_for_all_job_failures: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs: Any
+        self,
+        *,
+        alerts_for_all_job_failures: Optional[Union[str, "_models.AlertsState"]] = None,
+        alerts_for_all_replication_issues: Optional[Union[str, "_models.AlertsState"]] = None,
+        alerts_for_all_failover_issues: Optional[Union[str, "_models.AlertsState"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
         :paramtype alerts_for_all_job_failures: str or ~azure.mgmt.recoveryservices.models.AlertsState
+        :keyword alerts_for_all_replication_issues: Known values are: "Enabled" and "Disabled".
+        :paramtype alerts_for_all_replication_issues: str or
+         ~azure.mgmt.recoveryservices.models.AlertsState
+        :keyword alerts_for_all_failover_issues: Known values are: "Enabled" and "Disabled".
+        :paramtype alerts_for_all_failover_issues: str or
+         ~azure.mgmt.recoveryservices.models.AlertsState
         """
         super().__init__(**kwargs)
         self.alerts_for_all_job_failures = alerts_for_all_job_failures
+        self.alerts_for_all_replication_issues = alerts_for_all_replication_issues
+        self.alerts_for_all_failover_issues = alerts_for_all_failover_issues
 
 
 class CapabilitiesProperties(_serialization.Model):
@@ -62,7 +82,7 @@ class CapabilitiesProperties(_serialization.Model):
 class ResourceCapabilitiesBase(_serialization.Model):
     """Base class for request and response capabilities information for Microsoft.RecoveryServices.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
     :vartype type: str
@@ -88,7 +108,7 @@ class ResourceCapabilitiesBase(_serialization.Model):
 class CapabilitiesResponse(ResourceCapabilitiesBase):
     """Capabilities response for Microsoft.RecoveryServices.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
     :vartype type: str
@@ -229,22 +249,34 @@ class ClassicAlertSettings(_serialization.Model):
 
     :ivar alerts_for_critical_operations: Known values are: "Enabled" and "Disabled".
     :vartype alerts_for_critical_operations: str or ~azure.mgmt.recoveryservices.models.AlertsState
+    :ivar email_notifications_for_site_recovery: Known values are: "Enabled" and "Disabled".
+    :vartype email_notifications_for_site_recovery: str or
+     ~azure.mgmt.recoveryservices.models.AlertsState
     """
 
     _attribute_map = {
         "alerts_for_critical_operations": {"key": "alertsForCriticalOperations", "type": "str"},
+        "email_notifications_for_site_recovery": {"key": "emailNotificationsForSiteRecovery", "type": "str"},
     }
 
     def __init__(
-        self, *, alerts_for_critical_operations: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs: Any
+        self,
+        *,
+        alerts_for_critical_operations: Optional[Union[str, "_models.AlertsState"]] = None,
+        email_notifications_for_site_recovery: Optional[Union[str, "_models.AlertsState"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword alerts_for_critical_operations: Known values are: "Enabled" and "Disabled".
         :paramtype alerts_for_critical_operations: str or
          ~azure.mgmt.recoveryservices.models.AlertsState
+        :keyword email_notifications_for_site_recovery: Known values are: "Enabled" and "Disabled".
+        :paramtype email_notifications_for_site_recovery: str or
+         ~azure.mgmt.recoveryservices.models.AlertsState
         """
         super().__init__(**kwargs)
         self.alerts_for_critical_operations = alerts_for_critical_operations
+        self.email_notifications_for_site_recovery = email_notifications_for_site_recovery
 
 
 class ClientDiscoveryDisplay(_serialization.Model):
@@ -677,12 +709,76 @@ class ErrorAdditionalInfo(_serialization.Model):
         self.type = None
 
 
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.recoveryservices.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.recoveryservices.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.recoveryservices.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.recoveryservices.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class IdentityData(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
@@ -695,7 +791,7 @@ class IdentityData(_serialization.Model):
     :vartype type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user-assigned identities associated with the
      resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.recoveryservices.models.UserIdentity]
     """
 
@@ -727,7 +823,7 @@ class IdentityData(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.recoveryservices.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user-assigned identities associated with the
          resource. The user-assigned identity dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.recoveryservices.models.UserIdentity]
         """
@@ -1231,7 +1327,7 @@ class PrivateEndpointConnectionVaultProperties(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Format of id
-     subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.[Service]/{resource}/{resourceName}/privateEndpointConnections/{connectionName}.
+     subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.[Service]/{resource}/{resourceName}/privateEndpointConnections/{connectionName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar properties: Private Endpoint Connection Response Properties.
     :vartype properties: ~azure.mgmt.recoveryservices.models.PrivateEndpointConnection
@@ -1504,7 +1600,7 @@ class ReplicationUsageList(_serialization.Model):
 class ResourceCapabilities(ResourceCapabilitiesBase):
     """Input to get capabilities information for Microsoft.RecoveryServices.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
     :vartype type: str
@@ -1540,7 +1636,7 @@ class ResourceCertificateDetails(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ResourceCertificateAndAcsDetails, ResourceCertificateAndAadDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1632,7 +1728,7 @@ class ResourceCertificateDetails(_serialization.Model):
 class ResourceCertificateAndAadDetails(ResourceCertificateDetails):  # pylint: disable=too-many-instance-attributes
     """Certificate details representing the Vault credentials for AAD.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1773,7 +1869,7 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):  # pylint: d
 class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):  # pylint: disable=too-many-instance-attributes
     """Certificate details representing the Vault credentials for ACS.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -1958,7 +2054,7 @@ class SecuritySettings(_serialization.Model):
 class Sku(_serialization.Model):
     """Identifies the unique system identifier for each Azure resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of SKU is RS0 (Recovery Services 0th version) and the tier is standard tier.
      They do not have affect on backend storage redundancy or any other vault settings. To manage
@@ -2027,11 +2123,16 @@ class SoftDeleteSettings(_serialization.Model):
     :vartype soft_delete_state: str or ~azure.mgmt.recoveryservices.models.SoftDeleteState
     :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
     :vartype soft_delete_retention_period_in_days: int
+    :ivar enhanced_security_state: Known values are: "Invalid", "Enabled", "Disabled", and
+     "AlwaysON".
+    :vartype enhanced_security_state: str or
+     ~azure.mgmt.recoveryservices.models.EnhancedSecurityState
     """
 
     _attribute_map = {
         "soft_delete_state": {"key": "softDeleteState", "type": "str"},
         "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+        "enhanced_security_state": {"key": "enhancedSecurityState", "type": "str"},
     }
 
     def __init__(
@@ -2039,6 +2140,7 @@ class SoftDeleteSettings(_serialization.Model):
         *,
         soft_delete_state: Optional[Union[str, "_models.SoftDeleteState"]] = None,
         soft_delete_retention_period_in_days: Optional[int] = None,
+        enhanced_security_state: Optional[Union[str, "_models.EnhancedSecurityState"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2046,10 +2148,15 @@ class SoftDeleteSettings(_serialization.Model):
         :paramtype soft_delete_state: str or ~azure.mgmt.recoveryservices.models.SoftDeleteState
         :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
         :paramtype soft_delete_retention_period_in_days: int
+        :keyword enhanced_security_state: Known values are: "Invalid", "Enabled", "Disabled", and
+         "AlwaysON".
+        :paramtype enhanced_security_state: str or
+         ~azure.mgmt.recoveryservices.models.EnhancedSecurityState
         """
         super().__init__(**kwargs)
         self.soft_delete_state = soft_delete_state
         self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
+        self.enhanced_security_state = enhanced_security_state
 
 
 class SystemData(_serialization.Model):
@@ -2121,7 +2228,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
@@ -2268,7 +2375,7 @@ class Vault(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
@@ -2535,6 +2642,12 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
     :ivar secure_score: Secure Score of Recovery Services Vault. Known values are: "None",
      "Minimum", "Adequate", and "Maximum".
     :vartype secure_score: str or ~azure.mgmt.recoveryservices.models.SecureScoreLevel
+    :ivar bcdr_security_level: Security levels of Recovery Services Vault for business continuity
+     and disaster recovery. Known values are: "Poor", "Fair", "Good", and "Excellent".
+    :vartype bcdr_security_level: str or ~azure.mgmt.recoveryservices.models.BCDRSecurityLevel
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     """
 
     _validation = {
@@ -2545,6 +2658,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         "move_state": {"readonly": True},
         "backup_storage_version": {"readonly": True},
         "secure_score": {"readonly": True},
+        "bcdr_security_level": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2566,6 +2680,8 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         "redundancy_settings": {"key": "redundancySettings", "type": "VaultPropertiesRedundancySettings"},
         "security_settings": {"key": "securitySettings", "type": "SecuritySettings"},
         "secure_score": {"key": "secureScore", "type": "str"},
+        "bcdr_security_level": {"key": "bcdrSecurityLevel", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
     }
 
     def __init__(
@@ -2579,6 +2695,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         restore_settings: Optional["_models.RestoreSettings"] = None,
         redundancy_settings: Optional["_models.VaultPropertiesRedundancySettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2602,6 +2719,9 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
          ~azure.mgmt.recoveryservices.models.VaultPropertiesRedundancySettings
         :keyword security_settings: Security Settings of the vault.
         :paramtype security_settings: ~azure.mgmt.recoveryservices.models.SecuritySettings
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -2619,6 +2739,8 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         self.redundancy_settings = redundancy_settings
         self.security_settings = security_settings
         self.secure_score = None
+        self.bcdr_security_level = None
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class VaultPropertiesEncryption(_serialization.Model):
@@ -2710,10 +2832,8 @@ class VaultPropertiesMoveDetails(_serialization.Model):
 class VaultPropertiesRedundancySettings(_serialization.Model):
     """The redundancy Settings of a Vault.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar standard_tier_storage_redundancy: The storage redundancy setting of a vault. Known values
-     are: "LocallyRedundant", "GeoRedundant", and "ZoneRedundant".
+     are: "Invalid", "LocallyRedundant", "GeoRedundant", and "ZoneRedundant".
     :vartype standard_tier_storage_redundancy: str or
      ~azure.mgmt.recoveryservices.models.StandardTierStorageRedundancy
     :ivar cross_region_restore: Flag to show if Cross Region Restore is enabled on the Vault or
@@ -2721,21 +2841,30 @@ class VaultPropertiesRedundancySettings(_serialization.Model):
     :vartype cross_region_restore: str or ~azure.mgmt.recoveryservices.models.CrossRegionRestore
     """
 
-    _validation = {
-        "standard_tier_storage_redundancy": {"readonly": True},
-        "cross_region_restore": {"readonly": True},
-    }
-
     _attribute_map = {
         "standard_tier_storage_redundancy": {"key": "standardTierStorageRedundancy", "type": "str"},
         "cross_region_restore": {"key": "crossRegionRestore", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self,
+        *,
+        standard_tier_storage_redundancy: Optional[Union[str, "_models.StandardTierStorageRedundancy"]] = None,
+        cross_region_restore: Optional[Union[str, "_models.CrossRegionRestore"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword standard_tier_storage_redundancy: The storage redundancy setting of a vault. Known
+         values are: "Invalid", "LocallyRedundant", "GeoRedundant", and "ZoneRedundant".
+        :paramtype standard_tier_storage_redundancy: str or
+         ~azure.mgmt.recoveryservices.models.StandardTierStorageRedundancy
+        :keyword cross_region_restore: Flag to show if Cross Region Restore is enabled on the Vault or
+         not. Known values are: "Enabled" and "Disabled".
+        :paramtype cross_region_restore: str or ~azure.mgmt.recoveryservices.models.CrossRegionRestore
+        """
         super().__init__(**kwargs)
-        self.standard_tier_storage_redundancy = None
-        self.cross_region_restore = None
+        self.standard_tier_storage_redundancy = standard_tier_storage_redundancy
+        self.cross_region_restore = cross_region_restore
 
 
 class VaultUsage(_serialization.Model):

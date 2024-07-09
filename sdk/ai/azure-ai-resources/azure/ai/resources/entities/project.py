@@ -10,7 +10,23 @@ from azure.ai.ml.entities import Workspace
 
 # Effectively a lightweight wrapper around a v2 SDK workspace
 class Project:
-    """A Project is a lightweight object for orchestrating AI applications, and is parented by an AI resource"""
+    """A Project is a lightweight object for orchestrating AI applications, and is parented by an AI resource.
+    
+    :param name: The name of the project.
+    :type name: str
+    :param ai_resource: The AI resource parent of the project.
+    :type ai_resource: str
+    :param description: The description of the project.
+    :type description: Optional[str]
+    :param tags: Tags associated with the project.
+    :type tags: Optional[Dict[str, str]]
+    :param display_name: The display name of the project.
+    :type display_name: Optional[str]
+    :param location: The location of the project.
+    :type location: Optional[str]
+    :param resource_group: The project's resource group name.
+    :type resource_group: Optional[str]
+    """
 
     def __init__(
         self,
@@ -23,7 +39,7 @@ class Project:
         location: Optional[str] = None,
         resource_group: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._workspace = Workspace(
             name=name,
             workspace_hub=ai_resource,
@@ -65,7 +81,7 @@ class Project:
     def name(self, value: str):
         """Set the name of the project.
 
-        :param value: The new type to assign to the project.
+        :param value: The name to assign to the project.
         :type value: str
         """
         if not value:
@@ -85,7 +101,7 @@ class Project:
     def ai_resource(self, value: str):
         """Set the AI resource of the project.
 
-        :param value: The new type to assign to the project.
+        :param value: The AI resource to assign to the project.
         :type value: str
         """
         if not value:
@@ -105,7 +121,7 @@ class Project:
     def description(self, value: str):
         """Set the description of the project.
 
-        :param value: The new type to assign to the project.
+        :param value: The description to assign to the project.
         :type value: str
         """
         if not value:
@@ -114,18 +130,18 @@ class Project:
 
     @property
     def tags(self) -> str:
-        """The tags of the project.
+        """The project's tags.
 
-        :return: Name of the project.
+        :return: The tags associated with the project.
         :rtype: str
         """
         return self._workspace.tags
 
     @tags.setter
     def tags(self, value: Dict[str, str]):
-        """Set the tags of the project.
+        """Set the project's tags
 
-        :param value: The new type to assign to the project.
+        :param value: Tags to assign to the project.
         :type value: Dict[str, str]
         """
         if not value:
@@ -134,18 +150,18 @@ class Project:
 
     @property
     def display_name(self) -> str:
-        """The display_name of the project.
+        """The project display name
 
-        :return: Name of the project.
+        :return: The project display name
         :rtype: str
         """
         return self._workspace.display_name
 
     @display_name.setter
     def display_name(self, value: str):
-        """Set the display_name of the project.
+        """Set the project display name
 
-        :param value: The new type to assign to the project.
+        :param value: The display name to assign to the project.
         :type value: str
         """
         if not value:
@@ -156,7 +172,7 @@ class Project:
     def location(self) -> str:
         """The location of the project.
 
-        :return: Name of the project.
+        :return: The location of the project.
         :rtype: str
         """
         return self._workspace.location
@@ -165,7 +181,7 @@ class Project:
     def location(self, value: str):
         """Set the location of the project.
 
-        :param value: The new type to assign to the project.
+        :param value: The location to assign to the project.
         :type value: str
         """
         if not value:
@@ -174,18 +190,18 @@ class Project:
 
     @property
     def resource_group(self) -> str:
-        """The resource_group of the project.
+        """The resource group associated with the project.
 
-        :return: Name of the project.
+        :return: The name of the resource group associated with the project.
         :rtype: str
         """
         return self._workspace.resource_group
 
     @resource_group.setter
     def resource_group(self, value: str):
-        """Set the resource_group of the project.
+        """Set the project's resource group.
 
-        :param value: The new type to assign to the project.
+        :param value: The name of the resource group to assign to the project.
         :type value: str
         """
         if not value:

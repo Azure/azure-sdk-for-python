@@ -69,7 +69,8 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         return cast(int, await self._first_iterator_instance().get_count())
 
     async def get_answers(self) -> Optional[List[QueryAnswerResult]]:
-        """Return answers.
+        """Return semantic answers. Only included if the semantic ranker is used
+        and answers are requested in the search query via the query_answer parameter.
 
         :return: Answers.
         :rtype: list[~azure.search.documents.QueryAnswerResult]

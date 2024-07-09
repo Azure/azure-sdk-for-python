@@ -6,7 +6,8 @@
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
-from testcase import AppConfigTestCase
+from testcase import AppConfigTestCase, has_feature_flag
+from test_constants import FEATURE_MANAGEMENT_KEY
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -15,12 +16,14 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator_aad
     def test_provider_creation_aad(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         client = self.create_aad_client(
-            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_endpoint_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagementFeatureFlags" in client
-        assert "Alpha" in client["FeatureManagementFeatureFlags"]
+        assert FEATURE_MANAGEMENT_KEY in client
+        assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
     @recorded_by_proxy
@@ -31,13 +34,14 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_endpoint_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
         )
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
-        assert "FeatureManagementFeatureFlags" in client
-        assert "Alpha" in client["FeatureManagementFeatureFlags"]
+        assert FEATURE_MANAGEMENT_KEY in client
+        assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -49,7 +53,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["message"] == "test"
         assert "test.trimmed" not in client
-        assert "FeatureManagementFeatureFlags" not in client
+        assert FEATURE_MANAGEMENT_KEY not in client
 
     # method: provider_selectors
     @recorded_by_proxy

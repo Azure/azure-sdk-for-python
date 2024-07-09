@@ -27,6 +27,7 @@ USAGE:
 """
 
 import os
+from typing import List, MutableMapping
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
@@ -39,7 +40,7 @@ credential = DefaultAzureCredential()
 client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
 rule_id = os.environ["LOGS_DCR_RULE_ID"]
-body = [
+body: List[MutableMapping[str, str]] = [
     {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer1", "AdditionalContext": "context-2"},
     {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer2", "AdditionalContext": "context"},
 ]

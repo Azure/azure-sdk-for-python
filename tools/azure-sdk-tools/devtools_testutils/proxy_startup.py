@@ -12,7 +12,7 @@ import signal
 import platform
 import shutil
 import tarfile
-from typing import Optional
+from typing import Optional, Generator, Any
 import zipfile
 
 import certifi
@@ -24,8 +24,14 @@ from urllib3.exceptions import SSLError
 from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
+from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS, SANITIZED
 from .helpers import get_http_client, is_live_and_not_recording
-from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
+from .sanitizers import (
+    add_batch_sanitizers,
+    Sanitizer,
+    set_custom_default_matcher,
+    remove_batch_sanitizers,
+)
 
 
 load_dotenv(find_dotenv())
@@ -88,10 +94,17 @@ discovered_roots = []
 def get_target_version(repo_root: str) -> str:
     """Gets the target test-proxy version from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
-    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location = os.path.relpath("eng/target_proxy_version.txt")
 
-    with open(version_file_location_from_root, "r") as f:
-        target_version = f.read().strip()
+    version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
+    override_version_file_location_from_root = os.path.abspath(os.path.join(repo_root, override_version_file_location))
+
+    if os.path.exists(override_version_file_location_from_root):
+        with open(override_version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
+    else:
+        with open(version_file_location_from_root, "r") as f:
+            target_version = f.read().strip()
 
     return target_version
 
@@ -133,7 +146,7 @@ def ascend_to_root(start_dir_or_file: str) -> str:
     raise Exception(f'Requested target "{start_dir_or_file}" does not exist within a git repo.')
 
 
-def check_availability() -> None:
+def check_availability() -> int:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
         http_client = get_http_client(raise_on_status=False)
@@ -280,6 +293,50 @@ def prepare_local_tool(repo_root: str) -> str:
         )
 
 
+def set_common_sanitizers() -> None:
+    """Register sanitizers that will apply to all recordings throughout the SDK."""
+    batch_sanitizers = {}
+
+    # Remove headers from recordings if we don't need them, and ignore them if present
+    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
+    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
+    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    batch_sanitizers[Sanitizer.REMOVE_HEADER] = [{"headers": headers_to_ignore}]
+
+    # Remove OAuth interactions, which can contain client secrets and aren't necessary for playback testing
+    # TODO: Determine why this breaks some test playbacks. Since sensitive info in OAuth responses is sanitized
+    # through other sanitizers, it's fine to keep this off for now.
+    # batch_sanitizers[Sanitizer.OAUTH_RESPONSE] = [None]
+
+    # Body key sanitizers for sensitive fields in JSON requests/responses
+    batch_sanitizers[Sanitizer.BODY_KEY] = []
+
+    # Body regex sanitizers for sensitive patterns in request/response bodies
+    batch_sanitizers[Sanitizer.BODY_REGEX] = []
+
+    # General regex sanitizers for sensitive patterns throughout interactions
+    batch_sanitizers[Sanitizer.GENERAL_REGEX] = [
+        {
+            "regex": "(?:[\\?&](sig|se|st|sv)=)(?<secret>[^&\\\"\\s]*)",
+            "group_for_replace": "secret",
+            "value": SANITIZED
+        },
+    ]
+
+    # Header regex sanitizers for sensitive patterns in request/response headers
+    batch_sanitizers[Sanitizer.HEADER_REGEX] = []
+
+    # URI regex sanitizers for sensitive patterns in request/response URLs
+    batch_sanitizers[Sanitizer.URI_REGEX] = []
+
+    # Send all the above sanitizers to the test proxy in a single, batch request
+    add_batch_sanitizers(sanitizers=batch_sanitizers)
+
+    # Remove certain sanitizers that are too aggressive and cause excessive playback failures
+    #  - AZSDK2030: operation-location
+    remove_batch_sanitizers(["AZSDK2030"])
+
+
 def start_test_proxy(request) -> None:
     """Starts the test proxy and returns when the proxy server is ready to receive requests.
 
@@ -334,11 +391,7 @@ def start_test_proxy(request) -> None:
 
     # Wait for the proxy server to become available
     check_proxy_availability()
-    # Remove headers from recordings if we don't need them, and ignore them if present
-    # Authorization, for example, can contain sensitive info and can cause matching failures during challenge auth
-    headers_to_ignore = "Authorization, x-ms-client-request-id, x-ms-request-id"
-    add_remove_header_sanitizer(headers=headers_to_ignore)
-    set_custom_default_matcher(excluded_headers=headers_to_ignore)
+    set_common_sanitizers()
 
 
 def stop_test_proxy() -> None:
@@ -354,7 +407,7 @@ def stop_test_proxy() -> None:
 
 
 @pytest.fixture(scope="session")
-def test_proxy(request) -> None:
+def test_proxy(request) -> Generator[None, None, None]:
     """Pytest fixture to be used before running any tests that are recorded with the test proxy"""
     if is_live_and_not_recording():
         yield

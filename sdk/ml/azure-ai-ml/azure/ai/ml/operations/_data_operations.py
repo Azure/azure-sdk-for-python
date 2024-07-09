@@ -75,6 +75,7 @@ from azure.ai.ml.exceptions import (
     AssetPathException,
     ErrorCategory,
     ErrorTarget,
+    MlException,
     ValidationErrorType,
     ValidationException,
 )
@@ -83,7 +84,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -130,7 +131,7 @@ class DataOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -225,7 +226,7 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:  # type: ignore
         """Get the specified data asset.
 
@@ -277,7 +278,7 @@ class DataOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
@@ -326,7 +327,7 @@ class DataOperations(_ScopeDependentOperations):
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
                         )
-                    except Exception as err:  # pylint: disable=broad-except
+                    except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
@@ -423,7 +424,7 @@ class DataOperations(_ScopeDependentOperations):
                     ) from ex
             raise ex
 
-    @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.ImportData", ActivityType.PUBLICAPI)
     @experimental
     def import_data(self, data_import: DataImport, **kwargs: Any) -> PipelineJob:
         """Returns the data import job that is creating the data asset.
@@ -483,7 +484,7 @@ class DataOperations(_ScopeDependentOperations):
             job=import_pipeline, skip_validation=True, **kwargs
         )
 
-    @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     def list_materialization_status(
         self,
         name: str,
@@ -520,7 +521,7 @@ class DataOperations(_ScopeDependentOperations):
             ),
         )
 
-    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_activity(ops_logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Optional[List[str]]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
@@ -545,7 +546,7 @@ class DataOperations(_ScopeDependentOperations):
                         requests_pipeline=self._requests_pipeline,
                     )
                     metadata_yaml_path = None
-                except Exception:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=W0718
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
                     return None
@@ -577,14 +578,14 @@ class DataOperations(_ScopeDependentOperations):
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
             return cast(Optional[Dict], download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline))
-        except Exception:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=W0718
             module_logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
                 mltable_schema_url,
             )
             return None
 
-    @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -623,7 +624,7 @@ class DataOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -680,7 +681,7 @@ class DataOperations(_ScopeDependentOperations):
         )
         return self.get(name, version=latest_version)
 
-    @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "data.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
         self,
@@ -744,7 +745,7 @@ class DataOperations(_ScopeDependentOperations):
         with self._set_registry_client(registry_name):
             return self.create_or_update(data_ref)
 
-    @monitor_with_activity(logger, "data.Mount", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "data.Mount", ActivityType.PUBLICAPI)
     @experimental
     def mount(
         self,
@@ -784,7 +785,7 @@ class DataOperations(_ScopeDependentOperations):
         try:
             from azureml.dataprep import rslex_fuse_subprocess_wrapper
         except ImportError as exc:
-            raise Exception(
+            raise MlException(  # pylint: disable=W0718
                 "Mount operations requires package azureml-dataprep-rslex installed. "
                 + "You can install it with Azure ML SDK with `pip install azure-ai-ml[mount]`."
             ) from exc
@@ -821,9 +822,11 @@ class DataOperations(_ScopeDependentOperations):
                     if mount.mount_state == "MountRequested":
                         pass
                     elif mount.mount_state == "MountFailed":
-                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                        msg = f"Mount failed [name: {mount_name}]: {mount.error}"
+                        raise MlException(message=msg, no_personal_data_message=msg)
                     else:
-                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        raise MlException(message=msg, no_personal_data_message=msg)
                 except IndexError:
                     pass
                 time.sleep(5)

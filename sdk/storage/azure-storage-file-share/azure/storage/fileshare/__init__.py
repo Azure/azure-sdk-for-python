@@ -17,7 +17,9 @@ from ._shared.models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
-    StorageErrorCode)
+    StorageErrorCode,
+    Services,
+)
 from ._models import (
     ShareProperties,
     DirectoryProperties,
@@ -34,7 +36,8 @@ from ._models import (
     FileSasPermissions,
     ShareSasPermissions,
     ContentSettings,
-    NTFSAttributes)
+    NTFSAttributes,
+)
 from ._generated.models import (
     ShareAccessTier,
     ShareRootSquash
@@ -75,7 +78,8 @@ __all__ = [
     'ShareRootSquash',
     'generate_account_sas',
     'generate_share_sas',
-    'generate_file_sas'
+    'generate_file_sas',
+    'Services'
 ]
 
 
