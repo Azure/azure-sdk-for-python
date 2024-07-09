@@ -91,6 +91,8 @@ jobs:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
+        
 
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:
