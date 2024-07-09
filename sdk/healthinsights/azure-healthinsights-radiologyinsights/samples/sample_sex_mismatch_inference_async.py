@@ -7,7 +7,7 @@ import os
 import uuid
 
 
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 

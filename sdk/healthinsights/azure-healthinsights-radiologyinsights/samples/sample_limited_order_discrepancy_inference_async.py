@@ -31,7 +31,7 @@ from azure.healthinsights.radiologyinsights import models
 
 async def radiology_insights_async() -> None:
 
-    from azure.identity import DefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 
     credential = DefaultAzureCredential()
