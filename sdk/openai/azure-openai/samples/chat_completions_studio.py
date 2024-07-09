@@ -1,3 +1,8 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 
 def chat_completion_studio_viewcode() -> None:
     import os
@@ -7,12 +12,14 @@ def chat_completion_studio_viewcode() -> None:
     endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
     deployment = os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"]
 
-    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+    token_provider = get_bearer_token_provider(
+        DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+    )
 
     client = AzureOpenAI(
-        azure_endpoint = endpoint,
-        azure_ad_token_provider = token_provider,
-        api_version = "2024-02-01"
+        azure_endpoint=endpoint,
+        azure_ad_token_provider=token_provider,
+        api_version="2024-02-01",
     )
 
     completion = client.chat.completions.create(
@@ -24,18 +31,13 @@ def chat_completion_studio_viewcode() -> None:
             },
             {
                 "role": "assistant",
-                "content": "DRI stands for Directly Responsible Individual of a service. Which service are you asking about?"
+                "content": "DRI stands for Directly Responsible Individual of a service. Which service are you asking about?",
             },
-            {
-                "role": "user",
-                "content": "Opinion mining service"
-            }
-        ]
+            {"role": "user", "content": "Opinion mining service"},
+        ],
     )
 
     print(completion.to_json())
-
-
 
 
 if __name__ == "__main__":
