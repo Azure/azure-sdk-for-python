@@ -32,7 +32,9 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestAdministrationClient(
+    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
+)
 
 # ID to be assigned to test
 TEST_ID = "my-sdk-test-id"
@@ -48,8 +50,18 @@ result = client.create_or_update_test(
         },
         "passFailCriteria": {
             "passFailMetrics": {
-                "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                "condition1": {
+                    "clientmetric": "response_time_ms",
+                    "aggregate": "avg",
+                    "condition": ">",
+                    "value": 300,
+                },
+                "condition2": {
+                    "clientmetric": "error",
+                    "aggregate": "percentage",
+                    "condition": ">",
+                    "value": 50,
+                },
                 "condition3": {
                     "clientmetric": "latency",
                     "aggregate": "avg",
@@ -65,7 +77,7 @@ result = client.create_or_update_test(
                 "type": "AKV_SECRET_URI",
             }
         },
-        "environmentVariables": {"my-varaible": "value"},
+        "environmentVariables": {"my-variable": "value"},
     },
 )
 

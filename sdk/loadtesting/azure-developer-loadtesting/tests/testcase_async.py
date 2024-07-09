@@ -4,7 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.developer.loadtesting.aio import LoadTestRunClient, LoadTestAdministrationClient
+from azure.developer.loadtesting.aio import (
+    LoadTestRunClient,
+    LoadTestAdministrationClient,
+)
 from devtools_testutils import AzureRecordedTestCase
 
 

@@ -21,7 +21,10 @@ from azure.core.polling import PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 
-from ._operations import LoadTestAdministrationClientOperationsMixin as AdministrationOperationsGenerated, JSON
+from ._operations import (
+    LoadTestAdministrationClientOperationsMixin as AdministrationOperationsGenerated,
+    JSON,
+)
 from ._operations import LoadTestRunClientOperationsMixin as TestRunOperationsGenerated
 from .._serialization import Serializer
 from .. import models as _models
@@ -77,7 +80,11 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
         self._initial_response = None
         self._polling_interval = interval
         self._status = None
-        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
+        self._termination_statuses = [
+            "VALIDATION_SUCCESS",
+            "VALIDATION_FAILED",
+            "VALIDATION_NOT_REQUIRED",
+        ]
 
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]
@@ -102,11 +109,19 @@ class LoadTestAdministrationClientOperationsMixin(AdministrationOperationsGenera
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
+        super(LoadTestAdministrationClientOperationsMixin, self).__init__(
+            *args, **kwargs
+        )
 
     @distributed_trace
     def begin_upload_test_file(
-        self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
+        self,
+        test_id: str,
+        file_name: str,
+        body: IO,
+        *,
+        file_type: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Upload file to the test
 
@@ -128,13 +143,24 @@ class LoadTestAdministrationClientOperationsMixin(AdministrationOperationsGenera
         if polling_interval is None:
             polling_interval = 5
         upload_test_file_operation = super().begin_upload_test_file(
-            test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
+            test_id=test_id,
+            file_name=file_name,
+            body=body,
+            file_type=file_type,
+            **kwargs
         )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
-        create_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
-        return LROPoller(command, upload_test_file_operation, lambda *_: None, create_validation_status_polling)
+        create_validation_status_polling = ValidationCheckPoller(
+            interval=polling_interval
+        )
+        return LROPoller(
+            command,
+            upload_test_file_operation,
+            lambda *_: None,
+            create_validation_status_polling,
+        )
 
 
 class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
@@ -147,7 +173,12 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
 
     @overload
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: _models.TestProfileRun, *,content_type: Optional[str] = None, **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: _models.TestProfileRun,
+        *,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test profile run.
 
@@ -170,17 +201,29 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = super(). begin_test_profile_run(
+        create_or_update_test_profile_run_operation = super().begin_test_profile_run(
             test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
+        command = partial(
+            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
+        )
 
-        create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        create_test_profile_run_polling = TestRunStatusPoller(interval=polling_interval)
+        return LROPoller(
+            command,
+            create_or_update_test_profile_run_operation,
+            lambda *_: None,
+            create_test_profile_run_polling,
+        )
 
     @overload
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: JSON, *,content_type: Optional[str] = None, **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: JSON,
+        *,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test profile run.
 
@@ -203,17 +246,29 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = super(). begin_test_profile_run(
-            test_profile_run_id, body,  content_type=content_type, **kwargs
+        create_or_update_test_profile_run_operation = super().begin_test_profile_run(
+            test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
+        command = partial(
+            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
+        )
 
-        create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        create_test_profile_run_polling = TestRunStatusPoller(interval=polling_interval)
+        return LROPoller(
+            command,
+            create_or_update_test_profile_run_operation,
+            lambda *_: None,
+            create_test_profile_run_polling,
+        )
 
     @overload
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: IO[bytes], *,content_type: Optional[str] = None, **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test profile run.
 
@@ -236,17 +291,29 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = super(). begin_test_profile_run(
+        create_or_update_test_profile_run_operation = super().begin_test_profile_run(
             test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
+        command = partial(
+            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
+        )
 
-        create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        create_test_profile_run_polling = TestRunStatusPoller(interval=polling_interval)
+        return LROPoller(
+            command,
+            create_or_update_test_profile_run_operation,
+            lambda *_: None,
+            create_test_profile_run_polling,
+        )
 
     @distributed_trace
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], *,content_type: Optional[str] = None, **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: Union[_models.TestProfileRun, JSON, IO[bytes]],
+        *,
+        content_type: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test profile run.
 
@@ -269,17 +336,29 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = super(). begin_test_profile_run(
+        create_or_update_test_profile_run_operation = super().begin_test_profile_run(
             test_profile_run_id, body, content_type=content_type, **kwargs
         )
-        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
+        command = partial(
+            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
+        )
 
-        create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        create_test_profile_run_polling = TestRunStatusPoller(interval=polling_interval)
+        return LROPoller(
+            command,
+            create_or_update_test_profile_run_operation,
+            lambda *_: None,
+            create_test_profile_run_polling,
+        )
 
     @overload
     def begin_test_run(
-        self, test_run_id: str, body:_models.TestRun, *, old_test_run_id: Optional[str] = None, **kwargs: Any
+        self,
+        test_run_id: str,
+        body: _models.TestRun,
+        *,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -313,11 +392,21 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        return LROPoller(
+            command,
+            create_or_update_test_run_operation,
+            lambda *_: None,
+            create_test_run_polling,
+        )
 
     @overload
     def begin_test_run(
-        self, test_run_id: str, body: JSON, *, old_test_run_id: Optional[str] = None, **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -351,11 +440,21 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        return LROPoller(
+            command,
+            create_or_update_test_run_operation,
+            lambda *_: None,
+            create_test_run_polling,
+        )
 
     @overload
     def begin_test_run(
-        self, test_run_id: str, body:IO[bytes], *, old_test_run_id: Optional[str] = None, **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -389,11 +488,21 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        return LROPoller(
+            command,
+            create_or_update_test_run_operation,
+            lambda *_: None,
+            create_test_run_polling,
+        )
 
     @distributed_trace
     def begin_test_run(
-        self, test_run_id: str, body: Union[_models.TestRun,JSON, IO[bytes]], *, old_test_run_id: Optional[str] = None, **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRun, JSON, IO[bytes]],
+        *,
+        old_test_run_id: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -428,10 +537,18 @@ class LoadTestRunClientOperationsMixin(TestRunOperationsGenerated):
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-        return LROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
+        return LROPoller(
+            command,
+            create_or_update_test_run_operation,
+            lambda *_: None,
+            create_test_run_polling,
+        )
 
 
-__all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRunClientOperationsMixin"]
+__all__: List[str] = [
+    "LoadTestAdministrationClientOperationsMixin",
+    "LoadTestRunClientOperationsMixin",
+]
 
 
 # Add all objects you want publicly available to users at this package level

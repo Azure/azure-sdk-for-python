@@ -31,10 +31,11 @@ class LoadtestingTest(AzureRecordedTestCase):
             endpoint=endpoint,
         )
 
+
 LoadtestingPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "loadtesting",
-    loadtesting_endpoint="https://myservice.azure.com",
+    loadtesting_endpoint="00000000-0000-0000-0000-000000000000.eastus.cnt-prod.loadtesting.azure.com",
     loadtesting_test_id="000",
     loadtesting_file_id="000",
     loadtesting_test_run_id="000",
@@ -42,6 +43,6 @@ LoadtestingPowerShellPreparer = functools.partial(
     loadtesting_subscription_id="000",
     loadtesting_resource_id="000",
     loadtesting_test_profile_id="000",
-    loadtesting_target_resource_id="000",
+    loadtesting_target_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.Web/sites/myFlexFunction",
     loadtesting_test_profile_run_id="000",
 )

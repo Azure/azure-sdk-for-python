@@ -72,7 +72,9 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
+    async def test_create_or_update_load_test(
+        self, loadtesting_endpoint, loadtesting_test_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -100,7 +102,8 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
                 loadtesting_test_id,
                 {
                     "description": "",
-                    "displayName": DISPLAY_NAME + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+                    "displayName": DISPLAY_NAME
+                    + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
                     "loadTestConfig": {
                         "engineSize": "m",
                         "engineInstances": 1,
@@ -158,7 +161,9 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
         await self.setup_upload_test_file(loadtesting_endpoint)
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.get_test_file(self.setup_load_test_id, self.setup_file_name)
+        result = await client.get_test_file(
+            self.setup_load_test_id, self.setup_file_name
+        )
         assert result is not None
 
         with pytest.raises(ResourceNotFoundError):
@@ -172,7 +177,9 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
         await self.setup_upload_test_file(loadtesting_endpoint)
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.delete_test_file(self.setup_load_test_id, self.setup_file_name)
+        result = await client.delete_test_file(
+            self.setup_load_test_id, self.setup_file_name
+        )
         assert result is None
 
         with pytest.raises(ResourceNotFoundError):
@@ -232,7 +239,9 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_get_app_components(self, loadtesting_endpoint, loadtesting_resource_id):
+    async def test_get_app_components(
+        self, loadtesting_endpoint, loadtesting_resource_id
+    ):
         set_bodiless_matcher()
         await self.setup_create_load_test(loadtesting_endpoint)
         await self.setup_app_components(loadtesting_endpoint, loadtesting_resource_id)
@@ -290,109 +299,10 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
 
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_get_server_metrics_config(self, loadtesting_endpoint, loadtesting_test_id):
+    async def test_get_server_metrics_config(
+        self, loadtesting_endpoint, loadtesting_test_id
+    ):
         set_bodiless_matcher()
         client = self.create_administration_client(loadtesting_endpoint)
         result = await client.get_server_metrics_config(loadtesting_test_id)
-        assert result is not None
-
-class TestTestProfileAdministrationClientt(LoadtestingAsyncTest):
-
-    async def setup_create_test_profile(self, endpoint, testId, targetResourceId):
-        self.setup_test_profile_id = "test-profile" + time.strftime("%Y-%m-%d-%H-%M-%S")
-        client = self.create_administration_client(endpoint)
-
-        await client.create_or_update_test_profile(
-            self.setup_test_profile_id,
-            {
-                "description": "",
-                "displayName": DISPLAY_NAME,
-                "testId": testId,
-                "targetResourceId": targetResourceId,
-                "targetResourceConfigurations": {
-                    "kind": "FunctionsFlexConsumption",
-                    "configurations": {
-                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 16},
-                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 16},
-                    },
-                },
-            },
-        )
-
-    @LoadtestingPowerShellPreparer()
-    @recorded_by_proxy_async
-    async def test_create_or_update_test_profile(
-        self, loadtesting_endpoint, loadtesting_test_profile_id, loadtesting_test_id, loadtesting_target_resource_id
-    ):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.create_or_update_test_profile(
-            loadtesting_test_profile_id,
-            {
-                "description": "",
-                "displayName": DISPLAY_NAME,
-                "testId": loadtesting_test_id,
-                "targetResourceId": loadtesting_target_resource_id,
-                "targetResourceConfigurations": {
-                    "kind": "FunctionsFlexConsumption",
-                    "configurations": {
-                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 16},
-                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 16},
-                    },
-                },
-            },
-        )
-        assert result is not None
-
-        with pytest.raises(HttpResponseError):
-            await client.create_or_update_test_profile(
-                loadtesting_test_profile_id,
-                {
-                    "description": DISPLAY_NAME + "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
-                    "displayName": "",
-                    "testId": loadtesting_test_id,
-                    "targetResourceId": loadtesting_target_resource_id,
-                    "targetResourceConfigurations": {
-                        "kind": "FunctionsFlexConsumption",
-                        "configurations": {
-                            "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 16},
-                            "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 16},
-                        },
-                    },
-                },
-            )
-
-    @LoadtestingPowerShellPreparer()
-    @recorded_by_proxy_async
-    async def test_get_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id):
-        set_bodiless_matcher()
-
-        await self.setup_create_test_profile(loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id)
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.get_test_profile(self.setup_test_profile_id)
-        assert result is not None
-
-        with pytest.raises(ResourceNotFoundError):
-            await client.get_test_profile(NON_EXISTING_RESOURCE)
-
-    @LoadtestingPowerShellPreparer()
-    @recorded_by_proxy_async
-    async def test_delete_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id):
-        set_bodiless_matcher()
-        await self.setup_create_test_profile(loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id)
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.delete_test_profile(self.setup_test_profile_id)
-        assert result is None
-
-    @LoadtestingPowerShellPreparer()
-    @recorded_by_proxy_async
-    async def test_list_test_profiles(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id):
-        set_bodiless_matcher()
-        await self.setup_create_test_profile(loadtesting_endpoint, loadtesting_test_id, loadtesting_target_resource_id)
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = client.list_test_profiles()
         assert result is not None

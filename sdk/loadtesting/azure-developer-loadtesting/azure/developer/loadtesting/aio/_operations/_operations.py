@@ -10,7 +10,19 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -76,7 +88,9 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
 class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
@@ -86,7 +100,14 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_or_update_test_profile(
         self,
@@ -212,10 +233,22 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_or_update_test_profile(
-        self, test_profile_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestProfile:
         # pylint: disable=line-too-long
         """Create a new test profile or update an existing test profile.
@@ -295,7 +328,14 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_or_update_test_profile(
         self,
@@ -383,10 +423,20 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def create_or_update_test_profile(
-        self, test_profile_id: str, body: Union[_models.TestProfile, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_id: str,
+        body: Union[_models.TestProfile, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestProfile:
         # pylint: disable=line-too-long
         """Create a new test profile or update an existing test profile.
@@ -509,7 +559,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -528,7 +580,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -542,7 +596,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -565,7 +621,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_id", "accept"]
+        },
     )  # pylint: disable=inconsistent-return-statements
     async def delete_test_profile(  # pylint: disable=inconsistent-return-statements
         self, test_profile_id: str, **kwargs: Any
@@ -601,7 +659,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -615,7 +675,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -624,9 +686,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_id", "accept"]
+        },
     )
-    async def get_test_profile(self, test_profile_id: str, **kwargs: Any) -> _models.TestProfile:
+    async def get_test_profile(
+        self, test_profile_id: str, **kwargs: Any
+    ) -> _models.TestProfile:
         # pylint: disable=line-too-long
         """Get load test profile details.
 
@@ -700,7 +766,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -714,7 +782,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -842,9 +912,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -852,23 +926,33 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestProfile], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TestProfile], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -885,7 +969,11 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -894,7 +982,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_test(
-        self, test_id: str, body: _models.Test, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: _models.Test,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         # pylint: disable=line-too-long
         """Create a new test or update an existing test by providing the test Id.
@@ -1359,7 +1452,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_test(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         # pylint: disable=line-too-long
         """Create a new test or update an existing test by providing the test Id.
@@ -1604,7 +1702,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_test(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         # pylint: disable=line-too-long
         """Create a new test or update an existing test by providing the test Id.
@@ -2320,7 +2423,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Test] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -2339,7 +2444,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2353,7 +2460,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -2463,7 +2572,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_app_components(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test.
@@ -2517,7 +2631,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_app_components(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test.
@@ -2571,7 +2690,10 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @distributed_trace_async
     async def create_or_update_app_components(
-        self, test_id: str, body: Union[_models.TestAppComponents, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.TestAppComponents, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test.
@@ -2660,7 +2782,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestAppComponents] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -2670,16 +2794,20 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_load_test_administration_create_or_update_app_components_request(
-            test_id=test_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
+        _request = (
+            build_load_test_administration_create_or_update_app_components_request(
+                test_id=test_id,
+                content_type=content_type,
+                api_version=self._config.api_version,
+                content=_content,
+                headers=_headers,
+                params=_params,
+            )
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2693,7 +2821,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -2792,7 +2922,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_server_metrics_config(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -2840,7 +2975,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     async def create_or_update_server_metrics_config(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -2888,7 +3028,10 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @distributed_trace_async
     async def create_or_update_server_metrics_config(
-        self, test_id: str, body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -2966,7 +3109,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -2985,7 +3130,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2999,20 +3146,26 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestServerMetricConfig, response.json()
+                )
 
         if response.status_code == 201:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestServerMetricConfig, response.json()
+                )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3020,7 +3173,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_app_components(self, test_id: str, **kwargs: Any) -> _models.TestAppComponents:
+    async def get_app_components(
+        self, test_id: str, **kwargs: Any
+    ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Get associated app component (collection of azure resources) for the given test.
 
@@ -3085,7 +3240,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3099,7 +3256,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3113,7 +3272,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> _models.TestServerMetricConfig:
+    async def get_server_metrics_config(
+        self, test_id: str, **kwargs: Any
+    ) -> _models.TestServerMetricConfig:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -3172,7 +3333,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3186,7 +3349,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3456,7 +3621,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3470,7 +3637,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3484,7 +3653,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> _models.GetTestFileResponse:
+    async def get_test_file(
+        self, test_id: str, file_name: str, **kwargs: Any
+    ) -> _models.GetTestFileResponse:
         # pylint: disable=line-too-long
         """Get all the files that are associated with a test.
 
@@ -3538,7 +3709,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3552,7 +3725,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -3566,7 +3741,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_test_files(self, test_id: str, **kwargs: Any) -> AsyncIterable["_models.TestFileInfo"]:
+    def list_test_files(
+        self, test_id: str, **kwargs: Any
+    ) -> AsyncIterable["_models.TestFileInfo"]:
         # pylint: disable=line-too-long
         """Get all test files.
 
@@ -3622,9 +3799,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -3632,23 +3813,33 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestFileInfo], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TestFileInfo], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3665,7 +3856,11 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -3957,9 +4152,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -3967,17 +4166,25 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -4000,7 +4207,11 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -4070,7 +4281,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/octet-stream")
+        )
         cls: ClsType[_models.UploadTestFileResponse] = kwargs.pop("cls", None)
 
         _content = body
@@ -4086,7 +4299,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4100,7 +4315,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4151,7 +4368,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4165,14 +4384,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def delete_test(self, test_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete_test(
+        self, test_id: str, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a test by its test Id.
 
         Delete a test by its test Id.
@@ -4204,7 +4427,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4218,7 +4443,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -4230,7 +4457,14 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def begin_test_profile_run(
         self,
@@ -4432,10 +4666,22 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def begin_test_profile_run(
-        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Create and start a new test profile run.
@@ -4553,7 +4799,14 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def begin_test_profile_run(
         self,
@@ -4679,10 +4932,20 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     async def begin_test_profile_run(
-        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: Union[_models.TestProfileRun, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Create and start a new test profile run.
@@ -4881,7 +5144,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -4900,7 +5165,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4914,7 +5181,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -4937,7 +5206,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]
+        },
     )  # pylint: disable=inconsistent-return-statements
     async def delete_test_profile_run(  # pylint: disable=inconsistent-return-statements
         self, test_profile_run_id: str, **kwargs: Any
@@ -4973,7 +5244,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4987,7 +5260,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -4996,9 +5271,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]
+        },
     )
-    async def get_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+    async def get_test_profile_run(
+        self, test_profile_run_id: str, **kwargs: Any
+    ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Get test profile run details.
 
@@ -5110,7 +5389,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5124,7 +5405,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -5320,9 +5603,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -5330,23 +5617,33 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TestProfileRun], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5363,7 +5660,11 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -5373,9 +5674,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]
+        },
     )
-    async def stop_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+    async def stop_test_profile_run(
+        self, test_profile_run_id: str, **kwargs: Any
+    ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Stop test profile run.
 
@@ -5487,7 +5792,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5501,7 +5808,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -7841,7 +8150,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -7861,7 +8172,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7875,7 +8188,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -7985,7 +8300,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     async def create_or_update_app_components(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test run.
@@ -8039,7 +8359,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     async def create_or_update_app_components(
-        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test run.
@@ -8093,7 +8418,10 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @distributed_trace_async
     async def create_or_update_app_components(
-        self, test_run_id: str, body: Union[_models.TestRunAppComponents, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRunAppComponents, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test run.
@@ -8182,7 +8510,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestRunAppComponents] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -8201,7 +8531,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8215,20 +8547,26 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunAppComponents, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunAppComponents, response.json()
+                )
 
         if response.status_code == 201:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunAppComponents, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunAppComponents, response.json()
+                )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8315,7 +8653,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     async def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -8364,7 +8707,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     async def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -8413,7 +8761,10 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @distributed_trace_async
     async def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -8492,7 +8843,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -8511,7 +8864,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8525,20 +8880,26 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunServerMetricConfig, response.json()
+                )
 
         if response.status_code == 201:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunServerMetricConfig, response.json()
+                )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8580,7 +8941,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8594,14 +8957,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_app_components(self, test_run_id: str, **kwargs: Any) -> _models.TestRunAppComponents:
+    async def get_app_components(
+        self, test_run_id: str, **kwargs: Any
+    ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Get associated app component (collection of azure resources) for the given test
         run.
@@ -8668,7 +9035,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8682,7 +9051,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -8696,7 +9067,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> _models.TestRunServerMetricConfig:
+    async def get_server_metrics_config(
+        self, test_run_id: str, **kwargs: Any
+    ) -> _models.TestRunServerMetricConfig:
         """Get associated server metrics configuration for the given test run.
 
         Get associated server metrics configuration for the given test run.
@@ -8756,7 +9129,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8770,13 +9145,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+            deserialized = _deserialize(
+                _models.TestRunServerMetricConfig, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9182,7 +9561,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9196,7 +9577,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -9266,7 +9649,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9280,7 +9665,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -9366,7 +9753,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9380,7 +9769,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -9475,7 +9866,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9489,13 +9882,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MetricDefinitionCollection, response.json())
+            deserialized = _deserialize(
+                _models.MetricDefinitionCollection, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9503,7 +9900,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> _models.MetricNamespaceCollection:
+    async def get_metric_namespaces(
+        self, test_run_id: str, **kwargs: Any
+    ) -> _models.MetricNamespaceCollection:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -9549,7 +9948,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9563,13 +9964,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MetricNamespaceCollection, response.json())
+            deserialized = _deserialize(
+                _models.MetricNamespaceCollection, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9857,7 +10262,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[List[_models.TimeSeriesElement]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -9894,9 +10301,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -9904,23 +10315,33 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TimeSeriesElement], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TimeSeriesElement], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -9937,7 +10358,11 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -10377,9 +10802,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -10387,17 +10816,25 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -10420,7 +10857,11 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             if response.status_code not in [200]:
                 if _stream:
                     await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -10826,7 +11267,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -10840,7 +11283,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:

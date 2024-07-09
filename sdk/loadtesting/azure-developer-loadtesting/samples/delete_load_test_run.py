@@ -34,6 +34,8 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 TEST_RUN_ID = "some-test-run-id"
 
 # Build a client through AAD and resource endpoint
-client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestRunClient(
+    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
+)
 
 client.delete_test_run(TEST_RUN_ID)

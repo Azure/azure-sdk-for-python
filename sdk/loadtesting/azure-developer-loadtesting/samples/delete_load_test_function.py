@@ -41,6 +41,8 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 TEST_ID = "my-sdk-test-id"
 
 # Build a client through AAD and resource endpoint
-client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestAdministrationClient(
+    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
+)
 
 client.delete_test(TEST_ID)

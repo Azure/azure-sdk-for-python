@@ -10,7 +10,19 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, overload
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    Iterable,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -39,7 +51,9 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -51,8 +65,12 @@ def build_load_test_administration_create_or_update_test_profile_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -68,10 +86,14 @@ def build_load_test_administration_create_or_update_test_profile_request(  # pyl
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_delete_test_profile_request(  # pylint: disable=name-too-long
@@ -80,7 +102,9 @@ def build_load_test_administration_delete_test_profile_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -97,7 +121,9 @@ def build_load_test_administration_delete_test_profile_request(  # pylint: disab
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_get_test_profile_request(  # pylint: disable=name-too-long
@@ -106,7 +132,9 @@ def build_load_test_administration_get_test_profile_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,7 +151,9 @@ def build_load_test_administration_get_test_profile_request(  # pylint: disable=
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_list_test_profiles_request(  # pylint: disable=name-too-long
@@ -138,7 +168,9 @@ def build_load_test_administration_list_test_profiles_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -153,16 +185,22 @@ def build_load_test_administration_list_test_profiles_request(  # pylint: disabl
             "last_modified_start_time", last_modified_start_time, "iso-8601"
         )
     if last_modified_end_time is not None:
-        _params["lastModifiedEndTime"] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, "iso-8601")
+        _params["lastModifiedEndTime"] = _SERIALIZER.query(
+            "last_modified_end_time", last_modified_end_time, "iso-8601"
+        )
     if test_profile_ids is not None:
-        _params["testProfileIds"] = _SERIALIZER.query("test_profile_ids", test_profile_ids, "str")
+        _params["testProfileIds"] = _SERIALIZER.query(
+            "test_profile_ids", test_profile_ids, "str"
+        )
     if test_ids is not None:
         _params["testIds"] = _SERIALIZER.query("test_ids", test_ids, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_create_or_update_test_request(  # pylint: disable=name-too-long
@@ -171,8 +209,12 @@ def build_load_test_administration_create_or_update_test_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -188,10 +230,14 @@ def build_load_test_administration_create_or_update_test_request(  # pylint: dis
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_create_or_update_app_components_request(  # pylint: disable=name-too-long
@@ -200,8 +246,12 @@ def build_load_test_administration_create_or_update_app_components_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("content-type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -217,10 +267,14 @@ def build_load_test_administration_create_or_update_app_components_request(  # p
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["content-type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_create_or_update_server_metrics_config_request(  # pylint: disable=name-too-long
@@ -229,8 +283,12 @@ def build_load_test_administration_create_or_update_server_metrics_config_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("content-type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -246,10 +304,14 @@ def build_load_test_administration_create_or_update_server_metrics_config_reques
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["content-type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_get_app_components_request(  # pylint: disable=name-too-long
@@ -258,7 +320,9 @@ def build_load_test_administration_get_app_components_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -275,7 +339,9 @@ def build_load_test_administration_get_app_components_request(  # pylint: disabl
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_get_server_metrics_config_request(  # pylint: disable=name-too-long
@@ -284,7 +350,9 @@ def build_load_test_administration_get_server_metrics_config_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -301,7 +369,9 @@ def build_load_test_administration_get_server_metrics_config_request(  # pylint:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_get_test_request(  # pylint: disable=name-too-long
@@ -310,7 +380,9 @@ def build_load_test_administration_get_test_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -327,7 +399,9 @@ def build_load_test_administration_get_test_request(  # pylint: disable=name-too
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_get_test_file_request(  # pylint: disable=name-too-long
@@ -336,7 +410,9 @@ def build_load_test_administration_get_test_file_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -354,7 +430,9 @@ def build_load_test_administration_get_test_file_request(  # pylint: disable=nam
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_list_test_files_request(  # pylint: disable=name-too-long
@@ -363,7 +441,9 @@ def build_load_test_administration_list_test_files_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -380,7 +460,9 @@ def build_load_test_administration_list_test_files_request(  # pylint: disable=n
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_list_tests_request(  # pylint: disable=name-too-long
@@ -395,7 +477,9 @@ def build_load_test_administration_list_tests_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -412,24 +496,34 @@ def build_load_test_administration_list_tests_request(  # pylint: disable=name-t
             "last_modified_start_time", last_modified_start_time, "iso-8601"
         )
     if last_modified_end_time is not None:
-        _params["lastModifiedEndTime"] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, "iso-8601")
+        _params["lastModifiedEndTime"] = _SERIALIZER.query(
+            "last_modified_end_time", last_modified_end_time, "iso-8601"
+        )
     if maxpagesize is not None:
         _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_begin_upload_test_file_request(  # pylint: disable=name-too-long
-    test_id: str, file_name: str, *, file_type: Optional[Union[str, _models.FileType]] = None, **kwargs: Any
+    test_id: str,
+    file_name: str,
+    *,
+    file_type: Optional[Union[str, _models.FileType]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -450,7 +544,9 @@ def build_load_test_administration_begin_upload_test_file_request(  # pylint: di
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_delete_test_file_request(  # pylint: disable=name-too-long
@@ -459,7 +555,9 @@ def build_load_test_administration_delete_test_file_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -477,7 +575,9 @@ def build_load_test_administration_delete_test_file_request(  # pylint: disable=
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_administration_delete_test_request(  # pylint: disable=name-too-long
@@ -486,7 +586,9 @@ def build_load_test_administration_delete_test_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -503,7 +605,9 @@ def build_load_test_administration_delete_test_request(  # pylint: disable=name-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_begin_test_profile_run_request(  # pylint: disable=name-too-long
@@ -512,14 +616,20 @@ def build_load_test_run_begin_test_profile_run_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url(
+            "test_profile_run_id", test_profile_run_id, "str"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -529,10 +639,14 @@ def build_load_test_run_begin_test_profile_run_request(  # pylint: disable=name-
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_delete_test_profile_run_request(  # pylint: disable=name-too-long
@@ -541,13 +655,17 @@ def build_load_test_run_delete_test_profile_run_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url(
+            "test_profile_run_id", test_profile_run_id, "str"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -558,7 +676,9 @@ def build_load_test_run_delete_test_profile_run_request(  # pylint: disable=name
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_get_test_profile_run_request(  # pylint: disable=name-too-long
@@ -567,13 +687,17 @@ def build_load_test_run_get_test_profile_run_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url(
+            "test_profile_run_id", test_profile_run_id, "str"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -584,7 +708,9 @@ def build_load_test_run_get_test_profile_run_request(  # pylint: disable=name-to
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_list_test_profile_runs_request(  # pylint: disable=name-too-long
@@ -604,7 +730,9 @@ def build_load_test_run_list_test_profile_runs_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -615,30 +743,46 @@ def build_load_test_run_list_test_profile_runs_request(  # pylint: disable=name-
     if maxpagesize is not None:
         _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     if min_start_date_time is not None:
-        _params["minStartDateTime"] = _SERIALIZER.query("min_start_date_time", min_start_date_time, "iso-8601")
+        _params["minStartDateTime"] = _SERIALIZER.query(
+            "min_start_date_time", min_start_date_time, "iso-8601"
+        )
     if max_start_date_time is not None:
-        _params["maxStartDateTime"] = _SERIALIZER.query("max_start_date_time", max_start_date_time, "iso-8601")
+        _params["maxStartDateTime"] = _SERIALIZER.query(
+            "max_start_date_time", max_start_date_time, "iso-8601"
+        )
     if min_end_date_time is not None:
-        _params["minEndDateTime"] = _SERIALIZER.query("min_end_date_time", min_end_date_time, "iso-8601")
+        _params["minEndDateTime"] = _SERIALIZER.query(
+            "min_end_date_time", min_end_date_time, "iso-8601"
+        )
     if max_end_date_time is not None:
-        _params["maxEndDateTime"] = _SERIALIZER.query("max_end_date_time", max_end_date_time, "iso-8601")
+        _params["maxEndDateTime"] = _SERIALIZER.query(
+            "max_end_date_time", max_end_date_time, "iso-8601"
+        )
     if created_date_start_time is not None:
         _params["createdDateStartTime"] = _SERIALIZER.query(
             "created_date_start_time", created_date_start_time, "iso-8601"
         )
     if created_date_end_time is not None:
-        _params["createdDateEndTime"] = _SERIALIZER.query("created_date_end_time", created_date_end_time, "iso-8601")
+        _params["createdDateEndTime"] = _SERIALIZER.query(
+            "created_date_end_time", created_date_end_time, "iso-8601"
+        )
     if test_profile_run_ids is not None:
-        _params["testProfileRunIds"] = _SERIALIZER.query("test_profile_run_ids", test_profile_run_ids, "str")
+        _params["testProfileRunIds"] = _SERIALIZER.query(
+            "test_profile_run_ids", test_profile_run_ids, "str"
+        )
     if test_profile_ids is not None:
-        _params["testProfileIds"] = _SERIALIZER.query("test_profile_ids", test_profile_ids, "str")
+        _params["testProfileIds"] = _SERIALIZER.query(
+            "test_profile_ids", test_profile_ids, "str"
+        )
     if statuses is not None:
         _params["statuses"] = _SERIALIZER.query("statuses", statuses, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_stop_test_profile_run_request(  # pylint: disable=name-too-long
@@ -647,14 +791,17 @@ def build_load_test_run_stop_test_profile_run_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    #typespec bug -> incorrect path for stopTestProfileRun
-    _url = "/test-profile-runs/{testProfileRunId}:stopTestProfileRun"
+    _url = "/test-profile-runs/{testProfileRunId}:stop"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url(
+            "test_profile_run_id", test_profile_run_id, "str"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -665,7 +812,9 @@ def build_load_test_run_stop_test_profile_run_request(  # pylint: disable=name-t
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_begin_test_run_request(  # pylint: disable=name-too-long
@@ -674,8 +823,12 @@ def build_load_test_run_begin_test_run_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -689,14 +842,20 @@ def build_load_test_run_begin_test_run_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if old_test_run_id is not None:
-        _params["oldTestRunId"] = _SERIALIZER.query("old_test_run_id", old_test_run_id, "str")
+        _params["oldTestRunId"] = _SERIALIZER.query(
+            "old_test_run_id", old_test_run_id, "str"
+        )
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_create_or_update_app_components_request(  # pylint: disable=name-too-long
@@ -705,8 +864,12 @@ def build_load_test_run_create_or_update_app_components_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("content-type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -722,10 +885,14 @@ def build_load_test_run_create_or_update_app_components_request(  # pylint: disa
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["content-type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_create_or_update_server_metrics_config_request(  # pylint: disable=name-too-long
@@ -734,8 +901,12 @@ def build_load_test_run_create_or_update_server_metrics_config_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("content-type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -751,10 +922,14 @@ def build_load_test_run_create_or_update_server_metrics_config_request(  # pylin
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["content-type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_delete_test_run_request(  # pylint: disable=name-too-long
@@ -763,7 +938,9 @@ def build_load_test_run_delete_test_run_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -780,7 +957,9 @@ def build_load_test_run_delete_test_run_request(  # pylint: disable=name-too-lon
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_get_app_components_request(  # pylint: disable=name-too-long
@@ -789,7 +968,9 @@ def build_load_test_run_get_app_components_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -806,7 +987,9 @@ def build_load_test_run_get_app_components_request(  # pylint: disable=name-too-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_get_server_metrics_config_request(  # pylint: disable=name-too-long
@@ -815,7 +998,9 @@ def build_load_test_run_get_server_metrics_config_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -832,14 +1017,20 @@ def build_load_test_run_get_server_metrics_config_request(  # pylint: disable=na
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_run_get_test_run_request(
+    test_run_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -856,7 +1047,9 @@ def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) ->
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_get_test_run_file_request(  # pylint: disable=name-too-long
@@ -865,7 +1058,9 @@ def build_load_test_run_get_test_run_file_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -883,7 +1078,9 @@ def build_load_test_run_get_test_run_file_request(  # pylint: disable=name-too-l
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable=name-too-long
@@ -899,7 +1096,9 @@ def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -916,13 +1115,17 @@ def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable
     _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
     if interval is not None:
         _params["interval"] = _SERIALIZER.query("interval", interval, "str")
-    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["metricNamespace"] = _SERIALIZER.query(
+        "metric_namespace", metric_namespace, "str"
+    )
     _params["timespan"] = _SERIALIZER.query("time_interval", time_interval, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_get_metric_definitions_request(  # pylint: disable=name-too-long
@@ -931,7 +1134,9 @@ def build_load_test_run_get_metric_definitions_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -944,12 +1149,16 @@ def build_load_test_run_get_metric_definitions_request(  # pylint: disable=name-
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["metricNamespace"] = _SERIALIZER.query(
+        "metric_namespace", metric_namespace, "str"
+    )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_get_metric_namespaces_request(  # pylint: disable=name-too-long
@@ -958,7 +1167,9 @@ def build_load_test_run_get_metric_namespaces_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -975,7 +1186,9 @@ def build_load_test_run_get_metric_namespaces_request(  # pylint: disable=name-t
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_list_metrics_request(
@@ -991,8 +1204,12 @@ def build_load_test_run_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1010,15 +1227,21 @@ def build_load_test_run_list_metrics_request(
     _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
     if interval is not None:
         _params["interval"] = _SERIALIZER.query("interval", interval, "str")
-    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["metricNamespace"] = _SERIALIZER.query(
+        "metric_namespace", metric_namespace, "str"
+    )
     _params["timespan"] = _SERIALIZER.query("time_interval", time_interval, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_list_test_runs_request(  # pylint: disable=name-too-long
@@ -1035,7 +1258,9 @@ def build_load_test_run_list_test_runs_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1050,9 +1275,13 @@ def build_load_test_run_list_test_runs_request(  # pylint: disable=name-too-long
     if test_id is not None:
         _params["testId"] = _SERIALIZER.query("test_id", test_id, "str")
     if execution_from is not None:
-        _params["executionFrom"] = _SERIALIZER.query("execution_from", execution_from, "iso-8601")
+        _params["executionFrom"] = _SERIALIZER.query(
+            "execution_from", execution_from, "iso-8601"
+        )
     if execution_to is not None:
-        _params["executionTo"] = _SERIALIZER.query("execution_to", execution_to, "iso-8601")
+        _params["executionTo"] = _SERIALIZER.query(
+            "execution_to", execution_to, "iso-8601"
+        )
     if status is not None:
         _params["status"] = _SERIALIZER.query("status", status, "str")
     if maxpagesize is not None:
@@ -1061,14 +1290,18 @@ def build_load_test_run_list_test_runs_request(  # pylint: disable=name-too-long
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_load_test_run_stop_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2024-05-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1085,7 +1318,9 @@ def build_load_test_run_stop_request(test_run_id: str, **kwargs: Any) -> HttpReq
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
@@ -1095,7 +1330,14 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def create_or_update_test_profile(
         self,
@@ -1221,10 +1463,22 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def create_or_update_test_profile(
-        self, test_profile_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestProfile:
         # pylint: disable=line-too-long
         """Create a new test profile or update an existing test profile.
@@ -1304,7 +1558,14 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def create_or_update_test_profile(
         self,
@@ -1392,10 +1653,20 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def create_or_update_test_profile(
-        self, test_profile_id: str, body: Union[_models.TestProfile, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_id: str,
+        body: Union[_models.TestProfile, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestProfile:
         # pylint: disable=line-too-long
         """Create a new test profile or update an existing test profile.
@@ -1518,7 +1789,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -1537,13 +1810,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1551,7 +1828,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -1574,7 +1853,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_id", "accept"]
+        },
     )  # pylint: disable=inconsistent-return-statements
     def delete_test_profile(  # pylint: disable=inconsistent-return-statements
         self, test_profile_id: str, **kwargs: Any
@@ -1610,13 +1891,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1624,7 +1909,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [204]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1633,9 +1920,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_id", "accept"]
+        },
     )
-    def get_test_profile(self, test_profile_id: str, **kwargs: Any) -> _models.TestProfile:
+    def get_test_profile(
+        self, test_profile_id: str, **kwargs: Any
+    ) -> _models.TestProfile:
         # pylint: disable=line-too-long
         """Get load test profile details.
 
@@ -1709,13 +2000,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1723,7 +2018,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -1850,9 +2147,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -1860,23 +2161,33 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestProfile], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TestProfile], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1885,15 +2196,21 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1902,7 +2219,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_test(
-        self, test_id: str, body: _models.Test, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: _models.Test,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         # pylint: disable=line-too-long
         """Create a new test or update an existing test by providing the test Id.
@@ -2367,7 +2689,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_test(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         # pylint: disable=line-too-long
         """Create a new test or update an existing test by providing the test Id.
@@ -2612,7 +2939,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_test(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         # pylint: disable=line-too-long
         """Create a new test or update an existing test by providing the test Id.
@@ -3328,7 +3660,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.Test] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -3347,13 +3681,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3361,7 +3699,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -3471,7 +3811,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_app_components(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test.
@@ -3525,7 +3870,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_app_components(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test.
@@ -3579,7 +3929,10 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @distributed_trace
     def create_or_update_app_components(
-        self, test_id: str, body: Union[_models.TestAppComponents, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.TestAppComponents, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test.
@@ -3668,7 +4021,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestAppComponents] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -3678,22 +4033,28 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_load_test_administration_create_or_update_app_components_request(
-            test_id=test_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
+        _request = (
+            build_load_test_administration_create_or_update_app_components_request(
+                test_id=test_id,
+                content_type=content_type,
+                api_version=self._config.api_version,
+                content=_content,
+                headers=_headers,
+                params=_params,
+            )
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -3701,7 +4062,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -3800,7 +4163,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -3848,7 +4216,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -3896,7 +4269,10 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -3974,7 +4350,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -3993,13 +4371,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4007,20 +4389,26 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestServerMetricConfig, response.json()
+                )
 
         if response.status_code == 201:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestServerMetricConfig, response.json()
+                )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4028,7 +4416,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_app_components(self, test_id: str, **kwargs: Any) -> _models.TestAppComponents:
+    def get_app_components(
+        self, test_id: str, **kwargs: Any
+    ) -> _models.TestAppComponents:
         # pylint: disable=line-too-long
         """Get associated app component (collection of azure resources) for the given test.
 
@@ -4093,13 +4483,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4107,7 +4501,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4121,7 +4517,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> _models.TestServerMetricConfig:
+    def get_server_metrics_config(
+        self, test_id: str, **kwargs: Any
+    ) -> _models.TestServerMetricConfig:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -4180,13 +4578,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4194,7 +4596,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4464,13 +4868,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4478,7 +4886,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4492,7 +4902,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> _models.GetTestFileResponse:
+    def get_test_file(
+        self, test_id: str, file_name: str, **kwargs: Any
+    ) -> _models.GetTestFileResponse:
         # pylint: disable=line-too-long
         """Get all the files that are associated with a test.
 
@@ -4546,13 +4958,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -4560,7 +4976,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -4574,7 +4992,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_test_files(self, test_id: str, **kwargs: Any) -> Iterable["_models.TestFileInfo"]:
+    def list_test_files(
+        self, test_id: str, **kwargs: Any
+    ) -> Iterable["_models.TestFileInfo"]:
         # pylint: disable=line-too-long
         """Get all test files.
 
@@ -4629,9 +5049,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -4639,23 +5063,33 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestFileInfo], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TestFileInfo], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4664,15 +5098,21 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -4964,9 +5404,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -4974,17 +5418,25 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -4999,15 +5451,21 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -5077,7 +5535,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/octet-stream")
+        )
         cls: ClsType[_models.UploadTestFileResponse] = kwargs.pop("cls", None)
 
         _content = body
@@ -5093,13 +5553,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -5107,7 +5571,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -5158,13 +5624,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -5172,14 +5642,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [204]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def delete_test(self, test_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_test(
+        self, test_id: str, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a test by its test Id.
 
         Delete a test by its test Id.
@@ -5211,13 +5685,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -5225,7 +5703,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if response.status_code not in [204]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -5237,7 +5717,14 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def begin_test_profile_run(
         self,
@@ -5439,10 +5926,22 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Create and start a new test profile run.
@@ -5560,7 +6059,14 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @overload
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def begin_test_profile_run(
         self,
@@ -5686,10 +6192,20 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "test_profile_run_id",
+                "content_type",
+                "accept",
+            ]
+        },
     )
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: Union[_models.TestProfileRun, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Create and start a new test profile run.
@@ -5888,7 +6404,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -5907,13 +6425,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -5921,7 +6443,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -5944,7 +6468,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]
+        },
     )  # pylint: disable=inconsistent-return-statements
     def delete_test_profile_run(  # pylint: disable=inconsistent-return-statements
         self, test_profile_run_id: str, **kwargs: Any
@@ -5980,13 +6506,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -5994,7 +6524,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [204]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -6003,9 +6535,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]
+        },
     )
-    def get_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+    def get_test_profile_run(
+        self, test_profile_run_id: str, **kwargs: Any
+    ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Get test profile run details.
 
@@ -6117,13 +6653,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -6131,7 +6671,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -6326,9 +6868,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -6336,23 +6882,33 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TestProfileRun], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6361,15 +6917,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -6379,9 +6941,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={
+            "2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]
+        },
     )
-    def stop_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+    def stop_test_profile_run(
+        self, test_profile_run_id: str, **kwargs: Any
+    ) -> _models.TestProfileRun:
         # pylint: disable=line-too-long
         """Stop test profile run.
 
@@ -6493,13 +7059,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -6507,7 +7077,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -8847,7 +9419,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -8867,13 +9441,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -8881,7 +9459,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
@@ -8991,7 +9571,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_app_components(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test run.
@@ -9045,7 +9630,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_app_components(
-        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test run.
@@ -9099,7 +9689,10 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @distributed_trace
     def create_or_update_app_components(
-        self, test_run_id: str, body: Union[_models.TestRunAppComponents, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRunAppComponents, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Add an app component to a test run.
@@ -9188,7 +9781,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestRunAppComponents] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -9207,13 +9802,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -9221,20 +9820,26 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunAppComponents, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunAppComponents, response.json()
+                )
 
         if response.status_code == 201:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunAppComponents, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunAppComponents, response.json()
+                )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9321,7 +9926,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -9370,7 +9980,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -9419,7 +10034,10 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -9498,7 +10116,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("content-type", None)
+        )
         cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
@@ -9517,13 +10137,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -9531,20 +10155,26 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200, 201]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunServerMetricConfig, response.json()
+                )
 
         if response.status_code == 201:
             if _stream:
                 deserialized = response.iter_bytes()
             else:
-                deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+                deserialized = _deserialize(
+                    _models.TestRunServerMetricConfig, response.json()
+                )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9586,13 +10216,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -9600,14 +10234,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [204]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_app_components(self, test_run_id: str, **kwargs: Any) -> _models.TestRunAppComponents:
+    def get_app_components(
+        self, test_run_id: str, **kwargs: Any
+    ) -> _models.TestRunAppComponents:
         # pylint: disable=line-too-long
         """Get associated app component (collection of azure resources) for the given test
         run.
@@ -9674,13 +10312,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -9688,7 +10330,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -9702,7 +10346,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> _models.TestRunServerMetricConfig:
+    def get_server_metrics_config(
+        self, test_run_id: str, **kwargs: Any
+    ) -> _models.TestRunServerMetricConfig:
         """Get associated server metrics configuration for the given test run.
 
         Get associated server metrics configuration for the given test run.
@@ -9762,13 +10408,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -9776,13 +10426,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+            deserialized = _deserialize(
+                _models.TestRunServerMetricConfig, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10188,13 +10842,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -10202,7 +10860,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -10216,7 +10876,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> _models.GetTestRunFileResponse:
+    def get_test_run_file(
+        self, test_run_id: str, file_name: str, **kwargs: Any
+    ) -> _models.GetTestRunFileResponse:
         # pylint: disable=line-too-long
         """Get test run file by file name.
 
@@ -10270,13 +10932,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -10284,7 +10950,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -10370,13 +11038,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -10384,7 +11056,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
@@ -10479,13 +11153,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -10493,13 +11171,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MetricDefinitionCollection, response.json())
+            deserialized = _deserialize(
+                _models.MetricDefinitionCollection, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10507,7 +11189,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> _models.MetricNamespaceCollection:
+    def get_metric_namespaces(
+        self, test_run_id: str, **kwargs: Any
+    ) -> _models.MetricNamespaceCollection:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -10553,13 +11237,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -10567,13 +11255,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MetricNamespaceCollection, response.json())
+            deserialized = _deserialize(
+                _models.MetricNamespaceCollection, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10857,7 +11549,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[List[_models.TimeSeriesElement]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -10894,9 +11588,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -10904,23 +11602,33 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TimeSeriesElement], deserialized["value"])
+            list_of_elem = _deserialize(
+                List[_models.TimeSeriesElement], deserialized["value"]
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -10929,15 +11637,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -11377,9 +12091,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -11387,17 +12105,25 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str"
+                    ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -11412,15 +12138,21 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 if _stream:
                     response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -11826,13 +12558,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -11840,7 +12576,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if _stream:
