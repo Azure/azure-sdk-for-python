@@ -320,7 +320,7 @@ class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint
 
     All required parameters must be populated in order to send to server.
 
-    :ivar instance_memory_m_b: Memory size of the instance. Supported values are 512, 2048, 2096.
+    :ivar instance_memory_m_b: Memory size of the instance. Supported values are 2048, 4096.
      Required.
     :vartype instance_memory_m_b: int
     :ivar http_concurrency: HTTP Concurrency for the function app. Required.
@@ -328,7 +328,7 @@ class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint
     """
 
     instance_memory_m_b: int = rest_field(name="instanceMemoryMB")
-    """Memory size of the instance. Supported values are 512, 2048, 2096. Required."""
+    """Memory size of the instance. Supported values are 2048, 4096. Required."""
     http_concurrency: int = rest_field(name="httpConcurrency")
     """HTTP Concurrency for the function app. Required."""
 
@@ -365,7 +365,7 @@ class TargetResourceConfigurations(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    # removed visibility=["read", "create"]
+    # python bug -> commenting out  visibility=["read", "create"]
     kind: str = rest_discriminator(name="kind")
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 

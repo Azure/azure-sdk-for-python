@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
+LOADTESTSERVICE_ENDPOINT =os.environ["LOADTESTSERVICE_ENDPOINT"]
 RESOURCE_ID = os.environ["RESOURCE_ID"]
 
 # Build a client through AAD and resource endpoint

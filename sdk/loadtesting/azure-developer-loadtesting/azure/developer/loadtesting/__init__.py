@@ -8,8 +8,6 @@
 
 from ._client import LoadTestAdministrationClient
 from ._client import LoadTestRunClient
-from ._client import TestProfileAdministrationClient
-from ._client import TestProfileRunClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -24,8 +22,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "LoadTestAdministrationClient",
     "LoadTestRunClient",
-    "TestProfileAdministrationClient",
-    "TestProfileRunClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 
