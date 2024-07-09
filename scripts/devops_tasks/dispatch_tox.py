@@ -116,7 +116,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
-    if args.service:
+    if args.service and args.service != "auto":
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(root_dir, service_dir)
     else:
