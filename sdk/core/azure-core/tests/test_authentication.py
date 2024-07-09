@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+from collections import namedtuple
 from itertools import product
 from requests import Response
 import azure.core
@@ -331,6 +332,27 @@ def test_need_new_token():
     policy._token = AccessToken("", now + 1200, now - 1)
     assert policy._need_new_token
 
+    policy._token = None
+    assert policy._need_new_token
+
+
+def test_need_new_token_with_external_defined_token_class():
+    """Test the case where some custom credential get_token call returns a custom token object."""
+    FooAccessToken = namedtuple("FooAccessToken", ["token", "expires_on"])
+
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = FooAccessToken("", now - 1200)
+    assert policy._need_new_token
+
+    # Token is about to expire within 300 seconds.
+    policy._token = FooAccessToken("", now + 299)
+    assert policy._need_new_token
+
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_azure_key_credential_policy(http_request):
@@ -638,3 +660,47 @@ def test_azure_http_credential_policy(http_request):
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_access_token_unpack():
+    """Test various unpacking of AccessToken."""
+    token = AccessToken("token", 42)
+    assert token.token == "token"
+    assert token.expires_on == 42
+    assert token.refresh_on is None
+
+    token, expires_on = AccessToken("token", 42)
+    assert token == "token"
+    assert expires_on == 42
+
+    token, expires_on = AccessToken(token="token", expires_on=42)
+    assert token == "token"
+    assert expires_on == 42
+
+    token, expires_on, refresh_on = AccessToken("token", 42, 21)
+    assert token == "token"
+    assert expires_on == 42
+    assert refresh_on == 21
+
+    token, expires_on, refresh_on = AccessToken(token="token", expires_on=42, refresh_on=21)
+    assert token == "token"
+    assert expires_on == 42
+    assert refresh_on == 21
+
+
+def test_access_token_subscriptable():
+    """Test that AccessToken can be indexed by position. This is verify backwards-compatibility."""
+    token = AccessToken("token", 42)
+    assert token[0] == "token"
+    assert token[1] == 42
+    assert token[-1] == 42
+    assert len(token) == 2
+
+    token = AccessToken("token", 42, 100)
+    assert token[:1] == ("token",)
+    assert token[:2] == ("token", 42)
+    assert token[:3] == ("token", 42, 100)
+    assert token[:-1] == ("token", 42)
+    assert len(token) == 3
+    with pytest.raises(IndexError):
+        _ = token[3]

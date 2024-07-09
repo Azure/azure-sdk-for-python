@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import asyncio
+from collections import namedtuple
 import sys
 import time
 from unittest.mock import Mock, patch
@@ -470,3 +471,51 @@ def test_async_token_credential_sync():
         # Ensure trio isn't in sys.modules (i.e. imported).
         sys.modules.pop("trio", None)
         AsyncBearerTokenCredentialPolicy(Mock(), "scope")
+
+
+def test_need_new_token():
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = AsyncBearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = AccessToken("", now - 1200)
+    assert policy._need_new_token()
+
+    # Token is about to expire within 300 seconds.
+    policy._token = AccessToken("", now + 299)
+    assert policy._need_new_token()
+
+    # Token still has more than 300 seconds to live.
+    policy._token = AccessToken("", now + 305)
+    assert not policy._need_new_token()
+
+    # Token has both expires_on and refresh_on set well into the future.
+    policy._token = AccessToken("", now + 1200, now + 1200)
+    assert not policy._need_new_token()
+
+    # Token is not close to expiring, but refresh_on is in the past.
+    policy._token = AccessToken("", now + 1200, now - 1)
+    assert policy._need_new_token()
+
+    policy._token = None
+    assert policy._need_new_token()
+
+
+def test_need_new_token_with_external_defined_token_class():
+    """Test the case where some custom credential get_token call returns a custom token object."""
+    FooAccessToken = namedtuple("FooAccessToken", ["token", "expires_on"])
+
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = AsyncBearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = FooAccessToken("", now - 1200)
+    assert policy._need_new_token()
+
+    # Token is about to expire within 300 seconds.
+    policy._token = FooAccessToken("", now + 299)
+    assert policy._need_new_token()

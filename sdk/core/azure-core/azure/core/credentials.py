@@ -3,21 +3,38 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from dataclasses import dataclass, fields
 from typing import Any, NamedTuple, Optional
 from typing_extensions import Protocol, runtime_checkable
 
 
-class AccessToken(NamedTuple):
+@dataclass(frozen=True)
+class AccessToken:
     """Represents an OAuth access token."""
 
     token: str
+    """The token string."""
     expires_on: int
+    """The token's expiration time in Unix time."""
     refresh_on: Optional[int] = None
+    """When the token should be refreshed in Unix time."""
 
+    def __iter__(self) -> Any:
+        """Return an iterator that will yield non-None values.
 
-AccessToken.token.__doc__ = """The token string."""
-AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
-AccessToken.refresh_on.__doc__ = """When the token should be refreshed in Unix time."""
+        This is backwards compatible with code unpacking the token and expires_on values of AccessToken.
+
+        :return: Iterator containing the token and expires_on values.
+        :rtype: Iterator
+        """
+        # Note: `fields` returns a tuple of fields in the order they are defined in the class.
+        return (getattr(self, field.name) for field in fields(self) if getattr(self, field.name) is not None)
+
+    def __getitem__(self, index: Any) -> Any:
+        return tuple(self)[index]
+
+    def __len__(self) -> int:
+        return len(tuple(self.__iter__()))
 
 
 @runtime_checkable
