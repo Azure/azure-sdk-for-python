@@ -19,3 +19,4 @@ extends:
     ServiceDirectory: ${{ parameters.Service }}
     BuildTargetingString: "*"
     ValidateFormatting: true
+    TestProxy: true
