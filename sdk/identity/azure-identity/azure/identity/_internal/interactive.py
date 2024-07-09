@@ -19,7 +19,8 @@ from .msal_credentials import MsalCredential
 from .._auth_record import AuthenticationRecord
 from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
-from .._internal import wrap_exceptions, create_access_token
+from .._internal import wrap_exceptions
+from .._internal.utils import create_access_token
 
 ABC = abc.ABC
 

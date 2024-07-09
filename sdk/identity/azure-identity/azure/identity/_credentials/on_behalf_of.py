@@ -11,7 +11,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .certificate import get_client_credential
-from .._internal import create_access_token
+from .._internal.utils import create_access_token
 from .._internal.decorators import wrap_exceptions
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.interactive import _build_auth_record

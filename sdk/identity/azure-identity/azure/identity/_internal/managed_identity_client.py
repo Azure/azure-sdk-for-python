@@ -70,6 +70,11 @@ class ManagedIdentityClientBase(abc.ABC):
         expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         content["expires_on"] = expires_on
 
+        expires_in = int(content.get("expires_in") or expires_on - request_time)
+        if "refresh_in" not in content and expires_in >= 7200:
+            # MSAL Cache expects "refresh_in"
+            content["refresh_in"] = expires_in // 2
+
         token = create_access_token(content["access_token"], content["expires_on"], content)
 
         # caching is the final step because TokenCache.add mutates its "event"

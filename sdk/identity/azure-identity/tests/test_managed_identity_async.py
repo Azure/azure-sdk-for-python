@@ -737,6 +737,53 @@ async def test_imds_text_response():
 
 
 @pytest.mark.asyncio
+async def test_imds_default_refresh_on_set():
+    if not hasattr(AccessToken, "refresh_on"):
+        pytest.skip("AccessToken.refresh_on is not available")
+
+    now = int(time.time())
+    access_token = "****"
+    expires_in = 7200
+    expires_on = now + expires_in
+    refresh_on = now + expires_in // 2
+    expected_token = AccessToken(access_token, expires_on, refresh_on)
+    scope = "scope"
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
+                method="GET",
+                required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
+                required_params={"api-version": "2018-02-01", "resource": scope},
+            ),
+        ],
+        responses=[
+            mock_response(
+                json_payload={
+                    "access_token": access_token,
+                    "expires_in": expires_in,
+                    "expires_on": expires_on,
+                    "ext_expires_in": 42,
+                    "not_before": now,
+                    "resource": scope,
+                    "token_type": "Bearer",
+                }
+            ),
+        ],
+    )
+
+    # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
+    with mock.patch.dict("os.environ", clear=True):
+        token = await ManagedIdentityCredential(transport=transport).get_token(scope)
+    assert token.token == expected_token.token
+    assert token.expires_on == expected_token.expires_on
+    assert token.refresh_on == expected_token.refresh_on
+
+    # Check if refresh_on is set and close enough (within 1 or 2 seconds) to half the token life.
+    assert token.refresh_on - expected_token.expires_on < 2
+
+
+@pytest.mark.asyncio
 async def test_service_fabric():
     """Service Fabric 2019-07-01-preview"""
     access_token = "****"

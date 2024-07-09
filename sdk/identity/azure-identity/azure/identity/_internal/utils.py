@@ -123,12 +123,14 @@ def resolve_tenant(
 
 
 def create_access_token(token: str, expires_on: int, content: Optional[Dict[str, Any]] = None) -> AccessToken:
-    if hasattr(AccessToken, "refresh_on") and content:
-        refresh_on = None
+    # Check that the version of azure-core being used supports the "refresh_on" property in AccessToken.
+    if hasattr(AccessToken, "refresh_on") and content is not None:
+        refresh_on: Optional[int] = None
         if "refresh_on" in content:
             refresh_on = int(content["refresh_on"])
         elif "refresh_in" in content:
             now = int(time.time())
             refresh_on = now + int(content["refresh_in"])
         return AccessToken(token, expires_on, refresh_on)
+
     return AccessToken(token, expires_on)
