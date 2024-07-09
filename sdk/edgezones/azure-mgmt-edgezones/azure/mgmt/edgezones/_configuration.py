@@ -26,7 +26,7 @@ class EdgeZonesMgmtClientConfiguration:  # pylint: disable=too-many-instance-att
 
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2024-04-01-preview". Note that overriding this default value may result in unsupported

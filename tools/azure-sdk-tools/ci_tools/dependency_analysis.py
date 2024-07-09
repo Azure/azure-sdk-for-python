@@ -11,7 +11,10 @@ import re
 import sys
 import textwrap
 from typing import List, Set, Dict, Tuple, Any
-from collections import Sized
+try:
+    from collections import Sized
+except:
+    from collections.abc import Sized
 
 from pkg_resources import Requirement
 from packaging.specifiers import SpecifierSet, Version
@@ -312,6 +315,10 @@ def analyze_dependencies() -> None:
 
     if args.out:
         external = [k for k in dependencies if k not in packages and not k.startswith("azure")]
+
+        complete_dir = os.path.abspath(args.out)
+        report_dir = os.path.dirname(complete_dir)
+        os.makedirs(report_dir, exist_ok=True)
 
         def display_order(k):
             if k in incompatible:
