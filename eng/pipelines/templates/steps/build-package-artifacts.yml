@@ -57,7 +57,7 @@ steps:
 
   - pwsh: |
       which python
-      python -m pip install --force -r eng\ci_tools.txt
+      python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
     displayName: 'Prep Environment'
 
@@ -71,7 +71,7 @@ steps:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-All-Package-Properties.ps1
         # inputDiffJson populated by targeting-string-resolve.yml
         arguments: >
-          -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
+          -inputDiffJson $(Build.ArtifactStagingDirectory)/packages/diff/diff.json
           -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
