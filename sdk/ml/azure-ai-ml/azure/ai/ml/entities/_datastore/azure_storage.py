@@ -67,7 +67,7 @@ class AzureFileDatastore(Datastore):
         endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
-        credentials: Union[AccountKeyConfiguration, SasTokenConfiguration],
+        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_FILE
