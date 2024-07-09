@@ -643,7 +643,7 @@ class Handle(DictMixin):
     :keyword str session_id: Required. SMB session ID in context of which the file handle was opened.
     :keyword str client_ip: Required. Client IP that opened the handle.
     :keyword ~datetime.datetime open_time: Required. Time when the session that previously opened
-     the handle has last been reconnected. (UTC)
+        the handle has last been reconnected. (UTC)
     :keyword Optional[~datetime.datetime] last_reconnect_time: Time handle was last connected to. (UTC)
     :keyword access_rights: Access rights of the handle.
     :paramtype access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]]
@@ -702,8 +702,7 @@ class HandlesPaged(PageIterator):
     """An iterable of Handles.
 
     :param Callable command: Function to retrieve the next page of items.
-    :param Optional[int] results_per_page: The maximum number of share names to retrieve per
-        call.
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per call.
     :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
     """
 
