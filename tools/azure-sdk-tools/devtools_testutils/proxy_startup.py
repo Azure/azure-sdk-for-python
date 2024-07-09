@@ -364,8 +364,12 @@ def start_test_proxy(request) -> None:
                 if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
                     os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
 
-            _LOGGER.info("Downloading and starting standalone proxy executable...")
-            tool_name = prepare_local_tool(root)
+            if os.getenv("TF_BUILD"):
+                _LOGGER.info("Starting the test proxy tool from dotnet tool cache...")
+                tool_name = "test-proxy"
+            else:
+                _LOGGER.info("Downloading and starting standalone proxy executable...")
+                tool_name = prepare_local_tool(root)
 
             # Always start the proxy with these two defaults set to allow SSL connection
             passenv = {
