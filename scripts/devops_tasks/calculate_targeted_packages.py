@@ -3,8 +3,22 @@ import json
 import os
 
 from ci_tools.functions import discover_targeted_packages
+from typing import Dict
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
+
+def get_package_folder_from_path(file: str) -> str:
+    parts = file.split("/")
+
+    if len(parts) < 3:
+        return ""
+    return os.sep.join(parts[:3])
+
+def register(idx: Dict[str, str], key: str, value: str) -> None:
+    if key in idx:
+        idx[key].append(value)
+    else:
+        idx[key] = [value]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Calculate the targeted packages')
@@ -16,16 +30,21 @@ if __name__ == "__main__":
     with open(args.input_json, 'r') as f:
         diff = json.load(f)
 
-    targeted_services = diff["ChangedServices"]
-    all_packages = []
+    targeted_files = diff['ChangedFiles']
+    
+    all_packages = {} # {package: [file]}
 
-    # todo, iterate across the changed files and find affected packages
+    for file in targeted_files:
+        # register(all_packages, , file)
+        package = get_package_folder_from_path(file)
+        if package:
+            package_directory = os.path.join(root_dir, package)
+            package_name = os.path.basename(package_directory)
 
-    for service in targeted_services:
-        packages_for_service = discover_targeted_packages("*", target_root_dir=os.path.join(root_dir, "sdk", service), filter_type="Build", include_inactive=True)
-        all_packages.extend([os.path.basename(p) for p in packages_for_service])
+            if os.path.exists(os.path.join(package_directory, "pyproject.toml")) or os.path.exists(os.path.join(package_directory, "setup.py")):
+                register(all_packages, package_name, file)        
 
-    packages = ", ".join(all_packages)
-
-    print(f"This script sees the following packages [{packages}] for services {targeted_services}.")
+    packages = ",".join(all_packages.keys())
+    print(f"This script sees the following packages [{packages}].")
     print(f"##vso[task.setvariable variable=TargetingString;]{packages}")
+
