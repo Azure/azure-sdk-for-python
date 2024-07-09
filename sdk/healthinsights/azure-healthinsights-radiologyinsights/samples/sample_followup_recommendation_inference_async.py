@@ -32,8 +32,8 @@ submit it to the client, RadiologyInsightsClient, and display
 USAGE:
 
 1. Set the environment variables with your own values before running the sample:
-    - AZURE_HEALTH_INSIGHTS_API_KEY - your source from Health Insights API key.
     - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
+    - For more details how to use DefaultAzureCredential, please take a look at https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential
 
 2. python sample_followup_recommendation_inference_async.py
    
