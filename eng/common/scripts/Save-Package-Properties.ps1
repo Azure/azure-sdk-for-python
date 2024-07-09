@@ -32,11 +32,11 @@ Verison property in that file.
 
 [CmdletBinding()]
 Param (
-  [Parameter(Mandatory=$True)]
   [string] $serviceDirectory,
   [Parameter(Mandatory=$True)]
   [string] $outDirectory,
-  [switch] $addDevVersion
+  [switch] $addDevVersion,
+  [string] $inputDiffJson
 )
 
 . (Join-Path $PSScriptRoot common.ps1)
@@ -92,51 +92,58 @@ function GetRelativePath($path) {
 }
 
 $exportedPaths = @{}
-$allPackageProperties = Get-AllPkgProperties $serviceDirectory
-if ($allPackageProperties)
-{
-    if (-not (Test-Path -Path $outDirectory))
-    {
-      New-Item -ItemType Directory -Force -Path $outDirectory
-    }
-    foreach($pkg in $allPackageProperties)
-    {
-        if ($pkg.Name) {
-          Write-Host "Package Name: $($pkg.Name)"
-          Write-Host "Package Version: $($pkg.Version)"
-          Write-Host "Package SDK Type: $($pkg.SdkType)"
-          Write-Host "Artifact Name: $($pkg.ArtifactName)"
-          Write-Host "Release date: $($pkg.ReleaseStatus)"
-          $configFilePrefix = $pkg.Name
-          if ($pkg.ArtifactName)
-          {
-            $configFilePrefix = $pkg.ArtifactName
-          }
-          $outputPath = Join-Path -Path $outDirectory "$configFilePrefix.json"
-          Write-Host "Output path of json file: $outputPath"
-          $outDir = Split-Path $outputPath -parent
-          if (-not (Test-Path -path $outDir))
-          {
-            Write-Host "Creating directory $($outDir) for json property file"
-            New-Item -ItemType Directory -Path $outDir
-          }
 
-          # If package properties for a track 2 (IsNewSdk = true) package has
-          # already been written, skip writing to that same path.
-          if ($exportedPaths.ContainsKey($outputPath) -and $exportedPaths[$outputPath].IsNewSdk -eq $true) {
-            Write-Host "Track 2 package info with file name $($outputPath) already exported. Skipping export."
-            continue
-          }
-          $exportedPaths[$outputPath] = $pkg
+if ($inputDiffJson) {
 
-          SetOutput $outputPath $pkg
-        }
-    }
-
-    Get-ChildItem -Path $outDirectory
 }
-else
-{
-    Write-Error "Package properties are not available for service directory $($serviceDirectory)"
-    exit 1
+else {
+  $allPackageProperties = Get-AllPkgProperties $serviceDirectory
+  if ($allPackageProperties)
+  {
+      if (-not (Test-Path -Path $outDirectory))
+      {
+        New-Item -ItemType Directory -Force -Path $outDirectory
+      }
+      foreach($pkg in $allPackageProperties)
+      {
+          if ($pkg.Name) {
+            Write-Host "Package Name: $($pkg.Name)"
+            Write-Host "Package Version: $($pkg.Version)"
+            Write-Host "Package SDK Type: $($pkg.SdkType)"
+            Write-Host "Artifact Name: $($pkg.ArtifactName)"
+            Write-Host "Release date: $($pkg.ReleaseStatus)"
+            $configFilePrefix = $pkg.Name
+            if ($pkg.ArtifactName)
+            {
+              $configFilePrefix = $pkg.ArtifactName
+            }
+            $outputPath = Join-Path -Path $outDirectory "$configFilePrefix.json"
+            Write-Host "Output path of json file: $outputPath"
+            $outDir = Split-Path $outputPath -parent
+            if (-not (Test-Path -path $outDir))
+            {
+              Write-Host "Creating directory $($outDir) for json property file"
+              New-Item -ItemType Directory -Path $outDir
+            }
+
+            # If package properties for a track 2 (IsNewSdk = true) package has
+            # already been written, skip writing to that same path.
+            if ($exportedPaths.ContainsKey($outputPath) -and $exportedPaths[$outputPath].IsNewSdk -eq $true) {
+              Write-Host "Track 2 package info with file name $($outputPath) already exported. Skipping export."
+              continue
+            }
+            $exportedPaths[$outputPath] = $pkg
+
+            SetOutput $outputPath $pkg
+          }
+      }
+
+      Get-ChildItem -Path $outDirectory
+  }
+  else
+  {
+      Write-Error "Package properties are not available for service directory $($serviceDirectory)"
+      exit 1
+  }
 }
+

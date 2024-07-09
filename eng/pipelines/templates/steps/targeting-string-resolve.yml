@@ -41,9 +41,7 @@ steps:
         displayName: Coalesce targeting string for PR Builds
 
     - pwsh: |
-        python -m pip install tools/azure-sdk-tools[build]
-        cat "$(PRDiffJson)"
-        python $(Build.SourcesDirectory)/scripts/devops_tasks/calculate_targeted_packages.py "$(PRDiffJson)"
+        # code this shit to honor look for package properties files and then invoke checks for any one that exists
       displayName: Resolve Targeted Packages
 
   # if not triggered for a PR, simply attempt to locate the targeted packages from the parameter and variable. This will likely
