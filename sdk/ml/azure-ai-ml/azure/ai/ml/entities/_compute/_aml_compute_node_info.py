@@ -15,6 +15,7 @@ class AmlComputeNodeInfo:
     def __init__(self) -> None:
         self.node_id = None
         self.private_ip_address = None
+        self.public_ip_address = None
         self.port = None
         self.node_state = None
         self.run_id: Optional[str] = None
