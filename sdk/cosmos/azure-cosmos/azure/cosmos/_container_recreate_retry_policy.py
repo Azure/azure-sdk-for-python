@@ -34,8 +34,8 @@ from .partition_key import _Empty, _Undefined
 
 
 class ContainerRecreateRetryPolicy:
-    def __init__(self, client: Optional[Any], container_caches: Optional[Dict[str, Dict[str, Any]]]
-                 , *args: Optional[List]):
+    def __init__(self, client: Optional[Any], container_caches: Optional[Dict[str, Dict[str, Any]]],
+                 *args: Optional[List]):
         self.retry_after_in_milliseconds = 0  # Same as in .net
         self.refresh_container_properties_cache = True
         self._intended_headers = http_constants.HttpHeaders.IntendedCollectionRID
@@ -43,7 +43,7 @@ class ContainerRecreateRetryPolicy:
         self.container_link = None
         self.link = None
         self._http_request = args[3] if len(args) >= 4 else None
-        self._headers = self._http_request.headers if self._http_request else None
+        self._headers = self._http_request.headers if self._http_request else None  # pylint: disable=attr-defined
         if self._headers and self._intended_headers in self._headers:
             self.container_rid = self._headers[self._intended_headers]
             if container_caches:
@@ -100,9 +100,9 @@ class ContainerRecreateRetryPolicy:
             -> str:
         partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
-        new_partition_key = _Undefined
+        new_partition_key = None
         if body_dict:
-            options = client._AddPartitionKey(self.container_link, body_dict, {}) if client else []
+            options = client._AddPartitionKey(self.container_link, body_dict, {}) if client else {}
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
             if options and isinstance(options["partitionKey"], _Undefined):
                 new_partition_key = [{}]
@@ -116,8 +116,8 @@ class ContainerRecreateRetryPolicy:
                 new_partition_key = json.dumps([options["partitionKey"]])
         return new_partition_key
 
-    async def _extract_partition_key_async(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
-            -> str:
+    async def _extract_partition_key_async(self, client: Optional[Any],
+                                           container_cache: Optional[Dict[str, Any]], body: str) -> str:
         partition_key_definition = container_cache["partitionKey"]
         body_dict = self.__str_to_dict(body)
         new_partition_key = _Undefined
@@ -156,8 +156,7 @@ class ContainerRecreateRetryPolicy:
         body_dict["parameters"][0]["value"] = self.link
         return json.dumps(body_dict, separators=(',', ':'))
 
-
-    def __str_to_dict(self, dict_string: str) -> Dict[str, str]:
+    def __str_to_dict(self, dict_string: str) -> Dict[Any, Any]:
         try:
             # Use ast.literal_eval() to convert string to dictionary
             dict_obj = ast.literal_eval(dict_string)
