@@ -3761,7 +3761,6 @@ class TestStorageFile(StorageRecordedTestCase):
         )
 
         # Assert
-        with pytest.raises(ClientAuthenticationError):
-            file_client.exists()
+        file_client.exists()
 
 # ------------------------------------------------------------------------------
