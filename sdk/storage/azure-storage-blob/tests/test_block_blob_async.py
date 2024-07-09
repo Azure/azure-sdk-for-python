@@ -665,7 +665,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         container_name = self.get_resource_name('vlwcontainer')
 
         if self.is_live:
-            token_credential = self.get_credential(BlobServiceClient)
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
 
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
