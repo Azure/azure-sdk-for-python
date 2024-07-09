@@ -202,7 +202,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
     """
 
-    mutichannel: Optional[SmbMultichannel]
+    multichannel: Optional[SmbMultichannel]
     """Sets the multichannel settings."""
 
     def __init__(self, **kwargs: Any) -> None:
