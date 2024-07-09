@@ -76,10 +76,10 @@ jobs:
           artifactName: 'packages'
           targetPath: $(Build.ArtifactStagingDirectory)
 
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+      - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
+          PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
       - task: UsePythonVersion@0
         displayName: 'Use Python 3.9'

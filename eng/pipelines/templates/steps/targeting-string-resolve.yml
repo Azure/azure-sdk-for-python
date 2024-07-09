@@ -8,7 +8,7 @@ parameters:
   - name: TargetRepo
     type: string
     default: $(Build.SourcesDirectory)
-  - name: PRDiffFolder
+  - name: PackagePropertiesFolder
     type: string
 
 steps:

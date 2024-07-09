@@ -88,11 +88,10 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
-        
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
     - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
       parameters:

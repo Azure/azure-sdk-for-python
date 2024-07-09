@@ -36,8 +36,6 @@ steps:
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - template: set-dev-build.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
       Write-Host (Get-Command python).Source

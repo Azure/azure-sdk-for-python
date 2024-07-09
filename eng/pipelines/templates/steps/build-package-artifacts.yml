@@ -21,18 +21,6 @@ parameters:
     type: boolean
     default: true
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
-
-# The variable '$(ArtifactName)' is set at runtime by the strategy for the `Build` job.
-# Specifically, one of 3 values `linux`, `mac`, or `windows` will always be populated when invoked from `jobs/ci.yml`.
-
-# However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
-# to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
@@ -62,30 +50,49 @@ steps:
     displayName: 'Prep Environment'
 
   - template: set-dev-build.yml@self
+
+    - ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+      - pwsh: |
+          mkdir -p $(Build.ArtifactStagingDirectory)/diff
+        displayName: Create PR Diff Folder
+
+      - task: PowerShell@2
+        inputs:
+          filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
+          arguments: '-TargetPath "$(Build.SourcesDirectory)" -ArtifactPath $(Build.ArtifactStagingDirectory)/diff'
+        displayName: 'Generate PR Diff'
+
+      - pwsh: |
+          Write-Host "We freshly generated the PR diff, and this is what it sees!"
+          Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
+          cat $(Build.ArtifactStagingDirectory)/diff/diff.json
+        displayName: Dump PR Diff
+
+      - task: Powershell@2
+        inputs:
+          filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+          arguments: >
+            -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
+            -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+          pwsh: true
+          workingDirectory: $(Pipeline.Workspace)
+        displayName: Save package properties
+    - ${{ else }}:
+      - task: Powershell@2
+        inputs:
+          filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+          arguments: >
+            -ServiceDirectory ${{parameters.ServiceDirectory}}
+            -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+          pwsh: true
+          workingDirectory: $(Pipeline.Workspace)
+        displayName: Save package properties
+
+  - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  
-  - ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
-    - task: Powershell@2
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        # inputDiffJson populated by targeting-string-resolve.yml
-        arguments: >
-          -inputDiffJson $(Build.ArtifactStagingDirectory)/diff/diff.json
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-      displayName: Update package properties with dev version
-  - ${{ else }}:
-    - task: Powershell@2
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -ServiceDirectory ${{parameters.ServiceDirectory}}
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-      displayName: Update package properties with dev version
+      BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+      TargetRepo: $(Build.SourcesDirectory)
 
   - script: |
       sudo apt-get update

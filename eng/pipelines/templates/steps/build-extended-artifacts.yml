@@ -27,10 +27,10 @@ steps:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
-  - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+  - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
-      PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
@@ -58,8 +58,6 @@ steps:
     displayName: 'Prep Environment'
 
   - template: set-dev-build.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: auth-dev-feed.yml

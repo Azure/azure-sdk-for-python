@@ -1,7 +1,5 @@
 # This script fragment is used across our repos to set a variable "SetDevVersion" which
 # is used when this pipeline is going to be generating and publishing daily dev builds.
-parameters:
-  ServiceDirectory: ''
 steps:
 - pwsh: |
     $setDailyDevBuild = "false"

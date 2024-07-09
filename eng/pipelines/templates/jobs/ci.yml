@@ -77,12 +77,6 @@ jobs:
         os: linux
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
-
       - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -100,12 +94,6 @@ jobs:
         os: linux
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
-
       - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -124,12 +112,6 @@ jobs:
         os: windows
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
-
       - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -148,12 +130,6 @@ jobs:
         os: macOS
 
       steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          GeneratePRDiff: true
-          PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
-
       - template: ../steps/build-package-artifacts.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -297,11 +273,10 @@ jobs:
             python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
 
-        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
           parameters:
             BuildTargetingString: ${{ parameters.BuildTargetingString }}
-            PRDiffFolder: $(Build.ArtifactStagingDirectory)/diff
-
+            PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
         - task: PythonScript@0
           displayName: 'Ensure service coverage'
