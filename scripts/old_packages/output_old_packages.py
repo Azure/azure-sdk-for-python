@@ -13,6 +13,7 @@ import datetime
 
 import requests
 
+from ci_tools.parsing import get_config_setting
 from pypi_tools.pypi import PyPIClient
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
@@ -68,6 +69,24 @@ def get_latest_release(
     return latest
 
 
+def apply_filters(pkg_path: str, release: typing.Mapping[str, str]) -> bool:
+    """Filter out packages that are marked as Inactive or have a verify_status_by date in the future. 
+    If the package has no verify_status_by date, it is considered active.
+    """
+    if release["status"] == INACTIVE_CLASSIFIER:
+        return False
+
+    verify_status_by = get_config_setting(pkg_path, "verify_status_by", default=None)
+    if verify_status_by is None:
+        return True
+
+    today = datetime.datetime.today().date()
+    if get_newer(today, verify_status_by) == verify_status_by:
+        return False
+
+    return True
+
+
 class PepyClient:
     """Client to interact with the Pepy API to fetch package download data."""
 
@@ -108,6 +127,14 @@ if __name__ == "__main__":
         default=2,
     )
 
+    parser.add_argument(
+        "-f",
+        "--disable-filter",
+        dest="filter",
+        help="Disable the filter which removes Inactive packages and ones with verify_status_by dates in the future.",
+        action="store_false",
+    )
+
     args = parser.parse_args()
     sdk_path = pathlib.Path(__file__).parent.parent.parent / "sdk"
     service_directories = glob.glob(f"{sdk_path}/*/", recursive=True)
@@ -134,11 +161,12 @@ if __name__ == "__main__":
 
             if (
                 get_newer(latest_release["date"], timepoint) == timepoint
-                and latest_release["status"] != INACTIVE_CLASSIFIER
             ):
-                old_packages[package_name] = latest_release
-                old_packages[package_name]["downloads_90d"] = (
-                    pepy_client.get_downloads_90d(package_name)
-                )
+                add_package = not args.filter or apply_filters(package_path, latest_release)
+                if add_package:
+                    old_packages[package_name] = latest_release
+                    old_packages[package_name]["downloads_90d"] = (
+                        pepy_client.get_downloads_90d(package_name)
+                    )
 
     write_csv(old_packages)
