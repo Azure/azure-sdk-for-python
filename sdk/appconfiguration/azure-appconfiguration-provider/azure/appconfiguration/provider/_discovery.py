@@ -6,14 +6,11 @@
 
 import os
 import time
-from dataclasses import dataclass
 import dns.resolver
 from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
-
-@dataclass
 class SRVRecord:
     priority: int
     weight: int
