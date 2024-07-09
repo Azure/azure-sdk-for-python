@@ -89,7 +89,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         )
 
         poller = radiology_insights_client.begin_infer_radiology_insights(
-            id="JobIDS2",
+            id="SyncJobID",
             resource=jobdata,
         )
         response = poller.result()
