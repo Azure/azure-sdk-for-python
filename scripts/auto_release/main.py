@@ -111,6 +111,7 @@ class CodegenTestPR:
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.target_date = os.getenv('TARGET_DATE', '')
         self.test_folder = os.getenv('TEST_FOLDER', '')
+        self.issue_owner = os.getenv('ISSUE_OWNER', '')
 
         self.package_name = '' # 'dns' of 'sdk/compute/azure-mgmt-dns'
         self.whole_package_name = '' # 'azure-mgmt-dns'
@@ -522,7 +523,7 @@ class CodegenTestPR:
             # comment to ask for check from users
             issue_number = int(self.issue_link.split('/')[-1])
             api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-            author = api.issues.get(issue_number=issue_number).user.login
+            author = self.issue_owner or api.issues.get(issue_number=issue_number).user.login
             body = f'Hi @{author}, please check whether CHANGELOG for this release meet requirements:\n' \
                 f'```\n' \
                 f'CHANGELOG:\n' \

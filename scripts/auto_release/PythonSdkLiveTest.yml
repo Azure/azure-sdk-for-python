@@ -91,6 +91,7 @@ jobs:
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
         export TEST_FOLDER=$(TEST_FOLDER)
+        export ISSUE_OWNER=$(ISSUE_OWNER)
 
         # run
         cd azure-sdk-for-python
