@@ -1,5 +1,16 @@
 # Release History
 
+## 2.2.0b1 (2024-02-22)
+
+### Features Added
+
+  - Added operation group UnsupportedVmSizesOperations
+  - Model Cluster has a new parameter enable_http_gateway_exclusive_auth_mode
+  - Model ClusterUpdateParameters has a new parameter enable_http_gateway_exclusive_auth_mode
+  - Model NodeTypeDescription has a new parameter http_gateway_token_auth_endpoint_port
+  - Model StatelessServiceProperties has a new parameter min_instance_count
+  - Model StatelessServiceProperties has a new parameter min_instance_percentage
+
 ## 2.1.0 (2023-12-18)
 
 ### Features Added

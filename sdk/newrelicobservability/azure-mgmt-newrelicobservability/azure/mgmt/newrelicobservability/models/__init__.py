@@ -13,14 +13,21 @@ from ._models_py3 import AppServiceInfo
 from ._models_py3 import AppServicesGetParameter
 from ._models_py3 import AppServicesGetRequest
 from ._models_py3 import AppServicesListResponse
+from ._models_py3 import BillingInfoResponse
+from ._models_py3 import ConnectedPartnerResourceProperties
+from ._models_py3 import ConnectedPartnerResourcesListFormat
+from ._models_py3 import ConnectedPartnerResourcesListResponse
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import FilteringTag
 from ._models_py3 import HostsGetParameter
 from ._models_py3 import HostsGetRequest
+from ._models_py3 import LinkedResource
+from ._models_py3 import LinkedResourceListResponse
 from ._models_py3 import LogRules
 from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MarketplaceSaaSInfo
 from ._models_py3 import MetricRules
 from ._models_py3 import MetricsRequest
 from ._models_py3 import MetricsRequestParameter
@@ -29,6 +36,10 @@ from ._models_py3 import MetricsStatusRequestParameter
 from ._models_py3 import MetricsStatusResponse
 from ._models_py3 import MonitoredResource
 from ._models_py3 import MonitoredResourceListResponse
+from ._models_py3 import MonitoredSubscription
+from ._models_py3 import MonitoredSubscriptionProperties
+from ._models_py3 import MonitoredSubscriptionPropertiesList
+from ._models_py3 import MonitoringTagRulesProperties
 from ._models_py3 import NewRelicAccountProperties
 from ._models_py3 import NewRelicMonitorResource
 from ._models_py3 import NewRelicMonitorResourceListResult
@@ -40,11 +51,13 @@ from ._models_py3 import OperationListResult
 from ._models_py3 import OrganizationInfo
 from ._models_py3 import OrganizationResource
 from ._models_py3 import OrganizationsListResponse
+from ._models_py3 import PartnerBillingEntity
 from ._models_py3 import PlanData
 from ._models_py3 import PlanDataListResponse
 from ._models_py3 import PlanDataResource
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
+from ._models_py3 import SubscriptionList
 from ._models_py3 import SwitchBillingParameter
 from ._models_py3 import SwitchBillingRequest
 from ._models_py3 import SystemData
@@ -62,6 +75,7 @@ from ._new_relic_observability_mgmt_client_enums import AccountCreationSource
 from ._new_relic_observability_mgmt_client_enums import ActionType
 from ._new_relic_observability_mgmt_client_enums import BillingCycle
 from ._new_relic_observability_mgmt_client_enums import BillingSource
+from ._new_relic_observability_mgmt_client_enums import ConfigurationName
 from ._new_relic_observability_mgmt_client_enums import CreatedByType
 from ._new_relic_observability_mgmt_client_enums import LiftrResourceCategories
 from ._new_relic_observability_mgmt_client_enums import ManagedServiceIdentityType
@@ -69,6 +83,7 @@ from ._new_relic_observability_mgmt_client_enums import MarketplaceSubscriptionS
 from ._new_relic_observability_mgmt_client_enums import MonitoringStatus
 from ._new_relic_observability_mgmt_client_enums import OrgCreationSource
 from ._new_relic_observability_mgmt_client_enums import Origin
+from ._new_relic_observability_mgmt_client_enums import PatchOperation
 from ._new_relic_observability_mgmt_client_enums import ProvisioningState
 from ._new_relic_observability_mgmt_client_enums import SendAadLogsStatus
 from ._new_relic_observability_mgmt_client_enums import SendActivityLogsStatus
@@ -77,6 +92,7 @@ from ._new_relic_observability_mgmt_client_enums import SendSubscriptionLogsStat
 from ._new_relic_observability_mgmt_client_enums import SendingLogsStatus
 from ._new_relic_observability_mgmt_client_enums import SendingMetricsStatus
 from ._new_relic_observability_mgmt_client_enums import SingleSignOnStates
+from ._new_relic_observability_mgmt_client_enums import Status
 from ._new_relic_observability_mgmt_client_enums import TagAction
 from ._new_relic_observability_mgmt_client_enums import UsageType
 from ._patch import __all__ as _patch_all
@@ -91,14 +107,21 @@ __all__ = [
     "AppServicesGetParameter",
     "AppServicesGetRequest",
     "AppServicesListResponse",
+    "BillingInfoResponse",
+    "ConnectedPartnerResourceProperties",
+    "ConnectedPartnerResourcesListFormat",
+    "ConnectedPartnerResourcesListResponse",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "FilteringTag",
     "HostsGetParameter",
     "HostsGetRequest",
+    "LinkedResource",
+    "LinkedResourceListResponse",
     "LogRules",
     "ManagedServiceIdentity",
+    "MarketplaceSaaSInfo",
     "MetricRules",
     "MetricsRequest",
     "MetricsRequestParameter",
@@ -107,6 +130,10 @@ __all__ = [
     "MetricsStatusResponse",
     "MonitoredResource",
     "MonitoredResourceListResponse",
+    "MonitoredSubscription",
+    "MonitoredSubscriptionProperties",
+    "MonitoredSubscriptionPropertiesList",
+    "MonitoringTagRulesProperties",
     "NewRelicAccountProperties",
     "NewRelicMonitorResource",
     "NewRelicMonitorResourceListResult",
@@ -118,11 +145,13 @@ __all__ = [
     "OrganizationInfo",
     "OrganizationResource",
     "OrganizationsListResponse",
+    "PartnerBillingEntity",
     "PlanData",
     "PlanDataListResponse",
     "PlanDataResource",
     "ProxyResource",
     "Resource",
+    "SubscriptionList",
     "SwitchBillingParameter",
     "SwitchBillingRequest",
     "SystemData",
@@ -139,6 +168,7 @@ __all__ = [
     "ActionType",
     "BillingCycle",
     "BillingSource",
+    "ConfigurationName",
     "CreatedByType",
     "LiftrResourceCategories",
     "ManagedServiceIdentityType",
@@ -146,6 +176,7 @@ __all__ = [
     "MonitoringStatus",
     "OrgCreationSource",
     "Origin",
+    "PatchOperation",
     "ProvisioningState",
     "SendAadLogsStatus",
     "SendActivityLogsStatus",
@@ -154,6 +185,7 @@ __all__ = [
     "SendingLogsStatus",
     "SendingMetricsStatus",
     "SingleSignOnStates",
+    "Status",
     "TagAction",
     "UsageType",
 ]

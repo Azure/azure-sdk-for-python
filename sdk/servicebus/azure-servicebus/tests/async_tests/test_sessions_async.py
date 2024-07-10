@@ -34,7 +34,7 @@ from azure.servicebus.exceptions import (
     AutoLockRenewTimeout
 )
 from devtools_testutils import AzureMgmtRecordedTestCase
-from servicebus_preparer import (
+from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusTopicPreparer,
@@ -42,7 +42,7 @@ from servicebus_preparer import (
     ServiceBusSubscriptionPreparer,
     CachedServiceBusResourceGroupPreparer
 )
-from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+from tests.utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
@@ -1171,3 +1171,39 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                 with pytest.raises(ServiceBusError):
                     message = ServiceBusMessage("Handler message")
                     await sender.send_messages(message)
+
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_next_available_session_timeout_value(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp_transport:
+            pytest.skip("This test is for pyamqp only")
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10)
+            start_time = time.time()
+            with pytest.raises(OperationTimeoutError):
+                await receiver.receive_messages(max_wait_time=5)
+            assert time.time() - start_time < 65 # Default service timeout value is 65 seconds
+            start_time2 = time.time()
+            with pytest.raises(OperationTimeoutError):
+                async for msg in receiver:
+                    pass
+            assert time.time() - start_time2 < 65 # Default service timeout value is 65 seconds
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=70)
+            start_time = time.time()
+            with pytest.raises(OperationTimeoutError):
+                await receiver.receive_messages(max_wait_time=5)
+            assert time.time() - start_time > 65 # Default service timeout value is 65 seconds
+            start_time2 = time.time()
+            with pytest.raises(OperationTimeoutError):
+                async for msg in receiver:
+                    pass
+            assert time.time() - start_time2 > 65 # Default service timeout value is 65 seconds

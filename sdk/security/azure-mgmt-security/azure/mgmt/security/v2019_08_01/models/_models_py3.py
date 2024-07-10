@@ -25,7 +25,7 @@ class CustomAlertRule(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -79,7 +79,7 @@ class ThresholdCustomAlertRule(CustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -146,7 +146,7 @@ class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -234,7 +234,7 @@ class ActiveConnectionsNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -350,7 +350,7 @@ class ListCustomAlertRule(CustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -406,7 +406,7 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -469,7 +469,7 @@ class AmqpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -541,7 +541,7 @@ class AmqpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -613,7 +613,7 @@ class AmqpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -729,7 +729,7 @@ class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -783,7 +783,7 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -836,7 +836,7 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1023,7 +1023,7 @@ class DirectMethodInvokesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1123,7 +1123,7 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1195,7 +1195,7 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1267,7 +1267,7 @@ class HttpC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1339,7 +1339,7 @@ class HttpC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1411,7 +1411,7 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -1614,7 +1614,7 @@ class IoTSecurityAggregatedAlertList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of aggregated alerts data. Required.
     :vartype value: list[~azure.mgmt.security.v2019_08_01.models.IoTSecurityAggregatedAlert]
@@ -1643,7 +1643,7 @@ class IoTSecurityAggregatedAlertList(_serialization.Model):
         self.next_link = None
 
 
-class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(_serialization.Model):
+class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(_serialization.Model):  # pylint: disable=name-too-long
     """IoTSecurityAggregatedAlertPropertiesTopDevicesListItem.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1775,7 +1775,7 @@ class IoTSecurityAggregatedRecommendationList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of aggregated recommendations data. Required.
     :vartype value:
@@ -1998,7 +1998,7 @@ class IoTSecuritySolutionAnalyticsModelList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of Security analytics of your IoT Security solution. Required.
     :vartype value: list[~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionAnalyticsModel]
@@ -2028,7 +2028,9 @@ class IoTSecuritySolutionAnalyticsModelList(_serialization.Model):
         self.next_link = None
 
 
-class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(_serialization.Model):
+class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem.
 
     :ivar date: Aggregation of IoT Security solution device alert metrics by date.
@@ -2219,7 +2221,7 @@ class IoTSecuritySolutionsList(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of IoT Security solutions. Required.
     :vartype value: list[~azure.mgmt.security.v2019_08_01.models.IoTSecuritySolutionModel]
@@ -2286,7 +2288,7 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2339,7 +2341,7 @@ class MqttC2DMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2411,7 +2413,7 @@ class MqttC2DRejectedMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2483,7 +2485,7 @@ class MqttD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2555,7 +2557,7 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2608,7 +2610,7 @@ class QueuePurgesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2680,7 +2682,7 @@ class RecommendationConfigurationProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar recommendation_type: The type of IoT Security recommendation. Required. Known values are:
      "IoT_ACRAuthentication", "IoT_AgentSendsUnutilizedMessages", "IoT_Baseline",
@@ -2805,7 +2807,7 @@ class TwinUpdatesNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2877,7 +2879,7 @@ class UnauthorizedOperationsNotInAllowedRange(TimeWindowCustomAlertRule):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
@@ -2995,7 +2997,7 @@ class UpdateIotSecuritySolutionData(TagsResource):
 class UserDefinedResourcesProperties(_serialization.Model):
     """Properties of the IoT Security solution's user defined resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar query: Azure Resource Graph query which represents the security solution's user defined
      resources. Required to start with "where type != "Microsoft.Devices/IotHubs"". Required.

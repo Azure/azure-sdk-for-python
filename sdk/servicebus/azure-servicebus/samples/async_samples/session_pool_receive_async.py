@@ -21,6 +21,7 @@ SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 async def message_processing(servicebus_client, queue_name):
     while True:
         try:
+            # max_wait_time below is the maximum time the receiver will wait to connect to a session and to receive messages from the service
             async with servicebus_client.get_queue_receiver(queue_name, max_wait_time=1, session_id=NEXT_AVAILABLE_SESSION) as receiver:
                 renewer = AutoLockRenewer()
                 renewer.register(receiver, receiver.session)

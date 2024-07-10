@@ -21,6 +21,24 @@ class LogsIngestionClient(GeneratedClient):
     :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_client_public_cloud_async]
+            :end-before: [END create_client_public_cloud_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the LogsIngestionClient with DefaultAzureCredential.
+
+    .. admonition:: Example:
+
+       .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_client_sovereign_cloud_async]
+            :end-before: [END create_client_sovereign_cloud_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the LogsIngestionClient for use with a sovereign cloud (i.e. non-public cloud).
     """
 
 

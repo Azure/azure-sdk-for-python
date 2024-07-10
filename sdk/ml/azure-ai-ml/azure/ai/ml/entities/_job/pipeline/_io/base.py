@@ -620,7 +620,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         if self._data is None:
             # _meta will be None when node._component is not a Component object
             # so we just leave the type inference work to backend
-            self._data = Output(type=None)
+            self._data = Output(type=None)  # type: ignore[call-overload]
 
     def _build_data(self, data: T) -> Any:
         """Build output data according to assigned input, eg: node.outputs.key = data
@@ -740,12 +740,10 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return self._data_binding()
 
     @overload
-    def _build_data(self, data: Union[Model, Data]) -> Input:
-        ...
+    def _build_data(self, data: Union[Model, Data]) -> Input: ...
 
     @overload
-    def _build_data(self, data: T) -> Any:
-        ...
+    def _build_data(self, data: T) -> Any: ...
 
     def _build_data(self, data: Union[Model, Data, T]) -> Any:
         """Build data according to input type.

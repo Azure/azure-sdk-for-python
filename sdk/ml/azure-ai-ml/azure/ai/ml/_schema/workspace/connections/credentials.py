@@ -4,11 +4,15 @@
 
 # pylint: disable=unused-argument
 
+##### DEV NOTE: For some reason, these schemas correlate to the classes defined in ~azure.ai.ml.entities._credentials.
+# There used to be a credentials.py file in ~azure.ai.ml.entities.workspace.connections,
+# but it was, as far as I could tell, never used. So I removed it and added this comment.
+
 from typing import Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType
+from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -20,6 +24,9 @@ from azure.ai.ml.entities._credentials import (
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
     ApiKeyConfiguration,
+    AccountKeyConfiguration,
+    AadCredentialConfiguration,
+    NoneCredentialConfiguration,
 )
 
 
@@ -47,7 +54,7 @@ class SasTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         required=True,
     )
-    pat = fields.Str()
+    sas_token = fields.Str()
 
     @post_load
     def make(self, data: Dict[str, str], **kwargs) -> SasTokenConfiguration:
@@ -129,3 +136,43 @@ class ApiKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
     def make(self, data: Dict[str, str], **kwargs) -> ApiKeyConfiguration:
         data.pop("type")
         return ApiKeyConfiguration(**data)
+
+
+class AccountKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=ConnectionAuthType.ACCOUNT_KEY,
+        casing_transform=camel_to_snake,
+        required=True,
+    )
+    account_key = fields.Str()
+
+    @post_load
+    def make(self, data: Dict[str, str], **kwargs) -> AccountKeyConfiguration:
+        data.pop("type")
+        return AccountKeyConfiguration(**data)
+
+
+class AadCredentialConfigurationSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=ConnectionAuthType.AAD,
+        casing_transform=camel_to_snake,
+        required=True,
+    )
+
+    @post_load
+    def make(self, data: Dict[str, str], **kwargs) -> AadCredentialConfiguration:
+        data.pop("type")
+        return AadCredentialConfiguration(**data)
+
+
+class NoneCredentialConfigurationSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=ConnectionAuthType.NONE,
+        casing_transform=camel_to_snake,
+        required=True,
+    )
+
+    @post_load
+    def make(self, data: Dict[str, str], **kwargs) -> NoneCredentialConfiguration:
+        data.pop("type")
+        return NoneCredentialConfiguration(**data)

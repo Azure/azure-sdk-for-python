@@ -8,8 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -22,11 +21,6 @@ from ._enums import (
     RouterRuleKind,
     WorkerSelectorAttachmentKind,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -98,6 +92,7 @@ class DistributionMode(_model_base.Model):
      values are: "bestWorker", "longestIdle", and "roundRobin".
     :vartype kind: str or ~azure.communication.jobrouter.models.DistributionModeKind
     """
+
     __mapping__: Dict[str, _model_base.Model] = {}
     min_concurrent_offers: Optional[int] = rest_field(name="minConcurrentOffers")
     """Governs the minimum desired number of active concurrent offers a job can have."""
@@ -108,7 +103,7 @@ class DistributionMode(_model_base.Model):
      selectors. Warning: You may get workers that are not qualified for a job they are matched with
      if you set this variable to true. This flag is intended more for temporary usage. By default,
      set to false."""
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of DistributionMode. Required. Known values are:
      \"bestWorker\", \"longestIdle\", and \"roundRobin\"."""
 
@@ -116,6 +111,7 @@ class DistributionMode(_model_base.Model):
     def __init__(
         self,
         *,
+        kind: str,
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
@@ -129,9 +125,8 @@ class DistributionMode(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
@@ -193,9 +188,8 @@ class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[DistributionModeKind.BEST_WORKER] = DistributionModeKind.BEST_WORKER
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=DistributionModeKind.BEST_WORKER, **kwargs)
 
 
 class ExceptionAction(_model_base.Model):
@@ -216,7 +210,7 @@ class ExceptionAction(_model_base.Model):
     __mapping__: Dict[str, _model_base.Model] = {}
     id: Optional[str] = rest_field()
     """Unique Id of the exception action."""
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of ExceptionAction. Required. Known values are:
      \"cancel\", \"manualReclassify\", and \"reclassify\"."""
 
@@ -224,6 +218,7 @@ class ExceptionAction(_model_base.Model):
     def __init__(
         self,
         *,
+        kind: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ):
         ...
@@ -235,9 +230,8 @@ class ExceptionAction(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
@@ -283,9 +277,8 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[ExceptionActionKind.CANCEL] = ExceptionActionKind.CANCEL
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ExceptionActionKind.CANCEL, **kwargs)
 
 
 class CancelJobOptions(_model_base.Model):
@@ -498,13 +491,27 @@ class QueueSelectorAttachment(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of QueueSelectorAttachment. Required. Known values
      are: \"conditional\", \"passThrough\", \"ruleEngine\", \"static\", and \"weightedAllocation\"."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator="conditional"):
@@ -547,9 +554,8 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[QueueSelectorAttachmentKind.CONDITIONAL] = QueueSelectorAttachmentKind.CONDITIONAL
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=QueueSelectorAttachmentKind.CONDITIONAL, **kwargs)
 
 
 class WorkerSelectorAttachment(_model_base.Model):
@@ -569,14 +575,28 @@ class WorkerSelectorAttachment(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of WorkerSelectorAttachment. Required. Known
      values are: \"conditional\", \"passThrough\", \"ruleEngine\", \"static\", and
      \"weightedAllocation\"."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="conditional"):
@@ -619,9 +639,8 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[WorkerSelectorAttachmentKind.CONDITIONAL] = WorkerSelectorAttachmentKind.CONDITIONAL
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=WorkerSelectorAttachmentKind.CONDITIONAL, **kwargs)
 
 
 class DeclineJobOfferOptions(_model_base.Model):
@@ -686,13 +705,27 @@ class RouterRule(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of RouterRule. Required. Known values are:
      \"directMap\", \"expression\", \"function\", \"static\", and \"webhook\"."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class DirectMapRouterRule(RouterRule, discriminator="directMap"):
@@ -708,10 +741,6 @@ class DirectMapRouterRule(RouterRule, discriminator="directMap"):
     kind: Literal[RouterRuleKind.DIRECT_MAP] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
      DirectMapRouterRule."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RouterRuleKind.DIRECT_MAP] = RouterRuleKind.DIRECT_MAP
 
 
 class DistributionPolicy(_model_base.Model):
@@ -867,13 +896,27 @@ class ExceptionTrigger(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of ExceptionTrigger. Required. Known values are:
      \"queueLength\" and \"waitTime\"."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class ExpressionRouterRule(RouterRule, discriminator="expression"):
@@ -915,9 +958,8 @@ class ExpressionRouterRule(RouterRule, discriminator="expression"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RouterRuleKind.EXPRESSION] = RouterRuleKind.EXPRESSION
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RouterRuleKind.EXPRESSION, **kwargs)
 
 
 class FunctionRouterRule(RouterRule, discriminator="function"):
@@ -958,9 +1000,8 @@ class FunctionRouterRule(RouterRule, discriminator="function"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RouterRuleKind.FUNCTION] = RouterRuleKind.FUNCTION
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RouterRuleKind.FUNCTION, **kwargs)
 
 
 class FunctionRouterRuleCredential(_model_base.Model):
@@ -1025,13 +1066,27 @@ class JobMatchingMode(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: Literal[None] = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of JobMatchingMode. Required. Known values are:
      \"queueAndMatch\", \"scheduleAndSuspend\", and \"suspend\"."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
 
 
 class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
@@ -1076,9 +1131,8 @@ class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[DistributionModeKind.LONGEST_IDLE] = DistributionModeKind.LONGEST_IDLE
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=DistributionModeKind.LONGEST_IDLE, **kwargs)
 
 
 class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manualReclassify"):
@@ -1128,9 +1182,8 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manualRecl
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[ExceptionActionKind.MANUAL_RECLASSIFY] = ExceptionActionKind.MANUAL_RECLASSIFY
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ExceptionActionKind.MANUAL_RECLASSIFY, **kwargs)
 
 
 class OAuth2WebhookClientCredential(_model_base.Model):
@@ -1211,9 +1264,8 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[QueueSelectorAttachmentKind.PASS_THROUGH] = QueueSelectorAttachmentKind.PASS_THROUGH
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=QueueSelectorAttachmentKind.PASS_THROUGH, **kwargs)
 
 
 class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="passThrough"):
@@ -1265,9 +1317,8 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[WorkerSelectorAttachmentKind.PASS_THROUGH] = WorkerSelectorAttachmentKind.PASS_THROUGH
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=WorkerSelectorAttachmentKind.PASS_THROUGH, **kwargs)
 
 
 class QueueAndMatchMode(JobMatchingMode, discriminator="queueAndMatch"):
@@ -1284,10 +1335,6 @@ class QueueAndMatchMode(JobMatchingMode, discriminator="queueAndMatch"):
     kind: Literal[JobMatchingModeKind.QUEUE_AND_MATCH] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing QueueAndMatchMode. Required. Discriminator value for
      QueueAndMatchMode."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[JobMatchingModeKind.QUEUE_AND_MATCH] = JobMatchingModeKind.QUEUE_AND_MATCH
 
 
 class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queueLength"):
@@ -1324,9 +1371,8 @@ class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queueLength")
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[ExceptionTriggerKind.QUEUE_LENGTH] = ExceptionTriggerKind.QUEUE_LENGTH
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ExceptionTriggerKind.QUEUE_LENGTH, **kwargs)
 
 
 class QueueWeightedAllocation(_model_base.Model):
@@ -1411,9 +1457,8 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[ExceptionActionKind.RECLASSIFY] = ExceptionActionKind.RECLASSIFY
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ExceptionActionKind.RECLASSIFY, **kwargs)
 
 
 class ReclassifyJobOptions(_model_base.Model):
@@ -1467,9 +1512,8 @@ class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[DistributionModeKind.ROUND_ROBIN] = DistributionModeKind.ROUND_ROBIN
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=DistributionModeKind.ROUND_ROBIN, **kwargs)
 
 
 class RouterChannel(_model_base.Model):
@@ -2031,6 +2075,9 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :vartype load_ratio: float
     :ivar available_for_offers: A flag indicating this worker is open to receive offers or not.
     :vartype available_for_offers: bool
+    :ivar max_concurrent_offers: If this is set, the worker will only receive up to this many new
+     offers at a time.
+    :vartype max_concurrent_offers: int
     """
 
     etag: str = rest_field(visibility=["read"])
@@ -2062,6 +2109,8 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
      of '0' means no capacity is currently consumed."""
     available_for_offers: Optional[bool] = rest_field(name="availableForOffers")
     """A flag indicating this worker is open to receive offers or not."""
+    max_concurrent_offers: Optional[int] = rest_field(name="maxConcurrentOffers")
+    """If this is set, the worker will only receive up to this many new offers at a time."""
 
     @overload
     def __init__(
@@ -2073,6 +2122,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
         tags: Optional[Dict[str, Any]] = None,
         channels: Optional[List["_models.RouterChannel"]] = None,
         available_for_offers: Optional[bool] = None,
+        max_concurrent_offers: Optional[int] = None,
     ):
         ...
 
@@ -2234,9 +2284,8 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[QueueSelectorAttachmentKind.RULE_ENGINE] = QueueSelectorAttachmentKind.RULE_ENGINE
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=QueueSelectorAttachmentKind.RULE_ENGINE, **kwargs)
 
 
 class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="ruleEngine"):
@@ -2272,9 +2321,8 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[WorkerSelectorAttachmentKind.RULE_ENGINE] = WorkerSelectorAttachmentKind.RULE_ENGINE
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=WorkerSelectorAttachmentKind.RULE_ENGINE, **kwargs)
 
 
 class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"):
@@ -2311,9 +2359,8 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[JobMatchingModeKind.SCHEDULE_AND_SUSPEND] = JobMatchingModeKind.SCHEDULE_AND_SUSPEND
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=JobMatchingModeKind.SCHEDULE_AND_SUSPEND, **kwargs)
 
 
 class ScoringRuleOptions(_model_base.Model):
@@ -2408,9 +2455,8 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[QueueSelectorAttachmentKind.STATIC] = QueueSelectorAttachmentKind.STATIC
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=QueueSelectorAttachmentKind.STATIC, **kwargs)
 
 
 class StaticRouterRule(RouterRule, discriminator="static"):
@@ -2448,9 +2494,8 @@ class StaticRouterRule(RouterRule, discriminator="static"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RouterRuleKind.STATIC] = RouterRuleKind.STATIC
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RouterRuleKind.STATIC, **kwargs)
 
 
 class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="static"):
@@ -2486,9 +2531,8 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[WorkerSelectorAttachmentKind.STATIC] = WorkerSelectorAttachmentKind.STATIC
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=WorkerSelectorAttachmentKind.STATIC, **kwargs)
 
 
 class SuspendMode(JobMatchingMode, discriminator="suspend"):
@@ -2503,10 +2547,6 @@ class SuspendMode(JobMatchingMode, discriminator="suspend"):
 
     kind: Literal[JobMatchingModeKind.SUSPEND] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing SuspendMode. Required. Discriminator value for SuspendMode."""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[JobMatchingModeKind.SUSPEND] = JobMatchingModeKind.SUSPEND
 
 
 class UnassignJobOptions(_model_base.Model):
@@ -2608,9 +2648,8 @@ class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="waitTime"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[ExceptionTriggerKind.WAIT_TIME] = ExceptionTriggerKind.WAIT_TIME
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=ExceptionTriggerKind.WAIT_TIME, **kwargs)
 
 
 class WebhookRouterRule(RouterRule, discriminator="webhook"):
@@ -2658,12 +2697,13 @@ class WebhookRouterRule(RouterRule, discriminator="webhook"):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[RouterRuleKind.WEBHOOK] = RouterRuleKind.WEBHOOK
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=RouterRuleKind.WEBHOOK, **kwargs)
 
 
-class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discriminator="weightedAllocation"):
+class WeightedAllocationQueueSelectorAttachment(
+    QueueSelectorAttachment, discriminator="weightedAllocation"
+):  # pylint: disable=name-too-long
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -2697,14 +2737,13 @@ class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discrim
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION
-        ] = QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION, **kwargs)
 
 
-class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="weightedAllocation"):
+class WeightedAllocationWorkerSelectorAttachment(
+    WorkerSelectorAttachment, discriminator="weightedAllocation"
+):  # pylint: disable=name-too-long
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -2738,11 +2777,8 @@ class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment, discr
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[
-            WorkerSelectorAttachmentKind.WEIGHTED_ALLOCATION
-        ] = WorkerSelectorAttachmentKind.WEIGHTED_ALLOCATION
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=WorkerSelectorAttachmentKind.WEIGHTED_ALLOCATION, **kwargs)
 
 
 class WorkerWeightedAllocation(_model_base.Model):

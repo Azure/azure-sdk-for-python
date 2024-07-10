@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -84,7 +84,6 @@ class ChatThreadOperations:
         :param skip: Skips chat message read receipts up to a specified position in response. Default
          value is None.
         :type skip: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChatMessageReadReceipt or the result of
          cls(response)
         :rtype:
@@ -175,7 +174,7 @@ class ChatThreadOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -202,7 +201,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -212,7 +210,7 @@ class ChatThreadOperations:
     async def send_chat_read_receipt(  # pylint: disable=inconsistent-return-statements
         self,
         chat_thread_id: str,
-        send_read_receipt_request: IO,
+        send_read_receipt_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -224,11 +222,10 @@ class ChatThreadOperations:
         :param chat_thread_id: Thread id to send the read receipt event to. Required.
         :type chat_thread_id: str
         :param send_read_receipt_request: Read receipt details. Required.
-        :type send_read_receipt_request: IO
+        :type send_read_receipt_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -236,7 +233,10 @@ class ChatThreadOperations:
 
     @distributed_trace_async
     async def send_chat_read_receipt(  # pylint: disable=inconsistent-return-statements
-        self, chat_thread_id: str, send_read_receipt_request: Union[_models.SendReadReceiptRequest, IO], **kwargs: Any
+        self,
+        chat_thread_id: str,
+        send_read_receipt_request: Union[_models.SendReadReceiptRequest, IO[bytes]],
+        **kwargs: Any
     ) -> None:
         """Sends a read receipt event to a thread, on behalf of a user.
 
@@ -245,12 +245,9 @@ class ChatThreadOperations:
         :param chat_thread_id: Thread id to send the read receipt event to. Required.
         :type chat_thread_id: str
         :param send_read_receipt_request: Read receipt details. Is either a SendReadReceiptRequest type
-         or a IO type. Required.
-        :type send_read_receipt_request: ~azure.communication.chat.models.SendReadReceiptRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or a IO[bytes] type. Required.
+        :type send_read_receipt_request: ~azure.communication.chat.models.SendReadReceiptRequest or
+         IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -312,7 +309,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:
@@ -338,7 +335,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SendChatMessageResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.SendChatMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -348,7 +344,7 @@ class ChatThreadOperations:
     async def send_chat_message(
         self,
         chat_thread_id: str,
-        send_chat_message_request: IO,
+        send_chat_message_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -360,11 +356,10 @@ class ChatThreadOperations:
         :param chat_thread_id: The thread id to send the message to. Required.
         :type chat_thread_id: str
         :param send_chat_message_request: Details of the message to send. Required.
-        :type send_chat_message_request: IO
+        :type send_chat_message_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SendChatMessageResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.SendChatMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -372,7 +367,10 @@ class ChatThreadOperations:
 
     @distributed_trace_async
     async def send_chat_message(
-        self, chat_thread_id: str, send_chat_message_request: Union[_models.SendChatMessageRequest, IO], **kwargs: Any
+        self,
+        chat_thread_id: str,
+        send_chat_message_request: Union[_models.SendChatMessageRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SendChatMessageResult:
         """Sends a message to a thread.
 
@@ -381,12 +379,9 @@ class ChatThreadOperations:
         :param chat_thread_id: The thread id to send the message to. Required.
         :type chat_thread_id: str
         :param send_chat_message_request: Details of the message to send. Is either a
-         SendChatMessageRequest type or a IO type. Required.
-        :type send_chat_message_request: ~azure.communication.chat.models.SendChatMessageRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         SendChatMessageRequest type or a IO[bytes] type. Required.
+        :type send_chat_message_request: ~azure.communication.chat.models.SendChatMessageRequest or
+         IO[bytes]
         :return: SendChatMessageResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.SendChatMessageResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -448,7 +443,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("SendChatMessageResult", pipeline_response)
@@ -478,7 +473,6 @@ class ChatThreadOperations:
         :param start_time: The earliest point in time to get messages up to. The timestamp should be in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``. Default value is None.
         :type start_time: ~datetime.datetime
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChatMessage or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.models.ChatMessage]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -567,7 +561,7 @@ class ChatThreadOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -584,7 +578,6 @@ class ChatThreadOperations:
         :type chat_thread_id: str
         :param chat_message_id: The message id. Required.
         :type chat_message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ChatMessage or the result of cls(response)
         :rtype: ~azure.communication.chat.models.ChatMessage
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -635,7 +628,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("ChatMessage", pipeline_response)
@@ -668,7 +661,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -679,7 +671,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         chat_message_id: str,
-        update_chat_message_request: IO,
+        update_chat_message_request: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -693,11 +685,10 @@ class ChatThreadOperations:
         :param chat_message_id: The message id. Required.
         :type chat_message_id: str
         :param update_chat_message_request: Details of the request to update the message. Required.
-        :type update_chat_message_request: IO
+        :type update_chat_message_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -708,7 +699,7 @@ class ChatThreadOperations:
         self,
         chat_thread_id: str,
         chat_message_id: str,
-        update_chat_message_request: Union[_models.UpdateChatMessageRequest, IO],
+        update_chat_message_request: Union[_models.UpdateChatMessageRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Updates a message.
@@ -720,13 +711,9 @@ class ChatThreadOperations:
         :param chat_message_id: The message id. Required.
         :type chat_message_id: str
         :param update_chat_message_request: Details of the request to update the message. Is either a
-         UpdateChatMessageRequest type or a IO type. Required.
+         UpdateChatMessageRequest type or a IO[bytes] type. Required.
         :type update_chat_message_request: ~azure.communication.chat.models.UpdateChatMessageRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -789,7 +776,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:
@@ -807,7 +794,6 @@ class ChatThreadOperations:
         :type chat_thread_id: str
         :param chat_message_id: The message id. Required.
         :type chat_message_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -858,7 +844,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:
@@ -879,7 +865,6 @@ class ChatThreadOperations:
         :type max_page_size: int
         :param skip: Skips participants up to a specified position in response. Default value is None.
         :type skip: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ChatParticipant or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.chat.models.ChatParticipant]
@@ -969,7 +954,7 @@ class ChatThreadOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -998,7 +983,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1008,7 +992,7 @@ class ChatThreadOperations:
     async def remove_chat_participant(  # pylint: disable=inconsistent-return-statements
         self,
         chat_thread_id: str,
-        participant_communication_identifier: IO,
+        participant_communication_identifier: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1021,12 +1005,11 @@ class ChatThreadOperations:
         :type chat_thread_id: str
         :param participant_communication_identifier: Id of the thread participant to remove from the
          thread. Required.
-        :type participant_communication_identifier: IO
+        :type participant_communication_identifier: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Known values are: 'application/json', 'application/merge-patch+json'. Default value is
          "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1036,7 +1019,7 @@ class ChatThreadOperations:
     async def remove_chat_participant(  # pylint: disable=inconsistent-return-statements
         self,
         chat_thread_id: str,
-        participant_communication_identifier: Union[_models.CommunicationIdentifierModel, IO],
+        participant_communication_identifier: Union[_models.CommunicationIdentifierModel, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Remove a participant from a thread.
@@ -1046,13 +1029,9 @@ class ChatThreadOperations:
         :param chat_thread_id: Thread id to remove the participant from. Required.
         :type chat_thread_id: str
         :param participant_communication_identifier: Id of the thread participant to remove from the
-         thread. Is either a CommunicationIdentifierModel type or a IO type. Required.
+         thread. Is either a CommunicationIdentifierModel type or a IO[bytes] type. Required.
         :type participant_communication_identifier:
-         ~azure.communication.chat.models.CommunicationIdentifierModel or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.communication.chat.models.CommunicationIdentifierModel or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1114,7 +1093,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1141,7 +1120,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddChatParticipantsResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.AddChatParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1151,7 +1129,7 @@ class ChatThreadOperations:
     async def add_chat_participants(
         self,
         chat_thread_id: str,
-        add_chat_participants_request: IO,
+        add_chat_participants_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1163,11 +1141,10 @@ class ChatThreadOperations:
         :param chat_thread_id: Id of the thread to add participants to. Required.
         :type chat_thread_id: str
         :param add_chat_participants_request: Thread participants to be added to the thread. Required.
-        :type add_chat_participants_request: IO
+        :type add_chat_participants_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AddChatParticipantsResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.AddChatParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1177,7 +1154,7 @@ class ChatThreadOperations:
     async def add_chat_participants(
         self,
         chat_thread_id: str,
-        add_chat_participants_request: Union[_models.AddChatParticipantsRequest, IO],
+        add_chat_participants_request: Union[_models.AddChatParticipantsRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.AddChatParticipantsResult:
         """Adds thread participants to a thread. If participants already exist, no change occurs.
@@ -1187,13 +1164,9 @@ class ChatThreadOperations:
         :param chat_thread_id: Id of the thread to add participants to. Required.
         :type chat_thread_id: str
         :param add_chat_participants_request: Thread participants to be added to the thread. Is either
-         a AddChatParticipantsRequest type or a IO type. Required.
+         a AddChatParticipantsRequest type or a IO[bytes] type. Required.
         :type add_chat_participants_request:
-         ~azure.communication.chat.models.AddChatParticipantsRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.communication.chat.models.AddChatParticipantsRequest or IO[bytes]
         :return: AddChatParticipantsResult or the result of cls(response)
         :rtype: ~azure.communication.chat.models.AddChatParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1255,7 +1228,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("AddChatParticipantsResult", pipeline_response)
@@ -1285,7 +1258,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1295,7 +1267,7 @@ class ChatThreadOperations:
     async def update_chat_thread_properties(  # pylint: disable=inconsistent-return-statements
         self,
         chat_thread_id: str,
-        update_chat_thread_request: IO,
+        update_chat_thread_request: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
@@ -1307,11 +1279,10 @@ class ChatThreadOperations:
         :param chat_thread_id: The id of the thread to update. Required.
         :type chat_thread_id: str
         :param update_chat_thread_request: Request payload for updating a chat thread. Required.
-        :type update_chat_thread_request: IO
+        :type update_chat_thread_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1319,7 +1290,10 @@ class ChatThreadOperations:
 
     @distributed_trace_async
     async def update_chat_thread_properties(  # pylint: disable=inconsistent-return-statements
-        self, chat_thread_id: str, update_chat_thread_request: Union[_models.UpdateChatThreadRequest, IO], **kwargs: Any
+        self,
+        chat_thread_id: str,
+        update_chat_thread_request: Union[_models.UpdateChatThreadRequest, IO[bytes]],
+        **kwargs: Any
     ) -> None:
         """Updates a thread's properties.
 
@@ -1328,13 +1302,9 @@ class ChatThreadOperations:
         :param chat_thread_id: The id of the thread to update. Required.
         :type chat_thread_id: str
         :param update_chat_thread_request: Request payload for updating a chat thread. Is either a
-         UpdateChatThreadRequest type or a IO type. Required.
+         UpdateChatThreadRequest type or a IO[bytes] type. Required.
         :type update_chat_thread_request: ~azure.communication.chat.models.UpdateChatThreadRequest or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1396,7 +1366,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1410,7 +1380,6 @@ class ChatThreadOperations:
 
         :param chat_thread_id: Id of the thread. Required.
         :type chat_thread_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ChatThreadProperties or the result of cls(response)
         :rtype: ~azure.communication.chat.models.ChatThreadProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1460,7 +1429,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("ChatThreadProperties", pipeline_response)
@@ -1492,7 +1461,6 @@ class ChatThreadOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1502,7 +1470,7 @@ class ChatThreadOperations:
     async def send_typing_notification(  # pylint: disable=inconsistent-return-statements
         self,
         chat_thread_id: str,
-        send_typing_notification_request: Optional[IO] = None,
+        send_typing_notification_request: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1515,11 +1483,10 @@ class ChatThreadOperations:
         :type chat_thread_id: str
         :param send_typing_notification_request: Details of the typing notification request. Default
          value is None.
-        :type send_typing_notification_request: IO
+        :type send_typing_notification_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1529,7 +1496,7 @@ class ChatThreadOperations:
     async def send_typing_notification(  # pylint: disable=inconsistent-return-statements
         self,
         chat_thread_id: str,
-        send_typing_notification_request: Optional[Union[_models.SendTypingNotificationRequest, IO]] = None,
+        send_typing_notification_request: Optional[Union[_models.SendTypingNotificationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> None:
         """Posts a typing event to a thread, on behalf of a user.
@@ -1539,13 +1506,9 @@ class ChatThreadOperations:
         :param chat_thread_id: Id of the thread. Required.
         :type chat_thread_id: str
         :param send_typing_notification_request: Details of the typing notification request. Is either
-         a SendTypingNotificationRequest type or a IO type. Default value is None.
+         a SendTypingNotificationRequest type or a IO[bytes] type. Default value is None.
         :type send_typing_notification_request:
-         ~azure.communication.chat.models.SendTypingNotificationRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.communication.chat.models.SendTypingNotificationRequest or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1610,7 +1573,7 @@ class ChatThreadOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             raise HttpResponseError(response=response)
 
         if cls:

@@ -43,13 +43,11 @@ class SentenceTransformerEmbeddings:
         """
         Compute doc embeddings using a HuggingFace transformer model.
 
-        Args:
-        ----
-            texts: The list of texts to embed.
+        :param texts: The list of texts to embed.
+        :type texts: List[str]
 
-        Returns:
-        -------
-            List of embeddings, one for each text.
+        :return: List of embeddings, one for each text.
+        :rtype: List[List[float]]
         """
         import sentence_transformers
 
@@ -67,12 +65,10 @@ class SentenceTransformerEmbeddings:
         """
         Compute query embeddings using a HuggingFace transformer model.
 
-        Args:
-        ----
-            text: The text to embed.
+        :param text: The text to embed.
+        :type text: str
 
-        Returns:
-        -------
-            Embeddings for the text.
+        :return: Embeddings for the text.
+        :rtype: List[float]
         """
         return self.embed_documents([text])[0]

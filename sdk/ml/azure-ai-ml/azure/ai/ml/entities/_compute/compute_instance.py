@@ -167,6 +167,10 @@ class ComputeInstance(Compute):
     :type enable_sso: bool
     :param enable_root_access: Enable or disable root access. Defaults to True.
     :type enable_root_access: bool
+    :param release_quota_on_stop: Release quota on stop for the compute instance. Defaults to False.
+    :type release_quota_on_stop: bool
+    :param enable_os_patching: Enable or disable OS patching for the compute instance. Defaults to False.
+    :type enable_os_patching: bool
 
     .. admonition:: Example:
 
@@ -198,6 +202,8 @@ class ComputeInstance(Compute):
         custom_applications: Optional[List[CustomApplications]] = None,
         enable_sso: bool = True,
         enable_root_access: bool = True,
+        release_quota_on_stop: bool = False,
+        enable_os_patching: bool = False,
         **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -226,6 +232,8 @@ class ComputeInstance(Compute):
         self.enable_node_public_ip = enable_node_public_ip
         self.enable_sso = enable_sso
         self.enable_root_access = enable_root_access
+        self.release_quota_on_stop = release_quota_on_stop
+        self.enable_os_patching = enable_os_patching
         self.custom_applications = custom_applications
         self.subnet = None
 
@@ -308,6 +316,8 @@ class ComputeInstance(Compute):
             enable_node_public_ip=self.enable_node_public_ip,
             enable_sso=self.enable_sso,
             enable_root_access=self.enable_root_access,
+            release_quota_on_stop=self.release_quota_on_stop,
+            enable_os_patching=self.enable_os_patching,
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
@@ -372,20 +382,26 @@ class ComputeInstance(Compute):
         ):
             network_settings = NetworkSettings(
                 subnet=prop.properties.subnet.id if prop.properties.subnet else None,
-                public_ip_address=prop.properties.connectivity_endpoints.public_ip_address
-                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.public_ip_address
-                else None,
-                private_ip_address=prop.properties.connectivity_endpoints.private_ip_address
-                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
-                else None,
+                public_ip_address=(
+                    prop.properties.connectivity_endpoints.public_ip_address
+                    if prop.properties.connectivity_endpoints
+                    and prop.properties.connectivity_endpoints.public_ip_address
+                    else None
+                ),
+                private_ip_address=(
+                    prop.properties.connectivity_endpoints.private_ip_address
+                    if prop.properties.connectivity_endpoints
+                    and prop.properties.connectivity_endpoints.private_ip_address
+                    else None
+                ),
             )
         os_image_metadata = None
         if prop.properties and prop.properties.os_image_metadata:
             metadata = prop.properties.os_image_metadata
             os_image_metadata = ImageMetadata(
-                is_latest_os_image_version=metadata.is_latest_os_image_version
-                if metadata.is_latest_os_image_version is not None
-                else None,
+                is_latest_os_image_version=(
+                    metadata.is_latest_os_image_version if metadata.is_latest_os_image_version is not None else None
+                ),
                 current_image_version=metadata.current_image_version if metadata.current_image_version else None,
                 latest_image_version=metadata.latest_image_version if metadata.latest_image_version else None,
             )
@@ -413,46 +429,72 @@ class ComputeInstance(Compute):
             resource_id=prop.resource_id,
             tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
-            provisioning_errors=prop.provisioning_errors[0].error.code
-            if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
-            else None,
+            provisioning_errors=(
+                prop.provisioning_errors[0].error.code
+                if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
+                else None
+            ),
             size=prop.properties.vm_size if prop.properties else None,
             state=prop.properties.state if prop.properties else None,
-            last_operation=prop.properties.last_operation.as_dict()
-            if prop.properties and prop.properties.last_operation
-            else None,
-            services=[app.as_dict() for app in prop.properties.applications]
-            if prop.properties and prop.properties.applications
-            else None,
-            created_on=rest_obj.properties.created_on.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
-            if rest_obj.properties and rest_obj.properties.created_on is not None
-            else None,
+            last_operation=(
+                prop.properties.last_operation.as_dict() if prop.properties and prop.properties.last_operation else None
+            ),
+            services=(
+                [app.as_dict() for app in prop.properties.applications]
+                if prop.properties and prop.properties.applications
+                else None
+            ),
+            created_on=(
+                rest_obj.properties.created_on.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+                if rest_obj.properties and rest_obj.properties.created_on is not None
+                else None
+            ),
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,
-            ssh_public_access_enabled=_ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
-            if (prop.properties and prop.properties.ssh_settings and prop.properties.ssh_settings.ssh_public_access)
-            else None,
-            schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
-            if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
-            else None,
+            ssh_public_access_enabled=(
+                _ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
+                if (prop.properties and prop.properties.ssh_settings and prop.properties.ssh_settings.ssh_public_access)
+                else None
+            ),
+            schedules=(
+                ComputeSchedules._from_rest_object(prop.properties.schedules)
+                if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
+                else None
+            ),
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
-            setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
-            if prop.properties and prop.properties.setup_scripts
-            else None,
+            setup_scripts=(
+                SetupScripts._from_rest_object(prop.properties.setup_scripts)
+                if prop.properties and prop.properties.setup_scripts
+                else None
+            ),
             idle_time_before_shutdown=idle_time_before_shutdown,
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
             os_image_metadata=os_image_metadata,
-            enable_node_public_ip=prop.properties.enable_node_public_ip
-            if (prop.properties and prop.properties.enable_node_public_ip is not None)
-            else True,
+            enable_node_public_ip=(
+                prop.properties.enable_node_public_ip
+                if (prop.properties and prop.properties.enable_node_public_ip is not None)
+                else True
+            ),
             custom_applications=custom_applications,
-            enable_sso=prop.properties.enable_sso
-            if (prop.properties and prop.properties.enable_sso is not None)
-            else True,
-            enable_root_access=prop.properties.enable_root_access
-            if (prop.properties and prop.properties.enable_root_access is not None)
-            else True,
+            enable_sso=(
+                prop.properties.enable_sso if (prop.properties and prop.properties.enable_sso is not None) else True
+            ),
+            enable_root_access=(
+                prop.properties.enable_root_access
+                if (prop.properties and prop.properties.enable_root_access is not None)
+                else True
+            ),
+            release_quota_on_stop=(
+                prop.properties.release_quota_on_stop
+                if (prop.properties and prop.properties.release_quota_on_stop is not None)
+                else False
+            ),
+            enable_os_patching=(
+                prop.properties.enable_os_patching
+                if (prop.properties and prop.properties.enable_os_patching is not None)
+                else False
+            ),
         )
         return response
 

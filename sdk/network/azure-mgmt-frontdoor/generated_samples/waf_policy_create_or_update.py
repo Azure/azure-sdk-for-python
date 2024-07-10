@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.frontdoor import FrontDoorManagementClient
 
 """
@@ -33,6 +36,7 @@ def main():
         resource_group_name="rg1",
         policy_name="Policy1",
         parameters={
+            "location": "WestUs",
             "properties": {
                 "customRules": {
                     "rules": [
@@ -113,19 +117,31 @@ def main():
                 },
                 "policySettings": {
                     "customBlockResponseBody": "PGh0bWw+CjxoZWFkZXI+PHRpdGxlPkhlbGxvPC90aXRsZT48L2hlYWRlcj4KPGJvZHk+CkhlbGxvIHdvcmxkCjwvYm9keT4KPC9odG1sPg==",
-                    "customBlockResponseStatusCode": 499,
+                    "customBlockResponseStatusCode": 429,
                     "enabledState": "Enabled",
+                    "javascriptChallengeExpirationInMinutes": 30,
+                    "logScrubbing": {
+                        "scrubbingRules": [
+                            {
+                                "matchVariable": "RequestIPAddress",
+                                "selector": None,
+                                "selectorMatchOperator": "EqualsAny",
+                                "state": "Enabled",
+                            }
+                        ],
+                        "state": "Enabled",
+                    },
                     "mode": "Prevention",
                     "redirectUrl": "http://www.bing.com",
                     "requestBodyCheck": "Disabled",
                 },
             },
-            "sku": {"name": "Classic_AzureFrontDoor"},
+            "sku": {"name": "Premium_AzureFrontDoor"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2022-05-01/examples/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/frontdoor/resource-manager/Microsoft.Network/stable/2024-02-01/examples/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

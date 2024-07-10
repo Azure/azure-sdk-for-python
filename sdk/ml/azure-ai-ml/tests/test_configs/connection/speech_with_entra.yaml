@@ -1,0 +1,3 @@
+name: speech_entra
+type: azure_speech_services
+endpoint: my_endpoint

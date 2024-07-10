@@ -10,7 +10,6 @@ from typing import Optional, Dict, Union
 
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants._common import LOCAL_PATH
 
 def find_config_file_path(
     path: Optional[Union[os.PathLike, str]] = None,

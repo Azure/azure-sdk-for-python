@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
 
 """
@@ -44,7 +47,7 @@ def main():
                 "administratorLogin": "cloudsa",
                 "administratorLoginPassword": "your_password",
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
+                "backup": {"backupIntervalHours": 24, "backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
                 "createMode": "Default",
                 "dataEncryption": {
                     "geoBackupKeyURI": "https://test-geo.vault.azure.net/keys/key/c8a92236622244c0a4fdb892666f671a",
@@ -54,7 +57,12 @@ def main():
                     "type": "AzureKeyVault",
                 },
                 "highAvailability": {"mode": "ZoneRedundant", "standbyAvailabilityZone": "3"},
-                "storage": {"autoGrow": "Disabled", "iops": 600, "storageSizeGB": 100},
+                "storage": {
+                    "autoGrow": "Disabled",
+                    "iops": 600,
+                    "storageRedundancy": "LocalRedundancy",
+                    "storageSizeGB": 100,
+                },
                 "version": "5.7",
             },
             "sku": {"name": "Standard_D2ds_v4", "tier": "GeneralPurpose"},
@@ -64,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-10-01-preview/examples/ServerCreateWithBYOK.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-02-01-preview/examples/ServerCreateWithBYOK.json
 if __name__ == "__main__":
     main()

@@ -34,6 +34,7 @@
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
     "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
+    "sdk/ai/azure-ai-resources/azure/ai/resources/_restclient/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -99,6 +100,8 @@
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_autogen_entities/_model_base.py",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_autogen_entities/_serialization.py",
     "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
     "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
@@ -173,6 +176,7 @@
     "AsyncIterable",
     "asyncio",
     "avroencoder",
+    "Avs",
     "azcmagent",
     "azsdk",
     "azurecr",
@@ -194,8 +198,10 @@
     "contosodataset",
     "centralus",
     "centraluseuap",
+    "corehttp",
     "creds",
     "ctoring",
+    "ctxt",
     "ctypes",
     "curr",
     "dateutil",
@@ -205,6 +211,7 @@
     "dependened",
     "deque",
     "deserialization",
+    "deserializers",
     "disablecov",
     "distilbert",
     "distilroberta",
@@ -293,6 +300,8 @@
     "mibps",
     "mgmt",
     "mhsm",
+    "mros",
+    "Nify",
     "mipsle",
     "mktime",
     "mlindex",
@@ -445,11 +454,17 @@
     "yarl",
     "SDDL",
     "dacl",
+    "wday",
     "whls",
     "aiter",
     "solft",
     "amltmp",
-    "amltemp"
+    "amltemp",
+    "deserializers",
+    "dicom",
+    "WINDOWSVMIMAGE",
+    "LINUXVMIMAGE",
+    "MACVMIMAGE"
   ],
   "overrides": [
     {
@@ -551,6 +566,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/tests/*.py",
+      "words": [
+        "infile"
+      ]
+    },
+    {
       "filename": "sdk/identity/test-resources*",
       "words": [
         "kubelet",
@@ -561,6 +582,12 @@
       "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
       "words": [
         "wammsa"
+      ]
+    },
+    {
+      "filename": "sdk/identity/azure-identity-broker/tests/*.py",
+      "words": [
+        "signin"
       ]
     },
     {
@@ -672,37 +699,37 @@
     },
     {
       "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
-      "words": ["ctxt", "somethingstuid"]
+      "words": [ "ctxt", "somethingstuid" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv", "summ"],
+      "words": [ "conv", "summ" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
-      "words": ["undoc"]
+      "words": [ "undoc" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
-      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
+      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker", "ADTO"],
+      "words": [ "qnas", "qnamaker", "ADTO" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
-      "words": ["groovin", "Olufsen"]
+      "words": [ "groovin", "Olufsen" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
-      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
+      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
-      "words": ["Apim", "cognituve"]
+      "words": [ "Apim", "cognituve" ]
     },
     {
       "filename": "sdk/communication/**",
@@ -923,7 +950,9 @@
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa",
-        "Thawte"
+        "Thawte",
+        "myalias",
+        "mydomain"
       ]
     },
     {
@@ -977,7 +1006,18 @@
         "msecs",
         "mycontainer",
         "semconv",
-        "updown"
+        "updown",
+        "uvicorn"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/**/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday",
+        "Nify"
       ]
     },
     {
@@ -1100,7 +1140,7 @@
     },
     {
       "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
-      "words":[
+      "words": [
         "vusers"
       ]
     },
@@ -1257,6 +1297,16 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-inference/**",
+      "words": [
+        "ubinary",
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-generative/**",
       "words": [
         "tqdm",
@@ -1264,8 +1314,21 @@
       ]
     },
     {
+      "filename": "sdk/openai/azure-openai/**",
+      "words": [
+        "azuread",
+        "AZUREAD",
+        "dall",
+        "Lepardus",
+        "WEBVTT",
+        "logit",
+        "byod",
+        "logprobs"
+      ]
+    },
+    {
       "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
-      "words":[
+      "words": [
         "sharedwus"
       ]
     },
@@ -1293,8 +1356,8 @@
         "resouce",
         "nnumeral"
       ]
-     },
-     {
+    },
+    {
       "filename": "sdk/storage/azure-storage-file-share/**",
       "words": [
         "XSMB",
@@ -1323,7 +1386,8 @@
         "Ffile",
         "Fsubdir",
         "Fdir",
-        "adal"
+        "adal",
+        "mytestshare"
       ]
     },
     {
@@ -1416,7 +1480,9 @@
         "Docoptype",
         "mycontainer",
         "iscontinuationexpected",
-        "aalapatirvbd"
+        "aalapatirvbd",
+        "unconfigure",
+        "undoc"
       ]
     },
     {
@@ -1487,7 +1553,7 @@
         "jsonify",
         "ints",
         "inirudebwoy",
-	"mghextreme"
+        "mghextreme"
       ]
     },
     {
@@ -1638,14 +1704,33 @@
         "Nify",
         "ctxt",
         "unflattened",
-	      "deseralize",
-	      "wday"
+        "deseralize",
+        "wday",
+        "mros"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/models/*.py",
+      "words": [
+        "vcpus"
       ]
     },
     {
       "filename": "sdk/appconfiguration/test-resources.json",
       "words": [
         "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/**",
+      "words": [
+        "kvset"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
+      "words": [
+        "adfsasdfzsd"
       ]
     },
     {
@@ -1665,9 +1750,15 @@
       ]
     },
     {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_client.py",
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/**/_client.py",
       "words": [
         "awps"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/stress/*.py",
+      "words": [
+        "psutil"
       ]
     },
     {
@@ -1696,6 +1787,59 @@
       "words": [
         "ctxt",
         "wday"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-datamap/azure/purview/datamap/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "deserializers",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/translation/azure-ai-translation-document/azure/ai/translation/document/*.py",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
+      "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
+      "words": [
+        "ctxt",
+        "mros",
+        "Nify",
+        "loinc",
+        "wday",
+        "SNOMED"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/**",
+      "words": [
+        "mros",
+        "Nify",
+        "ctxt",
+        "wday",
+        "faceid",
+        "facelistid",
+        "largefacelistid",
+        "persongroupid",
+        "largepersongroupid",
+        "dynamicpersongroupid",
+        "personid",
+        "maxnumofcandidatesreturned"
+      ]
+    },
+    {
+      "filename": "sdk/face/azure-ai-vision-face/tests/**",
+      "words": [
+        "dcid"
       ]
     }
   ],

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -30,6 +31,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -221,7 +226,6 @@ class ManagedVirtualNetworksOperations:
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedVirtualNetworkResource or the result of
          cls(response)
         :rtype:
@@ -234,7 +238,7 @@ class ManagedVirtualNetworksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedVirtualNetworkListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -245,17 +249,16 @@ class ManagedVirtualNetworksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_factory_request(
+                _request = build_list_by_factory_request(
                     resource_group_name=resource_group_name,
                     factory_name=factory_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_factory.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -267,13 +270,13 @@ class ManagedVirtualNetworksOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedVirtualNetworkListResponse", pipeline_response)
@@ -283,11 +286,11 @@ class ManagedVirtualNetworksOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -298,10 +301,6 @@ class ManagedVirtualNetworksOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_factory.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks"
-    }
 
     @overload
     def create_or_update(
@@ -332,7 +331,6 @@ class ManagedVirtualNetworksOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedVirtualNetworkResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -344,7 +342,7 @@ class ManagedVirtualNetworksOperations:
         resource_group_name: str,
         factory_name: str,
         managed_virtual_network_name: str,
-        managed_virtual_network: IO,
+        managed_virtual_network: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -359,7 +357,7 @@ class ManagedVirtualNetworksOperations:
         :param managed_virtual_network_name: Managed virtual network name. Required.
         :type managed_virtual_network_name: str
         :param managed_virtual_network: Managed Virtual Network resource definition. Required.
-        :type managed_virtual_network: IO
+        :type managed_virtual_network: IO[bytes]
         :param if_match: ETag of the managed Virtual Network entity. Should only be specified for
          update, for which it should match existing entity or can be * for unconditional update. Default
          value is None.
@@ -367,7 +365,6 @@ class ManagedVirtualNetworksOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedVirtualNetworkResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -379,7 +376,7 @@ class ManagedVirtualNetworksOperations:
         resource_group_name: str,
         factory_name: str,
         managed_virtual_network_name: str,
-        managed_virtual_network: Union[_models.ManagedVirtualNetworkResource, IO],
+        managed_virtual_network: Union[_models.ManagedVirtualNetworkResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ManagedVirtualNetworkResource:
@@ -392,22 +389,18 @@ class ManagedVirtualNetworksOperations:
         :param managed_virtual_network_name: Managed virtual network name. Required.
         :type managed_virtual_network_name: str
         :param managed_virtual_network: Managed Virtual Network resource definition. Is either a
-         ManagedVirtualNetworkResource type or a IO type. Required.
+         ManagedVirtualNetworkResource type or a IO[bytes] type. Required.
         :type managed_virtual_network: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource or
-         IO
+         IO[bytes]
         :param if_match: ETag of the managed Virtual Network entity. Should only be specified for
          update, for which it should match existing entity or can be * for unconditional update. Default
          value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedVirtualNetworkResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -430,7 +423,7 @@ class ManagedVirtualNetworksOperations:
         else:
             _json = self._serialize.body(managed_virtual_network, "ManagedVirtualNetworkResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             managed_virtual_network_name=managed_virtual_network_name,
@@ -440,16 +433,15 @@ class ManagedVirtualNetworksOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -461,13 +453,9 @@ class ManagedVirtualNetworksOperations:
         deserialized = self._deserialize("ManagedVirtualNetworkResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(
@@ -490,12 +478,11 @@ class ManagedVirtualNetworksOperations:
          get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned. Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedVirtualNetworkResource or the result of cls(response)
         :rtype: ~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -509,23 +496,22 @@ class ManagedVirtualNetworksOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ManagedVirtualNetworkResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
             managed_virtual_network_name=managed_virtual_network_name,
             subscription_id=self._config.subscription_id,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -537,10 +523,6 @@ class ManagedVirtualNetworksOperations:
         deserialized = self._deserialize("ManagedVirtualNetworkResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/managedVirtualNetworks/{managedVirtualNetworkName}"
-    }
+        return deserialized  # type: ignore

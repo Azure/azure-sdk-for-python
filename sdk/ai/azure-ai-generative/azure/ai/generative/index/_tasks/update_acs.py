@@ -15,7 +15,7 @@ from packaging import version as pkg_version
 
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
 from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.generative.index._utils.connections import get_connection_credential
+from azure.ai.resources._index._utils.connections import get_connection_credential
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
@@ -67,14 +67,17 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
     """
     Create a search index using the Azure Search SDK.
 
-    Args:
-    ----
-        acs_config (dict): ACS configuration dictionary. Expected to contain:
-            - endpoint: ACS endpoint
-            - index_name: ACS index name
-            - field_mapping: Mappings from a set of fields understoon by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to ACS field names.
-        credential (TokenCredential): Azure credential to use for authentication.
-        embeddings (EmbeddingsContainer): EmbeddingsContainer to use for creating the index. If provided, the index will be configured to support vector search.
+    :param acs_config: ACS configuration dictionary. Expected to contain:
+        - endpoint: ACS endpoint
+        - index_name: ACS index name
+        - field_mapping: Mappings from a set of fields
+          understood by MLIndex (refer to MLIndex.INDEX_FIELD_MAPPING_TYPES) to ACS field names.
+    :type acs_config: dict
+    :param credential: Azure credential to use for authentication.
+    :type credential: TokenCredential
+    :param embeddings: EmbeddingsContainer to use for creating the index.
+        If provided, the index will be configured to support vector search.
+    :type embeddings: Optional[EmbeddingsContainer]
     """
     logger.info(f"Ensuring search index {acs_config['index_name']} exists")
     index_client = SearchIndexClient(endpoint=acs_config["endpoint"], credential=credential, user_agent=acs_user_agent)
@@ -87,21 +90,21 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                 fields.append(
                     SearchableField(name=field_name, type=SearchFieldDataType.String, analyzer_name="standard")
                 )
-            elif field_type == "url" or field_type == "filename":
+            elif field_type in {"url", "filename"}:
                 fields.append(SimpleField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "title":
                 fields.append(SearchableField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "metadata":
                 fields.append(SimpleField(name=field_name, type=SearchFieldDataType.String))
             elif field_type == "embedding":
-                # TODO: Bug 2878424 to address type: ignore in this section
+                assert isinstance(embeddings, EmbeddingsContainer)
                 if current_version >= pkg_version.parse("11.4.0b11"):
                     fields.append(
                         SearchField(
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions=embeddings.get_embedding_dimensions(),  # type: ignore[union-attr]
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
                             vector_search_profile=f"{field_name}_config",
                         )
                     )
@@ -111,7 +114,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                             name=field_name,
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
-                            vector_search_dimensions=embeddings.get_embedding_dimensions(),  # type: ignore[union-attr]
+                            vector_search_dimensions=embeddings.get_embedding_dimensions(),
                             vector_search_configuration=f"{field_name}_config",
                         )
                     )
@@ -123,7 +126,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
 
         if "content" not in acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
             raise RuntimeError(
-                f"ACS index must have a 'content' field. Please specify a 'content' field in the {MLIndex.INDEX_FIELD_MAPPING_KEY} config."
+                "ACS index must have a 'content' field. "
+                + f"Please specify a 'content' field in the {MLIndex.INDEX_FIELD_MAPPING_KEY} config."
             )
 
         vector_search_args = {}
@@ -189,7 +193,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                 )
             else:
                 raise RuntimeError(
-                    f"azure-search-documents version {azure_documents_search_version} is not supported when using embeddings. Please upgrade to 11.4.0b4 or later."
+                    f"azure-search-documents version {azure_documents_search_version} is not supported "
+                    + "when using embeddings. Please upgrade to 11.4.0b4 or later."
                 )
 
         semantic_config = SemanticConfiguration(
@@ -218,17 +223,43 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
         logger.info(f"Search index {acs_config['index_name']} already exists")
 
 
+# pylint: disable=too-many-locals, too-many-branches, too-many-statements
 def create_index_from_raw_embeddings(
     emb: EmbeddingsContainer,
-    acs_config={},
-    connection={},
-    output_path: Optional[Union[Path,str]] = None,
+    acs_config=None,
+    connection=None,
+    output_path: Optional[Union[Path, str]] = None,
     credential: Optional[TokenCredential] = None,
     verbosity: int = 1,
 ) -> MLIndex:
-    """Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex."""
+    """
+    Upload an EmbeddingsContainer to Azure Cognitive Search and return an MLIndex.
+
+    :param emb: The EmbeddingsContainer to upload.
+    :type emb: EmbeddingsContainer
+    :param acs_config: The ACS configuration.
+    :type acs_config: Optional[Dict[str, Any]]
+    :param connection: The connection configuration.
+    :type connection: Optional[Dict[str, Any]]
+    :param output_path: The output path.
+    :type output_path: Optional[Union[Path, str]]
+    :param credential: The credential.
+    :type credential: Optional[TokenCredential]
+    :param verbosity: The verbosity level.
+    :type verbosity: int
+    :return: The MLIndex.
+    :rtype: MLIndex
+    """
+    if acs_config is None:
+        acs_config = {}
+
+    if connection is None:
+        connection = {}
+
     with track_activity(
-        logger, "update_acs", custom_dimensions={"num_documents": len(emb._document_embeddings)}
+        logger,
+        "update_acs",
+        custom_dimensions={"num_documents": len(emb._document_embeddings)},  # pylint: disable=protected-access
     ) as activity_logger:
         logger.info("Updating ACS index")
 
@@ -281,10 +312,10 @@ def create_index_from_raw_embeddings(
             return []
 
         # Delete removed documents
-        def batched_docs_to_delete(embeddings_container) -> Iterator[List[Dict[str, str]]]:
+        def batched_docs_to_delete() -> Iterator[List[Dict[str, str]]]:
             num_deleted_ids = 0
             deleted_ids = []
-            for source_id, source in emb._deleted_sources.items():
+            for source_id, source in emb._deleted_sources.items():  # pylint: disable=protected-access
                 logger.info(f"Deleting all documents from source: {source_id}")
                 for doc_id in source.document_ids:
                     num_deleted_ids += 1
@@ -296,9 +327,10 @@ def create_index_from_raw_embeddings(
                         logger.info(f"Marked document for deletion: {doc_id}")
 
             logger.info(
-                f"{len(deleted_ids)} documents from sources marked for deletion, adding individual documents marked for deletion"
+                f"{len(deleted_ids)} documents from sources marked for deletion, "
+                + "adding individual documents marked for deletion"
             )
-            for doc_id in emb._deleted_documents:
+            for doc_id in emb._deleted_documents:  # pylint: disable=protected-access
                 num_deleted_ids += 1
                 deleted_ids.append({"id": base64.urlsafe_b64encode(doc_id.encode("utf-8")).decode("utf-8")})
                 if len(deleted_ids) == AZURE_SEARCH_DOCUMENT_ACTION_BATCH_LIMIT:
@@ -312,7 +344,7 @@ def create_index_from_raw_embeddings(
 
             logger.info(f"Total {num_deleted_ids} documents marked for deletion")
 
-        for delete_batch in batched_docs_to_delete(emb):
+        for delete_batch in batched_docs_to_delete():
             logger.info(f"Deleting {len(delete_batch)} documents from ACS")
             start_time = time.time()
             results = search_client.delete_documents(delete_batch)
@@ -321,7 +353,7 @@ def create_index_from_raw_embeddings(
             if len(failed) > 0:
                 logger.info(f"Retrying {len(failed)} documents")
                 failed_ids = [fail["key"] for fail in failed]
-                results = search_client.delete_documents([doc for doc in delete_batch if doc["id"] in failed_ids])  # type: ignore[index]
+                results = search_client.delete_documents([doc for doc in delete_batch if doc["id"] in failed_ids])
                 failed = process_upload_results(results, start_time)
                 if len(failed) > 0:
                     raise RuntimeError(f"Failed to delete {len(failed)} documents.")
@@ -344,7 +376,7 @@ def create_index_from_raw_embeddings(
         last_doc_prefix = None
         doc_prefix_count = 0
         skipped_prefix_documents = 0
-        for doc_id, emb_doc in emb._document_embeddings.items():
+        for doc_id, emb_doc in emb._document_embeddings.items():  # pylint: disable=protected-access
             doc_prefix = doc_id.split(".")[0]
             if doc_prefix != last_doc_prefix:
                 if doc_prefix_count > 0:
@@ -367,17 +399,16 @@ def create_index_from_raw_embeddings(
             # is_local=False when the EmbeddedDocuments data/embeddings are referenced from a remote source,
             # which is the case when the data was reused from a previous snapshot. is_local=True means the data
             # was generated for this snapshot and needs to pushed to the index.
-            
+
             # TODO: Bug 2878426
-            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:  # type: ignore[attr-defined]
+            if syncing_index and isinstance(emb_doc, ReferenceEmbeddedDocument) and not emb_doc.is_local:
                 skipped_prefix_documents += 1
                 num_source_docs += 1
                 if verbosity > 2:
                     logger.info(f"Skipping document as it should already be in index: {doc_id}")
                 continue
-            else:
-                if verbosity > 2:
-                    logger.info(f"Pushing document to index: {doc_id}")
+            if verbosity > 2:
+                logger.info(f"Pushing document to index: {doc_id}")
 
             doc_source = emb_doc.metadata.get("source", {})
             if isinstance(doc_source, str):
@@ -437,8 +468,10 @@ def create_index_from_raw_embeddings(
             num_source_docs += len(batch)
 
         duration = time.time() - t1
+        # pylint: disable=protected-access
         logger.info(
-            f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, took {duration:.4f} seconds"
+            f"Built index from {num_source_docs} documents and {len(emb._document_embeddings)} chunks, "
+            + f"took {duration:.4f} seconds"
         )
         activity_logger.info(
             "Built index", extra={"properties": {"num_source_docs": num_source_docs, "duration": duration}}
@@ -465,39 +498,39 @@ def create_index_from_raw_embeddings(
         if output_path is not None:
             output = Path(output_path)
             output.mkdir(parents=True, exist_ok=True)
-            with open(output / "MLIndex", "w") as f:
+            with open(output / "MLIndex", "w", encoding="utf-8") as f:
                 yaml.dump(mlindex_config, f)
 
     mlindex = MLIndex(uri=output_path, mlindex_config=mlindex_config)
     return mlindex
 
 
-def main(args, logger, activity_logger):
+def main(_args, _logger, activity_logger):  # pylint: disable=too-many-locals
     try:
         try:
-            acs_config = json.loads(args.acs_config)
+            acs_config = json.loads(_args.acs_config)
         except Exception as e:
-            logger.error(f"Failed to parse acs_config as json: {e}")
+            _logger.error(f"Failed to parse acs_config as json: {e}")
             activity_logger.error("Failed to parse acs_config as json")
             raise
 
         connection_args = {}
 
-        if args.connection_id is not None:
+        if _args.connection_id is not None:
             connection_args["connection_type"] = "workspace_connection"
-            connection_args["connection"] = {"id": args.connection_id}
-            from azure.ai.generative.index._utils.connections import (
+            connection_args["connection"] = {"id": _args.connection_id}
+            from azure.ai.resources._index._utils.connections import (
                 get_connection_by_id_v2,
                 get_metadata_from_connection,
                 get_target_from_connection,
             )
 
-            connection = get_connection_by_id_v2(args.connection_id)
+            connection = get_connection_by_id_v2(_args.connection_id)
             acs_config["endpoint"] = get_target_from_connection(connection)
             acs_config["api_version"] = get_metadata_from_connection(connection).get("apiVersion", "2023-07-01-preview")
         elif "endpoint_key_name" in acs_config:
             connection_args["connection_type"] = "workspace_keyvault"
-            from azureml.core import Run
+            from azureml.core import Run  # pylint: disable=import-error, no-name-in-module
 
             run = Run.get_context()
             ws = run.experiment.workspace
@@ -509,46 +542,50 @@ def main(args, logger, activity_logger):
             }
 
         # Mount embeddings container and create index from it
-        raw_embeddings_uri = args.embeddings
-        logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
+        raw_embeddings_uri = _args.embeddings
+        _logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
         splits = raw_embeddings_uri.split("/")
         embeddings_dir_name = splits.pop(len(splits) - 2)
-        logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
+        _logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
         parent = "/".join(splits)
-        logger.info(f"extracted embeddings container path: {parent}")
+        _logger.info(f"extracted embeddings container path: {parent}")
 
         from azureml.dataprep.fuse.dprepfuse import MountOptions, rslex_uri_volume_mount
 
         mnt_options = MountOptions(default_permission=0o555, allow_other=False, read_only=True)
-        logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
+        _logger.info(f"mounting embeddings container from: \n{parent} \n   to: \n{os.getcwd()}/embeddings_mount")
         with rslex_uri_volume_mount(parent, f"{os.getcwd()}/embeddings_mount", options=mnt_options) as mount_context:
             emb = EmbeddingsContainer.load(embeddings_dir_name, mount_context.mount_point)
             create_index_from_raw_embeddings(
                 emb,
                 acs_config=acs_config,
                 connection=connection_args,
-                output_path=args.output,
-                verbosity=args.verbosity,
+                output_path=_args.output,
+                verbosity=_args.verbosity,
             )
 
     except Exception as e:
-        logger.error("Failed to update ACS index")
+        _logger.error("Failed to update ACS index")
         exception_str = str(e)
         if "Floats quota has been exceeded for this service." in exception_str:
-            logger.error(
-                "Floats quota exceeded on Azure Cognitive Search Service. For more information check these docs: https://github.com/Azure/cognitive-search-vector-pr#storage-and-vector-index-size-limits"
+            url = "https://github.com/Azure/cognitive-search-vector-pr#storage-and-vector-index-size-limits"
+            _logger.error(
+                "Floats quota exceeded on Azure Cognitive Search Service. For more information check these docs: " + url
             )
-            logger.error(
-                "The usage statistic of an index can be checked using this REST API: https://learn.microsoft.com/en-us/rest/api/searchservice/get-index-statistics "
-            )
+
+            url = "https://learn.microsoft.com/en-us/rest/api/searchservice/get-index-statistics"
+            _logger.error("The usage statistic of an index can be checked using this REST API: " + url)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info[
                 "error"
             ] = f"{e.__class__.__name__}: Floats quota has been exceeded for this service."
         elif "Cannot find nested property" in exception_str:
-            logger.error(
-                f'The vector index provided "{acs_config["index_name"]}" has a different schema than outlined in this components description. This can happen if a different embedding model was used previously when updating this index.'
+            error_msg = (
+                f'The vector index provided "{acs_config["index_name"]}" has a different schema '
+                "than outlined in this components description. "
+                "This can happen if a different embedding model was used previously when updating this index."
             )
+            _logger.error(error_msg)
             activity_logger.activity_info["error_classification"] = "UserError"
             activity_logger.activity_info["error"] = f"{e.__class__.__name__}: Cannot find nested property"
         elif "Failed to upload" in exception_str:
@@ -559,13 +596,13 @@ def main(args, logger, activity_logger):
             activity_logger.activity_info["error_classification"] = "SystemError"
         raise e
 
-    logger.info("Updated ACS index")
+    _logger.info("Updated ACS index")
 
 
-def main_wrapper(args, logger):
-    with track_activity(logger, "update_acs") as activity_logger, safe_mlflow_start_run(logger=logger):
+def main_wrapper(_args, _logger):
+    with track_activity(_logger, "update_acs") as activity_logger, safe_mlflow_start_run(logger=_logger):
         try:
-            main(args, logger, activity_logger)
+            main(_args, _logger, activity_logger)
         except Exception:
             activity_logger.error(
                 f"update_acs failed with exception: {traceback.format_exc()}"
@@ -581,11 +618,12 @@ if __name__ == "__main__":
     parser.add_argument("--acs_config", type=str)
     parser.add_argument("--connection_id", type=str, required=False)
     parser.add_argument("--output", type=str)
+    msg = "Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. "
     parser.add_argument(
         "--verbosity",
         type=int,
         default=1,
-        help="Defaults to 1, which will log aggregate information about documents and IDs of deleted documents. 2 will log all document_ids as they are processed.",
+        help=msg + "2 will log all document_ids as they are processed.",
     )
     args = parser.parse_args()
 

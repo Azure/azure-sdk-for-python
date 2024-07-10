@@ -2,15 +2,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import os
 import sys
 
 from unittest import mock
 import pytest
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live, add_body_key_sanitizer
+from devtools_testutils import (
+    test_proxy,
+    is_live,
+    add_general_regex_sanitizer,
+    add_body_key_sanitizer,
+    add_header_regex_sanitizer,
+    add_remove_header_sanitizer,
+    set_custom_default_matcher,
+)
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 RECORD_IMDS = "--record-imds"
+TEST_ID = "00000000-0000-0000-0000-000000000000"
 
 
 def pytest_addoption(parser):
@@ -53,7 +63,7 @@ def record_imds_test(request):
 @pytest.fixture()
 def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
-
+    pytest.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/35957")
     missing_variables = [
         v
         for v in (
@@ -73,20 +83,31 @@ def live_service_principal():
         }
 
 
-def get_certificate_parameters(content, password_protected_content, password, extension):
-    # type: (bytes, bytes, str, str) -> dict
+def get_certificate_parameters(content: bytes, extension: str) -> dict:
     current_directory = os.path.dirname(__file__)
     parameters = {
         "cert_bytes": content,
         "cert_path": os.path.join(current_directory, "certificate." + extension),
+    }
+
+    try:
+        with open(parameters["cert_path"], "wb") as f:
+            f.write(parameters["cert_bytes"])
+    except IOError as ex:
+        pytest.skip("Failed to write a file: {}".format(ex))
+
+    return parameters
+
+
+def get_certificate_with_password_parameters(password_protected_content: bytes, password: str, extension: str) -> dict:
+    current_directory = os.path.dirname(__file__)
+    parameters = {
         "cert_with_password_bytes": password_protected_content,
         "cert_with_password_path": os.path.join(current_directory, "certificate-with-password." + extension),
         "password": password,
     }
 
     try:
-        with open(parameters["cert_path"], "wb") as f:
-            f.write(parameters["cert_bytes"])
         with open(parameters["cert_with_password_path"], "wb") as f:
             f.write(parameters["cert_with_password_bytes"])
     except IOError as ex:
@@ -101,31 +122,45 @@ def live_pem_certificate(live_service_principal):
     password_protected_content = os.environ.get("PEM_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
 
-    if content and password_protected_content and password:
-        parameters = get_certificate_parameters(
-            content.encode("utf-8"), password_protected_content.encode("utf-8"), password, "pem"
-        )
-        return dict(live_service_principal, **parameters)
+    cert_info = {}
 
+    if content:
+        content = content.replace("\\n", "\r\n")
+        parameters = get_certificate_parameters(content.encode("utf-8"), "pem")
+        cert_info.update(parameters)
+
+    if password_protected_content and password:
+        parameters = get_certificate_with_password_parameters(
+            password_protected_content.encode("utf-8"), password, "pem"
+        )
+        cert_info.update(parameters)
+
+    if cert_info:
+        return dict(live_service_principal, **cert_info)
     pytest.skip("Missing PEM certificate configuration")
 
 
 @pytest.fixture()
 def live_pfx_certificate(live_service_principal):
     # PFX bytes arrive base64 encoded because Key Vault secrets have string values
-    encoded_content = os.environ.get("PFX_CONTENT")
+    encoded_content = os.environ.get("PFX_CONTENTS")
     encoded_password_protected_content = os.environ.get("PFX_CONTENT_PASSWORD_PROTECTED")
     password = os.environ.get("CERTIFICATE_PASSWORD")
 
-    if encoded_content and encoded_password_protected_content and password:
-        import base64
+    cert_info = {}
 
+    if encoded_content:
         content = base64.b64decode(encoded_content.encode("utf-8"))
+        parameters = get_certificate_parameters(content, "pfx")
+        cert_info.update(parameters)
+
+    if encoded_password_protected_content and password:
         password_protected_content = base64.b64decode(encoded_password_protected_content.encode("utf-8"))
+        parameters = get_certificate_with_password_parameters(password_protected_content, password, "pfx")
+        cert_info.update(parameters)
 
-        parameters = get_certificate_parameters(content, password_protected_content, password, "pfx")
-        return dict(live_service_principal, **parameters)
-
+    if cert_info:
+        return dict(live_service_principal, **cert_info)
     pytest.skip("Missing PFX certificate configuration")
 
 
@@ -165,7 +200,11 @@ def event_loop():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy):
+def add_sanitizers(test_proxy, environment_variables):
+    set_custom_default_matcher(
+        excluded_headers="x-client-current-telemetry,x-client-last-telemetry,x-client-os,"
+        "x-client-sku,x-client-ver,x-client-cpu,x-client-brkrver,x-ms-lib-capability"  # cspell:ignore brkrver
+    )
     if EnvironmentVariables.MSI_ENDPOINT in os.environ:
         url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         PLAYBACK_URL = "https://msi-endpoint/token"
@@ -189,6 +228,17 @@ def add_sanitizers(test_proxy):
         add_general_regex_sanitizer(regex=os.environ["OBO_TENANT_ID"], value="tenant")
         add_general_regex_sanitizer(regex=os.environ["OBO_USERNAME"], value="username")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # Multi-tenant environment variables sanitization
+    sanitization_mapping = {
+        "AZURE_IDENTITY_MULTI_TENANT_TENANT_ID": TEST_ID,
+        "AZURE_IDENTITY_MULTI_TENANT_CLIENT_ID": TEST_ID,
+        "AZURE_IDENTITY_MULTI_TENANT_CLIENT_SECRET": TEST_ID,
+    }
+    environment_variables.sanitize_batch(sanitization_mapping)
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_remove_header_sanitizer(headers="Cookie")
+    add_header_regex_sanitizer(key="client-request-id", value="sanitized")
 
 
 @pytest.fixture(scope="session", autouse=True)

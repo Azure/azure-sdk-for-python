@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Mapping, Union, Optional
+from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -33,6 +33,8 @@ from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_par
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
+PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ScriptType:
@@ -105,7 +107,7 @@ class ScriptsProxy:
             feed_options["maxItemCount"] = max_item_count
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -191,7 +193,7 @@ class ScriptsProxy:
     def execute_stored_procedure(
         self,
         sproc: Union[str, Mapping[str, Any]],
-        partition_key: Optional[Union[str, bool, int, float, List[Union[str, bool, int, float]]]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         params: Optional[List[Dict[str, Any]]] = None,
         enable_script_logging: Optional[bool] = None,
         **kwargs: Any
@@ -268,7 +270,7 @@ class ScriptsProxy:
 
         return self.client_connection.QueryTriggers(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )
@@ -393,7 +395,7 @@ class ScriptsProxy:
 
         return self.client_connection.QueryUserDefinedFunctions(
             collection_link=self.container_link,
-            query=query if parameters is None else dict(query=query, parameters=parameters),
+            query=query if parameters is None else {"query": query, "parameters": parameters},
             options=feed_options,
             **kwargs
         )

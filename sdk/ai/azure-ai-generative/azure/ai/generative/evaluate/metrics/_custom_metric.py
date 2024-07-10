@@ -5,8 +5,7 @@ import abc
 
 
 class Metric(metaclass=abc.ABCMeta):
-
-    def __init__(self, *, name, description, **kwargs):
+    def __init__(self, *, name, description):
         self.name = name
         self.description = description
 
@@ -53,7 +52,7 @@ class CodeMetric(Metric):
     :paramtype aggregator: Callable
     """
 
-    def __init__(self, *, name, calculate, description=None, **kwargs):
+    def __init__(self, *, name, calculate, description=None):
         super(CodeMetric, self).__init__(name=name, description=description)
         self.calculate = calculate
 
@@ -75,7 +74,9 @@ class PromptMetric(Metric):
     .. code-block:: python
 
         # Metric from prompt template
-        custom_prompt_metric = PromptMetric.from_template(path="test_template.jinja2", name="my_relevance_from_template")
+        custom_prompt_metric = PromptMetric.from_template(
+            path="test_template.jinja2", name="my_relevance_from_template"
+        )
 
         # Creating metric by provided details needed to build the prompt
         metric = PromptMetric(
@@ -99,16 +100,13 @@ class PromptMetric(Metric):
 
         env = Environment()
 
-        with open(path) as template_file:
+        with open(path, encoding="utf-8") as template_file:
             template_content = template_file.read()
             template = env.parse(template_content, name="test")
 
         template_variables = meta.find_undeclared_variables(template)
 
-        metric = PromptMetric(
-            name=name,
-            prompt=template_content
-        )
+        metric = PromptMetric(name=name, prompt=template_content)
 
-        metric._template_variable = template_variables
+        metric._template_variable = template_variables  # pylint: disable=protected-access
         return metric

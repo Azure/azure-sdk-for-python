@@ -22,12 +22,9 @@ from ._models_py3 import CatalogUpdate
 from ._models_py3 import CatalogUpdateProperties
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
-from ._models_py3 import CloudErrorBody
+from ._models_py3 import CheckScopedNameAvailabilityRequest
 from ._models_py3 import CustomerManagedKeyEncryption
 from ._models_py3 import CustomerManagedKeyEncryptionKeyIdentity
-from ._models_py3 import CustomizationTask
-from ._models_py3 import CustomizationTaskInput
-from ._models_py3 import CustomizationTaskListResult
 from ._models_py3 import DevBoxDefinition
 from ._models_py3 import DevBoxDefinitionListResult
 from ._models_py3 import DevBoxDefinitionProperties
@@ -35,6 +32,7 @@ from ._models_py3 import DevBoxDefinitionUpdate
 from ._models_py3 import DevBoxDefinitionUpdateProperties
 from ._models_py3 import DevCenter
 from ._models_py3 import DevCenterListResult
+from ._models_py3 import DevCenterProjectCatalogSettings
 from ._models_py3 import DevCenterProperties
 from ._models_py3 import DevCenterSku
 from ._models_py3 import DevCenterUpdate
@@ -87,6 +85,7 @@ from ._models_py3 import PoolProperties
 from ._models_py3 import PoolUpdate
 from ._models_py3 import PoolUpdateProperties
 from ._models_py3 import Project
+from ._models_py3 import ProjectCatalogSettings
 from ._models_py3 import ProjectEnvironmentType
 from ._models_py3 import ProjectEnvironmentTypeListResult
 from ._models_py3 import ProjectEnvironmentTypeProperties
@@ -121,12 +120,13 @@ from ._models_py3 import UserRoleAssignmentValue
 
 from ._dev_center_mgmt_client_enums import ActionType
 from ._dev_center_mgmt_client_enums import CatalogConnectionState
+from ._dev_center_mgmt_client_enums import CatalogItemSyncEnableStatus
+from ._dev_center_mgmt_client_enums import CatalogItemType
 from ._dev_center_mgmt_client_enums import CatalogResourceValidationStatus
 from ._dev_center_mgmt_client_enums import CatalogSyncState
 from ._dev_center_mgmt_client_enums import CatalogSyncType
 from ._dev_center_mgmt_client_enums import CheckNameAvailabilityReason
 from ._dev_center_mgmt_client_enums import CreatedByType
-from ._dev_center_mgmt_client_enums import CustomizationTaskInputType
 from ._dev_center_mgmt_client_enums import DomainJoinType
 from ._dev_center_mgmt_client_enums import EnvironmentTypeEnableStatus
 from ._dev_center_mgmt_client_enums import HealthCheckStatus
@@ -169,12 +169,9 @@ __all__ = [
     "CatalogUpdateProperties",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
-    "CloudErrorBody",
+    "CheckScopedNameAvailabilityRequest",
     "CustomerManagedKeyEncryption",
     "CustomerManagedKeyEncryptionKeyIdentity",
-    "CustomizationTask",
-    "CustomizationTaskInput",
-    "CustomizationTaskListResult",
     "DevBoxDefinition",
     "DevBoxDefinitionListResult",
     "DevBoxDefinitionProperties",
@@ -182,6 +179,7 @@ __all__ = [
     "DevBoxDefinitionUpdateProperties",
     "DevCenter",
     "DevCenterListResult",
+    "DevCenterProjectCatalogSettings",
     "DevCenterProperties",
     "DevCenterSku",
     "DevCenterUpdate",
@@ -234,6 +232,7 @@ __all__ = [
     "PoolUpdate",
     "PoolUpdateProperties",
     "Project",
+    "ProjectCatalogSettings",
     "ProjectEnvironmentType",
     "ProjectEnvironmentTypeListResult",
     "ProjectEnvironmentTypeProperties",
@@ -267,12 +266,13 @@ __all__ = [
     "UserRoleAssignmentValue",
     "ActionType",
     "CatalogConnectionState",
+    "CatalogItemSyncEnableStatus",
+    "CatalogItemType",
     "CatalogResourceValidationStatus",
     "CatalogSyncState",
     "CatalogSyncType",
     "CheckNameAvailabilityReason",
     "CreatedByType",
-    "CustomizationTaskInputType",
     "DomainJoinType",
     "EnvironmentTypeEnableStatus",
     "HealthCheckStatus",

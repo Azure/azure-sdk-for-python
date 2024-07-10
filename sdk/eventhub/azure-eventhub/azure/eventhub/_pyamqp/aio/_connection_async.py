@@ -107,6 +107,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._port = PORT
         self.state: Optional[ConnectionState] = None
 
+        # Set the port for AmqpOverWebsocket
+        if transport_type.value == TransportType.AmqpOverWebsocket.value:
+            self._port = WEBSOCKET_PORT
+
         # Custom Endpoint
         custom_endpoint_address = kwargs.get("custom_endpoint_address")
         custom_endpoint = None
@@ -116,7 +120,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
         self._container_id: str = container_id or str(uuid.uuid4())
         self._network_trace = network_trace
-        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
+        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": "", "amqpLink": ""}
 
         transport = kwargs.get("transport")
         self._transport_type = transport_type
@@ -141,6 +145,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._transport: Union[SASLTransport, SASLWithWebSocket, AsyncTransport] = sasl_transport(
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
+                port=self._port,
                 custom_endpoint=custom_endpoint,
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
@@ -345,14 +350,13 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     async def _outgoing_empty(self) -> None:
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
-        if self._network_trace:
-            _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
-
         if self._error:
             raise self._error
 
         try:
             if self._can_write():
+                if self._network_trace:
+                    _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
                 await self._transport.write(EMPTY_FRAME)
                 self._last_frame_sent_time = time.time()
         except (OSError, IOError, SSLError, socket.error) as exc:
@@ -533,7 +537,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._error = AMQPConnectionError(
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
-            _LOGGER.error(
+            _LOGGER.warning(
                 "Connection closed with error: %r", frame[0],
                 extra=self._network_trace_params
             )
@@ -682,7 +686,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             ConnectionState.OPEN_SENT,
             ConnectionState.OPENED,
         ]:
-            raise ValueError("Connection not open.")
+            raise AMQPConnectionError(
+                ErrorCondition.SocketError,
+                description="Connection not open."
+            )
         now = time.time()
         if get_local_timeout(
             now,

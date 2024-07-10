@@ -12,7 +12,7 @@ import re
 import uuid
 from io import SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import (
         parse_qsl,
         urlencode,
@@ -471,12 +471,11 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param dict[str, Any]] settings: The configurable values pertaining to the increment operation.
         :param PipelineRequest request: A pipeline request object.
         :param Optional[PipelineResponse] response: A pipeline response object.
-        :param error: An error encountered during the request, or
+        :param Optional[AzureError] error: An error encountered during the request, or
             None if the response was received successfully.
-        :paramtype error: Optional[AzureError]
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """

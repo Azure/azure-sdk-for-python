@@ -1,6 +1,7 @@
+import logging
 import os
 from unittest.mock import Mock, patch
-import logging
+
 import mock
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Subscription
@@ -20,16 +21,16 @@ from azure.ai.ml import (
     load_online_endpoint,
     load_registry,
     load_workspace,
-    load_workspace_connection,
+    load_connection,
 )
-from azure.ai.ml._azure_environments import _get_default_cloud_name, AzureEnvironments
+from azure.ai.ml._azure_environments import AzureEnvironments, _get_default_cloud_name
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._telemetry import get_appinsights_log_handler
+from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
+from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
-from azure.ai.ml._user_agent import USER_AGENT
-from azure.ai.ml._telemetry import get_appinsights_log_handler
-from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
 
 
 @pytest.mark.unittest
@@ -552,7 +553,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            handler = get_appinsights_log_handler(
+            handler, _ = get_appinsights_log_handler(
                 USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
             )
             assert enable_telemetry
@@ -564,7 +565,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            handler = get_appinsights_log_handler(
+            handler, _ = get_appinsights_log_handler(
                 USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
             )
             assert enable_telemetry
@@ -589,7 +590,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            handler = get_appinsights_log_handler(
+            handler, _ = get_appinsights_log_handler(
                 USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
             )
             assert not enable_telemetry
@@ -601,7 +602,7 @@ class TestMachineLearningClient:
                 "subscription_id": subscription_id,
                 "resource_group_name": resource_group_name,
             }
-            handler = get_appinsights_log_handler(
+            handler, _ = get_appinsights_log_handler(
                 USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
             )
             assert not enable_telemetry

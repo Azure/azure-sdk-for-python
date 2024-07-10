@@ -7,6 +7,7 @@
 import datetime
 from typing import (
     Any,
+    AsyncContextManager,
     Iterable,
     Iterator,
     Mapping,
@@ -164,3 +165,21 @@ def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
         # though realistically it is ordered python 3.7 and after
         return cast(Sequence[Tuple[str, "FileType"]], files.items())
     return files
+
+
+def get_running_async_lock() -> AsyncContextManager:
+    """Get a lock instance from the async library that the current context is running under.
+    :return: An instance of the running async library's Lock class.
+    :rtype: AsyncContextManager
+    :raises: RuntimeError if the current context is not running under an async library.
+    """
+
+    try:
+        import asyncio
+
+        # Check if we are running in an asyncio event loop.
+        asyncio.get_running_loop()
+        return asyncio.Lock()
+    except RuntimeError as err:
+        # Otherwise, assume we are running in a trio event loop, but this currently isn't supported.
+        raise RuntimeError("An asyncio event loop is required.") from err

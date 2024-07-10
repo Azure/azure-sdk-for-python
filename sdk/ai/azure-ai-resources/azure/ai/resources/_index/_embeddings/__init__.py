@@ -8,6 +8,7 @@ import time
 from collections import OrderedDict
 from typing import Callable, List, Optional, Union
 
+import cloudpickle
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
 from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
@@ -218,9 +219,33 @@ class EmbeddingsContainer:
         """Set the path to the embeddings container."""
         self._embeddings_container_path = value
 
+    def as_langchain_embeddings(self, credential: Optional[TokenCredential] = None) -> Embedder:
+        """Returns a langchain Embedder that can be used to embed text."""
+        return get_langchain_embeddings(self.kind, self.arguments, credential=credential)
+
     @staticmethod
     def from_uri(uri: str, credential: Optional[TokenCredential] = None, **kwargs) -> "EmbeddingsContainer":
         """Create an embeddings object from a URI."""
         config = parse_model_uri(uri, **kwargs)
         kwargs["credential"] = credential
         return EmbeddingsContainer(**{**config, **kwargs})
+    
+    @staticmethod
+    def from_metadata(metadata: dict) -> "EmbeddingsContainer":
+        """Create an embeddings object from metadata."""
+        schema_version = metadata.get("schema_version", "1")
+        if schema_version == "1":
+            embeddings = EmbeddingsContainer(metadata["kind"], **metadata["arguments"])
+            return embeddings
+        elif schema_version == "2":
+            kind = metadata["kind"]
+            del metadata["kind"]
+            if kind == "custom":
+                metadata["embedding_fn"] = cloudpickle.loads(
+                    gzip.decompress(metadata["pickled_embedding_fn"]))
+                del metadata["pickled_embedding_fn"]
+
+            embeddings = EmbeddingsContainer(kind, **metadata)
+            return embeddings
+        else:
+            raise ValueError(f"Schema version {schema_version} is not supported")

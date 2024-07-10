@@ -1,3 +1,4 @@
+from __openai_patcher import TestProxyConfig, TestProxyHttpxClient # isort: split
 import asyncio
 import base64
 import os
@@ -17,6 +18,8 @@ from devtools_testutils import (
     is_live,
     set_custom_default_matcher,
 )
+from devtools_testutils.config import PROXY_URL
+from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_fixtures import (
     EnvironmentVariableSanitizer,
     VariableRecorder
@@ -38,6 +41,17 @@ def rand_num(variable_recorder: VariableRecorder) -> Callable[[str], str]:
     return generate_random_string
 
 
+@pytest.fixture()
+def recorded_test(recorded_test):
+    """Route requests from the openai package to the test proxy."""
+
+    config = TestProxyConfig(
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+    )
+
+
+    with TestProxyHttpxClient.record_with_proxy(config):
+        yield recorded_test
 
 @pytest.fixture()
 def ai_client(
@@ -86,7 +100,7 @@ def fake_datastore_key() -> str:
     return str(b64_key, "ascii")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     """Register recording sanitizers for the function under test"""
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")

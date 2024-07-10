@@ -6,8 +6,8 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BatchDeployment as RestBatchDeployment
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2024_01_01_preview.models import BatchDeployment as RestBatchDeployment
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     BatchDeploymentProperties,
     BatchPipelineComponentDeploymentConfiguration,
     IdAssetReference,

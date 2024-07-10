@@ -1,15 +1,20 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
 import unittest
+
 import pytest
+
 from azure.cosmos._vector_session_token import VectorSessionToken
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
-pytestmark = pytest.mark.cosmosEmulator
 
-@pytest.mark.usefixtures("teardown")
-class SessionTokenUnitTest(unittest.TestCase):
+@pytest.mark.cosmosEmulator
+class TestSessionTokenUnitTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
+
     def test_validate_successful_session_token_parsing(self):
-        #valid session token
+        # valid session token
         session_token = "1#100#1=20#2=5#3=30"
         self.assertEqual(VectorSessionToken.create(session_token).convert_to_string(), "1#100#1=20#2=5#3=30")
 
@@ -34,14 +39,14 @@ class SessionTokenUnitTest(unittest.TestCase):
         self.assertIsNone(VectorSessionToken.create(session_token))
 
     def test_validate_session_token_comparison(self):
-        #valid session token
+        # valid session token
         session_token1 = VectorSessionToken.create("1#100#1=20#2=5#3=30")
         session_token2 = VectorSessionToken.create("2#105#4=10#2=5#3=30")
         self.assertIsNotNone(session_token1)
         self.assertIsNotNone(session_token2)
         self.assertFalse(session_token1.equals(session_token2))
         self.assertFalse(session_token2.equals(session_token1))
-        
+
         session_token_merged = VectorSessionToken.create("2#105#2=5#3=30#4=10")
         self.assertIsNotNone(session_token_merged)
         self.assertTrue(session_token1.merge(session_token2).equals(session_token_merged))
@@ -77,4 +82,10 @@ class SessionTokenUnitTest(unittest.TestCase):
             session_token1.merge(session_token2)
             self.fail("Region progress can not be different when version is same")
         except CosmosHttpResponseError as e:
-            self.assertEqual(str(e), "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.")
+            self.assertEqual(str(e),
+                             "Status code: 500\nCompared session tokens '1#101#1=20#2=5#3=30' "
+                             "and '1#100#1=20#2=5#3=30#4=40' have unexpected regions.")
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -2,4 +2,3 @@
 ../../core/azure-core
 ../azure-eventhub
 azure-data-tables==12.2.0
--e ../../../tools/azure-devtools

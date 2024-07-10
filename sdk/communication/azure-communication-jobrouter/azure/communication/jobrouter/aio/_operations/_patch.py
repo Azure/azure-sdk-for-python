@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import datetime
-from typing import List, Any, Optional, Dict, Union, overload, IO
+from typing import List, Any, Optional, Dict, Union, overload, IO, Literal
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -20,26 +20,23 @@ from ._operations import (
     JobRouterClientOperationsMixin as JobRouterClientOperationsMixinGenerated,
     JobRouterAdministrationClientOperationsMixin as JobRouterAdministrationClientOperationsMixinGenerated,
 )
-from ..._model_base import _deserialize_datetime as _convert_str_to_datetime  # pylint:disable=protected-access
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+from ..._model_base import _deserialize_datetime as _convert_str_to_datetime
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
+
+
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class JobRouterAdministrationClientOperationsMixin(
     JobRouterAdministrationClientOperationsMixinGenerated
-):  # pylint:disable=too-many-lines,line-too-long,name-too-long,arguments-differ,unused-argument
+):  # pylint:disable=too-many-lines,line-too-long,name-too-long,arguments-differ
     # region ExceptionPolicy
     @overload
-    async def upsert_exception_policy(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_exception_policy(  # pylint: disable=arguments-differ
         self,
         exception_policy_id: str,
         *,
@@ -53,32 +50,25 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
-
-        :keyword exception_rules: (Optional) A collection of exception rules on the exception
-          policy.
+        :keyword exception_rules: (Optional) A collection of exception rules on the exception policy.
         :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
-
         :keyword Optional[str] name: The name of this policy.
-
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-
         :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/exception_policy_crud_ops.py
-                :start-after: [START update_exception_policy]
-                :end-before: [END update_exception_policy]
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START update_exception_policy_async]
+                :end-before: [END update_exception_policy_async]
                 :language: python
                 :dedent: 8
                 :caption: Using a JobRouterAdministrationClient to update an exception policy
@@ -148,8 +138,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -164,7 +153,7 @@ class JobRouterAdministrationClientOperationsMixin(
     async def upsert_exception_policy(
         self,
         exception_policy_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -179,7 +168,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param exception_policy_id: The Id of the exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -198,8 +187,8 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_exception_policy(
-        self, exception_policy_id: str, *args: Union[_models.ExceptionPolicy, JSON, IO], **kwargs: Any
+    async def upsert_exception_policy(  # pylint: disable=docstring-missing-param
+        self, exception_policy_id: str, *args: Union[_models.ExceptionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
 
@@ -227,9 +216,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/exception_policy_crud_ops.py
-                :start-after: [START update_exception_policy]
-                :end-before: [END update_exception_policy]
+            .. literalinclude:: ../samples/exception_policy_crud_ops_async.py
+                :start-after: [START update_exception_policy_async]
+                :end-before: [END update_exception_policy_async]
                 :language: python
                 :dedent: 8
                 :caption: Using a JobRouterAdministrationClient to update an exception policy
@@ -237,7 +226,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
-        exception_policy: Union[_models.ExceptionPolicy, JSON, IO] = _models.ExceptionPolicy()
+        exception_policy: Union[_models.ExceptionPolicy, JSON, IO[bytes]] = _models.ExceptionPolicy()
         if len(args) == 1:
             exception_policy = args[0]
 
@@ -297,7 +286,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region DistributionPolicy
     @overload
-    async def upsert_distribution_policy(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_distribution_policy(  # pylint: disable=arguments-differ
         self,
         distribution_policy_id: str,
         *,
@@ -338,9 +327,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/distribution_policy_crud_ops.py
-                :start-after: [START update_distribution_policy]
-                :end-before: [END update_distribution_policy]
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START update_distribution_policy_async]
+                :end-before: [END update_distribution_policy_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a distribution policy
@@ -426,7 +415,7 @@ class JobRouterAdministrationClientOperationsMixin(
     async def upsert_distribution_policy(
         self,
         distribution_policy_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -441,7 +430,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param distribution_policy_id: The unique identifier of the policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -460,8 +449,8 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_distribution_policy(
-        self, distribution_policy_id: str, *args: Union[_models.DistributionPolicy, JSON, IO], **kwargs: Any
+    async def upsert_distribution_policy(  # pylint: disable=docstring-missing-param
+        self, distribution_policy_id: str, *args: Union[_models.DistributionPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
@@ -492,9 +481,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/distribution_policy_crud_ops.py
-                :start-after: [START update_distribution_policy]
-                :end-before: [END update_distribution_policy]
+            .. literalinclude:: ../samples/distribution_policy_crud_ops_async.py
+                :start-after: [START update_distribution_policy_async]
+                :end-before: [END update_distribution_policy_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a distribution policy
@@ -502,7 +491,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
-        distribution_policy: Union[_models.DistributionPolicy, JSON, IO] = _models.DistributionPolicy()
+        distribution_policy: Union[_models.DistributionPolicy, JSON, IO[bytes]] = _models.DistributionPolicy()
         if len(args) == 1:
             distribution_policy = args[0]
 
@@ -565,7 +554,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region Queue
     @overload
-    async def upsert_queue(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_queue(  # pylint: disable=arguments-differ
         self,
         queue_id: str,
         *,
@@ -609,9 +598,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/job_queue_crud_ops.py
-                :start-after: [START update_queue]
-                :end-before: [END update_queue]
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START update_queue_async]
+                :end-before: [END update_queue_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a queue
@@ -697,7 +686,7 @@ class JobRouterAdministrationClientOperationsMixin(
     async def upsert_queue(
         self,
         queue_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -712,7 +701,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param queue_id: The Id of this queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -731,8 +720,8 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_queue(
-        self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO], **kwargs: Any
+    async def upsert_queue(  # pylint: disable=docstring-missing-param
+        self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
 
@@ -765,9 +754,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/job_queue_crud_ops.py
-                :start-after: [START update_queue]
-                :end-before: [END update_queue]
+            .. literalinclude:: ../samples/job_queue_crud_ops_async.py
+                :start-after: [START update_queue_async]
+                :end-before: [END update_queue_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a queue
@@ -775,7 +764,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        queue: Union[_models.RouterQueue, JSON, IO] = _models.RouterQueue()
+        queue: Union[_models.RouterQueue, JSON, IO[bytes]] = _models.RouterQueue()
         if len(args) == 1:
             queue = args[0]
 
@@ -838,7 +827,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region ClassificationPolicy
     @overload
-    async def upsert_classification_policy(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_classification_policy(  # pylint: disable=arguments-differ
         self,
         classification_policy_id: str,
         *,
@@ -924,9 +913,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/classification_policy_crud_ops.py
-                :start-after: [START update_classification_policy]
-                :end-before: [END update_classification_policy]
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START update_classification_policy_async]
+                :end-before: [END update_classification_policy_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a classification policy
@@ -1012,7 +1001,7 @@ class JobRouterAdministrationClientOperationsMixin(
     async def upsert_classification_policy(
         self,
         classification_policy_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1027,7 +1016,7 @@ class JobRouterAdministrationClientOperationsMixin(
         :param classification_policy_id: Unique identifier of this policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1046,8 +1035,8 @@ class JobRouterAdministrationClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_classification_policy(
-        self, classification_policy_id: str, *args: Union[_models.ClassificationPolicy, JSON, IO], **kwargs: Any
+    async def upsert_classification_policy(  # pylint: disable=docstring-missing-param
+        self, classification_policy_id: str, *args: Union[_models.ClassificationPolicy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
 
@@ -1094,9 +1083,9 @@ class JobRouterAdministrationClientOperationsMixin(
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/classification_policy_crud_ops.py
-                :start-after: [START update_classification_policy]
-                :end-before: [END update_classification_policy]
+            .. literalinclude:: ../samples/classification_policy_crud_ops_async.py
+                :start-after: [START update_classification_policy_async]
+                :end-before: [END update_classification_policy_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a classification policy
@@ -1104,7 +1093,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
-        classification_policy: Union[_models.ClassificationPolicy, JSON, IO] = _models.ClassificationPolicy()
+        classification_policy: Union[_models.ClassificationPolicy, JSON, IO[bytes]] = _models.ClassificationPolicy()
         if len(args) == 1:
             classification_policy = args[0]
 
@@ -1174,7 +1163,7 @@ class JobRouterAdministrationClientOperationsMixin(
 class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Worker
     @overload
-    async def upsert_worker(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_worker(  # pylint: disable=arguments-differ
         self,
         worker_id: str,
         *,
@@ -1184,6 +1173,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         tags: Optional[Dict[str, Union[int, float, str, bool]]],
         channels: Optional[List[_models.RouterChannel]],
         available_for_offers: Optional[bool],
+        max_concurrent_offers: Optional[int],
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1214,6 +1204,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
+        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
+          offers at a time.
+        :paramtype max_concurrent_offers: Optional[int]
+
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
@@ -1229,9 +1223,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_worker_crud_ops.py
-                :start-after: [START update_worker]
-                :end-before: [END update_worker]
+            .. literalinclude:: ../samples/router_worker_crud_ops_async.py
+                :start-after: [START update_worker_async]
+                :end-before: [END update_worker_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to update a worker
@@ -1239,20 +1233,30 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/router_worker_crud_ops.py
-                :start-after: [START register_worker]
-                :end-before: [END register_worker]
+                :start-after: [START register_worker_async]
+                :end-before: [END register_worker_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to register a worker
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_worker_crud_ops.py
-                :start-after: [START deregister_worker]
-                :end-before: [END deregister_worker]
+            .. literalinclude:: ../samples/router_worker_crud_ops_async.py
+                :start-after: [START deregister_worker_async]
+                :end-before: [END deregister_worker_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to de-register a worker
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops_async.py
+                :start-after: [START create_worker_w_limit_concurrent_offers_async]
+                :end-before: [END create_worker_w_limit_concurrent_offers_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to create a worker with concurrent offer limit
+
         """
 
     @overload
@@ -1335,7 +1339,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     async def upsert_worker(
         self,
         worker_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1350,7 +1354,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1369,8 +1373,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_worker(
-        self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO], **kwargs: Any
+    async def upsert_worker(  # pylint: disable=docstring-missing-param
+        self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
 
@@ -1397,6 +1401,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
+        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
+          offers at a time.
+        :paramtype max_concurrent_offers: Optional[int]
+
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
@@ -1412,27 +1420,27 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_worker_crud_ops.py
-                :start-after: [START update_worker]
-                :end-before: [END update_worker]
+            .. literalinclude:: ../samples/router_worker_crud_ops_async.py
+                :start-after: [START update_worker_async]
+                :end-before: [END update_worker_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to update a worker
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_worker_crud_ops.py
-                :start-after: [START register_worker]
-                :end-before: [END register_worker]
+            .. literalinclude:: ../samples/router_worker_crud_ops_async.py
+                :start-after: [START register_worker_async]
+                :end-before: [END register_worker_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to register a worker
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_worker_crud_ops.py
-                :start-after: [START deregister_worker]
-                :end-before: [END deregister_worker]
+            .. literalinclude:: ../samples/router_worker_crud_ops_async.py
+                :start-after: [START deregister_worker_async]
+                :end-before: [END deregister_worker_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to de-register a worker
@@ -1440,7 +1448,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        router_worker: Union[_models.RouterWorker, JSON, IO] = _models.RouterWorker()
+        router_worker: Union[_models.RouterWorker, JSON, IO[bytes]] = _models.RouterWorker()
         if len(args) == 1:
             router_worker = args[0]
 
@@ -1453,6 +1461,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 tags=kwargs.pop("tags", router_worker.tags),
                 channels=kwargs.pop("channels", router_worker.channels),
                 available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
+                max_concurrent_offers=kwargs.pop("max_concurrent_offers", router_worker.max_concurrent_offers),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -1534,7 +1543,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     # region Job
     @overload
-    async def upsert_job(  # pylint: disable=arguments-differ,unused-argument
+    async def upsert_job(  # pylint: disable=arguments-differ
         self,
         job_id: str,
         *,
@@ -1610,9 +1619,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_job_crud_ops.py
-                :start-after: [START update_job]
-                :end-before: [END update_job]
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START update_job_async]
+                :end-before: [END update_job_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to update a job
@@ -1698,7 +1707,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     async def upsert_job(
         self,
         job_id: str,
-        resource: IO,
+        resource: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1713,7 +1722,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param job_id: The id of the job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
-        :type resource: IO
+        :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1732,8 +1741,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    async def upsert_job(
-        self, job_id: str, *args: Union[_models.RouterJob, JSON, IO], **kwargs: Any
+    async def upsert_job(  # pylint: disable=docstring-missing-param
+        self, job_id: str, *args: Union[_models.RouterJob, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
 
@@ -1791,9 +1800,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/router_job_crud_ops.py
-                :start-after: [START update_job]
-                :end-before: [END update_job]
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START update_job_async]
+                :end-before: [END update_job_async]
                 :language: python
                 :dedent: 8
                 :caption: Use a JobRouterClient to update a job
@@ -1801,7 +1810,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        router_job: Union[_models.RouterJob, JSON, IO] = _models.RouterJob()
+        router_job: Union[_models.RouterJob, JSON, IO[bytes]] = _models.RouterJob()
         if len(args) == 1:
             router_job = args[0]
 

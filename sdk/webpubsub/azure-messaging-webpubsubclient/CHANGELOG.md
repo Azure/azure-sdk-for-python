@@ -1,5 +1,20 @@
 # Release History
 
+## 1.1.0 (2024-04-24)
+
+### Features Added
+
+- Add Async API with same name of Sync API
+- Add api `is_connected`
+
+### Other Changes
+
+- Change default reconnect times to unlimited
+- Optimize reconnect/recover logic
+- Optimize error message hint when failed to open client
+- Optimize typing annotations
+- Optimize close logic for Sync API.
+
 ## 1.0.0 (2024-01-31)
 
 ### Features Added

@@ -13,7 +13,8 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.ingestion import LogsIngestionClient
-from devtools_testutils import AzureRecordedTestCase
+
+from base_testcase import LogsIngestionClientTestCase
 
 
 LOGS_BODY = [
@@ -36,22 +37,22 @@ LOGS_BODY = [
 ]
 
 
-class TestLogsIngestionClient(AzureRecordedTestCase):
+class TestLogsIngestionClient(LogsIngestionClientTestCase):
 
     def test_send_logs(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         with client:
             client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=LOGS_BODY)
 
     def test_send_logs_large(self, recorded_test, monitor_info, large_data):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         with client:
             client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=large_data)
 
     def test_send_logs_error(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         body = [{"foo": "bar"}]
 
@@ -59,7 +60,7 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
             client.upload(rule_id='bad-rule', stream_name=monitor_info['stream_name'], logs=body)
 
     def test_send_logs_error_custom(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         body = [{"foo": "bar"}]
 
@@ -75,7 +76,7 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
         assert on_error.called
 
     def test_send_logs_json_file(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
 
         temp_file = str(uuid.uuid4()) + '.json'
@@ -89,7 +90,7 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only("Issues recording binary streams with test-proxy")
     def test_send_logs_gzip_file(self, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
 
         temp_file = str(uuid.uuid4()) + '.json.gz'
@@ -101,7 +102,7 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
         os.remove(temp_file)
 
     def test_abort_error_handler(self, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
 
         class TestException(Exception):
@@ -140,10 +141,10 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
 
         assert on_error.called
 
-    def test_invalid_logs_format(self, monitor_info):
-        client = self.create_client_from_credential(
+    @pytest.mark.parametrize("logs", ['[{"foo": "bar"}]', "foo", {"foo": "bar"}, None])
+    def test_invalid_logs_format(self, monitor_info, logs):
+        client = self.get_client(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
 
-        body = {"foo": "bar"}
         with pytest.raises(ValueError):
-            client.upload(rule_id="rule", stream_name="stream", logs=body)
+            client.upload(rule_id="rule", stream_name="stream", logs=logs)

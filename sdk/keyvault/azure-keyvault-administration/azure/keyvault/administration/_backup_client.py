@@ -62,8 +62,11 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     ) -> LROPoller[KeyVaultBackupResult]:
         ...
 
+    # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace
-    def begin_backup(self, blob_storage_url: str, *args: str, **kwargs: Any) -> LROPoller[KeyVaultBackupResult]:
+    def begin_backup(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+        self, blob_storage_url: str, *args: str, **kwargs: Any
+    ) -> LROPoller[KeyVaultBackupResult]:
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
@@ -74,7 +77,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
             will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
             token has to be specified.
-        :paramtype use_managed_identity: Literal[True]
+        :paramtype use_managed_identity: bool
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
         :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
@@ -154,8 +157,11 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     ) -> LROPoller[None]:
         ...
 
+    # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace
-    def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_restore(  # pylint: disable=docstring-missing-param,docstring-keyword-should-match-keyword-only
+        self, folder_url: str, *args: str, **kwargs: Any
+    ) -> LROPoller[None]:
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -169,7 +175,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
             will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
             token has to be specified.
-        :paramtype use_managed_identity: Literal[True]
+        :paramtype use_managed_identity: bool
         :keyword str key_name: Name of a single key in the backup. When set, only this key will be restored.
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
@@ -247,3 +253,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             polling=polling,
             **kwargs,
         )
+
+    def __enter__(self) -> "KeyVaultBackupClient":
+        self._client.__enter__()
+        return self

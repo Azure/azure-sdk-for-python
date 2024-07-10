@@ -24,7 +24,7 @@ import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob.aio import BlobServiceClient
 
-connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 
 
 async def shared_transport_async():

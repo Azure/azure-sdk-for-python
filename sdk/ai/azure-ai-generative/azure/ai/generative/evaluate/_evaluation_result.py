@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 from typing import Dict, Optional
 
 from azure.ai.generative.evaluate._utils import _get_ai_studio_url
@@ -31,7 +35,7 @@ class EvaluationResult(object):
 
     def download_evaluation_artifacts(self, path: str) -> None:
         from mlflow.artifacts import download_artifacts
-        for artifact, artifact_uri in self.artifacts.items():
+        for _, artifact_uri in self.artifacts.items():
             download_artifacts(
                 artifact_uri=artifact_uri,
                 tracking_uri=self.tracking_uri,

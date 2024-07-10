@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+from unittest.mock import Mock
 import json
 from io import BytesIO
 import xml.etree.ElementTree as ET
@@ -50,6 +51,31 @@ def test_sans_io_exception():
     req = HttpRequest("GET", "/")
     with pytest.raises(ValueError):
         pipeline.run(req)
+
+
+def test_invalid_policy_error():
+    # non-HTTPPolicy/non-SansIOHTTPPolicy should raise an error
+    class FooPolicy:
+        pass
+
+    # only on_request should raise an error
+    class OnlyOnRequestPolicy:
+        def on_request(self, request):
+            pass
+
+    # only on_response should raise an error
+    class OnlyOnResponsePolicy:
+        def on_response(self, request, response):
+            pass
+
+    with pytest.raises(AttributeError):
+        pipeline = Pipeline(transport=Mock(), policies=[FooPolicy()])
+
+    with pytest.raises(AttributeError):
+        pipeline = Pipeline(transport=Mock(), policies=[OnlyOnRequestPolicy()])
+
+    with pytest.raises(AttributeError):
+        pipeline = Pipeline(transport=Mock(), policies=[OnlyOnResponsePolicy()])
 
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)

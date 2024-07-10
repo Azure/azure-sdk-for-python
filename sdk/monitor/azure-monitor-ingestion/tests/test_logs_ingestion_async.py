@@ -13,7 +13,8 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.ingestion.aio import LogsIngestionClient
-from devtools_testutils import AzureRecordedTestCase
+
+from base_testcase import LogsIngestionClientTestCase
 
 
 LOGS_BODY = [
@@ -36,12 +37,12 @@ LOGS_BODY = [
 ]
 
 
-class TestLogsIngestionClientAsync(AzureRecordedTestCase):
+class TestLogsIngestionClientAsync(LogsIngestionClientTestCase):
 
     @pytest.mark.asyncio
     async def test_send_logs_async(self, recorded_test, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
         async with client:
             await client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=LOGS_BODY)
@@ -50,7 +51,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_send_logs_large(self, recorded_test, monitor_info, large_data):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
         async with client:
             await client.upload(
@@ -60,7 +61,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_send_logs_error(self, recorded_test, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
         body = [{"foo": "bar"}]
 
@@ -72,7 +73,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_send_logs_error_custom(self, recorded_test, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
         body = [{"foo": "bar"}]
 
@@ -92,7 +93,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_send_logs_json_file(self, recorded_test, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
 
         temp_file = str(uuid.uuid4()) + '.json'
@@ -109,7 +110,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @pytest.mark.live_test_only("Issues recording binary streams with test-proxy")
     async def test_send_logs_gzip_file(self, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
 
         temp_file = str(uuid.uuid4()) + '.json.gz'
@@ -125,7 +126,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_abort_error_handler(self, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
 
         class TestException(Exception):
@@ -166,12 +167,12 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
         await credential.close()
 
     @pytest.mark.asyncio
-    async def test_invalid_logs_format(self, monitor_info):
+    @pytest.mark.parametrize("logs", ['[{"foo": "bar"}]', "foo", {"foo": "bar"}, None])
+    async def test_invalid_logs_format(self, monitor_info, logs):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
-        client = self.create_client_from_credential(LogsIngestionClient, credential, endpoint=monitor_info['dce'])
+        client = self.get_client(LogsIngestionClient, credential, endpoint=monitor_info['dce'])
 
-        body = {"foo": "bar"}
         async with client:
             with pytest.raises(ValueError):
-                await client.upload(rule_id="rule", stream_name="stream", logs=body)
+                await client.upload(rule_id="rule", stream_name="stream", logs=logs)
         await credential.close()

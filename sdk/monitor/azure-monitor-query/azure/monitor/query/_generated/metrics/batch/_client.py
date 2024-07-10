@@ -27,7 +27,7 @@ class MonitorBatchMetricsClient:  # pylint: disable=client-accepts-api-version-k
      https://eastus.metrics.monitor.azure.com. The region should match the region of the requested
      resources. For global resources, the region should be 'global'. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-02-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

@@ -41,7 +41,7 @@ class Registry(Resource):
         intellectual_property: Optional[IntellectualProperty] = None,
         managed_resource_group: Optional[str] = None,
         mlflow_registry_uri: Optional[str] = None,
-        replication_locations: Optional[List],
+        replication_locations: Optional[List[RegistryRegionDetails]],
         **kwargs: Any,
     ):
         """Azure ML registry.
@@ -115,7 +115,7 @@ class Registry(Resource):
         # limited, and would probably just confuse most users.
         if self.replication_locations and len(self.replication_locations) > 0:
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
-                self.container_registry = self.replication_locations[0].acr_config[0]
+                self.container_registry = self.replication_locations[0].acr_config[0]  # type: ignore[assignment]
 
         res: dict = schema.dump(self)
         return res
@@ -165,12 +165,14 @@ class Registry(Resource):
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
-            intellectual_property=IntellectualProperty(publisher=real_registry.intellectual_property_publisher)
-            if real_registry.intellectual_property_publisher
-            else None,
+            intellectual_property=(
+                IntellectualProperty(publisher=real_registry.intellectual_property_publisher)
+                if real_registry.intellectual_property_publisher
+                else None
+            ),
             managed_resource_group=real_registry.managed_resource_group,
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
-            replication_locations=replication_locations,
+            replication_locations=replication_locations,  # type: ignore[arg-type]
         )
 
     # There are differences between what our registry validation schema
@@ -220,9 +222,9 @@ class Registry(Resource):
             properties=RegistryProperties(
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,
-                intellectual_property_publisher=(self.intellectual_property.publisher)
-                if self.intellectual_property
-                else None,
+                intellectual_property_publisher=(
+                    (self.intellectual_property.publisher) if self.intellectual_property else None
+                ),
                 managed_resource_group=self.managed_resource_group,
                 ml_flow_registry_uri=self.mlflow_registry_uri,
                 region_details=replication_locations,

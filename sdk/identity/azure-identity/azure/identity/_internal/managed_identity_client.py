@@ -13,6 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
+from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
@@ -26,7 +27,12 @@ class ManagedIdentityClientBase(abc.ABC):
         identity_config: Optional[Dict] = None,
         **kwargs: Any
     ) -> None:
-        self._cache = kwargs.pop("_cache", None) or TokenCache()
+        self._custom_cache = False
+        self._cache = kwargs.pop("_cache", None)
+        if self._cache:
+            self._custom_cache = True
+        else:
+            self._cache = TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._identity_config = identity_config or {}
         if client_id:
@@ -44,9 +50,9 @@ class ManagedIdentityClientBase(abc.ABC):
             except DecodeError as ex:
                 if response.http_response.content_type.startswith("application/json"):
                     message = "Failed to deserialize JSON from response"
-                else:
-                    message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
+                    raise ClientAuthenticationError(message=message, response=response.http_response) from ex
+                message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
+                raise CredentialUnavailableError(message=message, response=response.http_response) from ex
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
@@ -90,6 +96,19 @@ class ManagedIdentityClientBase(abc.ABC):
     @abc.abstractmethod
     def _build_pipeline(self, **kwargs):
         pass
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        if not self._custom_cache:
+            del state["_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        if not self._custom_cache:
+            self._cache = TokenCache()
 
 
 class ManagedIdentityClient(ManagedIdentityClientBase):

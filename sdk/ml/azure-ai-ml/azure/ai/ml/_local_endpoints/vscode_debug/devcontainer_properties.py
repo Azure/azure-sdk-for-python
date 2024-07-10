@@ -6,7 +6,7 @@
 # Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference
 
 
-from typing import Optional
+from typing import Dict, Optional
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
@@ -37,7 +37,7 @@ class Build(object):
         self._target = target
 
     def to_dict(self) -> dict:
-        build = {
+        build: Dict = {
             "build": {
                 "dockerfile": self._dockerfile_path,
             }

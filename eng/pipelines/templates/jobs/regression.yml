@@ -25,6 +25,8 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
+  - name: OSName
+    type: string
 
 # The variable $(DependentService) is set from the matrix configuration.
 
@@ -53,7 +55,8 @@ jobs:
 
     pool:
       name: $(Pool)
-      vmImage: $(OSVmImage)
+      image: $(OSVmImage)
+      os: ${{ parameters.OSName }}
 
     ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
       # Add a default so the job doesn't fail when the matrix is empty
@@ -76,6 +79,8 @@ jobs:
         displayName: 'Use Python 3.9'
         inputs:
           versionSpec: '3.9'
+    
+      - template: /eng/pipelines/templates/steps/use-venv.yml
 
       - task: DownloadPipelineArtifact@2
         inputs:

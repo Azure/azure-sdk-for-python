@@ -4,13 +4,13 @@
 import json
 import os.path
 from pathlib import Path
+from typing import Any, Dict
 
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities._deployment.data_collector import DataCollector
 
 
 class MdcConfigResolver(object):
-
     """Represents the contents of mdc config and handles writing the mdc configuration to User's system.
 
     :param data_collector: model data collector entity
@@ -21,9 +21,9 @@ class MdcConfigResolver(object):
         self,
         data_collector: DataCollector,
     ):
-        self.environment_variables = {}
-        self.volumes = {}
-        self.mdc_config = None
+        self.environment_variables: Dict = {}
+        self.volumes: Dict = {}
+        self.mdc_config: Any = None
         self.config_path = "/etc/mdc-config.json"
         self.local_config_name = "mdc-config.json"
         self._construct(data_collector)

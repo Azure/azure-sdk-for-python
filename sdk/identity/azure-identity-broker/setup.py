@@ -45,7 +45,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -61,9 +60,9 @@ setup(
     package_data={
         "pytyped": ["py.typed"],
     },
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
-        "azure-identity<2.0.0,>=1.14.0",
+        "azure-identity<2.0.0,>=1.15.0",
         "msal[broker]>=1.25,<2",
     ],
 )

@@ -1,0 +1,115 @@
+parameters:
+  - name: Daily
+    default: true
+  - name: Artifact
+    type: object
+    default: {}
+  - name: ArtifactName
+    type: string
+    default: "not-specified"
+
+steps:
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+    parameters:
+      AgentImage: $(OSVmImage)
+
+  - task: UsePythonVersion@0
+    displayName: "Use Python $(PythonVersion)"
+    inputs:
+      versionSpec: $(PythonVersion)
+
+  - script: |
+      python -m pip install pip==20.0.2
+      pip --version
+    displayName: pip --version
+
+  - ${{ if eq(parameters.Daily, false) }}:
+    - download: current
+      artifact: ${{ parameters.ArtifactName }}
+      timeoutInMinutes: 5
+
+    - pwsh: |
+        $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ parameters.Artifact.name }}/*.tar.gz"
+        Write-Host "Artifacts found:"
+        $artifacts = $packages | ForEach-Object {
+          if ($_.Name -match "([a-zA-Z\-]+)\-(.*).tar.gz") {
+            Write-Host "$($matches[1]): $($matches[2])"
+            return @{ "name" = $matches[1]; "version" = $matches[2] }
+          }
+        }
+        if ($artifacts.name -notcontains "${{parameters.Artifact.name}}") {
+          Write-Host "Can't find package ${{parameters.Artifact.name}}"
+          exit 1
+        }
+        $dependencies = Get-Content $(requirements) | ForEach-Object {
+          $line = $_
+          if ($line -match "([a-zA-Z\-]+)(\W+)(.*)") {
+              $override = ($artifacts | Where-Object { $_.Name -eq $matches[1] }).Version
+              if ($override) {
+                  $line = $line -replace '([a-zA-Z\-]+)(\W+)(.*)', ('${1}${2}' + $override)
+                  Write-Host "Overriding dependency to: $line"
+              }
+          }
+          return $line
+        }
+
+        $dependencies | Out-File $(requirements)
+
+      displayName: Override requirements with pipeline build artifact versions
+
+    # Retry for pip install due to delay in package availability after publish
+    # The package is expected to be available for download/installation within 10 minutes 
+    - pwsh: |
+        $ErrorActionPreference = "Continue"
+        while ($retries++ -lt 15) {
+          Write-Host "python -m pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
+          python -m pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
+          if ($LASTEXITCODE) {
+            if ($retries -ge 15) {
+              exit $LASTEXITCODE
+            }
+            Write-Host "Installation failed, retrying in 1 minute..."
+            sleep 60
+          } else {
+            break
+          }
+        }
+      displayName: Install requirements without dependencies
+
+  - ${{ if eq(parameters.Daily, true) }}:
+    - pwsh: |
+        python -m pip install -r "$(requirements)" --pre --no-deps --upgrade `
+          --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
+
+      displayName: Install requirements from dev feed without dependencies
+
+  - pwsh: python -m pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_async.txt
+    displayName: "Install requirements_async.txt"
+    condition: and(succeeded(), ne(variables['SkipAsyncInstall'], true))
+
+  - pwsh: |
+      python $(Build.SourcesDirectory)/common/smoketest/dependencies.py -r "$(requirements)" `
+        | Out-File $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
+    displayName: Create dependency list from installed packages
+
+  - script: python -m pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
+    displayName: Install package dependencies from PyPI
+
+  - script: python -m pip freeze
+    displayName: Show installed packages (pip freeze)
+
+  - template: /eng/common/TestResources/deploy-test-resources.yml
+    parameters:
+      ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
+      SubscriptionConfiguration: $(SubscriptionConfiguration)
+      Location: $(Location)
+      ArmTemplateParameters: $(ArmTemplateParameters)
+
+  - script: python $(Build.SourcesDirectory)/common/smoketest/program.py
+    displayName: Run Smoke Test
+
+  - template: /eng/common/TestResources/remove-test-resources.yml
+    parameters:
+      ServiceDirectory: '$(Build.SourcesDirectory)/common/smoketest/'
+      SubscriptionConfiguration: $(SubscriptionConfiguration)
+

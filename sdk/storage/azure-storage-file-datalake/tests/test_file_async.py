@@ -1454,7 +1454,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_dir_and_file_properties_owner_group_permissions(self, **kwargs):
+    async def test_dir_and_file_properties_owner_group_acl_permissions(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
@@ -1467,15 +1467,17 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await file_client1.create_file()
 
         directory_properties = await directory_client.get_directory_properties()
-        file_properties = await file_client1.get_file_properties()
+        file_properties = await file_client1.get_file_properties(upn=True)
 
         # Assert
         assert directory_properties['owner'] is not None
         assert directory_properties['group'] is not None
         assert directory_properties['permissions'] is not None
+        assert directory_properties['acl'] is not None
         assert file_properties['owner'] is not None
         assert file_properties['group'] is not None
         assert file_properties['permissions'] is not None
+        assert file_properties['acl'] is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1524,11 +1526,10 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         data = b'Hello world'
-        with pytest.raises(ClientAuthenticationError):
-            await fc.get_file_properties()
-            await fc.upload_data(data, overwrite=True)
+        await fc.get_file_properties()
+        await fc.upload_data(data, overwrite=True)
 
 
 # ------------------------------------------------------------------------------

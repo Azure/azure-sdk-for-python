@@ -3,4 +3,3 @@
 ../../core/azure-core
 ../azure-mgmt-communication
 aiohttp
--e ../../../tools/azure-devtools

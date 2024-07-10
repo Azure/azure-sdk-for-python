@@ -71,6 +71,11 @@
           },
           {
             "$ref": "#/parameters/PaginationParameter"
+          },
+          {
+            "in": "query",
+            "name": "aiCapabilities",
+            "type": "string"
           }
         ],
         "responses": {
@@ -122,6 +127,11 @@
           },
           {
             "$ref": "#/parameters/PaginationParameter"
+          },
+          {
+            "in": "query",
+            "name": "aiCapabilities",
+            "type": "string"
           }
         ],
         "responses": {
@@ -367,9 +377,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -419,6 +427,13 @@
           },
           {
             "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "query",
+            "name": "includeAll",
+            "description": "query parameter that indicates if get connection call should return both connections and datastores",
+            "type": "boolean",
+            "default": false
           }
         ],
         "responses": {
@@ -747,7 +762,7 @@
         ],
         "responses": {
           "202": {
-            "description": "The request was successful; the request was well-formed and received properly.",
+            "description": "Accepted",
             "headers": {
               "Location": {
                 "description": "URI to poll for asynchronous operation result.",
@@ -772,7 +787,64 @@
             "$ref": "./examples/WorkspaceConnection/testConnection.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/deployments": {
+      "get": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Get all the deployments under the workspace scope",
+        "operationId": "EndpointDeployment_GetInWorkspace",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointTypeParameter"
+          },
+          {
+            "$ref": "#/parameters/PaginationParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Endpoint Deployments In Workspace": {
+            "$ref": "./examples/Endpoint/Deployment/getInWorkspace.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/diagnose": {
@@ -827,9 +899,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -848,6 +918,587 @@
         "x-ms-long-running-operation": true,
         "x-ms-long-running-operation-options": {
           "final-state-via": "location"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints": {
+      "get": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "List All the endpoints under this workspace",
+        "operationId": "Endpoint_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointTypeParameter"
+          },
+          {
+            "$ref": "#/parameters/PaginationParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointResourcePropertiesBasicResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List Endpoint": {
+            "$ref": "./examples/Endpoint/list.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints/{endpointName}": {
+      "get": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Gets endpoint resource",
+        "operationId": "Endpoint_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointResourcePropertiesBasicResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Endpoint": {
+            "$ref": "./examples/Endpoint/get.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Create or update endpoint resource with the specified parameters",
+        "operationId": "Endpoint_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Endpoint resource object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EndpointResourcePropertiesBasicResource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointResourcePropertiesBasicResource"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Create Endpoint": {
+            "$ref": "./examples/Endpoint/create.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints/{endpointName}/deployments": {
+      "get": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Get all the deployments under the endpoint resource scope",
+        "operationId": "EndpointDeployment_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Endpoint Deployments": {
+            "$ref": "./examples/Endpoint/Deployment/getDeployments.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints/{endpointName}/deployments/{deploymentName}": {
+      "delete": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Delete  endpoint deployment resource by name",
+        "operationId": "EndpointDeployment_Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "#/parameters/DeploymentNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "204": {
+            "description": "Deployment was successfully deleted or doesn't exist."
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Delete Endpoint Deployment": {
+            "$ref": "./examples/Endpoint/Deployment/delete.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      },
+      "get": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Get deployments under endpoint resource by name",
+        "operationId": "EndpointDeployment_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "#/parameters/DeploymentNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointDeploymentResourcePropertiesBasicResource"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Endpoint Deployment": {
+            "$ref": "./examples/Endpoint/Deployment/get.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Create or update endpoint deployment resource with the specified parameters",
+        "operationId": "EndpointDeployment_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "#/parameters/DeploymentNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "deployment object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EndpointDeploymentResourcePropertiesBasicResource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointDeploymentResourcePropertiesBasicResource"
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Create Endpoint Deployment": {
+            "$ref": "./examples/Endpoint/Deployment/create.json"
+          }
+        },
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints/{endpointName}/listKeys": {
+      "post": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "List keys for the endpoint resource.",
+        "operationId": "Endpoint_ListKeys",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointKeys"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List Endpoint Keys": {
+            "$ref": "./examples/Endpoint/listKeys.json"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints/{endpointName}/models": {
+      "get": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Get available models under the endpoint resource.",
+        "operationId": "Endpoint_GetModels",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/EndpointModels"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Endpoint Models": {
+            "$ref": "./examples/Endpoint/getModels.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/endpoints/{endpointName}/regenerateKey": {
+      "post": {
+        "tags": [
+          "Endpoint"
+        ],
+        "summary": "Regenerate account keys",
+        "operationId": "Endpoint_RegenerateKeys",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/EndpointNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegenerateServiceAccountKeyContent"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/AccountApiKeys"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Regenerate Endpoint Keys": {
+            "$ref": "./examples/Endpoint/regenerateKey.json"
+          }
         }
       }
     },
@@ -1165,9 +1816,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -1292,9 +1941,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -1357,9 +2004,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -1681,9 +2326,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -1743,9 +2386,7 @@
               "Retry-After": {
                 "description": "Duration the client should wait between requests, in seconds.",
                 "type": "integer",
-                "format": "int32",
-                "maximum": 600,
-                "minimum": 10
+                "format": "int32"
               }
             }
           },
@@ -1769,6 +2410,16 @@
     }
   },
   "definitions": {
+    "AADAuthTypeWorkspaceConnectionProperties": {
+      "description": "This connection type covers the AAD auth for any applicable Azure service",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/WorkspaceConnectionPropertiesV2"
+        }
+      ],
+      "x-ms-discriminator-value": "AAD"
+    },
     "AccessKeyAuthTypeWorkspaceConnectionProperties": {
       "type": "object",
       "allOf": [
@@ -1782,6 +2433,102 @@
         }
       },
       "x-ms-discriminator-value": "AccessKey"
+    },
+    "AccountApiKeys": {
+      "type": "object",
+      "properties": {
+        "key1": {
+          "type": "string",
+          "x-ms-secret": true
+        },
+        "key2": {
+          "type": "string",
+          "x-ms-secret": true
+        }
+      }
+    },
+    "AccountKeyAuthTypeWorkspaceConnectionProperties": {
+      "description": "This connection type covers the account key connection for Azure storage",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/WorkspaceConnectionPropertiesV2"
+        }
+      ],
+      "properties": {
+        "credentials": {
+          "$ref": "#/definitions/WorkspaceConnectionSharedAccessSignature"
+        }
+      },
+      "x-ms-discriminator-value": "AccountKey"
+    },
+    "AccountModel": {
+      "description": "Cognitive Services account Model.",
+      "type": "object",
+      "properties": {
+        "baseModel": {
+          "type": "object",
+          "description": "Base Model Identifier.",
+          "$ref": "#/definitions/DeploymentModel"
+        },
+        "isDefaultVersion": {
+          "type": "boolean",
+          "description": "If the model is default version."
+        },
+        "skus": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelSku"
+          },
+          "x-ms-identifiers": [
+            "name"
+          ],
+          "description": "The list of Model Sku."
+        },
+        "maxCapacity": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The max capacity."
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The capabilities."
+        },
+        "finetuneCapabilities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The capabilities for finetune models."
+        },
+        "deprecation": {
+          "type": "object",
+          "$ref": "#/definitions/ModelDeprecationInfo"
+        },
+        "lifecycleStatus": {
+          "type": "string",
+          "enum": [
+            "GenerallyAvailable",
+            "Preview"
+          ],
+          "x-ms-enum": {
+            "name": "ModelLifecycleStatus",
+            "modelAsString": true
+          },
+          "description": "Model lifecycle status."
+        },
+        "systemData": {
+          "$ref": "../../../../../common-types/resource-management/v2/types.json#/definitions/systemData"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/DeploymentModel"
+        }
+      ]
     },
     "ApiKeyAuthWorkspaceConnectionProperties": {
       "description": "This connection type covers the generic ApiKey auth connection categories, for examples:\r\nAzureOpenAI:\r\n    Category:= AzureOpenAI\r\n    AuthType:= ApiKey (as type discriminator)\r\n    Credentials:= {ApiKey} as Microsoft.MachineLearning.AccountRP.Contracts.WorkspaceConnection.ApiKey\r\n    Target:= {ApiBase}\r\n            \r\nCognitiveService:\r\n    Category:= CognitiveService\r\n    AuthType:= ApiKey (as type discriminator)\r\n    Credentials:= {SubscriptionKey} as Microsoft.MachineLearning.AccountRP.Contracts.WorkspaceConnection.ApiKey\r\n    Target:= ServiceRegion={serviceRegion}\r\n            \r\nCognitiveSearch:\r\n    Category:= CognitiveSearch\r\n    AuthType:= ApiKey (as type discriminator)\r\n    Credentials:= {Key} as Microsoft.MachineLearning.AccountRP.Contracts.WorkspaceConnection.ApiKey\r\n    Target:= {Endpoint}\r\n            \r\nUse Metadata property bag for ApiType, ApiVersion, Kind and other metadata fields",
@@ -1797,6 +2544,116 @@
         }
       },
       "x-ms-discriminator-value": "ApiKey"
+    },
+    "CallRateLimit": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number",
+          "description": "The count value of Call Rate Limit."
+        },
+        "renewalPeriod": {
+          "type": "number",
+          "description": "The renewal period in seconds of Call Rate Limit."
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ThrottlingRule"
+          },
+          "x-ms-identifiers": [
+            "key"
+          ]
+        }
+      },
+      "description": "The call rate limit Cognitive Services account."
+    },
+    "CapacityConfig": {
+      "type": "object",
+      "properties": {
+        "minimum": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The minimum capacity."
+        },
+        "maximum": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The maximum capacity."
+        },
+        "step": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The minimal incremental between allowed values for capacity."
+        },
+        "default": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The default capacity."
+        },
+        "allowedValues": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The array of allowed values for capacity."
+        }
+      },
+      "description": "The capacity configuration."
+    },
+    "CognitiveServiceEndpointDeploymentResourceProperties": {
+      "required": [
+        "model"
+      ],
+      "type": "object",
+      "properties": {
+        "model": {
+          "description": "Model used for the endpoint deployment.",
+          "$ref": "#/definitions/EndpointDeploymentModel"
+        },
+        "raiPolicyName": {
+          "type": "string",
+          "description": "The name of RAI policy."
+        },
+        "sku": {
+          "$ref": "#/definitions/CognitiveServicesSku"
+        },
+        "versionUpgradeOption": {
+          "description": "Deployment model version upgrade option.",
+          "type": "string",
+          "enum": [
+            "OnceNewDefaultVersionAvailable",
+            "OnceCurrentVersionExpired",
+            "NoAutoUpgrade"
+          ],
+          "x-ms-enum": {
+            "name": "DeploymentModelVersionUpgradeOption",
+            "modelAsString": true
+          }
+        }
+      }
+    },
+    "CognitiveServicesSku": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "family": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "string"
+        }
+      }
     },
     "ComputeRuntimeDto": {
       "type": "object",
@@ -1814,10 +2671,13 @@
         "UsernamePassword",
         "None",
         "SAS",
+        "AccountKey",
         "ServicePrincipal",
         "AccessKey",
         "ApiKey",
-        "CustomKeys"
+        "CustomKeys",
+        "OAuth2",
+        "AAD"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -1843,13 +2703,132 @@
         "AzureOpenAI",
         "CognitiveSearch",
         "CognitiveService",
-        "CustomKeys"
+        "CustomKeys",
+        "AzureBlob",
+        "AzureOneLake",
+        "CosmosDb",
+        "CosmosDbMongoDbApi",
+        "AzureDataExplorer",
+        "AzureMariaDb",
+        "AzureDatabricksDeltaLake",
+        "AzureSqlMi",
+        "AzureTableStorage",
+        "AmazonRdsForOracle",
+        "AmazonRdsForSqlServer",
+        "AmazonRedshift",
+        "Db2",
+        "Drill",
+        "GoogleBigQuery",
+        "Greenplum",
+        "Hbase",
+        "Hive",
+        "Impala",
+        "Informix",
+        "MariaDb",
+        "MicrosoftAccess",
+        "MySql",
+        "Netezza",
+        "Oracle",
+        "Phoenix",
+        "PostgreSql",
+        "Presto",
+        "SapOpenHub",
+        "SapBw",
+        "SapHana",
+        "SapTable",
+        "Spark",
+        "SqlServer",
+        "Sybase",
+        "Teradata",
+        "Vertica",
+        "Cassandra",
+        "Couchbase",
+        "MongoDbV2",
+        "MongoDbAtlas",
+        "AmazonS3Compatible",
+        "FileServer",
+        "FtpServer",
+        "GoogleCloudStorage",
+        "Hdfs",
+        "OracleCloudStorage",
+        "Sftp",
+        "GenericHttp",
+        "ODataRest",
+        "Odbc",
+        "GenericRest",
+        "AmazonMws",
+        "Concur",
+        "Dynamics",
+        "DynamicsAx",
+        "DynamicsCrm",
+        "GoogleAdWords",
+        "Hubspot",
+        "Jira",
+        "Magento",
+        "Marketo",
+        "Office365",
+        "Eloqua",
+        "Responsys",
+        "OracleServiceCloud",
+        "PayPal",
+        "QuickBooks",
+        "Salesforce",
+        "SalesforceServiceCloud",
+        "SalesforceMarketingCloud",
+        "SapCloudForCustomer",
+        "SapEcc",
+        "ServiceNow",
+        "SharePointOnlineList",
+        "Shopify",
+        "Square",
+        "WebTable",
+        "Xero",
+        "Zoho",
+        "GenericContainerRegistry"
       ],
       "type": "string",
       "x-ms-enum": {
         "name": "ConnectionCategory",
         "modelAsString": true
       }
+    },
+    "ConnectionGroup": {
+      "description": "Group based on connection category",
+      "enum": [
+        "Azure",
+        "AzureAI",
+        "Database",
+        "NoSQL",
+        "File",
+        "GenericProtocol",
+        "ServicesAndApps"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ConnectionGroup",
+        "modelAsString": true
+      }
+    },
+    "ContentSafetyEndpointDeploymentResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CognitiveServiceEndpointDeploymentResourceProperties"
+        },
+        {
+          "$ref": "#/definitions/EndpointDeploymentResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "Azure.ContentSafety"
+    },
+    "ContentSafetyEndpointResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EndpointResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "Azure.ContentSafety"
     },
     "CosmosDbSettings": {
       "type": "object",
@@ -1887,6 +2866,52 @@
         }
       },
       "x-ms-discriminator-value": "CustomKeys"
+    },
+    "DefaultResourceProvisioningState": {
+      "enum": [
+        "NotStarted",
+        "Failed",
+        "Creating",
+        "Updating",
+        "Succeeded",
+        "Deleting",
+        "Canceled"
+      ],
+      "type": "string",
+      "readOnly": true,
+      "x-ms-mutability": [
+        "read"
+      ],
+      "x-ms-enum": {
+        "name": "DefaultResourceProvisioningState",
+        "modelAsString": true
+      }
+    },
+    "DeploymentModel": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "description": "Deployment model format."
+        },
+        "name": {
+          "type": "string",
+          "description": "Deployment model name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Optional. Deployment model version. If version is not specified, a default version will be assigned. The default version is different for different models and might change when there is new version available for a model. Default version for a model could be found from list models API."
+        },
+        "source": {
+          "type": "string",
+          "description": "Optional. Deployment model source ARM resource ID."
+        },
+        "callRateLimit": {
+          "readOnly": true,
+          "$ref": "#/definitions/CallRateLimit"
+        }
+      },
+      "description": "Properties of Cognitive Services account deployment model."
     },
     "DiagnoseRequestProperties": {
       "type": "object",
@@ -2151,6 +3176,182 @@
       "properties": {
         "keyVaultProperties": {
           "$ref": "#/definitions/EncryptionKeyVaultUpdateProperties"
+        }
+      }
+    },
+    "EndpointDeploymentModel": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "description": "Model format",
+          "type": "string"
+        },
+        "name": {
+          "description": "Model name.",
+          "type": "string"
+        },
+        "source": {
+          "description": "Optional. Deployment model source ARM resource ID.",
+          "type": "string"
+        },
+        "version": {
+          "description": "Model version.",
+          "type": "string"
+        }
+      }
+    },
+    "EndpointDeploymentResourceProperties": {
+      "required": [
+        "type"
+      ],
+      "type": "object",
+      "properties": {
+        "failureReason": {
+          "description": "The failure reason if the creation failed.",
+          "type": "string"
+        },
+        "provisioningState": {
+          "description": "Read-only provision state status property.",
+          "$ref": "#/definitions/DefaultResourceProvisioningState"
+        },
+        "type": {
+          "description": "Kind of the deployment.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9._]",
+          "type": "string"
+        }
+      },
+      "discriminator": "type"
+    },
+    "EndpointDeploymentResourcePropertiesBasicResource": {
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "$ref": "#/definitions/EndpointDeploymentResourceProperties"
+        }
+      }
+    },
+    "EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "type": "string"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EndpointDeploymentResourcePropertiesBasicResource"
+          }
+        }
+      }
+    },
+    "EndpointKeys": {
+      "type": "object",
+      "properties": {
+        "keys": {
+          "description": "Dictionary of Keys for the endpoint.",
+          "$ref": "#/definitions/AccountApiKeys",
+          "x-ms-secret": true
+        }
+      }
+    },
+    "EndpointModels": {
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page constructed using the continuationToken.  If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "List of models.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AccountModel"
+          }
+        }
+      }
+    },
+    "EndpointResourceProperties": {
+      "required": [
+        "endpointType"
+      ],
+      "type": "object",
+      "properties": {
+        "associatedResourceId": {
+          "description": "Byo resource id for creating the built-in model service endpoints.",
+          "type": "string",
+          "format": "arm-id"
+        },
+        "endpointType": {
+          "description": "Type of the endpoint.",
+          "type": "string",
+          "enum": [
+            "Azure.OpenAI",
+            "Azure.Speech",
+            "Azure.ContentSafety",
+            "Azure.Llama",
+            "managedOnlineEndpoint"
+          ],
+          "x-ms-enum": {
+            "name": "endpointType",
+            "modelAsString": true
+          }
+        },
+        "endpointUri": {
+          "description": "Uri of the endpoint.",
+          "type": "string",
+          "format": "url"
+        },
+        "failureReason": {
+          "description": "The failure reason if the creation failed.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the endpoint.",
+          "type": "string"
+        },
+        "provisioningState": {
+          "description": "Read-only provision state status property.",
+          "$ref": "#/definitions/DefaultResourceProvisioningState"
+        }
+      },
+      "discriminator": "endpointType"
+    },
+    "EndpointResourcePropertiesBasicResource": {
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "$ref": "#/definitions/EndpointResourceProperties"
+        }
+      }
+    },
+    "EndpointResourcePropertiesBasicResourceArmPaginatedResult": {
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "type": "string"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EndpointResourcePropertiesBasicResource"
+          }
         }
       }
     },
@@ -2425,14 +3626,14 @@
           "additionalProperties": {
             "description": "Outbound Rule for the managed network of a machine learning workspace.",
             "$ref": "#/definitions/OutboundRule"
-          }
+          },
+          "x-nullable": true
         },
         "status": {
           "description": "Status of the Provisioning for the managed network of a machine learning workspace.",
           "$ref": "#/definitions/ManagedNetworkProvisionStatus"
         },
         "changeableIsolationModes": {
-          "description": "Detail isolation modes for the managed network of a machine learning workspace.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/IsolationMode"
@@ -2452,6 +3653,70 @@
         "name": "ManagedNetworkStatus",
         "modelAsString": true
       }
+    },
+    "ManagedOnlineEndpointDeploymentResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EndpointDeploymentResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "managedOnlineEndpoint"
+    },
+    "ManagedOnlineEndpointResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EndpointResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "managedOnlineEndpoint"
+    },
+    "ModelDeprecationInfo": {
+      "description": "Cognitive Services account ModelDeprecationInfo.",
+      "type": "object",
+      "properties": {
+        "fineTune": {
+          "type": "string",
+          "description": "The datetime of deprecation of the fineTune Model."
+        },
+        "inference": {
+          "type": "string",
+          "description": "The datetime of deprecation of the inference Model."
+        }
+      }
+    },
+    "ModelSku": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the model SKU."
+        },
+        "usageName": {
+          "type": "string",
+          "description": "The usage name of the model SKU."
+        },
+        "deprecationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The datetime of deprecation of the model SKU."
+        },
+        "capacity": {
+          "type": "object",
+          "description": "The capacity configuration.",
+          "$ref": "#/definitions/CapacityConfig"
+        },
+        "rateLimits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CallRateLimit"
+          },
+          "x-ms-identifiers": [],
+          "description": "The list of rateLimit."
+        }
+      },
+      "description": "Describes an available Cognitive Services Model SKU."
     },
     "NoneAuthTypeWorkspaceConnectionProperties": {
       "type": "object",
@@ -2557,23 +3822,58 @@
         }
       }
     },
+    "OAuth2AuthTypeWorkspaceConnectionProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/WorkspaceConnectionPropertiesV2"
+        }
+      ],
+      "properties": {
+        "credentials": {
+          "$ref": "#/definitions/WorkspaceConnectionOAuth2"
+        }
+      },
+      "x-ms-discriminator-value": "OAuth2"
+    },
+    "OpenAIEndpointDeploymentResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CognitiveServiceEndpointDeploymentResourceProperties"
+        },
+        {
+          "$ref": "#/definitions/EndpointDeploymentResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "Azure.OpenAI"
+    },
+    "OpenAIEndpointResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EndpointResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "Azure.OpenAI"
+    },
     "OutboundRule": {
-      "description": "Outbound rule for the managed network of a machine learning workspace.",
+      "description": "Outbound Rule for the managed network of a machine learning workspace.",
       "required": [
         "type"
       ],
       "type": "object",
       "properties": {
         "category": {
-          "description": "Category of a managed network outbound rule of a machine learning workspace.",
+          "description": "Category of a managed network Outbound Rule of a machine learning workspace.",
           "$ref": "#/definitions/RuleCategory"
         },
         "status": {
-          "description": "Type of a managed network outbound rule of a machine learning workspace.",
+          "description": "Type of a managed network Outbound Rule of a machine learning workspace.",
           "$ref": "#/definitions/RuleStatus"
         },
         "type": {
-          "description": "Type of a managed network outbound rule of a machine learning workspace.",
+          "description": "Type of a managed network Outbound Rule of a machine learning workspace.",
           "$ref": "#/definitions/RuleType"
         }
       },
@@ -2890,6 +4190,14 @@
         "modelAsString": true
       }
     },
+    "RegenerateServiceAccountKeyContent": {
+      "type": "object",
+      "properties": {
+        "keyName": {
+          "$ref": "#/definitions/ServiceAccountKeyName"
+        }
+      }
+    },
     "RegistryListCredentialsResult": {
       "type": "object",
       "properties": {
@@ -2917,6 +4225,17 @@
           "x-ms-mutability": [
             "read"
           ]
+        }
+      }
+    },
+    "RequestMatchPattern": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
         }
       }
     },
@@ -2996,6 +4315,17 @@
           "description": "The flag to signal if serverless compute nodes deployed in custom vNet would have no public IP addresses for a workspace with private endpoint",
           "type": "boolean"
         }
+      }
+    },
+    "ServiceAccountKeyName": {
+      "enum": [
+        "Key1",
+        "Key2"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ServiceAccountKeyName",
+        "modelAsString": true
       }
     },
     "ServiceManagedResourcesSettings": {
@@ -3098,6 +4428,57 @@
         }
       }
     },
+    "SpeechEndpointDeploymentResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CognitiveServiceEndpointDeploymentResourceProperties"
+        },
+        {
+          "$ref": "#/definitions/EndpointDeploymentResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "Azure.Speech"
+    },
+    "SpeechEndpointResourceProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EndpointResourceProperties"
+        }
+      ],
+      "x-ms-discriminator-value": "Azure.Speech"
+    },
+    "ThrottlingRule": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "renewalPeriod": {
+          "type": "number"
+        },
+        "count": {
+          "type": "number"
+        },
+        "minCount": {
+          "type": "number"
+        },
+        "dynamicThrottlingEnabled": {
+          "type": "boolean"
+        },
+        "matchPatterns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RequestMatchPattern"
+          },
+          "x-ms-identifiers": [
+            "path",
+            "method"
+          ]
+        }
+      }
+    },
     "UsernamePasswordAuthTypeWorkspaceConnectionProperties": {
       "type": "object",
       "allOf": [
@@ -3181,6 +4562,48 @@
         }
       }
     },
+    "WorkspaceConnectionOAuth2": {
+      "description": "ClientId and ClientSecret are required. Other properties are optional\r\ndepending on each OAuth2 provider's implementation.",
+      "type": "object",
+      "properties": {
+        "authUrl": {
+          "description": "Required by Concur connection category",
+          "type": "string",
+          "format": "url"
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Client id in the format of UUID",
+          "format": "uuid"
+        },
+        "clientSecret": {
+          "type": "string",
+          "x-ms-secret": true
+        },
+        "developerToken": {
+          "description": "Required by GoogleAdWords connection category",
+          "type": "string",
+          "x-ms-secret": true
+        },
+        "password": {
+          "type": "string",
+          "x-ms-secret": true
+        },
+        "refreshToken": {
+          "description": "Required by GoogleBigQuery, GoogleAdWords, Hubspot, QuickBooks, Square, Xero, Zoho\r\nwhere user needs to get RefreshToken offline",
+          "type": "string",
+          "x-ms-secret": true
+        },
+        "tenantId": {
+          "description": "Required by QuickBooks and Xero connection categories",
+          "type": "string"
+        },
+        "username": {
+          "description": "Concur, ServiceNow auth server AccessToken grant type is 'Password'\r\nwhich requires UsernamePassword",
+          "type": "string"
+        }
+      }
+    },
     "WorkspaceConnectionPersonalAccessToken": {
       "type": "object",
       "properties": {
@@ -3204,7 +4627,6 @@
           "$ref": "#/definitions/ConnectionCategory"
         },
         "createdByWorkspaceArmId": {
-          "description": "The arm id of the workspace which created this connection",
           "type": "string",
           "format": "arm-id",
           "readOnly": true
@@ -3213,12 +4635,22 @@
           "format": "date-time",
           "type": "string"
         },
+        "group": {
+          "description": "Group based on connection category",
+          "$ref": "#/definitions/ConnectionGroup",
+          "readOnly": true
+        },
         "isSharedToAll": {
-          "description": "whether this connection will be shared to all the project workspace under the hub",
           "type": "boolean"
         },
         "metadata": {
           "type": "object"
+        },
+        "sharedUserList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "target": {
           "type": "string"
@@ -3263,6 +4695,7 @@
           "type": "string"
         },
         "clientSecret": {
+          "x-ms-secret": true,
           "type": "string"
         },
         "tenantId": {
@@ -3293,6 +4726,11 @@
       "properties": {
         "password": {
           "type": "string"
+        },
+        "securityToken": {
+          "description": "Optional, required by connections like SalesForce for extra security in addition to UsernamePassword",
+          "type": "string",
+          "x-ms-secret": true
         },
         "username": {
           "type": "string"
@@ -3392,6 +4830,14 @@
         "enableDataIsolation": {
           "type": "boolean"
         },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
+          "type": "boolean"
+        },
+        "enableSoftwareBillOfMaterials": {
+          "description": "Flag to tell if SoftwareBillOfMaterial should be enabled for this workspace",
+          "type": "boolean"
+        },
         "encryption": {
           "$ref": "#/definitions/EncryptionProperty"
         },
@@ -3419,6 +4865,13 @@
         "imageBuildCompute": {
           "description": "The compute name for image build",
           "type": "string"
+        },
+        "ipAllowlist": {
+          "description": "The list of IPv4  addresses that are allowed to access the workspace.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "keyVault": {
           "description": "ARM id of the key vault associated with this workspace. This cannot be changed once the workspace has been created",
@@ -3489,7 +4942,7 @@
           "$ref": "#/definitions/PublicNetworkAccessType"
         },
         "serverlessComputeSettings": {
-          "description": "Settings for serverless compute created in the workspace",
+          "description": "Settings for serverless compute in a workspace",
           "$ref": "#/definitions/ServerlessComputeSettings"
         },
         "serviceManagedResourcesSettings": {
@@ -3571,6 +5024,10 @@
       "description": "The parameters for updating a machine learning workspace.",
       "type": "object",
       "properties": {
+        "systemDatastoresAuthMode": {
+          "description": "The auth mode used for accessing the system datastores of the workspace.",
+          "type": "string"
+        },
         "applicationInsights": {
           "description": "ARM id of the application insights associated with this workspace.",
           "type": "string"
@@ -3584,6 +5041,14 @@
           "type": "string"
         },
         "enableDataIsolation": {
+          "type": "boolean"
+        },
+        "allowRoleAssignmentOnRG": {
+          "description": "Determine whether we will allow workspace role assignment on resource group level.",
+          "type": "boolean"
+        },
+        "enableSoftwareBillOfMaterials": {
+          "description": "Flag to tell if SoftwareBillOfMaterial should be enabled for this workspace",
           "type": "boolean"
         },
         "encryption": {
@@ -3601,6 +5066,13 @@
           "description": "The compute name for image build",
           "type": "string"
         },
+        "ipAllowlist": {
+          "description": "The list of IPv4 addresses that are allowed to access the workspace.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "managedNetwork": {
           "$ref": "#/definitions/ManagedNetworkSettings"
         },
@@ -3613,7 +5085,7 @@
           "$ref": "#/definitions/PublicNetworkAccessType"
         },
         "serverlessComputeSettings": {
-          "description": "Settings for serverless compute created in the workspace",
+          "description": "Settings for serverless compute in a workspace",
           "$ref": "#/definitions/ServerlessComputeSettings"
         },
         "serviceManagedResourcesSettings": {
@@ -3718,6 +5190,42 @@
       "description": "query parameter for which AOAI mode should be deployed",
       "type": "string",
       "x-ms-parameter-location": "method"
+    },
+    "EndpointTypeParameter": {
+      "in": "query",
+      "name": "endpointType",
+      "description": "Endpoint type filter",
+      "type": "string",
+      "enum": [
+        "Azure.OpenAI",
+        "Azure.Speech",
+        "Azure.ContentSafety",
+        "Azure.Llama",
+        "managedOnlineEndpoint"
+      ],
+      "x-ms-enum": {
+        "name": "endpointType",
+        "modelAsString": true
+      },
+      "x-ms-parameter-location": "method"
+    },
+    "EndpointNameParameter": {
+      "in": "path",
+      "name": "endpointName",
+      "description": "Name of the endpoint resource.",
+      "required": true,
+      "type": "string",
+      "x-ms-parameter-location": "method",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{2,32}$"
+    },
+    "DeploymentNameParameter": {
+      "in": "path",
+      "name": "deploymentName",
+      "description": "Name of the deployment resource",
+      "required": true,
+      "type": "string",
+      "x-ms-parameter-location": "method",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$"
     },
     "RuleName": {
       "in": "path",

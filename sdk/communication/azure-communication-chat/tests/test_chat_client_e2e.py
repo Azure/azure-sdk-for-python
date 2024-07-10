@@ -6,7 +6,7 @@
 import pytest
 import time
 from datetime import datetime, timezone
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
@@ -62,6 +62,7 @@ class TestChatClient(AzureRecordedTestCase):
         self.thread_id = create_chat_thread_result.chat_thread.id
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_access_token_validation(self):
         """
         This is to make sure that consecutive calls made using the same chat_client or chat_thread_client
@@ -95,20 +96,23 @@ class TestChatClient(AzureRecordedTestCase):
         assert raised is False
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_create_chat_thread(self):
         self._create_thread()
         assert self.thread_id is not None
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_create_chat_thread_w_no_participants(self):
         # create chat thread
         topic = "test topic"
         create_chat_thread_result = self.chat_client.create_chat_thread(topic)
         self.thread_id = create_chat_thread_result.chat_thread.id
         assert create_chat_thread_result.chat_thread is not None
-        assert create_chat_thread_result.errors is None
+        assert len(create_chat_thread_result.errors) == 0
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_create_chat_thread_w_repeatability_request_id(self):
         idempotency_token = str(uuid4())
         # create thread
@@ -122,6 +126,7 @@ class TestChatClient(AzureRecordedTestCase):
         assert thread_id == self.thread_id
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_list_chat_threads(self):
         self._create_thread()
         if self.is_live:
@@ -133,12 +138,14 @@ class TestChatClient(AzureRecordedTestCase):
             assert len(li) <= 1
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_get_thread_client(self):
         self._create_thread()
         chat_thread_client = self.chat_client.get_chat_thread_client(self.thread_id)
         assert chat_thread_client.thread_id == self.thread_id
 
     @pytest.mark.live_test_only
+    @recorded_by_proxy
     def test_delete_chat_thread(self):
         self._create_thread()
         self.chat_client.delete_chat_thread(self.thread_id)

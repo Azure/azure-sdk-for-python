@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from io import BytesIO
 import os
 
 _DEFAULT_LENGTH = 1024 * 1024
@@ -16,13 +17,16 @@ def get_random_bytes(buffer_length):
     return _BYTE_BUFFER[1][:buffer_length]
 
 
-class RandomStream:
+class RandomStream(BytesIO):
     def __init__(self, length, initial_buffer_length=_DEFAULT_LENGTH):
         self._base_data = get_random_bytes(initial_buffer_length)
         self._data_length = length
         self._base_buffer_length = initial_buffer_length
         self._position = 0
         self._remaining = length
+
+    def __len__(self):
+        return self._remaining
 
     def reset(self):
         self._position = 0

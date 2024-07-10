@@ -1,0 +1,8 @@
+name: test_ws_conn_custom_keys
+type: custom
+target: my_endpoint
+metadata:
+  one: two
+credentials:
+  type: api_key
+  key: "4444"

@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.0b6 (2024-02-22)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter enable_http_gateway_exclusive_auth_mode
+  - Model ManagedCluster has a new parameter http_gateway_token_auth_connection_port
+
 ## 2.0.0b5 (2024-01-18)
 
 ### Features Added

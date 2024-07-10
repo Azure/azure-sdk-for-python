@@ -582,6 +582,88 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
+    def test_put_blob_other_data_types(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        content = b'Hello World Encrypted!'
+        length = len(content)
+        byte_io = BytesIO(content)
+
+        def generator():
+            yield b'Hello '
+            yield b'World '
+            yield b'Encrypted!'
+
+        def text_generator():
+            yield 'Hello '
+            yield 'World '
+            yield 'Encrypted!'
+
+        data_list = [byte_io, generator(), text_generator()]
+
+        # Act
+        for data in data_list:
+            blob.upload_blob(data, length=length, overwrite=True)
+            result = blob.download_blob().readall()
+
+            # Assert
+            assert content == result
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_put_blob_other_data_types_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_put_size=1024,
+            max_block_size=1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        content = b'abcde' * 1030  # 5 KiB + 30
+        byte_io = BytesIO(content)
+
+        def generator():
+            for i in range(0, len(content), 500):
+                yield content[i: i + 500]
+
+        def text_generator():
+            s_content = str(content, encoding='utf-8')
+            for i in range(0, len(s_content), 500):
+                yield s_content[i: i + 500]
+
+        data_list = [byte_io, generator(), text_generator()]
+
+        # Act
+        for data in data_list:
+            blob.upload_blob(data, overwrite=True)
+            result = blob.download_blob().readall()
+
+            # Assert
+            assert content == result
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
     def test_get_blob_range_single_region(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1015,6 +1097,41 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         assert first == data[offset:offset + read_size]
         assert second == data[offset + read_size:offset + length]
         assert read_length == len(second)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_get_blob_using_read_chars(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = '你好世界' * 1024  # 12 KiB
+        blob.upload_blob(data, overwrite=True, encoding='utf-8')
+
+        # Act / Assert
+        stream = blob.download_blob(max_concurrency=2, encoding='utf-8')
+        assert stream.read() == data
+
+        result = ''
+        stream = blob.download_blob(encoding='utf-8')
+        for _ in range(4):
+            chunk = stream.read(chars=300)
+            result += chunk
+            assert len(chunk) == 300
+
+        result += stream.readall()
+        assert result == data
 
     @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
     @pytest.mark.live_test_only

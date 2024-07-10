@@ -274,6 +274,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
+                    if isinstance(last_exception, OperationTimeoutError):
+                        description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                            "use max_wait_time on the ServiceBusReceiver to control the"\
+                                " timeout."
+                        error = OperationTimeoutError(
+                            message=description,
+                        )
+                        raise error from last_exception
                     raise last_exception from None
                 await self._backoff(
                     retried_times=retried_times,
@@ -306,6 +314,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 entity_name,
                 last_exception,
             )
+            if isinstance(last_exception, OperationTimeoutError):
+                description = "If trying to receive from NEXT_AVAILABLE_SESSION, "\
+                    "use max_wait_time on the ServiceBusReceiver to control the"\
+                        " timeout."
+                error = OperationTimeoutError(
+                    message=description,
+                )
+                raise error from last_exception
             raise last_exception
 
     async def _mgmt_request_response(
@@ -324,13 +340,15 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
          be service-specific, but common values include READ, CREATE and UPDATE.
          This value will be added as an application property on the message.
         :param message: The message to send in the management request.
-        :paramtype message: ~uamqp.message.Message
+        :type message: ~uamqp.message.Message
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
-        :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
+        :type callback: Callable[int, ~uamqp.message.Message, str]
+        :param bool keep_alive_associated_link: A boolean flag for keeping
+         associated amqp sender/receiver link alive when
          executing operation on mgmt links.
-        :param timeout: timeout in seconds for executing the mgmt operation.
-        :rtype: None
+        :param float or None timeout: timeout in seconds for executing the mgmt operation.
+        :return: The message response.
+        :rtype: Message
         """
         await self._open()
 

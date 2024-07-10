@@ -105,6 +105,7 @@ class DataImport(Data):
 
     @classmethod
     def _from_rest_object(cls, data_rest_object: RestDataImport) -> "DataImport":
+        source: Any = None
         if isinstance(data_rest_object.source, RestDatabaseSource):
             source = Database(
                 connection=data_rest_object.source.connection,

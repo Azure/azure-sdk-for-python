@@ -96,6 +96,11 @@ class ModelBatchDeployment(Deployment):
                 error_threshold=settings.error_threshold,
                 logging_level=settings.logging_level,
             )
+            if self.resources is not None:
+                if self.resources.instance_count is None and settings.instance_count is not None:
+                    self.resources.instance_count = settings.instance_count
+            if self.resources is None and settings.instance_count is not None:
+                self.resources = ResourceConfiguration(instance_count=settings.instance_count)
 
     # pylint: disable=arguments-differ
     def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
@@ -121,9 +126,11 @@ class ModelBatchDeployment(Deployment):
             ),
             error_threshold=deployment_settings.error_threshold,
             resources=self.resources._to_rest_object() if self.resources else None,  # pylint: disable=protected-access
-            retry_settings=deployment_settings.retry_settings._to_rest_object()  # pylint: disable=protected-access
-            if deployment_settings.retry_settings
-            else None,
+            retry_settings=(
+                deployment_settings.retry_settings._to_rest_object()  # pylint: disable=protected-access
+                if deployment_settings.retry_settings
+                else None
+            ),
             logging_level=deployment_settings.logging_level,
             mini_batch_size=deployment_settings.mini_batch_size,
             max_concurrency_per_instance=deployment_settings.max_concurrency_per_instance,

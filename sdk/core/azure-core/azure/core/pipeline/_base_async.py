@@ -25,8 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type
-from typing_extensions import AsyncContextManager
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type, AsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -70,8 +69,7 @@ class _SansIOAsyncHTTPPolicyRunner(
         except Exception:  # pylint: disable=broad-except
             await _await_result(self._policy.on_exception, request)
             raise
-        else:
-            await _await_result(self._policy.on_response, request, response)
+        await _await_result(self._policy.on_response, request, response)
         return response
 
 
@@ -128,7 +126,7 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
             :caption: Builds the async pipeline for asynchronous transport.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[

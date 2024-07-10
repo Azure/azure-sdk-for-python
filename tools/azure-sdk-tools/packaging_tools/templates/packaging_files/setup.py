@@ -78,16 +78,17 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "isodate<1.0.0,>=0.6.1",
+        "isodate>=0.6.1",
+        "typing-extensions>=4.6.0",
         {%- if need_msrestazure %}
-        "msrestazure>=0.4.32,<2.0.0",
+        "msrestazure>=0.4.32",
         {%- endif %}
-        "azure-common~=1.1",
+        "azure-common>=1.1",
         {%- if need_azurecore %}
-        "azure-core>=1.24.0,<2.0.0",
+        "azure-core>=1.24.0",
         {%- endif %}
         {%- if need_azuremgmtcore %}
-        "azure-mgmt-core>=1.3.2,<2.0.0",
+        "azure-mgmt-core>=1.3.2",
         {%- endif %}
     ],
     python_requires=">=3.8",

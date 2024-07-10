@@ -4,13 +4,21 @@
 # IMPORTANT: Do not invoke this file directly. Please instead run eng/New-TestResources.ps1 from the repository root.
 
 param (
-  [hashtable] $DeploymentOutputs
+  [Parameter(ValueFromRemainingArguments = $true)]
+  $RemainingArguments,
+
+  [Parameter()]
+  [hashtable] $DeploymentOutputs,
+
+  [Parameter()]
+  [hashtable] $AdditionalParameters = @{}
 )
 
-# If not Linux, skip this script.
-if ($isLinux -ne "Linux") {
-  Write-Host "Skipping post-deployment because not running on Linux."
-  return
+$ProvisionLiveResources = $AdditionalParameters['ProvisionLiveResources']
+Write-Host "ProvisionLiveResources: $ProvisionLiveResources"
+if ($CI -and !$ProvisionLiveResources) {
+    Write-Host "Skipping test resource post-provisioning."
+    return
 }
 
 $ErrorActionPreference = 'Stop'
@@ -21,14 +29,11 @@ $workingFolder = $webappRoot;
 
 Write-Host "Working directory: $workingFolder"
 
-az login --service-principal -u $DeploymentOutputs['IDENTITY_CLIENT_ID'] -p $DeploymentOutputs['IDENTITY_CLIENT_SECRET'] --tenant $DeploymentOutputs['IDENTITY_TENANT_ID']
-az account set --subscription $DeploymentOutputs['IDENTITY_SUBSCRIPTION_ID']
-
 Write-Host "Sleeping for a bit to ensure container registry is ready."
 Start-Sleep -s 60
 
 az acr login -n $DeploymentOutputs['IDENTITY_ACR_NAME']
-$loginServer = az acr show -n $DeploymentOutputs['IDENTITY_ACR_NAME'] --query loginServer -o tsv
+$loginServer = $DeploymentOutputs['IDENTITY_ACR_LOGIN_SERVER']
 
 
 # Azure Functions app deployment
@@ -110,4 +115,25 @@ Write-Host $kubeConfig
 # Apply the config
 kubectl apply -f "$workingFolder/kubeconfig.yaml" --overwrite=true
 Write-Host "Applied kubeconfig.yaml"
-az logout
+
+# Virtual machine setup
+$vmScript = @"
+sudo apt update && sudo apt install python3-pip -y --no-install-recommends &&
+git clone https://github.com/Azure/azure-sdk-for-python.git --depth 1 --single-branch --branch main /sdk &&
+cd /sdk/sdk/identity/azure-identity/tests/integration/azure-vms &&
+pip install -r requirements.txt
+"@
+az vm run-command invoke -n $DeploymentOutputs['IDENTITY_VM_NAME'] -g $DeploymentOutputs['IDENTITY_RESOURCE_GROUP'] --command-id RunShellScript --scripts "$vmScript"
+
+
+# ACI is easier to provision here than in the bicep file because the image isn't available before now
+Write-Host "Deploying Azure Container Instance"
+az container create -g $($DeploymentOutputs['IDENTITY_RESOURCE_GROUP']) -n $($DeploymentOutputs['IDENTITY_CONTAINER_INSTANCE_NAME']) --image $image `
+  --acr-identity $($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY']) `
+  --assign-identity [system] $($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY']) `
+  --role "Storage Blob Data Reader" `
+  --scope $($DeploymentOutputs['IDENTITY_STORAGE_ID_1']) `
+  -e IDENTITY_STORAGE_NAME=$($DeploymentOutputs['IDENTITY_STORAGE_NAME_1']) `
+     IDENTITY_STORAGE_NAME_USER_ASSIGNED=$($DeploymentOutputs['IDENTITY_STORAGE_NAME_2']) `
+     IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID=$($DeploymentOutputs['IDENTITY_USER_DEFINED_IDENTITY_CLIENT_ID']) `
+     FUNCTIONS_CUSTOMHANDLER_PORT=80

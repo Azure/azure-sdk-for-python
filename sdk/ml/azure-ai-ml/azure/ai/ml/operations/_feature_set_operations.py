@@ -47,7 +47,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class FeatureSetOperations(_ScopeDependentOperations):
@@ -78,7 +78,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -124,8 +124,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str, **kwargs: Dict) -> Optional[FeatureSet]:  # type: ignore
+    @monitor_with_activity(ops_logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: str, **kwargs: Dict) -> FeatureSet:  # type: ignore
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -134,17 +134,19 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type version: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully
             identified and retrieved. Details will be provided in the error message.
+        :raises ~azure.core.exceptions.HttpResponseError: Raised if the corresponding name and version cannot be
+            retrieved from the service.
         :return: FeatureSet asset object.
         :rtype: ~azure.ai.ml.entities.FeatureSet
         """
         try:
             featureset_version_resource = self._get(name, version, **kwargs)
-            return FeatureSet._from_rest_object(featureset_version_resource)
+            return FeatureSet._from_rest_object(featureset_version_resource)  # type: ignore[return-value]
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, featureset: FeatureSet, **kwargs: Dict) -> LROPoller[FeatureSet]:
         """Create or update FeatureSet
 
@@ -182,7 +184,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.BeginBackFill", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.BeginBackFill", ActivityType.PUBLICAPI)
     def begin_backfill(
         self,
         *,
@@ -221,6 +223,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :paramtype spark_configuration: dict[str, str]
         :keyword data_status: Specifies the data status that you want to backfill.
         :paramtype data_status: list[str or ~azure.ai.ml.entities.DataAvailabilityStatus]
+        :keyword job_id: The job id.
+        :paramtype job_id: str
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
@@ -248,7 +252,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
     def list_materialization_operations(
         self,
         name: str,
@@ -293,7 +297,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         return materialization_jobs
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.ListFeatures", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.ListFeatures", ActivityType.PUBLICAPI)
     def list_features(
         self,
         feature_set_name: str,
@@ -333,7 +337,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         return features
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.GetFeature", ActivityType.PUBLICAPI)
     def get_feature(
         self, feature_set_name: str, version: str, *, feature_name: str, **kwargs: Dict
     ) -> Optional["Feature"]:
@@ -343,7 +347,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
-        :keyword feature_name: This is case-sensitive.
+        :keyword feature_name: The feature name. This argument is case-sensitive.
         :paramtype feature_name: str
         :keyword tags: String representation of a comma-separated list of tag names, and optionally, values.
             For example, "tag1,tag2=value2". If provided, only features matching the specified tags are returned.
@@ -360,10 +364,10 @@ class FeatureSetOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-        return Feature._from_rest_object(feature)
+        return Feature._from_rest_object(feature)  # type: ignore[return-value]
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -389,7 +393,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(ops_logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -434,7 +438,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                     datastore_operations=self._datastore_operation,
                 )
                 featureset_spec_path = None
-            except Exception as ex:  # pylint: disable=broad-except
+            except Exception as ex:  # pylint: disable=W0718
                 module_logger.info("Unable to access FeaturesetSpec at path %s", featureset_spec_path)
                 raise ex
             return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_path)

@@ -186,6 +186,14 @@ class ChatThreadClientSamplesAsync(object):
                 async for chat_message_page in chat_messages.by_page():
                     async for chat_message in chat_message_page:
                         print("ChatMessage: message=", chat_message.content.message)
+                        for attachment in chat_message.content.attachments:
+                            if attachment.attachment_type == "image":
+                                print("image attachment: ", attachment.name, " with ID: ", attachment.id, "received.")
+                                # render `attachment.preview_url` as the thumbnail
+                                # render `attachment.url` as the full image
+                            elif attachment.attachment_type == "file":
+                                print("file attachment: ", attachment.name, " with ID: ", attachment.id, "received.")
+                                # render a button that will navigate user to the URL provided in `attachment.preview_url`
         # [END list_messages]
         print("list_messages_async succeeded")
 

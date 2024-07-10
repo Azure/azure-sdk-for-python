@@ -139,7 +139,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
     ) -> None:
         self._init = True
         # property _source can't be set
-        kwargs.pop("_source", None)
+        source = kwargs.pop("_source", None)
         _from_component_func = kwargs.pop("_from_component_func", False)
         self._name: Optional[str] = None
         super(BaseNode, self).__init__(
@@ -186,11 +186,12 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # add current component in pipeline stack for dsl scenario
             self._register_in_current_pipeline_component_builder()
 
-        self._source = (
-            self._component._source
-            if isinstance(self._component, Component)
-            else Component._resolve_component_source_from_id(id=self._component)
-        )
+        if source is None:
+            if isinstance(component, Component):
+                source = self._component._source
+            else:
+                source = Component._resolve_component_source_from_id(id=self._component)
+        self._source = source
         self._validate_required_input_not_provided = True
         self._init = False
 
@@ -452,7 +453,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(
-            dict(
+            dict(  # pylint: disable=use-dict-literal
                 name=self.name,
                 type=self.type,
                 display_name=self.display_name,
@@ -493,7 +494,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
     def __str__(self) -> str:
         try:
             return str(self._to_yaml())
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             # add try catch in case component job failed in schema parse
             _obj: _AttrDict = _AttrDict()
             return _obj.__str__()

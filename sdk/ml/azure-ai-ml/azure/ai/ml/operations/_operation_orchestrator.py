@@ -287,7 +287,7 @@ class OperationOrchestrator(object):
             )
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
-                asset_operations=self._code_assets,
+                asset_operations=self._code_assets,  # type: ignore[arg-type]
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._operation_config.show_progress,
                 sas_uri=sas_info["sas_uri"],
@@ -318,7 +318,9 @@ class OperationOrchestrator(object):
             env_response = self._environments.create_or_update(environment)  # type: ignore[attr-defined]
             return env_response.id
         environment = _check_and_upload_env_build_context(
-            environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
+            environment=environment,
+            operations=self._environments,  # type: ignore[arg-type]
+            show_progress=self._operation_config.show_progress,
         )
         environment._id = get_arm_id_with_version(
             self._operation_scope,
@@ -338,7 +340,7 @@ class OperationOrchestrator(object):
                 return self._model.create_or_update(model).id  # type: ignore[attr-defined]
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,
-                asset_operations=self._model,
+                asset_operations=self._model,  # type: ignore[arg-type]
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=self._operation_config.show_progress,
             )
@@ -367,7 +369,7 @@ class OperationOrchestrator(object):
             return self._data.create_or_update(data_asset).id  # type: ignore[attr-defined]
         data_asset, _ = _check_and_upload_path(
             artifact=data_asset,
-            asset_operations=self._data,
+            asset_operations=self._data,  # type: ignore[arg-type]
             artifact_type=ErrorTarget.DATA,
             show_progress=self._operation_config.show_progress,
         )

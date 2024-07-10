@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.sphere import AzureSphereMgmtClient
 
 """
@@ -32,10 +33,10 @@ def main():
     client.images.begin_delete(
         resource_group_name="MyResourceGroup1",
         catalog_name="MyCatalog1",
-        image_name="imageID",
+        image_name="00000000-0000-0000-0000-000000000000",
     ).result()
 
 
-# x-ms-original-file: specification/sphere/resource-manager/Microsoft.AzureSphere/preview/2022-09-01-preview/examples/DeleteImage.json
+# x-ms-original-file: specification/sphere/resource-manager/Microsoft.AzureSphere/stable/2024-04-01/examples/DeleteImage.json
 if __name__ == "__main__":
     main()

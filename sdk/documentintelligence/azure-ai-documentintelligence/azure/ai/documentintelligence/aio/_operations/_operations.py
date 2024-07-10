@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -74,7 +74,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -132,6 +132,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
@@ -181,13 +182,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -384,7 +378,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -471,6 +465,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -962,13 +960,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -1156,7 +1147,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -1243,6 +1234,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -1734,13 +1729,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -1928,7 +1916,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -2015,6 +2003,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -2504,15 +2496,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword output_content_format: Format of the analyze result top-level content. Known values
          are: "text" and "markdown". Default value is None.
         :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
-        :keyword content_type: Input content type. Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -2709,7 +2692,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -2796,6 +2779,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -3271,6 +3258,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -3313,7 +3301,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         split: Optional[Union[str, _models.SplitMode]] = None,
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3364,6 +3352,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
@@ -3396,13 +3385,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -3599,7 +3581,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -3686,6 +3668,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -4160,13 +4146,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -4354,7 +4333,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -4441,6 +4420,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -4915,13 +4898,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -5109,7 +5085,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -5196,6 +5172,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -5668,15 +5648,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         :keyword split: Document splitting mode. Known values are: "auto", "none", and "perPage".
          Default value is None.
         :paramtype split: str or ~azure.ai.documentintelligence.models.SplitMode
-        :keyword content_type: Input content type. Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
@@ -5873,7 +5844,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                       value. Required. Known values are: "string", "date", "time",
                                       "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "boundingRegions": [
                                         {
                                             "pageNumber": 0,  # 1-based
@@ -5960,6 +5931,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                                     },
                                     "valuePhoneNumber": "str",  # Optional. Phone
                                       number value in E.164 format (ex. +19876543210).
+                                    "valueSelectionGroup": [
+                                        "str"  # Optional. Selection group
+                                          value.
+                                    ],
                                     "valueSelectionMark": "str",  # Optional.
                                       Selection mark value. Known values are: "selected" and
                                       "unselected".
@@ -6431,6 +6406,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -6471,7 +6447,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _build_document_model_initial(  # pylint: disable=inconsistent-return-statements
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6519,6 +6495,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
@@ -6536,13 +6513,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -6600,7 +6570,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -6626,7 +6596,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -6642,13 +6621,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -6685,7 +6657,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -6711,7 +6683,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -6727,13 +6708,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -6770,7 +6744,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -6796,7 +6770,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -6811,16 +6794,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          BuildDocumentModelRequest, JSON, IO[bytes] Required.
         :type build_request: ~azure.ai.documentintelligence.models.BuildDocumentModelRequest or JSON or
          IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -6878,7 +6851,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -6904,7 +6877,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6929,6 +6911,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -6965,7 +6948,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _compose_model_initial(  # pylint: disable=inconsistent-return-statements
         self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7013,6 +6996,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
@@ -7034,13 +7018,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7092,7 +7069,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -7118,7 +7095,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -7134,13 +7120,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7177,7 +7156,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -7203,7 +7182,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -7219,13 +7207,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7262,7 +7243,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -7288,7 +7269,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -7303,16 +7293,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          ComposeDocumentModelRequest, JSON, IO[bytes] Required.
         :type compose_request: ~azure.ai.documentintelligence.models.ComposeDocumentModelRequest or
          JSON or IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7364,7 +7344,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -7390,7 +7370,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -7415,6 +7404,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -7465,8 +7455,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7512,8 +7500,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7549,8 +7535,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7585,11 +7569,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          types: AuthorizeCopyRequest, JSON, IO[bytes] Required.
         :type authorize_copy_request: ~azure.ai.documentintelligence.models.AuthorizeCopyRequest or
          JSON or IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: CopyAuthorization. The CopyAuthorization is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.CopyAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7621,7 +7600,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                       the document model should be copied to. Required.
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7681,7 +7660,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _copy_model_to_initial(  # pylint: disable=inconsistent-return-statements
         self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7730,6 +7709,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
@@ -7754,13 +7734,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7811,7 +7784,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -7837,7 +7810,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -7855,13 +7837,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7898,7 +7873,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -7924,7 +7899,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -7942,13 +7926,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -7985,7 +7962,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -8011,7 +7988,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -8028,16 +8014,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          CopyAuthorization, JSON, IO[bytes] Required.
         :type copy_to_request: ~azure.ai.documentintelligence.models.CopyAuthorization or JSON or
          IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentModelDetails. The
          DocumentModelDetails is compatible with MutableMapping
         :rtype:
@@ -8088,7 +8064,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -8114,7 +8090,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -8140,6 +8125,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -8180,8 +8166,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DocumentModelDetails. The DocumentModelDetails is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.DocumentModelDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8216,7 +8200,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -8242,10 +8226,19 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8283,13 +8276,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.DocumentModelDetails, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -8333,7 +8331,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                       field value. Required. Known values are: "string", "date",
                                       "time", "phoneNumber", "number", "integer", "selectionMark",
                                       "countryRegion", "signature", "array", "object", "currency",
-                                      "address", and "boolean".
+                                      "address", "boolean", and "selectionGroup".
                                     "description": "str",  # Optional. Field
                                       description.
                                     "example": "str",  # Optional. Example field
@@ -8359,7 +8357,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
                           with the document model.
-                    }
+                    },
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -8367,7 +8374,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         cls: ClsType[List[_models.DocumentModelDetails]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8451,7 +8458,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8489,16 +8496,19 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_resource_info(self, **kwargs: Any) -> _models.ResourceDetails:
         # pylint: disable=line-too-long
         """Return information about the current resource.
 
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ResourceDetails. The ResourceDetails is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.ResourceDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8522,7 +8532,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     }
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8576,14 +8586,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         :param operation_id: Operation ID. Required.
         :type operation_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: OperationDetails. The OperationDetails is compatible with MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.OperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -8597,8 +8606,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "operationId": "str",  # Operation ID. Required.
                     "resourceLocation": "str",  # URL of the resource targeted by this operation.
                       Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
                     "apiVersion": "str",  # Optional. API version used to create this operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -8643,102 +8653,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                   "azureBlobFileList".
                             }
                         },
+                        "baseClassifierId": "str",  # Optional. Base classifierId on top of
+                          which the classifier was trained.
                         "description": "str",  # Optional. Document classifier description.
-                        "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and
-                          time (UTC) when the document classifier will expire.
-                    },
-                    "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelBuild":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
-                    "kind": "documentModelBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
-                    "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
-                            "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
-                        },
-                        "target": "str"  # Optional. The target of the error.
-                    },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document model was created. Required.
-                        "modelId": "str",  # Unique document model name. Required.
-                        "apiVersion": "str",  # Optional. API version used to create this
-                          document model.
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "fileList": "str"  # Path to a JSONL file within the
-                              container specifying a subset of documents. Required.
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "prefix": "str"  # Optional. Blob name prefix.
-                        },
-                        "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
-                        "description": "str",  # Optional. Document model description.
-                        "docTypes": {
-                            "str": {
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",  # Semantic data type
-                                          of the field value. Required. Known values are: "string",
-                                          "date", "time", "phoneNumber", "number", "integer",
-                                          "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", and "boolean".
-                                        "description": "str",  # Optional.
-                                          Field description.
-                                        "example": "str",  # Optional.
-                                          Example field content.
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
-                                "description": "str",  # Optional. Document model
-                                  description.
-                                "fieldConfidence": {
-                                    "str": 0.0  # Optional. Estimated confidence
-                                      for each field.
-                                }
-                            }
-                        },
                         "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document model will expire.
-                        "tags": {
-                            "str": "str"  # Optional. List of key-value tag attributes
-                              associated with the document model.
-                        }
+                          time (UTC) when the document classifier will expire.
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
                     },
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
@@ -8756,8 +8684,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "operationId": "str",  # Operation ID. Required.
                     "resourceLocation": "str",  # URL of the resource targeted by this operation.
                       Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
                     "apiVersion": "str",  # Optional. API version used to create this operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -8805,7 +8734,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                           of the field value. Required. Known values are: "string",
                                           "date", "time", "phoneNumber", "number", "integer",
                                           "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", and "boolean".
+                                          "object", "currency", "address", "boolean", and
+                                          "selectionGroup".
                                         "description": "str",  # Optional.
                                           Field description.
                                         "example": "str",  # Optional.
@@ -8831,7 +8761,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "tags": {
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
-                        }
+                        },
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
                     },
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
@@ -8849,8 +8788,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "operationId": "str",  # Operation ID. Required.
                     "resourceLocation": "str",  # URL of the resource targeted by this operation.
                       Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
                     "apiVersion": "str",  # Optional. API version used to create this operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -8898,7 +8838,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                           of the field value. Required. Known values are: "string",
                                           "date", "time", "phoneNumber", "number", "integer",
                                           "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", and "boolean".
+                                          "object", "currency", "address", "boolean", and
+                                          "selectionGroup".
                                         "description": "str",  # Optional.
                                           Field description.
                                         "example": "str",  # Optional.
@@ -8924,7 +8865,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "tags": {
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
-                        }
+                        },
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
                     },
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
@@ -8935,7 +8885,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 # response body for status code(s): 200
                 response == operation_details
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -8973,13 +8923,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.OperationDetails, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -8995,6 +8950,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -9008,8 +8964,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "operationId": "str",  # Operation ID. Required.
                     "resourceLocation": "str",  # URL of the resource targeted by this operation.
                       Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
                     "apiVersion": "str",  # Optional. API version used to create this operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -9054,102 +9011,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                   "azureBlobFileList".
                             }
                         },
+                        "baseClassifierId": "str",  # Optional. Base classifierId on top of
+                          which the classifier was trained.
                         "description": "str",  # Optional. Document classifier description.
-                        "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and
-                          time (UTC) when the document classifier will expire.
-                    },
-                    "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
-                    }
-                }
-
-                # JSON input template for discriminator value "documentModelBuild":
-                operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
-                    "kind": "documentModelBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
-                    "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
-                            "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
-                        },
-                        "target": "str"  # Optional. The target of the error.
-                    },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
-                    "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document model was created. Required.
-                        "modelId": "str",  # Unique document model name. Required.
-                        "apiVersion": "str",  # Optional. API version used to create this
-                          document model.
-                        "azureBlobFileListSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "fileList": "str"  # Path to a JSONL file within the
-                              container specifying a subset of documents. Required.
-                        },
-                        "azureBlobSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "prefix": "str"  # Optional. Blob name prefix.
-                        },
-                        "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
-                        "description": "str",  # Optional. Document model description.
-                        "docTypes": {
-                            "str": {
-                                "fieldSchema": {
-                                    "str": {
-                                        "type": "str",  # Semantic data type
-                                          of the field value. Required. Known values are: "string",
-                                          "date", "time", "phoneNumber", "number", "integer",
-                                          "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", and "boolean".
-                                        "description": "str",  # Optional.
-                                          Field description.
-                                        "example": "str",  # Optional.
-                                          Example field content.
-                                        "items": ...,
-                                        "properties": {
-                                            "str": ...
-                                        }
-                                    }
-                                },
-                                "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
-                                "description": "str",  # Optional. Document model
-                                  description.
-                                "fieldConfidence": {
-                                    "str": 0.0  # Optional. Estimated confidence
-                                      for each field.
-                                }
-                            }
-                        },
                         "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document model will expire.
-                        "tags": {
-                            "str": "str"  # Optional. List of key-value tag attributes
-                              associated with the document model.
-                        }
+                          time (UTC) when the document classifier will expire.
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
                     },
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
@@ -9167,8 +9042,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "operationId": "str",  # Operation ID. Required.
                     "resourceLocation": "str",  # URL of the resource targeted by this operation.
                       Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
                     "apiVersion": "str",  # Optional. API version used to create this operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -9216,7 +9092,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                           of the field value. Required. Known values are: "string",
                                           "date", "time", "phoneNumber", "number", "integer",
                                           "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", and "boolean".
+                                          "object", "currency", "address", "boolean", and
+                                          "selectionGroup".
                                         "description": "str",  # Optional.
                                           Field description.
                                         "example": "str",  # Optional.
@@ -9242,7 +9119,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "tags": {
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
-                        }
+                        },
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
                     },
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
@@ -9260,8 +9146,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "operationId": "str",  # Operation ID. Required.
                     "resourceLocation": "str",  # URL of the resource targeted by this operation.
                       Required.
-                    "status": "str",  # Operation status. Required. Known values are:
-                      "notStarted", "running", "failed", "succeeded", and "canceled".
+                    "status": "str",  # Operation status.  notStarted, running, completed, or
+                      failed. Required. Known values are: "notStarted", "running", "failed",
+                      "succeeded", "completed", and "canceled".
                     "apiVersion": "str",  # Optional. API version used to create this operation.
                     "error": {
                         "code": "str",  # One of a server-defined set of error codes.
@@ -9309,7 +9196,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                                           of the field value. Required. Known values are: "string",
                                           "date", "time", "phoneNumber", "number", "integer",
                                           "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", and "boolean".
+                                          "object", "currency", "address", "boolean", and
+                                          "selectionGroup".
                                         "description": "str",  # Optional.
                                           Field description.
                                         "example": "str",  # Optional.
@@ -9335,7 +9223,16 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                         "tags": {
                             "str": "str"  # Optional. List of key-value tag attributes
                               associated with the document model.
-                        }
+                        },
+                        "warnings": [
+                            {
+                                "code": "str",  # One of a server-defined set of
+                                  warning codes. Required.
+                                "message": "str",  # A human-readable representation
+                                  of the warning. Required.
+                                "target": "str"  # Optional. The target of the error.
+                            }
+                        ]
                     },
                     "tags": {
                         "str": "str"  # Optional. List of key-value tag attributes associated
@@ -9351,7 +9248,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         cls: ClsType[List[_models.OperationDetails]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9426,7 +9323,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     async def _build_classifier_initial(  # pylint: disable=inconsistent-return-statements
         self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9474,6 +9371,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
@@ -9495,13 +9393,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentClassifierDetails. The
          DocumentClassifierDetails is compatible with MutableMapping
         :rtype:
@@ -9532,6 +9423,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which to
+                      train the classifier.
                     "description": "str"  # Optional. Document classifier description.
                 }
 
@@ -9560,9 +9453,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
+                      classifier was trained.
                     "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and time (UTC)
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
                       when the document classifier will expire.
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -9578,13 +9482,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentClassifierDetails. The
          DocumentClassifierDetails is compatible with MutableMapping
         :rtype:
@@ -9619,9 +9516,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
+                      classifier was trained.
                     "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and time (UTC)
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
                       when the document classifier will expire.
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -9637,13 +9545,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentClassifierDetails. The
          DocumentClassifierDetails is compatible with MutableMapping
         :rtype:
@@ -9678,9 +9579,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
+                      classifier was trained.
                     "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and time (UTC)
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
                       when the document classifier will expire.
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
 
@@ -9695,16 +9607,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
          BuildDocumentClassifierRequest, JSON, IO[bytes] Required.
         :type build_request: ~azure.ai.documentintelligence.models.BuildDocumentClassifierRequest or
          JSON or IO[bytes]
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns DocumentClassifierDetails. The
          DocumentClassifierDetails is compatible with MutableMapping
         :rtype:
@@ -9735,6 +9637,8 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which to
+                      train the classifier.
                     "description": "str"  # Optional. Document classifier description.
                 }
 
@@ -9763,9 +9667,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
+                      classifier was trained.
                     "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and time (UTC)
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
                       when the document classifier will expire.
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -9790,6 +9705,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
             response_headers["Operation-Location"] = self._deserialize(
                 "str", response.headers.get("Operation-Location")
             )
@@ -9830,8 +9746,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DocumentClassifierDetails. The DocumentClassifierDetails is compatible with
          MutableMapping
         :rtype: ~azure.ai.documentintelligence.models.DocumentClassifierDetails
@@ -9865,12 +9779,23 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
+                      classifier was trained.
                     "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and time (UTC)
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
                       when the document classifier will expire.
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -9908,13 +9833,18 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.DocumentClassifierDetails, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -9956,9 +9886,20 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                               "azureBlobFileList".
                         }
                     },
+                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
+                      classifier was trained.
                     "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional. Date and time (UTC)
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
                       when the document classifier will expire.
+                    "warnings": [
+                        {
+                            "code": "str",  # One of a server-defined set of warning
+                              codes. Required.
+                            "message": "str",  # A human-readable representation of the
+                              warning. Required.
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ]
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -9966,7 +9907,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         cls: ClsType[List[_models.DocumentClassifierDetails]] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10050,7 +9991,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -10088,5 +10029,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore

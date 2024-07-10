@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import os
 from pathlib import Path
+from typing import Union
 
 
 def get_root_path() -> str:
@@ -32,7 +33,7 @@ def traverse_up_path_and_find_file(path, file_name, directory_name=None, num_lev
     :return: Path to the file that we found, or an empty string if we couldn't find the file.
     :rtype: str
     """
-    current_path = Path(path)
+    current_path: Union[Path, str] = Path(path)
     if directory_name is not None:
         file_name = os.path.join(directory_name, file_name)
 

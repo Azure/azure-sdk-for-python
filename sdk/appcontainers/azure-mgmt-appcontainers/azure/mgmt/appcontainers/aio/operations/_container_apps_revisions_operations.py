@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -75,7 +75,6 @@ class ContainerAppsRevisionsOperations:
         :type container_app_name: str
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Revision or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.Revision]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -97,18 +96,17 @@ class ContainerAppsRevisionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_revisions_request(
+                _request = build_list_revisions_request(
                     resource_group_name=resource_group_name,
                     container_app_name=container_app_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_revisions.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -120,13 +118,13 @@ class ContainerAppsRevisionsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("RevisionCollection", pipeline_response)
@@ -136,11 +134,11 @@ class ContainerAppsRevisionsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -152,10 +150,6 @@ class ContainerAppsRevisionsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_revisions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions"
-    }
 
     @distributed_trace_async
     async def get_revision(
@@ -172,7 +166,6 @@ class ContainerAppsRevisionsOperations:
         :type container_app_name: str
         :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Revision or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Revision
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -191,22 +184,21 @@ class ContainerAppsRevisionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Revision] = kwargs.pop("cls", None)
 
-        request = build_get_revision_request(
+        _request = build_get_revision_request(
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_revision.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -219,13 +211,9 @@ class ContainerAppsRevisionsOperations:
         deserialized = self._deserialize("Revision", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_revision.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def activate_revision(  # pylint: disable=inconsistent-return-statements
@@ -242,7 +230,6 @@ class ContainerAppsRevisionsOperations:
         :type container_app_name: str
         :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -261,22 +248,21 @@ class ContainerAppsRevisionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_activate_revision_request(
+        _request = build_activate_revision_request(
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.activate_revision.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -287,11 +273,7 @@ class ContainerAppsRevisionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    activate_revision.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/activate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def deactivate_revision(  # pylint: disable=inconsistent-return-statements
@@ -308,7 +290,6 @@ class ContainerAppsRevisionsOperations:
         :type container_app_name: str
         :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -327,22 +308,21 @@ class ContainerAppsRevisionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_deactivate_revision_request(
+        _request = build_deactivate_revision_request(
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.deactivate_revision.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -353,11 +333,7 @@ class ContainerAppsRevisionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    deactivate_revision.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/deactivate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def restart_revision(  # pylint: disable=inconsistent-return-statements
@@ -374,7 +350,6 @@ class ContainerAppsRevisionsOperations:
         :type container_app_name: str
         :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -393,22 +368,21 @@ class ContainerAppsRevisionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_restart_revision_request(
+        _request = build_restart_revision_request(
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.restart_revision.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -419,8 +393,4 @@ class ContainerAppsRevisionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    restart_revision.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/restart"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore

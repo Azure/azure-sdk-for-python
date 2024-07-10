@@ -193,6 +193,8 @@ def stream_logs_until_completion(
     :type datastore_operations: Optional[DatastoreOperations]
     :param raise_exception_on_failed_job: Should this method fail if job fails
     :type raise_exception_on_failed_job: Boolean
+    :keyword requests_pipeline: The HTTP pipeline to use for requests.
+    :type requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
     :return:
     :rtype: None
     """
@@ -276,7 +278,7 @@ def stream_logs_until_completion(
             _current_logs_dict = (
                 list_logs_in_datastore(
                     ds_properties,
-                    prefix=prefix,
+                    prefix=str(prefix),
                     legacy_log_folder_name=legacy_folder_name,
                 )
                 if ds_properties is not None
@@ -383,7 +385,7 @@ def get_git_properties() -> Dict[str, str]:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
         except KeyboardInterrupt:
             raise
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             return None
 
     # Check for environment variable overrides.

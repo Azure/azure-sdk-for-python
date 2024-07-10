@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2024-03-04)
+
+### Features Added
+
+  - Model ExperimentUpdate has a new parameter tags
+
 ## 1.0.0 (2023-11-20)
 
 ### Features Added

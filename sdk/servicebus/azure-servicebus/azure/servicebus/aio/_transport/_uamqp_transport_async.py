@@ -108,12 +108,12 @@ try:
         ) -> None:
             """
             Handles sending of service bus messages.
-            :param sender: The sender with handler to send messages.
+            :param ServiceBusSender sender: The sender with handler to send messages.
             :param message: ServiceBusMessage with uamqp.Message to be sent.
-            :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
+            :type message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
             :param int timeout: Timeout time.
             :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-            :param logger: Logger.
+            :param Logger logger: Logger.
             """
             # pylint: disable=protected-access
             await sender._open()

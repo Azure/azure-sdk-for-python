@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 # Not all of this file has been vendor, just the parts we use.
 # Last Sync: 2023-08-24
 # Commit: 3e5cda3405ec1aa369fe90253d88f3e26a03db10
@@ -5,23 +9,28 @@
 from abc import ABC, abstractmethod
 from typing import IO, Any, Callable, Dict, List, Optional, Sequence, Union
 
-from azure.ai.generative.index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
 from azure.ai.generative.index._langchain.vendor.document_loaders.base import BaseLoader
 
 
 def satisfies_min_unstructured_version(min_version: str) -> bool:
-    """Check if the installed `Unstructured` version exceeds the minimum version
-    for the feature in question."""
+    """
+    Check if the installed `Unstructured` version exceeds the minimum version
+    for the feature in question.
+
+    :param min_version: The minimum version to check against.
+    :type min_version: str
+    :return: True if the installed version exceeds the minimum version, False otherwise.
+    :rtype: bool
+    """
     from unstructured.__version__ import __version__ as __unstructured_version__
 
-    min_version_tuple = tuple([int(x) for x in min_version.split(".")])
+    min_version_tuple = tuple(int(x) for x in min_version.split("."))
 
     # NOTE(MthwRobinson) - enables the loader to work when you're using pre-release
     # versions of unstructured like 0.4.17-dev1
-    _unstructured_version = __unstructured_version__.split("-")[0]
-    unstructured_version_tuple = tuple(
-        [int(x) for x in _unstructured_version.split(".")]
-    )
+    _unstructured_version = __unstructured_version__.rsplit("-", maxsplit=1)[0]
+    unstructured_version_tuple = tuple(int(x) for x in _unstructured_version.split("."))
 
     return unstructured_version_tuple >= min_version_tuple
 
@@ -37,17 +46,15 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
     ):
         """Initialize with file path."""
         try:
+            # pylint: disable=unused-import
             import unstructured  # noqa:F401
-        except ImportError:
+        except ImportError as e:
             raise ValueError(
-                "unstructured package not found, please install it with "
-                "`pip install unstructured`"
-            )
+                "unstructured package not found, please install it with " + "`pip install unstructured`"
+            ) from e
         _valid_modes = {"single", "elements", "paged"}
         if mode not in _valid_modes:
-            raise ValueError(
-                f"Got {mode} for `mode`, but should be one of `{_valid_modes}`"
-            )
+            raise ValueError(f"Got {mode} for `mode`, but should be one of `{_valid_modes}`")
         self.mode = mode
 
         if not satisfies_min_unstructured_version("0.5.4"):
@@ -66,20 +73,31 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
         """Get metadata."""
 
     def _post_process_elements(self, elements: list) -> list:
-        """Applies post processing functions to extracted unstructured elements.
+        """
+        Applies post processing functions to extracted unstructured elements.
         Post processing functions are str -> str callables are passed
-        in using the post_processors kwarg when the loader is instantiated."""
+        in using the post_processors kwarg when the loader is instantiated.
+
+        :param elements: The list of unstructured elements to be post-processed.
+        :type elements: list
+        :return: The list of post-processed elements.
+        :rtype: list
+        """
         for element in elements:
             for post_processor in self.post_processors:
                 element.apply(post_processor)
         return elements
 
     def load(self) -> List[Document]:
-        """Load file."""
+        """Load file.
+
+        :return: List of Document objects.
+        :rtype: List[Document]
+        """
         elements = self._get_elements()
         self._post_process_elements(elements)
         if self.mode == "elements":
-            docs: List[Document] = list()
+            docs: List[Document] = []
             for element in elements:
                 metadata = self._get_metadata()
                 # NOTE(MthwRobinson) - the attribute check is for backward compatibility
@@ -93,7 +111,7 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
             text_dict: Dict[int, str] = {}
             meta_dict: Dict[int, Dict] = {}
 
-            for idx, element in enumerate(elements):
+            for element in enumerate(elements):
                 metadata = self._get_metadata()
                 if hasattr(element, "metadata"):
                     metadata.update(element.metadata.to_dict())
@@ -110,10 +128,7 @@ class UnstructuredBaseLoader(BaseLoader, ABC):
                     meta_dict[page_number].update(metadata)
 
             # Convert the dict to a list of Document objects
-            docs = [
-                Document(page_content=text_dict[key], metadata=meta_dict[key])
-                for key in text_dict.keys()
-            ]
+            docs = [Document(page_content=content, metadata=meta_dict[key]) for key, content in text_dict.items()]
         elif self.mode == "single":
             metadata = self._get_metadata()
             text = "\n\n".join([str(el) for el in elements])

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -71,7 +71,6 @@ class ContainerAppsRevisionReplicasOperations:
         :type revision_name: str
         :param replica_name: Name of the Container App Revision Replica. Required.
         :type replica_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Replica or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Replica
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -90,23 +89,22 @@ class ContainerAppsRevisionReplicasOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.Replica] = kwargs.pop("cls", None)
 
-        request = build_get_replica_request(
+        _request = build_get_replica_request(
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             replica_name=replica_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_replica.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -119,13 +117,9 @@ class ContainerAppsRevisionReplicasOperations:
         deserialized = self._deserialize("Replica", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_replica.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def list_replicas(
@@ -142,7 +136,6 @@ class ContainerAppsRevisionReplicasOperations:
         :type container_app_name: str
         :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ReplicaCollection or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ReplicaCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -161,22 +154,21 @@ class ContainerAppsRevisionReplicasOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ReplicaCollection] = kwargs.pop("cls", None)
 
-        request = build_list_replicas_request(
+        _request = build_list_replicas_request(
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_replicas.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -189,10 +181,6 @@ class ContainerAppsRevisionReplicasOperations:
         deserialized = self._deserialize("ReplicaCollection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_replicas.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas"
-    }
+        return deserialized  # type: ignore

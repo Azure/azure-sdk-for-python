@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     DataQualityMetricThresholdBase,
     FeatureAttributionMetricThreshold,
     GenerationSafetyQualityMetricThreshold,
+    GenerationTokenStatisticsMetricThreshold,
     ModelPerformanceMetricThresholdBase,
     MonitoringThreshold,
     NumericalDataDriftMetricThreshold,
@@ -104,13 +105,6 @@ class NumericalDriftMetrics(RestTranslatableMixin):
             normalized_wasserstein_distance=0.1,
         )
 
-    @classmethod
-    def defaults(cls) -> "NumericalDriftMetrics":
-        return cls._get_default_thresholds()
-
-    def get_name_and_threshold(self) -> Tuple:
-        return self._find_name_and_threshold()
-
 
 class CategoricalDriftMetrics(RestTranslatableMixin):
     """Categorical Drift Metrics
@@ -169,13 +163,6 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
             jensen_shannon_distance=0.1,
         )
 
-    @classmethod
-    def defaults(cls) -> "CategoricalDriftMetrics":
-        return cls._get_default_thresholds()
-
-    def get_name_and_threshold(self) -> Tuple:
-        return self._find_name_and_threshold()
-
 
 class DataDriftMetricThreshold(MetricThreshold):
     """Data drift metric threshold
@@ -204,7 +191,7 @@ class DataDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> DataDriftMetricThresholdBase:
         thresholds = []
         if self.numerical:
-            num_metric_name, num_threshold = self.numerical.get_name_and_threshold()
+            num_metric_name, num_threshold = self.numerical._find_name_and_threshold()
             thresholds.append(
                 NumericalDataDriftMetricThreshold(
                     metric=snake_to_camel(num_metric_name),
@@ -212,7 +199,7 @@ class DataDriftMetricThreshold(MetricThreshold):
                 )
             )
         if self.categorical:
-            cat_metric_name, cat_threshold = self.categorical.get_name_and_threshold()
+            cat_metric_name, cat_threshold = self.categorical._find_name_and_threshold()
             thresholds.append(
                 CategoricalDataDriftMetricThreshold(
                     metric=snake_to_camel(cat_metric_name),
@@ -244,8 +231,8 @@ class DataDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics._get_default_thresholds(),
+            categorical=CategoricalDriftMetrics._get_default_thresholds(),
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -279,7 +266,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> PredictionDriftMetricThresholdBase:
         thresholds = []
         if self.numerical:
-            num_metric_name, num_threshold = self.numerical.get_name_and_threshold()
+            num_metric_name, num_threshold = self.numerical._find_name_and_threshold()
             thresholds.append(
                 NumericalPredictionDriftMetricThreshold(
                     metric=snake_to_camel(num_metric_name),
@@ -287,7 +274,7 @@ class PredictionDriftMetricThreshold(MetricThreshold):
                 )
             )
         if self.categorical:
-            cat_metric_name, cat_threshold = self.categorical.get_name_and_threshold()
+            cat_metric_name, cat_threshold = self.categorical._find_name_and_threshold()
             thresholds.append(
                 CategoricalPredictionDriftMetricThreshold(
                     metric=snake_to_camel(cat_metric_name),
@@ -319,8 +306,8 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "PredictionDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics.defaults(),
-            categorical=CategoricalDriftMetrics.defaults(),
+            numerical=NumericalDriftMetrics._get_default_thresholds(),
+            categorical=CategoricalDriftMetrics._get_default_thresholds(),
         )
 
     def __eq__(self, other: Any) -> bool:
@@ -404,10 +391,6 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
             out_of_bounds_rate=0.0,
         )
 
-    @classmethod
-    def defaults(cls) -> "DataQualityMetricsNumerical":
-        return cls._get_default_thresholds()
-
 
 class DataQualityMetricsCategorical(RestTranslatableMixin):
     """Data Quality Categorical Metrics
@@ -479,10 +462,6 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
             data_type_error_rate=0.0,
             out_of_bounds_rate=0.0,
         )
-
-    @classmethod
-    def defaults(cls) -> "DataQualityMetricsCategorical":
-        return cls._get_default_thresholds()
 
 
 class DataQualityMetricThreshold(MetricThreshold):
@@ -587,9 +566,11 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     def _to_rest_object(self) -> FeatureAttributionMetricThreshold:
         return FeatureAttributionMetricThreshold(
             metric=snake_to_camel(self.metric_name),
-            threshold=MonitoringThreshold(value=self.normalized_discounted_cumulative_gain)
-            if self.normalized_discounted_cumulative_gain
-            else None,
+            threshold=(
+                MonitoringThreshold(value=self.normalized_discounted_cumulative_gain)
+                if self.normalized_discounted_cumulative_gain
+                else None
+            ),
         )
 
     @classmethod
@@ -911,3 +892,63 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
             fluency=fluency if fluency else None,
             similarity=similarity if similarity else None,
         )
+
+
+@experimental
+class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
+    """Generation token statistics metric threshold definition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar metric: Required. [Required] Gets or sets the feature attribution metric to calculate.
+     Possible values include: "TotalTokenCount", "TotalTokenCountPerGroup".
+    :vartype metric: str or
+     ~azure.mgmt.machinelearningservices.models.GenerationTokenStatisticsMetric
+    :ivar threshold: Gets or sets the threshold value.
+     If null, a default value will be set depending on the selected metric.
+    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
+    """
+
+    def __init__(
+        self,
+        *,
+        totaltoken: Optional[Dict[str, float]] = None,
+    ):
+        self.totaltoken = totaltoken
+
+    def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
+        metric_thresholds = []
+        if self.totaltoken:
+            if "total_token_count" in self.totaltoken:
+                acceptable_threshold = MonitoringThreshold(value=self.totaltoken["total_token_count"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationTokenStatisticsMetricThreshold(metric="TotalTokenCount", threshold=acceptable_threshold)
+            )
+            acceptable_threshold_per_group = MonitoringThreshold(value=self.totaltoken["total_token_count_per_group"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="TotalTokenCountPerGroup", threshold=acceptable_threshold_per_group
+                )
+            )
+        return metric_thresholds
+
+    @classmethod
+    def _from_rest_object(
+        cls, obj: GenerationTokenStatisticsMetricThreshold
+    ) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+        totaltoken = {}
+        for threshold in obj:
+            if threshold.metric == "TotalTokenCount":
+                totaltoken["total_token_count"] = threshold.threshold.value
+            if threshold.metric == "TotalTokenCountPerGroup":
+                totaltoken["total_token_count_per_group"] = threshold.threshold.value
+
+        return cls(
+            totaltoken=totaltoken if totaltoken else None,
+        )
+
+    @classmethod
+    def _get_default_thresholds(cls) -> "GenerationTokenStatisticsMonitorMetricThreshold":
+        return cls(totaltoken={"total_token_count": 0, "total_token_count_per_group": 0})

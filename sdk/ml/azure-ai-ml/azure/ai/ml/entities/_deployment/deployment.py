@@ -72,7 +72,7 @@ class Deployment(Resource, RestTranslatableMixin):
         tags: Optional[Dict[str, Any]] = None,
         properties: Optional[Dict[str, Any]] = None,
         model: Optional[Union[str, "Model"]] = None,
-        code_configuration: Any = None,
+        code_configuration: Optional[CodeConfiguration] = None,
         environment: Optional[Union[str, "Environment"]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         code_path: Optional[Union[str, PathLike]] = None,
@@ -174,7 +174,7 @@ class Deployment(Resource, RestTranslatableMixin):
         if not self.code_configuration:
             self.code_configuration = CodeConfiguration()
 
-        self.code_configuration.scoring_script = value
+        self.code_configuration.scoring_script = value  # type: ignore[misc]
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the deployment content into a file in yaml format.

@@ -12,6 +12,7 @@ import pytest
 import requests
 
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.core.tracing import SpanKind, AbstractSpan
 from azure.core import __version__ as core_version
@@ -24,8 +25,8 @@ def test_structural_subtyping():
 
 
 class TestOpentelemetryWrapper:
-    def test_span_passed_in(self, tracer):
-        with tracer.start_as_current_span(name="parent") as parent:
+    def test_span_passed_in(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span(name="parent") as parent:
             wrapped_span = OpenTelemetrySpan(parent)
 
             assert wrapped_span.span_instance.name == "parent"
@@ -34,8 +35,8 @@ class TestOpentelemetryWrapper:
 
             assert parent is trace.get_current_span()
 
-    def test_no_span_passed_in_with_no_environ(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_no_span_passed_in_with_no_environ(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             with OpenTelemetrySpan() as wrapped_span:
 
                 assert wrapped_span.span_instance.name == "span"
@@ -43,8 +44,8 @@ class TestOpentelemetryWrapper:
 
             assert parent is trace.get_current_span()
 
-    def test_span(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_span(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             with OpenTelemetrySpan() as wrapped_span:
                 assert wrapped_span.span_instance is trace.get_current_span()
 
@@ -53,8 +54,8 @@ class TestOpentelemetryWrapper:
                     assert child.span_instance is trace.get_current_span()
                     assert child.span_instance.parent is wrapped_span.span_instance.context
 
-    def test_nested_span_suppression(self, tracer, exporter):
-        with tracer.start_as_current_span("Root"):
+    def test_nested_span_suppression(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
                 assert isinstance(outer_span.span_instance, trace.Span)
                 assert outer_span.span_instance.kind == OpenTelemetrySpanKind.INTERNAL
@@ -62,15 +63,15 @@ class TestOpentelemetryWrapper:
                 with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
                     assert isinstance(inner_span.span_instance, NonRecordingSpan)
 
-                assert len(exporter.get_finished_spans()) == 0
-            assert len(exporter.get_finished_spans()) == 1
+                assert len(tracing_helper.exporter.get_finished_spans()) == 0
+            assert len(tracing_helper.exporter.get_finished_spans()) == 1
 
-        assert len(exporter.get_finished_spans()) == 2
-        spans_names_list = [span.name for span in exporter.get_finished_spans()]
+        assert len(tracing_helper.exporter.get_finished_spans()) == 2
+        spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["outer-span", "Root"]
 
-    def test_nested_span_suppression_with_multiple_outer_spans(self, tracer, exporter):
-        with tracer.start_as_current_span("Root"):
+    def test_nested_span_suppression_with_multiple_outer_spans(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span-1", kind=SpanKind.INTERNAL) as outer_span_1:
                 assert isinstance(outer_span_1.span_instance, trace.Span)
                 assert outer_span_1.span_instance.kind == OpenTelemetrySpanKind.INTERNAL
@@ -78,7 +79,7 @@ class TestOpentelemetryWrapper:
                 with OpenTelemetrySpan(name="inner-span-1", kind=SpanKind.INTERNAL) as inner_span_1:
                     assert isinstance(inner_span_1.span_instance, NonRecordingSpan)
 
-            assert len(exporter.get_finished_spans()) == 1
+            assert len(tracing_helper.exporter.get_finished_spans()) == 1
 
             with OpenTelemetrySpan(name="outer-span-2", kind=SpanKind.INTERNAL) as outer_span_2:
                 assert isinstance(outer_span_2.span_instance, trace.Span)
@@ -87,14 +88,14 @@ class TestOpentelemetryWrapper:
                 with OpenTelemetrySpan(name="inner-span-2", kind=SpanKind.INTERNAL) as inner_span_2:
                     assert isinstance(inner_span_2.span_instance, NonRecordingSpan)
 
-            assert len(exporter.get_finished_spans()) == 2
+            assert len(tracing_helper.exporter.get_finished_spans()) == 2
 
-        assert len(exporter.get_finished_spans()) == 3
-        spans_names_list = [span.name for span in exporter.get_finished_spans()]
+        assert len(tracing_helper.exporter.get_finished_spans()) == 3
+        spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["outer-span-1", "outer-span-2", "Root"]
 
-    def test_nested_span_suppression_with_nested_client(self, tracer, exporter):
-        with tracer.start_as_current_span("Root"):
+    def test_nested_span_suppression_with_nested_client(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
                 assert isinstance(outer_span.span_instance, trace.Span)
                 assert outer_span.span_instance.kind == OpenTelemetrySpanKind.INTERNAL
@@ -107,14 +108,14 @@ class TestOpentelemetryWrapper:
                         assert client_span.span_instance.kind == OpenTelemetrySpanKind.CLIENT
                         # Parent of this should be the unsuppressed outer span.
                         assert client_span.span_instance.parent is outer_span.span_instance.context
-                    assert len(exporter.get_finished_spans()) == 1
+                    assert len(tracing_helper.exporter.get_finished_spans()) == 1
 
-        assert len(exporter.get_finished_spans()) == 3
-        spans_names_list = [span.name for span in exporter.get_finished_spans()]
+        assert len(tracing_helper.exporter.get_finished_spans()) == 3
+        spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["client-span", "outer-span", "Root"]
 
-    def test_nested_span_suppression_with_attributes(self, tracer):
-        with tracer.start_as_current_span("Root"):
+    def test_nested_span_suppression_with_attributes(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
 
                 with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
@@ -132,8 +133,8 @@ class TestOpentelemetryWrapper:
                         assert "foo" in client_span.span_instance.attributes
                         assert client_span.span_instance.attributes["foo"] == "biz"
 
-    def test_nested_span_suppression_deep_nested(self, tracer, exporter):
-        with tracer.start_as_current_span("Root"):
+    def test_nested_span_suppression_deep_nested(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
 
                 with OpenTelemetrySpan(name="inner-span-1", kind=SpanKind.INTERNAL):
@@ -144,12 +145,12 @@ class TestOpentelemetryWrapper:
                                 with OpenTelemetrySpan(name="client-span", kind=SpanKind.CLIENT) as client_span:
                                     assert client_span.span_instance.parent is producer_span.span_instance.context
 
-        assert len(exporter.get_finished_spans()) == 4
-        spans_names_list = [span.name for span in exporter.get_finished_spans()]
+        assert len(tracing_helper.exporter.get_finished_spans()) == 4
+        spans_names_list = [span.name for span in tracing_helper.exporter.get_finished_spans()]
         assert spans_names_list == ["client-span", "producer-span", "outer-span", "Root"]
 
-    def test_nested_get_current_span(self, tracer):
-        with tracer.start_as_current_span("Root"):
+    def test_nested_get_current_span(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             with OpenTelemetrySpan(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
                 with outer_span.span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
                     assert isinstance(inner_span.span_instance, NonRecordingSpan)
@@ -178,7 +179,7 @@ class TestOpentelemetryWrapper:
             assert isinstance(span2.span_instance, trace.Span)
         span1.finish()
 
-    def test_suppress_http_auto_instrumentation(self, exporter):
+    def test_suppress_http_auto_instrumentation(self, tracing_helper):
         # Enable auto-instrumentation for requests.
         RequestsInstrumentor().instrument()
         from requests import Response
@@ -191,16 +192,16 @@ class TestOpentelemetryWrapper:
                 with OpenTelemetrySpan(name="client-span", kind=SpanKind.CLIENT):
                     # With CLIENT spans and automatic HTTP instrumentation is suppressed.
                     requests.get("https://www.foo.bar/first")
-                assert len(exporter.get_finished_spans()) == 1
+                assert len(tracing_helper.exporter.get_finished_spans()) == 1
                 # The following requests should still be auto-instrumented since it's not in the scope
                 # of a CLIENT span.
                 requests.post("https://www.foo.bar/second")
                 requests.get("https://www.foo.bar/third")
-                assert len(exporter.get_finished_spans()) == 3
-            assert len(exporter.get_finished_spans()) == 4
+                assert len(tracing_helper.exporter.get_finished_spans()) == 3
+            assert len(tracing_helper.exporter.get_finished_spans()) == 4
 
-    def test_start_finish(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_start_finish(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             wrapped_class = OpenTelemetrySpan()
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is None
@@ -211,14 +212,14 @@ class TestOpentelemetryWrapper:
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is not None
 
-    def test_change_context(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_change_context(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             with OpenTelemetrySpan() as wrapped_class:
                 with OpenTelemetrySpan.change_context(parent):
                     assert trace.get_current_span() is parent
 
-    def test_to_header(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_to_header(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             wrapped_class = OpenTelemetrySpan()
             headers = wrapped_class.to_header()
             assert "traceparent" in headers
@@ -229,8 +230,8 @@ class TestOpentelemetryWrapper:
 
             assert traceparent == headers["traceparent"]
 
-    def test_links(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_links(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
             with OpenTelemetrySpan() as wrapped_class:
                 OpenTelemetrySpan.link_from_headers(og_header)
@@ -250,8 +251,8 @@ class TestOpentelemetryWrapper:
                 assert link.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
                 assert link.context.span_id == int("231ebdc614cb9ddd", 16)
 
-    def test_links_with_attribute(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_links_with_attribute(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             attributes = {"attribute1": 1, "attribute2": 2}
             og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-02"}
             with OpenTelemetrySpan() as wrapped_class:
@@ -278,15 +279,15 @@ class TestOpentelemetryWrapper:
                 assert "attribute2" in link.attributes
                 assert link.attributes == attributes
 
-    def test_parent_context(self, tracer):
-        with tracer.start_as_current_span("Root"):
+    def test_parent_context(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root"):
             parent_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
             span = OpenTelemetrySpan(name="test_span", context=parent_header)
             assert span.span_instance.context.trace_id == int("2578531519ed94423ceae67588eff2c9", 16)
             assert span.span_instance.parent.span_id == int("231ebdc614cb9ddd", 16)
 
-    def test_empty_parent_context(self, tracer):
-        with tracer.start_as_current_span("Root") as root:
+    def test_empty_parent_context(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as root:
             span = OpenTelemetrySpan(name="test_span", context={})
             # Parent of span should be current span context if context is empty.
             assert span.span_instance.parent is root.context
@@ -303,15 +304,15 @@ class TestOpentelemetryWrapper:
         # If no outer span and no context, parent should be None.
         assert span.span_instance.parent is None
 
-    def test_add_attribute(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_add_attribute(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)
             wrapped_class.add_attribute("test", "test2")
             assert wrapped_class.span_instance.attributes["test"] == "test2"
             assert parent.attributes["test"] == "test2"
 
-    def test_set_http_attributes(self, tracer):
-        with tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
+    def test_set_http_attributes(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root", kind=OpenTelemetrySpanKind.CLIENT) as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)
             request = mock.Mock()
             setattr(request, "method", "GET")
@@ -321,26 +322,26 @@ class TestOpentelemetryWrapper:
             setattr(response, "status_code", 200)
             wrapped_class.set_http_attributes(request)
             assert wrapped_class.span_instance.kind == OpenTelemetrySpanKind.CLIENT
-            assert wrapped_class.span_instance.attributes.get("http.method") == request.method
+            assert wrapped_class.span_instance.attributes.get("http.request.method") == request.method
             assert wrapped_class.span_instance.attributes.get("component") == "http"
-            assert wrapped_class.span_instance.attributes.get("http.url") == request.url
-            assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
+            assert wrapped_class.span_instance.attributes.get("url.full") == request.url
+            assert wrapped_class.span_instance.attributes.get("http.response.status_code") == 504
             assert wrapped_class.span_instance.attributes.get("user_agent.original") is None
 
             request.headers["User-Agent"] = "some user agent"
             request.url = "http://foo.bar:8080/path"
             wrapped_class.set_http_attributes(request, response)
-            assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
+            assert wrapped_class.span_instance.attributes.get("http.response.status_code") == response.status_code
             assert wrapped_class.span_instance.attributes.get("user_agent.original") == request.headers.get(
                 "User-Agent"
             )
 
             if wrapped_class.span_instance.attributes.get("net.peer.name"):
-                assert wrapped_class.span_instance.attributes.get("net.peer.name") == "foo.bar"
-                assert wrapped_class.span_instance.attributes.get("net.peer.port") == 8080
+                assert wrapped_class.span_instance.attributes.get("server.address") == "foo.bar"
+                assert wrapped_class.span_instance.attributes.get("server.port") == 8080
 
-    def test_span_kind(self, tracer):
-        with tracer.start_as_current_span("Root") as parent:
+    def test_span_kind(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
             wrapped_class = OpenTelemetrySpan(span=parent)
 
             wrapped_class.kind = SpanKind.UNSPECIFIED
@@ -369,3 +370,20 @@ class TestOpentelemetryWrapper:
 
             with pytest.raises(ValueError):
                 wrapped_class.kind = "somethingstuid"
+
+    def test_error_type_attribute_builtin_error(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
+            with pytest.raises(ValueError):
+                with OpenTelemetrySpan() as wrapped_class:
+                    raise ValueError("This is a test error")
+            assert wrapped_class.span_instance.attributes.get("error.type") == "ValueError"
+
+    def test_error_type_attribute_azure_error(self, tracing_helper):
+        with tracing_helper.tracer.start_as_current_span("Root") as parent:
+            with pytest.raises(ClientAuthenticationError):
+                with OpenTelemetrySpan() as wrapped_class:
+                    raise ClientAuthenticationError("This is a test error")
+            assert (
+                wrapped_class.span_instance.attributes.get("error.type")
+                == "azure.core.exceptions.ClientAuthenticationError"
+            )

@@ -1,3 +1,2 @@
 -e ../../../tools/azure-sdk-tools
 ../azure-core
--e ../../../tools/azure-devtools

@@ -2233,6 +2233,13 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar upgrade_description: The policy to use when upgrading the cluster.
     :vartype upgrade_description:
      ~azure.mgmt.servicefabricmanagedclusters.models.ClusterUpgradePolicy
+    :ivar http_gateway_token_auth_connection_port: The port used for token-auth based HTTPS
+     connections to the cluster. Cannot be set to the same port as HttpGatewayEndpoint.
+    :vartype http_gateway_token_auth_connection_port: int
+    :ivar enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+     allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+     token-based authentication is used, HttpGatewayTokenAuthConnectionPort must be defined.
+    :vartype enable_http_gateway_exclusive_auth_mode: bool
     """
 
     _validation = {
@@ -2301,6 +2308,14 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         "public_i_pv6_prefix_id": {"key": "properties.publicIPv6PrefixId", "type": "str"},
         "ddos_protection_plan_id": {"key": "properties.ddosProtectionPlanId", "type": "str"},
         "upgrade_description": {"key": "properties.upgradeDescription", "type": "ClusterUpgradePolicy"},
+        "http_gateway_token_auth_connection_port": {
+            "key": "properties.httpGatewayTokenAuthConnectionPort",
+            "type": "int",
+        },
+        "enable_http_gateway_exclusive_auth_mode": {
+            "key": "properties.enableHttpGatewayExclusiveAuthMode",
+            "type": "bool",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2339,6 +2354,8 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         public_i_pv6_prefix_id: Optional[str] = None,
         ddos_protection_plan_id: Optional[str] = None,
         upgrade_description: Optional["_models.ClusterUpgradePolicy"] = None,
+        http_gateway_token_auth_connection_port: Optional[int] = None,
+        enable_http_gateway_exclusive_auth_mode: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2446,6 +2463,13 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword upgrade_description: The policy to use when upgrading the cluster.
         :paramtype upgrade_description:
          ~azure.mgmt.servicefabricmanagedclusters.models.ClusterUpgradePolicy
+        :keyword http_gateway_token_auth_connection_port: The port used for token-auth based HTTPS
+         connections to the cluster. Cannot be set to the same port as HttpGatewayEndpoint.
+        :paramtype http_gateway_token_auth_connection_port: int
+        :keyword enable_http_gateway_exclusive_auth_mode: If true, token-based authentication is not
+         allowed on the HttpGatewayEndpoint. This is required to support TLS versions 1.3 and above. If
+         token-based authentication is used, HttpGatewayTokenAuthConnectionPort must be defined.
+        :paramtype enable_http_gateway_exclusive_auth_mode: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -2486,6 +2510,8 @@ class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
         self.public_i_pv6_prefix_id = public_i_pv6_prefix_id
         self.ddos_protection_plan_id = ddos_protection_plan_id
         self.upgrade_description = upgrade_description
+        self.http_gateway_token_auth_connection_port = http_gateway_token_auth_connection_port
+        self.enable_http_gateway_exclusive_auth_mode = enable_http_gateway_exclusive_auth_mode
 
 
 class ManagedClusterCodeVersionResult(_serialization.Model):

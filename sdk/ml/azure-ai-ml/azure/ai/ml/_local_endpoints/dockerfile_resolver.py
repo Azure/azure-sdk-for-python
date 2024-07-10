@@ -93,7 +93,7 @@ class DockerfileResolver(object):
             self._instructions.extend(
                 [
                     Run(f"mkdir -p {self._docker_azureml_app_path}"),
-                    Workdir(self._docker_azureml_app_path),
+                    Workdir(str(self._docker_azureml_app_path)),
                 ]
             )
 

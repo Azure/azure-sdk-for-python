@@ -12,7 +12,13 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 [Source code][python-di-src]
 | [Package (PyPI)][python-di-pypi]
+| [API reference documentation][python-di-ref-docs]
+| [Product documentation][python-di-product-docs]
 | [Samples][python-di-samples]
+
+## _Disclaimer_
+
+_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -23,9 +29,11 @@ python -m pip install azure-ai-documentintelligence
 ```
 
 This table shows the relationship between SDK versions and supported API service versions:
-|SDK version|Supported API service version
-|-|-
-|1.0.0b1 | 2023-10-31-preview
+
+|SDK version|Supported API service version|
+|-|-|
+|1.0.0b1 | 2023-10-31-preview|
+|1.0.0b2 | 2024-02-29-preview|
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
@@ -229,35 +237,143 @@ for page in result.pages:
             words = get_words(page, line)
             print(
                 f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{line.polygon}'"
+                f"within bounding polygon '{format_polygon(line.polygon)}'"
             )
 
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+    if page.words:
+        for word in page.words:
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
+
+if result.paragraphs:
+    print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+    # Sort all paragraphs by span's offset to read in the right order.
+    result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+    print("-----Print sorted paragraphs-----")
+    for paragraph in result.paragraphs:
+        print(
+            f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
+        )
+        print(f"...with content: '{paragraph.content}'")
+        print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
 if result.tables:
     for table_idx, table in enumerate(result.tables):
         print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
-                    print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+                    print(
+                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
+                    )
 
 print("----------------------------------------")
 ```
 
 <!-- END SNIPPET -->
+
+### Using the General Document Model
+
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Document Intelligence service.
+Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
+
+<!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        analyze_request=f,
+        features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+
+if result.styles:
+    for style in result.styles:
+        if style.is_handwritten:
+            print("Document contains handwritten content: ")
+            print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
+
+print("----Key-value pairs found in document----")
+if result.key_value_pairs:
+    for kv_pair in result.key_value_pairs:
+        if kv_pair.key:
+            print(
+                f"Key '{kv_pair.key.content}' found within "
+                f"'{format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+            )
+        if kv_pair.value:
+            print(
+                f"Value '{kv_pair.value.content}' found within "
+                f"'{format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
+            )
+
+for page in result.pages:
+    print(f"----Analyzing document from page #{page.page_number}----")
+    print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
+
+    if page.lines:
+        for line_idx, line in enumerate(page.lines):
+            words = get_words(page.words, line)
+            print(
+                f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
+                f"bounding polygon '{format_polygon(line.polygon)}'"
+            )
+
+    if page.words:
+        for word in page.words:
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+
+    if page.selection_marks:
+        for selection_mark in page.selection_marks:
+            print(
+                f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of "
+                f"{selection_mark.confidence}"
+            )
+
+if result.tables:
+    for table_idx, table in enumerate(result.tables):
+        print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
+        if table.bounding_regions:
+            for region in table.bounding_regions:
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                )
+        for cell in table.cells:
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
+            if cell.bounding_regions:
+                for region in cell.bounding_regions:
+                    print(
+                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"
+                    )
+print("----------------------------------------")
+```
+
+<!-- END SNIPPET -->
+
+- Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
 ### Using Prebuilt Models
 
@@ -435,31 +551,77 @@ if result.documents:
                     f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
                 )
 
-# iterate over tables, lines, and selection marks on each page
-for page in result.pages:
-    print(f"\nLines found on page {page.page_number}")
-    if page.lines:
-        for line in page.lines:
-            print(f"...Line '{line.content}'")
-    if page.words:
-        for word in page.words:
-            print(f"...Word '{word.content}' has a confidence of {word.confidence}")
-    if page.selection_marks:
-        print(f"\nSelection marks found on page {page.page_number}")
-        for selection_mark in page.selection_marks:
-            print(
-                f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
-            )
+    # Extract table cell values
+    SYMBOL_OF_TABLE_TYPE = "array"
+    SYMBOL_OF_OBJECT_TYPE = "object"
+    KEY_OF_VALUE_OBJECT = "valueObject"
+    KEY_OF_CELL_CONTENT = "content"
 
-if result.tables:
-    for i, table in enumerate(result.tables):
-        print(f"\nTable {i + 1} can be found on page:")
-        if table.bounding_regions:
-            for region in table.bounding_regions:
-                print(f"...{region.page_number}")
-        for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
-print("-----------------------------------")
+    for doc in result.documents:
+        if not doc.fields is None:
+            for field_name, field_value in doc.fields.items():
+                # Dynamic Table cell information store as array in document field.
+                if (
+                    field_value.type == SYMBOL_OF_TABLE_TYPE
+                    and field_value.value_array
+                ):
+                    col_names = []
+                    sample_obj = field_value.value_array[0]
+                    if KEY_OF_VALUE_OBJECT in sample_obj:
+                        col_names = list(sample_obj[KEY_OF_VALUE_OBJECT].keys())
+                    print("----Extracting Dynamic Table Cell Values----")
+                    table_rows = []
+                    for obj in field_value.value_array:
+                        if KEY_OF_VALUE_OBJECT in obj:
+                            value_obj = obj[KEY_OF_VALUE_OBJECT]
+                            extract_value_by_col_name = lambda key: (
+                                value_obj[key].get(KEY_OF_CELL_CONTENT)
+                                if key in value_obj and KEY_OF_CELL_CONTENT in value_obj[key]
+                                else "None"
+                            )
+                            row_data = list(map(extract_value_by_col_name, col_names))
+                            table_rows.append(row_data)
+                    print_table(col_names, table_rows)
+                
+                elif (
+                    field_value.type == SYMBOL_OF_OBJECT_TYPE
+                    and KEY_OF_VALUE_OBJECT in field_value
+                    and field_value[KEY_OF_VALUE_OBJECT] is not None
+                ):
+                    rows_by_columns = list(field_value[KEY_OF_VALUE_OBJECT].values())
+                    is_fixed_table = all(
+                        (
+                            rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
+                            and Counter(
+                                list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys())
+                            )
+                            == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
+                        )
+                        for rows_of_column in rows_by_columns
+                    )
+
+                    # Fixed Table cell information store as object in document field.
+                    if is_fixed_table:
+                        print("----Extracting Fixed Table Cell Values----")
+                        col_names = list(field_value[KEY_OF_VALUE_OBJECT].keys())
+                        row_dict: dict = {}
+                        for rows_of_column in rows_by_columns:
+                            rows = rows_of_column[KEY_OF_VALUE_OBJECT]
+                            for row_key in list(rows.keys()):
+                                if row_key in row_dict:
+                                    row_dict[row_key].append(
+                                        rows[row_key].get(KEY_OF_CELL_CONTENT)
+                                    )
+                                else:
+                                    row_dict[row_key] = [
+                                        row_key,
+                                        rows[row_key].get(KEY_OF_CELL_CONTENT),
+                                    ]
+
+                        col_names.insert(0, "")
+                        print_table(col_names, list(row_dict.values()))
+
+print("------------------------------------")
 ```
 
 <!-- END SNIPPET -->
@@ -575,6 +737,10 @@ print(f"\nModel ID: {my_model.model_id}")
 print(f"Description: {my_model.description}")
 print(f"Model created on: {my_model.created_date_time}")
 print(f"Model expires on: {my_model.expiration_date_time}")
+if my_model.warnings:
+    print("Warnings encountered while building the model:")
+    for warning in my_model.warnings:
+        print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
 ```
 
 <!-- END SNIPPET -->
@@ -665,7 +831,12 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure_sub]: https://azure.microsoft.com/free/
-[python-di-product-docs]: https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/overview?view=form-recog-3.0.0
+[python-di-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/azure/ai/documentintelligence
+[python-di-pypi]: https://pypi.org/project/azure-ai-documentintelligence/
+[python-di-product-docs]: https://learn.microsoft.com/azure/ai-services/document-intelligence/overview?view=doc-intel-4.0.0&viewFallbackFrom=form-recog-3.0.0
+[python-di-ref-docs]: https://aka.ms/azsdk/python/documentintelligence/docs
+[python-di-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
+[python-di-available-regions]: https://aka.ms/azsdk/documentintelligence/available-regions
 [azure_portal]: https://ms.portal.azure.com/
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
@@ -695,3 +866,4 @@ additional questions or comments.
 [addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_languages.py
 [query_fields_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_query_fields.py
 [service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
+[service_prebuilt_document]: https://docs.microsoft.com/azure/ai-services/document-intelligence/concept-general-document#general-document-features

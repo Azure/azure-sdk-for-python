@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from ci_tools.parsing import get_config_setting
-from ci_tools.variables import in_public
+from ci_tools.variables import in_public, in_analyze_weekly
 import os
 from typing import Any
 
@@ -52,8 +52,8 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
     if package_path == ".":
         package_path = os.getcwd()
 
-    ci_enabled = get_config_setting(package_path, "ci_enabled", default)
-    if not in_public() and ci_enabled is False:
+    ci_enabled = get_config_setting(package_path, "ci_enabled", True)
+    if not in_public() and not in_analyze_weekly() and ci_enabled is False:
         return False
 
     # now pull the new pyproject.toml configuration

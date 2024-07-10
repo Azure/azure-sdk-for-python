@@ -229,7 +229,7 @@ class LoggerFactory:
         info["location"] = location
         try:
             from azureml.core import Run
-            run: Run = Run.get_context()
+            run: Run = Run.get_context() # type: ignore[annotation-unchecked]
             if hasattr(run, "experiment"):
                 info["parent_run_id"] = run.properties.get("azureml.pipelinerunid", "Unknown")
                 info["mlIndexAssetKind"] = run.properties.get("azureml.mlIndexAssetKind", "Unknown")

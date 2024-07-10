@@ -1,5 +1,5 @@
--e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 ../../nspkg/azure-search-nspkg
 aiohttp>=3.0
+azure-identity
 azure-mgmt-resource<=21.1.0

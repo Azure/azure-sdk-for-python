@@ -2,7 +2,7 @@
 
 # Prerequisite tools
 - Azure CLI
-  - https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest
+  - https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest
 - Docker CLI
   - https://hub.docker.com/search?q=&type=edition&offering=community
 

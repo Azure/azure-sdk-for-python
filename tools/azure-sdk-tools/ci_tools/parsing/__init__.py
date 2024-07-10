@@ -12,7 +12,8 @@ from .parse_functions import (
     get_pyproject,
     VERSION_REGEX,
     VERSION_PY,
-    OLD_VERSION_PY
+    OLD_VERSION_PY,
+    compare_string_to_glob_array
 )
 
 __all__ = [
@@ -29,5 +30,6 @@ __all__ = [
     "get_pyproject"
     "VERSION_REGEX",
     "VERSION_PY",
-    "OLD_VERSION_PY"
+    "OLD_VERSION_PY",
+    "compare_string_to_glob_array"
 ]

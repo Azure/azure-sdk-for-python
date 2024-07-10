@@ -22,10 +22,21 @@ param (
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $SubscriptionId,
 
+    [Parameter()]
+    [hashtable] $AdditionalParameters = @{},
+
     [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $TenantId
 )
+
+$ProvisionLiveResources = $AdditionalParameters['ProvisionLiveResources']
+Write-Host "ProvisionLiveResources: $ProvisionLiveResources"
+if ($CI -and !$ProvisionLiveResources) {
+    Write-Host "Skipping test resource pre-provisioning."
+    return
+}
+$templateFileParameters['provisionLiveResources'] = $true
 
 Import-Module -Name $PSScriptRoot/../../eng/common/scripts/X509Certificate2 -Verbose
 
@@ -37,7 +48,12 @@ $templateFileParameters['sshPubKey'] = $sshKey
 Write-Host "Sleeping for a bit to ensure service principal is ready."
 Start-Sleep -s 45
 
-az login --service-principal -u $TestApplicationId -p $TestApplicationSecret --tenant $TenantId
+# Install this specific version of the Azure CLI to avoid https://github.com/Azure/azure-cli/issues/28358.
+pip install azure-cli=="2.56.0"
+
+$az_version = az version
+Write-Host "Azure CLI version: $az_version"
+az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
 az account set --subscription $SubscriptionId
 $versions = az aks get-versions -l westus -o json | ConvertFrom-Json
 Write-Host "AKS versions: $($versions | ConvertTo-Json -Depth 100)"

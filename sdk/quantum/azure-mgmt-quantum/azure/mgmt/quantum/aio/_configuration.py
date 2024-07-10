@@ -19,24 +19,24 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureQuantumManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for AzureQuantumManagementClient.
+class AzureQuantumMgmtClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for AzureQuantumMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Azure subscription ID. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-01-10-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-11-13-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        super(AzureQuantumManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-01-10-preview")
+        super(AzureQuantumMgmtClientConfiguration, self).__init__(**kwargs)
+        api_version: str = kwargs.pop("api_version", "2023-11-13-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

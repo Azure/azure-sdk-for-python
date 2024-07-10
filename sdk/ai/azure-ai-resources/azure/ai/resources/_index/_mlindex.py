@@ -11,7 +11,7 @@ import yaml  # type: ignore[import]
 from azure.ai.ml.entities import Data
 from azure.core.credentials import TokenCredential
 from azure.ai.resources._index._documents import Document
-from azure.ai.resources._index._embeddings.EmbeddingsContainer import from_metadata
+from azure.ai.resources._index._embeddings import EmbeddingsContainer
 from azure.ai.resources._index._utils.connections import (
     get_connection_credential,
     get_connection_by_id_v2,
@@ -142,7 +142,7 @@ class MLIndex:
 
     def get_langchain_embeddings(self, credential: Optional[TokenCredential] = None):
         """Get the LangChainEmbeddings from the MLIndex."""
-        embeddings = from_metadata(self.embeddings_config.copy())
+        embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy())
 
         return embeddings.as_langchain_embeddings(credential=credential)
 
@@ -233,7 +233,7 @@ class MLIndex:
                 if engine == "langchain.vectorstores.FAISS":
                     from azure.ai.resources._index._langchain.vendor.vectorstores.faiss import FAISS
 
-                    embeddings = from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
+                    embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
 
                     fs, uri = url_to_fs(self.base_uri)
 
@@ -253,7 +253,7 @@ class MLIndex:
                         logger.warning(error_fmt_str.format(e=e))
                         azureml_faiss_as_langchain_faiss = None  # type: ignore[assignment]
 
-                    embeddings = from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
+                    embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
 
                     store: FaissAndDocStore = FaissAndDocStore.load(self.base_uri, embeddings.embed_query)  # type: ignore[no-redef]
                     if azureml_faiss_as_langchain_faiss is not None:

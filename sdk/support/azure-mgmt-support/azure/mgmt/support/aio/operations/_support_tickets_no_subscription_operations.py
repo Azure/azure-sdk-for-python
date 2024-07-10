@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -78,7 +78,6 @@ class SupportTicketsNoSubscriptionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -86,17 +85,16 @@ class SupportTicketsNoSubscriptionOperations:
 
     @overload
     async def check_name_availability(
-        self, check_name_availability_input: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, check_name_availability_input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This API should be used to check the uniqueness of
         the name for support ticket creation for the selected subscription.
 
         :param check_name_availability_input: Input to check. Required.
-        :type check_name_availability_input: IO
+        :type check_name_availability_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -104,19 +102,15 @@ class SupportTicketsNoSubscriptionOperations:
 
     @distributed_trace_async
     async def check_name_availability(
-        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO], **kwargs: Any
+        self, check_name_availability_input: Union[_models.CheckNameAvailabilityInput, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityOutput:
         """Check the availability of a resource name. This API should be used to check the uniqueness of
         the name for support ticket creation for the selected subscription.
 
         :param check_name_availability_input: Input to check. Is either a CheckNameAvailabilityInput
-         type or a IO type. Required.
+         type or a IO[bytes] type. Required.
         :type check_name_availability_input: ~azure.mgmt.support.models.CheckNameAvailabilityInput or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         IO[bytes]
         :return: CheckNameAvailabilityOutput or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.CheckNameAvailabilityOutput
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -144,21 +138,20 @@ class SupportTicketsNoSubscriptionOperations:
         else:
             _json = self._serialize.body(check_name_availability_input, "CheckNameAvailabilityInput")
 
-        request = build_check_name_availability_request(
+        _request = build_check_name_availability_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_name_availability.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -171,11 +164,9 @@ class SupportTicketsNoSubscriptionOperations:
         deserialized = self._deserialize("CheckNameAvailabilityOutput", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_name_availability.metadata = {"url": "/providers/Microsoft.Support/checkNameAvailability"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list(
@@ -200,7 +191,6 @@ class SupportTicketsNoSubscriptionOperations:
          :code:`<i>CreatedDate</i>` filter, the supported operators are 'gt' and 'ge'. When using both
          filters, combine them using the logical 'AND'. Default value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SupportTicketDetails or the result of
          cls(response)
         :rtype:
@@ -224,16 +214,15 @@ class SupportTicketsNoSubscriptionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     top=top,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -245,13 +234,13 @@ class SupportTicketsNoSubscriptionOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SupportTicketsListResult", pipeline_response)
@@ -261,11 +250,11 @@ class SupportTicketsNoSubscriptionOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -278,8 +267,6 @@ class SupportTicketsNoSubscriptionOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Support/supportTickets"}
-
     @distributed_trace_async
     async def get(self, support_ticket_name: str, **kwargs: Any) -> _models.SupportTicketDetails:
         """Gets details for a specific support ticket. Support ticket data is available for 18 months
@@ -288,7 +275,6 @@ class SupportTicketsNoSubscriptionOperations:
 
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportTicketDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.SupportTicketDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -307,19 +293,18 @@ class SupportTicketsNoSubscriptionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.SupportTicketDetails] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             support_ticket_name=support_ticket_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -332,11 +317,9 @@ class SupportTicketsNoSubscriptionOperations:
         deserialized = self._deserialize("SupportTicketDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/providers/Microsoft.Support/supportTickets/{supportTicketName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def update(
@@ -360,7 +343,6 @@ class SupportTicketsNoSubscriptionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportTicketDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.SupportTicketDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -370,7 +352,7 @@ class SupportTicketsNoSubscriptionOperations:
     async def update(
         self,
         support_ticket_name: str,
-        update_support_ticket: IO,
+        update_support_ticket: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -384,11 +366,10 @@ class SupportTicketsNoSubscriptionOperations:
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
         :param update_support_ticket: UpdateSupportTicket object. Required.
-        :type update_support_ticket: IO
+        :type update_support_ticket: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SupportTicketDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.SupportTicketDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -396,7 +377,10 @@ class SupportTicketsNoSubscriptionOperations:
 
     @distributed_trace_async
     async def update(
-        self, support_ticket_name: str, update_support_ticket: Union[_models.UpdateSupportTicket, IO], **kwargs: Any
+        self,
+        support_ticket_name: str,
+        update_support_ticket: Union[_models.UpdateSupportTicket, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SupportTicketDetails:
         """This API allows you to update the severity level, ticket status, and your contact information
         in the support ticket.:code:`<br/>`:code:`<br/>`Note: The severity levels cannot be changed if
@@ -407,12 +391,8 @@ class SupportTicketsNoSubscriptionOperations:
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
         :param update_support_ticket: UpdateSupportTicket object. Is either a UpdateSupportTicket type
-         or a IO type. Required.
-        :type update_support_ticket: ~azure.mgmt.support.models.UpdateSupportTicket or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         or a IO[bytes] type. Required.
+        :type update_support_ticket: ~azure.mgmt.support.models.UpdateSupportTicket or IO[bytes]
         :return: SupportTicketDetails or the result of cls(response)
         :rtype: ~azure.mgmt.support.models.SupportTicketDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -440,22 +420,21 @@ class SupportTicketsNoSubscriptionOperations:
         else:
             _json = self._serialize.body(update_support_ticket, "UpdateSupportTicket")
 
-        request = build_update_request(
+        _request = build_update_request(
             support_ticket_name=support_ticket_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -468,16 +447,14 @@ class SupportTicketsNoSubscriptionOperations:
         deserialized = self._deserialize("SupportTicketDetails", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {"url": "/providers/Microsoft.Support/supportTickets/{supportTicketName}"}
+        return deserialized  # type: ignore
 
     async def _create_initial(
         self,
         support_ticket_name: str,
-        create_support_ticket_parameters: Union[_models.SupportTicketDetails, IO],
+        create_support_ticket_parameters: Union[_models.SupportTicketDetails, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.SupportTicketDetails]:
         error_map = {
@@ -503,22 +480,21 @@ class SupportTicketsNoSubscriptionOperations:
         else:
             _json = self._serialize.body(create_support_ticket_parameters, "SupportTicketDetails")
 
-        request = build_create_request(
+        _request = build_create_request(
             support_ticket_name=support_ticket_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -537,11 +513,9 @@ class SupportTicketsNoSubscriptionOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_initial.metadata = {"url": "/providers/Microsoft.Support/supportTickets/{supportTicketName}"}
+        return deserialized  # type: ignore
 
     @overload
     async def begin_create(
@@ -572,14 +546,6 @@ class SupportTicketsNoSubscriptionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SupportTicketDetails or the result
          of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.support.models.SupportTicketDetails]
@@ -590,7 +556,7 @@ class SupportTicketsNoSubscriptionOperations:
     async def begin_create(
         self,
         support_ticket_name: str,
-        create_support_ticket_parameters: IO,
+        create_support_ticket_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -611,18 +577,10 @@ class SupportTicketsNoSubscriptionOperations:
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
         :param create_support_ticket_parameters: Support ticket request payload. Required.
-        :type create_support_ticket_parameters: IO
+        :type create_support_ticket_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SupportTicketDetails or the result
          of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.support.models.SupportTicketDetails]
@@ -633,7 +591,7 @@ class SupportTicketsNoSubscriptionOperations:
     async def begin_create(
         self,
         support_ticket_name: str,
-        create_support_ticket_parameters: Union[_models.SupportTicketDetails, IO],
+        create_support_ticket_parameters: Union[_models.SupportTicketDetails, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SupportTicketDetails]:
         """Creates a new support ticket for Billing, and Subscription Management issues. Learn the
@@ -652,19 +610,9 @@ class SupportTicketsNoSubscriptionOperations:
         :param support_ticket_name: Support ticket name. Required.
         :type support_ticket_name: str
         :param create_support_ticket_parameters: Support ticket request payload. Is either a
-         SupportTicketDetails type or a IO type. Required.
-        :type create_support_ticket_parameters: ~azure.mgmt.support.models.SupportTicketDetails or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         SupportTicketDetails type or a IO[bytes] type. Required.
+        :type create_support_ticket_parameters: ~azure.mgmt.support.models.SupportTicketDetails or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns either SupportTicketDetails or the result
          of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.support.models.SupportTicketDetails]
@@ -695,7 +643,7 @@ class SupportTicketsNoSubscriptionOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SupportTicketDetails", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -708,12 +656,12 @@ class SupportTicketsNoSubscriptionOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.SupportTicketDetails].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create.metadata = {"url": "/providers/Microsoft.Support/supportTickets/{supportTicketName}"}
+        return AsyncLROPoller[_models.SupportTicketDetails](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

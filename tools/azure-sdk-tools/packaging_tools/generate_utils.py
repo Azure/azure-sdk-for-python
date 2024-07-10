@@ -7,10 +7,11 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_call
+from subprocess import check_output, CalledProcessError, check_call, getoutput
 from typing import Dict, Any
 from glob import glob
 import yaml
+import shutil
 
 from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
@@ -24,6 +25,51 @@ _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
+
+
+# input example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
+def del_outdated_generated_files(readme: str):
+    tspconfig = Path(readme) / "tspconfig.yaml"
+    if not tspconfig.exists():
+        _LOGGER.info(f"do not find tspconfig.yaml: {tspconfig}")
+        return
+
+    with open(tspconfig, "r") as file_in:
+        content = yaml.safe_load(file_in)
+    # tspconfig.yaml example: https://github.com/Azure/azure-rest-api-specs/pull/29080/files
+    service_dir = content.get("parameters", {}).get("service-dir", {}).get("default", "")
+    package_dir = content.get("options", {}).get("@azure-tools/typespec-python", {}).get("package-dir", "")
+    if not service_dir or not package_dir:
+        _LOGGER.info(f"do not find service-dir or package-dir in tspconfig.yaml: {tspconfig}")
+        return
+    generated_files_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
+    # remove outdated generate files
+    if generated_files_dir.exists():
+        generated_files = [
+            file
+            for file in generated_files_dir.glob("**/*")
+            if all(
+                i not in str(file)
+                for i in (
+                    "__pycache__",
+                    "node_modules",
+                    ".tox",
+                    ".mypy_cache",
+                )
+            )
+            and file.suffix == ".py"
+        ]
+        for file in generated_files:
+            if file.stem != "_patch":
+                os.remove(file)
+        _LOGGER.info(f"delete outdated generated files except _patch.py successfully")
+
+    # remove outdated generated samples
+    for item in ["generated_samples", "generated_tests"]:
+        generated_dir = Path(service_dir) / package_dir / item
+        if generated_dir.exists():
+            shutil.rmtree(generated_dir)
+            _LOGGER.info(f"delete outdated {item} successfully")
 
 
 def check_api_version_in_subfolder(sdk_code_path: str):
@@ -75,11 +121,10 @@ def call_build_config(package_name: str, folder_name: str):
     #     shell=True,
     # )
 
-def init_new_service(package_name, folder_name, is_typespec = False):
-    if not is_typespec:
-        setup = Path(folder_name, package_name, "setup.py")
-        if not setup.exists():
-            call_build_config(package_name, folder_name)
+
+def init_new_service(package_name, folder_name):
+    if "azure-mgmt-" in package_name:
+        call_build_config(package_name, folder_name)
     else:
         output_path = Path(folder_name) / package_name
         if not (output_path / CONF_NAME).exists():
@@ -90,7 +135,7 @@ def init_new_service(package_name, folder_name, is_typespec = False):
     generate_ci(
         template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
         folder_path=Path(folder_name),
-        package_name=package_name
+        package_name=package_name,
     )
 
 
@@ -99,17 +144,21 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     if not package_folder.exists():
         _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
         return
-    if not (package_folder / "_meta.json").exists():
-        metadata = {}
-    else:
-        with open(str(package_folder / "_meta.json"), "r") as file_in:
+    for_swagger_gen = "meta" in config
+    metadata_folder = package_folder / "_meta.json"
+    if metadata_folder.exists() and for_swagger_gen:
+        with open(metadata_folder, "r") as file_in:
             metadata = json.load(file_in)
+    else:
+        metadata = {}
 
-    metadata.update({
-        "commit": data["headSha"],
-        "repository_url": data["repoHttpsUrl"],
-    })
-    if "meta" in config:
+    metadata.update(
+        {
+            "commit": data["headSha"],
+            "repository_url": data["repoHttpsUrl"],
+        }
+    )
+    if for_swagger_gen:
         readme_file = str(Path(spec_folder, input_readme))
         global_conf = config["meta"]
         local_conf = config.get("projects", {}).get(readme_file, {})
@@ -122,12 +171,14 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         cmd += build_autorest_options(global_conf, local_conf)
 
         # metadata
-        metadata.update({
-            "autorest": global_conf["autorest_options"]["version"],
-            "use": global_conf["autorest_options"]["use"],
-            "autorest_command": " ".join(cmd),
-            "readme": input_readme,
-        })
+        metadata.update(
+            {
+                "autorest": global_conf["autorest_options"]["version"],
+                "use": global_conf["autorest_options"]["use"],
+                "autorest_command": " ".join(cmd),
+                "readme": input_readme,
+            }
+        )
     else:
         metadata["typespec_src"] = input_readme
         metadata.update(config)
@@ -362,13 +413,14 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
+
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
     ci = Path(folder_path, "ci.yml")
     service_name = folder_path.name
     safe_name = package_name.replace("-", "")
     if not ci.exists():
         env = Environment(loader=FileSystemLoader(template_path), keep_trailing_newline=True)
-        template = env.get_template('ci.yml')
+        template = env.get_template("ci.yml")
         content = template.render(package_name=package_name, service_name=service_name, safe_name=safe_name)
     else:
         with open(ci, "r") as file_in:
@@ -376,20 +428,30 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
             for line in content:
                 if package_name in line:
                     return
-            content.append(f'    - name: {package_name}\n')
-            content.append(f'      safeName: {safe_name}\n')
+            content.append(f"    - name: {package_name}\n")
+            content.append(f"      safeName: {safe_name}\n")
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
+
 def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, rest_repo_url: str) -> Dict[str, Any]:
     typespec_python = "@azure-tools/typespec-python"
-
     # call scirpt to generate sdk
-    check_call(f'pwsh {Path("eng/common/scripts/TypeSpec-Project-Process.ps1")} {(Path(spec_folder) / typespec_relative_path).resolve()} {head_sha} {rest_repo_url}', shell=True)
+    try:
+        tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
+        repo_url = rest_repo_url.replace("https://github.com/", "")
+        check_output(
+            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug",
+            shell=True,
+        )
+    except CalledProcessError as e:
+        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        raise e
 
-    # get version of codegen used in generation
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)
-        npm_package_verstion = {typespec_python: data["dependencies"][typespec_python]}
+        npm_package_verstion = {
+            typespec_python: data["dependencies"][typespec_python],
+        }
 
     return npm_package_verstion

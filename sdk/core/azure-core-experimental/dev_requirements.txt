@@ -1,6 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 ../azure-core
--e ../../../tools/azure-devtools
+-e ../azure-core/tests/testserver_tests/coretestserver
 js
 pyodide==0.19.0a1; python_version >= '3.8'
 httpx==0.23.3
+urllib3>=2.0.0

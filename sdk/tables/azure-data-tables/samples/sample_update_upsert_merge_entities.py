@@ -70,10 +70,8 @@ class TableEntitySamples(object):
                 "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
             }
             try:
-                # [START create_entity]
                 created_entity = table.create_entity(entity=my_entity)
                 print(f"Created entity: {created_entity}")
-                # [END create_entity]
 
                 # [START get_entity]
                 # Get Entity by partition and row key

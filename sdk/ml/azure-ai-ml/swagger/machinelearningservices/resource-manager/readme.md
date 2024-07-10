@@ -7,6 +7,14 @@ version of the file used for AzureML's ARM APIs, which is defined [here](https:/
 
 ---
 
+## Usage
+
+For instructions for regenerating the _restclient using these arguments, see the `docs/dev_setup.md` in the AML CLI repo.
+For a quick example, Run this command from azure-sdk-for-python/sdk/ml/azure-ai-ml/:
+```
+python ./scripts/regenerate_restclient.py -a v2022-01-01-preview
+```
+
 ## Configuration
 
 ### Basic Information
@@ -238,7 +246,22 @@ input-file:
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/registries.json
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceFeatures.json
   - Microsoft.MachineLearningServices/preview/2024-01-01-preview/mfe.json
+  - Microsoft.MachineLearningServices/preview/2024-01-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2024_01_01_preview
+```
+
+### Tag: v2024-04-01-preview
+
+These settings apply only when `--tag=v2024-04-01-preview` is specified on the command line.
+
+```yaml $(tag) == 'v2024-04-01-preview'
+input-file:
+  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/machineLearningServices.json
+  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/registries.json
+  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/workspaceFeatures.json
+  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/mfe.json
+  - Microsoft.MachineLearningServices/preview/2024-04-01-preview/workspaceRP.json
+output-folder: $(python-sdks-folder)/v2024_04_01_preview
 ```
 
 ### Tag: multiapi
@@ -265,6 +288,7 @@ batch:
   - tag: v2023-08-01-preview
   - tag: v2023-10-01
   - tag: v2024-01-01-preview
+  - tag: v2024-04-01-preview
   #unstable tags
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true
