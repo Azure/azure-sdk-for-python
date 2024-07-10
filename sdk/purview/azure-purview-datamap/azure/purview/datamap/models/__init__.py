@@ -16,7 +16,6 @@ from ._models import AtlasEntitiesWithExtInfo
 from ._models import AtlasEntity
 from ._models import AtlasEntityDef
 from ._models import AtlasEntityHeader
-from ._models import AtlasEntityHeaders
 from ._models import AtlasEntityWithExtInfo
 from ._models import AtlasEnumDef
 from ._models import AtlasEnumElementDef
@@ -43,23 +42,18 @@ from ._models import AtlasTermCategorizationHeader
 from ._models import AtlasTypeDef
 from ._models import AtlasTypeDefHeader
 from ._models import AtlasTypesDef
-from ._models import AutoCompleteOptions
 from ._models import AutoCompleteResult
 from ._models import AutoCompleteResultValue
 from ._models import BulkImportResult
-from ._models import BusinessMetadataOptions
-from ._models import ClassificationAssociateOptions
 from ._models import ContactInfo
 from ._models import ContactSearchResultValue
 from ._models import DateFormat
 from ._models import EntityMutationResult
 from ._models import ImportInfo
 from ._models import LineageRelation
-from ._models import MoveEntitiesOptions
 from ._models import NumberFormat
 from ._models import ParentRelation
 from ._models import PurviewObjectId
-from ._models import QueryOptions
 from ._models import QueryResult
 from ._models import ResourceLink
 from ._models import SearchFacetItem
@@ -69,7 +63,6 @@ from ._models import SearchFacetSort
 from ._models import SearchHighlights
 from ._models import SearchResultValue
 from ._models import SearchTaxonomySetting
-from ._models import SuggestOptions
 from ._models import SuggestResult
 from ._models import SuggestResultValue
 from ._models import TermSearchResultValue
@@ -106,7 +99,6 @@ __all__ = [
     "AtlasEntity",
     "AtlasEntityDef",
     "AtlasEntityHeader",
-    "AtlasEntityHeaders",
     "AtlasEntityWithExtInfo",
     "AtlasEnumDef",
     "AtlasEnumElementDef",
@@ -133,23 +125,18 @@ __all__ = [
     "AtlasTypeDef",
     "AtlasTypeDefHeader",
     "AtlasTypesDef",
-    "AutoCompleteOptions",
     "AutoCompleteResult",
     "AutoCompleteResultValue",
     "BulkImportResult",
-    "BusinessMetadataOptions",
-    "ClassificationAssociateOptions",
     "ContactInfo",
     "ContactSearchResultValue",
     "DateFormat",
     "EntityMutationResult",
     "ImportInfo",
     "LineageRelation",
-    "MoveEntitiesOptions",
     "NumberFormat",
     "ParentRelation",
     "PurviewObjectId",
-    "QueryOptions",
     "QueryResult",
     "ResourceLink",
     "SearchFacetItem",
@@ -159,7 +146,6 @@ __all__ = [
     "SearchHighlights",
     "SearchResultValue",
     "SearchTaxonomySetting",
-    "SuggestOptions",
     "SuggestResult",
     "SuggestResultValue",
     "TermSearchResultValue",

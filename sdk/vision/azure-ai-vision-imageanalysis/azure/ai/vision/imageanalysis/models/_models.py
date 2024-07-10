@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 class CaptionResult(_model_base.Model):
     """Represents a generated phrase that describes the content of the whole image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar confidence: A score, in the range of 0 to 1 (inclusive), representing the confidence that
      this description is accurate.
@@ -43,8 +42,7 @@ class CaptionResult(_model_base.Model):
         *,
         confidence: float,
         text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -62,7 +60,6 @@ class CropRegion(_model_base.Model):
     The region preserves as much content as possible from the analyzed image, with priority given
     to detected faces.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar aspect_ratio: The aspect ratio of the crop region.
      Aspect ratio is calculated by dividing the width of the region in pixels by its height in
@@ -91,8 +88,7 @@ class CropRegion(_model_base.Model):
         *,
         aspect_ratio: float,
         bounding_box: "_models.ImageBoundingBox",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -109,7 +105,6 @@ class DenseCaption(_model_base.Model):
     """Represents a generated phrase that describes the content of the whole image or a region in the
     image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar confidence: A score, in the range of 0 to 1 (inclusive), representing the confidence that
      this description is accurate.
@@ -137,8 +132,7 @@ class DenseCaption(_model_base.Model):
         confidence: float,
         text: str,
         bounding_box: "_models.ImageBoundingBox",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -155,7 +149,6 @@ class DenseCaptionsResult(_model_base.Model):
     """Represents a list of up to 10 image captions for different regions of the image.
     The first caption always applies to the whole image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar list: The list of image captions. Required.
     :vartype list: list[~azure.ai.vision.imageanalysis.models.DenseCaption]
@@ -169,8 +162,7 @@ class DenseCaptionsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DenseCaption"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -186,7 +178,6 @@ class DenseCaptionsResult(_model_base.Model):
 class DetectedObject(_model_base.Model):
     """Represents a physical object detected in an image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar bounding_box: A rectangular boundary where the object was detected. Required.
     :vartype bounding_box: ~azure.ai.vision.imageanalysis.models.ImageBoundingBox
@@ -205,8 +196,7 @@ class DetectedObject(_model_base.Model):
         *,
         bounding_box: "_models.ImageBoundingBox",
         tags: List["_models.DetectedTag"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -224,7 +214,6 @@ class DetectedPerson(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar bounding_box: A rectangular boundary where the person was detected. Required.
     :vartype bounding_box: ~azure.ai.vision.imageanalysis.models.ImageBoundingBox
@@ -247,7 +236,6 @@ class DetectedTag(_model_base.Model):
     scenery, or action
     that appear in the image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar confidence: A score, in the range of 0 to 1 (inclusive), representing the confidence that
      this entity was observed.
@@ -270,8 +258,7 @@ class DetectedTag(_model_base.Model):
         *,
         confidence: float,
         name: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -287,7 +274,6 @@ class DetectedTag(_model_base.Model):
 class DetectedTextBlock(_model_base.Model):
     """Represents a single block of detected text in the image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar lines: A list of text lines in this block. Required.
     :vartype lines: list[~azure.ai.vision.imageanalysis.models.DetectedTextLine]
@@ -301,8 +287,7 @@ class DetectedTextBlock(_model_base.Model):
         self,
         *,
         lines: List["_models.DetectedTextLine"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -318,7 +303,6 @@ class DetectedTextBlock(_model_base.Model):
 class DetectedTextLine(_model_base.Model):
     """Represents a single line of text in the image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar text: Text content of the detected text line. Required.
     :vartype text: str
@@ -344,8 +328,7 @@ class DetectedTextLine(_model_base.Model):
         text: str,
         bounding_polygon: List["_models.ImagePoint"],
         words: List["_models.DetectedTextWord"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -363,7 +346,6 @@ class DetectedTextWord(_model_base.Model):
     languages,
     such as Chinese, Japanese, and Korean, each character is represented as its own word.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar text: Text content of the word. Required.
     :vartype text: str
@@ -392,8 +374,7 @@ class DetectedTextWord(_model_base.Model):
         text: str,
         bounding_polygon: List["_models.ImagePoint"],
         confidence: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -409,7 +390,6 @@ class DetectedTextWord(_model_base.Model):
 class ImageAnalysisResult(_model_base.Model):
     """Represents the outcome of an Image Analysis operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar caption: The generated phrase that describes the content of the analyzed image.
     :vartype caption: ~azure.ai.vision.imageanalysis.models.CaptionResult
@@ -473,8 +453,7 @@ class ImageAnalysisResult(_model_base.Model):
         read: Optional["_models.ReadResult"] = None,
         smart_crops: Optional["_models.SmartCropsResult"] = None,
         tags: Optional["_models.TagsResult"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -490,7 +469,6 @@ class ImageAnalysisResult(_model_base.Model):
 class ImageBoundingBox(_model_base.Model):
     """A basic rectangle specifying a sub-region of the image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar x: X-coordinate of the top left point of the area, in pixels. Required.
     :vartype x: int
@@ -519,8 +497,7 @@ class ImageBoundingBox(_model_base.Model):
         y: int,
         width: int,
         height: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -536,7 +513,6 @@ class ImageBoundingBox(_model_base.Model):
 class ImageMetadata(_model_base.Model):
     """Metadata associated with the analyzed image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar height: The height of the image in pixels. Required.
     :vartype height: int
@@ -555,8 +531,7 @@ class ImageMetadata(_model_base.Model):
         *,
         height: int,
         width: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -572,7 +547,6 @@ class ImageMetadata(_model_base.Model):
 class ImagePoint(_model_base.Model):
     """Represents the coordinates of a single pixel in the image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar x: The horizontal x-coordinate of this point, in pixels. Zero values corresponds to the
      left-most pixels in the image. Required.
@@ -595,8 +569,7 @@ class ImagePoint(_model_base.Model):
         *,
         x: int,
         y: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -625,7 +598,6 @@ class ImageUrl(_model_base.Model):
 class ObjectsResult(_model_base.Model):
     """Represents a list of physical object detected in an image and their location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar list: A list of physical object detected in an image and their location. Required.
     :vartype list: list[~azure.ai.vision.imageanalysis.models.DetectedObject]
@@ -639,8 +611,7 @@ class ObjectsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedObject"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -656,7 +627,6 @@ class ObjectsResult(_model_base.Model):
 class PeopleResult(_model_base.Model):
     """Represents a list of people detected in an image and their location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar list: A list of people detected in an image and their location. Required.
     :vartype list: list[~azure.ai.vision.imageanalysis.models.DetectedPerson]
@@ -670,8 +640,7 @@ class PeopleResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedPerson"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -687,7 +656,6 @@ class PeopleResult(_model_base.Model):
 class ReadResult(_model_base.Model):
     """The results of a Read (OCR) operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar blocks: A list of text blocks in the image. At the moment only one block is returned,
      containing all the text detected in the image. Required.
@@ -703,8 +671,7 @@ class ReadResult(_model_base.Model):
         self,
         *,
         blocks: List["_models.DetectedTextBlock"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -723,7 +690,6 @@ class SmartCropsResult(_model_base.Model):
     These regions preserve as much content as possible from the analyzed image, with priority given
     to detected faces.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar list: A list of crop regions. Required.
     :vartype list: list[~azure.ai.vision.imageanalysis.models.CropRegion]
@@ -737,8 +703,7 @@ class SmartCropsResult(_model_base.Model):
         self,
         *,
         list: List["_models.CropRegion"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -756,7 +721,6 @@ class TagsResult(_model_base.Model):
     or actions
     that appear in the image.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar list: A list of tags. Required.
     :vartype list: list[~azure.ai.vision.imageanalysis.models.DetectedTag]
@@ -770,8 +734,7 @@ class TagsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedTag"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

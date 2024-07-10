@@ -715,23 +715,32 @@ class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
 
-    :ivar prompt_tokens: Number of tokens in the request. Required.
+    :ivar input_tokens: Number of tokens in the request prompt. Required.
+    :vartype input_tokens: int
+    :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
+     identical to ``input_tokens``.
+     However, certain AI models may add extra tokens to the input hence the number can be higher.
+     (for example when input_type="query"). Required.
     :vartype prompt_tokens: int
-    :ivar total_tokens: Total number of tokens transacted in this request/response.
-     Should equal the number of tokens in the request. Required.
+    :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
     :vartype total_tokens: int
     """
 
+    input_tokens: int = rest_field()
+    """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
-    """Number of tokens in the request. Required."""
+    """Number of tokens used for the prompt sent to the AI model. Typically identical to
+     ``input_tokens``.
+     However, certain AI models may add extra tokens to the input hence the number can be higher.
+     (for example when input_type=\"query\"). Required."""
     total_tokens: int = rest_field()
-    """Total number of tokens transacted in this request/response.
-    Should equal the number of tokens in the request. Required."""
+    """Total number of tokens transacted in this request/response. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
     ): ...
@@ -1195,7 +1204,7 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
     role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: Union["str", List["_models.ContentItem"]] = rest_field()
+    content: Union[str, List["_models.ContentItem"]] = rest_field()
     """The contents of the user message, with available input types varying by selected model.
      Required. Is either a str type or a [ContentItem] type."""
 

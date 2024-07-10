@@ -538,13 +538,13 @@ class MongoClusterProperties(_model_base.Model):  # pylint: disable=too-many-ins
 class MongoClusterRestoreParameters(_model_base.Model):
     """Parameters used for restore operations.
 
-    :ivar point_in_time_u_t_c: UTC point in time to restore a mongo cluster.
-    :vartype point_in_time_u_t_c: ~datetime.datetime
+    :ivar point_in_time_utc: UTC point in time to restore a mongo cluster.
+    :vartype point_in_time_utc: ~datetime.datetime
     :ivar source_resource_id: Resource ID to locate the source cluster to restore.
     :vartype source_resource_id: str
     """
 
-    point_in_time_u_t_c: Optional[datetime.datetime] = rest_field(name="pointInTimeUTC", format="rfc3339")
+    point_in_time_utc: Optional[datetime.datetime] = rest_field(name="pointInTimeUTC", format="rfc3339")
     """UTC point in time to restore a mongo cluster."""
     source_resource_id: Optional[str] = rest_field(name="sourceResourceId")
     """Resource ID to locate the source cluster to restore."""
@@ -553,7 +553,7 @@ class MongoClusterRestoreParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        point_in_time_u_t_c: Optional[datetime.datetime] = None,
+        point_in_time_utc: Optional[datetime.datetime] = None,
         source_resource_id: Optional[str] = None,
     ): ...
 
@@ -659,9 +659,9 @@ class NodeGroupSpec(_model_base.Model):
     :ivar sku: The resource sku for the node group. This defines the size of CPU and memory that is
      provisioned for each node. Example values: 'M30', 'M40'.
     :vartype sku: str
-    :ivar disk_size_g_b: The disk storage size for the node group in GB. Example values: 128, 256,
+    :ivar disk_size_gb: The disk storage size for the node group in GB. Example values: 128, 256,
      512, 1024.
-    :vartype disk_size_g_b: int
+    :vartype disk_size_gb: int
     :ivar enable_ha: Whether high availability is enabled on the node group.
     :vartype enable_ha: bool
     :ivar kind: The node type deployed in the node group. "Shard"
@@ -673,7 +673,7 @@ class NodeGroupSpec(_model_base.Model):
     sku: Optional[str] = rest_field()
     """The resource sku for the node group. This defines the size of CPU and memory that is
      provisioned for each node. Example values: 'M30', 'M40'."""
-    disk_size_g_b: Optional[int] = rest_field(name="diskSizeGB")
+    disk_size_gb: Optional[int] = rest_field(name="diskSizeGB")
     """The disk storage size for the node group in GB. Example values: 128, 256, 512, 1024."""
     enable_ha: Optional[bool] = rest_field(name="enableHa")
     """Whether high availability is enabled on the node group."""
@@ -687,7 +687,7 @@ class NodeGroupSpec(_model_base.Model):
         self,
         *,
         sku: Optional[str] = None,
-        disk_size_g_b: Optional[int] = None,
+        disk_size_gb: Optional[int] = None,
         enable_ha: Optional[bool] = None,
         kind: Optional[Union[str, "_models.NodeKind"]] = None,
         node_count: Optional[int] = None,

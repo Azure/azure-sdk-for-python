@@ -87,7 +87,6 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
             **kwargs
         )
 
-
     @distributed_trace
     def analyze(
         self,

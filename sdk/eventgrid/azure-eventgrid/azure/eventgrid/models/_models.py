@@ -28,7 +28,6 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 class AcknowledgeResult(_model_base.Model):
     """The result of the Acknowledge operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -67,7 +66,6 @@ class AcknowledgeResult(_model_base.Model):
 class BrokerProperties(_model_base.Model):
     """Properties of the Event Broker operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar lock_token: The token of the lock on the event. Required.
     :vartype lock_token: str
@@ -170,7 +168,6 @@ class Error(_model_base.Model):
 class FailedLockToken(_model_base.Model):
     """Failed LockToken information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar lock_token: The lock token of an entry in the request. Required.
     :vartype lock_token: str
@@ -227,7 +224,6 @@ class PublishResult(_model_base.Model):
 class ReceiveDetails(_model_base.Model):
     """Receive operation details per Cloud Event.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.eventgrid.models._models.BrokerProperties
@@ -244,7 +240,6 @@ class ReceiveDetails(_model_base.Model):
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar details: Array of receive responses, one per cloud event. Required.
     :vartype details: list[~azure.eventgrid.models._models.ReceiveDetails]
@@ -257,7 +252,6 @@ class ReceiveResult(_model_base.Model):
 class RejectResult(_model_base.Model):
     """The result of the Reject operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -296,7 +290,6 @@ class RejectResult(_model_base.Model):
 class ReleaseResult(_model_base.Model):
     """The result of the Release operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -335,7 +328,6 @@ class ReleaseResult(_model_base.Model):
 class RenewLocksResult(_model_base.Model):
     """The result of the RenewLock operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
