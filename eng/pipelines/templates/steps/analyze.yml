@@ -39,6 +39,7 @@ steps:
           PackageName: ${{artifact.name}}
           ServiceName: ${{parameters.ServiceDirectory}}
           ForRelease: false
+          Condition: succeededOrFailed()
 
   - script: |
       python -m pip install "./tools/azure-sdk-tools[build]" -q -I
@@ -66,6 +67,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
+      Condition: succeededOrFailed()
 
   - template: ../steps/verify-autorest.yml
     parameters:
