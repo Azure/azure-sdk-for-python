@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+
 def chat_completion_studio_viewcode() -> None:
     import os
     from openai import AzureOpenAI
