@@ -70,13 +70,13 @@ stages:
                       workingDirectory: $(Pipeline.Workspace)
                       displayName: Output Visible Artifacts
 
-                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-                      parameters:
-                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                        PackageRepository: PyPI
-                        ReleaseSha: $(Build.SourceVersion)
-                        RepoId: Azure/azure-sdk-for-python
-                        WorkingDirectory: $(System.DefaultWorkingDirectory)
+                    # - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                    #   parameters:
+                    #     ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
+                    #     PackageRepository: PyPI
+                    #     ReleaseSha: $(Build.SourceVersion)
+                    #     RepoId: Azure/azure-sdk-for-python
+                    #     WorkingDirectory: $(System.DefaultWorkingDirectory)
 
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
