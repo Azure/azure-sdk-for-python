@@ -23,7 +23,22 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a custom schema format."""
 
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """
+    Represents the Schema Registry API version to use for requests.
+    """
+
+    V2021_10 = "2021-10"
+    V2022_10 = "2022-10"
+    """This is the default version."""
+
+
+DEFAULT_VERSION = ApiVersion.V2022_10
+
+
+__all__: List[str] = (
+    []
+)  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

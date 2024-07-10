@@ -22,7 +22,10 @@ from ..._operations._patch import (
     build_schema_registry_get_schema_properties_by_content_request,
     build_schema_registry_register_schema_request,
 )
-from ._operations import ClsType, SchemaRegistryClientOperationsMixin as GeneratedClientOperationsMixin
+from ._operations import (
+    ClsType,
+    SchemaRegistryClientOperationsMixin as GeneratedClientOperationsMixin,
+)
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -68,7 +71,9 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8"))
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = schema_content
@@ -84,7 +89,10 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
@@ -99,16 +107,30 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
-        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
-        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
-        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
-        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Schema-Id"] = self._deserialize(
+            "str", response.headers.get("Schema-Id")
+        )
+        response_headers["Schema-Id-Location"] = self._deserialize(
+            "str", response.headers.get("Schema-Id-Location")
+        )
+        response_headers["Schema-Group-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Group-Name")
+        )
+        response_headers["Schema-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Name")
+        )
+        response_headers["Schema-Version"] = self._deserialize(
+            "int", response.headers.get("Schema-Version")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -149,7 +171,9 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8"))
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "text/plain; charset=utf-8")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = content
@@ -165,7 +189,10 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
@@ -180,16 +207,30 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         if response.status_code not in [204]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
-        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
-        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
-        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
-        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Schema-Id"] = self._deserialize(
+            "str", response.headers.get("Schema-Id")
+        )
+        response_headers["Schema-Id-Location"] = self._deserialize(
+            "str", response.headers.get("Schema-Id-Location")
+        )
+        response_headers["Schema-Group-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Group-Name")
+        )
+        response_headers["Schema-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Name")
+        )
+        response_headers["Schema-Version"] = self._deserialize(
+            "int", response.headers.get("Schema-Version")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)

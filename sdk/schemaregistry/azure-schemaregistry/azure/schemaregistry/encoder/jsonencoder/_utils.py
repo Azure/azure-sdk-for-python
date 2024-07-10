@@ -3,7 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Any, Callable, Optional, Type, Union, cast, Mapping, TYPE_CHECKING, Tuple, TypeVar, overload
+from typing import (
+    Any,
+    Callable,
+    Optional,
+    Type,
+    Union,
+    cast,
+    Mapping,
+    TYPE_CHECKING,
+    Tuple,
+    TypeVar,
+    overload,
+)
 import json
 
 try:
@@ -16,8 +28,8 @@ from functools import partial
 
 from ..._patch import (  # pylint: disable=import-error
     MessageContent,
-    MessageContentGetter as MessageContentGetterProtocol,
-    MessageContentSetter as MessageContentSetterProtocol,
+    InboundMessageContent as InboundMessageContentProtocol,
+    OutboundMessageContent as OutboundMessageContentProtocol,
 )
 from ._exceptions import (  # pylint: disable=import-error
     InvalidContentError,
@@ -31,18 +43,25 @@ if TYPE_CHECKING:
         pass
     from ..._patch import SchemaContentValidate
 
-# TypeVar ties the return type to the exact MessageType class, rather than the "MessageType" Protocol
+# TypeVar ties the return type to the exact OutboundMessageContent/InboundMessageContent class,
+# rather than the "OutboundMessageContent/InboundMessageContent" Protocol.
 # Otherwise, mypy will complain that the return type is not compatible with the type annotation when
-# the MessageType object is returned and passed around.
-MessageContentGetter = TypeVar("MessageContentGetter", bound=MessageContentGetterProtocol)
-MessageContentSetter = TypeVar("MessageContentSetter", bound=MessageContentSetterProtocol)
+# the OutboundMessageContent/InboundMessageContent object is returned and passed around.
+InboundMessageContent = TypeVar(
+    "InboundMessageContent", bound=InboundMessageContentProtocol
+)
+OutboundMessageContent = TypeVar(
+    "OutboundMessageContent", bound=OutboundMessageContentProtocol
+)
 
 
 def get_jsonschema_validator(draft_identifier: str) -> "Validator":
 
     # get validator
     try:
-        validator = jsonschema.validators.validator_for({"$schema": draft_identifier}, default=False)
+        validator = jsonschema.validators.validator_for(
+            {"$schema": draft_identifier}, default=False
+        )
     except AttributeError:
         raise ValueError(
             "To use a provided JSON Schema Validator, please install the "
@@ -59,7 +78,9 @@ def get_jsonschema_validator(draft_identifier: str) -> "Validator":
     return partial(jsonschema_validate, validator=validator)
 
 
-def jsonschema_validate(validator: "Validator", schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
+def jsonschema_validate(
+    validator: "Validator", schema: Mapping[str, Any], content: Mapping[str, Any]
+) -> None:
     """
     Validates content against provided schema using `jsonschema.Draft4Validator`.
      If invalid, raises Exception. Else, returns None.
@@ -118,9 +139,9 @@ def create_message_content(
     schema: Mapping[str, Any],
     schema_id: str,
     validate: "Validator",
-    message_type: Type[MessageContentSetter],
+    message_type: Type[OutboundMessageContent],
     **kwargs: Any,
-) -> MessageContentSetter: ...
+) -> OutboundMessageContent: ...
 
 
 @overload
@@ -138,9 +159,9 @@ def create_message_content(
     schema: Mapping[str, Any],
     schema_id: str,
     validate: Union["Validator", "SchemaContentValidate"],
-    message_type: Optional[Type[MessageContentSetter]] = None,
+    message_type: Optional[Type[OutboundMessageContent]] = None,
     **kwargs: Any,
-) -> Union[MessageContentSetter, MessageContent]:
+) -> Union[OutboundMessageContent, MessageContent]:
     content_type = f"{JSON_MIME_TYPE}+{schema_id}"
     try:
         # validate content
@@ -163,11 +184,16 @@ def create_message_content(
 
     if message_type:
         try:
-            return cast(MessageContentSetter, message_type.from_message_content(content_bytes, content_type, **kwargs))
+            return cast(
+                OutboundMessageContent,
+                message_type.from_message_content(
+                    content_bytes, content_type, **kwargs
+                ),
+            )
         except AttributeError as exc:
             raise TypeError(
                 f"""Cannot set content and content type on model object. The content model
-                    {str(message_type)} must be a subtype of the MessageType protocol.
+                    {str(message_type)} must be a subtype of the OutboundMessageContent protocol.
                     If using an Azure SDK model class, please check the README.md for the full list
                     of supported Azure SDK models and their corresponding versions.""",
                 {"content": content_bytes, "content_type": content_type},
@@ -176,9 +202,9 @@ def create_message_content(
     return MessageContent({"content": content_bytes, "content_type": content_type})
 
 
-def parse_message(message: Union[MessageContentGetter, MessageContent]):
+def parse_message(message: Union[InboundMessageContent, MessageContent]):
     try:
-        message = cast("MessageContentGetter", message)
+        message = cast("InboundMessageContent", message)
         message_content_dict = message.__message_content__()
         content = message_content_dict["content"]
         content_type = message_content_dict["content_type"]
@@ -189,7 +215,7 @@ def parse_message(message: Union[MessageContentGetter, MessageContent]):
             content_type = message["content_type"]
         except (KeyError, TypeError) as exc:
             raise TypeError(
-                f"""The content model {str(message)} must be a subtype of the MessageType protocol or type
+                f"""The content model {str(message)} must be a subtype of the InboundMessageContent protocol or type
                     MessageContent. If using an Azure SDK model class, please check the README.md
                     for the full list of supported Azure SDK models and their corresponding versions."""
             ) from exc
@@ -218,7 +244,8 @@ def decode_content(
     try:
         content = json.loads(content)
     except Exception as exc:
-        error_message = f"Cannot decode value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"
+        error_message = f"""Cannot decode value '{content!r}' for schema
+                        with schema ID {schema_id}: {schema_definition}"""
         raise InvalidContentError(
             error_message,
             details={
@@ -227,11 +254,13 @@ def decode_content(
             },
         ) from exc
     try:
-        validate(schema=json.loads(schema_definition), content=cast(Mapping[str, Any], content))
-    except Exception as exc:
-        error_message = (
-            f"Invalid content value '{content!r}' for schema with schema ID {schema_id}: {schema_definition}"
+        validate(
+            schema=json.loads(schema_definition),
+            content=cast(Mapping[str, Any], content),
         )
+    except Exception as exc:
+        error_message = f"""Invalid content value '{content!r}' for schema
+                        with schema ID {schema_id}: {schema_definition}"""
         raise InvalidContentError(
             error_message,
             details={

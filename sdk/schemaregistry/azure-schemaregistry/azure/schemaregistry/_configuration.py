@@ -33,7 +33,12 @@ class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-at
     :paramtype api_version: str
     """
 
-    def __init__(self, fully_qualified_namespace: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2023-07-01")
 
         if fully_qualified_namespace is None:
@@ -44,19 +49,33 @@ class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-at
         self.fully_qualified_namespace = fully_qualified_namespace
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://eventhubs.azure.net/.default"])
+        self.credential_scopes = kwargs.pop(
+            "credential_scopes", ["https://eventhubs.azure.net/.default"]
+        )
         kwargs.setdefault("sdk_moniker", "schemaregistry/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
-        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.user_agent_policy = kwargs.get(
+            "user_agent_policy"
+        ) or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(
+            **kwargs
+        )
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.logging_policy = kwargs.get(
+            "logging_policy"
+        ) or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get(
+            "http_logging_policy"
+        ) or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get(
+            "custom_hook_policy"
+        ) or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(
+            **kwargs
+        )
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:

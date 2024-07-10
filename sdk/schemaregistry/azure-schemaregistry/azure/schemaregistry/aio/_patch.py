@@ -51,7 +51,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2023-07-01".
+     Default value is "2022-10".
 
     .. admonition:: Example:
 
@@ -145,7 +145,9 @@ class SchemaRegistryClient(object):
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema: ...
 
     @overload
-    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema: ...
+    async def get_schema(
+        self, *, group_name: str, name: str, version: int, **kwargs: Any
+    ) -> Schema: ...
 
     @distributed_trace_async
     async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword

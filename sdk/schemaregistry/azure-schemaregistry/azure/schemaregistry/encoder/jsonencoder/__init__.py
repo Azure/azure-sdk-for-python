@@ -27,7 +27,9 @@ from ._version import VERSION  # pylint: disable=import-error
 
 __version__ = VERSION
 
-from ._schema_registry_json_encoder import JsonSchemaEncoder  # pylint: disable=import-error
+from ._schema_registry_json_encoder import (
+    JsonSchemaEncoder,
+)  # pylint: disable=import-error
 from ._exceptions import InvalidContentError  # pylint: disable=import-error
 
 

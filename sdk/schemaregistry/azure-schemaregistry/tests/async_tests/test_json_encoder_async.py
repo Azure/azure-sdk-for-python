@@ -212,7 +212,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
         schema_id = schema_properties.id
         dict_content = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
 
-        # message type that doesn't fit MessageType protocol
+        # message type that doesn't fit OutboundMessageContent/InboundMessageContent protocol
         class BadExample:
             def __init__(self, not_content):
                 self.not_content = not_content
@@ -220,15 +220,15 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
         # encoding invalid message_type raises error
         with pytest.raises(TypeError) as e:
             await sr_json_encoder.encode({"name": "Ben"}, schema_id=schema_id, message_type=BadExample)
-        assert "subtype of the MessageType" in (str(e.value))
+        assert "subtype of the OutboundMessageContent" in (str(e.value))
 
         # decoding invalid message_type raises error
         bad_ex = BadExample("fake")
         with pytest.raises(TypeError) as e:  # caught TypeError
             await sr_json_encoder.decode(message=bad_ex)
-        assert "subtype of the MessageType" in (str(e.value))
+        assert "subtype of the InboundMessageContent" in (str(e.value))
 
-        # message type that fits MessageType protocol
+        # message type that fits OutboundMessageContent/InboundMessageContent protocol
         class GoodExample:
             def __init__(self, content, **kwargs):
                 self.content = content

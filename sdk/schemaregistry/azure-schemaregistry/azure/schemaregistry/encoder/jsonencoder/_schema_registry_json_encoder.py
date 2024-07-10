@@ -45,8 +45,8 @@ from ._utils import (  # pylint: disable=import-error
     decode_content,
     get_loaded_schema,
     get_jsonschema_validator,
-    MessageContentGetter,
-    MessageContentSetter,
+    InboundMessageContent,
+    OutboundMessageContent,
 )
 
 if TYPE_CHECKING:
@@ -116,7 +116,11 @@ class JsonSchemaEncoder(object):
         :rtype: str
         """
         schema_id = self._schema_registry_client.get_schema_properties(
-            cast(str, self._schema_group), schema_name, schema_str, SchemaFormat.JSON.value, **kwargs
+            cast(str, self._schema_group),
+            schema_name,
+            schema_str,
+            SchemaFormat.JSON.value,
+            **kwargs,
         ).id
         return schema_id
 
@@ -130,7 +134,9 @@ class JsonSchemaEncoder(object):
         :return: Schema content
         :rtype: str
         """
-        schema_str = self._schema_registry_client.get_schema(schema_id, **kwargs).definition
+        schema_str = self._schema_registry_client.get_schema(
+            schema_id, **kwargs
+        ).definition
         return schema_str
 
     @overload
@@ -139,15 +145,15 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Type[MessageContentSetter],
+        message_type: Type[OutboundMessageContent],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContentSetter:
+    ) -> OutboundMessageContent:
         """Encodes content after validating against the pre-registered JSON schema. Encoded content and content
-         type will be passed to the provided MessageType callback to create message object.
+         type will be passed to the provided OutboundMessageContent class to create the message object.
 
-        If `message_type` is set, then additional keyword arguments for building MessageType will be passed to the
-         MessageType.from_message_content() method.
+        If `message_type` is set, then additional keyword arguments for building the OutboundMessageContent object
+         will be passed to the OutboundMessageContent.from_message_content() method.
 
         :param content: The content to be encoded.
         :type content: mapping[str, any]
@@ -155,12 +161,12 @@ class JsonSchemaEncoder(object):
          must not be passed.
         :paramtype schema: str
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.MessageType protocol.
-        :paramtype message_type: type[MessageType]
+         azure.schemaregistry.OutboundMessageContent protocol.
+        :paramtype message_type: type[OutboundMessageContent]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :returns: The MessageType object with encoded content and content type.
-        :rtype: MessageType
+        :returns: The OutboundMessageContent object with encoded content and content type.
+        :rtype: OutboundMessageContent
         :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
          or validating it against the schema.
         :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
@@ -173,16 +179,16 @@ class JsonSchemaEncoder(object):
         content: Mapping[str, Any],
         *,
         schema_id: str,
-        message_type: Type[MessageContentSetter],
+        message_type: Type[OutboundMessageContent],
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> MessageContentSetter:
+    ) -> OutboundMessageContent:
         """Encodes content after validating against the pre-registered JSON schema corresponding to
          the provided schema ID. Encoded content and content type will be passed to the provided
-         MessageType callback to create message object.
+         OutboundMessageContent class to create message object.
 
-        If `message_type` is set, then additional keyword arguments for building MessageType will be passed to the
-         MessageType.from_message_content() method.
+        If `message_type` is set, then additional keyword arguments for building the OutboundMessageContent object
+         will be passed to the OutboundMessageContent.from_message_content() method.
 
         :param content: The content to be encoded.
         :type content: mapping[str, any]
@@ -190,12 +196,12 @@ class JsonSchemaEncoder(object):
          for validation. `schema` must not be passed.
         :paramtype schema_id: str
         :keyword message_type: The message class to construct the message. Must be a subtype of the
-         azure.schemaregistry.MessageType protocol.
-        :paramtype message_type: type[MessageType]
+         azure.schemaregistry.OutboundMessageContent protocol.
+        :paramtype message_type: type[OutboundMessageContent]
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
-        :returns: The MessageType object with encoded content and content type.
-        :rtype: MessageType
+        :returns: The OutboundMessageContent object with encoded content and content type.
+        :rtype: OutboundMessageContent
         :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
          or validating it against the schema.
         :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
@@ -267,17 +273,17 @@ class JsonSchemaEncoder(object):
         *,
         schema: Optional[str] = None,
         schema_id: Optional[str] = None,
-        message_type: Optional[Type[MessageContentSetter]] = None,
+        message_type: Optional[Type[OutboundMessageContent]] = None,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> Union[MessageContentSetter, "MessageContent"]:
+    ) -> Union[OutboundMessageContent, "MessageContent"]:
         """Encodes content after validating against the provided pre-registered schema or the one corresponding to
-         the provided schema ID. If provided with a MessageType subtype, encoded content and content type will be
-         passed to create message object. If not provided, the following dict will be returned:
+         the provided schema ID. If provided with a OutboundMessageContent subtype, encoded content and
+         content type will be passed to create message object. If not provided, the following dict will be returned:
          {"content": JSON encoded value, "content_type": JSON mime type string + schema ID}.
 
-        If `message_type` is set, then additional keyword arguments for building MessageType will be passed to the
-         MessageType.from_message_content() method.
+        If `message_type` is set, then additional keyword arguments for building OutboundMessageContent will be
+         passed to the OutboundMessageContent.from_message_content() method.
 
         :param content: The content to be encoded.
         :type content: mapping[str, any]
@@ -288,13 +294,13 @@ class JsonSchemaEncoder(object):
          for validation. Exactly one of `schema` or `schema_id` must be passed.
         :paramtype schema_id: str or None
         :keyword message_type: The message class to construct the message. If passed, must be a subtype of the
-         azure.schemaregistry.MessageType protocol.
-        :paramtype message_type: type[MessageType] or None
+         azure.schemaregistry.OutboundMessageContent protocol.
+        :paramtype message_type: type[OutboundMessageContent] or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: TypedDict of encoded content and content type if `message_type` is not set, otherwise the
          constructed message object.
-        :rtype: MessageType or MessageContent
+        :rtype: OutboundMessageContent or MessageContent
         :raises: ~azure.schemaregistry.encoder.InvalidContentError if there is an issue with encoding content
          or validating it against the schema.
         :raises: ~azure.core.exceptions.HttpResponseError if there is an issue with the request to get the schema
@@ -304,11 +310,17 @@ class JsonSchemaEncoder(object):
 
         # If schema_id, get schema for validation. If schema, get schema_id for content type.
         if schema_id and not schema:
-            cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+            cache_misses = (
+                self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+            )
             schema_str = self._get_schema(schema_id, **request_options)
-            new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+            new_cache_misses = (
+                self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+            )
             if new_cache_misses > cache_misses:
-                cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+                cache_info = (
+                    self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+                )
                 _LOGGER.info(
                     "New entry has been added to schema cache. Cache info: %s",
                     str(cache_info),
@@ -316,14 +328,26 @@ class JsonSchemaEncoder(object):
             schema_dict = json.loads(schema_str)
         elif schema and not schema_id:
             if not self._schema_group:
-                raise TypeError("'group_name' is required in constructor, if 'schema' is passed to encode.")
+                raise TypeError(
+                    "'group_name' is required in constructor, if 'schema' is passed to encode."
+                )
 
-            schema_fullname, schema_str, schema_dict = get_loaded_schema(schema, content)
-            cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
-            schema_id = self._get_schema_id(schema_fullname, schema_str, **request_options)
-            new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+            schema_fullname, schema_str, schema_dict = get_loaded_schema(
+                schema, content
+            )
+            cache_misses = (
+                self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+            )
+            schema_id = self._get_schema_id(
+                schema_fullname, schema_str, **request_options
+            )
+            new_cache_misses = (
+                self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+            )
             if new_cache_misses > cache_misses:
-                cache_info = self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
+                cache_info = (
+                    self._get_schema_id.cache_info()  # pylint: disable=no-value-for-parameter
+                )
                 _LOGGER.info(
                     "New entry has been added to schema ID cache. Cache info: %s",
                     str(cache_info),
@@ -342,7 +366,7 @@ class JsonSchemaEncoder(object):
 
     def decode(
         self,
-        message: Union["MessageContent", MessageContentGetter],
+        message: Union["MessageContent", InboundMessageContent],
         *,
         request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
@@ -351,7 +375,7 @@ class JsonSchemaEncoder(object):
 
         :param message: The message object which holds the content to be decoded and content type
          containing the schema ID.
-        :type message: MessageType or MessageContent
+        :type message: InboundMessageContent or MessageContent
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: dict[str, any] or None
         :returns: The decoded content.
@@ -362,17 +386,27 @@ class JsonSchemaEncoder(object):
          from the registry.
         """
         schema_id, content = parse_message(message)
-        cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+        cache_misses = (
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+        )
         request_options = request_options or {}
         schema_definition = self._get_schema(schema_id, **request_options)
-        new_cache_misses = self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+        new_cache_misses = (
+            self._get_schema.cache_info().misses  # pylint: disable=no-value-for-parameter
+        )
         if new_cache_misses > cache_misses:
-            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+            cache_info = (
+                self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+            )
             _LOGGER.info(
                 "New entry has been added to schema cache. Cache info: %s",
                 str(cache_info),
             )
 
         return decode_content(
-            content=content, schema_id=schema_id, schema_definition=schema_definition, validate=self._validate, **kwargs
+            content=content,
+            schema_id=schema_id,
+            schema_definition=schema_definition,
+            validate=self._validate,
+            **kwargs,
         )

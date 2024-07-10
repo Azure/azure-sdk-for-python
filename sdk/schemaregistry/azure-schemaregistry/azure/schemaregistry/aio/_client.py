@@ -23,7 +23,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class SchemaRegistryClient(
+    SchemaRegistryClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema
     Registry service.
 
@@ -37,11 +39,18 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
     :paramtype api_version: str
     """
 
-    def __init__(self, fully_qualified_namespace: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
         super().__init__()
         _endpoint = "https://{fullyQualifiedNamespace}"
         self._config = SchemaRegistryClientConfiguration(
-            fully_qualified_namespace=fully_qualified_namespace, credential=credential, **kwargs
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=credential,
+            **kwargs
         )
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -57,10 +66,16 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                (
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                    if self._config.redirect_policy
+                    else None
+                ),
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=_endpoint, policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -89,11 +104,16 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
         request_copy = deepcopy(request)
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:

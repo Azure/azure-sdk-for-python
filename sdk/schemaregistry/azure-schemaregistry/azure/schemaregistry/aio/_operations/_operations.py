@@ -7,7 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, List, Optional, Type, TypeVar
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -39,10 +49,14 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
-class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pylint: disable=abstract-class-instantiated
+class SchemaRegistryClientOperationsMixin(
+    SchemaRegistryClientMixinABC
+):  # pylint: disable=abstract-class-instantiated
 
     def __init__(self) -> None:
         raise_if_not_implemented(
@@ -98,7 +112,9 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
                         skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -106,12 +122,16 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "fullyQualifiedNamespace": self._serialize.url(
@@ -121,7 +141,9 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
                         skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -142,7 +164,11 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -150,7 +176,9 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> AsyncIterable[int]:
+    def list_schema_versions(
+        self, group_name: str, schema_name: str, **kwargs: Any
+    ) -> AsyncIterable[int]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -200,7 +228,9 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
                         skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -208,12 +238,16 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "fullyQualifiedNamespace": self._serialize.url(
@@ -223,7 +257,9 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
                         skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -244,7 +280,11 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -285,7 +325,10 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -300,17 +343,33 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
-        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
-        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
-        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
-        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Schema-Id"] = self._deserialize(
+            "str", response.headers.get("Schema-Id")
+        )
+        response_headers["Schema-Id-Location"] = self._deserialize(
+            "str", response.headers.get("Schema-Id-Location")
+        )
+        response_headers["Schema-Group-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Group-Name")
+        )
+        response_headers["Schema-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Name")
+        )
+        response_headers["Schema-Version"] = self._deserialize(
+            "int", response.headers.get("Schema-Version")
+        )
+        response_headers["Content-Type"] = self._deserialize(
+            "str", response.headers.get("Content-Type")
+        )
 
         deserialized = response.iter_bytes()
 
@@ -360,7 +419,10 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
@@ -375,17 +437,33 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Schema-Id"] = self._deserialize("str", response.headers.get("Schema-Id"))
-        response_headers["Schema-Id-Location"] = self._deserialize("str", response.headers.get("Schema-Id-Location"))
-        response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
-        response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
-        response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Schema-Id"] = self._deserialize(
+            "str", response.headers.get("Schema-Id")
+        )
+        response_headers["Schema-Id-Location"] = self._deserialize(
+            "str", response.headers.get("Schema-Id-Location")
+        )
+        response_headers["Schema-Group-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Group-Name")
+        )
+        response_headers["Schema-Name"] = self._deserialize(
+            "str", response.headers.get("Schema-Name")
+        )
+        response_headers["Schema-Version"] = self._deserialize(
+            "int", response.headers.get("Schema-Version")
+        )
+        response_headers["Content-Type"] = self._deserialize(
+            "str", response.headers.get("Content-Type")
+        )
 
         deserialized = response.iter_bytes()
 

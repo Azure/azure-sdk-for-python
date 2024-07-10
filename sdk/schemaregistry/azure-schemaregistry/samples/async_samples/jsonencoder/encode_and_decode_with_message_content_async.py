@@ -30,8 +30,8 @@ DESCRIPTION:
      - Authenticating an async SchemaRegistryClient to be used by the JsonSchemaEncoder.
      - Passing in content and schema to the JsonSchemaEncoder, which will return a TypedDict containing
       encoded and validated content and corresponding content type.
-     - Manually setting the content and content type on a MessageType object, specifically EventData.
-     - Manually retrieving the content and content type from a MessageType object, and passing it to the
+     - Manually setting the content and content type on a OutboundMessageContent object, specifically EventData.
+     - Manually retrieving the content and content type from a InboundMessageContent object, and passing it to the
       JsonSchemaEncoder, which will return the decoded and validated content.
 USAGE:
     python encode_and_decode_with_message_content_async.py

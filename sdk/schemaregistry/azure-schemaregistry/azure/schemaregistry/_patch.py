@@ -49,7 +49,9 @@ if TYPE_CHECKING:
 ###### Response Handlers ######
 
 
-def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
+def _parse_schema_properties_dict(
+    response_headers: Mapping[str, Union[str, int]]
+) -> Dict[str, Union[str, int]]:
     return {
         "id": response_headers["Schema-Id"],
         "group_name": response_headers["Schema-Group-Name"],
@@ -93,7 +95,9 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
     # re-generate after multi-content type response fix: https://github.com/Azure/autorest.python/issues/2122
-    properties_dict["format"] = _get_format(cast(str, response_headers.get("Content-Type")))
+    properties_dict["format"] = _get_format(
+        cast(str, response_headers.get("Content-Type"))
+    )
     pipeline_response.http_response.raise_for_status()
     return pipeline_response.http_response, properties_dict
 
@@ -103,7 +107,9 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 
 def get_http_request_kwargs(kwargs):
     http_request_keywords = ["params", "headers", "json", "data", "files"]
-    http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
+    http_request_kwargs = {
+        key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs
+    }
     return http_request_kwargs
 
 
@@ -113,7 +119,9 @@ def get_content_type(format: str):  # pylint:disable=redefined-builtin
     return f"application/json; serialization={format}"
 
 
-def get_case_insensitive_format(format: Union[str, SchemaFormat]) -> str:  # pylint:disable=redefined-builtin
+def get_case_insensitive_format(
+    format: Union[str, SchemaFormat]
+) -> str:  # pylint:disable=redefined-builtin
     try:
         format = cast(SchemaFormat, format)
         format = format.value
@@ -135,7 +143,7 @@ class SchemaRegistryClient:
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2023-07-01".
+     Default value is "2022-10".
 
     .. admonition:: Example:
 
@@ -148,7 +156,9 @@ class SchemaRegistryClient:
 
     """
 
-    def __init__(self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any) -> None:
+    def __init__(
+        self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
+    ) -> None:
         # using composition (not inheriting from generated client) to allow
         # calling different operations conditionally within one method
         self._generated_client = GeneratedServiceClient(
@@ -207,7 +217,7 @@ class SchemaRegistryClient:
         http_request_kwargs = get_http_request_kwargs(kwargs)
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[str, Union[int, str]] = (
-            self._generated_client._register_schema( # type:ignore # pylint:disable=protected-access
+            self._generated_client._register_schema(  # type:ignore # pylint:disable=protected-access
                 group_name=group_name,
                 schema_name=name,
                 content=cast(IO[Any], definition),
@@ -223,7 +233,9 @@ class SchemaRegistryClient:
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema: ...
 
     @overload
-    def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema: ...
+    def get_schema(
+        self, *, group_name: str, name: str, version: int, **kwargs: Any
+    ) -> Schema: ...
 
     @distributed_trace
     def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
@@ -393,7 +405,9 @@ class SchemaProperties:
     def __repr__(self):
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
-            f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
+                :1024
+            ]
         )
 
 
@@ -412,7 +426,9 @@ class Schema:
         self.properties: SchemaProperties = kwargs.pop("properties")
 
     def __repr__(self):
-        return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
+        return f"Schema(definition={self.definition}, properties={self.properties})"[
+            :1024
+        ]
 
 
 ###### Encoder Protocols ######
@@ -457,29 +473,32 @@ class MessageContent(TypedDict):
     content_type: str
 
 
-class MessageContentSetter(Protocol):
+class OutboundMessageContent(Protocol):
     """Protocol for classes that set content and content type values internally."""
 
     @classmethod
-    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> Self:
-        """Creates an object that is a subtype of MessageContentSetter, given content type and
+    def from_message_content(
+        cls, content: bytes, content_type: str, **kwargs: Any
+    ) -> Self:
+        """Creates an object that is a subtype of OutboundMessageContent, given content type and
          a content value to be set on the object.
 
         :param bytes content: The content value to be set as the body of the message.
         :param str content_type: The content type to be set on the message.
-        :rtype: ~azure.schemaregistry.MessageContentSetter
-        :returns: The MessageContentSetter object with encoded content and content type.
+        :rtype: ~azure.schemaregistry.OutboundMessageContent
+        :returns: The OutboundMessageContent object with encoded content and content type.
         """
 
-class MessageContentGetter(Protocol):
+
+class InboundMessageContent(Protocol):
     """Message Types that get content and content type values internally."""
 
     def __message_content__(self) -> MessageContent:
         """A MessageContent object, with `content` and `content_type` set to
-         the values of their respective properties on the MessageContentGetter object.
+         the values of their respective properties on the InboundMessageContent object.
 
         :rtype: ~azure.schemaregistry.MessageContent
-        :returns: TypedDict of the content and content type from the MessageContentGetter object.
+        :returns: TypedDict of the content and content type from the InboundMessageContent object.
         """
 
 
@@ -499,6 +518,6 @@ __all__: List[str] = [
     "SchemaFormat",
     "SchemaContentValidate",
     "MessageContent",
-    "MessageContentSetter",
-    "MessageContentGetter",
+    "OutboundMessageContent",
+    "InboundMessageContent",
 ]  # Add all objects you want publicly available to users at this package level
