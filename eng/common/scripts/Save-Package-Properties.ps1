@@ -96,7 +96,7 @@ $exportedPaths = @{}
 $allPackageProperties = @()
 
 if ($serviceInput.endswith("diff.json")) {
-  $allPackageProperties = Get-AllPkgPropertiesFromDiffJson $serviceInput
+  $allPackageProperties = Get-PrPkgProperties $serviceInput
 }
 else {
   $allPackageProperties = Get-AllPkgProperties $serviceInput
