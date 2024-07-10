@@ -3,13 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
-from typing import TYPE_CHECKING
+from typing import Dict, Optional
 from urllib import parse
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import
-    from typing import Dict, Optional
-    from .http_challenge import HttpChallenge
+from .http_challenge import HttpChallenge
 
 
 _cache: "Dict[str, HttpChallenge]" = {}
