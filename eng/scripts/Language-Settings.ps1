@@ -36,22 +36,28 @@ function Register-Item {
 
 function Get-python-PRPackageInfoFromRepo($InputDiffJson)
 {
-  $diff = Get-Content $input_json | ConvertFrom-Json
+  $diff = Get-Content $InputDiffJson | ConvertFrom-Json
 
   $targetedFiles = $diff.ChangedFiles
   $allPackages = @{}
 
-  foreach ($file in $targeted_files) {
+  foreach ($file in $targetedFiles) {
     $package = Get-PackageFolderFromPath $file
     if ($package) {
-      $package_directory = Join-Path $RepoRoot $package
-      $package_name = [System.IO.Path]::GetFileName($package_directory)
+      $packageDirectory = Join-Path $RepoRoot $package
+      $packageName = [System.IO.Path]::GetFileName($packageDirectory)
 
-      if (Test-Path (Join-Path $package_directory "pyproject.toml") -or Test-Path (Join-Path $package_directory "setup.py")) {
-        Register-Item -idx ([ref]$all_packages) -key $package_name -value $file
+      if (
+          (Test-Path (Join-Path -Path $packageDirectory -ChildPath "pyproject.toml"))`
+          -or `
+          (Test-Path (Join-Path -Path $packageDirectory -ChildPath "setup.py"))
+        ) {
+        Register-Item -idx $allPackages -key $packageName -value $file
       }
     }
   }
+
+  return $allPackages.Keys
 }
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
