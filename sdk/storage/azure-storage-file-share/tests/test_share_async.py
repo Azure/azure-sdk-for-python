@@ -756,7 +756,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
         self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
-        share = await self._create_share(protocols="NFS", enable_snapshot_virtual_directory_access=False)
+        share = await self._create_share(protocols="NFS", headers={'x-ms-enable-snapshot-virtual-directory-access': "False"})
 
         # Act
         list_props = []
