@@ -91,7 +91,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
         additional_allowed_query_params: Iterable[str] = kwargs.get("additional_allowed_query_params", {})
         self.allowed_query_params: Set[str] = CaseInsensitiveSet(
-            set(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST) | set(additional_allowed_query_params)
+            self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST | set(additional_allowed_query_params)
         )
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
