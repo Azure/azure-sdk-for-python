@@ -482,7 +482,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         ...
 
     @overload
-    def read(self, *, chars: Optional[int] = None) -> str:
+    async def read(self, *, chars: Optional[int] = None) -> str:
         ...
 
     # pylint: disable-next=too-many-statements,too-many-branches
