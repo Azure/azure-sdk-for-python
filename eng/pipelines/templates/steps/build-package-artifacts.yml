@@ -79,7 +79,7 @@ steps:
           -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
-      displayName: Save package properties
+      displayName: Save package properties filtered for PR
   - ${{ else }}:
     - task: Powershell@2
       inputs:
@@ -89,7 +89,7 @@ steps:
           -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
-      displayName: Save package properties
+      displayName: Save package properties for service
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:

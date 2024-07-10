@@ -63,6 +63,8 @@ function Get-python-PRPackageInfoFromRepo($InputDiffJson)
 
   $inputPackages = $allPackages.Keys -Join ","
 
+  Write-Host "I see the following packages: $inputPackages"
+
   # now that we have the set of targeted packages, we just need to actually get the result for it
   # that is what is missing here.
   $allPackageProps = @()
