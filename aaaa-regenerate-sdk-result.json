@@ -1,26 +1,26 @@
 {
   "succeed_to_regenerate": [
-    "azure-healthinsights-radiologyinsights",
-    "azure-ai-vision-face",
-    "azure-mgmt-mongocluster",
-    "azure-mgmt-edgezones",
     "azure-ai-inference",
-    "azure-mgmt-devopsinfrastructure",
-    "azure-ai-vision-imageanalysis",
-    "azure-ai-translation-text",
-    "azure-ai-translation-document",
-    "azure-ai-contentsafety",
+    "azure-mgmt-mongocluster",
     "azure_ai_assets_v2024_04_01",
-    "azure-schemaregistry",
+    "azure-mgmt-edgezones",
+    "azure-purview-datamap",
+    "azure-communication-jobrouter",
+    "azure-ai-translation-document",
+    "azure-ai-translation-text",
+    "azure-ai-vision-face",
+    "azure-ai-contentsafety",
+    "azure-healthinsights-radiologyinsights",
     "azure-ai-documentintelligence",
     "azure-eventgrid",
-    "azure-purview-datamap",
-    "azure-communication-jobrouter"
+    "azure-ai-vision-imageanalysis",
+    "azure-schemaregistry",
+    "azure-mgmt-devopsinfrastructure"
   ],
   "fail_to_regenerate": [
     "azure-developer-devcenter",
     "azure-mgmt-informaticadatamanagement",
     "azure-communication-messages"
   ],
-  "time_to_regenerate": "2024-07-10 10:26:22.981059"
+  "time_to_regenerate": "2024-07-10 10:39:59.672072"
 }

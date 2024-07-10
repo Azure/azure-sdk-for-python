@@ -98,7 +98,7 @@ class OsDiskStorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Standard OS disk type."""
     PREMIUM = "Premium"
     """Premium OS disk type."""
-    STANDARD_S_S_D = "StandardSSD"
+    STANDARD_SSD = "StandardSSD"
     """Standard SSD OS disk type."""
 
 
@@ -193,13 +193,13 @@ class ResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StorageAccountType enums."""
 
-    STANDARD_L_R_S = "Standard_LRS"
+    STANDARD_LRS = "Standard_LRS"
     """The data disk should use standard locally redundant storage."""
-    PREMIUM_L_R_S = "Premium_LRS"
+    PREMIUM_LRS = "Premium_LRS"
     """The data disk should use premium locally redundant storage."""
-    STANDARD_S_S_D_L_R_S = "StandardSSD_LRS"
+    STANDARD_SSDLRS = "StandardSSD_LRS"
     """The data disk should use standard SSD locally redundant storage."""
-    PREMIUM_Z_R_S = "Premium_ZRS"
+    PREMIUM_ZRS = "Premium_ZRS"
     """The data disk should use premium SSD zonal redundant storage."""
-    STANDARD_S_S_D_Z_R_S = "StandardSSD_ZRS"
+    STANDARD_SSDZRS = "StandardSSD_ZRS"
     """The data disk should use standard SSD zonal redundant storage."""

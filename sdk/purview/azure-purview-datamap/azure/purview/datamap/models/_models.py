@@ -146,8 +146,8 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar attribute_defs: An array of attribute definitions.
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
@@ -180,7 +180,7 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
@@ -202,7 +202,7 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
     ): ...
 
@@ -225,8 +225,8 @@ class AtlasClassification(_model_base.Model):
     :vartype attributes: dict[str, any]
     :ivar type_name: The name of the type.
     :vartype type_name: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar entity_guid: The GUID of the entity.
     :vartype entity_guid: str
     :ivar entity_status: Status of the entity - can be active or deleted. Deleted entities are not
@@ -243,7 +243,7 @@ class AtlasClassification(_model_base.Model):
     """The attributes of the struct."""
     type_name: Optional[str] = rest_field(name="typeName")
     """The name of the type."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     entity_guid: Optional[str] = rest_field(name="entityGuid")
     """The GUID of the entity."""
@@ -261,7 +261,7 @@ class AtlasClassification(_model_base.Model):
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         entity_guid: Optional[str] = None,
         entity_status: Optional[Union[str, "_models.EntityStatus"]] = None,
         remove_propagations_on_entity_delete: Optional[bool] = None,
@@ -310,8 +310,8 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar attribute_defs: An array of attribute definitions.
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     :ivar entity_types: Specifying a list of entityType names in the classificationDef, ensures
@@ -371,7 +371,7 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
@@ -419,7 +419,7 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
         entity_types: Optional[List[str]] = None,
         sub_types: Optional[List[str]] = None,
@@ -568,8 +568,8 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :vartype attributes: dict[str, any]
     :ivar type_name: The name of the type.
     :vartype type_name: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar business_attributes: Business attributes.
     :vartype business_attributes: dict[str, any]
     :ivar classifications: An array of classifications.
@@ -616,7 +616,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     """The attributes of the struct."""
     type_name: Optional[str] = rest_field(name="typeName")
     """The name of the type."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     business_attributes: Optional[Dict[str, Any]] = rest_field(name="businessAttributes")
     """Business attributes."""
@@ -664,7 +664,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         business_attributes: Optional[Dict[str, Any]] = None,
         classifications: Optional[List["_models.AtlasClassification"]] = None,
         create_time: Optional[int] = None,
@@ -727,8 +727,8 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar attribute_defs: An array of attribute definitions.
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     :ivar sub_types: An array of sub types.
@@ -768,7 +768,7 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
@@ -798,7 +798,7 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
         sub_types: Optional[List[str]] = None,
         super_types: Optional[List[str]] = None,
@@ -823,8 +823,8 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     :vartype attributes: dict[str, any]
     :ivar type_name: The name of the type.
     :vartype type_name: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar classification_names: An array of classification names.
     :vartype classification_names: list[str]
     :ivar classifications: An array of classifications.
@@ -850,7 +850,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     """The attributes of the struct."""
     type_name: Optional[str] = rest_field(name="typeName")
     """The name of the type."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     classification_names: Optional[List[str]] = rest_field(name="classificationNames")
     """An array of classification names."""
@@ -878,7 +878,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         classification_names: Optional[List[str]] = None,
         classifications: Optional[List["_models.AtlasClassification"]] = None,
         display_text: Optional[str] = None,
@@ -966,8 +966,8 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar default_value: The default value.
     :vartype default_value: str
     :ivar element_defs: An array of enum element definitions.
@@ -1002,7 +1002,7 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     default_value: Optional[str] = rest_field(name="defaultValue")
     """The default value."""
@@ -1026,7 +1026,7 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         default_value: Optional[str] = None,
         element_defs: Optional[List["_models.AtlasEnumElementDef"]] = None,
     ): ...
@@ -1133,8 +1133,8 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
     :vartype qualified_name: str
     :ivar short_description: The short version of description.
     :vartype short_description: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
@@ -1165,7 +1165,7 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
     """The qualified name of the glossary object."""
     short_description: Optional[str] = rest_field(name="shortDescription")
     """The short version of description."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     create_time: Optional[int] = rest_field(name="createTime")
     """The created time of the record."""
@@ -1194,7 +1194,7 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -1231,8 +1231,8 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
     :vartype qualified_name: str
     :ivar short_description: The short version of description.
     :vartype short_description: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
@@ -1263,7 +1263,7 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
     """The qualified name of the glossary object."""
     short_description: Optional[str] = rest_field(name="shortDescription")
     """The short version of description."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     create_time: Optional[int] = rest_field(name="createTime")
     """The created time of the record."""
@@ -1292,7 +1292,7 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -1329,8 +1329,8 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
     :vartype qualified_name: str
     :ivar short_description: The short version of description.
     :vartype short_description: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
@@ -1365,7 +1365,7 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
     """The qualified name of the glossary object."""
     short_description: Optional[str] = rest_field(name="shortDescription")
     """The short version of description."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     create_time: Optional[int] = rest_field(name="createTime")
     """The created time of the record."""
@@ -1398,7 +1398,7 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -1475,8 +1475,8 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     :vartype qualified_name: str
     :ivar short_description: The short version of description.
     :vartype short_description: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
@@ -1554,7 +1554,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     """The qualified name of the glossary object."""
     short_description: Optional[str] = rest_field(name="shortDescription")
     """The short version of description."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     create_time: Optional[int] = rest_field(name="createTime")
     """The created time of the record."""
@@ -1630,7 +1630,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -1971,8 +1971,8 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
     :vartype attributes: dict[str, any]
     :ivar type_name: The name of the type.
     :vartype type_name: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
@@ -2004,7 +2004,7 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
     """The attributes of the struct."""
     type_name: Optional[str] = rest_field(name="typeName")
     """The name of the type."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     create_time: Optional[int] = rest_field(name="createTime")
     """The created time of the record."""
@@ -2037,7 +2037,7 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         end1: Optional["_models.AtlasObjectId"] = None,
@@ -2234,8 +2234,8 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar attribute_defs: An array of attribute definitions.
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     :ivar end_def1: The relationshipEndDef represents an end of the relationship. The end of the
@@ -2291,7 +2291,7 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
@@ -2337,7 +2337,7 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
         end_def1: Optional["_models.AtlasRelationshipEndDef"] = None,
         end_def2: Optional["_models.AtlasRelationshipEndDef"] = None,
@@ -2455,15 +2455,15 @@ class AtlasStruct(_model_base.Model):
     :vartype attributes: dict[str, any]
     :ivar type_name: The name of the type.
     :vartype type_name: str
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     """
 
     attributes: Optional[Dict[str, Any]] = rest_field()
     """The attributes of the struct."""
     type_name: Optional[str] = rest_field(name="typeName")
     """The name of the type."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
 
     @overload
@@ -2472,7 +2472,7 @@ class AtlasStruct(_model_base.Model):
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
     ): ...
 
     @overload
@@ -2517,8 +2517,8 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar attribute_defs: An array of attribute definitions.
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
@@ -2551,7 +2551,7 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
@@ -2573,7 +2573,7 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
     ): ...
 
@@ -2739,8 +2739,8 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar entity_types: Specifying a list of entityType names in the classificationDef, ensures
      that
      classifications can
@@ -2832,7 +2832,7 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     entity_types: Optional[List[str]] = rest_field(name="entityTypes")
     """Specifying a list of entityType names in the classificationDef, ensures that
@@ -2914,7 +2914,7 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         entity_types: Optional[List[str]] = None,
         sub_types: Optional[List[str]] = None,
         super_types: Optional[List[str]] = None,
@@ -4327,8 +4327,8 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
     :vartype updated_by: str
     :ivar version: The version of the record.
     :vartype version: int
-    :ivar last_modified_t_s: ETag for concurrency control.
-    :vartype last_modified_t_s: str
+    :ivar last_modified_ts: ETag for concurrency control.
+    :vartype last_modified_ts: str
     :ivar attribute_defs: An array of attribute definitions.
     :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
@@ -4361,7 +4361,7 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
     """The user who updated the record."""
     version: Optional[int] = rest_field()
     """The version of the record."""
-    last_modified_t_s: Optional[str] = rest_field(name="lastModifiedTS")
+    last_modified_ts: Optional[str] = rest_field(name="lastModifiedTS")
     """ETag for concurrency control."""
     attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = rest_field(name="attributeDefs")
     """An array of attribute definitions."""
@@ -4383,7 +4383,7 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
     ): ...
 

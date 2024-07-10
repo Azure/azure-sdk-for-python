@@ -87,14 +87,14 @@ class FaceAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FaceDetectionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The detection model for the face."""
 
-    DETECTION_01 = "detection_01"
+    DETECTION01 = "detection_01"
     """The default detection model. Recommend for near frontal face detection. For scenarios with
     exceptionally large angle (head-pose) faces, occluded faces or wrong image orientation, the
     faces in such cases may not be detected."""
-    DETECTION_02 = "detection_02"
+    DETECTION02 = "detection_02"
     """Detection model released in 2019 May with improved accuracy especially on small, side and
     blurry faces."""
-    DETECTION_03 = "detection_03"
+    DETECTION03 = "detection_03"
     """Detection model released in 2021 February with improved accuracy especially on small faces."""
 
 
@@ -123,14 +123,14 @@ class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FaceRecognitionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The recognition model for the face."""
 
-    RECOGNITION_01 = "recognition_01"
+    RECOGNITION01 = "recognition_01"
     """The default recognition model for "Detect". All those faceIds created before 2019 March are
     bonded with this recognition model."""
-    RECOGNITION_02 = "recognition_02"
+    RECOGNITION02 = "recognition_02"
     """Recognition model released in 2019 March."""
-    RECOGNITION_03 = "recognition_03"
+    RECOGNITION03 = "recognition_03"
     """Recognition model released in 2020 May."""
-    RECOGNITION_04 = "recognition_04"
+    RECOGNITION04 = "recognition_04"
     """Recognition model released in 2021 February. It's recommended to use this recognition model for
     better recognition accuracy."""
 
@@ -192,10 +192,10 @@ class HairColorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The model version used for liveness classification."""
 
-    V2020_02_15_PREVIEW_01 = "2020-02-15-preview.01"
-    V2021_11_12_PREVIEW_03 = "2021-11-12-preview.03"
-    V2022_10_15_PREVIEW_04 = "2022-10-15-preview.04"
-    V2023_03_02_PREVIEW_05 = "2023-03-02-preview.05"
+    V2020_02_15_PREVIEW01 = "2020-02-15-preview.01"
+    V2021_11_12_PREVIEW03 = "2021-11-12-preview.03"
+    V2022_10_15_PREVIEW04 = "2022-10-15-preview.04"
+    V2023_03_02_PREVIEW05 = "2023-03-02-preview.05"
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,5 +254,5 @@ class QualityForRecognition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """API versions for Azure AI Face API."""
 
-    V1_1_PREVIEW_1 = "v1.1-preview.1"
+    V1_1_PREVIEW1 = "v1.1-preview.1"
     """v1.1-preview.1"""

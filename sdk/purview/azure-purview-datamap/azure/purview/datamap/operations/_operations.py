@@ -11127,7 +11127,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -11155,8 +11155,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -11321,7 +11321,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -11348,8 +11348,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -11505,7 +11505,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
                 "createdBy": created_by,
                 "guid": guid,
                 "language": language,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "longDescription": long_description,
                 "name": name,
                 "qualifiedName": qualified_name,
@@ -12102,7 +12102,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -12130,8 +12130,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -12316,7 +12316,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -12343,8 +12343,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -12520,7 +12520,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
                 "createTime": create_time,
                 "createdBy": created_by,
                 "guid": guid,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "longDescription": long_description,
                 "name": name,
                 "parentCategory": parent_category,
@@ -12867,7 +12867,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -12897,8 +12897,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -13086,7 +13086,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -13115,8 +13115,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -13292,7 +13292,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
                 "createTime": create_time,
                 "createdBy": created_by,
                 "guid": guid,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "longDescription": long_description,
                 "name": name,
                 "parentCategory": parent_category,
@@ -14461,7 +14461,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -14513,8 +14513,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -15144,7 +15144,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -15195,8 +15195,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -15818,7 +15818,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
                 "guid": guid,
                 "hierarchyInfo": hierarchy_info,
                 "isA": is_a,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "longDescription": long_description,
                 "name": name,
                 "nickName": nick_name,
@@ -16762,7 +16762,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -16816,8 +16816,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -17451,7 +17451,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -17504,8 +17504,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -18127,7 +18127,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
                 "guid": guid,
                 "hierarchyInfo": hierarchy_info,
                 "isA": is_a,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "longDescription": long_description,
                 "name": name,
                 "nickName": nick_name,
@@ -21089,7 +21089,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -21122,8 +21122,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -21301,7 +21301,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         name: Optional[str] = None,
         qualified_name: Optional[str] = None,
         short_description: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         update_time: Optional[int] = None,
@@ -21333,8 +21333,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :paramtype qualified_name: str
         :keyword short_description: The short version of description. Default value is None.
         :paramtype short_description: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -21490,7 +21490,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
                 "createdBy": created_by,
                 "guid": guid,
                 "language": language,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "longDescription": long_description,
                 "name": name,
                 "qualifiedName": qualified_name,
@@ -25089,7 +25089,7 @@ class RelationshipOperations:
         content_type: str = "application/json",
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         end1: Optional[_models.AtlasObjectId] = None,
@@ -25113,8 +25113,8 @@ class RelationshipOperations:
         :paramtype attributes: dict[str, any]
         :keyword type_name: The name of the type. Default value is None.
         :paramtype type_name: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -25241,7 +25241,7 @@ class RelationshipOperations:
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         end1: Optional[_models.AtlasObjectId] = None,
@@ -25264,8 +25264,8 @@ class RelationshipOperations:
         :paramtype attributes: dict[str, any]
         :keyword type_name: The name of the type. Default value is None.
         :paramtype type_name: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -25389,7 +25389,7 @@ class RelationshipOperations:
                 "guid": guid,
                 "homeId": home_id,
                 "label": label,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "provenanceType": provenance_type,
                 "status": status,
                 "typeName": type_name,
@@ -25533,7 +25533,7 @@ class RelationshipOperations:
         content_type: str = "application/json",
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         end1: Optional[_models.AtlasObjectId] = None,
@@ -25557,8 +25557,8 @@ class RelationshipOperations:
         :paramtype attributes: dict[str, any]
         :keyword type_name: The name of the type. Default value is None.
         :paramtype type_name: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -25685,7 +25685,7 @@ class RelationshipOperations:
         *,
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
-        last_modified_t_s: Optional[str] = None,
+        last_modified_ts: Optional[str] = None,
         create_time: Optional[int] = None,
         created_by: Optional[str] = None,
         end1: Optional[_models.AtlasObjectId] = None,
@@ -25708,8 +25708,8 @@ class RelationshipOperations:
         :paramtype attributes: dict[str, any]
         :keyword type_name: The name of the type. Default value is None.
         :paramtype type_name: str
-        :keyword last_modified_t_s: ETag for concurrency control. Default value is None.
-        :paramtype last_modified_t_s: str
+        :keyword last_modified_ts: ETag for concurrency control. Default value is None.
+        :paramtype last_modified_ts: str
         :keyword create_time: The created time of the record. Default value is None.
         :paramtype create_time: int
         :keyword created_by: The user who created the record. Default value is None.
@@ -25833,7 +25833,7 @@ class RelationshipOperations:
                 "guid": guid,
                 "homeId": home_id,
                 "label": label,
-                "lastModifiedTS": last_modified_t_s,
+                "lastModifiedTS": last_modified_ts,
                 "provenanceType": provenance_type,
                 "status": status,
                 "typeName": type_name,
