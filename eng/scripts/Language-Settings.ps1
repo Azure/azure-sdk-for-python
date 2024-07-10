@@ -41,8 +41,12 @@ function Get-python-PRPackageInfoFromRepo($InputDiffJson)
   $targetedFiles = $diff.ChangedFiles
   $allPackages = @{}
 
+  Write-Host "I see the following diff: "
+  Write-Host ($diff | ConvertTo-Json -Depth 2)
+
   foreach ($file in $targetedFiles) {
     $package = Get-PackageFolderFromPath $file
+    Write-Host "Examining $file sees $package"
     if ($package) {
       $packageDirectory = Join-Path $RepoRoot $package
       $packageName = [System.IO.Path]::GetFileName($packageDirectory)
@@ -57,6 +61,8 @@ function Get-python-PRPackageInfoFromRepo($InputDiffJson)
     }
   }
 
+  Write-Host "Exiting and returning the keys"
+  Write-Host $allPackages
   return $allPackages.Keys
 }
 
