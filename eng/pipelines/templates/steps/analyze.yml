@@ -1,6 +1,7 @@
 parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
+  BuildTargetingString: ''
   AdditionalTestArgs: ''
   Artifacts: []
   TestPipeline: false
@@ -31,7 +32,7 @@ steps:
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: /eng/common/pipelines/templates/steps/check-spelling.yml

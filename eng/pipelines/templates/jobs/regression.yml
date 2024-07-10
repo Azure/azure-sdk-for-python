@@ -78,7 +78,7 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
         parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
           PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
       - task: UsePythonVersion@0
