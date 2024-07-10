@@ -81,7 +81,7 @@ class TestModelClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #                      HAPPY PATH TESTS - CHAT COMPLETIONS
+    #         CHAT COMPLETIONS TESTS - NO SERVICE RESPONSER REQUIRED
     #
     # **********************************************************************************
 
@@ -93,6 +93,7 @@ class TestModelClient(ModelClientTestBase):
             endpoint="http://does.not.exist",
             credential=AzureKeyCredential("key-value"),
             headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
         )
 
         try:
@@ -147,15 +148,13 @@ class TestModelClient(ModelClientTestBase):
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
             assert headers["Content-Type"] == "application/json"
             assert headers["Content-Length"] == "1790"
-            assert headers["unknown-parameters"] == "pass_through"
+            assert headers["extra-parameters"] == "pass_through"
             assert headers["Accept"] == "application/json"
             assert headers["some_header"] == "some_header_value"
-            assert "azsdk-python-ai-inference/" in headers["User-Agent"]
+            assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
+            assert " Python/" in headers["User-Agent"]
             assert headers["Authorization"] == "Bearer key-value"
-            assert (
-                self.pipeline_request.http_request.data
-                == '{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}'
-            )
+            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD1
             return
         assert False
 
@@ -215,10 +214,7 @@ class TestModelClient(ModelClientTestBase):
             )
         except ServiceRequestError as _:
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert (
-                self.pipeline_request.http_request.data
-                == '{\"frequency_penalty\": 0.321, \"max_tokens\": 123, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}], \"model\": \"some-other-model-id\", \"presence_penalty\": 7.654, \"response_format\": \"text\", \"seed\": 456, \"stop\": [\"stop3\"], \"stream\": false, \"temperature\": 6.789, \"tool_choice\": \"none\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key10\": 1, \"key11\": true, \"key12\": \"Some other value\"}'
-            )
+            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD2
             return
         assert False
 
@@ -262,12 +258,15 @@ class TestModelClient(ModelClientTestBase):
             )
         except ServiceRequestError as _:
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert (
-                self.pipeline_request.http_request.data
-                == '{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}'
-            )
+            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD3
             return
         assert False
+
+    # **********************************************************************************
+    #
+    #                      HAPPY PATH TESTS - CHAT COMPLETIONS
+    #
+    # **********************************************************************************
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
@@ -331,13 +330,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_chat_client(**kwargs)
         response = client.complete(
             messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
-            model_extras={
-                "key1": 1,
-                "key2": True,
-                "key3": "Some value",
-                "key4": [1, 2, 3],
-                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-            },
+            model_extras={"n": 1},
             raw_request_hook=self.request_callback,
         )
 

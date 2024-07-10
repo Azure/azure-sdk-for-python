@@ -288,7 +288,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these extra parameters depends on the value of the
-         ``unknown-parameters`` request header. Default value is None.
+         ``extra-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative frequency in generated text.
@@ -449,7 +449,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these extra parameters depends on the value of the
-         ``unknown-parameters`` request header. Default value is None.
+         ``extra-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword frequency_penalty: A value that influences the probability of generated tokens
          appearing based on their cumulative frequency in generated text.
@@ -528,7 +528,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -552,10 +552,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -567,7 +567,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_chat_completions_complete_request(
-            unknown_params=_unknown_params,
+            extra_parameters=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -658,7 +658,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these extra parameters depends on the value of the
-         ``unknown-parameters`` request header. Default value is None.
+         ``extra-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
          To embed multiple inputs in a single request, pass an array
@@ -751,7 +751,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these extra parameters depends on the value of the
-         ``unknown-parameters`` request header. Default value is None.
+         ``extra-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input text to embed, encoded as a string or array of tokens.
          To embed multiple inputs in a single request, pass an array
@@ -785,7 +785,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -800,7 +800,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -810,7 +810,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_embeddings_embed_request(
-            unknown_params=_unknown_params,
+            extra_parameters=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -903,7 +903,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these extra parameters depends on the value of the
-         ``unknown-parameters`` request header. Default value is None.
+         ``extra-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
@@ -996,7 +996,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
          How the service handles these extra parameters depends on the value of the
-         ``unknown-parameters`` request header. Default value is None.
+         ``extra-parameters`` request header. Default value is None.
         :paramtype model_extras: dict[str, Any]
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
@@ -1030,7 +1030,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -1045,7 +1045,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1055,7 +1055,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_image_embeddings_embed_request(
-            unknown_params=_unknown_params,
+            extra_parameters=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

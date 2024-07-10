@@ -288,7 +288,7 @@ To generate completions for additional messages, simply call `client.complete` m
 
 In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are intended for AI models that require extra parameters beyond what is defined in the REST API.
 
-Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"unknown_params": "pass_through"`.
+Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra_parameters": "pass_through"`.
 
 The input argument `model_extras` is not restricted to chat completions. It is suppored on other client methods as well.
 

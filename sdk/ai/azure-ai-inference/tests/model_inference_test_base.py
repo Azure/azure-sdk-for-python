@@ -35,7 +35,7 @@ if LOGGING_ENABLED:
 
 ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_chat_completions",
+    "azure_ai_chat",
     azure_ai_chat_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
     azure_ai_chat_key="00000000000000000000000000000000",
 )
@@ -98,6 +98,14 @@ class ModelClientTestBase(AzureRecordedTestCase):
             },
         )
     )
+
+    # Expected JSON request payload in some of the tests. These are common to
+    # sync and async tests, therefore they are defined here.
+    JSON_REQUEST_PAYLOAD1 = "{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
+
+    JSON_REQUEST_PAYLOAD2 = "{\"frequency_penalty\": 0.321, \"max_tokens\": 123, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}], \"model\": \"some-other-model-id\", \"presence_penalty\": 7.654, \"response_format\": \"text\", \"seed\": 456, \"stop\": [\"stop3\"], \"stream\": false, \"temperature\": 6.789, \"tool_choice\": \"none\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key10\": 1, \"key11\": true, \"key12\": \"Some other value\"}"
+
+    JSON_REQUEST_PAYLOAD3 = "{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
 
     # Methods to load credentials from environment variables
     def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
@@ -186,25 +194,13 @@ class ModelClientTestBase(AzureRecordedTestCase):
     @staticmethod
     def _validate_model_extras(body: str, headers: Dict[str, str]):
         assert headers is not None
-        assert headers["unknown-parameters"] == "pass_through"
+        assert headers["extra-parameters"] == "pass_through"
         assert body is not None
         try:
             body_json = json.loads(body)
         except json.JSONDecodeError:
             print("Invalid JSON format")
-        assert body_json["key1"] == 1
-        assert body_json["key2"] == True
-        assert body_json["key3"] == "Some value"
-        assert body_json["key4"][0] == 1
-        assert body_json["key4"][1] == 2
-        assert body_json["key4"][2] == 3
-        assert body_json["key5"]["key6"] == 2
-        assert body_json["key5"]["key7"] == False
-        assert body_json["key5"]["key8"] == "Some other value"
-        assert body_json["key5"]["key9"][0] == 4
-        assert body_json["key5"]["key9"][1] == 5
-        assert body_json["key5"]["key9"][2] == 6
-        assert body_json["key5"]["key9"][3] == 7
+        assert body_json["n"] == 1
 
     @staticmethod
     def _validate_chat_completions_result(response: sdk.models.ChatCompletions, contains: List[str]):
