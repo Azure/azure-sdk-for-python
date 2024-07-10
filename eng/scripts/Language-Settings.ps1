@@ -9,6 +9,51 @@ $PackageRepositoryUri = "https://pypi.org/project"
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 ."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
+
+function Get-PackageFolderFromPath($file) {
+    $parts = $file -split "/"
+
+    if ($parts.Length -lt 3) {
+        return ""
+    }
+    return [System.IO.Path]::Combine($parts[0], $parts[1], $parts[2])
+}
+
+function Register-Item {
+    param (
+        [Hashtable]$idx,
+        [string]$key,
+        [string]$value
+    )
+
+    if ($idx.ContainsKey($key)) {
+        $idx[$key].Add($value)
+    } else {
+        $idx[$key] = New-Object System.Collections.ArrayList
+        $idx[$key].Add($value)
+    }
+}
+
+function Get-python-PRPackageInfoFromRepo($InputDiffJson)
+{
+  $diff = Get-Content $input_json | ConvertFrom-Json
+
+  $targetedFiles = $diff.ChangedFiles
+  $allPackages = @{}
+
+  foreach ($file in $targeted_files) {
+    $package = Get-PackageFolderFromPath $file
+    if ($package) {
+      $package_directory = Join-Path $RepoRoot $package
+      $package_name = [System.IO.Path]::GetFileName($package_directory)
+
+      if (Test-Path (Join-Path $package_directory "pyproject.toml") -or Test-Path (Join-Path $package_directory "setup.py")) {
+        Register-Item -idx ([ref]$all_packages) -key $package_name -value $file
+      }
+    }
+  }
+}
+
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()

@@ -93,60 +93,59 @@ function GetRelativePath($path) {
 
 $exportedPaths = @{}
 
-if ($serviceInput.endswith("diff.json")) {
-  $diffConfig = Get-Content $serviceInput | ConvertFrom-Json
+$allPackageProperties = @()
 
-  # use common functions implementation of processing diff.json to get the list of affected packages
-  
+if ($serviceInput.endswith("diff.json")) {
+  $allPackageProperties = Get-AllPkgPropertiesFromDiffJson $serviceInput
 }
 else {
   $allPackageProperties = Get-AllPkgProperties $serviceInput
-  if ($allPackageProperties)
-  {
-      if (-not (Test-Path -Path $outDirectory))
-      {
-        New-Item -ItemType Directory -Force -Path $outDirectory
-      }
-      foreach($pkg in $allPackageProperties)
-      {
-          if ($pkg.Name) {
-            Write-Host "Package Name: $($pkg.Name)"
-            Write-Host "Package Version: $($pkg.Version)"
-            Write-Host "Package SDK Type: $($pkg.SdkType)"
-            Write-Host "Artifact Name: $($pkg.ArtifactName)"
-            Write-Host "Release date: $($pkg.ReleaseStatus)"
-            $configFilePrefix = $pkg.Name
-            if ($pkg.ArtifactName)
-            {
-              $configFilePrefix = $pkg.ArtifactName
-            }
-            $outputPath = Join-Path -Path $outDirectory "$configFilePrefix.json"
-            Write-Host "Output path of json file: $outputPath"
-            $outDir = Split-Path $outputPath -parent
-            if (-not (Test-Path -path $outDir))
-            {
-              Write-Host "Creating directory $($outDir) for json property file"
-              New-Item -ItemType Directory -Path $outDir
-            }
-
-            # If package properties for a track 2 (IsNewSdk = true) package has
-            # already been written, skip writing to that same path.
-            if ($exportedPaths.ContainsKey($outputPath) -and $exportedPaths[$outputPath].IsNewSdk -eq $true) {
-              Write-Host "Track 2 package info with file name $($outputPath) already exported. Skipping export."
-              continue
-            }
-            $exportedPaths[$outputPath] = $pkg
-
-            SetOutput $outputPath $pkg
-          }
-      }
-
-      Get-ChildItem -Path $outDirectory
-  }
-  else
-  {
-      Write-Error "Package properties are not available for service directory $($serviceInput)"
-      exit 1
-  }
 }
 
+if ($allPackageProperties)
+{
+    if (-not (Test-Path -Path $outDirectory))
+    {
+      New-Item -ItemType Directory -Force -Path $outDirectory
+    }
+    foreach($pkg in $allPackageProperties)
+    {
+        if ($pkg.Name) {
+          Write-Host "Package Name: $($pkg.Name)"
+          Write-Host "Package Version: $($pkg.Version)"
+          Write-Host "Package SDK Type: $($pkg.SdkType)"
+          Write-Host "Artifact Name: $($pkg.ArtifactName)"
+          Write-Host "Release date: $($pkg.ReleaseStatus)"
+          $configFilePrefix = $pkg.Name
+          if ($pkg.ArtifactName)
+          {
+            $configFilePrefix = $pkg.ArtifactName
+          }
+          $outputPath = Join-Path -Path $outDirectory "$configFilePrefix.json"
+          Write-Host "Output path of json file: $outputPath"
+          $outDir = Split-Path $outputPath -parent
+          if (-not (Test-Path -path $outDir))
+          {
+            Write-Host "Creating directory $($outDir) for json property file"
+            New-Item -ItemType Directory -Path $outDir
+          }
+
+          # If package properties for a track 2 (IsNewSdk = true) package has
+          # already been written, skip writing to that same path.
+          if ($exportedPaths.ContainsKey($outputPath) -and $exportedPaths[$outputPath].IsNewSdk -eq $true) {
+            Write-Host "Track 2 package info with file name $($outputPath) already exported. Skipping export."
+            continue
+          }
+          $exportedPaths[$outputPath] = $pkg
+
+          SetOutput $outputPath $pkg
+        }
+    }
+
+    Get-ChildItem -Path $outDirectory
+}
+else
+{
+    Write-Error "Package properties are not available for service directory $($serviceInput)"
+    exit 1
+}
