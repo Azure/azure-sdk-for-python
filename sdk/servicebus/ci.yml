@@ -23,6 +23,7 @@ pr:
   paths:
     include:
     - sdk/servicebus/
+    - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
