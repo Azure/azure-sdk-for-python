@@ -13,9 +13,10 @@ steps:
     # if we are in a PR, utilize the fact that the package properties folder will already be downloaded in the Packages folder
     # any json file that exists within the PackagePropertiesFolder will be added to the targeting string
     - pwsh: |
-        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" | Where-Object { $_.Extension -eq '.json' }
-
-        Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" | % { $_.FullName }
+        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
+          | Where-Object { $_.Extension -eq '.json' } `
+          | Foreach-Object { $_.Name } `
+          | ForEach-Object { $_.Replace(".json", "") }
 
         $setting = $packageProperties -join ","
 
