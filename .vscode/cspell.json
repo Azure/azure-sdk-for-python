@@ -198,6 +198,7 @@
     "contosodataset",
     "centralus",
     "centraluseuap",
+    "corehttp",
     "creds",
     "ctoring",
     "ctxt",
@@ -1010,6 +1011,16 @@
       ]
     },
     {
+      "filename": "sdk/schemaregistry/**/*.py",
+      "words": [
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday",
+        "Nify"
+      ]
+    },
+    {
       "filename": "sdk/schemaregistry/**/tests/**/*.py",
       "words": [
         "favo",
@@ -1470,7 +1481,8 @@
         "mycontainer",
         "iscontinuationexpected",
         "aalapatirvbd",
-        "unconfigure"
+        "unconfigure",
+        "undoc"
       ]
     },
     {

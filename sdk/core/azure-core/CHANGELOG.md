@@ -1,14 +1,19 @@
 # Release History
 
-## 1.30.3 (Unreleased)
+## 1.31.0 (Unreleased)
 
 ### Features Added
+
+- `AccessToken` now has an optional `refresh_on` attribute that can be used to specify when the token should be refreshed.  #36183
+  - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check the `refresh_on` attribute when determining if a token request should be made.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- The Azure Core OpenTelemetry tracing plugin will now be the preferred tracing plugin over the OpenCensus plugin. If both plugins are installed and `opentelemetry` is imported, then OpenTelemetry will be used to trace Azure SDK operations.  #35050
 
 ## 1.30.2 (2024-06-06)
 

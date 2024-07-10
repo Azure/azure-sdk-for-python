@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, cast, Optional
+from datetime import datetime
+from typing import Any, cast, Dict, Optional
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -65,7 +66,18 @@ class SecretClient(AsyncKeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def set_secret(self, name: str, value: str, **kwargs: Any) -> KeyVaultSecret:
+    async def set_secret(
+        self,
+        name: str,
+        value: str,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        content_type: Optional[str] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        **kwargs: Any,
+    ) -> KeyVaultSecret:
         """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
 
         Requires secrets/set permission.
@@ -93,10 +105,6 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Set a secret's value
                 :dedent: 8
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
-        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
@@ -104,7 +112,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         parameters = self._models.SecretSetParameters(
             value=value,
-            tags=kwargs.pop("tags", None),
+            tags=tags,
             content_type=content_type,
             secret_attributes=attributes
         )
@@ -119,7 +127,16 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_secret_properties(
-        self, name: str, version: Optional[str] = None, **kwargs: Any
+        self,
+        name: str,
+        version: Optional[str] = None,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        content_type: Optional[str] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        **kwargs: Any,
     ) -> SecretProperties:
         """Update properties of a secret other than its value. Requires secrets/set permission.
 
@@ -150,10 +167,6 @@ class SecretClient(AsyncKeyVaultClientBase):
                 :caption: Updates a secret's attributes
                 :dedent: 8
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
-        content_type = kwargs.pop("content_type", None)
         if enabled is not None or not_before is not None or expires_on is not None:
             attributes = self._models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires_on)
         else:
@@ -162,7 +175,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         parameters = self._models.SecretUpdateParameters(
             content_type=content_type,
             secret_attributes=attributes,
-            tags=kwargs.pop("tags", None)
+            tags=tags,
         )
 
         bundle = await self._client.update_secret(

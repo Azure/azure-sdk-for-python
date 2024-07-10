@@ -39,4 +39,5 @@ class JsonSchemaDraftIdentifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DRAFT_04 = "http://json-schema.org/draft-04/schema"
     DRAFT_03 = "http://json-schema.org/draft-03/schema"
 
+
 JSON_MIME_TYPE = "application/json;serialization=Json"
