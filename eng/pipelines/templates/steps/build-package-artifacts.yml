@@ -57,7 +57,7 @@ steps:
 
   - pwsh: |
       which python
-      python -m pip install --force -r eng\ci_tools.txt
+      python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
     displayName: 'Prep Environment'
 

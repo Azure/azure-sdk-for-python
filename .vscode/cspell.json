@@ -198,6 +198,7 @@
     "contosodataset",
     "centralus",
     "centraluseuap",
+    "corehttp",
     "creds",
     "ctoring",
     "ctxt",
@@ -1480,7 +1481,8 @@
         "mycontainer",
         "iscontinuationexpected",
         "aalapatirvbd",
-        "unconfigure"
+        "unconfigure",
+        "undoc"
       ]
     },
     {
