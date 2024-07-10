@@ -39,7 +39,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             documentintelligence_api_key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
             polling_interval = 5
         else:
-            documentintelligence_endpoint = "https://fakeendpoint.cognitiveservices.azure.com"
+            documentintelligence_endpoint = "https://fakeendpoint.cognitiveservices.azure.com/"
             documentintelligence_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
             polling_interval = 0
 
