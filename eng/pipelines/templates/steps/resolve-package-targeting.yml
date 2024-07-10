@@ -14,6 +14,9 @@ steps:
     # any json file that exists within the PackagePropertiesFolder will be added to the targeting string
     - pwsh: |
         $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" | Where-Object { $_.Extension -eq '.json' }
+
+        Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" | % { $_.FullName }
+
         $setting = $packageProperties -join ","
 
         Write-Host "Setting TargetingString to $setting"

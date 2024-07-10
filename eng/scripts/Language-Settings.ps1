@@ -61,14 +61,56 @@ function Get-python-PRPackageInfoFromRepo($InputDiffJson)
     }
   }
 
-  Write-Host "Exiting and returning the keys"
-  Write-Host $allPackages
-  return $allPackages.Keys
+  $inputPackages = $allPackages.Keys -Join ","
+
+  # now that we have the set of targeted packages, we just need to actually get the result for it
+  # that is what is missing here.
+  $allPackageProps = @()
+
+  $allPkgPropLines = $null
+  try
+  {
+    Push-Location $RepoRoot
+    $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+    $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -p $inputPackages
+  }
+  catch
+  {
+    # This is soft error and failure is expected for python metapackages
+    LogError "Failed to get all package properties"
+  }
+  finally
+  {
+    Pop-Location
+  }
+
+  foreach ($line in $allPkgPropLines)
+  {
+    $pkgInfo = ($line -Split " ")
+    $packageName = $pkgInfo[0]
+    $packageVersion = $pkgInfo[1]
+    $isNewSdk = ($pkgInfo[2] -eq "True")
+    $pkgDirectoryPath = $pkgInfo[3]
+    $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
+    if ($packageName -match "mgmt")
+    {
+      $sdkType = "mgmt"
+    }
+    else
+    {
+      $sdkType = "client"
+    }
+    $pkgProp = [PackageProps]::new($packageName, $packageVersion, $pkgDirectoryPath, $serviceDirectoryName)
+    $pkgProp.IsNewSdk = $isNewSdk
+    $pkgProp.SdkType = $sdkType
+    $pkgProp.ArtifactName = $packageName
+    $allPackageProps += $pkgProp
+  }
+  return $allPackageProps
 }
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
-  Write-Host "In the Get-AllPackageInfoFromRepo function"
   $allPackageProps = @()
   $searchPath = "sdk"
   if ($serviceDirectory)
