@@ -11,6 +11,7 @@ from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disa
 from dns.rdatatype import SRV  # cspell:disable-line
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
+
 class SRVRecord:
     priority: int
     weight: int
