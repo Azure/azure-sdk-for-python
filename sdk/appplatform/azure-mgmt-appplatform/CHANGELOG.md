@@ -1,5 +1,9 @@
 # Release History
 
+## 9.1.0.post1 (2024-07-09)
+
+- Re-releasing to account for setuptools source distribution normalization changes.
+
 ## 9.1.0 (2024-07-03)
 
 ### Features Added
