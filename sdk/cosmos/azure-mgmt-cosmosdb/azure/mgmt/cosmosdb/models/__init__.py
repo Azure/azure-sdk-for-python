@@ -68,7 +68,7 @@ from ._models_py3 import DataCenterResource
 from ._models_py3 import DataCenterResourceProperties
 from ._models_py3 import DataTransferRegionalServiceResource
 from ._models_py3 import DataTransferServiceResource
-from ._models_py3 import DataTransferServiceResourceCreateUpdateParameters
+from ._models_py3 import DataTransferServiceResourceCreateUpdateProperties
 from ._models_py3 import DataTransferServiceResourceProperties
 from ._models_py3 import DatabaseAccountConnectionString
 from ._models_py3 import DatabaseAccountCreateUpdateParameters
@@ -88,7 +88,7 @@ from ._models_py3 import FailoverPolicies
 from ._models_py3 import FailoverPolicy
 from ._models_py3 import GraphAPIComputeRegionalServiceResource
 from ._models_py3 import GraphAPIComputeServiceResource
-from ._models_py3 import GraphAPIComputeServiceResourceCreateUpdateParameters
+from ._models_py3 import GraphAPIComputeServiceResourceCreateUpdateProperties
 from ._models_py3 import GraphAPIComputeServiceResourceProperties
 from ._models_py3 import GremlinDatabaseCreateUpdateParameters
 from ._models_py3 import GremlinDatabaseGetPropertiesOptions
@@ -121,7 +121,7 @@ from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import ManagedServiceIdentityUserAssignedIdentity
 from ._models_py3 import MaterializedViewsBuilderRegionalServiceResource
 from ._models_py3 import MaterializedViewsBuilderServiceResource
-from ._models_py3 import MaterializedViewsBuilderServiceResourceCreateUpdateParameters
+from ._models_py3 import MaterializedViewsBuilderServiceResourceCreateUpdateProperties
 from ._models_py3 import MaterializedViewsBuilderServiceResourceProperties
 from ._models_py3 import Metric
 from ._models_py3 import MetricAvailability
@@ -240,7 +240,7 @@ from ._models_py3 import SqlDatabaseListResult
 from ._models_py3 import SqlDatabaseResource
 from ._models_py3 import SqlDedicatedGatewayRegionalServiceResource
 from ._models_py3 import SqlDedicatedGatewayServiceResource
-from ._models_py3 import SqlDedicatedGatewayServiceResourceCreateUpdateParameters
+from ._models_py3 import SqlDedicatedGatewayServiceResourceCreateUpdateProperties
 from ._models_py3 import SqlDedicatedGatewayServiceResourceProperties
 from ._models_py3 import SqlRoleAssignmentCreateUpdateParameters
 from ._models_py3 import SqlRoleAssignmentGetResults
@@ -395,7 +395,7 @@ __all__ = [
     "DataCenterResourceProperties",
     "DataTransferRegionalServiceResource",
     "DataTransferServiceResource",
-    "DataTransferServiceResourceCreateUpdateParameters",
+    "DataTransferServiceResourceCreateUpdateProperties",
     "DataTransferServiceResourceProperties",
     "DatabaseAccountConnectionString",
     "DatabaseAccountCreateUpdateParameters",
@@ -415,7 +415,7 @@ __all__ = [
     "FailoverPolicy",
     "GraphAPIComputeRegionalServiceResource",
     "GraphAPIComputeServiceResource",
-    "GraphAPIComputeServiceResourceCreateUpdateParameters",
+    "GraphAPIComputeServiceResourceCreateUpdateProperties",
     "GraphAPIComputeServiceResourceProperties",
     "GremlinDatabaseCreateUpdateParameters",
     "GremlinDatabaseGetPropertiesOptions",
@@ -448,7 +448,7 @@ __all__ = [
     "ManagedServiceIdentityUserAssignedIdentity",
     "MaterializedViewsBuilderRegionalServiceResource",
     "MaterializedViewsBuilderServiceResource",
-    "MaterializedViewsBuilderServiceResourceCreateUpdateParameters",
+    "MaterializedViewsBuilderServiceResourceCreateUpdateProperties",
     "MaterializedViewsBuilderServiceResourceProperties",
     "Metric",
     "MetricAvailability",
@@ -567,7 +567,7 @@ __all__ = [
     "SqlDatabaseResource",
     "SqlDedicatedGatewayRegionalServiceResource",
     "SqlDedicatedGatewayServiceResource",
-    "SqlDedicatedGatewayServiceResourceCreateUpdateParameters",
+    "SqlDedicatedGatewayServiceResourceCreateUpdateProperties",
     "SqlDedicatedGatewayServiceResourceProperties",
     "SqlRoleAssignmentCreateUpdateParameters",
     "SqlRoleAssignmentGetResults",

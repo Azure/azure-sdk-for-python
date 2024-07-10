@@ -123,7 +123,7 @@ To load an asynchronous client, import the `load_client` function from `azure.ai
 
 Entra ID authentication is also supported by the `load_client` function. Replace the key authentication above with `credential=DefaultAzureCredential()` for example.
 
-### Getting AI model information
+### Get AI model information
 
 All clients provide a `get_model_info` method to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info).
 
@@ -345,7 +345,7 @@ for item in response.data:
 
 The length of the embedding vector depends on the model, but you should see something like this:
 
-```txt
+```text
 data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]
 data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739]
 data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747]

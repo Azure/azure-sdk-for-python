@@ -40,6 +40,7 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 @pytest.mark.core_sdk_test
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
+    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_secret_population(
         self,
         client: MLClient,
@@ -112,7 +113,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.GIT)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
             # TODO : Uncomment once service side returns creds correctly
             # assert wps_connection.credentials.pat == "dummpy_pat_update"
         finally:
@@ -139,7 +140,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.SNOWFLAKE)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
 
             wps_connection.credentials.username = "dummy"
             wps_connection.credentials.password = "dummy"
@@ -153,7 +154,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.SNOWFLAKE)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
         finally:
             client.connections.delete(name=wps_connection_name)
 
@@ -179,7 +180,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCESS_KEY)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.S3)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
 
             wps_connection.credentials.access_key_id = "dummy"
             wps_connection.credentials.secret_access_key = "dummy"
@@ -193,7 +194,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCESS_KEY)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.S3)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
         finally:
             client.connections.delete(name=wps_connection_name)
 
@@ -216,7 +217,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.name == wps_connection_name
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert wps_connection.type == ConnectionTypes.AZURE_CONTENT_SAFETY
-        assert wps_connection.tags is not None
+        assert wps_connection.metadata is not None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -237,7 +238,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.name == wps_connection_name
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert wps_connection.type == ConnectionTypes.AZURE_SPEECH_SERVICES
-        assert wps_connection.tags is not None
+        assert wps_connection.metadata is not None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -260,7 +261,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         # assert wps_connection.api_key == "3333" # TODO add api key retrieval everywhere
         assert wps_connection.type == ConnectionTypes.AZURE_SEARCH
-        assert wps_connection.tags is not None
+        assert wps_connection.metadata is not None
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
@@ -468,7 +469,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
-        assert created_connection.tags["four"] == "five"
+        assert created_connection.metadata["four"] == "five"
         assert created_connection.target == "my_endpoint"
 
         with pytest.raises(Exception):
@@ -485,7 +486,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.type == ConnectionTypes.AZURE_DATA_LAKE_GEN_2
         assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
-        assert created_connection.tags["four"] == "five"
+        assert created_connection.metadata["four"] == "five"
         assert created_connection.target == "my_endpoint"
 
         with pytest.raises(Exception):
@@ -550,8 +551,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
         expected_key = "12344" if is_live() else "dGhpcyBpcyBmYWtlIGtleQ=="
         assert created_connection.api_key == expected_key
-        assert created_connection.tags is not None
-        assert created_connection.tags["hello"] == "world"
+        assert created_connection.metadata is not None
+        assert created_connection.metadata["hello"] == "world"
         assert created_connection.api_version == "1.0"
         assert created_connection.open_ai_resource_id == None
 
@@ -571,8 +572,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == ConnectionAuthType.AAD.lower()
         assert created_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
-        assert created_connection.tags is not None
-        assert created_connection.tags["hello"] == "world"
+        assert created_connection.metadata is not None
+        assert created_connection.metadata["hello"] == "world"
         assert created_connection.api_version is None
         assert created_connection.open_ai_resource_id == None
 
@@ -784,7 +785,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert created_connection.name == wps_connection_name
         assert created_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert created_connection.type == camel_to_snake(ConnectionTypes.CUSTOM)
-        assert created_connection.tags is not None
+        assert created_connection.metadata is not None
         assert created_connection.is_shared
 
         with pytest.raises(Exception):
@@ -873,7 +874,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
             # TODO : Uncomment once service side returns creds correctly
             # assert wps_connection.credentials.pat == "dummy_pat"
 
@@ -888,7 +889,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
             # TODO : Uncomment once service side returns creds correctly
             # assert wps_connection.credentials.pat == "dummpy_pat_update"
         finally:
@@ -916,7 +917,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             assert wps_connection.name == wps_connection_name
             assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
             assert wps_connection.type == camel_to_snake(ConnectionCategory.CONTAINER_REGISTRY)
-            assert wps_connection.tags == {}
+            assert wps_connection.metadata == {}
             # TODO : Uncomment once service side returns creds correctly
             # assert wps_connection.credentials.pat == "dummy_pat"
 

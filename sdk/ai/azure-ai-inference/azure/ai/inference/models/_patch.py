@@ -31,11 +31,7 @@ class ImageUrl(ImageUrlGenerated):
 
     @classmethod
     def load(
-        cls,
-        *,
-        image_file: str,
-        image_format: str,
-        detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None
+        cls, *, image_file: str, image_format: str, detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None
     ) -> Self:
         """
         Create an ImageUrl object from a local image file. The method reads the image
@@ -51,7 +47,7 @@ class ImageUrl(ImageUrlGenerated):
         :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
         :return: An ImageUrl object with the image data encoded as a base64 string.
         :rtype: ~azure.ai.inference.models.ImageUrl
-        :raises FileNotFoundError when the image file could not be opened.
+        :raises FileNotFoundError: when the image file could not be opened.
         """
         with open(image_file, "rb") as f:
             image_data = base64.b64encode(f.read()).decode("utf-8")
