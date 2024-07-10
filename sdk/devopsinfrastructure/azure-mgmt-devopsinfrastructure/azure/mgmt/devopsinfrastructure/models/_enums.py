@@ -64,7 +64,9 @@ class LogonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of managed identity assigned to this resource."""
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
 
     NONE = "None"
     """No managed identity."""

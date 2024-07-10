@@ -26,7 +26,7 @@ class DocumentIntelligenceClientConfiguration:  # pylint: disable=too-many-insta
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
@@ -81,7 +81,7 @@ class DocumentIntelligenceAdministrationClientConfiguration:  # pylint: disable=
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Is either a
+    :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential

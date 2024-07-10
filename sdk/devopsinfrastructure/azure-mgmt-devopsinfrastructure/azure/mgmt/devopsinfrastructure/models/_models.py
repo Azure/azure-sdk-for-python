@@ -27,7 +27,7 @@ class AgentProfile(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for AgentProfile. Required. Default value is None.
     :vartype kind: str
     :ivar resource_predictions: Defines pool buffer/stand-by agents.
     :vartype resource_predictions: ~azure.mgmt.devopsinfrastructure.models.ResourcePredictions
@@ -38,7 +38,7 @@ class AgentProfile(_model_base.Model):
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for AgentProfile. Required. Default value is None."""
     resource_predictions: Optional["_models.ResourcePredictions"] = rest_field(name="resourcePredictions")
     """Defines pool buffer/stand-by agents."""
     resource_predictions_profile: Optional["_models.ResourcePredictionsProfile"] = rest_field(
@@ -152,13 +152,13 @@ class OrganizationProfile(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for OrganizationProfile. Required. Default value is None.
     :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for OrganizationProfile. Required. Default value is None."""
 
     @overload
     def __init__(
@@ -433,13 +433,13 @@ class FabricProfile(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: Required. Default value is None.
+    :ivar kind: Discriminator property for FabricProfile. Required. Default value is None.
     :vartype kind: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     kind: str = rest_discriminator(name="kind")
-    """Required. Default value is None."""
+    """Discriminator property for FabricProfile. Required. Default value is None."""
 
     @overload
     def __init__(
@@ -530,7 +530,7 @@ class GitHubOrganizationProfile(OrganizationProfile, discriminator="GitHub"):
 
 
 class Resource(_model_base.Model):
-    """Common properties for all Azure Resource Manager resources.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -560,7 +560,8 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The base proxy resource.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -598,7 +599,7 @@ class ImageVersion(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.ImageVersionProperties
     """
 
-    properties: Optional["_models.ImageVersionProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ImageVersionProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -622,7 +623,6 @@ class ImageVersion(ProxyResource):
 class ImageVersionProperties(_model_base.Model):
     """Details of the ImageVersionProperties.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar version: Version of the image. Required.
     :vartype version: str
@@ -650,31 +650,35 @@ class ImageVersionProperties(_model_base.Model):
 
 
 class ManagedServiceIdentity(_model_base.Model):
-    """The properties of the managed service identities assigned to this resource.
+    """Managed service identity (system assigned and/or user assigned identities).
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar tenant_id: The Active Directory tenant id of the principal.
-    :vartype tenant_id: str
-    :ivar principal_id: The active directory identifier of this principal.
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
     :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
-     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: str or ~azure.mgmt.devopsinfrastructure.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: The identities assigned to this resource by the user.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.devopsinfrastructure.models.UserAssignedIdentity]
     """
 
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The Active Directory tenant id of the principal."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The active directory identifier of this principal."""
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
     type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
-     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned, UserAssigned\"."""
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
     user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities"
     )
@@ -952,16 +956,16 @@ class TrackedResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devopsinfrastructure.models.SystemData
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
 
     @overload
     def __init__(
@@ -1001,17 +1005,17 @@ class Pool(TrackedResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devopsinfrastructure.models.SystemData
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.PoolProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.devopsinfrastructure.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.PoolProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.PoolProperties"] = rest_field()
     """The resource-specific properties for this resource."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
     """The managed service identities assigned to this resource."""
@@ -1253,7 +1257,7 @@ class Quota(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.QuotaProperties
     """
 
-    properties: Optional["_models.QuotaProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.QuotaProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -1310,7 +1314,6 @@ class QuotaName(_model_base.Model):
 class QuotaProperties(_model_base.Model):
     """Describes Resource Quota properties.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar unit: The unit of usage measurement. Required.
     :vartype unit: str
@@ -1372,7 +1375,7 @@ class ResourceDetailsObject(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.ResourceDetailsObjectProperties
     """
 
-    properties: Optional["_models.ResourceDetailsObjectProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ResourceDetailsObjectProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -1396,7 +1399,6 @@ class ResourceDetailsObject(ProxyResource):
 class ResourceDetailsObjectProperties(_model_base.Model):
     """Details of the ResourceDetailsObject.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar status: The status of the resource. Required. Known values are: "Ready", "NotReady",
      "Allocated", "PendingReturn", "Returned", "Leased", "Provisioning", "Updating", "Starting",
@@ -1461,7 +1463,7 @@ class ResourceSku(ProxyResource):
     :vartype properties: ~azure.mgmt.devopsinfrastructure.models.ResourceSkuProperties
     """
 
-    properties: Optional["_models.ResourceSkuProperties"] = rest_field(visibility=["read", "create"])
+    properties: Optional["_models.ResourceSkuProperties"] = rest_field()
     """The resource-specific properties for this resource."""
 
     @overload
@@ -1485,7 +1487,6 @@ class ResourceSku(ProxyResource):
 class ResourceSkuCapabilities(_model_base.Model):
     """Describes The SKU capabilities object.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU capability. Required.
     :vartype name: str
@@ -1520,7 +1521,6 @@ class ResourceSkuCapabilities(_model_base.Model):
 class ResourceSkuLocationInfo(_model_base.Model):
     """Describes an available Compute SKU Location Information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: Location of the SKU. Required.
     :vartype location: str
@@ -1561,7 +1561,6 @@ class ResourceSkuLocationInfo(_model_base.Model):
 class ResourceSkuProperties(_model_base.Model):
     """Properties of a ResourceSku.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar resource_type: The type of resource the SKU applies to. Required.
     :vartype resource_type: str
@@ -1661,7 +1660,6 @@ class ResourceSkuRestrictionInfo(_model_base.Model):
 class ResourceSkuRestrictions(_model_base.Model):
     """The restrictions of the SKU.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar type: the type of restrictions. Known values are: "Location" and "Zone".
     :vartype type: str or ~azure.mgmt.devopsinfrastructure.models.ResourceSkuRestrictionsType
@@ -1711,7 +1709,6 @@ class ResourceSkuRestrictions(_model_base.Model):
 class ResourceSkuZoneDetails(_model_base.Model):
     """Describes The zonal capabilities of a SKU.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Gets the set of zones that the SKU is available in with the specified capabilities.
      Required.
@@ -1916,64 +1913,47 @@ class StorageProfile(_model_base.Model):
 class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.devopsinfrastructure.models.CreatedByType
-    :ivar created_at: The type of identity that created the resource.
-    :vartype created_at: ~datetime.date
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.devopsinfrastructure.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.date
+    :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    created_by: Optional[str] = rest_field(name="createdBy")
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="createdByType", visibility=["read"]
-    )
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.date] = rest_field(name="createdAt", visibility=["read"])
-    """The type of identity that created the resource."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="lastModifiedByType", visibility=["read"]
-    )
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.date] = rest_field(name="lastModifiedAt", visibility=["read"])
+    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
     """The timestamp of resource last modification (UTC)."""
-
-
-class UserAssignedIdentity(_model_base.Model):
-    """A managed identity assigned by the user.
-
-    :ivar client_id: The active directory client identifier for this principal.
-    :vartype client_id: str
-    :ivar principal_id: The active directory identifier for this principal.
-    :vartype principal_id: str
-    """
-
-    client_id: Optional[str] = rest_field(name="clientId")
-    """The active directory client identifier for this principal."""
-    principal_id: Optional[str] = rest_field(name="principalId")
-    """The active directory identifier for this principal."""
 
     @overload
     def __init__(
         self,
         *,
-        client_id: Optional[str] = None,
-        principal_id: Optional[str] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
     ): ...
 
     @overload
@@ -1985,6 +1965,23 @@ class UserAssignedIdentity(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class UserAssignedIdentity(_model_base.Model):
+    """User assigned identity properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
 class VmssFabricProfile(FabricProfile, discriminator="Vmss"):

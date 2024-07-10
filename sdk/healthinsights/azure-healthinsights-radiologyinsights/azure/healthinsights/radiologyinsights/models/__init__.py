@@ -31,7 +31,7 @@ from ._models import FollowupCommunicationInference
 from ._models import FollowupRecommendationInference
 from ._models import FollowupRecommendationOptions
 from ._models import GenericProcedureRecommendation
-from ._models import HealthInsightsOperationStatus
+from ._models import HealthInsightsOperationStatusRadiologyInsightsInferenceResultError
 from ._models import Identifier
 from ._models import ImagingProcedure
 from ._models import ImagingProcedureRecommendation
@@ -51,7 +51,6 @@ from ._models import Period
 from ._models import ProcedureRecommendation
 from ._models import Quantity
 from ._models import RadiologyCodeWithTypes
-from ._models import RadiologyInsightsData
 from ._models import RadiologyInsightsInference
 from ._models import RadiologyInsightsInferenceOptions
 from ._models import RadiologyInsightsInferenceResult
@@ -117,7 +116,7 @@ __all__ = [
     "FollowupRecommendationInference",
     "FollowupRecommendationOptions",
     "GenericProcedureRecommendation",
-    "HealthInsightsOperationStatus",
+    "HealthInsightsOperationStatusRadiologyInsightsInferenceResultError",
     "Identifier",
     "ImagingProcedure",
     "ImagingProcedureRecommendation",
@@ -137,7 +136,6 @@ __all__ = [
     "ProcedureRecommendation",
     "Quantity",
     "RadiologyCodeWithTypes",
-    "RadiologyInsightsData",
     "RadiologyInsightsInference",
     "RadiologyInsightsInferenceOptions",
     "RadiologyInsightsInferenceResult",

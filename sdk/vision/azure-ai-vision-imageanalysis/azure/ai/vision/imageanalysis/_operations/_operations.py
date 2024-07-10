@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -123,6 +123,7 @@ def build_image_analysis_analyze_from_url_request(  # pylint: disable=name-too-l
 
 
 class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
+
     @distributed_trace
     def _analyze_from_image_data(
         self,
@@ -135,7 +136,6 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         model_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ImageAnalysisResult:
-        # pylint: disable=line-too-long
         """Performs a single Image Analysis operation.
 
         :param image_content: The image to be analyzed. Required.
@@ -180,33 +180,25 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                 # response body for status code(s): 200
                 response == {
                     "metadata": {
-                        "height": 0,  # The height of the image in pixels. Required.
-                        "width": 0  # The width of the image in pixels. Required.
+                        "height": 0,
+                        "width": 0
                     },
-                    "modelVersion": "str",  # The cloud AI model used for the analysis. Required.
+                    "modelVersion": "str",
                     "captionResult": {
-                        "confidence": 0.0,  # A score, in the range of 0 to 1 (inclusive),
-                          representing the confidence that this description is accurate. Higher values
-                          indicating higher confidence. Required.
-                        "text": "str"  # The text of the caption. Required.
+                        "confidence": 0.0,
+                        "text": "str"
                     },
                     "denseCaptionsResult": {
                         "values": [
                             {
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 },
-                                "confidence": 0.0,  # A score, in the range of 0 to 1
-                                  (inclusive), representing the confidence that this description is
-                                  accurate. Higher values indicating higher confidence. Required.
-                                "text": "str"  # The text of the caption. Required.
+                                "confidence": 0.0,
+                                "text": "str"
                             }
                         ]
                     },
@@ -214,23 +206,15 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                         "values": [
                             {
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 },
                                 "tags": [
                                     {
-                                        "confidence": 0.0,  # A score, in the
-                                          range of 0 to 1 (inclusive), representing the confidence that
-                                          this entity was observed. Higher values indicating higher
-                                          confidence. Required.
-                                        "name": "str"  # Name of the entity.
-                                          Required.
+                                        "confidence": 0.0,
+                                        "name": "str"
                                     }
                                 ]
                             }
@@ -240,18 +224,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                         "values": [
                             {
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 },
-                                "confidence": 0.0  # A score, in the range of 0 to 1
-                                  (inclusive), representing the confidence that this detection was
-                                  accurate. Higher values indicating higher confidence. Required.
+                                "confidence": 0.0
                             }
                         ]
                     },
@@ -262,39 +240,23 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                                     {
                                         "boundingPolygon": [
                                             {
-                                                "x": 0,  # The
-                                                  horizontal x-coordinate of this point, in pixels.
-                                                  Zero values corresponds to the left-most pixels in
-                                                  the image. Required.
-                                                "y": 0  # The
-                                                  vertical y-coordinate of this point, in pixels. Zero
-                                                  values corresponds to the top-most pixels in the
-                                                  image. Required.
+                                                "x": 0,
+                                                "y": 0
                                             }
                                         ],
-                                        "text": "str",  # Text content of the
-                                          detected text line. Required.
+                                        "text": "str",
                                         "words": [
                                             {
                                                 "boundingPolygon": [
                                                     {
                                                         "x":
-                                                          0,  # The horizontal x-coordinate of this
-                                                          point, in pixels. Zero values corresponds to
-                                                          the left-most pixels in the image. Required.
+                                                          0,
                                                         "y":
-                                                          0  # The vertical y-coordinate of this point,
-                                                          in pixels. Zero values corresponds to the
-                                                          top-most pixels in the image. Required.
+                                                          0
                                                     }
                                                 ],
-                                                "confidence": 0.0,  #
-                                                  The level of confidence that the word was detected.
-                                                  Confidence scores span the range of 0.0 to 1.0
-                                                  (inclusive), with higher values indicating a higher
-                                                  confidence of detection. Required.
-                                                "text": "str"  # Text
-                                                  content of the word. Required.
+                                                "confidence": 0.0,
+                                                "text": "str"
                                             }
                                         ]
                                     }
@@ -305,21 +267,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                     "smartCropsResult": {
                         "values": [
                             {
-                                "aspectRatio": 0.0,  # The aspect ratio of the crop
-                                  region. Aspect ratio is calculated by dividing the width of the
-                                  region in pixels by its height in pixels. The aspect ratio will be in
-                                  the range 0.75 to 1.8 (inclusive) if provided by the developer during
-                                  the analyze call. Otherwise, it will be in the range 0.5 to 2.0
-                                  (inclusive). Required.
+                                "aspectRatio": 0.0,
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 }
                             }
                         ]
@@ -327,16 +280,14 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                     "tagsResult": {
                         "values": [
                             {
-                                "confidence": 0.0,  # A score, in the range of 0 to 1
-                                  (inclusive), representing the confidence that this entity was
-                                  observed. Higher values indicating higher confidence. Required.
-                                "name": "str"  # Name of the entity. Required.
+                                "confidence": 0.0,
+                                "name": "str"
                             }
                         ]
                     }
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -404,9 +355,7 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         smart_crops_aspect_ratios: Optional[List[float]] = None,
         model_version: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ImageAnalysisResult:
-        ...
-
+    ) -> _models.ImageAnalysisResult: ...
     @overload
     def _analyze_from_url(
         self,
@@ -419,9 +368,7 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         smart_crops_aspect_ratios: Optional[List[float]] = None,
         model_version: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ImageAnalysisResult:
-        ...
-
+    ) -> _models.ImageAnalysisResult: ...
     @overload
     def _analyze_from_url(
         self,
@@ -434,8 +381,7 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         smart_crops_aspect_ratios: Optional[List[float]] = None,
         model_version: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ImageAnalysisResult:
-        ...
+    ) -> _models.ImageAnalysisResult: ...
 
     @distributed_trace
     def _analyze_from_url(
@@ -449,12 +395,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         model_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ImageAnalysisResult:
-        # pylint: disable=line-too-long
         """Performs a single Image Analysis operation.
 
         :param image_content: The image to be analyzed. Is one of the following types: ImageUrl, JSON,
          IO[bytes] Required.
-        :type image_content: ~azure.ai.vision.imageanalysis.models.ImageUrl or JSON or IO[bytes]
+        :type image_content: ~azure.ai.vision.imageanalysis.models._models.ImageUrl or JSON or
+         IO[bytes]
         :keyword visual_features: A list of visual features to analyze.
          Seven visual features are supported: Caption, DenseCaptions, Read (OCR), Tags, Objects,
          SmartCrops, and People.
@@ -494,39 +440,31 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 image_content = {
-                    "url": "str"  # Publicly reachable URL of an image to analyze. Required.
+                    "url": "str"
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "metadata": {
-                        "height": 0,  # The height of the image in pixels. Required.
-                        "width": 0  # The width of the image in pixels. Required.
+                        "height": 0,
+                        "width": 0
                     },
-                    "modelVersion": "str",  # The cloud AI model used for the analysis. Required.
+                    "modelVersion": "str",
                     "captionResult": {
-                        "confidence": 0.0,  # A score, in the range of 0 to 1 (inclusive),
-                          representing the confidence that this description is accurate. Higher values
-                          indicating higher confidence. Required.
-                        "text": "str"  # The text of the caption. Required.
+                        "confidence": 0.0,
+                        "text": "str"
                     },
                     "denseCaptionsResult": {
                         "values": [
                             {
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 },
-                                "confidence": 0.0,  # A score, in the range of 0 to 1
-                                  (inclusive), representing the confidence that this description is
-                                  accurate. Higher values indicating higher confidence. Required.
-                                "text": "str"  # The text of the caption. Required.
+                                "confidence": 0.0,
+                                "text": "str"
                             }
                         ]
                     },
@@ -534,23 +472,15 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                         "values": [
                             {
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 },
                                 "tags": [
                                     {
-                                        "confidence": 0.0,  # A score, in the
-                                          range of 0 to 1 (inclusive), representing the confidence that
-                                          this entity was observed. Higher values indicating higher
-                                          confidence. Required.
-                                        "name": "str"  # Name of the entity.
-                                          Required.
+                                        "confidence": 0.0,
+                                        "name": "str"
                                     }
                                 ]
                             }
@@ -560,18 +490,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                         "values": [
                             {
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 },
-                                "confidence": 0.0  # A score, in the range of 0 to 1
-                                  (inclusive), representing the confidence that this detection was
-                                  accurate. Higher values indicating higher confidence. Required.
+                                "confidence": 0.0
                             }
                         ]
                     },
@@ -582,39 +506,23 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                                     {
                                         "boundingPolygon": [
                                             {
-                                                "x": 0,  # The
-                                                  horizontal x-coordinate of this point, in pixels.
-                                                  Zero values corresponds to the left-most pixels in
-                                                  the image. Required.
-                                                "y": 0  # The
-                                                  vertical y-coordinate of this point, in pixels. Zero
-                                                  values corresponds to the top-most pixels in the
-                                                  image. Required.
+                                                "x": 0,
+                                                "y": 0
                                             }
                                         ],
-                                        "text": "str",  # Text content of the
-                                          detected text line. Required.
+                                        "text": "str",
                                         "words": [
                                             {
                                                 "boundingPolygon": [
                                                     {
                                                         "x":
-                                                          0,  # The horizontal x-coordinate of this
-                                                          point, in pixels. Zero values corresponds to
-                                                          the left-most pixels in the image. Required.
+                                                          0,
                                                         "y":
-                                                          0  # The vertical y-coordinate of this point,
-                                                          in pixels. Zero values corresponds to the
-                                                          top-most pixels in the image. Required.
+                                                          0
                                                     }
                                                 ],
-                                                "confidence": 0.0,  #
-                                                  The level of confidence that the word was detected.
-                                                  Confidence scores span the range of 0.0 to 1.0
-                                                  (inclusive), with higher values indicating a higher
-                                                  confidence of detection. Required.
-                                                "text": "str"  # Text
-                                                  content of the word. Required.
+                                                "confidence": 0.0,
+                                                "text": "str"
                                             }
                                         ]
                                     }
@@ -625,21 +533,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                     "smartCropsResult": {
                         "values": [
                             {
-                                "aspectRatio": 0.0,  # The aspect ratio of the crop
-                                  region. Aspect ratio is calculated by dividing the width of the
-                                  region in pixels by its height in pixels. The aspect ratio will be in
-                                  the range 0.75 to 1.8 (inclusive) if provided by the developer during
-                                  the analyze call. Otherwise, it will be in the range 0.5 to 2.0
-                                  (inclusive). Required.
+                                "aspectRatio": 0.0,
                                 "boundingBox": {
-                                    "h": 0,  # Height of the area, in pixels.
-                                      Required.
-                                    "w": 0,  # Width of the area, in pixels.
-                                      Required.
-                                    "x": 0,  # X-coordinate of the top left point
-                                      of the area, in pixels. Required.
-                                    "y": 0  # Y-coordinate of the top left point
-                                      of the area, in pixels. Required.
+                                    "h": 0,
+                                    "w": 0,
+                                    "x": 0,
+                                    "y": 0
                                 }
                             }
                         ]
@@ -647,16 +546,14 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                     "tagsResult": {
                         "values": [
                             {
-                                "confidence": 0.0,  # A score, in the range of 0 to 1
-                                  (inclusive), representing the confidence that this entity was
-                                  observed. Higher values indicating higher confidence. Required.
-                                "name": "str"  # Name of the entity. Required.
+                                "confidence": 0.0,
+                                "name": "str"
                             }
                         ]
                     }
                 }
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

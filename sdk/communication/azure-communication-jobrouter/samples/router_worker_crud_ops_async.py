@@ -139,7 +139,7 @@ class RouterWorkerSamplesAsync(object):
                     ],
                     labels={"Location": "NA", "English": 7, "O365": True, "Xbox_Support": False},
                     tags={"Name": "John Doe", "Department": "IT_HelpDesk"},
-                    max_concurrent_offers = 1,
+                    max_concurrent_offers=1,
                 ),
             )
 

@@ -7,15 +7,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_field
 from .._vendor import FileType
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -95,8 +102,7 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
         type_name: Optional[str] = None,
         values_max_count: Optional[int] = None,
         values_min_count: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -198,8 +204,7 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
         version: Optional[int] = None,
         last_modified_t_s: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -261,8 +266,7 @@ class AtlasClassification(_model_base.Model):
         entity_status: Optional[Union[str, "_models.EntityStatus"]] = None,
         remove_propagations_on_entity_delete: Optional[bool] = None,
         validity_periods: Optional[List["_models.TimeBoundary"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -420,8 +424,7 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
         entity_types: Optional[List[str]] = None,
         sub_types: Optional[List[str]] = None,
         super_types: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -476,8 +479,7 @@ class AtlasClassifications(_model_base.Model):
         sort_type: Optional[Union[str, "_models.SortType"]] = None,
         start_index: Optional[int] = None,
         total_count: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -510,8 +512,7 @@ class AtlasConstraintDef(_model_base.Model):
         *,
         params: Optional[Dict[str, Any]] = None,
         type: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -545,8 +546,7 @@ class AtlasEntitiesWithExtInfo(_model_base.Model):
         *,
         referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = None,
         entities: Optional[List["_models.AtlasEntity"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -683,8 +683,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
         contacts: Optional[Dict[str, List["_models.ContactInfo"]]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -804,8 +803,7 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
         sub_types: Optional[List[str]] = None,
         super_types: Optional[List[str]] = None,
         relationship_attribute_defs: Optional[List["_models.AtlasRelationshipAttributeDef"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -890,37 +888,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
         meaning_names: Optional[List[str]] = None,
         meanings: Optional[List["_models.AtlasTermAssignmentHeader"]] = None,
         status: Optional[Union[str, "_models.EntityStatus"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class AtlasEntityHeaders(_model_base.Model):
-    """An instance of an entity header map.
-
-    :ivar guid_header_map: The description of the guid header map,.
-    :vartype guid_header_map: dict[str, ~azure.purview.datamap.models.AtlasEntityHeader]
-    """
-
-    guid_header_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="guidHeaderMap")
-    """The description of the guid header map,."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        guid_header_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -954,8 +922,7 @@ class AtlasEntityWithExtInfo(_model_base.Model):
         *,
         referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = None,
         entity: Optional["_models.AtlasEntity"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1062,8 +1029,7 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
         last_modified_t_s: Optional[str] = None,
         default_value: Optional[str] = None,
         element_defs: Optional[List["_models.AtlasEnumElementDef"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1101,8 +1067,7 @@ class AtlasEnumElementDef(_model_base.Model):
         description: Optional[str] = None,
         ordinal: Optional[int] = None,
         value: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1140,8 +1105,7 @@ class AtlasErrorResponse(_model_base.Model):
         request_id: Optional[str] = None,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1239,8 +1203,7 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
         language: Optional[str] = None,
         terms: Optional[List["_models.AtlasRelatedTermHeader"]] = None,
         usage: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1338,8 +1301,7 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
         children_categories: Optional[List["_models.AtlasRelatedCategoryHeader"]] = None,
         parent_category: Optional["_models.AtlasRelatedCategoryHeader"] = None,
         terms: Optional[List["_models.AtlasRelatedTermHeader"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1447,8 +1409,7 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
         usage: Optional[str] = None,
         category_info: Optional[Dict[str, "_models.AtlasGlossaryCategory"]] = None,
         term_info: Optional[Dict[str, "_models.AtlasGlossaryTerm"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1486,8 +1447,7 @@ class AtlasGlossaryHeader(_model_base.Model):
         display_text: Optional[str] = None,
         glossary_guid: Optional[str] = None,
         relation_guid: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1701,8 +1661,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
         usage: Optional[str] = None,
         valid_values: Optional[List["_models.AtlasRelatedTermHeader"]] = None,
         valid_values_for: Optional[List["_models.AtlasRelatedTermHeader"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1771,8 +1730,7 @@ class AtlasLineageInfo(_model_base.Model):
         lineage_direction: Optional[Union[str, "_models.LineageDirection"]] = None,
         parent_relations: Optional[List["_models.ParentRelation"]] = None,
         relations: Optional[List["_models.LineageRelation"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1810,8 +1768,7 @@ class AtlasObjectId(_model_base.Model):
         guid: Optional[str] = None,
         type_name: Optional[str] = None,
         unique_attributes: Optional[Dict[str, Any]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1859,8 +1816,7 @@ class AtlasRelatedCategoryHeader(_model_base.Model):
         display_text: Optional[str] = None,
         parent_category_guid: Optional[str] = None,
         relation_guid: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1935,8 +1891,7 @@ class AtlasRelatedObjectId(_model_base.Model):
         relationship_attributes: Optional["_models.AtlasStruct"] = None,
         relationship_guid: Optional[str] = None,
         relationship_status: Optional[Union[str, "_models.StatusAtlasRelationship"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1996,8 +1951,7 @@ class AtlasRelatedTermHeader(_model_base.Model):
         status: Optional[Union[str, "_models.AtlasTermRelationshipStatus"]] = None,
         steward: Optional[str] = None,
         term_guid: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2096,8 +2050,7 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
         update_time: Optional[int] = None,
         updated_by: Optional[str] = None,
         version: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2200,8 +2153,7 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
         values_min_count: Optional[int] = None,
         is_legacy_attribute: Optional[bool] = None,
         relationship_type_name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2391,8 +2343,7 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
         end_def2: Optional["_models.AtlasRelationshipEndDef"] = None,
         relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = None,
         relationship_label: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2450,8 +2401,7 @@ class AtlasRelationshipEndDef(_model_base.Model):
         is_legacy_attribute: Optional[bool] = None,
         name: Optional[str] = None,
         type: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2484,8 +2434,7 @@ class AtlasRelationshipWithExtInfo(_model_base.Model):
         *,
         referred_entities: Optional[Dict[str, "_models.AtlasEntityHeader"]] = None,
         relationship: Optional["_models.AtlasRelationship"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2524,8 +2473,7 @@ class AtlasStruct(_model_base.Model):
         attributes: Optional[Dict[str, Any]] = None,
         type_name: Optional[str] = None,
         last_modified_t_s: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2627,8 +2575,7 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
         version: Optional[int] = None,
         last_modified_t_s: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2698,8 +2645,7 @@ class AtlasTermAssignmentHeader(_model_base.Model):
         status: Optional[Union[str, "_models.AtlasTermAssignmentStatus"]] = None,
         steward: Optional[str] = None,
         term_guid: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2749,8 +2695,7 @@ class AtlasTermCategorizationHeader(_model_base.Model):
         display_text: Optional[str] = None,
         relation_guid: Optional[str] = None,
         status: Optional[Union[str, "_models.AtlasTermRelationshipStatus"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2981,8 +2926,7 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
         relationship_category: Optional[Union[str, "_models.RelationshipCategory"]] = None,
         relationship_label: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3024,8 +2968,7 @@ class AtlasTypeDefHeader(_model_base.Model):
         category: Optional[Union[str, "_models.TypeCategory"]] = None,
         guid: Optional[str] = None,
         name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3083,51 +3026,7 @@ class AtlasTypesDef(_model_base.Model):
         relationship_defs: Optional[List["_models.AtlasRelationshipDef"]] = None,
         struct_defs: Optional[List["_models.AtlasStructDef"]] = None,
         term_template_defs: Optional[List["_models.TermTemplateDef"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class AutoCompleteOptions(_model_base.Model):
-    """The payload of autocomplete request.
-
-    :ivar keywords: The keywords applied to all fields that support autocomplete operation. It must
-     be at least 1 character, and no more than 100 characters.
-    :vartype keywords: str
-    :ivar limit: The number of autocomplete results we hope to return. The default value is 50.
-     The value must be a number between 1 and 100.
-    :vartype limit: int
-    :ivar filter: The filter for the autocomplete request.
-    :vartype filter: any
-    """
-
-    keywords: Optional[str] = rest_field()
-    """The keywords applied to all fields that support autocomplete operation. It must
-     be at least 1 character, and no more than 100 characters."""
-    limit: Optional[int] = rest_field()
-    """The number of autocomplete results we hope to return. The default value is 50.
-     The value must be a number between 1 and 100."""
-    filter: Optional[Any] = rest_field()
-    """The filter for the autocomplete request."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        keywords: Optional[str] = None,
-        limit: Optional[int] = None,
-        filter: Optional[Any] = None,  # pylint: disable=redefined-builtin
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3155,8 +3054,7 @@ class AutoCompleteResult(_model_base.Model):
         self,
         *,
         value: Optional[List["_models.AutoCompleteResultValue"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3189,8 +3087,7 @@ class AutoCompleteResultValue(_model_base.Model):
         *,
         text: Optional[str] = None,
         query_plus_text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3223,75 +3120,7 @@ class BulkImportResult(_model_base.Model):
         *,
         failed_import_info_list: Optional[List["_models.ImportInfo"]] = None,
         success_import_info_list: Optional[List["_models.ImportInfo"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class BusinessMetadataOptions(_model_base.Model):
-    """Business metadata to send to the service.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar file: InputStream of file. Required.
-    :vartype file: bytes
-    """
-
-    file: FileType = rest_field(is_multipart_file_input=True)
-    """InputStream of file. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        file: FileType,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ClassificationAssociateOptions(_model_base.Model):
-    """The request payload for classification association.
-
-    :ivar classification: An instance of a classification; it doesn't have an identity, this object
-     exists only when associated with an entity.
-    :vartype classification: ~azure.purview.datamap.models.AtlasClassification
-    :ivar entity_guids: The GUID of the entity.
-    :vartype entity_guids: list[str]
-    """
-
-    classification: Optional["_models.AtlasClassification"] = rest_field()
-    """An instance of a classification; it doesn't have an identity, this object
-     exists only when associated with an entity."""
-    entity_guids: Optional[List[str]] = rest_field(name="entityGuids")
-    """The GUID of the entity."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        classification: Optional["_models.AtlasClassification"] = None,
-        entity_guids: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3324,8 +3153,7 @@ class ContactInfo(_model_base.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         info: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3365,8 +3193,7 @@ class ContactSearchResultValue(_model_base.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         info: Optional[str] = None,
         contact_type: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3434,8 +3261,7 @@ class DateFormat(_model_base.Model):
         number_format: Optional["_models.NumberFormat"] = None,
         time_instance: Optional["_models.DateFormat"] = None,
         time_zone: Optional["_models.TimeZone"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3473,8 +3299,7 @@ class EntityMutationResult(_model_base.Model):
         guid_assignments: Optional[Dict[str, str]] = None,
         mutated_entities: Optional[Dict[str, List["_models.AtlasEntityHeader"]]] = None,
         partial_updated_entities: Optional[List["_models.AtlasEntityHeader"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3517,8 +3342,7 @@ class ImportInfo(_model_base.Model):
         import_status: Optional[Union[str, "_models.ImportStatus"]] = None,
         parent_object_name: Optional[str] = None,
         remarks: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3556,37 +3380,7 @@ class LineageRelation(_model_base.Model):
         from_entity_id: Optional[str] = None,
         relationship_id: Optional[str] = None,
         to_entity_id: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class MoveEntitiesOptions(_model_base.Model):
-    """MoveEntitiesOptions.
-
-    :ivar entity_guids: An array of entity guids to be moved to target collection.
-    :vartype entity_guids: list[str]
-    """
-
-    entity_guids: Optional[List[str]] = rest_field(name="entityGuids")
-    """An array of entity guids to be moved to target collection."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        entity_guids: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3681,8 +3475,7 @@ class NumberFormat(_model_base.Model):  # pylint: disable=too-many-instance-attr
         parse_integer_only: Optional[bool] = None,
         percent_instance: Optional["_models.NumberFormat"] = None,
         rounding_mode: Optional[Union[str, "_models.RoundingMode"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3720,8 +3513,7 @@ class ParentRelation(_model_base.Model):
         child_entity_id: Optional[str] = None,
         relationship_id: Optional[str] = None,
         parent_entity_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3784,72 +3576,7 @@ class PurviewObjectId(_model_base.Model):
         item_path: Optional[str] = None,
         resource_id: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class QueryOptions(_model_base.Model):
-    """The search query of advanced search request.
-
-    :ivar keywords: The keywords applied to all searchable fields.
-    :vartype keywords: str
-    :ivar limit: The limit of the number of the search result. default value is 50; maximum
-     value is 1000.
-    :vartype limit: int
-    :ivar continuation_token: The token used to get next batch of data. Default 'Null' to get the
-     first
-     batch, and will return new token in each response unless there's no more data.
-    :vartype continuation_token: str
-    :ivar orderby: The sort order of search results, can specify multiple fields.
-    :vartype orderby: list[any]
-    :ivar filter: The filter for the search. See examples for the usage of supported filters.
-    :vartype filter: any
-    :ivar facets: The facets for search. See examples for the usage of supported facets.
-    :vartype facets: list[~azure.purview.datamap.models.SearchFacetItem]
-    :ivar taxonomy_setting: The taxonomy setting for search.
-    :vartype taxonomy_setting: ~azure.purview.datamap.models.SearchTaxonomySetting
-    """
-
-    keywords: Optional[str] = rest_field()
-    """The keywords applied to all searchable fields."""
-    limit: Optional[int] = rest_field()
-    """The limit of the number of the search result. default value is 50; maximum
-     value is 1000."""
-    continuation_token: Optional[str] = rest_field(name="continuationToken")
-    """The token used to get next batch of data. Default 'Null' to get the first
-     batch, and will return new token in each response unless there's no more data."""
-    orderby: Optional[List[Any]] = rest_field()
-    """The sort order of search results, can specify multiple fields."""
-    filter: Optional[Any] = rest_field()
-    """The filter for the search. See examples for the usage of supported filters."""
-    facets: Optional[List["_models.SearchFacetItem"]] = rest_field()
-    """The facets for search. See examples for the usage of supported facets."""
-    taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = rest_field(name="taxonomySetting")
-    """The taxonomy setting for search."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        keywords: Optional[str] = None,
-        limit: Optional[int] = None,
-        continuation_token: Optional[str] = None,
-        orderby: Optional[List[Any]] = None,
-        filter: Optional[Any] = None,  # pylint: disable=redefined-builtin
-        facets: Optional[List["_models.SearchFacetItem"]] = None,
-        taxonomy_setting: Optional["_models.SearchTaxonomySetting"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3905,8 +3632,7 @@ class QueryResult(_model_base.Model):
         continuation_token: Optional[str] = None,
         search_facets: Optional["_models.SearchFacetResultValue"] = None,
         value: Optional[List["_models.SearchResultValue"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3939,8 +3665,7 @@ class ResourceLink(_model_base.Model):
         *,
         display_name: Optional[str] = None,
         url: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -3978,8 +3703,7 @@ class SearchFacetItem(_model_base.Model):
         count: Optional[int] = None,
         facet: Optional[str] = None,
         sort: Optional["_models.SearchFacetSort"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4012,8 +3736,7 @@ class SearchFacetItemValue(_model_base.Model):
         *,
         count: Optional[int] = None,
         value: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4088,8 +3811,7 @@ class SearchFacetResultValue(_model_base.Model):
         glossary_type: Optional[List["_models.SearchFacetItemValue"]] = None,
         term_status: Optional[List["_models.SearchFacetItemValue"]] = None,
         term_template: Optional[List["_models.SearchFacetItemValue"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4122,8 +3844,7 @@ class SearchFacetSort(_model_base.Model):
         *,
         count: Optional[Union[str, "_models.SearchSortOrder"]] = None,
         value: Optional[Union[str, "_models.SearchSortOrder"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4174,8 +3895,7 @@ class SearchHighlights(_model_base.Model):
         name: Optional[List[str]] = None,
         description: Optional[List[str]] = None,
         entity_type: Optional[List[str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4322,8 +4042,7 @@ class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance
         term_status: Optional[str] = None,
         term_template: Optional[List[str]] = None,
         long_description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4356,55 +4075,7 @@ class SearchTaxonomySetting(_model_base.Model):
         *,
         asset_types: Optional[List[str]] = None,
         facet: Optional["_models.SearchFacetItem"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class SuggestOptions(_model_base.Model):
-    """The payload of suggest request.
-
-    :ivar keywords: The keywords applied to all fields that support suggest operation. It must be
-     at least 1 character, and no more than 100 characters. In the index schema we
-     defined a default suggester which lists all the supported fields and specifies
-     a search mode.
-    :vartype keywords: str
-    :ivar limit: The number of suggestions we hope to return. The default value is 5. The value
-     must be a number between 1 and 100.
-    :vartype limit: int
-    :ivar filter: The filter for the search.
-    :vartype filter: any
-    """
-
-    keywords: Optional[str] = rest_field()
-    """The keywords applied to all fields that support suggest operation. It must be
-     at least 1 character, and no more than 100 characters. In the index schema we
-     defined a default suggester which lists all the supported fields and specifies
-     a search mode."""
-    limit: Optional[int] = rest_field()
-    """The number of suggestions we hope to return. The default value is 5. The value
-     must be a number between 1 and 100."""
-    filter: Optional[Any] = rest_field()
-    """The filter for the search."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        keywords: Optional[str] = None,
-        limit: Optional[int] = None,
-        filter: Optional[Any] = None,  # pylint: disable=redefined-builtin
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4432,8 +4103,7 @@ class SuggestResult(_model_base.Model):
         self,
         *,
         value: Optional[List["_models.SuggestResultValue"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4575,8 +4245,7 @@ class SuggestResultValue(_model_base.Model):  # pylint: disable=too-many-instanc
         term_status: Optional[str] = None,
         term_template: Optional[List[str]] = None,
         long_description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4614,8 +4283,7 @@ class TermSearchResultValue(_model_base.Model):
         name: Optional[str] = None,
         glossary_name: Optional[str] = None,
         guid: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4717,8 +4385,7 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
         version: Optional[int] = None,
         last_modified_t_s: Optional[str] = None,
         attribute_defs: Optional[List["_models.AtlasAttributeDef"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4756,8 +4423,7 @@ class TimeBoundary(_model_base.Model):
         end_time: Optional[str] = None,
         start_time: Optional[str] = None,
         time_zone: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -4810,8 +4476,7 @@ class TimeZone(_model_base.Model):
         default: Optional["_models.TimeZone"] = None,
         display_name: Optional[str] = None,
         raw_offset: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
