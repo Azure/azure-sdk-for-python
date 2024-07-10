@@ -223,7 +223,12 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
     headers = _get_headers(
-        "Startup", provider._replica_client_manager.get_client_count() - 1, **kwargs  # pylint:disable=protected-access
+        kwargs.pop("headers", {}),
+        "Startup",
+        provider._replica_client_manager.get_client_count() - 1,
+        kwargs.pop("uses_feature_flags", False),
+        kwargs.pop("feature_filters_used", {}),
+        uses_key_vault,  # pylint:disable=protected-access
     )
 
     try:
@@ -243,15 +248,13 @@ def _delay_failure(start_time: datetime.datetime) -> None:
         time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
-def _get_headers(request_type, replica_count, **kwargs) -> str:
-    headers = kwargs.pop("headers", {})
+def _get_headers(headers, request_type, replica_count, uses_feature_flags, feature_filters_used, uses_key_vault) -> str:
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
     correlation_context = "RequestType=" + request_type
 
-    if "feature_filters_used" in kwargs and len(kwargs["feature_filters_used"]) > 0:
+    if len(feature_filters_used) > 0:
         filters_used = ""
-        feature_filters_used = kwargs.pop("feature_filters_used", {})
         if CUSTOM_FILTER_KEY in feature_filters_used:
             filters_used = CUSTOM_FILTER_KEY
         if PERCENTAGE_FILTER_KEY in feature_filters_used:
@@ -262,14 +265,9 @@ def _get_headers(request_type, replica_count, **kwargs) -> str:
             filters_used += ("+" if filters_used else "") + TARGETING_FILTER_KEY
         correlation_context += ",Filters=" + filters_used
 
-    correlation_context += _uses_feature_flags(**kwargs)
+    correlation_context += _uses_feature_flags(uses_feature_flags)
 
-    if (
-        "keyvault_credential" in kwargs
-        or "keyvault_client_configs" in kwargs
-        or "secret_resolver" in kwargs
-        or kwargs.pop("uses_key_vault", False)
-    ):
+    if uses_key_vault:
         correlation_context += ",UsesKeyVault"
     host_type = ""
     if AzureFunctionEnvironmentVariable in os.environ:
@@ -292,8 +290,8 @@ def _get_headers(request_type, replica_count, **kwargs) -> str:
     return headers
 
 
-def _uses_feature_flags(**kwargs):
-    if not kwargs.pop("uses_feature_flags", False):
+def _uses_feature_flags(uses_feature_flags):
+    if not uses_feature_flags:
         return ""
     package_name = "featuremanagement"
     try:
@@ -545,12 +543,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 try:
                     if self._refresh_on:
                         headers = _get_headers(
+                            kwargs.pop("headers", {}),
                             "Watch",
                             self._replica_client_manager.get_client_count() - 1,
-                            uses_key_vault=self._uses_key_vault,
-                            feature_filters_used=self._feature_filter_usage,
-                            uses_feature_flags=self._feature_flag_enabled,
-                            **kwargs
+                            self._feature_flag_enabled,
+                            self._feature_filter_usage,
+                            self._uses_key_vault,
                         )
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers, **kwargs
@@ -568,12 +566,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
                         headers = _get_headers(
+                            kwargs.pop("headers", {}),
                             "Watch",
                             self._replica_client_manager.get_client_count() - 1,
-                            uses_key_vault=self._uses_key_vault,
-                            feature_filters_used=self._feature_filter_usage,
-                            uses_feature_flags=self._feature_flag_enabled,
-                            **kwargs
+                            self._feature_flag_enabled,
+                            self._feature_filter_usage,
+                            self._uses_key_vault,
                         )
                         need_ff_refresh, self._refresh_on_feature_flags, feature_flags = client.refresh_feature_flags(
                             self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
