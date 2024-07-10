@@ -1198,6 +1198,8 @@ class OcrSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Zulu"""
     UNK = "unk"
     """Unknown (All)"""
+    IS_ENUM = "is"
+    """Icelandic"""
 
 
 class PhoneticEncoder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1508,6 +1510,8 @@ class SplitSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Urdu"""
     ZH = "zh"
     """Chinese (Simplified)"""
+    IS_ENUM = "is"
+    """Icelandic"""
 
 
 class StemmerTokenFilterLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1847,6 +1851,8 @@ class TextTranslationSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Malayalam"""
     PA = "pa"
     """Punjabi"""
+    IS_ENUM = "is"
+    """Icelandic"""
 
 
 class TokenCharacterKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

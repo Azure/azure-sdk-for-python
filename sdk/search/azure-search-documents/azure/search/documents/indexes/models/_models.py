@@ -6,8 +6,10 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, List, Optional, MutableMapping
+from typing_extensions import Self
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
+from .._generated import _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -32,7 +34,7 @@ from .._generated.models import (
 DELIMITER = "|"
 
 
-class SearchIndexerSkillset:
+class SearchIndexerSkillset(_serialization.Model):
     """A list of skills.
 
     All required parameters must be populated in order to send to Azure.
@@ -131,7 +133,7 @@ class SearchIndexerSkillset:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerSkillset":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -166,29 +168,6 @@ class SearchIndexerSkillset:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerSkillset.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
 
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -428,7 +407,7 @@ class SentimentSkill(SearchIndexerSkill):
         return None
 
 
-class AnalyzeTextOptions:
+class AnalyzeTextOptions(_serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens.
 
     All required parameters must be populated in order to send to Azure.
@@ -507,7 +486,7 @@ class AnalyzeTextOptions:
         return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "AnalyzeTextOptions":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a AnalyzeTextOptions instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -542,29 +521,6 @@ class AnalyzeTextOptions:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(AnalyzeRequest.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
 
 
 class CustomAnalyzer(LexicalAnalyzer):
@@ -780,7 +736,7 @@ class PatternTokenizer(LexicalTokenizer):
         )
 
 
-class SearchResourceEncryptionKey:
+class SearchResourceEncryptionKey(_serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
 
@@ -853,7 +809,7 @@ class SearchResourceEncryptionKey:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchResourceEncryptionKey"]:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -890,31 +846,8 @@ class SearchResourceEncryptionKey:
         """
         return cls._from_generated(_SearchResourceEncryptionKey.from_dict(data, content_type=content_type))
 
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
 
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
-
-
-class SynonymMap:
+class SynonymMap(_serialization.Model):
     """Represents a synonym map definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -979,7 +912,7 @@ class SynonymMap:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SynonymMap":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a SynonymMap instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -1015,31 +948,8 @@ class SynonymMap:
         """
         return cls._from_generated(_SynonymMap.from_dict(data, content_type=content_type))
 
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
 
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
-
-
-class SearchIndexerDataSourceConnection:
+class SearchIndexerDataSourceConnection(_serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
@@ -1129,7 +1039,7 @@ class SearchIndexerDataSourceConnection:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerDataSourceConnection":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a SearchIndexerDataSourceConnection instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -1164,29 +1074,6 @@ class SearchIndexerDataSourceConnection:
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexerDataSource.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
 
 
 def pack_analyzer(analyzer):
