@@ -47,21 +47,15 @@ if TYPE_CHECKING:
 # rather than the "OutboundMessageContent/InboundMessageContent" Protocol.
 # Otherwise, mypy will complain that the return type is not compatible with the type annotation when
 # the OutboundMessageContent/InboundMessageContent object is returned and passed around.
-InboundMessageContent = TypeVar(
-    "InboundMessageContent", bound=InboundMessageContentProtocol
-)
-OutboundMessageContent = TypeVar(
-    "OutboundMessageContent", bound=OutboundMessageContentProtocol
-)
+InboundMessageContent = TypeVar("InboundMessageContent", bound=InboundMessageContentProtocol)
+OutboundMessageContent = TypeVar("OutboundMessageContent", bound=OutboundMessageContentProtocol)
 
 
 def get_jsonschema_validator(draft_identifier: str) -> "Validator":
 
     # get validator
     try:
-        validator = jsonschema.validators.validator_for(
-            {"$schema": draft_identifier}, default=False
-        )
+        validator = jsonschema.validators.validator_for({"$schema": draft_identifier}, default=False)
     except AttributeError:
         raise ValueError(
             "To use a provided JSON Schema Validator, please install the "
@@ -78,9 +72,7 @@ def get_jsonschema_validator(draft_identifier: str) -> "Validator":
     return partial(jsonschema_validate, validator=validator)
 
 
-def jsonschema_validate(
-    validator: "Validator", schema: Mapping[str, Any], content: Mapping[str, Any]
-) -> None:
+def jsonschema_validate(validator: "Validator", schema: Mapping[str, Any], content: Mapping[str, Any]) -> None:
     """
     Validates content against provided schema using `jsonschema.Draft4Validator`.
      If invalid, raises Exception. Else, returns None.
@@ -186,9 +178,7 @@ def create_message_content(
         try:
             return cast(
                 OutboundMessageContent,
-                message_type.from_message_content(
-                    content_bytes, content_type, **kwargs
-                ),
+                message_type.from_message_content(content_bytes, content_type, **kwargs),
             )
         except AttributeError as exc:
             raise TypeError(

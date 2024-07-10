@@ -92,7 +92,7 @@ client = SchemaRegistryClient(
 schema_id = pre_register_schema(client)
 
 # create a JsonSchemaEncoder instance
-json_schema_encoder = JsonSchemaEncoder(client=client, validate=cast(str, SCHEMA_JSON['$schema']))
+json_schema_encoder = JsonSchemaEncoder(client=client, validate=cast(str, SCHEMA_JSON["$schema"]))
 
 with eventhub_producer, json_schema_encoder:
     send_event_data_batch(eventhub_producer, json_schema_encoder, schema_id)

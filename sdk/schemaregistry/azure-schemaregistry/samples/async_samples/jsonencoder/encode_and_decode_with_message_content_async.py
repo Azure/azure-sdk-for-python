@@ -115,7 +115,7 @@ async def main():
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, validate=cast(str, SCHEMA_JSON['$schema'])
+        client=schema_registry, group_name=GROUP_NAME, validate=cast(str, SCHEMA_JSON["$schema"])
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)

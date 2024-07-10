@@ -145,9 +145,7 @@ class SchemaRegistryClient(object):
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema: ...
 
     @overload
-    async def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs: Any
-    ) -> Schema: ...
+    async def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema: ...
 
     @distributed_trace_async
     async def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword

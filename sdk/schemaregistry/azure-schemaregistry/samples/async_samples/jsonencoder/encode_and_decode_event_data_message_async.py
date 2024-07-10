@@ -124,7 +124,7 @@ async def main():
         fully_qualified_namespace=SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE,
         credential=token_credential,
     )
-    encoder = JsonSchemaEncoder(client=schema_registry, validate=cast(str, SCHEMA_JSON['$schema']))
+    encoder = JsonSchemaEncoder(client=schema_registry, validate=cast(str, SCHEMA_JSON["$schema"]))
     schema_id = await pre_register_schema(schema_registry)
     event_data_ben, event_data_alice = await encode_to_event_data_message(encoder, schema_id)
     decoded_content_ben = await decode_event_data_message(encoder, event_data_ben)

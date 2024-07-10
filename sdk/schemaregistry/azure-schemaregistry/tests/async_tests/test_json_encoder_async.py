@@ -175,9 +175,7 @@ class TestJsonSchemaEncoderAsync(AzureRecordedTestCase):
 
         # use encoder w/o group_name to decode
         extra_sr_client = self.create_client(fully_qualified_namespace=schemaregistry_json_fully_qualified_namespace)
-        sr_json_encoder_no_group = JsonSchemaEncoder(
-            client=extra_sr_client, validate=DRAFT07_SCHEMA_IDENTIFIER
-        )
+        sr_json_encoder_no_group = JsonSchemaEncoder(client=extra_sr_client, validate=DRAFT07_SCHEMA_IDENTIFIER)
         decoded_content = await sr_json_encoder_no_group.decode(encoded_message_content)
         assert decoded_content["name"] == "Ben"
         assert decoded_content["favorite_number"] == 7

@@ -49,9 +49,7 @@ if TYPE_CHECKING:
 ###### Response Handlers ######
 
 
-def _parse_schema_properties_dict(
-    response_headers: Mapping[str, Union[str, int]]
-) -> Dict[str, Union[str, int]]:
+def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
     return {
         "id": response_headers["Schema-Id"],
         "group_name": response_headers["Schema-Group-Name"],
@@ -95,9 +93,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
     # re-generate after multi-content type response fix: https://github.com/Azure/autorest.python/issues/2122
-    properties_dict["format"] = _get_format(
-        cast(str, response_headers.get("Content-Type"))
-    )
+    properties_dict["format"] = _get_format(cast(str, response_headers.get("Content-Type")))
     pipeline_response.http_response.raise_for_status()
     return pipeline_response.http_response, properties_dict
 
@@ -107,9 +103,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 
 def get_http_request_kwargs(kwargs):
     http_request_keywords = ["params", "headers", "json", "data", "files"]
-    http_request_kwargs = {
-        key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs
-    }
+    http_request_kwargs = {key: kwargs.pop(key, None) for key in http_request_keywords if key in kwargs}
     return http_request_kwargs
 
 
@@ -119,9 +113,7 @@ def get_content_type(format: str):  # pylint:disable=redefined-builtin
     return f"application/json; serialization={format}"
 
 
-def get_case_insensitive_format(
-    format: Union[str, SchemaFormat]
-) -> str:  # pylint:disable=redefined-builtin
+def get_case_insensitive_format(format: Union[str, SchemaFormat]) -> str:  # pylint:disable=redefined-builtin
     try:
         format = cast(SchemaFormat, format)
         format = format.value
@@ -156,9 +148,7 @@ class SchemaRegistryClient:
 
     """
 
-    def __init__(
-        self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, fully_qualified_namespace: str, credential: TokenCredential, **kwargs: Any) -> None:
         # using composition (not inheriting from generated client) to allow
         # calling different operations conditionally within one method
         self._generated_client = GeneratedServiceClient(
@@ -233,9 +223,7 @@ class SchemaRegistryClient:
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema: ...
 
     @overload
-    def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs: Any
-    ) -> Schema: ...
+    def get_schema(self, *, group_name: str, name: str, version: int, **kwargs: Any) -> Schema: ...
 
     @distributed_trace
     def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
@@ -405,9 +393,7 @@ class SchemaProperties:
     def __repr__(self):
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
-            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
-                :1024
-            ]
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
         )
 
 
@@ -426,9 +412,7 @@ class Schema:
         self.properties: SchemaProperties = kwargs.pop("properties")
 
     def __repr__(self):
-        return f"Schema(definition={self.definition}, properties={self.properties})"[
-            :1024
-        ]
+        return f"Schema(definition={self.definition}, properties={self.properties})"[:1024]
 
 
 ###### Encoder Protocols ######
@@ -477,9 +461,7 @@ class OutboundMessageContent(Protocol):
     """Protocol for classes that set content and content type values internally."""
 
     @classmethod
-    def from_message_content(
-        cls, content: bytes, content_type: str, **kwargs: Any
-    ) -> Self:
+    def from_message_content(cls, content: bytes, content_type: str, **kwargs: Any) -> Self:
         """Creates an object that is a subtype of OutboundMessageContent, given content type and
          a content value to be set on the object.
 
