@@ -115,7 +115,7 @@ if __name__ == "__main__":
     pkg_details = ParsedSetup.from_path(package_dir)
 
     if should_build_docs(pkg_details.name):
-        # Only data-plane libraries run strict-sphinx at the moment
+        # Only data-plane libraries run strict sphinx at the moment
         fail_on_warning = not is_mgmt_package(pkg_details.name)
         sphinx_build(
             target_dir,
