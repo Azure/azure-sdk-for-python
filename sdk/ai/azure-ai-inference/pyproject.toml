@@ -1,2 +1,5 @@
+[tool.azure-sdk-build]
+strict_sphinx = true
+
 [tool.generate]
 autorest-post-process = true
