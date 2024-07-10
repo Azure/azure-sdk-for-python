@@ -18,6 +18,8 @@ from azure.core.exceptions import HttpResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from .._shared.streams_async import AsyncIterStreamer, StructuredMessageDecodeStream
+from .._shared.validation import ChecksumAlgorithm, SM_HEADER_V1_CRC64
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 from .._encryption import (
@@ -30,10 +32,18 @@ from .._encryption import (
 T = TypeVar('T', bytes, str)
 
 
-async def process_content(data, start_offset, end_offset, encryption):
-    if data is None:
+async def process_content(download, start_offset, end_offset, encryption, validate_content):
+    if download is None:
         raise ValueError("Response cannot be None.")
-    content = data.response.body()
+
+    if validate_content == ChecksumAlgorithm.CRC64:
+        # For async, the body is already in memory so wrap that in a stream
+        content = BytesIO(download.response.body())
+        stream = StructuredMessageDecodeStream(content, download.content_length)
+        content = await stream.read()
+    else:
+        content = download.response.body()
+
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
@@ -43,11 +53,11 @@ async def process_content(data, start_offset, end_offset, encryption):
                 content,
                 start_offset,
                 end_offset,
-                data.response.headers)
+                download.response.headers)
         except Exception as error:
             raise HttpResponseError(
                 message="Decryption failed.",
-                response=data.response,
+                response=download.response,
                 error=error) from error
     return content
 
@@ -99,16 +109,20 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             content_length = download_range[1] - download_range[0] + 1
             chunk_data = b"\x00" * content_length
         else:
+            md5_validation = self.validate_content is True or self.validate_content == ChecksumAlgorithm.MD5
             range_header, range_validation = validate_and_format_range_headers(
                 download_range[0],
                 download_range[1],
-                check_content_md5=self.validate_content
+                check_content_md5=md5_validation
             )
+            structured_body_type = SM_HEADER_V1_CRC64 if self.validate_content == ChecksumAlgorithm.CRC64 else None
+
             try:
                 _, response = await self.client.download(
                     range=range_header,
                     range_get_content_md5=range_validation,
-                    validate_content=self.validate_content,
+                    validate_content=True if md5_validation else None,
+                    structured_body_type=structured_body_type,
                     data_stream_total=self.total_size,
                     download_stream_current=self.progress_total,
                     **self.request_options
@@ -117,7 +131,12 @@ class _AsyncChunkDownloader(_ChunkDownloader):
             except HttpResponseError as error:
                 process_storage_error(error)
 
-            chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
+            chunk_data = await process_content(
+                response,
+                offset[0],
+                offset[1],
+                self.encryption_options,
+                self.validate_content)
             content_length = response.content_length
 
             # This makes sure that if_match is set so that we can validate
@@ -277,12 +296,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             await self._get_encryption_data_request()
 
+        first_get_size = self._config.max_single_get_size
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only self.MAX_CHUNK_GET_SIZE for the first
+        # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
         first_get_size = (
             self._config.max_single_get_size if not self._validate_content else self._config.max_chunk_get_size
         )
+        if self._validate_content is True or self._validate_content == ChecksumAlgorithm.MD5:
+            first_get_size = self._config.max_chunk_get_size
+
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - initial_request_start < first_get_size:
             initial_request_end = self._end_range
@@ -317,23 +341,26 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
     @property
     def _download_complete(self):
-        if is_encryption_v2(self._encryption_data):
+        if is_encryption_v2(self._encryption_data) or self._validate_content == ChecksumAlgorithm.CRC64:
             return self._download_offset >= self.size
         return self._raw_download_offset >= self.size
 
     async def _initial_request(self):
+        md5_validation = self._validate_content is True or self._validate_content == ChecksumAlgorithm.MD5
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content)
+            check_content_md5=md5_validation)
+        structured_body_type = SM_HEADER_V1_CRC64 if self._validate_content == ChecksumAlgorithm.CRC64 else None
 
         try:
             location_mode, response = await self._clients.blob.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
-                validate_content=self._validate_content,
+                validate_content=True if md5_validation else None,
+                structured_body_type=structured_body_type,
                 data_stream_total=None,
                 download_stream_current=0,
                 **self._request_options)
@@ -365,7 +392,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 # any properties.
                 try:
                     _, response = await self._clients.blob.download(
-                        validate_content=self._validate_content,
+                        validate_content=True if md5_validation else None,
+                        structured_body_type=structured_body_type,
                         data_stream_total=0,
                         download_stream_current=0,
                         **self._request_options)
@@ -385,7 +413,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 response,
                 self._initial_offset[0],
                 self._initial_offset[1],
-                self._encryption_options
+                self._encryption_options,
+                self._validate_content
             )
         self._download_offset += len(self._current_content)
         self._raw_download_offset += response.content_length

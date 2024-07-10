@@ -7,6 +7,7 @@
 from io import BytesIO
 
 import pytest
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobType
 from azure.storage.blob.aio import (
     BlobClient,
@@ -18,7 +19,13 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, Generic
 from settings.testcase import BlobPreparer
 
 from encryption_test_helper import KeyWrapper
-from test_content_validation import assert_content_crc64, assert_content_md5, assert_structured_message
+from test_content_validation import (
+    assert_content_crc64,
+    assert_content_md5,
+    assert_content_md5_get,
+    assert_structured_message,
+    assert_structured_message_get
+)
 
 
 class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
@@ -29,7 +36,10 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         credential = {'account_name': account_name, 'account_key': account_key}
         self.bsc = BlobServiceClient(self.account_url(account_name, "blob"), credential=credential, logging_enable=True)
         self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
-        await self.container.create_container()
+        try:
+            await self.container.create_container()
+        except ResourceExistsError:
+            pass
 
     # TODO: Figure out how to get this to run automatically
     async def _teardown(self):
@@ -373,4 +383,120 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await blob.download_blob()
         assert await content.readall() == data
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_get_blob(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512
+        await blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        stream = BytesIO()
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_get_blob_chunks(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512 + b'abcde'
+        await blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        stream = BytesIO()
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        read_content = b''
+        downloader = await blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        for _ in range(len(data) // 100 + 1):
+            read_content += await downloader.read(100)
+            print(len(read_content))
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        assert read_content == data
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_get_blob_chunks_partial(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512 + b'abcde'
+        await blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await blob.download_blob(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        stream = BytesIO()
+        downloader = await blob.download_blob(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        await downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data[10:1010]
+        assert stream.read() == data[10:1010]
+        await self._teardown()
+
+    @BlobPreparer()
+    @pytest.mark.live_test_only
+    async def test_get_blob_large_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        # The service will use 4 MiB for structured message chunk size, so make chunk size larger
+        self.container._config.max_chunk_get_size = 10 * 1024 * 1024
+        data = b'abcde' * 30 * 1024 * 1024 + b'abcde'  # 150 MiB + 5
+        await blob.upload_blob(data, overwrite=True, max_concurrency=5)
+
+        # Act
+        downloader = await blob.download_blob(validate_content='crc64', max_concurrency=3)
+        content = await downloader.read()
+
+        # Assert
+        assert content == data
         await self._teardown()
