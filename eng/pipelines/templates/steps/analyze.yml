@@ -27,6 +27,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Set Tox Environment Skips'
+    condition: succeededOrFailed()
     inputs:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
@@ -60,6 +61,7 @@ steps:
         }
       }
     displayName: Check for CRLF Line endings
+    condition: succeededOrFailed()
 
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
@@ -73,7 +75,7 @@ steps:
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      
+
   - task: PythonScript@0
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
