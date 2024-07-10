@@ -16,6 +16,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -92,7 +94,8 @@ def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
-    accept = _headers.pop("Accept", "application/json; serialization=Avro")
+    accept = _headers.pop("Accept", None)
+
     # Construct URL
     _url = "/$schemaGroups/$schemas/{id}"
     path_format_arguments = {
@@ -105,7 +108,8 @@ def build_schema_registry_get_schema_by_id_request(  # pylint: disable=name-too-
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -117,7 +121,8 @@ def build_schema_registry_get_schema_by_version_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
-    accept = _headers.pop("Accept", "application/json; serialization=Avro")
+    accept = _headers.pop("Accept", None)
+
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{schemaName}/versions/{schemaVersion}"
     path_format_arguments = {
@@ -132,7 +137,8 @@ def build_schema_registry_get_schema_by_version_request(  # pylint: disable=name
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if accept is not None:
+        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -394,7 +400,10 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -469,7 +478,10 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

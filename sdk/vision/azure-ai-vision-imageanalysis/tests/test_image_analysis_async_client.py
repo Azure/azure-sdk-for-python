@@ -8,6 +8,7 @@ import azure.ai.vision.imageanalysis as sdk
 from image_analysis_test_base import ImageAnalysisTestBase, ServicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
+
 # The test class name needs to start with "Test" to get collected by pytest
 class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
 

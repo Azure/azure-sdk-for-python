@@ -88,9 +88,7 @@ def set_authentication_policy(credential, kwargs):
                 scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
                 if not is_cognitive_services_scope(scope):
                     scope = scope.rstrip("/").rstrip(DEFAULT_SCOPE) + DEFAULT_SCOPE
-                kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(
-                    credential, scope
-                )
+                kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(credential, scope)
 
 
 class TextTranslationClient(ServiceClientGenerated):

@@ -1,0 +1,26 @@
+{
+  "succeed_to_regenerate": [
+    "azure-healthinsights-radiologyinsights",
+    "azure-ai-vision-face",
+    "azure-mgmt-mongocluster",
+    "azure-mgmt-edgezones",
+    "azure-ai-inference",
+    "azure-mgmt-devopsinfrastructure",
+    "azure-ai-vision-imageanalysis",
+    "azure-ai-translation-text",
+    "azure-ai-translation-document",
+    "azure-ai-contentsafety",
+    "azure_ai_assets_v2024_04_01",
+    "azure-schemaregistry",
+    "azure-ai-documentintelligence",
+    "azure-eventgrid",
+    "azure-purview-datamap",
+    "azure-communication-jobrouter"
+  ],
+  "fail_to_regenerate": [
+    "azure-developer-devcenter",
+    "azure-mgmt-informaticadatamanagement",
+    "azure-communication-messages"
+  ],
+  "time_to_regenerate": "2024-07-10 10:26:22.981059"
+}

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -25,7 +26,7 @@ class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):  # pylint: disabl
     :param endpoint: Azure AI Computer Vision endpoint (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-10-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -87,7 +88,7 @@ class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):  # pylint: disabl
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "ImageAnalysisClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
