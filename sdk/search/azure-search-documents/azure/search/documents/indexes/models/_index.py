@@ -651,7 +651,7 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index) -> "SearchIndex":
+    def _from_generated(cls, search_index) -> Optional["SearchIndex"]:
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -730,7 +730,7 @@ class SearchIndex(_serialization.Model):
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndex":
+    ) -> Optional["SearchIndex"]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key

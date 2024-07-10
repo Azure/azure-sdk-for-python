@@ -164,7 +164,7 @@ class SearchIndexerSkillset(_serialization.Model):
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndexerSkillset":
+    ) -> Optional["SearchIndexerSkillset"]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -529,7 +529,7 @@ class AnalyzeTextOptions(_serialization.Model):
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "AnalyzeTextOptions":
+    ) -> Optional["AnalyzeTextOptions"]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -979,7 +979,7 @@ class SynonymMap(_serialization.Model):
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SynonymMap":
+    ) -> Optional["SynonymMap"]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -1118,7 +1118,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndexerDataSourceConnection":
+    ) -> Optional["SearchIndexerDataSourceConnection"]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
