@@ -6,7 +6,6 @@
 
 
 def chat_completion_oyd_studio_viewcode() -> None:
-
     import os
     from openai import AzureOpenAI
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
