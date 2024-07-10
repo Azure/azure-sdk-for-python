@@ -20,6 +20,9 @@ parameters:
   - name: UseVirtualEnvironment
     type: boolean
     default: true
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
 
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self

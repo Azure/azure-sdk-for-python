@@ -83,6 +83,7 @@ jobs:
           BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
           TestPipeline: ${{ parameters.TestPipeline }}
           Artifacts: ${{ parameters.Artifacts }}
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - ${{ if eq(parameters['AdvancedBuild'], true) }}:
     - job: 'Build_Linux'
@@ -102,6 +103,7 @@ jobs:
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: linux
           UseVirtualEnvironment: false
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
     - job: 'Build_Windows'
       timeoutInMinutes: 90
@@ -120,6 +122,7 @@ jobs:
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: windows
           UseVirtualEnvironment: false
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
     - job: 'Build_MacOS'
       timeoutInMinutes: 90
@@ -138,6 +141,7 @@ jobs:
           Artifacts: ${{ parameters.Artifacts }}
           ArtifactSuffix: mac
           UseVirtualEnvironment: false
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
     - job: 'CoalesceBuildArtifacts'
       displayName: Combine Built Artifacts
