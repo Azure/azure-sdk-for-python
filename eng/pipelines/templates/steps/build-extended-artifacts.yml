@@ -29,7 +29,7 @@ steps:
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      BuildTargetingParameter: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
