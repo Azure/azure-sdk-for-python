@@ -24,12 +24,11 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
-    :param client:
-        The client of the blob or container to lease.
+    :param client: The client of the blob or container to lease.
     :type client: Union[BlobClient, ContainerClient]
-    :param Optional[str] lease_id:
-        A string representing the lease ID of an existing lease. This value does not
-        need to be specified in order to acquire a new lease, or break one.
+    :param lease_id: A string representing the lease ID of an existing lease. This value does not need to be
+    specified in order to acquire a new lease, or break one.
+    :type lease_id: Optional[str]
     """
 
     id: str

@@ -713,15 +713,11 @@ class CopyProperties(DictMixin):
         Copy Blob operation where this blob was the destination blob."""
     status: Optional[str]
     """State of the copy operation identified by Copy ID, with these values:
-        success:
-            Copy completed successfully.
-        pending:
-            Copy is in progress. Check copy_status_description if intermittent,
-            non-fatal errors impede copy progress but don't cause failure.
-        aborted:
-            Copy was ended by Abort Copy Blob.
-        failed:
-            Copy failed. See copy_status_description for failure details."""
+    success: Copy completed successfully.
+    pending: Copy is in progress. Check copy_status_description if intermittent, non-fatal errors impede copy progress
+    but don't cause failure.
+    aborted: Copy was ended by Abort Copy Blob.
+    failed: Copy failed. See copy_status_description for failure details."""
     progress: Optional[str]
     """Contains the number of bytes copied and the total bytes in the source in the last
         attempted Copy Blob operation where this blob was the destination blob. Can show
