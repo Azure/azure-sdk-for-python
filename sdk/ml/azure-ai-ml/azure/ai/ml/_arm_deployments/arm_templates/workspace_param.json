@@ -39,7 +39,7 @@
         "value": ""
     },
     "applicationInsightsOption": {
-        "value": "none"
+        "value": "new"
     },
     "applicationInsightsName": {
         "value": ""
@@ -128,9 +128,6 @@
     "managedNetwork": {
         "value": {}
     },
-    "systemDatastoresAuthMode": {
-        "value": "accesskey"
-    },
     "spark_runtime_version" : {
         "value": null
     },
@@ -197,7 +194,7 @@
     "serverless_compute_settings": {
         "value": {}
     },
-    "system_datastore_auth_mode": {
+    "systemDatastoresAuthMode": {
         "value": ""
     },
     "endpoint_resource_id": {

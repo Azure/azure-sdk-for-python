@@ -23,11 +23,11 @@ The live tests were written against the AI models mentioned below. You will need
         ```bash
         pip install wheel
         pip install -r dev_requirements.txt
-        python setup.py bdist_wheel
+        python setup.py bdist_whee
         ```
-    - Then install the resulting local wheel (update version `1.0.0b1` to the current one):
+    - Then install the resulting local wheel (update version `1.0.0b2` to the current one):
         ```bash
-        pip install dist\azure_ai_inference-1.0.0b1-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_inference-1.0.0b2-py3-none-any.whl --user --force-reinstall
         ```
 
 ## Set environment variables

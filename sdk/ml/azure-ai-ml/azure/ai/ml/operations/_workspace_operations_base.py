@@ -33,7 +33,13 @@ from azure.ai.ml._utils._workspace_utils import (
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceKind, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import (
+    ArmConstants,
+    LROConfigurations,
+    WorkspaceKind,
+    WorkspaceResourceConstants,
+    WORKSPACE_PATCH_REJECTED_KEYS,
+)
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -223,7 +229,7 @@ class WorkspaceOperationsBase(ABC):
             CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,too-many-locals
     def begin_update(
         self,
         workspace: Workspace,
@@ -369,6 +375,11 @@ class WorkspaceOperationsBase(ABC):
             or kwargs.get("update_online_store_role_assignment", None)
         )
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
+
+        # Remove deprecated keys from older workspaces that might still have them before we try to update.
+        if workspace.tags is not None:
+            for bad_key in WORKSPACE_PATCH_REJECTED_KEYS:
+                _ = workspace.tags.pop(bad_key, None)
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
@@ -589,6 +600,14 @@ class WorkspaceOperationsBase(ABC):
                 param["applicationInsightsResourceGroupName"],
                 group_name,
             )
+        elif workspace._kind and workspace._kind.lower() in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}:
+            _set_val(param["applicationInsightsOption"], "none")
+            # Set empty values because arm templates whine over unset values.
+            _set_val(param["applicationInsightsName"], "ignoredButCantBeEmpty")
+            _set_val(
+                param["applicationInsightsResourceGroupName"],
+                "ignoredButCantBeEmpty",
+            )
         else:
             log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)
             _set_val(param["logAnalyticsName"], log_analytics)
@@ -639,7 +658,7 @@ class WorkspaceOperationsBase(ABC):
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
 
-        if not workspace.allow_roleassignment_on_rg:
+        if workspace.allow_roleassignment_on_rg is False:
             _set_val(param["allowRoleAssignmentOnRG"], "false")
 
         if workspace.image_build_compute:
@@ -685,7 +704,7 @@ class WorkspaceOperationsBase(ABC):
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId, AzureStorageContainerResourceId
 
             # set workspace storage account access auth type to identity-based
-            _set_val(param["system_datastore_auth_mode"], "identity")
+            _set_val(param["systemDatastoresAuthMode"], "identity")
 
             if offline_store_target:
                 arm_id = AzureStorageContainerResourceId(offline_store_target)

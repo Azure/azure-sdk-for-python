@@ -55,20 +55,20 @@ Note that the client library does not directly read these environment variable a
 
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
-| Chat completions | `CHAT_COMPLETIONS_ENDPOINT` | `CHAT_COMPLETIONS_KEY` |
-| Embeddings | `EMBEDDINGS_ENDPOINT` | `EMBEDDINGS_KEY` |
+| Chat completions | `AZURE_AI_CHAT_ENDPOINT` | `AZURE_AI_CHAT_KEY` |
+| Embeddings | `AZURE_AI_EMBEDDINGS_ENDPOINT` | `AZURE_AI_EMBEDDINGS_KEY` |
 <!--
 | Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
 -->
 
-To run against a Managed Compute Endpoint, some samples also have an optional environment variable `CHAT_COMPLETIONS_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
+To run against a Managed Compute Endpoint, some samples also have an optional environment variable `AZURE_AI_CHAT_DEPLOYMENT_NAME`. This is the value used to set the HTTP request header `azureml-model-deployment` when constructing the client.
 
 ## Azure OpenAI endpoints
 
 | Sample type | Endpoint environment variable name | Key environment variable name  |
 |----------|----------|----------|
-| Chat completions | `AOAI_CHAT_COMPLETIONS_ENDPOINT` | `AOAI_CHAT_COMPLETIONS_KEY` |
-| Embeddings | `AOAI_EMBEDDINGS_ENDPOINT` | `AOAI_EMBEDDINGS_KEY` |
+| Chat completions | `AZURE_OPENAI_CHAT_ENDPOINT` | `AZURE_OPENAI_CHAT_KEY` |
+| Embeddings | `AZURE_OPENAI_EMBEDDINGS_ENDPOINT` | `AZURE_OPENAI_EMBEDDINGS_KEY` |
 <!--
 | Image generation | `IMAGE_GENERATION_ENDPOINT` | `IMAGE_GENERATION_KEY` |
 -->

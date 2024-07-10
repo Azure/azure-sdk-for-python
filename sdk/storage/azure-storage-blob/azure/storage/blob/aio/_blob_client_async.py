@@ -167,9 +167,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :param str source_url:
             A URL of up to 2 KB in length that specifies a file or blob.
             The value should be URL-encoded as it would appear in a request URI.
-            If the source is in another account, the source must either be public
-            or must be authenticated via a shared access signature. If the source
-            is public, no authentication is required.
+            The source must either be public or must be authenticated via a shared
+            access signature as part of the url or using the source_authorization keyword.
+            If the source is public, no authentication is required.
             Examples:
             https://myaccount.blob.core.windows.net/mycontainer/myblob
 

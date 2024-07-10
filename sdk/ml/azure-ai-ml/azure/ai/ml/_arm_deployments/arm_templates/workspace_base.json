@@ -119,10 +119,11 @@
         },
         "applicationInsightsOption": {
             "type": "string",
-            "defaultValue": "none",
+            "defaultValue": "new",
             "allowedValues": [
-                "none",
-                "existing"
+                "new",
+                "existing",
+                "none"
             ],
             "metadata": {
                 "description": "Determines whether or not new ApplicationInsights should be provisioned."
@@ -416,13 +417,6 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
-        "systemDatastoresAuthMode": {
-            "type": "string",
-            "defaultValue": "accesskey",
-            "metadata": {
-                "description": "The authentication mode for system datastores"
-            }
-        },
         "allowRoleAssignmentOnRG": {
             "type": "string",
             "defaultValue": "true",
@@ -599,11 +593,11 @@
                 "description": "Serverless compute settings to be used for the workspace."
             }
         },
-        "system_datastore_auth_mode": {
+        "systemDatastoresAuthMode": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Settings to control workspace storage account access auth type"
+                "description": "The authentication mode for system datastores"
             }
         },
         "endpoint_resource_id": {
@@ -803,6 +797,34 @@
             }
         },
         {
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "tags": "[parameters('tagValues')]",
+            "apiVersion": "2020-08-01",
+            "name": "[parameters('logAnalyticsName')]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web"
+            }
+        },
+        {
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "type": "Microsoft.Insights/components",
+            "tags": "[parameters('tagValues')]",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[parameters('applicationInsightsName')]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
+            "kind": "web",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+            ],
+            "properties": {
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[parameters('logAnalyticsArmId')]"
+            }
+        },
+        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-08-01-preview",
@@ -812,7 +834,8 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
             ],
             "identity": "[parameters('identity')]",
             "properties": {
@@ -838,7 +861,8 @@
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                "systemDatastoresAuthMode": "[parameters('system_datastore_auth_mode')]",
+                "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
+                "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                 "managedNetwork": "[parameters('managedNetwork')]",
                 "featureStoreSettings": {
                     "computeruntime": {
@@ -953,7 +977,8 @@
                                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                                 },
                                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                                "systemDatastoresAuthMode": "[parameters('system_datastore_auth_mode')]",
+                                "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
+                                "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                                 "managedNetwork": "[parameters('managedNetwork')]",
                                 "featureStoreSettings": {
                                     "computeruntime": {
