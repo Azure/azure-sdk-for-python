@@ -121,11 +121,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs.update(access_condition)
         name = indexer.name
         result = await self._client.indexers.create_or_update(
-            indexer_name=name,
-            indexer=indexer,
-            prefer="return=representation",
-            error_map=error_map,
-            **kwargs
+            indexer_name=name, indexer=indexer, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result
 

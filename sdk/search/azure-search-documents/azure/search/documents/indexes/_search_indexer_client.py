@@ -125,11 +125,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs.update(access_condition)
         name = indexer.name
         result = self._client.indexers.create_or_update(
-            indexer_name=name,
-            indexer=indexer,
-            prefer="return=representation",
-            error_map=error_map,
-            **kwargs
+            indexer_name=name, indexer=indexer, prefer="return=representation", error_map=error_map, **kwargs
         )
         return result
 
@@ -582,6 +578,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             **kwargs
         )
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
+
 
 def _validate_skillset(skillset: SearchIndexerSkillset):
     """Validates any multi-version skills in the skillset to verify that unsupported
