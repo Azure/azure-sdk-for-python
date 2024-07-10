@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional, MutableMapping
+from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable
 from typing_extensions import Self
 from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
@@ -259,22 +259,32 @@ class SearchField(_serialization.Model):
         """
         return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
     ) -> Optional["SearchField"]:
         """Parse a dict using given key extractor return a model.
+
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
         :param str content_type: JSON by default, set application/xml if XML.
@@ -282,7 +292,9 @@ class SearchField(_serialization.Model):
         :rtype: SearchField
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchField.from_dict(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchField.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 def SimpleField(
@@ -698,22 +710,32 @@ class SearchIndex(_serialization.Model):
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
     ) -> "SearchIndex":
         """Parse a dict using given key extractor return a model.
+
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
         :param str content_type: JSON by default, set application/xml if XML.
@@ -721,7 +743,9 @@ class SearchIndex(_serialization.Model):
         :rtype: SearchIndex
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndex.from_dict(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchIndex.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:
