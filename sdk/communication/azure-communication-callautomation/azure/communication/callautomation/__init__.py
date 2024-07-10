@@ -8,7 +8,6 @@ import warnings
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
-from ._streaming_data_parser import StreamingDataParser
 from ._models import (
     CallConnectionProperties,
     FileSource,
@@ -32,11 +31,7 @@ from ._models import (
     ServerCallLocator,
     GroupCallLocator,
     AzureBlobContainerRecordingStorage,
-    AzureCommunicationsRecordingStorage,
-    AudioMetadata,
-    AudioData,
-    TranscriptionMetadata,
-    TranscriptionData
+    AzureCommunicationsRecordingStorage
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -74,9 +69,6 @@ __all__ = [
     "CallAutomationClient",
     "CallConnectionClient",
 
-    # parser
-    "StreamingDataParser",
-
     # models for input
     "FileSource",
     "TextSource",
@@ -89,10 +81,6 @@ __all__ = [
     "TranscriptionSubscription",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
-    "AudioMetadata",
-    "AudioData",
-    "TranscriptionMetadata",
-    "TranscriptionData",
 
     # models for output
     "CallConnectionProperties",
