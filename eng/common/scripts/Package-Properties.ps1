@@ -109,10 +109,11 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $pkgPropsResult = @()
 
     Write-Host "In Get-PRPkgProperties function"
-    if (Test-Path "Function:GetPRPackageInfoFromRepoFn")
+
+    if ($GetPRPackageInfoFromRepoFn -and (Test-Path "Function:$GetPRPackageInfoFromRepoFn"))
     {
         Write-Host "Attempting to invoke the language one"
-        $pkgPropsResult = GetPRPackageInfoFromRepoFn -InputDiffJson $InputDiffJson
+        $pkgPropsResult = &$GetPRPackageInfoFromRepoFn -InputDiffJson $InputDiffJson
     }
 
     return $pkgPropsResult

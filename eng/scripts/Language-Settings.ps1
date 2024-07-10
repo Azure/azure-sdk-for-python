@@ -68,6 +68,7 @@ function Get-python-PRPackageInfoFromRepo($InputDiffJson)
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
+  Write-Host "In the Get-AllPackageInfoFromRepo function"
   $allPackageProps = @()
   $searchPath = "sdk"
   if ($serviceDirectory)
