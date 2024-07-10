@@ -4,6 +4,26 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: chat_completions_oyd.py
+
+DESCRIPTION:
+    This sample demonstrates how to use your own data with Azure OpenAI Chat Completions.
+
+USAGE:
+    python chat_completions_oyd.py
+
+    Before running the sample:
+
+    pip install "openai" and "azure-identity"
+
+    Set the environment variables with your own values:
+    1) AZURE_OPENAI_ENDPOINT - the endpoint to your Azure OpenAI resource.
+    2) AZURE_OPENAI_CHAT_DEPLOYMENT - the deployment name you chose when deploying your model.
+    3) AZURE_OPENAI_SEARCH_ENDPOINT - the endpoint to your Azure Search resource.
+    4) AZURE_OPENAI_SEARCH_INDEX - the index name you chose when creating your Azure Search index.
+"""
+
 
 def chat_completion_oyd_studio_viewcode() -> None:
     import os

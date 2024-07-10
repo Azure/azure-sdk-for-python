@@ -4,6 +4,24 @@
 # license information.
 # --------------------------------------------------------------------------
 
+"""
+FILE: chat_completions_quickstart.py
+
+DESCRIPTION:
+    This sample demonstrates how to get started with Chat Completions using Azure OpenAI.
+
+USAGE:
+    python chat_completions_quickstart.py
+
+    Before running the sample:
+
+    pip install "openai" and "azure-identity"
+
+    Set the environment variables with your own values:
+    1) AZURE_OPENAI_ENDPOINT - the endpoint to your Azure OpenAI resource.
+    2) AZURE_OPENAI_CHAT_DEPLOYMENT - the deployment name you chose when deploying your model.
+"""
+
 
 def chat_completion_quickstart() -> None:
     import os
