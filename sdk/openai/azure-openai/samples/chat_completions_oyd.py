@@ -13,11 +13,11 @@ def chat_completion_oyd_studio_viewcode() -> None:
     endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
     deployment = os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"]
 
-    # token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
+    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
     client = AzureOpenAI(
         azure_endpoint=endpoint,
-        api_key=os.environ["AZURE_OPENAI_KEY"],
+        azure_ad_token_provider=token_provider,
         api_version="2024-02-01",
     )
 
@@ -27,13 +27,8 @@ def chat_completion_oyd_studio_viewcode() -> None:
             messages=[
                 {
                     "role": "user",
-                    "content": "Who is DRI?",
-                },
-                {
-                    "role": "assistant",
-                    "content": "DRI stands for Directly Responsible Individual of a service. Which service are you asking about?",
-                },
-                {"role": "user", "content": "Opinion mining service"},
+                    "content": "What languages have libraries you know about for Azure OpenAI?",
+                }
             ],
             extra_body={
                 "data_sources": [
@@ -49,10 +44,10 @@ def chat_completion_oyd_studio_viewcode() -> None:
                     }
                 ]
             },
-        ),
+        )
     )
 
-    print(completion.to_json())
+    print(completion.choices[0].message.content)
 
 
 if __name__ == "__main__":

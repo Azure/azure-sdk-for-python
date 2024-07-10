@@ -7,10 +7,13 @@
 def chat_completion_quickstart() -> None:
     import os
     from openai import AzureOpenAI
+    from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+
+    token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
 
     client = AzureOpenAI(
         azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-        api_key=os.environ["AZURE_OPENAI_KEY"],
+        azure_ad_token_provider=token_provider,
         api_version="2024-02-01",
     )
 
@@ -30,7 +33,7 @@ def chat_completion_quickstart() -> None:
         ],
     )
 
-    print(response.choices[0].message.content)
+    print(response.to_json())
 
 
 if __name__ == "__main__":
