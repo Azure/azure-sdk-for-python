@@ -101,6 +101,7 @@ For an example how to create a client, a request and get the result see the exam
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
+3. Run the sample. Example: `python <sample_name>.py`
 
 ### Create a request for the RadiologyInsights service
 
