@@ -14,7 +14,7 @@ extends:
       # As such, the canary test runs should run on a reduced matrix.
       CloudConfig:
         Prod:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
           Location: 'eastus'
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
