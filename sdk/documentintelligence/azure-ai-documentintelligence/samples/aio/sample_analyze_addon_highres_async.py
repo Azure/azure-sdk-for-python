@@ -73,7 +73,6 @@ async def analyze_with_highres():
             "sample_forms/add_ons/highres.png",
         )
     )
-    # [START analyze_with_highres]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -139,7 +138,6 @@ async def analyze_with_highres():
                         )
 
     print("----------------------------------------")
-    # [END analyze_with_highres]
 
 
 async def main():

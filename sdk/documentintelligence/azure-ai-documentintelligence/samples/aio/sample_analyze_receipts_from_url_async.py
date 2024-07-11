@@ -33,7 +33,6 @@ def format_price(price_dict):
 
 
 async def analyze_receipts_from_url():
-    # [START analyze_receipts_from_url]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, AnalyzeResult
@@ -48,7 +47,6 @@ async def analyze_receipts_from_url():
             "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
         )
         receipts: AnalyzeResult = await poller.result()
-    # [END analyze_receipts_from_url]
 
     if receipts.documents:
         for idx, receipt in enumerate(receipts.documents):

@@ -58,7 +58,6 @@ async def analyze_barcodes():
             "sample_forms/add_ons/barcodes.jpg",
         )
     )
-    # [START analyze_barcodes]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -91,7 +90,6 @@ async def analyze_barcodes():
                 print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
 
     print("----------------------------------------")
-    # [END analyze_barcodes]
 
 
 async def main():

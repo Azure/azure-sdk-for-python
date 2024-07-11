@@ -44,7 +44,6 @@ import os
 
 
 async def analyze_query_fields():
-    # [START analyze_query_fields]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentAnalysisFeature, AnalyzeResult
@@ -71,7 +70,6 @@ async def analyze_query_fields():
                 print(f"Address: {doc.fields['Address'].value_string}")
             if doc.fields and doc.fields["InvoiceNumber"]:
                 print(f"Invoice number: {doc.fields['InvoiceNumber'].value_string}")
-    # [END analyze_query_fields]
 
 
 async def main():

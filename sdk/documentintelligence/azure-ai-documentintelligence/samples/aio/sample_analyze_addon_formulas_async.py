@@ -58,7 +58,6 @@ async def analyze_formulas():
             "sample_forms/add_ons/formulas.pdf",
         )
     )
-    # [START analyze_formulas]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -100,7 +99,6 @@ async def analyze_formulas():
                 print(f"  Bounding regions: {format_polygon(formula.polygon)}")
 
     print("----------------------------------------")
-    # [END analyze_formulas]
 
 
 async def main():

@@ -66,7 +66,6 @@ async def analyze_layout():
         )
     )
 
-    # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -139,7 +138,6 @@ async def analyze_layout():
                         )
 
     print("----------------------------------------")
-    # [END extract_layout]
 
 
 async def main():

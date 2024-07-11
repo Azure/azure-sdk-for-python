@@ -52,7 +52,6 @@ async def analyze_languages():
             "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-    # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -84,7 +83,6 @@ async def analyze_languages():
             )
 
     print("----------------------------------------")
-    # [END analyze_languages]
 
 
 async def main():

@@ -42,7 +42,6 @@ async def analyze_receipts():
         )
     )
 
-    # [START analyze_receipts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -113,7 +112,6 @@ async def analyze_receipts():
                 if total:
                     print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
         print("--------------------------------------")
-    # [END analyze_receipts]
 
 
 async def main():

@@ -71,7 +71,6 @@ async def analyze_custom_documents(custom_model_id):
     path_to_sample_documents = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg")
     )
-    # [START analyze_custom_documents]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -172,7 +171,6 @@ async def analyze_custom_documents(custom_model_id):
                             col_names.insert(0, "")
                             print_table(col_names, list(row_dict.values()))
     print("-----------------------------------")
-    # [END analyze_custom_documents]
 
 
 async def main():

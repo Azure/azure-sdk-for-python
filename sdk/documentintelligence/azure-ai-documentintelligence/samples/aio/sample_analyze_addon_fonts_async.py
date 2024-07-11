@@ -60,7 +60,6 @@ async def analyze_fonts():
             "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-    # [START analyze_fonts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -134,7 +133,6 @@ async def analyze_fonts():
         print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
     print("----------------------------------------")
-    # [END analyze_fonts]
 
 
 async def main():
