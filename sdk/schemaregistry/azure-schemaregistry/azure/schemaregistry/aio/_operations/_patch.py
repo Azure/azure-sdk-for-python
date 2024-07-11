@@ -22,7 +22,10 @@ from ..._operations._patch import (
     build_schema_registry_get_schema_properties_by_content_request,
     build_schema_registry_register_schema_request,
 )
-from ._operations import ClsType, SchemaRegistryClientOperationsMixin as GeneratedClientOperationsMixin
+from ._operations import (
+    ClsType,
+    SchemaRegistryClientOperationsMixin as GeneratedClientOperationsMixin,
+)
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -84,7 +87,10 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
@@ -165,7 +171,10 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)

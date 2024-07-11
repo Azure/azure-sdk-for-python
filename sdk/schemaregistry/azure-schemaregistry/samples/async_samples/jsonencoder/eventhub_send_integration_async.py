@@ -36,7 +36,6 @@ from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 
 EVENTHUB_CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -98,7 +97,7 @@ async def main():
     schema_id = await pre_register_schema(sr_client)
 
     # create a JsonSchemaEncoder instance
-    json_schema_encoder = JsonSchemaEncoder(client=sr_client, validate=JsonSchemaDraftIdentifier.DRAFT2020_12)
+    json_schema_encoder = JsonSchemaEncoder(client=sr_client, validate=cast(str, SCHEMA_JSON["$schema"]))
     await send_event_data_batch(eventhub_producer, json_schema_encoder, schema_id)
     await json_schema_encoder.close()
     await azure_credential.close()

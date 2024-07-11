@@ -23,17 +23,18 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Optional, Dict
+from typing import Any, Dict, Optional
 
 
 class InvalidContentError(ValueError):
     """Error during encoding or decoding content with a schema.
 
     :param str message: The message object stringified as 'message' attribute
-    :keyword error: The original exception, if any.
+    :keyword dict[str, str] or None details: The error details. Depending on the error, this may include
+     information like: `schema_id`, `schema_definition`, `message_content`.
 
     :ivar str message: A stringified version of the message parameter
-    :ivar dict details: The error details. Depending on the error, this may include
+    :ivar dict[str, str] details: The error details. Depending on the error, this may include
      information like: `schema_id`, `schema_definition`, `message_content`.
     """
 
