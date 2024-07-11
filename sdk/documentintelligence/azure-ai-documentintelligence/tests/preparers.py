@@ -17,7 +17,7 @@ REGION = os.getenv("DOCUMENTINTELLIGENCE_LOCATION", None)
 DocumentIntelligencePreparer = functools.partial(
     PowerShellPreparer,
     "documentintelligence",
-    documentintelligence_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
+    documentintelligence_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     documentintelligence_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     documentintelligence_storage_container_sas_url="https://blob_sas_url",
     documentintelligence_testing_data_container_sas_url="https://blob_sas_url",
@@ -39,7 +39,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             documentintelligence_api_key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
             polling_interval = 5
         else:
-            documentintelligence_endpoint = "https://fakeendpoint.cognitiveservices.azure.com/"
+            documentintelligence_endpoint = "https://fakeendpoint.cognitiveservices.azure.com"
             documentintelligence_api_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
             polling_interval = 0
 
