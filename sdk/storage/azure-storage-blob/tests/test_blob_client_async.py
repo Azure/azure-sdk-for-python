@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import platform
+import time
 from datetime import datetime, timedelta
 
 import pytest
@@ -20,6 +21,7 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobServiceClient
 )
+from azure.storage.blob._shared.authentication import AzureSigningError
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -679,5 +681,26 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             service = client(
                 self.account_url(storage_account_name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
             await service.close()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_bad_storage_account_key_no_retry(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = "a"
+
+        blob_client = BlobClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            container_name="foo",
+            blob_name="bar",
+            credential=storage_account_key,
+        )
+
+        start = time.time()
+        with pytest.raises(AzureSigningError) as e:
+            await blob_client.get_blob_properties()
+        end = time.time()
+
+        assert "Invalid base64-encoded string" in e.value.message
+        assert end - start < 2.0
 
 # ------------------------------------------------------------------------------
