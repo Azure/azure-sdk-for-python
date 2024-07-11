@@ -179,7 +179,7 @@ maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription
 
 result = maps_render_client.get_map_static_image(
     zoom=10,
-    bounding_box_private= [13.228, 52.4559, 13.5794, 52.629]
+    bounding_box_private=[13.228, 52.4559, 13.5794, 52.629]
 )
 ```
 

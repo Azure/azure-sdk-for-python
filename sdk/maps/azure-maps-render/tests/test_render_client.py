@@ -47,6 +47,7 @@ class TestMapsRenderClient(AzureRecordedTestCase):
             bounds=[42.982261, 24.980233, 56.526017, 1.355233],
         )
         assert len(result.get("copyrights", [])) > 0
+        assert "TomTom" in result["copyrights"][0] or "TomTom" in result["copyrights"][1]
 
     @MapsRenderPreparer()
     @recorded_by_proxy
@@ -55,6 +56,7 @@ class TestMapsRenderClient(AzureRecordedTestCase):
             south_west=[42.982261, 24.980233],
             north_east=[56.526017, 1.355233],
         )
+        assert len(result.get("regions", [])) > 0
         assert len(result.get("generalCopyrights", [])) > 0
         copyrights = result["generalCopyrights"][0]
         assert "TomTom" in copyrights
