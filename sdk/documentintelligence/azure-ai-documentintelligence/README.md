@@ -213,6 +213,29 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
 
+def get_words(page, line):
+    result = []
+    for word in page.words:
+        if _in_span(word, line.spans):
+            result.append(word)
+    return result
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
+
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
@@ -295,6 +318,29 @@ Select the General Document Model by passing `model_id="prebuilt-document"` into
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+def get_words(words, line):
+    result = []
+    for word in words:
+        if _in_span(word, line.spans):
+            result.append(word)
+    return result
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
+
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -387,6 +433,9 @@ For example, to analyze fields from a sales receipt, use the prebuilt receipt mo
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
+
+def format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -525,6 +574,33 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeResult
 
+def print_table(header_names, table_data):
+    """Print a two-dimensional array like a table.
+
+    Based on provided column header names and two two-dimensional array data, print the strings like table.
+
+    Args:
+        header_names: An array of string, it's the column header names.  e.g. ["name", "gender", "age"]
+        table_data: A two-dimensional array, they're the table data.  e.g. [["Mike", "M", 25], ["John", "M", 19], ["Lily", "F", 23]]
+    Return: None
+        It's will print the string like table in output window. e.g.
+        Name    Gender    Age
+        Mike    M         25
+        John    M         19
+        Lily    F         23
+    """
+    max_len_list = []
+    for i in range(len(header_names)):
+        col_values = list(map(lambda row: len(str(row[i])), table_data))
+        col_values.append(len(str(header_names[i])))
+        max_len_list.append(max(col_values))
+
+    row_format_str = "".join(map(lambda len: f"{{:<{len + 4}}}", max_len_list))
+
+    print(row_format_str.format(*header_names))
+    for row in table_data:
+        print(row_format_str.format(*row))
+
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
@@ -561,10 +637,7 @@ if result.documents:
         if not doc.fields is None:
             for field_name, field_value in doc.fields.items():
                 # Dynamic Table cell information store as array in document field.
-                if (
-                    field_value.type == SYMBOL_OF_TABLE_TYPE
-                    and field_value.value_array
-                ):
+                if field_value.type == SYMBOL_OF_TABLE_TYPE and field_value.value_array:
                     col_names = []
                     sample_obj = field_value.value_array[0]
                     if KEY_OF_VALUE_OBJECT in sample_obj:
@@ -582,7 +655,7 @@ if result.documents:
                             row_data = list(map(extract_value_by_col_name, col_names))
                             table_rows.append(row_data)
                     print_table(col_names, table_rows)
-                
+
                 elif (
                     field_value.type == SYMBOL_OF_OBJECT_TYPE
                     and KEY_OF_VALUE_OBJECT in field_value
@@ -592,9 +665,7 @@ if result.documents:
                     is_fixed_table = all(
                         (
                             rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
-                            and Counter(
-                                list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys())
-                            )
+                            and Counter(list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys()))
                             == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
                         )
                         for rows_of_column in rows_by_columns
@@ -609,9 +680,7 @@ if result.documents:
                             rows = rows_of_column[KEY_OF_VALUE_OBJECT]
                             for row_key in list(rows.keys()):
                                 if row_key in row_dict:
-                                    row_dict[row_key].append(
-                                        rows[row_key].get(KEY_OF_CELL_CONTENT)
-                                    )
+                                    row_dict[row_key].append(rows[row_key].get(KEY_OF_CELL_CONTENT))
                                 else:
                                     row_dict[row_key] = [
                                         row_key,
@@ -634,6 +703,9 @@ Additionally, a document URL can also be used to analyze documents using the `be
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, AnalyzeResult
+
+def format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
