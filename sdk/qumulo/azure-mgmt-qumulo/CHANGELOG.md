@@ -4,13 +4,12 @@
 
 ### Features Added
 
-  - Model FileSystemResource has a new parameter private_ips
   - Model MarketplaceDetails has a new parameter term_unit
 
 ### Breaking Changes
 
   - Model FileSystemResource no longer has parameter initial_capacity
-  - Model FileSystemResource no longer has parameter private_i_ps
+  - Rename parameter `private_i_ps` to `private_ips` in Model FileSystemResource
   - Model FileSystemResourceUpdateProperties no longer has parameter cluster_login_url
   - Model FileSystemResourceUpdateProperties no longer has parameter private_i_ps
 
