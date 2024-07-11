@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.qumulo import QumuloMgmtClient
 
 """
@@ -26,33 +29,32 @@ from azure.mgmt.qumulo import QumuloMgmtClient
 def main():
     client = QumuloMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ulseeqylxb",
+        subscription_id="382E8C7A-AC80-4D70-8580-EFE99537B9B7",
     )
 
     response = client.file_systems.update(
         resource_group_name="rgQumulo",
-        file_system_name="nauwwbfoqehgbhdsmkewoboyxeqg",
+        file_system_name="ahpixnvykleksjlr",
         properties={
-            "identity": {"type": "None", "userAssignedIdentities": {"key4522": {}}},
+            "identity": {"type": "None", "userAssignedIdentities": {"key7679": {}}},
             "properties": {
-                "clusterLoginUrl": "adabmuthwrbjshzfbo",
-                "delegatedSubnetId": "vjfirtaljehawmflyfianw",
+                "delegatedSubnetId": "bqaryqsjlackxphpmzffgoqsvm",
                 "marketplaceDetails": {
-                    "marketplaceSubscriptionId": "ujrcqvxfnhxxheoth",
+                    "marketplaceSubscriptionId": "xaqtkloiyovmexqhn",
                     "marketplaceSubscriptionStatus": "PendingFulfillmentStart",
-                    "offerId": "eiyhbmpwgezcmzrrfoiskuxlcvwojf",
-                    "planId": "x",
-                    "publisherId": "wfmokfdjbwpjhz",
+                    "offerId": "s",
+                    "planId": "fwtpz",
+                    "publisherId": "czxcfrwodazyaft",
+                    "termUnit": "cfwwczmygsimcyvoclcw",
                 },
-                "privateIPs": ["eugjqbaoucgjsopzfrq"],
-                "userDetails": {"email": "aa"},
+                "userDetails": {"email": "aqsnzyroo"},
             },
-            "tags": {"key7534": "jsgqvqbagquvxowbrkanyhzvo"},
+            "tags": {"key357": "ztkkvhfia"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/liftrqumulo/resource-manager/Qumulo.Storage/stable/2022-10-12/examples/FileSystems_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/liftrqumulo/resource-manager/Qumulo.Storage/stable/2024-06-19/examples/FileSystems_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
