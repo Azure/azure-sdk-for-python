@@ -33,6 +33,12 @@ if LOGGING_ENABLED:
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
+#
+# Define these environment variables. They should point to a Mistral Large model
+# hosted on MaaS, or any other MaaS model that suppots chat completions with tools.
+# AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+# AZURE_AI_CHAT_KEY=<32-char-api-key>
+#
 ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_chat",
@@ -40,6 +46,28 @@ ServicePreparerChatCompletions = functools.partial(
     azure_ai_chat_key="00000000000000000000000000000000",
 )
 
+#
+# Define these environment variables. They should point to any GPT model that
+# accepts image input in chat completions (e.g. GPT-4o model).
+# hosted on Azure OpenAI (AOAI) endpoint.
+# TODO: When we have a MaaS model that supports chat completions with image input,
+# use that instead.
+# AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
+# AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
+#
+ServicePreparerAOAIChatCompletions = functools.partial(
+    EnvironmentVariableLoader,
+    "azure_openai_chat",
+    azure_openai_chat_endpoint="https://your-deployment-name.your-azure-region.inference.ai.azure.com",
+    azure_openai_chat_key="00000000000000000000000000000000",
+)
+
+#
+# Define these environment variables. They should point to a Cohere model
+# hosted on MaaS, or any other MaaS model that text embeddings.
+# AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+# AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
+#
 ServicePreparerEmbeddings = functools.partial(
     EnvironmentVariableLoader,
     "azure_ai_embeddings",
@@ -54,11 +82,15 @@ class ModelClientTestBase(AzureRecordedTestCase):
     # Set to True to print out all results to the console
     PRINT_RESULT = True
 
-    # Regular expression describing the pattern of a result ID. Format allowed are:
+    # Regular expression describing the pattern of a result ID returned from MaaS/MaaP endpoint. Format allowed are:
     # "183b56eb-8512-484d-be50-5d8df82301a2", "26ef25aa45424781865a2d38a4484274" and "Sanitized"
     REGEX_RESULT_ID = re.compile(
         r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$|^[0-9a-fA-F]{32}$|^Sanitized$"
     )
+
+    # Regular expression describing the pattern of a result ID returned from AOAI endpoint.
+    # For example: "chatcmpl-9jscXwejvOMnGrxRfACmNrCCdiwWb"
+    REGEX_AOAI_RESULT_ID = re.compile(r"^chatcmpl-[0-9a-zA-Z]{29}$")
 
     # A couple of tool definitions to use in the tests
     TOOL1 = sdk.models.ChatCompletionsFunctionToolDefinition(
@@ -114,6 +146,14 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
+    def _load_aoai_chat_credentials(self, *, bad_key: bool, **kwargs):
+        endpoint = kwargs.pop("azure_openai_chat_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_key")
+        credential = AzureKeyCredential("")
+        headers={"api-key": key}
+        api_version="2024-02-15-preview"
+        return endpoint, credential, headers, api_version
+
     def _load_embeddings_credentials(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_ai_embeddings_endpoint")
         key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_embeddings_key")
@@ -142,9 +182,19 @@ class ModelClientTestBase(AzureRecordedTestCase):
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
         return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
+    def _create_async_aoai_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential, headers, api_version = self._load_aoai_chat_credentials(bad_key=bad_key, **kwargs)
+        return async_sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, headers=headers,
+                                               api_version=api_version, logging_enable=LOGGING_ENABLED)
+
     def _create_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
         endpoint, credential = self._load_chat_credentials(bad_key=bad_key, **kwargs)
         return sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
+
+    def _create_aoai_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential, headers, api_version = self._load_aoai_chat_credentials(bad_key=bad_key, **kwargs)
+        return sdk.ChatCompletionsClient(endpoint=endpoint, credential=credential, headers=headers,
+                                         api_version=api_version, logging_enable=LOGGING_ENABLED)
 
     def _create_async_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.EmbeddingsClient:
         endpoint, credential = self._load_embeddings_credentials(bad_key=bad_key, **kwargs)
@@ -203,12 +253,15 @@ class ModelClientTestBase(AzureRecordedTestCase):
         assert body_json["n"] == 1
 
     @staticmethod
-    def _validate_chat_completions_result(response: sdk.models.ChatCompletions, contains: List[str]):
+    def _validate_chat_completions_result(response: sdk.models.ChatCompletions, contains: List[str], is_aoai: Optional[bool] = False):
         assert any(item in response.choices[0].message.content for item in contains)
         assert response.choices[0].message.role == sdk.models.ChatRole.ASSISTANT
         assert response.choices[0].finish_reason == sdk.models.CompletionsFinishReason.STOPPED
         assert response.choices[0].index == 0
-        assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+        if is_aoai:
+            assert bool(ModelClientTestBase.REGEX_AOAI_RESULT_ID.match(response.id))
+        else:
+            assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
         assert response.created is not None
         assert response.created != ""
         assert response.model is not None

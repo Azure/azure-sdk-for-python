@@ -6,7 +6,7 @@ import inspect
 import os
 import azure.ai.inference as sdk
 
-from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
+from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerAOAIChatCompletions, ServicePreparerEmbeddings
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
@@ -436,6 +436,63 @@ class TestModelClient(ModelClientTestBase):
             tools=[forecast_tool],
         )
         self._validate_chat_completions_result(response, ["62"])
+        client.close()
+
+    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
+    # input input.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_input_image_file(self, **kwargs):
+        client = self._create_aoai_chat_client(**kwargs)
+
+        # Construct the full path to the image file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_file_path = os.path.join(script_dir, "test_image1.png")
+
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(content="You are an AI assistant that describes images in details."),
+                sdk.models.UserMessage(
+                    content=[
+                        sdk.models.TextContentItem(text="What's in this image?"),
+                        sdk.models.ImageContentItem(
+                            image_url=sdk.models.ImageUrl.load(
+                                image_file=image_file_path,
+                                image_format="png",
+                                detail=sdk.models.ImageDetailLevel.HIGH,
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        client.close()
+
+    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
+    # input input.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_input_image_url(self, **kwargs):
+        # TODO: Update this to point to Main branch
+        url = "https://aka.ms/azsdk/azure-ai-inference/python/tests/test_image1.png"
+        client = self._create_aoai_chat_client(**kwargs)
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(content="You are an AI assistant that describes images in details."),
+                sdk.models.UserMessage(
+                    content=[
+                        sdk.models.TextContentItem(text="What's in this image?"),
+                        sdk.models.ImageContentItem(
+                            image_url=sdk.models.ImageUrl(url=url, detail=sdk.models.ImageDetailLevel.AUTO)
+                        ),
+                    ],
+                ),
+            ],
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
         client.close()
 
     # **********************************************************************************
