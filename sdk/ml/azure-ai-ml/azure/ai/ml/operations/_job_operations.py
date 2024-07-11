@@ -300,7 +300,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return cast(
             Iterable[Job],
-            self._operation_2023_02_preview.list(
+            self.service_client_01_2024_preview.list(
                 self._operation_scope.resource_group_name,
                 self._workspace_name,
                 cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -1027,7 +1027,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._operation_2023_02_preview.get(
+        return self.service_client_01_2024_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
