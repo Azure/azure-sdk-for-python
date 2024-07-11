@@ -9,6 +9,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     FineTuningJob as RestFineTuningJob,
 )
+from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
 
 
 @pytest.fixture
@@ -46,7 +47,7 @@ def expected_custom_model_finetuning_job_full(
     train_dataset, validation_dataset, mlflow_model_llama, hyperparameters
 ) -> RestFineTuningJob:
     custom_model_finetuning_job = CustomModelFineTuningJob(
-        task="text_completion",
+        task=FineTuningTaskTypes.TEXT_CLASSIFICATION,
         model=mlflow_model_llama,
         training_data=train_dataset,
         validation_data=validation_dataset,
