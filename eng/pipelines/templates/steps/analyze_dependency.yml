@@ -17,6 +17,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/verify-readme.yml
     parameters:
       ScanPath: ${{ parameters.ScanPath }}
+      Condition: succeededOrFailed()
 
   - pwsh: |
       sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
