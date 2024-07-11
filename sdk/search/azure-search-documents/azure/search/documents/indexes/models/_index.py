@@ -177,6 +177,7 @@ class SearchField(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.name = kwargs["name"]
         self.type = kwargs["type"]
         self.key = kwargs.get("key", None)
@@ -284,7 +285,9 @@ class SearchField(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore
@@ -615,6 +618,7 @@ class SearchIndex(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.name = kwargs["name"]
         self.fields = kwargs["fields"]
         self.scoring_profiles = kwargs.get("scoring_profiles", None)
@@ -748,7 +752,9 @@ class SearchIndex(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore

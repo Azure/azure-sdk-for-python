@@ -6,8 +6,8 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, List, Optional, MutableMapping, Dict, Callable
-from typing_extensions import Self
 from enum import Enum
+from typing_extensions import Self
 from azure.core import CaseInsensitiveEnumMeta
 from .._generated import _serialization
 from .._generated.models import (
@@ -79,7 +79,7 @@ class SearchIndexerSkillset(_serialization.Model):
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
     ) -> None:
-        # pylint:disable=unused-argument
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.skills = skills
@@ -159,7 +159,9 @@ class SearchIndexerSkillset(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore
@@ -465,6 +467,7 @@ class AnalyzeTextOptions(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.text = kwargs["text"]
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.tokenizer_name = kwargs.get("tokenizer_name", None)
@@ -528,7 +531,9 @@ class AnalyzeTextOptions(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_analyze_request().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_analyze_request().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore
@@ -793,6 +798,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.key_name = kwargs["key_name"]
         self.key_version = kwargs["key_version"]
         self.vault_uri = kwargs["vault_uri"]
@@ -866,7 +872,9 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore
@@ -924,6 +932,7 @@ class SynonymMap(_serialization.Model):
     format = "solr"
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.name = kwargs["name"]
         self.synonyms = kwargs["synonyms"]
         self.encryption_key = kwargs.get("encryption_key", None)
@@ -984,7 +993,9 @@ class SynonymMap(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore
@@ -1047,6 +1058,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.name = kwargs["name"]
         self.description = kwargs.get("description", None)
         self.type = kwargs["type"]
@@ -1130,7 +1142,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
     def from_dict(  # type: ignore

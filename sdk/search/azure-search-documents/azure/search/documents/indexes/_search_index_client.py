@@ -229,7 +229,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = self._client.indexes.create(patched_index, **kwargs)
-        return cast(SearchIndex, SearchIndex._from_generated(result))
+        return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_index(
@@ -281,7 +281,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return cast(SearchIndex, SearchIndex._from_generated(result))
+        return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def analyze_text(self, index_name: str, analyze_request: AnalyzeTextOptions, **kwargs: Any) -> AnalyzeResult:
@@ -438,7 +438,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return cast(SynonymMap, SynonymMap._from_generated(result))
+        return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def create_or_update_synonym_map(
@@ -470,7 +470,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return cast(SynonymMap, SynonymMap._from_generated(result))
+        return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def get_service_statistics(self, **kwargs: Any) -> MutableMapping[str, Any]:
