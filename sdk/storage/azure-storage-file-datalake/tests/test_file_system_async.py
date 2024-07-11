@@ -1080,7 +1080,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         dsc = DataLakeServiceClient(url, token_credential, logging_enable=True)
         file_system_name = self._get_file_system_reference()
         directory_client_name = '/'
@@ -1119,7 +1119,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         url = self.account_url(datalake_storage_account_name, 'dfs')
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         dsc = DataLakeServiceClient(url, token_credential)
         file_system_name = self._get_file_system_reference()
         directory_client_name = '/'
@@ -1216,7 +1216,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         await file_system_client.create_directory('testdir1')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
@@ -1244,7 +1244,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         await file_system_client.create_directory('testdir2')
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         fsc = FileSystemClient(
             url, file_system_name,
             credential=token_credential,
