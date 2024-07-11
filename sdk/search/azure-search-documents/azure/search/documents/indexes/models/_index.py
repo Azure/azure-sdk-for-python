@@ -172,6 +172,7 @@ class SearchField(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.name = kwargs["name"]
         self.type = kwargs["type"]
         self.key = kwargs.get("key", None)
@@ -214,7 +215,7 @@ class SearchField(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_field) -> Optional["SearchField"]:
+    def _from_generated(cls, search_field) -> Self:
         if not search_field:
             return None
         # pylint:disable=protected-access
@@ -268,10 +269,13 @@ class SearchField(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )  # type: ignore
 
     @classmethod
     def from_dict(
@@ -287,6 +291,7 @@ class SearchField(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
         :rtype: SearchField
@@ -599,6 +604,7 @@ class SearchIndex(_serialization.Model):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.name = kwargs["name"]
         self.fields = kwargs["fields"]
         self.scoring_profiles = kwargs.get("scoring_profiles", None)
@@ -651,7 +657,7 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index) -> Optional["SearchIndex"]:
+    def _from_generated(cls, search_index) -> Self:
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -719,10 +725,13 @@ class SearchIndex(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )  # type: ignore
 
     @classmethod
     def from_dict(
@@ -738,6 +747,7 @@ class SearchIndex(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
