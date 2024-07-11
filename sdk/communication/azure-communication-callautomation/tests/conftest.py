@@ -42,6 +42,7 @@ def start_proxy(test_proxy):
     add_header_regex_sanitizer(key="Content-Security-Policy-Report-Only", value="sanitized")
     add_header_regex_sanitizer(key="Repeatability-First-Sent", value="sanitized")
     add_header_regex_sanitizer(key="Repeatability-Request-ID", value="sanitized")
+    add_header_regex_sanitizer(key="x-ms-host", value="sanitized")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id

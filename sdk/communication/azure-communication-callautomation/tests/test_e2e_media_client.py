@@ -356,7 +356,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         # check for PlayCompleted event
         play_completed_event_file_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
         if play_completed_event_file_source is None:
-            raise ValueError("PlayCompleted event is None")
+            raise ValueError("Play media all PlayCompleted event is None")
 
         # play media
         call_connection.play_media(
@@ -367,7 +367,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         # check for PlayCompleted event
         play_completed_event_file_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
         if play_completed_event_file_source_to_target is None:
-            raise ValueError("PlayCompleted event is None")
+            raise ValueError("Play media PlayCompleted event is None")
         
         self.terminate_call(unique_id)
         return
