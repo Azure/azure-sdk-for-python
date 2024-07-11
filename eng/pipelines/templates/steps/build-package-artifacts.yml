@@ -97,7 +97,7 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
 
