@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional, MutableMapping
-
+from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable
+from typing_extensions import Self
+from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
 from .._generated.models import (
     SearchField as _SearchField,
@@ -23,7 +24,7 @@ from ._models import (
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-class SearchField:
+class SearchField(_serialization.Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
@@ -260,7 +261,7 @@ class SearchField:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchField"]:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a SearchField instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -270,22 +271,32 @@ class SearchField:
         """
         return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
     ) -> Optional["SearchField"]:
         """Parse a dict using given key extractor return a model.
+
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
         :param str content_type: JSON by default, set application/xml if XML.
@@ -293,30 +304,9 @@ class SearchField:
         :rtype: SearchField
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchField.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_generated(
+            _SearchField.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 def SimpleField(
@@ -570,7 +560,7 @@ def ComplexField(
     return SearchField(**result)
 
 
-class SearchIndex:
+class SearchIndex(_serialization.Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
@@ -730,7 +720,7 @@ class SearchIndex:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndex":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a SearchIndex instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -741,22 +731,32 @@ class SearchIndex:
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
     def from_dict(
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
     ) -> "SearchIndex":
         """Parse a dict using given key extractor return a model.
+
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
         :param str content_type: JSON by default, set application/xml if XML.
@@ -764,30 +764,9 @@ class SearchIndex:
         :rtype: SearchIndex
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndex.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_generated(
+            _SearchIndex.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:
