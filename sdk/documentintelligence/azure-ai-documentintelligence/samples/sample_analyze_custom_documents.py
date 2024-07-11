@@ -30,38 +30,11 @@ USAGE:
 import os
 from collections import Counter
 
-def print_table(header_names, table_data):
-    """Print a two-dimensional array like a table.
-
-    Based on provided column header names and two two-dimensional array data, print the strings like table.
-
-    Args:
-        header_names: An array of string, it's the column header names.  e.g. ["name", "gender", "age"]
-        table_data: A two-dimensional array, they're the table data.  e.g. [["Mike", "M", 25], ["John", "M", 19], ["Lily", "F", 23]]
-    Return: None
-        It's will print the string like table in output window. e.g.
-         Name    Gender    Age
-         Mike    M         25
-         John    M         19
-         Lily    F         23
-    """
-    max_len_list = []
-    for i in range(len(header_names)):
-        col_values = list(map(lambda row: len(str(row[i])), table_data))
-        col_values.append(len(str(header_names[i])))
-        max_len_list.append(max(col_values))
-
-    row_format_str = "".join(map(lambda len: f"{{:<{len + 4}}}", max_len_list))
-
-    print(row_format_str.format(*header_names))
-    for row in table_data:
-        print(row_format_str.format(*row))
-
 
 def analyze_custom_documents(custom_model_id):
     # For the Form_1.jpg, it should be the test file under the traning dataset which storage at the Azure Blob Storage path
-    # combined by DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX, 
-    # or it can also be a test file with the format similar to the training dataset. 
+    # combined by DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX,
+    # or it can also be a test file with the format similar to the training dataset.
     # Put it here locally just for presenting documents visually in sample.
 
     # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
@@ -73,6 +46,33 @@ def analyze_custom_documents(custom_model_id):
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
+
+    def print_table(header_names, table_data):
+        """Print a two-dimensional array like a table.
+
+        Based on provided column header names and two two-dimensional array data, print the strings like table.
+
+        Args:
+            header_names: An array of string, it's the column header names.  e.g. ["name", "gender", "age"]
+            table_data: A two-dimensional array, they're the table data.  e.g. [["Mike", "M", 25], ["John", "M", 19], ["Lily", "F", 23]]
+        Return: None
+            It's will print the string like table in output window. e.g.
+            Name    Gender    Age
+            Mike    M         25
+            John    M         19
+            Lily    F         23
+        """
+        max_len_list = []
+        for i in range(len(header_names)):
+            col_values = list(map(lambda row: len(str(row[i])), table_data))
+            col_values.append(len(str(header_names[i])))
+            max_len_list.append(max(col_values))
+
+        row_format_str = "".join(map(lambda len: f"{{:<{len + 4}}}", max_len_list))
+
+        print(row_format_str.format(*header_names))
+        for row in table_data:
+            print(row_format_str.format(*row))
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -110,10 +110,7 @@ def analyze_custom_documents(custom_model_id):
             if not doc.fields is None:
                 for field_name, field_value in doc.fields.items():
                     # Dynamic Table cell information store as array in document field.
-                    if (
-                        field_value.type == SYMBOL_OF_TABLE_TYPE
-                        and field_value.value_array
-                    ):
+                    if field_value.type == SYMBOL_OF_TABLE_TYPE and field_value.value_array:
                         col_names = []
                         sample_obj = field_value.value_array[0]
                         if KEY_OF_VALUE_OBJECT in sample_obj:
@@ -131,7 +128,7 @@ def analyze_custom_documents(custom_model_id):
                                 row_data = list(map(extract_value_by_col_name, col_names))
                                 table_rows.append(row_data)
                         print_table(col_names, table_rows)
-                    
+
                     elif (
                         field_value.type == SYMBOL_OF_OBJECT_TYPE
                         and KEY_OF_VALUE_OBJECT in field_value
@@ -141,9 +138,7 @@ def analyze_custom_documents(custom_model_id):
                         is_fixed_table = all(
                             (
                                 rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
-                                and Counter(
-                                    list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys())
-                                )
+                                and Counter(list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys()))
                                 == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
                             )
                             for rows_of_column in rows_by_columns
@@ -158,9 +153,7 @@ def analyze_custom_documents(custom_model_id):
                                 rows = rows_of_column[KEY_OF_VALUE_OBJECT]
                                 for row_key in list(rows.keys()):
                                     if row_key in row_dict:
-                                        row_dict[row_key].append(
-                                            rows[row_key].get(KEY_OF_CELL_CONTENT)
-                                        )
+                                        row_dict[row_key].append(rows[row_key].get(KEY_OF_CELL_CONTENT))
                                     else:
                                         row_dict[row_key] = [
                                             row_key,
@@ -206,9 +199,7 @@ if __name__ == "__main__":
                 request = BuildDocumentModelRequest(
                     model_id=str(uuid.uuid4()),
                     build_mode=DocumentBuildMode.TEMPLATE,
-                    azure_blob_source=AzureBlobContentSource(
-                        container_url=blob_container_sas_url, prefix=blob_prefix
-                    ),
+                    azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url, prefix=blob_prefix),
                 )
                 model = document_intelligence_admin_client.begin_build_document_model(request).result()
                 model_id = model.model_id

@@ -43,13 +43,6 @@ import os
 from collections import defaultdict
 
 
-def get_styled_text(styles, content):
-    # Iterate over the styles and merge the spans from each style.
-    spans = [span for style in styles for span in style.spans]
-    spans.sort(key=lambda span: span.offset)
-    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
-
-
 def analyze_fonts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -62,6 +55,12 @@ def analyze_fonts():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+    def get_styled_text(styles, content):
+        # Iterate over the styles and merge the spans from each style.
+        spans = [span for style in styles for span in style.spans]
+        spans.sort(key=lambda span: span.offset)
+        return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]

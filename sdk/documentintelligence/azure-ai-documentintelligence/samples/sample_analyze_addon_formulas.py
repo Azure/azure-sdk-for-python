@@ -42,12 +42,6 @@ USAGE:
 import os
 
 
-def format_polygon(polygon):
-    if not polygon:
-        return "N/A"
-    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
-
-
 def analyze_formulas():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -60,6 +54,11 @@ def analyze_formulas():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+    def format_polygon(polygon):
+        if not polygon:
+            return "N/A"
+        return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]

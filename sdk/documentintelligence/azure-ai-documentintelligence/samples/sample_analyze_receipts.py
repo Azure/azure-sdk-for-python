@@ -27,10 +27,6 @@ USAGE:
 import os
 
 
-def format_price(price_dict):
-    return "".join([f"{p}" for p in price_dict.values()])
-
-
 def analyze_receipts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -44,6 +40,9 @@ def analyze_receipts():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
+
+    def format_price(price_dict):
+        return "".join([f"{p}" for p in price_dict.values()])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]

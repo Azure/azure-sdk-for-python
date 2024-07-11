@@ -24,33 +24,6 @@ USAGE:
 import os
 
 
-def get_words(words, line):
-    result = []
-    for word in words:
-        if _in_span(word, line.spans):
-            result.append(word)
-    return result
-
-
-def _in_span(word, spans):
-    for span in spans:
-        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
-            return True
-    return False
-
-
-def format_bounding_region(bounding_regions):
-    if not bounding_regions:
-        return "N/A"
-    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
-
-
-def format_polygon(polygon):
-    if not polygon:
-        return "N/A"
-    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
-
-
 def analyze_general_documents():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -64,6 +37,29 @@ def analyze_general_documents():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+    def get_words(words, line):
+        result = []
+        for word in words:
+            if _in_span(word, line.spans):
+                result.append(word)
+        return result
+
+    def _in_span(word, spans):
+        for span in spans:
+            if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+                return True
+        return False
+
+    def format_bounding_region(bounding_regions):
+        if not bounding_regions:
+            return "N/A"
+        return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
+
+    def format_polygon(polygon):
+        if not polygon:
+            return "N/A"
+        return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
