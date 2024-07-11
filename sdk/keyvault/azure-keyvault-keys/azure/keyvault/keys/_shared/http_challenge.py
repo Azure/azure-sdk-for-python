@@ -2,11 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Dict, MutableMapping, Optional
 from urllib import parse
-
-if TYPE_CHECKING:
-    from typing import Dict, MutableMapping, Optional
 
 
 class HttpChallenge(object):
