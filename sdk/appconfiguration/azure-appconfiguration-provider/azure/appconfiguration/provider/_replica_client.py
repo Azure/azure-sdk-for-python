@@ -29,8 +29,7 @@ class ReplicaClient:
     _client: AzureAppConfigurationClient
     backoff_end_time: float = 0
     failed_attempts: int = 0
-
-    logger = getLogger(__name__)
+    LOGGER = getLogger(__name__)
 
     @classmethod
     def from_credential(
@@ -111,7 +110,7 @@ class ReplicaClient:
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
             if updated_sentinel is not None:
-                self.logger.debug(
+                self.LOGGER.debug(
                     "Refresh all triggered by key: %s label %s.",
                     key,
                     label,
@@ -121,7 +120,7 @@ class ReplicaClient:
             if e.status_code == 404:
                 if etag is not None:
                     # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                    self.logger.debug("Refresh all triggered by key: %s label %s.", key, label)
+                    self.LOGGER.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
                 raise e

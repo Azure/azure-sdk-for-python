@@ -225,10 +225,10 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     headers = _get_headers(
         kwargs.pop("headers", {}),
         "Startup",
-        provider._replica_client_manager.get_client_count() - 1,
+        provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
         kwargs.pop("uses_feature_flags", False),
         kwargs.pop("feature_filters_used", {}),
-        uses_key_vault,  # pylint:disable=protected-access
+        uses_key_vault,
     )
 
     try:
