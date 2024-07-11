@@ -221,7 +221,7 @@ class SearchField(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_field) -> Optional["SearchField"]:
+    def _from_generated(cls, search_field) -> Optional[Self]:
         if not search_field:
             return None
         # pylint:disable=protected-access
@@ -261,7 +261,7 @@ class SearchField(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchField instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -280,18 +280,19 @@ class SearchField(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchField"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -299,6 +300,7 @@ class SearchField(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
         :rtype: SearchField
@@ -667,7 +669,9 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index) -> "SearchIndex":
+    def _from_generated(cls, search_index) -> Optional[Self]:
+        if not search_index:
+            return None
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -720,7 +724,7 @@ class SearchIndex(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndex instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -740,18 +744,19 @@ class SearchIndex(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndex":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -759,6 +764,7 @@ class SearchIndex(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex

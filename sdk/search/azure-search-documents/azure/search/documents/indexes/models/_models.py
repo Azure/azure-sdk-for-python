@@ -109,7 +109,9 @@ class SearchIndexerSkillset(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, skillset) -> "SearchIndexerSkillset":
+    def _from_generated(cls, skillset) -> Optional[Self]:
+        if not skillset:
+            return None
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
@@ -133,7 +135,7 @@ class SearchIndexerSkillset(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -153,18 +155,19 @@ class SearchIndexerSkillset(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndexerSkillset":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -172,6 +175,7 @@ class SearchIndexerSkillset(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerSkillset instance
         :rtype: SearchIndexerSkillset
@@ -479,7 +483,9 @@ class AnalyzeTextOptions(_serialization.Model):
         )
 
     @classmethod
-    def _from_analyze_request(cls, analyze_request) -> "AnalyzeTextOptions":
+    def _from_analyze_request(cls, analyze_request) -> Optional[Self]:
+        if not analyze_request:
+            return None
         return cls(
             text=analyze_request.text,
             analyzer_name=analyze_request.analyzer,
@@ -498,7 +504,7 @@ class AnalyzeTextOptions(_serialization.Model):
         return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a AnalyzeTextOptions instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -518,18 +524,19 @@ class AnalyzeTextOptions(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_analyze_request().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "AnalyzeTextOptions":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -537,6 +544,7 @@ class AnalyzeTextOptions(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A AnalyzeTextOptions instance
         :rtype: AnalyzeTextOptions
@@ -807,7 +815,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key) -> Optional["SearchResourceEncryptionKey"]:
+    def _from_generated(cls, search_resource_encryption_key) -> Optional[Self]:
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
@@ -833,7 +841,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -854,18 +862,19 @@ class SearchResourceEncryptionKey(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchResourceEncryptionKey"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -873,6 +882,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchResourceEncryptionKey instance
         :rtype: SearchResourceEncryptionKey
@@ -930,7 +940,9 @@ class SynonymMap(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, synonym_map) -> "SynonymMap":
+    def _from_generated(cls, synonym_map) -> Optional[Self]:
+        if not synonym_map:
+            return None
         return cls(
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
@@ -948,7 +960,7 @@ class SynonymMap(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SynonymMap instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -968,18 +980,19 @@ class SynonymMap(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SynonymMap":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -987,6 +1000,7 @@ class SynonymMap(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SynonymMap instance
         :rtype: SynonymMap
@@ -1064,7 +1078,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source) -> "SearchIndexerDataSourceConnection":
+    def _from_generated(cls, search_indexer_data_source) -> Optional[Self]:
+        if not search_indexer_data_source:
+            return None
         connection_string = (
             search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
@@ -1090,7 +1106,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexerDataSourceConnection instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -1110,18 +1126,19 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
         return self._to_generated().as_dict(keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndexerDataSourceConnection":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -1129,6 +1146,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         and last_rest_key_case_insensitive_extractor)
 
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerDataSourceConnection instance
         :rtype: SearchIndexerDataSourceConnection
