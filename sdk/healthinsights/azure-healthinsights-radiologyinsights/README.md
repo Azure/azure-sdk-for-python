@@ -37,7 +37,7 @@ You can find the endpoint for your Health Insights service resource using the [A
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
-#### Create a RadiologyInsightsClient with AzureDefaultCredential
+#### Create a RadiologyInsightsClient with DefaultAzureCredential
 
 DefaultAzureCredential provides different ways to authenticate with the service. Documentation about this can be found [here][azure_credential]
 
