@@ -405,6 +405,7 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
         response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
         response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         deserialized = response.iter_bytes()
 
@@ -479,6 +480,7 @@ class SchemaRegistryClientOperationsMixin(SchemaRegistryClientMixinABC):  # pyli
         response_headers["Schema-Group-Name"] = self._deserialize("str", response.headers.get("Schema-Group-Name"))
         response_headers["Schema-Name"] = self._deserialize("str", response.headers.get("Schema-Name"))
         response_headers["Schema-Version"] = self._deserialize("int", response.headers.get("Schema-Version"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         deserialized = response.iter_bytes()
 

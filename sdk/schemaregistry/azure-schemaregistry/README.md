@@ -91,20 +91,27 @@ encoder = JsonSchemaEncoder(client=schema_registry_client, group_name=group_name
 
 ## Key concepts
 
+### Client concepts
+
 * Schema: Schema is the organization or structure for data. More detailed information can be found [here][schemas].
 
 * Schema Group: A logical group of similar schemas based on business criteria, which can hold multiple versions of a schema. More detailed information can be found [here][schema_groups].
 
 * SchemaRegistryClient: `SchemaRegistryClient` provides the API for storing and retrieving schemas in schema registry.
 
+### Encoder concepts
+
 * JsonSchemaEncoder: Provides API to encode content to and decode content from Binary Encoding, validate content against a JSON Schema, and cache schemas/schema IDs retrived from the registry using the `SchemaRegistryClient` locally.
 
-* MessageType: Protocol defined under `azure.schemaregistry` that allows for `JsonSchemaEncoder` interoperability with certain Azure Messaging SDK message types. Support has been added to:
+* OutboundMessageContent: Protocol defined under `azure.schemaregistry` that allows for `JsonSchemaEncoder.encode` interoperability with certain Azure Messaging SDK message types. Support has been added to:
   * `azure.eventhub.EventData` for `azure-eventhub>=5.9.0`
 
-### MessageType
+* InboundMessageContent: Protocol defined under `azure.schemaregistry` that allows for `JsonSchemaEncoder.decode` interoperability with certain Azure Messaging SDK message types. Support has been added to:
+  * `azure.eventhub.EventData` for `azure-eventhub>=5.9.0`
 
-If a message type that follows the MessageType protocol is provided to the encoder, it will set the corresponding content and content type properties:
+#### OutboundMessageContent/InboundMessageContent
+
+If a message type that follows the OutboundMessageContent protocol is provided to the `JsonSchemaEncoder`, it will set the corresponding content and content type properties. If a message type object that follows the InboundMessageContent protocol is provided to the encoder, it will get the corresponding content and content type properties. These are defined as:
 
 * `content`: Binary-encoded, JSON schema-validated payload (in general, format-specific payload)
 
