@@ -188,7 +188,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             :language: python
             :dedent: 0
             :caption: Create a new instance of the Cosmos DB client:
-            :name: create_client
     """
 
     def __init__(
@@ -273,6 +272,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/examples.py
@@ -281,7 +281,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :language: python
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
-                :name: create_database
         """
         response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
@@ -322,6 +321,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         Create the database if it does not exist already.
         If the database already exists, the existing settings are returned.
+
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.

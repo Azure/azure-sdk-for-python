@@ -274,7 +274,7 @@
 /sdk/ml/data-experiences.tests.yml                                                      @sogansky @code-vicar @pritamDas9191
 
 # PRLabel: %ML-Local Endpoints
-/sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
+/sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
 
 # PRLabel: %ML-Jobs
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230
@@ -865,6 +865,7 @@
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
+/.github/workflows/                                                  @Azure/azure-sdk-eng
 
 /tools/                                                              @scbedd @mccoyp
 
