@@ -133,7 +133,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return cast(ItemPaged[str], names)
 
     @distributed_trace
-    def get_index(self, name: str, **kwargs: Any) -> SearchIndex:
+    def get_index(self, name: str, **kwargs: Any) -> Optional[SearchIndex]:
         """
 
         :param name: The name of the index to retrieve.
@@ -153,7 +153,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get(name, **kwargs)
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return SearchIndex._from_generated(result)
 
     @distributed_trace
     def get_index_statistics(self, index_name: str, **kwargs: Any) -> MutableMapping[str, Any]:
@@ -228,7 +228,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = self._client.indexes.create(patched_index, **kwargs)
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndex, SearchIndex._from_generated(result))
 
     @distributed_trace
     def create_or_update_index(
@@ -280,7 +280,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndex, SearchIndex._from_generated(result))
 
     @distributed_trace
     def analyze_text(self, index_name: str, analyze_request: AnalyzeTextOptions, **kwargs: Any) -> AnalyzeResult:
@@ -356,7 +356,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return [x.name for x in result.synonym_maps]
 
     @distributed_trace
-    def get_synonym_map(self, name: str, **kwargs: Any) -> SynonymMap:
+    def get_synonym_map(self, name: str, **kwargs: Any) -> Optional[SynonymMap]:
         """Retrieve a named Synonym Map in an Azure Search service
 
         :param name: The name of the Synonym Map to get
@@ -437,7 +437,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = self._client.synonym_maps.create(patched_synonym_map, **kwargs)
-        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
+        return cast(SynonymMap, SynonymMap._from_generated(result))
 
     @distributed_trace
     def create_or_update_synonym_map(
@@ -469,7 +469,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return SynonymMap._from_generated(result)  # pylint:disable=protected-access
+        return cast(SynonymMap, SynonymMap._from_generated(result))
 
     @distributed_trace
     def get_service_statistics(self, **kwargs: Any) -> MutableMapping[str, Any]:

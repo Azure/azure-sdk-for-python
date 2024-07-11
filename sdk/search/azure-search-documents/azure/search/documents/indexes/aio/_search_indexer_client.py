@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Optional, Sequence, List
+from typing import Union, Any, Optional, Sequence, List, cast
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -304,7 +304,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
         result = await self._client.data_sources.create(packed_data_source, **kwargs)
-        return SearchIndexerDataSourceConnection._from_generated(result)
+        return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
 
     @distributed_trace_async
     async def create_or_update_data_source_connection(
@@ -338,7 +338,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             error_map=error_map,
             **kwargs
         )
-        return SearchIndexerDataSourceConnection._from_generated(result)
+        return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
 
     @distributed_trace_async
     async def delete_data_source_connection(
@@ -381,7 +381,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     @distributed_trace_async
     async def get_data_source_connection(
         self, name: str, *, select: Optional[List[str]] = None, **kwargs: Any
-    ) -> SearchIndexerDataSourceConnection:
+    ) -> Optional[SearchIndexerDataSourceConnection]:
         """Retrieves a data source connection definition.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
@@ -477,7 +477,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return [x.name for x in result.skillsets]
 
     @distributed_trace_async
-    async def get_skillset(self, name: str, **kwargs) -> SearchIndexerSkillset:
+    async def get_skillset(self, name: str, **kwargs) -> Optional[SearchIndexerSkillset]:
         """Retrieve a named SearchIndexerSkillset in an Azure Search service
 
         :param name: The name of the SearchIndexerSkillset to get
@@ -529,7 +529,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
         result = await self._client.skillsets.create(skillset_gen, **kwargs)
-        return SearchIndexerSkillset._from_generated(result)
+        return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
     @distributed_trace_async
     async def create_or_update_skillset(
@@ -563,4 +563,4 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             error_map=error_map,
             **kwargs
         )
-        return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
+        return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))

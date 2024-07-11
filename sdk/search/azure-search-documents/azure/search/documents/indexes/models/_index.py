@@ -215,7 +215,7 @@ class SearchField(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_field) -> Self:
+    def _from_generated(cls, search_field) -> Optional[Self]:
         if not search_field:
             return None
         # pylint:disable=protected-access
@@ -250,7 +250,7 @@ class SearchField(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchField instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -273,12 +273,12 @@ class SearchField(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(
+        return self._to_generated().as_dict(  # type: ignore
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )  # type: ignore
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
@@ -657,7 +657,9 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index) -> Self:
+    def _from_generated(cls, search_index) -> Optional[Self]:
+        if not search_index:
+            return None
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -705,7 +707,7 @@ class SearchIndex(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndex instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -734,12 +736,12 @@ class SearchIndex(_serialization.Model):
         )  # type: ignore
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchIndex"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key

@@ -109,7 +109,9 @@ class SearchIndexerSkillset(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, skillset) -> Self:
+    def _from_generated(cls, skillset) -> Optional[Self]:
+        if not skillset:
+            return None
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
@@ -133,7 +135,7 @@ class SearchIndexerSkillset(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -157,17 +159,17 @@ class SearchIndexerSkillset(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(
+        return self._to_generated().as_dict(  # type: ignore
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )  # type: ignore
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchIndexerSkillset"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -181,7 +183,7 @@ class SearchIndexerSkillset(_serialization.Model):
         :rtype: SearchIndexerSkillset
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(
+        return cls._from_generated(  # type: ignore
             _SearchIndexerSkillset.from_dict(data, content_type=content_type, key_extractors=key_extractors)
         )
 
@@ -503,7 +505,7 @@ class AnalyzeTextOptions(_serialization.Model):
         return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a AnalyzeTextOptions instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -527,17 +529,17 @@ class AnalyzeTextOptions(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_analyze_request().as_dict(
+        return self._to_analyze_request().as_dict(  # type: ignore
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )  # type: ignore
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["AnalyzeTextOptions"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -817,7 +819,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key) -> Self:
+    def _from_generated(cls, search_resource_encryption_key) -> Optional[Self]:
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
@@ -843,7 +845,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -851,9 +853,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :returns: A SearchResourceEncryptionKey instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(  # type: ignore
-            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
-        )
+        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))
 
     def as_dict(
         self,
@@ -868,17 +868,17 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(
+        return self._to_generated().as_dict(  # type: ignore
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )  # type: ignore
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchResourceEncryptionKey"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -945,7 +945,9 @@ class SynonymMap(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, synonym_map) -> Self:
+    def _from_generated(cls, synonym_map) -> Optional[Self]:
+        if not synonym_map:
+            return None
         return cls(
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
@@ -963,7 +965,7 @@ class SynonymMap(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SynonymMap instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -987,17 +989,17 @@ class SynonymMap(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(
+        return self._to_generated().as_dict(  # type: ignore
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )  # type: ignore
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SynonymMap"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -1082,7 +1084,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source) -> Self:
+    def _from_generated(cls, search_indexer_data_source) -> Optional[Self]:
+        if not search_indexer_data_source:
+            return None
         connection_string = (
             search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
@@ -1107,7 +1111,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexerDataSourceConnection instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -1131,17 +1135,17 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(
+        return self._to_generated().as_dict(  # type: ignore
             keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )  # type: ignore
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchIndexerDataSourceConnection"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
