@@ -327,7 +327,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
 
     @recorded_by_proxy
-    def test_play_multiple_file_sources_with_play_media(self):
+    def test_play_multiple_file_sources_with_play_media_all(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
@@ -358,6 +358,31 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if play_completed_event_file_source is None:
             raise ValueError("Play media all PlayCompleted event is None")
 
+        self.terminate_call(unique_id)
+        return
+
+    @recorded_by_proxy
+    def test_play_multiple_file_sources_with_play_media(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_multiple_file_source = [
+            FileSource(url=self.file_source_url),
+            FileSource(url=self.file_source_url),
+            FileSource(url=self.file_source_url)
+        ]
+
         # play media
         call_connection.play_media(
             play_source=play_multiple_file_source,
@@ -373,7 +398,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
     
     @recorded_by_proxy
-    def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media(self):
+    def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media_all(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
@@ -406,6 +431,33 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         play_completed_event_file_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
         if play_completed_event_file_source is None:
             raise ValueError("PlayCompleted event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_multiple_file_source = [
+            FileSource(url=self.file_source_url),
+            FileSource(url=self.file_source_url),
+            FileSource(url=self.file_source_url)
+        ]
+
+        random_unique_id = self._unique_key_gen(caller, target)
 
         # play media
         call_connection.play_media(
@@ -421,7 +473,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         
         self.terminate_call(unique_id)
         return
-    
+
     @pytest.mark.skip(reason="Currently the cognitive service is not available to test")
     @recorded_by_proxy
     def test_play_multiple_text_sources_with_play_media(self):
@@ -512,7 +564,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
     
     @recorded_by_proxy
-    def test_play_with_invalid_file_sources_with_play_media(self):
+    def test_play_with_invalid_file_sources_with_play_media_all(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
@@ -536,6 +588,27 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         play_failed_event = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
         if play_failed_event is None:
             raise ValueError("PlayFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_play_with_invalid_file_sources_with_play_media(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        file_prompt = [FileSource(url="https://dummy.com/dummyurl.wav")]
 
         call_connection._play_media(
             play_source=file_prompt,
