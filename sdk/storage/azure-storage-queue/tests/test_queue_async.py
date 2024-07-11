@@ -26,7 +26,7 @@ from azure.storage.queue import (
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
-from devtools_testutils import FakeTokenCredential
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import QueuePreparer
@@ -906,7 +906,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         assert queues is not None
 
         # Action 2: change token value to make request fail
-        fake_credential = FakeTokenCredential()
+        fake_credential = AsyncFakeCredential()
         service = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             credential=fake_credential)

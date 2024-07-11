@@ -49,7 +49,7 @@ from azure.storage.blob import (
     generate_account_sas,
     generate_container_sas,
     generate_blob_sas)
-from devtools_testutils import FakeTokenCredential
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -2367,7 +2367,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert result is not None
 
         # Action 2: change token value to make request fail
-        fake_credential = FakeTokenCredential()
+        fake_credential = AsyncFakeCredential()
         service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=fake_credential)
         with pytest.raises(ClientAuthenticationError):
             await service.get_service_properties()
