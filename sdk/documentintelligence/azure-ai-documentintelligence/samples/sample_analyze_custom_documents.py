@@ -32,13 +32,6 @@ from collections import Counter
 
 
 def analyze_custom_documents(custom_model_id):
-    # For the Form_1.jpg, it should be the test file under the traning dataset which storage at the Azure Blob Storage path
-    # combined by DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX,
-    # or it can also be a test file with the format similar to the training dataset.
-    # Put it here locally just for presenting documents visually in sample.
-
-    # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
-    # train a model. For more information, access https://aka.ms/build-a-custom-model please.
     path_to_sample_documents = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg")
     )
@@ -47,21 +40,8 @@ def analyze_custom_documents(custom_model_id):
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
 
-    def print_table(header_names, table_data):
-        """Print a two-dimensional array like a table.
-
-        Based on provided column header names and two two-dimensional array data, print the strings like table.
-
-        Args:
-            header_names: An array of string, it's the column header names.  e.g. ["name", "gender", "age"]
-            table_data: A two-dimensional array, they're the table data.  e.g. [["Mike", "M", 25], ["John", "M", 19], ["Lily", "F", 23]]
-        Return: None
-            It's will print the string like table in output window. e.g.
-            Name    Gender    Age
-            Mike    M         25
-            John    M         19
-            Lily    F         23
-        """
+    def _print_table(header_names, table_data):
+        # Print a two-dimensional array like a table.
         max_len_list = []
         for i in range(len(header_names)):
             col_values = list(map(lambda row: len(str(row[i])), table_data))
@@ -127,7 +107,7 @@ def analyze_custom_documents(custom_model_id):
                                 )
                                 row_data = list(map(extract_value_by_col_name, col_names))
                                 table_rows.append(row_data)
-                        print_table(col_names, table_rows)
+                        _print_table(col_names, table_rows)
 
                     elif (
                         field_value.type == SYMBOL_OF_OBJECT_TYPE
@@ -161,7 +141,7 @@ def analyze_custom_documents(custom_model_id):
                                         ]
 
                             col_names.insert(0, "")
-                            print_table(col_names, list(row_dict.values()))
+                            _print_table(col_names, list(row_dict.values()))
 
     print("------------------------------------")
     # [END analyze_custom_documents]

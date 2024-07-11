@@ -55,11 +55,6 @@ def analyze_barcodes():
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
-    def format_polygon(polygon):
-        if not polygon:
-            return "N/A"
-        return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
-
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
@@ -84,7 +79,18 @@ def analyze_barcodes():
                 print(f"- Barcode #{barcode_idx}: {barcode.value}")
                 print(f"  Kind: {barcode.kind}")
                 print(f"  Confidence: {barcode.confidence}")
-                print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
+                if not barcode.polygon:
+                    print("  Bounding regions: N/A")
+                else:
+                    print("  Bounding regions: ")
+                    print(
+                        ", ".join(
+                            [
+                                f"[{barcode.polygon[i]}, {barcode.polygon[i + 1]}]"
+                                for i in range(0, len(barcode.polygon), 2)
+                            ]
+                        )
+                    )
 
     print("----------------------------------------")
     # [END analyze_barcodes]
