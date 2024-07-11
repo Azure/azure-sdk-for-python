@@ -10,7 +10,7 @@ refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 ### Prerequisites
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal][azure_portal] or the [Azure PowerShell][azure_powershell] to set it up.
 
@@ -32,11 +32,13 @@ pip install azure-communication-callautomation
 ## Examples
 ### Initialize CallAutomationClient
 ```Python
+from azure.identity import ManagedIdentityCredential
 from azure.communication.callautomation import (CallAutomationClient)
 
 # Your unique Azure Communication service endpoint
-connection_string = '<CONNECTION STRING>'
-client = CallAutomationClient.from_connection_string(connection_string)
+endpoint_url = '<ENDPOINT>'
+credential = ManagedIdentityCredential()
+client = CallAutomationClient(endpoint_url, credential)
 ```
 
 ### Create Call
