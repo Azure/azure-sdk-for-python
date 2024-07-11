@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import logging
+from logging import getLogger
 import json
 import time
 import random
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
+from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
@@ -29,6 +30,8 @@ class ReplicaClient:
     backoff_end_time: float = 0
     failed_attempts: int = 0
 
+    logger = getLogger(__name__)
+
     @classmethod
     def from_credential(
         cls,
@@ -38,7 +41,7 @@ class ReplicaClient:
         retry_total: int,
         retry_backoff_max: int,
         **kwargs
-    ) -> "ReplicaClient":
+    ) -> Self:
         """
         Creates a new instance of the ReplicaClient class, using the provided credential to authenticate requests.
 
@@ -65,7 +68,7 @@ class ReplicaClient:
     @classmethod
     def from_connection_string(
         cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
-    ) -> "ReplicaClient":
+    ) -> Self:
         """
         Creates a new instance of the ReplicaClient class, using the provided connection string to authenticate
         requests.
@@ -108,7 +111,7 @@ class ReplicaClient:
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
             if updated_sentinel is not None:
-                logging.debug(
+                self.logger.debug(
                     "Refresh all triggered by key: %s label %s.",
                     key,
                     label,
@@ -118,7 +121,7 @@ class ReplicaClient:
             if e.status_code == 404:
                 if etag is not None:
                     # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                    logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                    self.logger.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
                 raise e
