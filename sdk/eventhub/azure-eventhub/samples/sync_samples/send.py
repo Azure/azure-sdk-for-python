@@ -75,13 +75,14 @@ def send_event_data_list(producer):
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
 
-    event_data_list = [EventData('Event Data {}'.format(i)) for i in range(10)]
-    try:
-        producer.send_batch(event_data_list)
-    except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
-        print("Size of the event data list exceeds the size limit of a single send")
-    except EventHubError as eh_err:
-        print("Sending error: ", eh_err)
+    for _ in range(100):
+        event_data_list = [EventData('Event Data {}'.format(i)) for i in range(10)]
+        try:
+            producer.send_batch(event_data_list)
+        except ValueError:  # Size exceeds limit. This shouldn't happen if you make sure before hand.
+            print("Size of the event data list exceeds the size limit of a single send")
+        except EventHubError as eh_err:
+            print("Sending error: ", eh_err)
 
 
 producer = EventHubProducerClient.from_connection_string(

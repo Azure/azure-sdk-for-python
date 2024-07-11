@@ -130,6 +130,7 @@ class EventHubConsumer(
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
+        _LOGGER.debug("%r - offset passed to consumer constructor: %r", self._name, self._offset)
         self._message_buffer: Deque["uamqp_Message"] = deque()
         self._last_received_event: Optional[EventData] = None
         self._message_buffer_lock = asyncio.Lock()

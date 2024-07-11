@@ -337,6 +337,18 @@ class EventProcessor(
                     )
                     raise
                 except Exception as error:  # pylint:disable=broad-except
+                    fully_qualified_namespace = self._consumers[partition_id]._client._address.hostname
+                    eventhub_name = self._consumers[partition_id]._client._address.path
+                    consumer_group = self._consumers[partition_id]._client._consumer_group
+                    checkpoints = await self._consumers[partition_id]._client._checkpoint_store.list_checkpoints(
+                        fully_qualified_namespace, eventhub_name, consumer_group
+                    )
+                    _LOGGER.debug(f'{self._consumers[partition_id]._name} - Updated Checkpoints from blob: {checkpoints}')
+                    _LOGGER.debug(
+                        "%r - offset on exception: %r",
+                        self._consumers[partition_id]._name,
+                        self._consumers[partition_id]._offset,
+                    )
                     _LOGGER.warning(
                         "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                         "An error occurred while receiving. The exception is %r.",

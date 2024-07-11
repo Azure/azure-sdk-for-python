@@ -240,6 +240,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     consumer._next_message_in_buffer() # pylint: disable=protected-access
                     for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
                 ]
+                _LOGGER.debug(f'{consumer._name} - Length of message buffer: {len(consumer._message_buffer)}')
             now_time = time.time()
             if len(events) > 0:
                 await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
@@ -247,6 +248,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             else:
                 if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
                     # no events received, and need to callback
+                    _LOGGER.debug(f'{consumer._name} - No events received')
                     await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
                     consumer._last_callback_called_time = now_time # pylint: disable=protected-access
                 # backoff a bit to avoid throttling CPU when no events are coming
@@ -278,6 +280,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         return
                     if consumer._last_received_event:
                         consumer._offset = consumer._last_received_event.offset
+                        _LOGGER.error(f'{consumer._name} - Exception {exception}')
+                        _LOGGER.debug(f'{consumer._name} - last received offset: {consumer._offset}')
+                        fully_qualified_namespace = consumer._client._address.hostname
+                        eventhub_name = consumer._client._address.path
+                        consumer_group = consumer._client._consumer_group
+                        checkpoints = await consumer._client._checkpoint_store.list_checkpoints(
+                            fully_qualified_namespace, eventhub_name, consumer_group
+                        )
+                        _LOGGER.debug(f'{consumer._name} - Updated Checkpoints from blob: {checkpoints}')
                     last_exception = await consumer._handle_exception(exception)
                     retried_times += 1
                     if retried_times > max_retries:

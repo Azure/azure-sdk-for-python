@@ -18,6 +18,13 @@ import logging
 from azure.eventhub.aio import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 
+import logging
+import sys
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
@@ -45,6 +52,7 @@ async def receive_batch():
         consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
         checkpoint_store=checkpoint_store,
+        logging_enable=True
     )
     async with client:
         await client.receive_batch(

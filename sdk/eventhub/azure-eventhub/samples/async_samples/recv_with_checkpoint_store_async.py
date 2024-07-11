@@ -23,6 +23,16 @@ STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 
+import logging
+import sys
+#logging.basicConfig(level=logging.DEBUG, format='amqpConnection: %(amqpConnection)s, amqpSession: %(amqpSession)s, amqpLink: %(amqpLink)s', stream=sys.stdout)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger = logging.getLogger('azure.eventhub')
+logger.setLevel(logging.DEBUG)
+logger.addHandler(handler)
+# can store offset so that we can check vs. seq num as well
+#offset_seqnum = {offset: seqnum}
+
 async def on_event(partition_context, event):
     # Put your code here.
     print("Received event from partition: {}.".format(partition_context.partition_id))
@@ -37,7 +47,6 @@ async def receive(client):
     """
     await client.receive(
         on_event=on_event,
-        starting_position="-1",  # "-1" is from the beginning of the partition.
     )
     # With specified partition_id, load-balance will be disabled, for example:
     # await client.receive(on_event=on_event, partition_id='0'))
@@ -50,6 +59,7 @@ async def main():
         consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
         checkpoint_store=checkpoint_store,  # For load-balancing and checkpoint. Leave None for no load-balancing.
+        logging_enable=True
     )
     async with client:
         await receive(client)
