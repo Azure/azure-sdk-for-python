@@ -52,14 +52,27 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
-  - ${{ if eq(parameters.UseVirtualEnvironment, true) }}:
-    - template: /eng/pipelines/templates/steps/use-venv.yml
 
-  - pwsh: |
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      VirtualEnvironmentName: "venv"
+      Activate: false
+
+  - bash: |
+      source $(VENV_LOCATION)/bin/activate
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
-    displayName: 'Prep Environment'
+    displayName: 'Prep Environment Linux/Mac'
+    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+
+  - pwsh: |
+      . $(VENV_LOCATION)/Scripts/Activate.ps1
+      which python
+      python -m pip install --force -r eng/ci_tools.txt
+      python -m pip freeze --all
+    displayName: 'Prep Environment Windows'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - template: set-dev-build.yml@self
     parameters:
@@ -84,10 +97,22 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - pwsh: |
+  - bash: |
+      source $(VENV_LOCATION)/bin/activate
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages'
+    displayName: 'Generate Packages Linux/Mac'
+    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+    timeoutInMinutes: 80
+    env:
+      CIBW_BUILD_VERBOSITY: 3
+
+  - pwsh: |
+      . $(VENV_LOCATION)/Scripts/Activate.ps1
+      which python
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
+    displayName: 'Generate Packages Windows'
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
