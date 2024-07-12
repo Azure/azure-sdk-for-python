@@ -10,7 +10,7 @@ from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperati
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import AnyStr, cast, IO, Iterable, Optional, Tuple, Union
+from typing import AnyStr, cast, IO, Iterable, Optional, Sized, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
@@ -60,9 +60,8 @@ def prepare_upload_data(
 
     content_length = data_length
     if structured_message:
-        data = cast(IO[bytes], data)
-        data = StructuredMessageEncodeStream(data, data_length, StructuredMessageProperties.CRC64)
-        content_length = len(data)
+        data = StructuredMessageEncodeStream(data, data_length, StructuredMessageProperties.CRC64)  # type: ignore
+        content_length = len(cast(Sized, data))
 
     return data, data_length, content_length  # type: ignore
 

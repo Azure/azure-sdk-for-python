@@ -97,7 +97,7 @@ def generate_segment_header(number: int, size: int) -> bytes:
             size.to_bytes(8, 'little'))
 
 
-class StructuredMessageEncodeStream(IO[bytes]):  # pylint: disable=too-many-instance-attributes
+class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
     message_version: int
     content_length: int
     message_length: int
@@ -192,26 +192,11 @@ class StructuredMessageEncodeStream(IO[bytes]):  # pylint: disable=too-many-inst
         else:
             raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
-    def __enter__(self) -> IO[bytes]:
-        return self._inner_stream.__enter__()
-
-    def __exit__(self, t, value, traceback) -> None:
-        self._inner_stream.__exit__(t, value, traceback)
-
-    def close(self) -> None:
-        self._inner_stream.close()
-
     def __len__(self):
         return self.message_length
 
     def readable(self) -> bool:
         return True
-
-    def writable(self) -> bool:
-        return False
-
-    def isatty(self) -> bool:
-        return False
 
     def seekable(self) -> bool:
         try:
@@ -303,7 +288,7 @@ class StructuredMessageEncodeStream(IO[bytes]):  # pylint: disable=too-many-inst
             self._current_segment_number = new_segment_num
 
         self._update_current_region_length()
-        self._inner_stream.seek(self._initial_content_position or 0 + self._content_offset)
+        self._inner_stream.seek((self._initial_content_position or 0) + self._content_offset)
         return position
 
     def read(self, size: int = -1) -> bytes:
@@ -329,33 +314,6 @@ class StructuredMessageEncodeStream(IO[bytes]):  # pylint: disable=too-many-inst
                 raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
         return output.getvalue()
-
-    def fileno(self) -> int:
-        raise UnsupportedOperation
-
-    def flush(self) -> None:
-        pass
-
-    def readline(self, size: int = -1) -> bytes:
-        raise UnsupportedOperation
-
-    def readlines(self, hint: int = -1) -> list[bytes]:
-        raise UnsupportedOperation
-
-    def truncate(self, size: Optional[int] = None) -> int:
-        raise UnsupportedOperation
-
-    def write(self, b) -> int:
-        raise UnsupportedOperation
-
-    def writelines(self, lines) -> None:
-        raise UnsupportedOperation
-
-    def __next__(self) -> bytes:
-        raise UnsupportedOperation
-
-    def __iter__(self) -> Iterator[bytes]:
-        raise UnsupportedOperation
 
     def _calculate_message_length(self) -> int:
         length = self._message_header_length
