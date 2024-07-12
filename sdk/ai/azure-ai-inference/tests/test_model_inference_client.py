@@ -17,6 +17,67 @@ class TestModelClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
+    #                               UNIT TESTS
+    #
+    # **********************************************************************************
+
+    def test_image_url_load(self, **kwargs):
+        local_folder = os.path.dirname(os.path.abspath(__file__))
+        image_file = os.path.join(local_folder, "test_image1.png")
+        image_url = sdk.models.ImageUrl.load(
+            image_file=image_file,
+            image_format="png",
+            detail=sdk.models.ImageDetailLevel.AUTO,
+        )
+        assert image_url
+        assert image_url.url.startswith("data:image/png;base64,iVBORw")
+        assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
+
+    # **********************************************************************************
+    #
+    #         EMBEDDINGS TESTS - NO SERVICE RESPONSER REQUIRED
+    #
+    # **********************************************************************************
+
+    def test_embeddings_request_payload(self, **kwargs):
+        client = sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        )
+        try:
+            response = client.embed(
+                input=["first phrase", "second phrase", "third phrase"],
+                dimensions=2048,
+                encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+                input_type=sdk.models.EmbeddingInputType.QUERY,
+                model_extras={
+                    "key1": 1,
+                    "key2": True,
+                    "key3": "Some value",
+                    "key4": [1, 2, 3],
+                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                },
+                raw_request_hook=self.request_callback)
+        except ServiceRequestError as _:
+            headers = self.pipeline_request.http_request.headers
+            print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
+            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
+            assert headers["Content-Type"] == "application/json"
+            assert headers["Content-Length"] == "285"
+            assert headers["extra-parameters"] == "pass_through"
+            assert headers["Accept"] == "application/json"
+            assert headers["some_header"] == "some_header_value"
+            assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
+            assert " Python/" in headers["User-Agent"]
+            assert headers["Authorization"] == "Bearer key-value"
+            assert self.pipeline_request.http_request.data == self.EMBEDDINGDS_JSON_REQUEST_PAYLOAD1
+            return
+        assert False
+
+    # **********************************************************************************
+    #
     #                      HAPPY PATH TESTS - TEXT EMBEDDINGS
     #
     # **********************************************************************************
@@ -66,18 +127,6 @@ class TestModelClient(ModelClientTestBase):
         self._print_embeddings_result(response)
         self._validate_embeddings_result(response)
         client.close()
-
-    def test_image_url_load(self, **kwargs):
-        local_folder = os.path.dirname(os.path.abspath(__file__))
-        image_file = os.path.join(local_folder, "../samples/sample1.png")
-        image_url = sdk.models.ImageUrl.load(
-            image_file=image_file,
-            image_format="png",
-            detail=sdk.models.ImageDetailLevel.AUTO,
-        )
-        assert image_url
-        assert image_url.url.startswith("data:image/png;base64,iVBORw")
-        assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
 
     # **********************************************************************************
     #
@@ -154,7 +203,7 @@ class TestModelClient(ModelClientTestBase):
             assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
             assert " Python/" in headers["User-Agent"]
             assert headers["Authorization"] == "Bearer key-value"
-            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD1
+            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD1
             return
         assert False
 
@@ -214,7 +263,7 @@ class TestModelClient(ModelClientTestBase):
             )
         except ServiceRequestError as _:
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD2
+            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD2
             return
         assert False
 
@@ -258,7 +307,7 @@ class TestModelClient(ModelClientTestBase):
             )
         except ServiceRequestError as _:
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD3
+            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD3
             return
         assert False
 

@@ -18,6 +18,54 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
+    #         EMBEDDINGS TESTS - NO SERVICE RESPONSER REQUIRED
+    #
+    # **********************************************************************************
+
+    # Regression test. Send a request that includes almost all supported types of input objects. Make sure the resulting
+    # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
+    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_embeddings_request_payload(self, **kwargs):
+        client = async_sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        )
+        try:
+            response = await client.embed(
+                input=["first phrase", "second phrase", "third phrase"],
+                dimensions=2048,
+                encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+                input_type=sdk.models.EmbeddingInputType.QUERY,
+                model_extras={
+                    "key1": 1,
+                    "key2": True,
+                    "key3": "Some value",
+                    "key4": [1, 2, 3],
+                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                },
+                raw_request_hook=self.request_callback)
+        except ServiceRequestError as _:
+            headers = self.pipeline_request.http_request.headers
+            print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
+            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
+            assert headers["Content-Type"] == "application/json"
+            assert headers["Content-Length"] == "285"
+            assert headers["extra-parameters"] == "pass_through"
+            assert headers["Accept"] == "application/json"
+            assert headers["some_header"] == "some_header_value"
+            assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
+            assert " Python/" in headers["User-Agent"]
+            assert headers["Authorization"] == "Bearer key-value"
+            assert self.pipeline_request.http_request.data == self.EMBEDDINGDS_JSON_REQUEST_PAYLOAD1
+            await client.close()
+            return
+        await client.close()
+        assert False
+
+    # **********************************************************************************
+    #
     #                      HAPPY PATH TESTS - TEXT EMBEDDINGS
     #
     # **********************************************************************************
@@ -142,8 +190,10 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
             assert " Python/" in headers["User-Agent"]
             assert headers["Authorization"] == "Bearer key-value"
-            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD1
+            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD1
+            await client.close()
             return
+        await client.close()
         assert False
 
     # Regression test. Send a request that includes almost all supported types of input objects, with input arguments
@@ -203,7 +253,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             )
         except ServiceRequestError as _:
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD2
+            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD2
             return
         assert False
 
@@ -248,7 +298,7 @@ class TestModelAsyncClient(ModelClientTestBase):
             )
         except ServiceRequestError as _:
             print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert self.pipeline_request.http_request.data == self.JSON_REQUEST_PAYLOAD3
+            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD3
             return
         assert False
 
