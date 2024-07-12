@@ -3,11 +3,18 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from collections import namedtuple
 import time
 from itertools import product
 from requests import Response
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureKeyCredential,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    ExtendedAccessToken,
+)
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport, HttpRequest
@@ -324,11 +331,32 @@ def test_need_new_token():
     assert not policy._need_new_token
 
     # Token has both expires_on and refresh_on set well into the future.
-    policy._token = AccessToken("", now + 1200, now + 1200)
+    policy._token = ExtendedAccessToken("", now + 1200, refresh_on=now + 1200)
     assert not policy._need_new_token
 
     # Token is not close to expiring, but refresh_on is in the past.
-    policy._token = AccessToken("", now + 1200, now - 1)
+    policy._token = ExtendedAccessToken("", now + 1200, refresh_on=now - 1)
+    assert policy._need_new_token
+
+    policy._token = None
+    assert policy._need_new_token
+
+
+def test_need_new_token_with_external_defined_token_class():
+    """Test the case where some custom credential get_token call returns a custom token object."""
+    FooAccessToken = namedtuple("FooAccessToken", ["token", "expires_on"])
+
+    expected_scope = "scope"
+    now = int(time.time())
+
+    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
+
+    # Token is expired.
+    policy._token = FooAccessToken("", now - 1200)
+    assert policy._need_new_token
+
+    # Token is about to expire within 300 seconds.
+    policy._token = FooAccessToken("", now + 299)
     assert policy._need_new_token
 
 
@@ -638,3 +666,48 @@ def test_azure_http_credential_policy(http_request):
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
     pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_extended_access_token_unpack():
+    """Test various unpacking of AccessToken."""
+    token = ExtendedAccessToken("token", 42)
+    assert token.token == "token"
+    assert token.expires_on == 42
+    assert token.refresh_on is None
+
+    token, expires_on = ExtendedAccessToken(token="token", expires_on=42, refresh_on=21)
+    assert token == "token"
+    assert expires_on == 42
+
+    token, expires_on = ExtendedAccessToken("token", 42)
+    assert token == "token"
+    assert expires_on == 42
+
+    token, expires_on = ExtendedAccessToken(token="token", expires_on=42)
+    assert token == "token"
+    assert expires_on == 42
+
+    token, expires_on = ExtendedAccessToken("token", 42, refresh_on=21)
+    assert token == "token"
+    assert expires_on == 42
+
+    token, expires_on = ExtendedAccessToken(token="token", expires_on=42, refresh_on=21)
+    assert token == "token"
+    assert expires_on == 42
+
+
+def test_access_token_subscriptable():
+    """Test that AccessToken can be indexed by position. This is verify backwards-compatibility."""
+    token = ExtendedAccessToken("token", 42)
+    assert token[0] == "token"
+    assert token[1] == 42
+    assert token[-1] == 42
+    assert len(token) == 2
+
+    token = ExtendedAccessToken("token", 42, refresh_on=100)
+    assert token[:1] == ("token",)
+    assert token[:2] == ("token", 42)
+    assert token[:-1] == ("token",)
+    assert len(token) == 2
+    with pytest.raises(IndexError):
+        _ = token[2]
