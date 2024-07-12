@@ -1,14 +1,10 @@
 # Release History
 
-## 5.12.2 (Unreleased)
+## 5.12.2a1 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Add more debug logging for checkpoint store.
 
 ## 5.12.1 (2024-06-11)
 
