@@ -7,7 +7,7 @@
 import os
 import time
 import dns.resolver
-from dns.resolver import NXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
+from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
@@ -17,7 +17,6 @@ class SRVRecord:
     weight: int
     port: int
     target: str
-    protocol: str = HTTPS_PREFIX
 
     def __init__(self, answer):
         self.priority = answer.priority
@@ -39,18 +38,18 @@ def find_auto_failover_endpoints(endpoint: str):
 
     srv_records = [origin] + _find_replicas(origin.target)
     endpoints = []
+    if endpoint.startswith(HTTPS_PREFIX):
+        endpoint = endpoint[len(HTTPS_PREFIX) :]
     for srv_record in srv_records:
-        if endpoint.startswith(HTTPS_PREFIX):
-            endpoint = endpoint[len(HTTPS_PREFIX) :]
         if _validate(known_domain, srv_record.target) and srv_record.target != endpoint:
             endpoints.append(HTTPS_PREFIX + srv_record.target)
     return endpoints
 
 
-def _find_origin(domain):
-    uri = domain
-    if domain.startswith(HTTPS_PREFIX):
-        uri = domain[len(HTTPS_PREFIX) :]
+def _find_origin(endpoint):
+    uri = endpoint
+    if endpoint.startswith(HTTPS_PREFIX):
+        uri = endpoint[len(HTTPS_PREFIX) :]
     request = f"_origin._tcp.{uri}"
     srv_records = _request_record(request)
     if not srv_records:
@@ -77,7 +76,7 @@ def _request_record(request):
     while time.time() - now < 5:
         try:
             return dns.resolver.resolve(request, SRV)
-        except NXDOMAIN:  # cspell:disable-line
+        except (NXDOMAIN, YXDOMAIN):  # cspell:disable-line
             break
         except (LifetimeTimeout, NoNameservers):
             continue
@@ -96,7 +95,7 @@ def _get_known_domains(known_host):
     trusted_domain_labels = ["appconfig", "azconfig"]  # cspell:disable-line
 
     for label in trusted_domain_labels:
-        index = known_host.lower().find(f".{label}.")
+        index = known_host.lower().rfind(f".{label}.")
         if index > 0:
             return known_host[index:]
     return None
