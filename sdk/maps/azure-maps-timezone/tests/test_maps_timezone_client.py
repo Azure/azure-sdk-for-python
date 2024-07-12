@@ -7,7 +7,6 @@ import os
 
 from azure.core.credentials import AzureKeyCredential
 from azure.maps.timezone import AzureTimezoneClient
-from azure.maps.search import BoundaryResultType, Resolution
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 
 from timezone_preparer import MapsTimezonePreparer
