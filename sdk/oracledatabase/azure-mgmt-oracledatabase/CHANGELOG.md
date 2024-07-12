@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0.post2 (2024-07-12)
+
+### Other changes
+
+- Re-releasing to account for setuptools source distribution normalization changes.
+
 ## 1.0.0 (2024-07-04)
 
 ### Other Changes

@@ -48,11 +48,11 @@ stages:
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
 
-                    - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
-                      parameters:
-                        PackageName: ${{artifact.name}}
-                        ServiceDirectory: ${{parameters.ServiceDirectory}}
-                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                    # - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
+                    #   parameters:
+                    #     PackageName: ${{artifact.name}}
+                    #     ServiceDirectory: ${{parameters.ServiceDirectory}}
+                    #     ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}
 
                     - script: |
                         python -m pip install "./tools/azure-sdk-tools"
@@ -70,13 +70,13 @@ stages:
                       workingDirectory: $(Pipeline.Workspace)
                       displayName: Output Visible Artifacts
 
-                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-                      parameters:
-                        ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
-                        PackageRepository: PyPI
-                        ReleaseSha: $(Build.SourceVersion)
-                        RepoId: Azure/azure-sdk-for-python
-                        WorkingDirectory: $(System.DefaultWorkingDirectory)
+                    # - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                    #   parameters:
+                    #     ArtifactLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
+                    #     PackageRepository: PyPI
+                    #     ReleaseSha: $(Build.SourceVersion)
+                    #     RepoId: Azure/azure-sdk-for-python
+                    #     WorkingDirectory: $(System.DefaultWorkingDirectory)
 
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
