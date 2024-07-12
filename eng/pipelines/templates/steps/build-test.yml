@@ -64,6 +64,8 @@ steps:
 
   - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
+  - template: /eng/pipelines/templates/steps/use-venv.yml
+
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
       displayName: Run Tests (AzurePowerShell@5)
