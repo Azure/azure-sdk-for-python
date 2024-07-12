@@ -13,10 +13,6 @@ steps:
         -RepoRoot "$(Build.SourcesDirectory)"
     displayName: Create virtual environment
 
-  - pwsh: |
-      Get-ChildItem -R $(VENV_LOCATION) | % { $_.FullName }
-    displayName: Dump Contents of Venv
-
   - ${{ if eq(parameters.Activate, true) }}:
     - pwsh: |
         $(Build.SourcesDirectory)/eng/scripts/activate-venv.ps1 `

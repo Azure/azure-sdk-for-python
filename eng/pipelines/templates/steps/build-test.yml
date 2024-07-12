@@ -120,7 +120,9 @@ steps:
           --toxenv="${{ parameters.ToxTestEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}" `
           ${{ parameters.ToxEnvParallel }}
+        exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
+      displayName: Run Tests
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
