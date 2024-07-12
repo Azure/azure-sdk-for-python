@@ -30,7 +30,9 @@ class SmsSingleRecipientSample(object):
     phone_number = os.getenv("SMS_PHONE_NUMBER")
     
     def send_sms_to_single_recipient(self):
+        # [START auth_from_connection_string]
         sms_client = SmsClient.from_connection_string(self.connection_string)
+        # [END auth_from_connection_string]
 
         # calling send() with sms values
         sms_responses = sms_client.send(

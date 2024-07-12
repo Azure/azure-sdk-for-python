@@ -51,7 +51,7 @@ def expected_azure_openai_finetuning_job_full(
     train_dataset, validation_dataset, mlflow_model_gpt4, hyperparameters
 ) -> RestFineTuningJob:
     custom_model_finetuning_job = AzureOpenAIFineTuningJob(
-        task="chat_completion",
+        task="chatCompletion",
         model=mlflow_model_gpt4,
         training_data=train_dataset,
         validation_data=validation_dataset,

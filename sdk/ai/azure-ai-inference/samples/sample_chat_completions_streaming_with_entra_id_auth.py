@@ -15,11 +15,11 @@ USAGE:
     python sample_chat_completions_streaming_with_entra_id_auth.py
 
     Set one or two of these environment variables before running the sample:
-    1) CHAT_COMPLETIONS_ENDPOINT - Your endpoint URL, in the form 
+    1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
         https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) CHAT_COMPLETIONS_DEPLOYMENT_NAME - Optional. The value for the HTTP
+    2) AZURE_AI_CHAT_DEPLOYMENT_NAME - Optional. The value for the HTTP
         request header `azureml-model-deployment`.
 """
 
@@ -28,16 +28,16 @@ def sample_chat_completions_streaming_with_entra_id_auth():
     import os
 
     try:
-        endpoint = os.environ["CHAT_COMPLETIONS_ENDPOINT"]
+        endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
     except KeyError:
-        print("Missing environment variable 'CHAT_COMPLETIONS_ENDPOINT'")
+        print("Missing environment variable 'AZURE_AI_CHAT_ENDPOINT'")
         print("Set it. before running this sample.")
         exit()
 
     try:
-        model_deployment = os.environ["CHAT_COMPLETIONS_DEPLOYMENT_NAME"]
+        model_deployment = os.environ["AZURE_AI_CHAT_DEPLOYMENT_NAME"]
     except KeyError:
-        print("Could not read optional environment variable `CHAT_COMPLETIONS_DEPLOYMENT_NAME`.")
+        print("Could not read optional environment variable `AZURE_AI_CHAT_DEPLOYMENT_NAME`.")
         print("HTTP request header `azureml-model-deployment` will not be set.")
         model_deployment = None
 

@@ -42,6 +42,12 @@ USAGE:
 import os
 
 
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+
+
 def analyze_barcodes():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -79,7 +85,7 @@ def analyze_barcodes():
                 print(f"- Barcode #{barcode_idx}: {barcode.value}")
                 print(f"  Kind: {barcode.kind}")
                 print(f"  Confidence: {barcode.confidence}")
-                print(f"  Bounding regions: {barcode.polygon}")
+                print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
 
     print("----------------------------------------")
     # [END analyze_barcodes]

@@ -14,7 +14,6 @@ TEXT_COMPLETION_VALIDATION_DATASET = TEST_DATASETS_PATH + "/" + "text_completion
 
 @pytest.fixture
 def text_completion_dataset() -> Tuple[Input, Input]:
-    # Classification Dataset
     training_data = Input(type=AssetTypes.URI_FILE, path=TEXT_COMPLETION_TRAIN_DATASET)
     validation_data = Input(type=AssetTypes.URI_FILE, path=TEXT_COMPLETION_VALIDATION_DATASET)
     return training_data, validation_data

@@ -1,7 +1,7 @@
 name: test_ws_conn_custom_keys
 type: custom
 target: my_endpoint
-tags:
+metadata:
   one: two
 credentials:
   type: api_key

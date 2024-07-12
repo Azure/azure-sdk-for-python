@@ -11,6 +11,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      Condition: succeededOrFailed()
 
   - pwsh: |
       python -m pip install "tools/azure-sdk-tools[build]"

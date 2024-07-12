@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMicrosoft365
+
+from azure.mgmt.appcomplianceautomation import AppComplianceAutomationMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +25,7 @@ from azure.mgmt.appcomplianceautomation import AppComplianceAutomationToolForMic
 
 
 def main():
-    client = AppComplianceAutomationToolForMicrosoft365(
+    client = AppComplianceAutomationMgmtClient(
         credential=DefaultAzureCredential(),
     )
 
@@ -35,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/preview/2022-11-16-preview/examples/Snapshot_Get.json
+# x-ms-original-file: specification/appcomplianceautomation/resource-manager/Microsoft.AppComplianceAutomation/stable/2024-06-27/examples/Snapshot_Get.json
 if __name__ == "__main__":
     main()
