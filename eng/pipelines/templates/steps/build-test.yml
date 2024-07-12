@@ -48,7 +48,6 @@ steps:
       else {
         . $(VENV_LOCATION)/bin/Activate.ps1
       }
-      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       python -m pip install -r eng/ci_tools.txt
