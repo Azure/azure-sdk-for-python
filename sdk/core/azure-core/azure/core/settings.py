@@ -507,7 +507,7 @@ class Settings:
         "azure_cloud",
         env_var="AZURE_CLOUD",
         convert=convert_azure_cloud,
-        default=AzureClouds.AZURE_PUBLIC_CLOUD,
+        default=AzureClouds.AzurePublicCloud,
     )
 
 
