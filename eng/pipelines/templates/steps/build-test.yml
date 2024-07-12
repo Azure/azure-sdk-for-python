@@ -43,13 +43,8 @@ steps:
       Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip freeze
-      python -m pip install pip==23.2.1
-      python -m pip install wheel==0.43.0 --force-reinstall
-      python -m pip install setuptools==69.2.0 --force-reinstall
-      python -m pip install -r eng/ci_tools.txt
-      pip --version
-      pip freeze
+      python -m pip install -I -r eng/ci_tools.txt
+      python -m pip freeze --all
     displayName: 'Prep Environment Linux/Mac'
 
   - ${{if eq(parameters.TestProxy, true) }}:
