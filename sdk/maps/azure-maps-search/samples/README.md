@@ -23,6 +23,8 @@ Then for common Azure Maps Search operations:
 
 * Perform reverse batch geocode search: [sample_reverse_geocode_batch.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_reverse_geocode_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_reverse_geocode_batch_async.py))
 
+* Perform polygon search: [sample_get_polygon.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/sample_get_polygon.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-search/samples/async_samples/sample_get_polygon_async.py))
+
 
 ## Prerequisites
 
