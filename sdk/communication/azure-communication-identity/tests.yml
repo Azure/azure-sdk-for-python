@@ -17,15 +17,7 @@ extends:
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
-        PPE:
-            SubscriptionConfigurations:
-              - $(sub-config-communication-ppe-test-resources-common)
-              - $(sub-config-communication-ppe-test-resources-python)
-        Int:
-          SubscriptionConfigurations:
-            - $(sub-config-communication-int-test-resources-common)
-            - $(sub-config-communication-int-test-resources-python)
-      Clouds: Public,PPE,Int
+      Clouds: Public
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
