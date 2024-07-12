@@ -4,11 +4,15 @@ The instructions below are for running tests locally, on a Windows machine, agai
 
 ## Prerequisites
 
-The live tests were written against the AI models mentioned below. You will need to deploy them in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
+The live tests were written against the AI models mentioned below. You will need to deploy these two in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
 
-- `Mistral-Large` for chat completion tests
+- `Mistral-Large` for chat completion tests, including tool tests
 - `Cohere-embed-v3-english` for embedding tests
 <!-- - `TBD` for image generation tests -->
+
+In addition, you will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
+
+- `gpt-4o` on Azure OpenAI (AOAI), for chat completions tests with image input
 
 ## Setup
 
@@ -32,7 +36,21 @@ The live tests were written against the AI models mentioned below. You will need
 
 ## Set environment variables
 
-The tests read endpoints and keys from environemt variables. See the [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/README.md#set-environment-variables) section in the samples README.md file for the full list of environment variables that need to be set for all tests to pass.
+Here is the list of environment variables used by the tests:
+
+```bash
+# For chat completions test, including tools
+set AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+set AZURE_AI_CHAT_KEY=<32-char-api-key>
+
+# For chat completions tests using image input
+set AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
+set AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
+
+# For text embedding tests
+set AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+set AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
+```
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 
