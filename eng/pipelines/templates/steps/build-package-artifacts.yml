@@ -61,7 +61,7 @@ steps:
   - bash: |
       source $(VENV_LOCATION)/bin/activate
       which python
-      python -m pip install --force -r eng\ci_tools.txt
+      python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
     displayName: 'Prep Environment Linux/Mac'
     condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
