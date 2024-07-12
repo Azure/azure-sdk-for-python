@@ -223,9 +223,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
         :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
-        :keyword bool enable_snapshot_virtual_directory_access:
-            Specifies whether the snapshot virtual directory should be accessible at the root of the share
-            mount point when NFS is enabled. Default value is True.
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
         :keyword int paid_bursting_max_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
         :keyword int paid_bursting_max_iops: The maximum IOPS the file share can support.

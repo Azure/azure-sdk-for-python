@@ -38,16 +38,17 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       python -m pip freeze
       python -m pip install pip==23.2.1
-      python -m pip install setuptools==67.6.0
-      python -m pip install wheel==0.37.0
+      python -m pip install wheel==0.43.0 --force-reinstall
+      python -m pip install setuptools==69.2.0 --force-reinstall
       python -m pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
-    displayName: 'Prep Environment'
+    displayName: 'Prep Environment Linux/Mac'
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -150,7 +151,7 @@ steps:
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
-  - ${{ else }}: 
+  - ${{ else }}:
     - task: PythonScript@0
       displayName: 'Test Samples'
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
