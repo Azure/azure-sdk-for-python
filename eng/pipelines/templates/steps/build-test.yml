@@ -46,7 +46,7 @@ steps:
         . $(VENV_LOCATION)/Scripts/Activate.ps1
       }
       else {
-        . $(VENV_LOCATION)/bin/Activate.ps1
+        . $(VENV_LOCATION)/bin/activate.ps1
       }
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
@@ -86,7 +86,7 @@ steps:
             . $(VENV_LOCATION)/Scripts/Activate.ps1
           }
           else {
-            . $(VENV_LOCATION)/bin/Activate.ps1
+            . $(VENV_LOCATION)/bin/activate.ps1
           }
           Write-Host (Get-Command python).Source
           $account = (Get-AzContext).Account;
@@ -111,7 +111,7 @@ steps:
           . $(VENV_LOCATION)/Scripts/Activate.ps1
         }
         else {
-          . $(VENV_LOCATION)/bin/Activate.ps1
+          . $(VENV_LOCATION)/bin/activate.ps1
         }
         Write-Host (Get-Command python).Source
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
