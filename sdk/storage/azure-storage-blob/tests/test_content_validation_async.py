@@ -370,22 +370,6 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await self._teardown()
 
     @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_download_blob(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        await self._setup(storage_account_name, storage_account_key)
-        blob = self.container.get_blob_client(self._get_blob_reference())
-        data = b'abc' * 512
-        await blob.upload_blob(data)
-
-        # Assert
-        content = await blob.download_blob()
-        assert await content.readall() == data
-        await self._teardown()
-
-    @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async

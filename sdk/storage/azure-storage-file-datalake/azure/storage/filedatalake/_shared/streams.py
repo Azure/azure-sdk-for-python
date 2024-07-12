@@ -7,10 +7,10 @@ from __future__ import annotations
 
 import math
 import sys
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from enum import auto, Enum, IntFlag
 from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
-from typing import IO, Optional
+from typing import AnyStr, IO, Optional, Union
 
 from .validation import calculate_crc64
 
@@ -20,9 +20,9 @@ DEFAULT_SEGMENT_SIZE = 4 * 1024 * 1024
 
 class IterStreamer(IOBase):
     """A file-like wrapper over an iterable."""
-    def __init__(self, iterable: Iterable[bytes], encoding: str = "UTF-8"):
-        self.iterable = iterable
-        self.iterator = iter(iterable)
+    def __init__(self, iterable: Iterable[AnyStr], encoding: str = "UTF-8"):
+        self.iterable: Union[Iterable[str], Iterable[bytes]] = iterable
+        self.iterator: Union[Iterator[str], Iterator[bytes]] = iter(iterable)
         self.leftover = bytearray()
         self.encoding = encoding
 
@@ -97,7 +97,7 @@ def generate_segment_header(number: int, size: int) -> bytes:
             size.to_bytes(8, 'little'))
 
 
-class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
+class StructuredMessageEncodeStream(IO[bytes]):  # pylint: disable=too-many-instance-attributes
     message_version: int
     content_length: int
     message_length: int
@@ -117,6 +117,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
     _checksum_offset: int
     """Tracks the offset the checksum has been calculated up to for seeking purposes"""
+
     _message_crc64: int
     _segment_crc64s: dict[int, int]
 
@@ -191,11 +192,26 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         else:
             raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
+    def __enter__(self) -> IO[bytes]:
+        return self._inner_stream.__enter__()
+
+    def __exit__(self, t, value, traceback) -> None:
+        self._inner_stream.__exit__(t, value, traceback)
+
+    def close(self) -> None:
+        self._inner_stream.close()
+
     def __len__(self):
         return self.message_length
 
     def readable(self) -> bool:
         return True
+
+    def writable(self) -> bool:
+        return False
+
+    def isatty(self) -> bool:
+        return False
 
     def seekable(self) -> bool:
         try:
@@ -287,7 +303,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             self._current_segment_number = new_segment_num
 
         self._update_current_region_length()
-        self._inner_stream.seek(self._initial_content_position + self._content_offset)
+        self._inner_stream.seek(self._initial_content_position or 0 + self._content_offset)
         return position
 
     def read(self, size: int = -1) -> bytes:
@@ -313,6 +329,33 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
                 raise StructuredMessageError(f"Invalid SMRegion {self._current_region}")
 
         return output.getvalue()
+
+    def fileno(self) -> int:
+        raise UnsupportedOperation
+
+    def flush(self) -> None:
+        pass
+
+    def readline(self, size: int = -1) -> bytes:
+        raise UnsupportedOperation
+
+    def readlines(self, hint: int = -1) -> list[bytes]:
+        raise UnsupportedOperation
+
+    def truncate(self, size: Optional[int] = None) -> int:
+        raise UnsupportedOperation
+
+    def write(self, b) -> int:
+        raise UnsupportedOperation
+
+    def writelines(self, lines) -> None:
+        raise UnsupportedOperation
+
+    def __next__(self) -> bytes:
+        raise UnsupportedOperation
+
+    def __iter__(self) -> Iterator[bytes]:
+        raise UnsupportedOperation
 
     def _calculate_message_length(self) -> int:
         length = self._message_header_length

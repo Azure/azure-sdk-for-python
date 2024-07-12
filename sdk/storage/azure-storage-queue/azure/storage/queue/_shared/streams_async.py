@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import inspect
 import sys
-from collections.abc import AsyncIterable
+from collections.abc import AsyncIterable, AsyncIterator
 from io import BytesIO, IOBase
-from typing import IO
+from typing import AnyStr, IO, Union
 
 from .streams import StructuredMessageConstants, StructuredMessageError, StructuredMessageProperties
 from .validation import calculate_crc64
@@ -17,9 +17,9 @@ from .validation import calculate_crc64
 
 class AsyncIterStreamer(IOBase):
     """An async file-like wrapper over an async iterable."""
-    def __init__(self, iterable: AsyncIterable[bytes], encoding: str = "UTF-8"):
-        self.iterable = iterable
-        self.iterator = iterable.__aiter__()
+    def __init__(self, iterable: AsyncIterable[AnyStr], encoding: str = "UTF-8"):
+        self.iterable: Union[AsyncIterable[str], AsyncIterable[bytes]] = iterable
+        self.iterator: Union[AsyncIterator[str], AsyncIterator[bytes]] = iterable.__aiter__()
         self.leftover = bytearray()
         self.encoding = encoding
 
