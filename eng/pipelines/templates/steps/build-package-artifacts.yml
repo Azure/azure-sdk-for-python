@@ -67,7 +67,7 @@ steps:
     condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
 
   - pwsh: |
-      .$(VENV_LOCATION)/Scripts/Activate.ps1
+      . $(VENV_LOCATION)/Scripts/Activate.ps1
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
