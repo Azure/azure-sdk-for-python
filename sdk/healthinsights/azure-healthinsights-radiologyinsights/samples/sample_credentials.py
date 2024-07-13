@@ -1,28 +1,48 @@
-import functools
-import datetime
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
-from azure.core.credentials import AzureKeyCredential
+import datetime
+from http import client
+import os
+import uuid
+
+from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
-from devtools_testutils import (
-    AzureRecordedTestCase,
-    EnvironmentVariableLoader,
-    recorded_by_proxy,
-)
+"""
+FILE: sample_credentials.py
 
-HealthInsightsEnvPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "healthinsights",
-    healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
-    healthinsights_key="00000000000000000000000000000000",
-)
+DESCRIPTION:
+The sample_credentials.py module processes a sample radiology document with the Radiology Insights service.
+It will initialize a RadiologyInsightsClient, build a Radiology Insights request with the sample document,
+submit it to the client, RadiologyInsightsClient, and display the Critical Results description.     
 
 
-class TestRadiologyInsightsClient(AzureRecordedTestCase):
-    @HealthInsightsEnvPreparer()
-    @recorded_by_proxy
-    def test_sync(self, healthinsights_endpoint, healthinsights_key):
+USAGE:
+
+1. Set the environment variables with your own values before running the sample:
+    - AZURE_HEALTH_INSIGHTS_ENDPOINT - the endpoint to your source Health Insights resource.
+    - AZURE_CLIENT_ID - the client ID of your Azure AD application.
+    - AZURE_TENANT_ID - the tenant ID of your Azure AD tenant.
+    - AZURE_CLIENT_SECRET - the client secret of your Azure AD application.
+
+2. python sample_credentials.py
+    - This is an example how to use DefaultAzureCredential to authenticate the RadiologyInsightsClient.
+   
+"""
+
+
+class HealthInsightsSyncSamples:
+    def radiology_insights_sync(self) -> None:
+        # [START credentials]
+        credential = DefaultAzureCredential()
+        ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
+
+        radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
+        # [END credentials]
+
+        job_id = str(uuid.uuid4())
 
         doc_content1 = """CLINICAL HISTORY:   
         20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -37,6 +57,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         A new US pelvis within the next 6 months is recommended.
         These results have been discussed with Dr. Jones at 3 PM on November 5 2020."""
 
+        # Create ordered procedure
         procedure_coding = models.Coding(
             system="Http://hl7.org/fhir/ValueSet/cpt-all",
             code="USPELVIS",
@@ -44,7 +65,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         )
         procedure_code = models.CodeableConcept(coding=[procedure_coding])
         ordered_procedure = models.OrderedProcedure(description="US PELVIS COMPLETE", code=procedure_code)
-
+        # Create encounter
         start = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         end = datetime.datetime(2021, 8, 28, 0, 0, 0, 0)
         encounter = models.PatientEncounter(
@@ -52,10 +73,10 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             class_property=models.EncounterClass.IN_PATIENT,
             period=models.TimePeriod(start=start, end=end),
         )
-
+        # Create patient info
         birth_date = datetime.date(1959, 11, 11)
         patient_info = models.PatientDetails(sex=models.PatientSex.FEMALE, birth_date=birth_date)
-
+        # Create author
         author = models.DocumentAuthor(id="author2", full_name="authorName2")
 
         create_date_time = datetime.datetime(2024, 2, 19, 0, 0, 0, 0, tzinfo=datetime.timezone.utc)
@@ -73,6 +94,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             language="en",
         )
 
+        # Construct patient
         patient1 = models.PatientRecord(
             id="patient_id2",
             details=patient_info,
@@ -80,23 +102,38 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             patient_documents=[patient_document1],
         )
 
+        # Create a configuration
         configuration = models.RadiologyInsightsModelConfiguration(verbose=False, include_evidence=True, locale="en-US")
 
-        data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
-        jobdata = models.RadiologyInsightsJob(job_data=data)
-
-        radiology_insights_client = RadiologyInsightsClient(
-            healthinsights_endpoint, AzureKeyCredential(healthinsights_key)
+        # Construct the request with the patient and configuration
+        patient_data = models.RadiologyInsightsJob(
+            job_data=models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         )
 
-        poller = radiology_insights_client.begin_infer_radiology_insights(
-            id="JobIDS2",
-            resource=jobdata,
-        )
-        response = poller.result()
-        radiology_insights_result = models.RadiologyInsightsInferenceResult(response)
+        # Health Insights Radiology Insights
+        try:
+            poller = radiology_insights_client.begin_infer_radiology_insights(
+                id=job_id,
+                resource=patient_data,
+            )
+            radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
+            self.display_critical_results(radiology_insights_result)
+        except Exception as ex:
+            print(str(ex))
+            return
 
+    def display_critical_results(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
-            assert patient_result.inferences is not None
-            for inference in patient_result.inferences:
-                assert inference.kind is not None
+            for ri_inference in patient_result.inferences:
+                if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
+                    critical_result = ri_inference.result
+                    print(f"Critical Result Inference found: {critical_result.description}")
+
+
+def main():
+    sample = HealthInsightsSyncSamples()
+    sample.radiology_insights_sync()
+
+
+if __name__ == "__main__":
+    main()

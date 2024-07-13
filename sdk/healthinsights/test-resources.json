@@ -1,69 +1,133 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "baseName": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().name]",
-            "metadata": {
-                "description": "The base resource name."
-            }
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-                "description": "The location of the resource. By default, this is the same as the resource group."
-            }
-        },
-        "endpointPrefix": {
-            "defaultValue": "healthinsights",
-            "type": "string"
-        },
-        "cognitiveServicesEndpointSuffix": {
-            "defaultValue": ".cognitiveservices.azure.com",
-            "type": "string"
-        },
-        "testApplicationOid": {
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The base resource name."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location of the resources. By default, this is the same as the resource group."
+      }
+    },"testApplicationOid": {
             "type": "string",
             "metadata": {
                 "description": "The principal to assign the role to. This is application object id."
             }
-        }
     },
-    "variables": {
-        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
-        "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
+    "endpointPrefix": {
+        "defaultValue": "healthinsights",
+        "type": "string"
+    },
+    "cognitiveServicesEndpointSuffix": {
+        "defaultValue": ".cognitiveservices.azure.com",
+        "type": "string"
+    },
+    "identity": {
+          "defaultValue": {
+              "type": "SystemAssigned"
+          },
+          "type": "object"
+      },
+      "textAnalyticsResourceGroupName": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().name]"
+      }
+  },
+"variables": {
+        "healthApiVersion": "2023-10-01-preview",
+        "textAnalyticsName": "[format('textanalytics-{0}', parameters('baseName'))]",
+        "textAnalyticsResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('textAnalyticsResourceGroupName'), '/providers/Microsoft.CognitiveServices/accounts/', variables('textAnalyticsName'))]",
+        "textAnalyticsContributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]",
+        "HealthInsightsName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
+        "healthInsightsProperties": {
+            "customSubDomainName": "[toLower(variables('HealthInsightsName'))]",
+            "apiProperties": {
+                "TA4HResourceId": "[variables('textAnalyticsResourceId')]"
+            }
+        },
+        "textAnalyticsProperties": {
+            "customSubDomainName": "[toLower(variables('textAnalyticsName'))]"
+        },
+        "systemAndUserIdentities": {
+            "type": "SystemAssigned, UserAssigned",
+            "userAssignedIdentities": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), parameters('identity').userAssignedIdentities, json('{}'))]"
+        },
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('endpointPrefix'), parameters('cognitiveServicesEndpointSuffix'))]"
     },
     "resources": [
-        {
-            "type": "Microsoft.CognitiveServices/accounts",
-            "apiVersion": "2022-12-01",
-            "name": "[variables('uniqueSubDomainName')]",
-            "location":"[parameters('location')]",
-            "sku": {
-                "name": "S0"
-            },
-            "kind": "HealthInsights",
-            "properties": {
-                "customSubDomainName": "[variables('uniqueSubDomainName')]"
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2018-09-01-preview",
-            "name": "[guid(resourceGroup().id)]",
-            "properties": {
-                "roleDefinitionId": "[variables('roleDefinitionId')]",
-                "principalId": "[parameters('testApplicationOid')]"
-            }
+      {
+          "type": "Microsoft.CognitiveServices/accounts",
+          "apiVersion": "[variables('healthApiVersion')]",
+          "name": "[variables('HealthInsightsName')]",
+          "location": "[parameters('location')]",
+          "sku":{
+            "name": "S0"
+          },
+          "kind": "HealthInsights",
+          "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
+          "properties": "[variables('healthInsightsProperties')]"
+      },
+      {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[guid(resourceGroup().id)]",
+        "properties": {
+          "roleDefinitionId": "[variables('textAnalyticsContributorRole')]",
+          "principalId": "[parameters('testApplicationOid')]"
         }
+      },
+      {
+        "type": "Microsoft.CognitiveServices/accounts/providers/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[format('{0}/Microsoft.Authorization/{1}', variables('textAnalyticsName'), guid(variables('textAnalyticsName')))]",
+        "dependsOn": [
+         "[resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName'))]"
+        ],
+        "properties": {
+         "principalId": "[parameters('testApplicationOid')]",
+         "roleDefinitionId": "[variables('textAnalyticsContributorRole')]"
+        }
+      },
+      {
+        "apiVersion": "2017-04-18",
+        "name": "[variables('textAnalyticsName')]",
+        "location": "[parameters('location')]",
+        "type": "Microsoft.CognitiveServices/accounts",
+        "kind": "TextAnalytics",
+        "sku": {
+          "name": "S"
+        },
+        "identity": "[if(contains(string(parameters('identity')),'userAssignedIdentities'), variables('systemAndUserIdentities'), parameters('identity'))]",
+        "properties": "[variables('textAnalyticsProperties')]",
+        "dependsOn": [
+          "[concat('Microsoft.CognitiveServices/accounts/', variables('HealthInsightsName'))]"
+        ]
+      }
     ],
     "outputs": {
+        "LANGUAGE_API_KEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key1]"
+        },
+        "LANGUAGE_API_KEY_ALT": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('textAnalyticsName')), '2017-04-18').key2]"
+        },
+        "ENDPOINT": {
+            "type": "string",
+            "value": "[concat('https://', variables('textAnalyticsName'), parameters('cognitiveServicesEndpointSuffix'), '/')]"
+        },
+
         "HEALTHINSIGHTS_KEY": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('uniqueSubDomainName')), '2017-04-18').key1]"
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts',variables('HealthInsightsName')),'2017-04-18').key1]"
         },
         "HEALTHINSIGHTS_ENDPOINT": {
             "type": "string",
