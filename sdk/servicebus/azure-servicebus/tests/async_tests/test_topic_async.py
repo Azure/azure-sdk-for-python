@@ -44,7 +44,7 @@ class TestServiceBusTopicsAsync(AzureMgmtRecordedTestCase):
     async def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = self.get_credential(ServiceBusClient)
-        async with ServiceBusClient.from_connection_string(
+        async with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
             logging_enable=False,
