@@ -5,17 +5,13 @@
 
 import pytest
 import functools
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
-from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud, get_textanalytics_client
 from devtools_testutils import recorded_by_proxy
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     ExtractiveSummaryResult,
     AbstractiveSummaryResult
 )
-
-# pre-apply the client_cls positional argument so it needn't be explicitly passed below
-TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
 
 class TestSummarization(TextAnalyticsTest):
@@ -24,9 +20,9 @@ class TestSummarization(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_extract_summary(self, client):
+    def test_extract_summary(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
@@ -68,9 +64,9 @@ class TestSummarization(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_extract_summary_action_with_options(self, client):
+    def test_extract_summary_action_with_options(self):
+        client = get_textanalytics_client()
         docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
             "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
@@ -114,9 +110,9 @@ class TestSummarization(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_abstract_summary_action(self, client):
+    def test_abstract_summary_action(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
@@ -153,9 +149,9 @@ class TestSummarization(TextAnalyticsTest):
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_abstract_summary_action_with_options(self, client):
+    def test_abstract_summary_action_with_options(self):
+        client = get_textanalytics_client()
         docs = [{"id": "1", "language": "en", "text":
             "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
             " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
