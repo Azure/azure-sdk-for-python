@@ -23,7 +23,7 @@ USAGE:
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
     3) CUSTOM_BUILT_MODEL_ID - the ID of your custom built model.
         -OR-
-       DOCUMENTINTELLIGENCE_STORAGE_ADVANCE_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
+       DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
        A model will be built and used to run the sample.
 """
 
