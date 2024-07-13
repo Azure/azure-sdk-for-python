@@ -3,7 +3,7 @@
 #############################################################################
 files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AVS/stable/2018-01-01/PrivateCloud.json",
-    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/b07bb9f3a6bd6a2c2c69835933f70c739607534e/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiManagement/stable/2018-01-01/APIManagement.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AppConfiguration/stable/2018-01-01/AppConfiguration.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ContainerRegistry/stable/2018-01-01/ContainerRegistry.json",
@@ -79,6 +79,7 @@ EXCEPTIONS = [
     "AvsPrivateCloudEventData",
     "AvsScriptExecutionEventData",
     "AcsMessageEventData",
+    "AcsMessageLanguageDetection",
 ]
 
 NAMING_CHANGES = ["AcsMessageDeliveryStatusUpdatedEventName", "AcsMessageReceivedEventName"]
