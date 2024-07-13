@@ -72,6 +72,17 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
 
         await self.async_client.close()
 
+    # Test a single visual feature from an image url, using Entra ID authentication
+    @ServicePreparer()
+    @recorded_by_proxy_async
+    async def test_analyze_async_single_feature_from_file_entra_id_auth(self, **kwargs):
+
+        self._create_client_for_standard_analysis_with_entra_id_auth(sync=False, **kwargs)
+
+        await self._do_async_analysis(image_source=self.IMAGE_FILE,visual_features=[sdk.models.VisualFeatures.SMART_CROPS], **kwargs)
+
+        await self.async_client.close()
+
     # **********************************************************************************
     #
     #                            ERROR TESTS
