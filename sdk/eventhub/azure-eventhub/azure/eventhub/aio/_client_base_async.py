@@ -481,7 +481,7 @@ class ConsumerProducerMixin(_MIXIN_BASE):
             if self._handler:
                 await self._handler.close_async()
             auth = await self._client._create_auth_async(auth_uri=self._client._auth_uri)
-            self._create_handler(auth)
+            await self._create_handler(auth)
             conn = await self._client._conn_manager_async.get_connection(
                 endpoint=self._client._address.hostname, auth=auth
             )
