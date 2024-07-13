@@ -535,7 +535,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_subscription_async_update_dict_error(self, servicebus_connection_str, **kwargs):
+    async def test_mgmt_subscription_async_update_dict_error(self, servicebus_fully_qualified_namespace, **kwargs):
         credential = get_credential(is_async=True)
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace=servicebus_fully_qualified_namespace,

@@ -528,7 +528,11 @@ class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_async_mgmt_topic_basic_v2017_04(self, servicebus_connection_str, servicebus_fully_qualified_namespace,
                                     servicebus_sas_key, servicebus_sas_policy):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_fully_qualified_namespace, api_version=ApiVersion.V2017_04)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential = credential,
+            api_version=ApiVersion.V2017_04)
         await clear_topics(mgmt_service)
 
         await mgmt_service.create_topic("test_topic")
