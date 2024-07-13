@@ -175,7 +175,6 @@ class LROPoller(Generic[PollingReturnType_co]):
                 name="LROPoller({})".format(uuid.uuid4()),
             )
             self._thread.daemon = True
-            self._thread.start()
 
     def _start(self):
         """Start the long running operation.
@@ -263,6 +262,7 @@ class LROPoller(Generic[PollingReturnType_co]):
         """
         if self._thread is None:
             return
+        self._thread.start()            
         self._thread.join(timeout=timeout)
         try:
             # Let's handle possible None in forgiveness here
