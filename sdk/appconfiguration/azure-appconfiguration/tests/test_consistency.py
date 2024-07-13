@@ -107,7 +107,7 @@ class TestAppConfigurationConsistencyUnitTest(AppConfigTestCase):
         feature_flag = FeatureFlagConfigurationSetting(
             key, enabled=True, filters=[{"name": FILTER_PERCENTAGE, "parameters": {"Value": 10, "User": "user1"}}]
         )
-        feature_flag.value = json.dumps({"id": key, "conditions": {"client_filters": []}, "enabled": False})
+        feature_flag.value = json.dumps({"conditions": {"client_filters": []}, "enabled": False})
 
         assert feature_flag.enabled == False
 
@@ -127,7 +127,7 @@ class TestAppConfigurationConsistencyUnitTest(AppConfigTestCase):
         assert feature_flag.key.startswith(".appconfig.featureflag/")
 
     def test_feature_flag_different_key_and_id(self):
-        key =f".appconfig.featureflag/{self.get_resource_name("key")}"
+        key = f'.appconfig.featureflag/{self.get_resource_name("key")}'
         feature_id = self.get_resource_name("id")
         feature_flag = FeatureFlagConfigurationSetting(feature_id, enabled=True, key=key)
 
