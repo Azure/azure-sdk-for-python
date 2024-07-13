@@ -82,7 +82,7 @@ class TestDACClassifyDocumentAsync(AsyncDocumentIntelligenceTest):
             )
             document = await poller.result()
             assert document.model_id == classifier.classifier_id
-            assert document.pages is not None
+            assert len(document.pages) == 4
             assert document.tables is None
             assert document.paragraphs is None
             assert document.styles is None
