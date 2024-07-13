@@ -5,12 +5,10 @@ extends:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 480
+      UseFederatedAuth: true
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
-        AZURE_TENANT_ID: $(SERVICEBUS_TENANT_ID)
-        AZURE_CLIENT_ID: $(SERVICEBUS_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(SERVICEBUS_CLIENT_SECRET)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
       MatrixFilters:
