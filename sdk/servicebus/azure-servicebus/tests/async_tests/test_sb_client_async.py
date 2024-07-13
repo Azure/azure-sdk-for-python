@@ -25,7 +25,7 @@ from azure.servicebus.exceptions import (
     ServiceBusAuthorizationError,
     ServiceBusConnectionError
 )
-from devtools_testutils import AzureMgmtRecordedTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
 from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
@@ -87,8 +87,10 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_sb_client_bad_entity_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+    async def test_sb_client_bad_entity_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_namespace=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        client = ServiceBusClient(fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
 
         async with client:
             with pytest.raises(ServiceBusAuthenticationError):
@@ -177,8 +179,10 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_async_sb_client_close_spawned_handlers(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+    async def test_async_sb_client_close_spawned_handlers(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_namespace, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        client = ServiceBusClient(fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
 
         await client.close()
 

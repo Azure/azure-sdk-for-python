@@ -95,8 +95,10 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_sb_client_bad_entity(self, uamqp_transport, *, servicebus_namespace_connection_string=None, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+    def test_sb_client_bad_entity(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_namespace=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        client = ServiceBusClient(fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
 
         with client:
             with pytest.raises(ServiceBusAuthenticationError):
