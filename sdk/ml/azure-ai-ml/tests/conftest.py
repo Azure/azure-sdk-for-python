@@ -177,14 +177,18 @@ def mock_operation_config_no_progress() -> OperationConfig:
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
     sanitizings = {
-        "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
-        "ML_RESOURCE_GROUP": "00000",
-        "ML_WORKSPACE_NAME": "00000",
+        "ML_SUBSCRIPTION_ID": "75703df0-38f9-4e2e-8328-45f6fc810286",
+        "ML_RESOURCE_GROUP": "rg-sasumai",
+        "ML_WORKSPACE_NAME": "sasum-westus3-ws",
         "ML_FEATURE_STORE_NAME": "00000",
-        "ML_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
+        "ML_TEST_STORAGE_ACCOUNT_NAME": "stsasumai920059435573",
         "ML_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
         "ML_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
     }
+    os.environ["ML_SUBSCRIPTION_ID"] = sanitizings["ML_SUBSCRIPTION_ID"]
+    os.environ["ML_RESOURCE_GROUP"] = sanitizings["ML_RESOURCE_GROUP"]
+    os.environ["ML_WORKSPACE_NAME"] = sanitizings["ML_WORKSPACE_NAME"]
+    os.environ["ML_TEST_STORAGE_ACCOUNT_NAME"] = sanitizings["ML_TEST_STORAGE_ACCOUNT_NAME"]
     return environment_variables.sanitize_batch(sanitizings)
 
 

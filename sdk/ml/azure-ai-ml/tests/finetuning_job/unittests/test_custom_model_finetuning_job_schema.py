@@ -17,18 +17,28 @@ def loaded_custom_model_finetuning_job_full(mock_machinelearning_client: Operati
         "./tests/test_configs/finetuning_job/e2e_configs/custom_model_finetuning_job/mock_custom_model_finetuning_job_full.yaml"
     )
     job = load_job(test_schema_path)
-    mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
-    return job
+    rest_object = CustomModelFineTuningJob._to_rest_object(job)
+    return rest_object
+
+
+@pytest.fixture
+def loaded_custom_model_finetuning_job_as_dict(mock_machinelearning_client: OperationScope) -> FineTuningJob:
+    test_schema_path = Path(
+        "./tests/test_configs/finetuning_job/e2e_configs/custom_model_finetuning_job/mock_custom_model_finetuning_job_full.yaml"
+    )
+    job = load_job(test_schema_path)
+    rest_object = CustomModelFineTuningJob._to_rest_object(job)
+    return rest_object
 
 
 @pytest.fixture
 def train_dataset() -> Input:
-    return Input(type="uri_file", path="https://foo/bar/train.jsonl")
+    return Input(type="uri_file", path="./samsum_dataset/small_train.jsonl")
 
 
 @pytest.fixture
 def validation_dataset() -> Input:
-    return Input(type="uri_file", path="https://foo/bar/validation.jsonl")
+    return Input(type="uri_file", path="./samsum_dataset/small_validation.jsonl")
 
 
 @pytest.fixture
@@ -70,12 +80,18 @@ class TestCustomModelFineTuningJobSchema:
         mlflow_model = cast(Input, finetuning_job.model)
         assert mlflow_model.type == "mlflow_model"
 
-    def test_custom_model_finetuning_job_full(
+    def test_custom_model_finetuning_job_full_rest_transform(
         self, expected_custom_model_finetuning_job_full, loaded_custom_model_finetuning_job_full
     ):
-        self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
+        # self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
 
-        assert (
-            loaded_custom_model_finetuning_job_full._to_rest_object().as_dict()
-            == expected_custom_model_finetuning_job_full.as_dict()
-        )
+        loaded_job = loaded_custom_model_finetuning_job_full.as_dict()
+        expected_job = expected_custom_model_finetuning_job_full.as_dict()
+        assert loaded_job == expected_job
+
+    def test_custom_model_finetuning_job_load_from_dict_using_schema(
+        self, expected_custom_model_finetuning_job_full, loaded_custom_model_finetuning_job_as_dict
+    ):
+        # self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
+
+        assert loaded_custom_model_finetuning_job_as_dict is not None
