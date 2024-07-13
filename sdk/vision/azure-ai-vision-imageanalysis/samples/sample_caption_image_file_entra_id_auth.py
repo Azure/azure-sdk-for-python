@@ -38,7 +38,7 @@ def sample_caption_image_file_entra_id_auth():
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
     except KeyError:
-        print("Missing environment variable 'VISION_ENDPOINT'")
+        print("Missing environment variable 'VISION_ENDPOINT'.")
         print("Set it before running this sample.")
         exit()
 
