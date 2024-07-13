@@ -1168,8 +1168,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_async_session_basic_topic_subscription_send_and_receive(self, uamqp_transport, *, fully_qualified_namespace=fully_qualified_namespace,
-            credential=credential, servicebus_topic, servicebus_subscription, **kwargs):
+    async def test_async_session_basic_topic_subscription_send_and_receive(self, uamqp_transport, *, servicebus_namespace, servicebus_topic, servicebus_subscription, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential(is_async=True)
         async with ServiceBusClient(
