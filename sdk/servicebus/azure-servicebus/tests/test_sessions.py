@@ -62,8 +62,6 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
     def test_session_by_session_client_conn_str_receive_handler_peeklock(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:

@@ -1173,7 +1173,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
         credential = get_credential(is_async=True)
         async with ServiceBusClient(
                 fully_qualified_namespace=fully_qualified_namespace,
-            credential=credential,
+                credential=credential,
                 logging_enable=False,
                 uamqp_transport=uamqp_transport
         ) as sb_client:
