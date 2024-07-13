@@ -78,7 +78,7 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
 
         return await ImageAnalysisClientOperationsMixin._analyze_from_url(  # pylint: disable=protected-access
             self,
-            image_content=_models._models.ImageUrl(url=image_url),  # pylint: disable=protected-access
+            image_url=_models._models.ImageUrl(url=image_url),  # pylint: disable=protected-access
             visual_features=visual_features_impl,
             language=language,
             gender_neutral_caption=gender_neutral_caption,
@@ -138,7 +138,7 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
 
         return await ImageAnalysisClientOperationsMixin._analyze_from_image_data(  # pylint: disable=protected-access
             self,
-            image_content=image_data,
+            image_data=image_data,
             visual_features=visual_features_impl,
             language=language,
             gender_neutral_caption=gender_neutral_caption,
