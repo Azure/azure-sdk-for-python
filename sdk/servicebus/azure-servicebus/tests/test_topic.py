@@ -7,7 +7,7 @@
 import logging
 import pytest
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, get_credential
 
 from azure.servicebus import ServiceBusClient
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
@@ -37,7 +37,7 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @ArgPasser()
     def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = self.get_credential(ServiceBusClient)
+        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
