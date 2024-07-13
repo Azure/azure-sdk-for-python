@@ -1784,7 +1784,8 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     def test_queue_message_http_proxy_setting(self, uamqp_transport):
-        mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
+        mock_fully_qualified_namespace = "mock_namespace"
+        credential = get_credential(is_async=True)
         http_proxy = {
             'proxy_hostname': '127.0.0.1',
             'proxy_port': 8899,
@@ -1792,7 +1793,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             'password': '123456'
         }
 
-        sb_client = ServiceBusClient(mock_conn_str, http_proxy=http_proxy, uamqp_transport=uamqp_transport)
+        sb_client = ServiceBusClient(mock_fully_qualified_namespace, credential, http_proxy=http_proxy, uamqp_transport=uamqp_transport)
         assert sb_client._config.http_proxy == http_proxy
         assert sb_client._config.transport_type == TransportType.AmqpOverWebsocket
 
@@ -2448,9 +2449,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     async def test_async_send_message_no_body(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential(is_async=True)
-        async with ServiceBusClient(
-            servicebus_namespace_connection_string) as sb_client:
-
+        async with ServiceBusClient(fully_qualified_namespace, credential) as sb_client:
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage(body=None))
 

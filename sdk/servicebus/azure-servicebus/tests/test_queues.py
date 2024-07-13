@@ -126,8 +126,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_github_issue_6178(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
@@ -153,8 +151,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_queue_client_conn_str_receive_handler_peeklock(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -245,8 +241,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_queue_client_conn_str_receive_handler_release_messages(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -426,8 +420,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_queue_client_send_multiple_messages(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
@@ -552,8 +544,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             
@@ -605,8 +595,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete_prefetch(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -678,8 +666,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_queue_client_conn_str_receive_handler_with_stop(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
@@ -719,8 +705,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_iter_messages_simple(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
@@ -756,8 +740,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_servicebus_conn_str_client_iter_messages_with_abandon(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -801,8 +783,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_iter_messages_with_defer(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
@@ -844,8 +824,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_client(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
@@ -885,8 +863,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -987,8 +963,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
@@ -1029,8 +1003,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_not_found(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
@@ -1068,8 +1040,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_servicebus_client_receive_batch_with_deadletter(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -1133,8 +1103,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_receive_batch_with_retrieve_deadletter(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
@@ -1189,8 +1157,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_by_servicebus_client_session_fail(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
@@ -1215,8 +1181,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_servicebus_client_browse_messages_client(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -2048,7 +2012,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     def test_queue_message_http_proxy_setting(self, uamqp_transport):
-        mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
+        mock_fully_qualified_namespace = "mock_namespace"
+        credential = get_credential()
         http_proxy = {
             'proxy_hostname': '127.0.0.1',
             'proxy_port': 8899,
@@ -2056,8 +2021,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             'password': '123456'
         }
 
-        mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
-        sb_client = ServiceBusClient(mock_conn_str, http_proxy=http_proxy, uamqp_transport=uamqp_transport)
+        sb_client = ServiceBusClient(mock_fully_qualified_namespace, credential, http_proxy=http_proxy, uamqp_transport=uamqp_transport)
         assert sb_client._config.http_proxy == http_proxy
         assert sb_client._config.transport_type == TransportType.AmqpOverWebsocket
 
@@ -2719,8 +2683,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender.send_messages(ServiceBusMessage(payload))
 
         # ReceiveMessages
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
         with ServiceBusClient(
                 fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
@@ -2893,8 +2855,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_send_message_no_body(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
-        sb_client = ServiceBusClient(
-            fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
+        sb_client = ServiceBusClient(fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
 
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
             sender.send_messages(ServiceBusMessage(body=None))
