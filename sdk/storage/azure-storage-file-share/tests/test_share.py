@@ -1685,15 +1685,15 @@ class TestStorageShare(StorageRecordedTestCase):
         first_share_props = first_share_client.get_share_properties()
         second_share_props = second_share_client.get_share_properties()
         assert first_share_props is not None
-        assert first_share.share_name == first_share_props.name
-        assert 'TransactionOptimized' == first_share_props.access_tier
+        assert first_share_props.name == first_share.share_name
+        assert first_share_props.access_tier == 'TransactionOptimized'
         assert second_share_props is not None
-        assert second_share.share_name == second_share_props.name
-        assert 'TransactionOptimized' == first_share_props.access_tier
+        assert second_share_props.name == second_share.share_name
+        assert first_share_props.access_tier == 'TransactionOptimized'
 
         first_share_client.set_share_properties(access_tier='Hot')
         first_share_props = first_share_client.get_share_properties()
-        assert 'Hot' == first_share_props.access_tier
+        assert first_share_props.access_tier == 'Hot'
 
         first_share_deleted = first_share_client.delete_share()
         second_share_deleted = second_share_client.delete_share()
