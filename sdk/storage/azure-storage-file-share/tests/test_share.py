@@ -1654,6 +1654,57 @@ class TestStorageShare(StorageRecordedTestCase):
 
         self._delete_shares()
 
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_share_service_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.get_credential(ShareClient)
+
+        self._setup(storage_account_name, storage_account_key)
+        first_share = self._create_share()
+        second_share = self._create_share()
+
+        share_names = [share.name for share in self.fsc.list_shares()]
+        assert first_share.share_name in share_names
+        assert second_share.share_name in share_names
+
+        first_share_client = ShareClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=first_share.share_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+        second_share_client = ShareClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=second_share.share_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+
+        first_share_props = first_share_client.get_share_properties()
+        second_share_props = second_share_client.get_share_properties()
+        assert first_share_props is not None
+        assert first_share.share_name == first_share_props.name
+        assert 'TransactionOptimized' == first_share_props.access_tier
+        assert second_share_props is not None
+        assert second_share.share_name == second_share_props.name
+        assert 'TransactionOptimized' == first_share_props.access_tier
+
+        first_share_client.set_share_properties(access_tier='Hot')
+        first_share_props = first_share_client.get_share_properties()
+        assert 'Hot' == first_share_props.access_tier
+
+        first_share_deleted = first_share_client.delete_share()
+        second_share_deleted = second_share_client.delete_share()
+
+        assert first_share_deleted is None
+        assert second_share_deleted is None
+        with pytest.raises(ResourceNotFoundError):
+            first_share_client.get_share_properties()
+        with pytest.raises(ResourceNotFoundError):
+            second_share_client.get_share_properties()
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

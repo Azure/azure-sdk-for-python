@@ -52,6 +52,7 @@ def build_create_request(
     paid_bursting_enabled: Optional[bool] = None,
     paid_bursting_max_bandwidth_mibps: Optional[int] = None,
     paid_bursting_max_iops: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -102,6 +103,8 @@ def build_create_request(
         _headers["x-ms-share-paid-bursting-max-iops"] = _SERIALIZER.header(
             "paid_bursting_max_iops", paid_bursting_max_iops, "int"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -113,6 +116,7 @@ def build_get_properties_request(
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -141,6 +145,8 @@ def build_get_properties_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -153,6 +159,7 @@ def build_delete_request(
     timeout: Optional[int] = None,
     delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
     lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -183,6 +190,8 @@ def build_delete_request(
         _headers["x-ms-delete-snapshots"] = _SERIALIZER.header("delete_snapshots", delete_snapshots, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -196,6 +205,7 @@ def build_acquire_lease_request(
     proposed_lease_id: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -232,6 +242,8 @@ def build_acquire_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -244,6 +256,7 @@ def build_release_lease_request(
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -277,6 +290,8 @@ def build_release_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -290,6 +305,7 @@ def build_change_lease_request(
     proposed_lease_id: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -325,6 +341,8 @@ def build_change_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -337,6 +355,7 @@ def build_renew_lease_request(
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -370,6 +389,8 @@ def build_renew_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -383,6 +404,7 @@ def build_break_lease_request(
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -419,13 +441,20 @@ def build_break_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_create_snapshot_request(
-    url: str, *, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    metadata: Optional[Dict[str, str]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -453,6 +482,8 @@ def build_create_snapshot_request(
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -503,6 +534,7 @@ def build_get_permission_request(
     url: str,
     *,
     file_permission_key: str,
+    file_permission_key_format: Optional[Union[str, _models.FilePermissionKeyFormat]] = None,
     timeout: Optional[int] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -531,6 +563,10 @@ def build_get_permission_request(
 
     # Construct headers
     _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
+    if file_permission_key_format is not None:
+        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
+            "file_permission_key_format", file_permission_key_format, "str"
+        )
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
@@ -551,6 +587,7 @@ def build_set_properties_request(
     paid_bursting_enabled: Optional[bool] = None,
     paid_bursting_max_bandwidth_mibps: Optional[int] = None,
     paid_bursting_max_iops: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -601,6 +638,8 @@ def build_set_properties_request(
         _headers["x-ms-share-paid-bursting-max-iops"] = _SERIALIZER.header(
             "paid_bursting_max_iops", paid_bursting_max_iops, "int"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -612,6 +651,7 @@ def build_set_metadata_request(
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -642,13 +682,20 @@ def build_set_metadata_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_access_policy_request(
-    url: str, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -676,13 +723,21 @@ def build_get_access_policy_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_set_access_policy_request(
-    url: str, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, content: Any = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    content: Any = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -711,6 +766,8 @@ def build_set_access_policy_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -719,7 +776,12 @@ def build_set_access_policy_request(
 
 
 def build_get_statistics_request(
-    url: str, *, timeout: Optional[int] = None, lease_id: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -747,6 +809,8 @@ def build_get_statistics_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -759,6 +823,7 @@ def build_restore_request(
     request_id_parameter: Optional[str] = None,
     deleted_share_name: Optional[str] = None,
     deleted_share_version: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -793,6 +858,8 @@ def build_restore_request(
         _headers["x-ms-deleted-share-version"] = _SERIALIZER.header(
             "deleted_share_version", deleted_share_version, "str"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -896,6 +963,7 @@ class ShareOperations:
             paid_bursting_enabled=paid_bursting_enabled,
             paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -974,6 +1042,7 @@ class ShareOperations:
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -1100,6 +1169,7 @@ class ShareOperations:
             timeout=timeout,
             delete_snapshots=delete_snapshots,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
             headers=_headers,
@@ -1188,6 +1258,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1276,6 +1347,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1369,6 +1441,7 @@ class ShareOperations:
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1457,6 +1530,7 @@ class ShareOperations:
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1559,6 +1633,7 @@ class ShareOperations:
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             sharesnapshot=sharesnapshot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
             restype=restype,
@@ -1633,6 +1708,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1800,12 +1876,24 @@ class ShareOperations:
 
     @distributed_trace
     def get_permission(
-        self, file_permission_key: str, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        file_permission_key: str,
+        file_permission_key_format: Optional[Union[str, _models.FilePermissionKeyFormat]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.SharePermission:
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the directory/file. Required.
         :type file_permission_key: str
+        :param file_permission_key_format: Optional. Available for version 2023-06-01 and later.
+         Specifies the format in which the permission is returned. Acceptable values are SDDL or binary.
+         If x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "SDDL" and "binary". Default value is None.
+        :type file_permission_key_format: str or
+         ~azure.storage.fileshare.models.FilePermissionKeyFormat
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -1833,6 +1921,7 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
+            file_permission_key_format=file_permission_key_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
@@ -1946,6 +2035,7 @@ class ShareOperations:
             paid_bursting_enabled=paid_bursting_enabled,
             paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2025,6 +2115,7 @@ class ShareOperations:
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2099,6 +2190,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2188,6 +2280,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -2264,6 +2357,7 @@ class ShareOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2350,6 +2444,7 @@ class ShareOperations:
             request_id_parameter=request_id_parameter,
             deleted_share_name=deleted_share_name,
             deleted_share_version=deleted_share_version,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,

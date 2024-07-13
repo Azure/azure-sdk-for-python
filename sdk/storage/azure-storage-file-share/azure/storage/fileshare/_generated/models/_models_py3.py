@@ -1175,6 +1175,8 @@ class SharePermission(_serialization.Model):
     :ivar permission: The permission in the Security Descriptor Definition Language (SDDL).
      Required.
     :vartype permission: str
+    :ivar format: Known values are: "SDDL" and "binary".
+    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionKeyFormat
     """
 
     _validation = {
@@ -1183,16 +1185,22 @@ class SharePermission(_serialization.Model):
 
     _attribute_map = {
         "permission": {"key": "permission", "type": "str"},
+        "format": {"key": "format", "type": "str"},
     }
 
-    def __init__(self, *, permission: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, permission: str, format: Optional[Union[str, "_models.FilePermissionKeyFormat"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword permission: The permission in the Security Descriptor Definition Language (SDDL).
          Required.
         :paramtype permission: str
+        :keyword format: Known values are: "SDDL" and "binary".
+        :paramtype format: str or ~azure.storage.fileshare.models.FilePermissionKeyFormat
         """
         super().__init__(**kwargs)
         self.permission = permission
+        self.format = format
 
 
 class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
