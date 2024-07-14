@@ -22,7 +22,9 @@ from azure.storage.fileshare import (
     AccountSasPermissions,
     generate_account_sas,
     generate_share_sas,
+    Metrics,
     ResourceTypes,
+    RetentionPolicy,
     ShareAccessTier,
     ShareClient,
     ShareFileClient,
@@ -1656,7 +1658,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_share_service_with_oauth(self, **kwargs):
+    def test_share_client_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         token_credential = self.get_credential(ShareClient)
@@ -1665,7 +1667,7 @@ class TestStorageShare(StorageRecordedTestCase):
         first_share = self._create_share()
         second_share = self._create_share()
 
-        share_names = [share.name for share in self.fsc.list_shares()]
+        share_names = {share.name for share in self.fsc.list_shares()}
         assert first_share.share_name in share_names
         assert second_share.share_name in share_names
 
@@ -1697,13 +1699,68 @@ class TestStorageShare(StorageRecordedTestCase):
 
         first_share_deleted = first_share_client.delete_share()
         second_share_deleted = second_share_client.delete_share()
-
         assert first_share_deleted is None
         assert second_share_deleted is None
         with pytest.raises(ResourceNotFoundError):
             first_share_client.get_share_properties()
         with pytest.raises(ResourceNotFoundError):
             second_share_client.get_share_properties()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_share_service_client_properties_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        token_credential = self.get_credential(ShareServiceClient)
+
+        # Arrange
+        share_service_client = ShareServiceClient(
+            self.account_url(storage_account_name, "file"),
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+
+        # Act
+        service_props = share_service_client.get_service_properties()
+        assert service_props is not None
+
+        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        share_service_client.set_service_properties(hour_metrics=hour_metrics)
+        service_props = share_service_client.get_service_properties()
+
+        # Assert
+        assert service_props['hour_metrics'] is not None
+        assert service_props['hour_metrics'].enabled
+        assert service_props['hour_metrics'].include_apis
+        assert service_props['hour_metrics'].retention_policy.enabled
+        assert service_props['hour_metrics'].retention_policy.days == 5
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_share_service_client_create_delete_share_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        token_credential = self.get_credential(ShareServiceClient)
+
+        # Arrange
+        share_service_client = ShareServiceClient(
+            self.account_url(storage_account_name, "file"),
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+
+        # Act / Assert
+        share_name = self.get_resource_name(TEST_SHARE_PREFIX)
+        share_client = share_service_client.create_share(share_name)
+        share_props = share_client.get_share_properties()
+        assert share_props.name == share_name
+
+        shares = list(share_service_client.list_shares())
+        assert len(shares) >= 1
+        share_names = {share.name for share in shares}
+        assert share_name in share_names
+
+        share_service_client.delete_share(share_name)
+        with pytest.raises(ResourceNotFoundError):
+            share_client.get_share_properties()
 
 
 # ------------------------------------------------------------------------------
