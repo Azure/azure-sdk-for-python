@@ -334,7 +334,7 @@ class Workspace(Resource):
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
-        # TODO: Remove once Online endpoints updates API version to at least 2023-08-01
+        # TODO: Remove once Online Endpoints updates API version to at least 2023-08-01
         allow_roleassignment_on_rg = None
         if hasattr(rest_obj, "allow_roleassignment_on_rg"):
             allow_roleassignment_on_rg = rest_obj.allow_roleassignment_on_rg
