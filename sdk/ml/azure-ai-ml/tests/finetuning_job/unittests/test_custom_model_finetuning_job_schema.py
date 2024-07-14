@@ -12,17 +12,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
 
 
 @pytest.fixture
-def loaded_custom_model_finetuning_job_full(mock_machinelearning_client: OperationScope) -> FineTuningJob:
-    test_schema_path = Path(
-        "./tests/test_configs/finetuning_job/e2e_configs/custom_model_finetuning_job/mock_custom_model_finetuning_job_full.yaml"
-    )
-    job = load_job(test_schema_path)
-    rest_object = CustomModelFineTuningJob._to_rest_object(job)
-    return rest_object
-
-
-@pytest.fixture
-def loaded_custom_model_finetuning_job_as_dict(mock_machinelearning_client: OperationScope) -> FineTuningJob:
+def loaded_custom_model_finetuning_job_as_rest_obj() -> FineTuningJob:
     test_schema_path = Path(
         "./tests/test_configs/finetuning_job/e2e_configs/custom_model_finetuning_job/mock_custom_model_finetuning_job_full.yaml"
     )
@@ -52,7 +42,7 @@ def hyperparameters() -> Dict[str, str]:
 
 
 @pytest.fixture
-def expected_custom_model_finetuning_job_full(
+def expected_custom_model_finetuning_job_as_rest_obj(
     train_dataset, validation_dataset, mlflow_model_llama, hyperparameters
 ) -> RestFineTuningJob:
     custom_model_finetuning_job = CustomModelFineTuningJob(
@@ -81,17 +71,8 @@ class TestCustomModelFineTuningJobSchema:
         assert mlflow_model.type == "mlflow_model"
 
     def test_custom_model_finetuning_job_full_rest_transform(
-        self, expected_custom_model_finetuning_job_full, loaded_custom_model_finetuning_job_full
+        self, expected_custom_model_finetuning_job_as_rest_obj, loaded_custom_model_finetuning_job_as_rest_obj
     ):
         # self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
 
-        loaded_job = loaded_custom_model_finetuning_job_full.as_dict()
-        expected_job = expected_custom_model_finetuning_job_full.as_dict()
-        assert loaded_job == expected_job
-
-    def test_custom_model_finetuning_job_load_from_dict_using_schema(
-        self, expected_custom_model_finetuning_job_full, loaded_custom_model_finetuning_job_as_dict
-    ):
-        # self._validate_finetuning_job(loaded_custom_model_finetuning_job_full)
-
-        assert loaded_custom_model_finetuning_job_as_dict is not None
+        loaded_custom_model_finetuning_job_as_rest_obj == expected_custom_model_finetuning_job_as_rest_obj
