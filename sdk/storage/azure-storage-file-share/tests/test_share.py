@@ -1735,16 +1735,16 @@ class TestStorageShare(StorageRecordedTestCase):
         assert props.lease.status == 'locked'
 
         lease_id1 = lease.id
-        lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
-        lease.change(proposed_lease_id=lease_id)
+        new_lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
+        lease.change(proposed_lease_id=new_lease_id)
         lease_id2 = lease.id
         assert lease_id1 is not None
         assert lease_id2 is not None
         assert lease_id1 != lease_id2
-        assert lease_id2 == lease_id
+        assert lease_id2 == new_lease_id
 
         lease.renew()
-        assert lease.id == lease_id
+        assert lease.id == new_lease_id
 
         time_elapsed = 2
         self.sleep(time_elapsed)
