@@ -206,20 +206,17 @@ class CustomModelFineTuningJob(FineTuningVertical):
         #        **kwargs,
         #    )
         # else:
-        print("##################################################")
-        print(data)
-        print("##################################################")
         loaded_data = load_from_dict(CustomModelFineTuningSchema, data, context, additional_message, **kwargs)
+
         training_data = loaded_data.get("training_data", None)
         if isinstance(training_data, str):
             loaded_data["training_data"] = Input(type="uri_file", path=training_data)
+
         validation_data = loaded_data.get("validation_data", None)
         if isinstance(validation_data, str):
             loaded_data["validation_data"] = Input(type="uri_file", path=validation_data)
+
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
-        print("##################################################")
-        print(job_instance)
-        print("##################################################")
         return job_instance
 
     @classmethod

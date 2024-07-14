@@ -300,7 +300,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return cast(
             Iterable[Job],
-            self.service_client_01_2024_preview.list(
+            self.service_client_01_2024_preview.jobs.list(
                 self._operation_scope.resource_group_name,
                 self._workspace_name,
                 cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -721,25 +721,6 @@ class JobOperations(_ScopeDependentOperations):
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
-        print("-------------------------------------------------------------------------------------------------------")
-        print("-------------------------------------------------------------------------------------------------------")
-        # print(json.dumps(rest_job_resource.properties))
-        import debugpy
-        import pdb
-
-        # pdb.set_trace()
-        # Listen for a client to attach to the debugger at localhost:5678
-        # debugpy.listen(5678)
-
-        # Wait for the client to attach to the debugger
-        print("Waiting for debugger to attach...")
-        # debugpy.wait_for_client()
-
-        # Now you can set breakpoints
-        # debugpy.breakpoint()
-        print("-------------------------------------------------------------------------------------------------------")
-        print("-------------------------------------------------------------------------------------------------------")
         if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
@@ -1045,7 +1026,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self.service_client_01_2024_preview.get(
+        return self.service_client_01_2024_preview.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -1151,7 +1132,6 @@ class JobOperations(_ScopeDependentOperations):
         :return: the job resource entity that nested dependencies are resolved
         :rtype: Job
         """
-        print("helllllllllllllllllllllllllllllllllllllllllllllloooooooooooooooooooooooooooooo")
         self._append_tid_to_studio_url(job)
         self._resolve_job_inputs_arm_id(job)
         return self._resolve_arm_id_or_azureml_id(job, self._orchestrators.resolve_azureml_id)
