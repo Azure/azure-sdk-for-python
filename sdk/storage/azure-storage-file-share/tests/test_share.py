@@ -1763,6 +1763,46 @@ class TestStorageShare(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_create_snapshot_and_metadata_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.get_credential(ShareClient)
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        share = self._get_share_reference()
+        metadata = {"test1": "foo", "test2": "bar"}
+        metadata2 = {"test100": "foo100", "test200": "bar200"}
+
+        # Act
+        created = share.create_share(metadata=metadata)
+        share_props = share.get_share_properties()
+        snapshot = share.create_snapshot(metadata=metadata2)
+        snapshot_client = ShareClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=share.share_name,
+            snapshot=snapshot,
+            credential=token_credential,
+            token_intent=TEST_INTENT
+        )
+        snapshot_props = snapshot_client.get_share_properties()
+
+        # Assert
+        assert created
+        assert share_props.metadata == metadata
+        assert snapshot['snapshot'] is not None
+        assert snapshot['etag'] is not None
+        assert snapshot['last_modified'] is not None
+        assert snapshot_props.metadata == metadata2
+
+        share.set_share_metadata(metadata=metadata2)
+        share_props = share.get_share_properties()
+        assert share_props.metadata == metadata2
+
+        self._delete_shares(share.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_share_service_client_properties_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         token_credential = self.get_credential(ShareServiceClient)
