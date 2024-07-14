@@ -65,7 +65,6 @@ class CustomModelFineTuningJob(FineTuningVertical):
         :return: REST object representation of this object.
         :rtype: JobBase
         """
-        print(self._model)
         custom_finetuning_vertical = RestCustomModelFineTuningVertical(
             task_type=self._task,
             model=self._model,
