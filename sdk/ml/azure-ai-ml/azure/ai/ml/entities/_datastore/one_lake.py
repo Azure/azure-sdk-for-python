@@ -8,11 +8,11 @@ from abc import ABC
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import LakeHouseArtifact as RestLakeHouseArtifact
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore as RestOneLakeDatastore
+from azure.ai.ml._restclient.v2024_01_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2024_01_01_preview.models import DatastoreType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import LakeHouseArtifact as RestLakeHouseArtifact
+from azure.ai.ml._restclient.v2024_01_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.v2024_01_01_preview.models import OneLakeDatastore as RestOneLakeDatastore
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE

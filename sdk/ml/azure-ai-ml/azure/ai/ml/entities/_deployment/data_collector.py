@@ -5,7 +5,7 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataCollector as RestDataCollector
+from azure.ai.ml._restclient.v2024_01_01_preview.models import DataCollector as RestDataCollector
 from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY

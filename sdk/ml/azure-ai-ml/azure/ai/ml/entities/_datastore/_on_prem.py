@@ -8,9 +8,9 @@ from base64 import b64encode
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import HdfsDatastore as RestHdfsDatastore
+from azure.ai.ml._restclient.v2024_01_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2024_01_01_preview.models import DatastoreType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import HdfsDatastore as RestHdfsDatastore
 from azure.ai.ml._schema._datastore._on_prem import HdfsSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE

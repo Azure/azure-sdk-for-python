@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 
 
 # cspell:disable-next-line
 from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import Index as RestIndex
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,

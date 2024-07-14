@@ -6,7 +6,7 @@
 
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import LearningRateScheduler, StochasticOptimizer
+from azure.ai.ml._restclient.v2024_01_01_preview.models import LearningRateScheduler, StochasticOptimizer
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage
 from azure.ai.ml.entities._job.automl.image.image_classification_search_space import ImageClassificationSearchSpace
