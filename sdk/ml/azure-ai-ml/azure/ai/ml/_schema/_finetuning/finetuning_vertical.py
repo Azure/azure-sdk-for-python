@@ -4,9 +4,10 @@
 
 # pylint: disable=unused-argument
 
+from marshmallow import fields
+
 from azure.ai.ml._schema._finetuning.finetuning_job import FineTuningJobSchema
 from azure.ai.ml._schema._finetuning.constants import SnakeCaseFineTuningTaskTypes
-from marshmallow import fields
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     LocalPathField,
