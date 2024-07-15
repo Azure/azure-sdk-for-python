@@ -19,15 +19,6 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
-class ApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Various application types of the Serverless Runtime environments."""
-
-    CDI = "CDI"
-    """Data Integration"""
-    CDIE = "CDIE"
-    """Advanced Data Integration"""
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -54,38 +45,33 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class PlatformType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Various types of the Platform types."""
-
-    AZURE = "AZURE"
-    """Azure platform type"""
-
-
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning State of the Organization resource."""
+    """The status of the current operation."""
 
-    ACCEPTED = "Accepted"
-    """Organization resource creation request accepted"""
-    CREATING = "Creating"
-    """Organization resource creation started"""
-    UPDATING = "Updating"
-    """Organization resource is being updated"""
-    DELETING = "Deleting"
-    """Organization resource deletion started"""
     SUCCEEDED = "Succeeded"
-    """Organization resource creation successful"""
+    """Resource has been created."""
     FAILED = "Failed"
-    """Organization resource creation failed"""
+    """Resource creation failed."""
     CANCELED = "Canceled"
-    """Organization resource creation canceled"""
-    DELETED = "Deleted"
-    """Organization resource is deleted"""
-    NOT_SPECIFIED = "NotSpecified"
-    """Organization resource state is unknown"""
+    """Resource creation was canceled."""
+    PROVISIONING = "Provisioning"
+    """Provisioning State"""
+    UPDATING = "Updating"
+    """Updating State"""
+    DELETING = "Deleting"
+    """Deleting State"""
+    ACCEPTED = "Accepted"
+    """Accepted State"""
 
 
-class RuntimeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Various types of the runtime types."""
+class RegistrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure Extended Zone registration status for a subscription."""
 
-    SERVERLESS = "SERVERLESS"
-    """Serverless Runtime type"""
+    NOT_REGISTERED = "NotRegistered"
+    """Subscription not registered for the Azure Extended Zone"""
+    PENDING_REGISTER = "PendingRegister"
+    """Subscription pending registration for the Azure Extended Zone"""
+    REGISTERED = "Registered"
+    """Subscription is registered for the Azure Extended Zone"""
+    PENDING_UNREGISTER = "PendingUnregister"
+    """Subscription is pending unregistering for the Azure Extended Zone"""

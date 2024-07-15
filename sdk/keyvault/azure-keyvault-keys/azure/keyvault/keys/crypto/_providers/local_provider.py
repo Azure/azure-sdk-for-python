@@ -4,7 +4,7 @@
 # ------------------------------------
 import abc
 import os
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import AzureError
 
@@ -15,7 +15,6 @@ ABC = abc.ABC
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Optional, Union
     from .._internal.key import Key
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from ... import JsonWebKey

@@ -22,6 +22,12 @@
 ### Other Changes
 - WorkspaceConnections are officially GA'd and no longer experimental. But its much newer subclasses remain experimental.
 
+## 1.17.1 (2024-07-04)
+
+### Bugs Fixed
+- Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
+- Project create operations works in general.
+
 ## 1.17.0 (2024-06-18)
 
 ## 1.16.0 (2024-05-14)
