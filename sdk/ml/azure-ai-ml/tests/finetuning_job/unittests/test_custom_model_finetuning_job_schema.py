@@ -2,7 +2,6 @@ import pytest
 from pathlib import Path
 from typing import Dict, cast
 from azure.ai.ml import load_job
-from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from azure.ai.ml.entities._inputs_outputs import Input, Output
