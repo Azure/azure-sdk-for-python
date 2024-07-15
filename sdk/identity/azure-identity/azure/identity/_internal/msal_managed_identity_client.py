@@ -9,6 +9,7 @@ import logging
 
 import msal
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 
 from .msal_client import MsalClient
 from .utils import within_credential_chain
@@ -133,7 +134,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
                 ex,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
-            raise CredentialUnavailableError(self.get_unavailable_message(str(ex)))
+            raise ClientAuthenticationError(self.get_unavailable_message(str(ex)))
         except Exception as ex:  # pylint:disable=broad-except
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,

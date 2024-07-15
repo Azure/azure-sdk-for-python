@@ -8,7 +8,7 @@
 # ------------------------------------
 import pytest
 import msal
-from azure.identity import CredentialUnavailableError
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._credentials.azure_arc import AzureArcCredential
 
 def test_msal_managed_identity_error():
@@ -21,5 +21,5 @@ def test_msal_managed_identity_error():
     cred = AzureArcCredential()
     cred._msal_client.acquire_token_for_client = mock_request_token
 
-    with pytest.raises(CredentialUnavailableError):
+    with pytest.raises(ClientAuthenticationError):
         cred.get_token(*scopes)
