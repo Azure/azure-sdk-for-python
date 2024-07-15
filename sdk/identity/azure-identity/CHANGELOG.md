@@ -6,7 +6,7 @@
 
 ### Other Changes
 
-- Migrated managed identity implementation to use MSAL library.
+- The synchronous `ManagedIdentityCredential` was updated to use MSAL (Microsoft Authentication Library) for handling most of the underlying managed identity implementations.
 
 ## 1.17.1 (2024-06-21)
 
