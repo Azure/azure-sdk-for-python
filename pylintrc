@@ -19,6 +19,8 @@ load-plugins=pylint_guidelines_checker
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
 # Let's black deal with bad-continuation
 
+enable=useless-suppression
+
 # Added disables from super-with-arguments
 disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,docstring-keyword-should-match-keyword-only,docstring-type-do-not-use-class,consider-using-max-builtin
 
