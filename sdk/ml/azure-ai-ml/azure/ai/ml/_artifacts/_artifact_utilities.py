@@ -42,7 +42,6 @@ from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
@@ -79,6 +78,8 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
 def get_datastore_info(
     operations: DatastoreOperations,
     name: str,
+    *,
+    credential=None,
     **kwargs,
 ) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
     """Get datastore account, type, and auth information.
@@ -87,6 +88,10 @@ def get_datastore_info(
     :type operations: DatastoreOperations
     :param name: Name of the datastore. If not provided, the default datastore will be used.
     :type name: str
+    :keyword credential: Local credential to use for authentication. This argument is no longer used as of 1.18.0.
+        Instead, a SAS token will be requested from the datastore, and the MLClient credential will be used as backup,
+        if necessary.
+    :paramtype credential: str
     :return: The dictionary with datastore info
     :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
     """
@@ -102,9 +107,8 @@ def get_datastore_info(
 
     try:
         credential = operations._list_secrets(name=name, expirable_secret=True)
-        if not hasattr(credential, "sas_token"):
-            raise Exception("Credential does not have a SAS token. Falling back on MLClient credential.")
-    except Exception as e:  # pylint: disable=W0718
+        datastore_info["credential"] = credential.sas_token
+    except HttpResponseError:
         datastore_info["credential"] = operations._credential
 
     if datastore.type == DatastoreType.AZURE_BLOB:
