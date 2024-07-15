@@ -417,7 +417,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        play_to: List['CommunicationIdentifier'],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -455,7 +455,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        play_to: Literal["all"] = 'all',
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -484,7 +484,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword interrupt_call_media_operation: If set play can barge into other existing
+        :keyword interrupt_call_media_operation: If set, media will take priority over other existing
          queued-up/currently-processing requests. This is applicable only when play_to set to all.
         :paramtype interrupt_call_media_operation: bool
         :return: None
