@@ -88,6 +88,14 @@ def generate(
                         Path(restapi_git_folder or "", input_path).resolve() for input_path in optional_relative_paths
                     ]
 
+            # after codegen fix, we could remove the following block
+            readme_python_md = absolute_markdown_path.parent / "readme.python.md"
+            if readme_python_md.exists():
+                with open(readme_python_md, "r", encoding="utf-8") as f:
+                    content = f.read()
+                if "rdbms/azure-mgmt-rdbms/" in content or "recoveryservices/azure-mgmt-recoveryservicesbackup/" in content:
+                    global_conf["autorest_options"].pop("generate-test", None)
+
             build_project(
                 temp_dir,
                 project,
