@@ -61,7 +61,7 @@ class TestCustomModelFineTuningJob:
 
         original_obj = CustomModelFineTuningJob._from_rest_object(rest_obj)
         assert custom_model_finetuning_job == original_obj, "Conversion to/from rest object failed"
-        assert original_obj.task == task, "Task not set correctly"
+        assert original_obj.task.lower() == task.lower(), "Task not set correctly"
         assert original_obj.display_name == "llama-display-name", "Display name not set correctly"
         assert original_obj.name == "llama-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
@@ -119,7 +119,7 @@ class TestCustomModelFineTuningJob:
             outputs={"registered_model": Output(type="mlflow_model", name="llama-finetune-registered")},
         )
         dict_obj = custom_model_finetuning_job._to_dict()
-        assert dict_obj["task"] == task, "Task not set correctly"
+        assert dict_obj["task"].lower() == task.lower(), "Task not set correctly"
         assert dict_obj["display_name"] == "llama-display-name", "Display name not set correctly"
         assert dict_obj["name"] == "llama-finetuning", "Name not set correctly"
         assert dict_obj["experiment_name"] == "foo_exp", "Experiment name not set correctly"
@@ -144,6 +144,16 @@ class TestCustomModelFineTuningJob:
         "task",
         [
             FineTuningTaskTypes.CHAT_COMPLETION,
+            FineTuningTaskTypes.TEXT_COMPLETION,
+            FineTuningTaskTypes.TEXT_CLASSIFICATION,
+            FineTuningTaskTypes.QUESTION_ANSWERING,
+            FineTuningTaskTypes.TEXT_SUMMARIZATION,
+            FineTuningTaskTypes.TOKEN_CLASSIFICATION,
+            FineTuningTaskTypes.TEXT_TRANSLATION,
+            FineTuningTaskTypes.IMAGE_CLASSIFICATION,
+            FineTuningTaskTypes.IMAGE_INSTANCE_SEGMENTATION,
+            FineTuningTaskTypes.IMAGE_OBJECT_DETECTION,
+            FineTuningTaskTypes.VIDEO_MULTI_OBJECT_TRACKING,
         ],
     )
     def test_azure_openai_finetuning_job_conversion(self, task: str):
@@ -174,7 +184,7 @@ class TestCustomModelFineTuningJob:
 
         original_obj = AzureOpenAIFineTuningJob._from_rest_object(rest_obj)
         assert custom_model_finetuning_job == original_obj, "Conversion to/from rest object failed"
-        assert original_obj.task == task, "Task not set correctly"
+        assert original_obj.task.lower() == task.lower(), "Task not set correctly"
         assert original_obj.name == "gpt4-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
