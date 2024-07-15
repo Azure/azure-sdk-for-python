@@ -92,8 +92,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             id="SyncJobID",
             resource=jobdata,
         )
-        response = poller.result()
-        radiology_insights_result = models.RadiologyInsightsInferenceResult(response)
+        radiology_insights_result = poller.result()
 
         for patient_result in radiology_insights_result.patient_results:
             assert patient_result.inferences is not None

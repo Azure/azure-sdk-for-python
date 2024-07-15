@@ -92,8 +92,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
             id="AsyncJobID",
             resource=jobdata,
         )
-        response = await poller.result()
-        radiology_insights_result = models.RadiologyInsightsInferenceResult(response)
+        radiology_insights_result = await poller.result()
         for patient_result in radiology_insights_result.patient_results:
             assert patient_result.inferences is not None
             for inference in patient_result.inferences:
