@@ -345,7 +345,7 @@ for item in response.data:
 
 The length of the embedding vector depends on the model, but you should see something like this:
 
-```txt
+```text
 data[0]: length=1024, [0.0013399124, -0.01576233, ..., 0.007843018, 0.000238657]
 data[1]: length=1024, [0.036590576, -0.0059547424, ..., 0.011405945, 0.004863739]
 data[2]: length=1024, [0.04196167, 0.029083252, ..., -0.0027484894, 0.0073127747]

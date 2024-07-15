@@ -46,7 +46,7 @@ def expected_custom_model_finetuning_job_full(
     train_dataset, validation_dataset, mlflow_model_llama, hyperparameters
 ) -> RestFineTuningJob:
     custom_model_finetuning_job = CustomModelFineTuningJob(
-        task="text_completion",
+        task="textCompletion",
         model=mlflow_model_llama,
         training_data=train_dataset,
         validation_data=validation_dataset,
