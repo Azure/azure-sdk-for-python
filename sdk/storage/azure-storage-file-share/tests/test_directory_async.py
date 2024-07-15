@@ -138,7 +138,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_create_directory_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -331,7 +331,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_get_directory_properties_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -578,7 +578,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_get_set_directory_metadata_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -625,7 +625,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_set_directory_properties_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -784,7 +784,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_list_subdirectories_and_files_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1103,7 +1103,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_delete_directory_with_existing_share_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1210,7 +1210,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def test_rename_directory_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1455,7 +1455,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.exists()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
@@ -1485,7 +1485,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.exists()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(ShareServiceClient, is_async=True)
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
