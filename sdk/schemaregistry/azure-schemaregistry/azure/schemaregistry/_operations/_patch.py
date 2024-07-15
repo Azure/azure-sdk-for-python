@@ -20,7 +20,10 @@ from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import ClsType, SchemaRegistryClientOperationsMixin as GeneratedClientOperationsMixin
+from ._operations import (
+    ClsType,
+    SchemaRegistryClientOperationsMixin as GeneratedClientOperationsMixin,
+)
 from .._serialization import Serializer
 
 if TYPE_CHECKING:
@@ -143,7 +146,10 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
@@ -224,7 +230,10 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         )
         path_format_arguments = {
             "fullyQualifiedNamespace": self._serialize.url(
-                "self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, "str", skip_quote=True
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                "str",
+                skip_quote=True,
             ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)

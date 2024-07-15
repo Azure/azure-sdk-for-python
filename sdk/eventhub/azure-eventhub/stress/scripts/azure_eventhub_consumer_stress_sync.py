@@ -81,6 +81,7 @@ parser.add_argument("--proxy_password", type=str)
 parser.add_argument("--aad_client_id", help="AAD client id")
 parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
+parser.add_argument("--storage_acount", default=os.environ["AZURE_STORAGE_ACCOUNT"])
 parser.add_argument("--storage_conn_str", help="conn str of storage blob to store ownership and checkpoint data")
 parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
 parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
@@ -171,9 +172,9 @@ def on_error(partition_context, exception):
 
 
 def create_client(args):
-    if args.storage_conn_str:
-        checkpoint_store = BlobCheckpointStore.from_connection_string(args.storage_conn_str, args.storage_container_name)
-    else:
+    try:
+        checkpoint_store = BlobCheckpointStore(args.storage_account, DefaultAzureCredential(), args.storage_container_name)
+    except:
         checkpoint_store = None
 
     transport_type = TransportType.Amqp if args.transport_type == 0 else TransportType.AmqpOverWebsocket
@@ -185,63 +186,19 @@ def create_client(args):
             "username": args.proxy_username,
             "password": args.proxy_password,
         }
-    if args.azure_identity:
-        client = EventHubConsumerClientTest(
-            fully_qualified_namespace=args.hostname,
-            eventhub_name=args.eventhub,
-            consumer_group=args.consumer_group,
-            credential=DefaultAzureCredential(),
-            checkpoint_store=checkpoint_store,
-            load_balancing_interval=args.load_balancing_interval,
-            auth_timeout=args.auth_timeout,
-            http_proxy=http_proxy,
-            transport_type=transport_type,
-            logging_enable=args.pyamqp_logging_enable,
-            uamqp_transport=args.uamqp_mode,
-        )
-    elif args.conn_str:
-        client = EventHubConsumerClientTest.from_connection_string(
-            args.conn_str,
-            args.consumer_group,
-            eventhub_name=args.eventhub,
-            checkpoint_store=checkpoint_store,
-            load_balancing_interval=args.load_balancing_interval,
-            auth_timeout=args.auth_timeout,
-            http_proxy=http_proxy,
-            transport_type=transport_type,
-            logging_enable=args.pyamqp_logging_enable,
-            uamqp_transport=args.uamqp_mode,
-        )
-    elif args.hostname:
-        client = EventHubConsumerClientTest(
-            fully_qualified_namespace=args.hostname,
-            eventhub_name=args.eventhub,
-            consumer_group=args.consumer_group,
-            credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
-            checkpoint_store=checkpoint_store,
-            load_balancing_interval=args.load_balancing_interval,
-            auth_timeout=args.auth_timeout,
-            http_proxy=http_proxy,
-            transport_type=transport_type,
-            logging_enable=args.pyamqp_logging_enable,
-            uamqp_transport=args.uamqp_mode,
-        )
-    elif args.aad_client_id:
-        credential = ClientSecretCredential(args.tenant_id, args.aad_client_id, args.aad_secret)
-        client = EventHubConsumerClientTest(
-            fully_qualified_namespace=args.hostname,
-            eventhub_name=args.eventhub,
-            consumer_group=args.consumer_group,
-            credential=credential,
-            checkpoint_store=checkpoint_store,
-            load_balancing_interval=args.load_balancing_interval,
-            auth_timeout=args.auth_timeout,
-            http_proxy=http_proxy,
-            transport_type=transport_type,
-            logging_enable=args.pyamqp_logging_enable,
-            uamqp_transport=args.uamqp_mode,
-        )
-
+    client = EventHubConsumerClientTest(
+        fully_qualified_namespace=args.hostname,
+        eventhub_name=args.eventhub,
+        consumer_group=args.consumer_group,
+        credential=DefaultAzureCredential(),
+        checkpoint_store=checkpoint_store,
+        load_balancing_interval=args.load_balancing_interval,
+        auth_timeout=args.auth_timeout,
+        http_proxy=http_proxy,
+        transport_type=transport_type,
+        logging_enable=args.pyamqp_logging_enable,
+        uamqp_transport=args.uamqp_mode,
+    )
     return client
 
 

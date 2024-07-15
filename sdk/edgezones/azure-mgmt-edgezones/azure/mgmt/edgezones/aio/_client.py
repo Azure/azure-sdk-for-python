@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -15,36 +16,31 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import InformaticaDataMgmtClientConfiguration
-from .operations import Operations, OrganizationsOperations, ServerlessRuntimesOperations
+from ._configuration import EdgeZonesMgmtClientConfiguration
+from .operations import ExtendedZonesOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class InformaticaDataMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
-    """InformaticaDataMgmtClient.
+class EdgeZonesMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+    """EdgeZonesMgmtClient.
 
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.informaticadatamanagement.aio.operations.Operations
-    :ivar organizations: OrganizationsOperations operations
-    :vartype organizations:
-     azure.mgmt.informaticadatamanagement.aio.operations.OrganizationsOperations
-    :ivar serverless_runtimes: ServerlessRuntimesOperations operations
-    :vartype serverless_runtimes:
-     azure.mgmt.informaticadatamanagement.aio.operations.ServerlessRuntimesOperations
+    :vartype operations: azure.mgmt.edgezones.aio.operations.Operations
+    :ivar extended_zones: ExtendedZonesOperations operations
+    :vartype extended_zones: azure.mgmt.edgezones.aio.operations.ExtendedZonesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-05-08".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2024-04-01-preview". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
     """
 
     def __init__(
@@ -54,7 +50,7 @@ class InformaticaDataMgmtClient:  # pylint: disable=client-accepts-api-version-k
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = InformaticaDataMgmtClientConfiguration(
+        self._config = EdgeZonesMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
         _policies = kwargs.pop("policies", None)
@@ -81,10 +77,7 @@ class InformaticaDataMgmtClient:  # pylint: disable=client-accepts-api-version-k
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.organizations = OrganizationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.serverless_runtimes = ServerlessRuntimesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.extended_zones = ExtendedZonesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
@@ -113,7 +106,7 @@ class InformaticaDataMgmtClient:  # pylint: disable=client-accepts-api-version-k
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "InformaticaDataMgmtClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

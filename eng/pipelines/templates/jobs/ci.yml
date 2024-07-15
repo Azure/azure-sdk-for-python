@@ -196,7 +196,7 @@ jobs:
         - 'CoalesceBuildArtifacts'
       - ${{ else }}:
         - 'Build'
-      
+
     timeoutInMinutes: 90
 
     pool:
@@ -247,6 +247,7 @@ jobs:
         ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
           Directory: sdk/${{ parameters.ServiceDirectory }}
         CheckLinkGuidance: $true
+        Condition: succeededOrFailed()
 
     - task: DownloadPipelineArtifact@2
       condition: succeededOrFailed()

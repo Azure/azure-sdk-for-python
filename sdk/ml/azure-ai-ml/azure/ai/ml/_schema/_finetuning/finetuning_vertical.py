@@ -5,11 +5,11 @@
 # pylint: disable=unused-argument
 
 from azure.ai.ml._schema._finetuning.finetuning_job import FineTuningJobSchema
+from azure.ai.ml._schema._finetuning.constants import SnakeCaseFineTuningTaskTypes
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml.constants import JobType
-from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml._utils.utils import snake_to_camel
 from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, DataInputSchema, ModelInputSchema
-from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningTaskType
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
 from azure.ai.ml._utils._experimental import experimental
 
@@ -24,19 +24,19 @@ class FineTuningVerticalSchema(FineTuningJobSchema):
     validation_data = UnionField([NestedField(MLTableInputSchema), NestedField(DataInputSchema)])
     task = StringTransformedEnum(
         allowed_values=[
-            FineTuningTaskType.CHAT_COMPLETION,
-            FineTuningTaskType.TEXT_COMPLETION,
-            FineTuningTaskType.TEXT_CLASSIFICATION,
-            FineTuningTaskType.QUESTION_ANSWERING,
-            FineTuningTaskType.TEXT_SUMMARIZATION,
-            FineTuningTaskType.TOKEN_CLASSIFICATION,
-            FineTuningTaskType.TEXT_TRANSLATION,
-            FineTuningTaskType.IMAGE_CLASSIFICATION,
-            FineTuningTaskType.IMAGE_INSTANCE_SEGMENTATION,
-            FineTuningTaskType.IMAGE_OBJECT_DETECTION,
-            FineTuningTaskType.VIDEO_MULTI_OBJECT_TRACKING,
+            SnakeCaseFineTuningTaskTypes.CHAT_COMPLETION,
+            SnakeCaseFineTuningTaskTypes.TEXT_COMPLETION,
+            SnakeCaseFineTuningTaskTypes.TEXT_CLASSIFICATION,
+            SnakeCaseFineTuningTaskTypes.QUESTION_ANSWERING,
+            SnakeCaseFineTuningTaskTypes.TEXT_SUMMARIZATION,
+            SnakeCaseFineTuningTaskTypes.TOKEN_CLASSIFICATION,
+            SnakeCaseFineTuningTaskTypes.TEXT_TRANSLATION,
+            SnakeCaseFineTuningTaskTypes.IMAGE_CLASSIFICATION,
+            SnakeCaseFineTuningTaskTypes.IMAGE_INSTANCE_SEGMENTATION,
+            SnakeCaseFineTuningTaskTypes.IMAGE_OBJECT_DETECTION,
+            SnakeCaseFineTuningTaskTypes.VIDEO_MULTI_OBJECT_TRACKING,
         ],
-        casing_transform=camel_to_snake,
+        casing_transform=snake_to_camel,
         data_key=FineTuningConstants.TaskType,
         required=True,
     )
