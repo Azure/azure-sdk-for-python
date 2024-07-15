@@ -39,8 +39,6 @@ from .._base import (
     GenerateGuidId,
     _set_properties_cache
 )
-from ..exceptions import CosmosResourceNotFoundError
-from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
 from ..partition_key import (
@@ -354,7 +352,7 @@ class ContainerProxy:
         if hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
@@ -468,7 +466,7 @@ class ContainerProxy:
         if hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
@@ -533,7 +531,7 @@ class ContainerProxy:
         if hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
@@ -887,7 +885,7 @@ class ContainerProxy:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -929,7 +927,7 @@ class ContainerProxy:
         else:
             feed_options["enableCrossPartitionQuery"] = True
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,

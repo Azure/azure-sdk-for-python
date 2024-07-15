@@ -39,8 +39,6 @@ from ._base import (
     GenerateGuidId,
     _set_properties_cache
 )
-from .exceptions import CosmosResourceNotFoundError
-from .http_constants import StatusCodes
 from .offer import Offer, ThroughputProperties
 from .scripts import ScriptsProxy
 from .partition_key import (
@@ -303,7 +301,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook.clear()
 
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -364,7 +362,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
@@ -484,7 +482,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         items = self.client_connection.QueryItems(
             database_or_container_link=self.container_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -1006,7 +1004,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1049,7 +1047,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches().get(self.container_link).get("_rid")
+            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,

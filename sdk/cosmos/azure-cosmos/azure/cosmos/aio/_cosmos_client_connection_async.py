@@ -3075,7 +3075,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if isinstance(val, _Undefined) or isinstance(val, _Empty):
+                if isinstance(val, (_Undefined, _Empty)):
                     val = None
                 ret.append(val)
             return ret

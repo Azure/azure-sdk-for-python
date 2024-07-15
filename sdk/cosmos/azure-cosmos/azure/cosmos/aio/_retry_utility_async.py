@@ -41,7 +41,7 @@ from .. import _timeout_failover_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
-# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements
+# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
 
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs):
@@ -77,9 +77,12 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         client.connection_policy, global_endpoint_manager, *args
     )
 
-    container_recreate_retry_policy = ContainerRecreateRetryPolicy(
-        client, client._container_properties_cache, *args
-    )
+    if args and len(args) > 3:
+        container_recreate_retry_policy = ContainerRecreateRetryPolicy(
+            client, client._container_properties_cache, args[3].headers, *args)
+    else:
+        container_recreate_retry_policy = ContainerRecreateRetryPolicy(
+            client, client._container_properties_cache, {}, *args)
 
     while True:
         client_timeout = kwargs.get('timeout')

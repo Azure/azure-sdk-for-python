@@ -35,15 +35,14 @@ from .partition_key import _Empty, _Undefined
 
 class ContainerRecreateRetryPolicy:
     def __init__(self, client: Optional[Any], container_caches: Optional[Dict[str, Dict[str, Any]]],
-                 *args: Optional[List]):
+                 headers: Dict[str, Any], *args: Optional[List]):
         self.retry_after_in_milliseconds = 0  # Same as in .net
         self.refresh_container_properties_cache = True
         self._intended_headers = http_constants.HttpHeaders.IntendedCollectionRID
         self.container_rid = None
         self.container_link = None
         self.link = None
-        self._http_request = args[3] if len(args) >= 4 else None
-        self._headers = self._http_request.headers if self._http_request else None  # pylint: disable=attr-defined
+        self._headers = headers
         if self._headers and self._intended_headers in self._headers:
             self.container_rid = self._headers[self._intended_headers]
             if container_caches:
@@ -91,9 +90,8 @@ class ContainerRecreateRetryPolicy:
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
                 return 'null' in current_partition_key
-            else:
-                # These values indicate the partition key was not successfully extracted from the document definition
-                return current_partition_key == '[{}]' or current_partition_key == '[]'
+            # These values indicate the partition key was not successfully extracted from the document definition
+            return current_partition_key in ('[{}]', '[]')
         return False
 
     def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
@@ -122,7 +120,7 @@ class ContainerRecreateRetryPolicy:
         body_dict = self.__str_to_dict(body)
         new_partition_key = _Undefined
         if body_dict:
-            options = await client._AddPartitionKey(self.container_link, body_dict, {})
+            options = await client._AddPartitionKey(self.container_link, body_dict, {}) if client else {}
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
             if isinstance(options["partitionKey"], _Undefined):
                 new_partition_key = [{}]

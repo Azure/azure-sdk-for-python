@@ -141,11 +141,10 @@ def _partition_range_is_gone(e):
 
 
 def _container_recreate_exception(e):
-    if (e.status_code == http_constants.StatusCodes.BAD_REQUEST
-        and e.sub_status == http_constants.SubStatusCodes.COLLECTION_RID_MISMATCH) \
-            or (e.status_code == http_constants.StatusCodes.NOT_FOUND
-                and e.sub_status == http_constants.SubStatusCodes.OWNER_RESOURCE_NOT_FOUND) \
-            or (e.status_code == http_constants.StatusCodes.NOT_FOUND
-                and e.sub_status == http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND):
+    if (e.status_code in (
+            http_constants.StatusCodes.BAD_REQUEST, http_constants.StatusCodes.NOT_FOUND)) and e.sub_status in (
+            http_constants.SubStatusCodes.COLLECTION_RID_MISMATCH,
+            http_constants.SubStatusCodes.OWNER_RESOURCE_NOT_FOUND,
+            http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND):
         return True
     return False

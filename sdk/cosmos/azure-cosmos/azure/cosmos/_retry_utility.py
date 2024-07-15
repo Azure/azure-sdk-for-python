@@ -23,7 +23,6 @@
 """
 
 import time
-import json
 import ast
 from typing import Optional
 
@@ -39,11 +38,10 @@ from . import _session_retry_policy
 from . import _gone_retry_policy
 from . import _timeout_failover_retry_policy
 from . import _container_recreate_retry_policy
-from . import _base
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
@@ -80,9 +78,12 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-
-    container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
-        client, client._container_properties_cache, *args)
+    if args and len(args) > 3:
+        container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
+            client, client._container_properties_cache, args[3].headers, *args)
+    else:
+        container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
+            client, client._container_properties_cache, {}, *args)
 
     while True:
         client_timeout = kwargs.get('timeout')
