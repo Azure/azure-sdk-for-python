@@ -25,7 +25,7 @@ Cosmos database service.
 import ast
 import json
 
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Union
 from . import http_constants
 from .partition_key import _Empty, _Undefined
 
@@ -38,6 +38,7 @@ class ContainerRecreateRetryPolicy:
                  headers: Dict[str, Any], *args: Optional[List]):
         self.retry_after_in_milliseconds = 0  # Same as in .net
         self.refresh_container_properties_cache = True
+        self.args = args
         self._intended_headers = http_constants.HttpHeaders.IntendedCollectionRID
         self.container_rid = None
         self.container_link = None
@@ -98,7 +99,7 @@ class ContainerRecreateRetryPolicy:
             -> str:
         partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
-        new_partition_key = None
+        new_partition_key: Optional[Union[str, List, Dict]] = None
         if body_dict:
             options = client._AddPartitionKey(self.container_link, body_dict, {}) if client else {}
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -116,9 +117,9 @@ class ContainerRecreateRetryPolicy:
 
     async def _extract_partition_key_async(self, client: Optional[Any],
                                            container_cache: Optional[Dict[str, Any]], body: str) -> str:
-        partition_key_definition = container_cache["partitionKey"]
+        partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
-        new_partition_key = _Undefined
+        new_partition_key: Optional[Union[str, List, Dict]] = None
         if body_dict:
             options = await client._AddPartitionKey(self.container_link, body_dict, {}) if client else {}
             # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
@@ -135,26 +136,26 @@ class ContainerRecreateRetryPolicy:
         return new_partition_key
 
     def should_update_throughput_link(self, body: Optional[str], cached_container: Optional[Dict[str, Any]]) -> bool:
-        body_dict = self.__str_to_dict(body)
+        body_dict = self.__str_to_dict(body) if body else body
         if not body_dict:
             return False
         try:
             # If this is a request to get throughput properties then we will update the link
             if body_dict["query"] == "SELECT * FROM root r WHERE r.resource=@link":
-                self.link = cached_container["_self"]
+                self.link = cached_container["_self"] if cached_container else None
                 return True
         except (TypeError, IndexError, KeyError):
             return False
         return False
 
-    def _update_throughput_link(self, body: Optional[str]) -> str:
-        body_dict = self.__str_to_dict(body)
+    def _update_throughput_link(self, body: str) -> str:
+        body_dict = self.__str_to_dict(body) if body else body
         if not body_dict:
             return body
         body_dict["parameters"][0]["value"] = self.link
         return json.dumps(body_dict, separators=(',', ':'))
 
-    def __str_to_dict(self, dict_string: str) -> Dict[Any, Any]:
+    def __str_to_dict(self, dict_string: str) -> Dict:
         try:
             # Use ast.literal_eval() to convert string to dictionary
             dict_obj = ast.literal_eval(dict_string)
