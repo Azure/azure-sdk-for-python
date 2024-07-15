@@ -50,7 +50,7 @@ from ._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._replica_client import ConfigurationClientWrapper, ConfigurationClientManager
+from ._client_manager import ConfigurationClientWrapper, ConfigurationClientManager
 from ._discovery import find_auto_failover_endpoints
 from ._user_agent import USER_AGENT
 
