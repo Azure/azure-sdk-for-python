@@ -11,7 +11,13 @@ import azure.batch
 import azure.batch.models
 from azure.core.credentials import AzureNamedKeyCredential
 
-from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
+from devtools_testutils import (
+    AzureMgmtPreparer, 
+    AzureTestError, 
+    ResourceGroupPreparer, 
+    FakeResource, 
+    add_general_regex_sanitizer
+)
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
@@ -98,15 +104,11 @@ class AccountPreparer(AzureMgmtPreparer):
             credentials = AzureNamedKeyCredential(keys.account_name, keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
-        # self.test_class_instance.scrubber.register_name_pair(
-        #     name,
-        #     self.resource_moniker
-        # )
+            add_general_regex_sanitizer(regex=name, value=self.moniker)
         else:
             # If using pilotprod, need to prefix the region with the environment.
             # IE: myaccount.pilotprod1.eastus.batch.azure.com
             env_prefix = "" if self.batch_environment is None else ".{}".format(self.batch_environment)
-
             self.resource = FakeAccount(
                 name=name, account_endpoint="https://{}{}.{}.batch.azure.com".format(name, env_prefix, self.location)
             )

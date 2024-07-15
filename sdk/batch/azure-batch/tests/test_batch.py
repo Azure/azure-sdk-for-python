@@ -331,7 +331,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
             start_task=models.BatchStartTask(
                 command_line='cmd.exe /c "echo hello world"',
-                resource_files=[models.ResourceFile(http_url="https://blobsource.com", file_path="filename.txt")],
+                resource_files=[models.ResourceFile(http_url="https://contoso.com", file_path="filename.txt")],
                 environment_settings=[models.EnvironmentSetting(name="ENV_VAR", value="env_value")],
                 user_identity=models.UserIdentity(
                     auto_user=models.AutoUserSpecification(elevation_level=models.ElevationLevel.admin)
@@ -772,7 +772,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 client.get_node_remote_login_settings(batch_pool.name, nodes[0].id)
             )
             assert remote_desktop_bytes is not None
-        assert "remoteLoginIPAddress" in str(b"".join(remote_desktop_bytes), "utf-8")
+        assert "remoteLoginIPAddress" in remote_desktop_bytes
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix="batch4", location=AZURE_LOCATION)
