@@ -11,6 +11,8 @@ from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # c
 from dns.rdatatype import SRV  # cspell:disable-line
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
+request_retry_period = 5  # seconds
+
 
 class SRVRecord:
     priority: int
@@ -73,7 +75,7 @@ def _find_replicas(origin):
 
 def _request_record(request):
     now = time.time()
-    while time.time() - now < 5:
+    while time.time() - now < request_retry_period:
         try:
             return dns.resolver.resolve(request, SRV)
         except (NXDOMAIN, YXDOMAIN):  # cspell:disable-line

@@ -24,7 +24,7 @@ from ._constants import FEATURE_FLAG_PREFIX
 
 
 @dataclass
-class ReplicaClient:
+class ConfigurationClientWrapper:
     endpoint: str
     _client: AzureAppConfigurationClient
     backoff_end_time: float = 0
@@ -42,15 +42,16 @@ class ReplicaClient:
         **kwargs
     ) -> Self:
         """
-        Creates a new instance of the ReplicaClient class, using the provided credential to authenticate requests.
+        Creates a new instance of the ConfigurationClientWrapper class, using the provided credential to authenticate
+        requests.
 
         :param str endpoint: The endpoint of the App Configuration store
         :param TokenCredential credential: The credential to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the ReplicaClient class
-        :rtype: ReplicaClient
+        :return: A new instance of the ConfigurationClientWrapper class
+        :rtype: ConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -69,16 +70,16 @@ class ReplicaClient:
         cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
     ) -> Self:
         """
-        Creates a new instance of the ReplicaClient class, using the provided connection string to authenticate
-        requests.
+        Creates a new instance of the ConfigurationClientWrapper class, using the provided connection string to
+        authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
         :param str connection_string: The connection string to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the ReplicaClient class
-        :rtype: ReplicaClient
+        :return: A new instance of the ConfigurationClientWrapper class
+        :rtype: ConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -263,13 +264,13 @@ class ReplicaClient:
         self._client.__exit__(*args)
 
 
-class ReplicaClientManager:
+class ConfigurationClientManager:
     def __init__(self, min_backoff_sec: int, max_backoff_sec: int):
-        self._replica_clients: List[ReplicaClient] = []
+        self._replica_clients: List[ConfigurationClientWrapper] = []
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
 
-    def set_clients(self, replica_clients: List[ReplicaClient]):
+    def set_clients(self, replica_clients: List[ConfigurationClientWrapper]):
         self._replica_clients.clear()
         self._replica_clients.extend(replica_clients)
 
@@ -280,7 +281,7 @@ class ReplicaClientManager:
                 active_clients.append(client)
         return active_clients
 
-    def backoff(self, client: ReplicaClient):
+    def backoff(self, client: ConfigurationClientWrapper):
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time

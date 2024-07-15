@@ -50,7 +50,7 @@ from ._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._replica_client import ReplicaClient, ReplicaClientManager
+from ._replica_client import ConfigurationClientWrapper, ConfigurationClientManager
 from ._discovery import find_auto_failover_endpoints
 from ._user_agent import USER_AGENT
 
@@ -321,7 +321,7 @@ def _buildprovider(
     clients = []
     if connection_string and endpoint:
         clients.append(
-            ReplicaClient.from_connection_string(
+            ConfigurationClientWrapper.from_connection_string(
                 endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
             )
         )
@@ -329,7 +329,7 @@ def _buildprovider(
         for failover_endpoint in failover_endpoints:
             failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
             clients.append(
-                ReplicaClient.from_connection_string(
+                ConfigurationClientWrapper.from_connection_string(
                     failover_endpoint, failover_connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
                 )
             )
@@ -337,12 +337,14 @@ def _buildprovider(
         return provider
     if endpoint and credential:
         clients.append(
-            ReplicaClient.from_credential(endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs)
+            ConfigurationClientWrapper.from_credential(
+                endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
+            )
         )
         failover_endpoints = find_auto_failover_endpoints(endpoint)
         for failover_endpoint in failover_endpoints:
             clients.append(
-                ReplicaClient.from_credential(
+                ConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
                 )
             )
@@ -487,7 +489,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
         min_backoff: int = kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= interval else interval
         max_backoff: int = 600 if 600 <= interval else interval
-        self._replica_client_manager = ReplicaClientManager(min_backoff, max_backoff)
+        self._replica_client_manager = ConfigurationClientManager(min_backoff, max_backoff)
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
