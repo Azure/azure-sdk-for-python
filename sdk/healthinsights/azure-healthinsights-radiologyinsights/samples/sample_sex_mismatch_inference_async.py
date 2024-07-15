@@ -121,8 +121,8 @@ class HealthInsightsSamples:
                 id=job_id,
                 resource=patient_data,
             )
-            inference_result = await poller.result()
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(inference_result)
+            radiology_insights_result = await poller.result()
+            
             self.display_sex_mismatch(radiology_insights_result)
         except Exception as ex:
             print(str(ex))

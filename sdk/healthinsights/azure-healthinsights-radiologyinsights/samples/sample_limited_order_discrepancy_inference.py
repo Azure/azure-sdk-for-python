@@ -112,7 +112,7 @@ class HealthInsightsSyncSamples:
                 id=job_id,
                 resource=patient_data,
             )
-            radiology_insights_result = models.RadiologyInsightsInferenceResult(poller.result())
+            radiology_insights_result = poller.result()
             self.display_limited_order_discrepancy(radiology_insights_result)
         except Exception as ex:
             print(str(ex))
