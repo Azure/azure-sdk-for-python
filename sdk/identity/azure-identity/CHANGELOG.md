@@ -2,6 +2,8 @@
 
 ## 1.18.0b1 (2024-07-16)
 
+- Fixed the issue that `SharedTokenCacheCredential` was not picklable.
+
 ### Other Changes
 
 - Migrated managed identity implementation to use MSAL library.

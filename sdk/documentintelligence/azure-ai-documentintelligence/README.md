@@ -237,30 +237,47 @@ for page in result.pages:
             words = get_words(page, line)
             print(
                 f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{line.polygon}'"
+                f"within bounding polygon '{format_polygon(line.polygon)}'"
             )
 
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+    if page.words:
+        for word in page.words:
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
             )
+
+if result.paragraphs:
+    print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
+    # Sort all paragraphs by span's offset to read in the right order.
+    result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
+    print("-----Print sorted paragraphs-----")
+    for paragraph in result.paragraphs:
+        print(
+            f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
+        )
+        print(f"...with content: '{paragraph.content}'")
+        print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
 if result.tables:
     for table_idx, table in enumerate(result.tables):
         print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
-                    print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+                    print(
+                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
+                    )
 
 print("----------------------------------------")
 ```
@@ -302,11 +319,14 @@ print("----Key-value pairs found in document----")
 if result.key_value_pairs:
     for kv_pair in result.key_value_pairs:
         if kv_pair.key:
-            print(f"Key '{kv_pair.key.content}' found within " f"'{kv_pair.key.bounding_regions}' bounding regions")
+            print(
+                f"Key '{kv_pair.key.content}' found within "
+                f"'{format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+            )
         if kv_pair.value:
             print(
                 f"Value '{kv_pair.value.content}' found within "
-                f"'{kv_pair.value.bounding_regions}' bounding regions\n"
+                f"'{format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
             )
 
 for page in result.pages:
@@ -318,17 +338,18 @@ for page in result.pages:
             words = get_words(page.words, line)
             print(
                 f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
-                f"bounding polygon '{line.polygon}'"
+                f"bounding polygon '{format_polygon(line.polygon)}'"
             )
 
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+    if page.words:
+        for word in page.words:
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     if page.selection_marks:
         for selection_mark in page.selection_marks:
             print(
                 f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of "
+                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of "
                 f"{selection_mark.confidence}"
             )
 
@@ -337,13 +358,15 @@ if result.tables:
         print(f"Table # {table_idx} has {table.row_count} rows and {table.column_count} columns")
         if table.bounding_regions:
             for region in table.bounding_regions:
-                print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
+                print(
+                    f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                )
         for cell in table.cells:
             print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             if cell.bounding_regions:
                 for region in cell.bounding_regions:
                     print(
-                        f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'\n"
+                        f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"
                     )
 print("----------------------------------------")
 ```
