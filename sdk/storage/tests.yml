@@ -5,10 +5,9 @@ parameters:
     type: object
     default:
       - azure-storage-blob
-      - azure-storage-blob-changefeed
-      - azure-storage-queue
       - azure-storage-file-datalake
       - azure-storage-file-share
+      - azure-storage-queue
 
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
@@ -31,7 +30,6 @@ extends:
             Selection: sparse
             GenerateVMJobs: true
       EnvVars:
-        TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
