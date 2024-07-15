@@ -18,7 +18,7 @@ from azure.core.exceptions import HttpResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from .._shared.streams_async import AsyncIterStreamer, StructuredMessageDecodeStream
+from .._shared.streams_async import StructuredMessageDecodeStream
 from .._shared.validation import ChecksumAlgorithm, SM_HEADER_V1_CRC64
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
