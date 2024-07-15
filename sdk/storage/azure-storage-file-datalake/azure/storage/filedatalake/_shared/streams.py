@@ -7,14 +7,59 @@ from __future__ import annotations
 
 import math
 import sys
+from collections.abc import Iterable, Iterator
 from enum import auto, Enum, IntFlag
 from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
-from typing import IO, Optional
+from typing import AnyStr, IO, Optional, Union
 
 from .validation import calculate_crc64
 
 DEFAULT_MESSAGE_VERSION = 1
 DEFAULT_SEGMENT_SIZE = 4 * 1024 * 1024
+
+
+class IterStreamer(IOBase):
+    """A file-like wrapper over an iterable."""
+    def __init__(self, iterable: Iterable[AnyStr], encoding: str = "UTF-8"):
+        self.iterable: Union[Iterable[str], Iterable[bytes]] = iterable
+        self.iterator: Union[Iterator[str], Iterator[bytes]] = iter(iterable)
+        self.leftover = bytearray()
+        self.encoding = encoding
+
+    def __len__(self):
+        # Not part of the ABC, but here in case the iterable also has a len
+        return len(self.iterable)  # type: ignore
+
+    def __iter__(self):
+        return self.iterator
+
+    def __next__(self):
+        return next(self.iterator)
+
+    def readable(self):
+        return True
+
+    def read(self, size: int = -1) -> bytes:
+        if size < 0:
+            size = sys.maxsize
+        data = self.leftover
+        count = len(self.leftover)
+        try:
+            while count < size:
+                chunk = self.__next__()
+                if isinstance(chunk, str):
+                    chunk = chunk.encode(self.encoding)
+                data.extend(chunk)
+                count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
+        except StopIteration:
+            self.leftover = bytearray()
+
+        if count >= size:
+            self.leftover = data[size:]
+
+        data_view = memoryview(data)
+        return bytes(data_view[:size])
 
 
 class StructuredMessageError(Exception):
@@ -72,6 +117,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
 
     _checksum_offset: int
     """Tracks the offset the checksum has been calculated up to for seeking purposes"""
+
     _message_crc64: int
     _segment_crc64s: dict[int, int]
 
@@ -242,7 +288,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             self._current_segment_number = new_segment_num
 
         self._update_current_region_length()
-        self._inner_stream.seek(self._initial_content_position + self._content_offset)
+        self._inner_stream.seek((self._initial_content_position or 0) + self._content_offset)
         return position
 
     def read(self, size: int = -1) -> bytes:
@@ -451,7 +497,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
             segment_remaining = self._segment_content_length - self._segment_content_offset
             read_size = min(segment_remaining, size - count)
 
-            segment_content = self._inner_stream.read(read_size)
+            segment_content = self._read_from_inner(read_size)
             content.write(segment_content)
 
             # Update the running CRC64 for the segment and message
@@ -480,18 +526,21 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
         if self.message_length - self._message_offset < length:
             raise StructuredMessageError("Invalid structured message data detected.")
 
+    def _read_from_inner(self, size: int) -> bytes:
+        return self._inner_stream.read(size)
+
     def _read_message_header(self) -> None:
         # The first byte should always be the message version
-        self.message_version = int.from_bytes(self._inner_stream.read(1), 'little')
+        self.message_version = int.from_bytes(self._read_from_inner(1), 'little')
 
         if self.message_version == 1:
-            message_length = int.from_bytes(self._inner_stream.read(8), 'little')
+            message_length = int.from_bytes(self._read_from_inner(8), 'little')
             if message_length != self.message_length:
                 raise StructuredMessageError(f"Structured message length {message_length} "
                                              f"did not match content length {self.message_length}")
 
-            self.flags = StructuredMessageProperties(int.from_bytes(self._inner_stream.read(2), 'little'))
-            self.num_segments = int.from_bytes(self._inner_stream.read(2), 'little')
+            self.flags = StructuredMessageProperties(int.from_bytes(self._read_from_inner(2), 'little'))
+            self.num_segments = int.from_bytes(self._read_from_inner(2), 'little')
 
             self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
 
@@ -505,7 +554,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
             raise StructuredMessageError("Invalid structured message data detected.")
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            message_crc = self._inner_stream.read(StructuredMessageConstants.CRC64_LENGTH)
+            message_crc = self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
             if self._message_crc64 != int.from_bytes(message_crc, 'little'):
                 raise StructuredMessageError("CRC64 mismatch detected in message trailer. "
@@ -516,11 +565,11 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
     def _read_segment_header(self) -> None:
         self._assert_remaining_length(self._segment_header_length)
 
-        segment_number = int.from_bytes(self._inner_stream.read(2), 'little')
+        segment_number = int.from_bytes(self._read_from_inner(2), 'little')
         if segment_number != self._segment_number + 1:
             raise StructuredMessageError(f"Structured message segment number invalid or out of order {segment_number}")
         self._segment_number = segment_number
-        self._segment_content_length = int.from_bytes(self._inner_stream.read(8), 'little')
+        self._segment_content_length = int.from_bytes(self._read_from_inner(8), 'little')
         self._message_offset += self._segment_header_length
 
         self._segment_content_offset = 0
@@ -530,7 +579,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
         self._assert_remaining_length(self._segment_footer_length)
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            segment_crc = self._inner_stream.read(StructuredMessageConstants.CRC64_LENGTH)
+            segment_crc = self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
             if self._segment_crc64 != int.from_bytes(segment_crc, 'little'):
                 raise StructuredMessageError(f"CRC64 mismatch detected in segment {self._segment_number}. "

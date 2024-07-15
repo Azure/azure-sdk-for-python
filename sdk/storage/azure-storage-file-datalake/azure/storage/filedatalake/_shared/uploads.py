@@ -10,14 +10,14 @@ from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperati
 from itertools import islice
 from math import ceil
 from threading import Lock
-from typing import AnyStr, IO, Iterable, Optional, Tuple, Union
+from typing import AnyStr, cast, IO, Iterable, Optional, Sized, Tuple, Union
 
 from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
 from .request_handlers import get_length, read_length
 from .response_handlers import return_response_headers
-from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
+from .streams import IterStreamer, StructuredMessageEncodeStream, StructuredMessageProperties
 from .validation import calculate_crc64_bytes, calculate_md5, ChecksumAlgorithm
 
 
@@ -54,16 +54,16 @@ def prepare_upload_data(
         # TODO: Block IO[str] here?
         pass
     elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
-        data = IterStreamer(data, encoding=encoding)
+        data = IterStreamer(cast(Iterable[AnyStr], data), encoding=encoding)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
     content_length = data_length
     if structured_message:
-        data = StructuredMessageEncodeStream(data, data_length, StructuredMessageProperties.CRC64)
-        content_length = len(data)
+        data = StructuredMessageEncodeStream(data, data_length, StructuredMessageProperties.CRC64)  # type: ignore
+        content_length = len(cast(Sized, data))
 
-    return data, data_length, content_length
+    return data, data_length, content_length  # type: ignore
 
 
 def _parallel_uploads(executor, uploader, pending, running):
@@ -623,52 +623,3 @@ class SubStream(IOBase):
 
     def writeable(self):
         return False
-
-
-class IterStreamer(object):
-    """
-    File-like streaming iterator.
-    """
-
-    def __init__(self, generator, encoding="UTF-8"):
-        self.generator = generator
-        self.iterator = iter(generator)
-        self.leftover = b""
-        self.encoding = encoding
-
-    def __len__(self):
-        return self.generator.__len__()
-
-    def __iter__(self):
-        return self.iterator
-
-    def seekable(self):
-        return False
-
-    def __next__(self):
-        return next(self.iterator)
-
-    def tell(self, *args, **kwargs):
-        raise UnsupportedOperation("Data generator does not support tell.")
-
-    def seek(self, *args, **kwargs):
-        raise UnsupportedOperation("Data generator is not seekable.")
-
-    def read(self, size):
-        data = self.leftover
-        count = len(self.leftover)
-        try:
-            while count < size:
-                chunk = self.__next__()
-                if isinstance(chunk, str):
-                    chunk = chunk.encode(self.encoding)
-                data += chunk
-                count += len(chunk)
-        # This means count < size and what's leftover will be returned in this call.
-        except StopIteration:
-            self.leftover = b""
-
-        if count >= size:
-            self.leftover = data[size:]
-
-        return data[:size]

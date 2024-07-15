@@ -26,6 +26,11 @@ def assert_content_md5(request):
         assert request.http_request.headers.get('Content-MD5') is not None
 
 
+def assert_content_md5_get(response):
+    assert response.http_request.headers.get('x-ms-range-get-content-md5') == 'true'
+    assert response.http_response.headers.get('Content-MD5') is not None
+
+
 def assert_content_crc64(request):
     if request.http_request.query.get('comp') in ('block', 'page') or request.http_request.headers.get('x-ms-blob-type') == 'BlockBlob':
         assert request.http_request.headers.get('x-ms-content-crc64') is not None
@@ -36,12 +41,18 @@ def assert_structured_message(request):
         assert request.http_request.headers.get('x-ms-structured-body') is not None
 
 
+def assert_structured_message_get(response):
+    assert response.http_request.headers.get('x-ms-structured-body') is not None
+    assert response.http_response.headers.get('x-ms-structured-body') is not None
+
+
 class TestStorageContentValidation(StorageRecordedTestCase):
     bsc: BlobServiceClient = None
     container: ContainerClient = None
 
     def _setup(self, account_name, account_key):
-        self.bsc = BlobServiceClient(self.account_url(account_name, "blob"), credential=account_key, logging_enable=True)
+        credential = {'account_name': account_name, 'account_key': account_key}
+        self.bsc = BlobServiceClient(self.account_url(account_name, "blob"), credential=credential, logging_enable=True)
         self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
         self.container.create_container()
 
@@ -359,3 +370,115 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         content = blob.download_blob(offset=0, length=len(data1) + data2_encoded_len)
         assert content.readall() == data1 + data2.encode('utf-8')
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_get_blob(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512
+        blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        content = downloader.read()
+
+        stream = BytesIO()
+        downloader = blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_get_blob_chunks(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512 + b'abcde'
+        blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        content = downloader.read()
+
+        stream = BytesIO()
+        downloader = blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        downloader.readinto(stream)
+        stream.seek(0)
+
+        read_content = b''
+        downloader = blob.download_blob(validate_content=a, raw_response_hook=assert_method)
+        for _ in range(len(data) // 100 + 1):
+            read_content += downloader.read(100)
+            print(len(read_content))
+
+        # Assert
+        assert content == data
+        assert stream.read() == data
+        assert read_content == data
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_get_blob_chunks_partial(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512 + b'abcde'
+        blob.upload_blob(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = blob.download_blob(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        content = downloader.read()
+
+        stream = BytesIO()
+        downloader = blob.download_blob(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        downloader.readinto(stream)
+        stream.seek(0)
+
+        # Assert
+        assert content == data[10:1010]
+        assert stream.read() == data[10:1010]
+
+    @BlobPreparer()
+    @pytest.mark.live_test_only
+    def test_get_blob_large_chunks(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        # The service will use 4 MiB for structured message chunk size, so make chunk size larger
+        self.container._config.max_chunk_get_size = 10 * 1024 * 1024
+        data = b'abcde' * 30 * 1024 * 1024 + b'abcde'  # 150 MiB + 5
+        blob.upload_blob(data, overwrite=True, max_concurrency=5)
+
+        # Act
+        downloader = blob.download_blob(validate_content='crc64', max_concurrency=3)
+        content = downloader.read()
+
+        # Assert
+        assert content == data
