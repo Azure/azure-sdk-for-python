@@ -1,14 +1,10 @@
 # Release History
 
-## 1.17.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.18.0b1 (2024-07-16)
 
 ### Other Changes
+
+- Migrated managed identity implementation to use MSAL library.
 
 ## 1.17.1 (2024-06-21)
 
