@@ -610,15 +610,15 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             if messages is _Unset:
                 raise TypeError("missing required argument: messages")
             body = {
+                "messages": messages,
+                "stream": stream,
                 "frequency_penalty": frequency_penalty if frequency_penalty is not None else self._frequency_penalty,
                 "max_tokens": max_tokens if max_tokens is not None else self._max_tokens,
-                "messages": messages,
                 "model": model if model is not None else self._model,
                 "presence_penalty": presence_penalty if presence_penalty is not None else self._presence_penalty,
                 "response_format": response_format if response_format is not None else self._response_format,
                 "seed": seed if seed is not None else self._seed,
                 "stop": stop if stop is not None else self._stop,
-                "stream": stream,
                 "temperature": temperature if temperature is not None else self._temperature,
                 "tool_choice": tool_choice if tool_choice is not None else self._tool_choice,
                 "tools": tools if tools is not None else self._tools,
