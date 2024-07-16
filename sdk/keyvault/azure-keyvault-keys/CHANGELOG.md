@@ -3,6 +3,8 @@
 ## 4.10.1 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.6-preview.1`
+- Updated minimum `typing-extensions` version to 4.6.0
 
 ### Breaking Changes
 
