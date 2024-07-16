@@ -9,6 +9,7 @@ import time
 import dns.resolver
 from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
+from urllib.parse import urlparse
 from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
 
 request_retry_period = 5  # seconds
@@ -49,9 +50,7 @@ def find_auto_failover_endpoints(endpoint: str):
 
 
 def _find_origin(endpoint):
-    uri = endpoint
-    if endpoint.startswith(HTTPS_PREFIX):
-        uri = endpoint[len(HTTPS_PREFIX) :]
+    uri = urlparse(endpoint).hostname
     request = f"_origin._tcp.{uri}"
     srv_records = _request_record(request)
     if not srv_records:
