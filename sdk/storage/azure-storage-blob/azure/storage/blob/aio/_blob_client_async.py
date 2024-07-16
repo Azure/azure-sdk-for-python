@@ -478,15 +478,25 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
             This keyword argument was introduced in API version '2019-12-12'.
 
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash for each chunk of the blob. The storage
-            service checks the hash of the content that has arrived with the hash
-            that was sent. This is primarily valuable for detecting bitflips on
-            the wire if using http instead of https, as https (the default), will
-            already validate. Note that this MD5 hash is not stored with the
-            blob. Also note that if enabled, the memory-efficient upload algorithm
-            will not be used because computing the MD5 hash requires buffering
-            entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+        :keyword validate_content:
+            Enables checksum validation for the transfer.
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each data chunk and verifies it matches what the service sent.
+            This is primarily valuable for detecting bit-flips on the wire if using http instead of https.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             Required if the blob has an active lease. If specified, download_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
