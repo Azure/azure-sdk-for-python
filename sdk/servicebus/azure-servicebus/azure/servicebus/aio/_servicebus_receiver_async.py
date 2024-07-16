@@ -454,7 +454,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
         self._check_message_alive(message, settle_operation)
 
-        await self._amqp_transport._settle_message_with_retry(message, settle_operation, dead_letter_reason, dead_letter_error_description)
+        await self._amqp_transport._settle_message_with_retry(self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
 
     async def _settle_message(  # type: ignore
         self,
