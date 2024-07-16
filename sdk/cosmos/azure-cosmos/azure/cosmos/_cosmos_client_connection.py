@@ -3217,15 +3217,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         partitionKeyDefinition: Mapping[str, Any],
         document: Mapping[str, Any]
-    ) -> Union[List[Union[str, float, bool, _Empty]], str, float, bool, _Empty, _Undefined]:
+    ) -> Union[List[Optional[Union[str, float, bool]]], str, float, bool, _Empty, _Undefined]:
         if partitionKeyDefinition["kind"] == "MultiHash":
-            ret = []
+            ret: List[Optional[Union[str, float, bool]]] = []
             for partition_key_level in partitionKeyDefinition["paths"]:
                 # Parses the paths into a list of token each representing a property
                 partition_key_parts = base.ParsePaths([partition_key_level])
                 # Check if the partitionKey is system generated or not
                 is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
-
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val: Optional[Union[str, float, bool, _Empty, _Undefined]] = self._retrieve_partition_key(
                     partition_key_parts, document, is_system_key)

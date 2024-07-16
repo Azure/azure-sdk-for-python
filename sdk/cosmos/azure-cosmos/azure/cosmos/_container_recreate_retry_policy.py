@@ -96,7 +96,7 @@ class ContainerRecreateRetryPolicy:
         return False
 
     def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
-            -> str:
+            -> Optional[Union[str, List, Dict]]:
         partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
         new_partition_key: Optional[Union[str, List, Dict]] = None
@@ -116,7 +116,8 @@ class ContainerRecreateRetryPolicy:
         return new_partition_key
 
     async def _extract_partition_key_async(self, client: Optional[Any],
-                                           container_cache: Optional[Dict[str, Any]], body: str) -> str:
+                                           container_cache: Optional[Dict[str, Any]],
+                                           body: str) -> Optional[Union[str, List, Dict]]:
         partition_key_definition = container_cache["partitionKey"] if container_cache else None
         body_dict = self.__str_to_dict(body)
         new_partition_key: Optional[Union[str, List, Dict]] = None
@@ -136,7 +137,7 @@ class ContainerRecreateRetryPolicy:
         return new_partition_key
 
     def should_update_throughput_link(self, body: Optional[str], cached_container: Optional[Dict[str, Any]]) -> bool:
-        body_dict = self.__str_to_dict(body) if body else body
+        body_dict = self.__str_to_dict(body) if body else None
         if not body_dict:
             return False
         try:
@@ -149,7 +150,7 @@ class ContainerRecreateRetryPolicy:
         return False
 
     def _update_throughput_link(self, body: str) -> str:
-        body_dict = self.__str_to_dict(body) if body else body
+        body_dict = self.__str_to_dict(body) if body else None
         if not body_dict:
             return body
         body_dict["parameters"][0]["value"] = self.link
