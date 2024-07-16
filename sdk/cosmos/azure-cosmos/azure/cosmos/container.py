@@ -214,6 +214,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/examples.py
@@ -222,7 +223,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :language: python
                 :dedent: 0
                 :caption: Get an item from the database and update one of its properties:
-                :name: update_item
         """
         doc_link = self._get_document_link(item)
         if session_token is not None:
@@ -430,7 +430,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :language: python
                 :dedent: 0
                 :caption: Get all products that have not been discontinued:
-                :name: query_items
 
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START query_items_param]
@@ -438,7 +437,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :language: python
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
-                :name: query_items_param
         """
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -949,7 +947,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         If no ThroughputProperties already exist for the container, an exception is raised.
 
         :param throughput: The throughput to be set.
-        :type throughput: Union[int, ThroughputProperties]
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container

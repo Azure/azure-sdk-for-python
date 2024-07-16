@@ -53,16 +53,14 @@ from typing import cast, Iterator
 
 from azure.identity import ClientSecretCredential
 from azure.schemaregistry import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder, JsonSchemaDraftIdentifier
+from azure.schemaregistry.encoder.jsonencoder import JsonSchemaEncoder
 from azure.eventhub import EventData
 
 TENANT_ID = os.environ["AZURE_TENANT_ID"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ[
-    "SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"
-]
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 SCHEMA_JSON = {
     "$id": "https://example.com/person.schema.json",
@@ -70,48 +68,35 @@ SCHEMA_JSON = {
     "title": "Person",
     "type": "object",
     "properties": {
-        "name": {
-            "type": "string",
-            "description": "Person's name."
-        },
-        "favorite_color": {
-            "type": "string",
-            "description": "Favorite color."
-        },
+        "name": {"type": "string", "description": "Person's name."},
+        "favorite_color": {"type": "string", "description": "Favorite color."},
         "favorite_number": {
             "description": "Favorite number.",
             "type": "integer",
-        }
-    }
+        },
+    },
 }
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
-)
+token_credential = ClientSecretCredential(tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+
 
 def pre_register_schema(schema_registry: SchemaRegistryClient):
     schema_properties = schema_registry.register_schema(
-        group_name=GROUP_NAME,
-        name=cast(str, SCHEMA_JSON['title']),
-        definition=SCHEMA_STRING,
-        format="Json"
+        group_name=GROUP_NAME, name=cast(str, SCHEMA_JSON["title"]), definition=SCHEMA_STRING, format="Json"
     )
     return schema_properties.id
+
 
 def encode_to_event_data_message(encoder: JsonSchemaEncoder, schema_id: str):
     dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
     dict_content_alice = {"name": "Alice", "favorite_number": 15, "favorite_color": "green"}
 
     # Schema would be automatically registered into Schema Registry and cached locally.
-    event_data_ben = encoder.encode(
-        dict_content_ben, schema_id=schema_id, message_type=EventData
-    )
+    event_data_ben = encoder.encode(dict_content_ben, schema_id=schema_id, message_type=EventData)
 
     # The second call won't trigger a service call.
-    event_data_alice = encoder.encode(
-        dict_content_alice, schema_id=schema_id, message_type=EventData
-    )
+    event_data_alice = encoder.encode(dict_content_alice, schema_id=schema_id, message_type=EventData)
 
     print("Encoded content is: ", next(cast(Iterator[bytes], event_data_ben.body)))
     print("Encoded content is: ", next(cast(Iterator[bytes], event_data_alice.body)))
@@ -137,9 +122,7 @@ if __name__ == "__main__":
         credential=token_credential,
     )
     schema_id = pre_register_schema(schema_registry)
-    encoder = JsonSchemaEncoder(
-        client=schema_registry, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
-    )
+    encoder = JsonSchemaEncoder(client=schema_registry, validate=cast(str, SCHEMA_JSON["$schema"]))
     event_data_ben, event_data_alice = encode_to_event_data_message(encoder, schema_id)
     decoded_content_ben = decode_event_data_message(encoder, event_data_ben)
     decoded_content_alice = decode_event_data_message(encoder, event_data_alice)

@@ -5,7 +5,7 @@
 import abc
 import platform
 import time
-from typing import Any, Iterable, List, Mapping, Optional, cast
+from typing import Any, Iterable, List, Mapping, Optional, cast, Dict
 from urllib.parse import urlparse
 import msal
 
@@ -96,6 +96,10 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         self._tenant_id = tenant_id
         self._cache = kwargs.pop("_cache", None)
         self._cae_cache = kwargs.pop("_cae_cache", None)
+        if self._cache or self._cae_cache:
+            self._custom_cache = True
+        else:
+            self._custom_cache = False
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
@@ -267,3 +271,18 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         :rtype: bool
         """
         return platform.system() in {"Darwin", "Linux", "Windows"}
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        if not self._custom_cache:
+            del state["_cache"]
+            del state["_cae_cache"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        # Re-create the unpickable entries
+        if not self._custom_cache:
+            self._cache = None
+            self._cae_cache = None

@@ -463,6 +463,9 @@ class AMQPClient(
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
 
+        while not self.client_ready():
+            time.sleep(0.05)
+
         while not mgmt_link.ready():
             self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
