@@ -26,7 +26,12 @@ from ..._pyamqp.error import (
 
 from ._base_async import AmqpTransportAsync
 from ..._common.utils import utc_from_timestamp, utc_now
-from ..._common.tracing import get_receive_links, receive_trace_context_manager
+from ..._common.tracing import (
+        get_receive_links, 
+        receive_trace_context_manager,
+        settle_trace_context_manager,
+        get_span_link_from_message,
+    )
 from ..._common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_LOCKED_UNTIL,
@@ -538,3 +543,24 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         
 
         return [receiver._build_received_message(message) for message in batch]
+    
+    @staticmethod
+    async def _settle_message_with_retry(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        link = get_span_link_from_message(message)
+        trace_links = [link] if link else []
+        with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
+            await receiver._do_retryable_operation(
+                receiver._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True

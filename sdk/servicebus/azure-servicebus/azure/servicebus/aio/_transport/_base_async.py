@@ -335,3 +335,14 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         **kwargs
     ):
         """TODO"""
+
+    @staticmethod
+    @abstractmethod
+    async def _settle_message_with_retry(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        """TODO"""
