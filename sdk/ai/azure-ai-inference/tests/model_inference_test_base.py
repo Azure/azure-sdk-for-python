@@ -131,15 +131,11 @@ class ModelClientTestBase(AzureRecordedTestCase):
         )
     )
 
-    # Expected JSON request payload in some of the tests. These are common to
+    # Expected JSON request payload in regression tests. These are common to
     # sync and async tests, therefore they are defined here.
-    CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD1 = "{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
+    CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD = "{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
 
-    CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD2 = "{\"frequency_penalty\": 0.321, \"max_tokens\": 123, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}], \"model\": \"some-other-model-id\", \"presence_penalty\": 7.654, \"response_format\": \"text\", \"seed\": 456, \"stop\": [\"stop3\"], \"stream\": false, \"temperature\": 6.789, \"tool_choice\": \"none\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key10\": 1, \"key11\": true, \"key12\": \"Some other value\"}"
-
-    CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD3 = "{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
-
-    EMBEDDINGDS_JSON_REQUEST_PAYLOAD1 = "{\"dimensions\": 2048, \"encoding_format\": \"ubinary\", \"input\": [\"first phrase\", \"second phrase\", \"third phrase\"], \"input_type\": \"query\", \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
+    EMBEDDINGDS_JSON_REQUEST_PAYLOAD = "{\"input\": [\"first phrase\", \"second phrase\", \"third phrase\"], \"dimensions\": 2048, \"encoding_format\": \"ubinary\", \"input_type\": \"query\", \"model\": \"some-model-id\", \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}"
 
     # Methods to load credentials from environment variables
     def _load_chat_credentials(self, *, bad_key: bool, **kwargs):
@@ -214,6 +210,34 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
     def request_callback(self, pipeline_request) -> None:
         self.pipeline_request = pipeline_request
+
+    def _validate_embeddings_json_request_payload(self) -> None:
+        headers = self.pipeline_request.http_request.headers
+        print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
+        print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
+        assert headers["Content-Type"] == "application/json"
+        assert headers["Content-Length"] == "311"
+        assert headers["extra-parameters"] == "pass_through"
+        assert headers["Accept"] == "application/json"
+        assert headers["some_header"] == "some_header_value"
+        assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
+        assert " Python/" in headers["User-Agent"]
+        assert headers["Authorization"] == "Bearer key-value"
+        assert self.pipeline_request.http_request.data == self.EMBEDDINGDS_JSON_REQUEST_PAYLOAD
+
+    def _validate_chat_completions_json_request_payload(self) -> None:
+        print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
+        print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
+        headers = self.pipeline_request.http_request.headers
+        assert headers["Content-Type"] == "application/json"
+        assert headers["Content-Length"] == "1790"
+        assert headers["extra-parameters"] == "pass_through"
+        assert headers["Accept"] == "application/json"
+        assert headers["some_header"] == "some_header_value"
+        assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
+        assert " Python/" in headers["User-Agent"]
+        assert headers["Authorization"] == "Bearer key-value"
+        assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD
 
     @staticmethod
     def read_text_file(file_name: str) -> io.BytesIO:

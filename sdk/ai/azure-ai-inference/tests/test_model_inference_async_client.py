@@ -18,11 +18,11 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #         EMBEDDINGS TESTS - NO SERVICE RESPONSER REQUIRED
+    #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
     #
     # **********************************************************************************
 
-    # Regression test. Send a request that includes almost all supported types of input objects. Make sure the resulting
+    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
     # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
     @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
     async def test_async_embeddings_request_payload(self, **kwargs):
@@ -32,37 +32,111 @@ class TestModelAsyncClient(ModelClientTestBase):
             headers={"some_header": "some_header_value"},
             user_agent="MyAppId",
         )
-        try:
-            response = await client.embed(
-                input=["first phrase", "second phrase", "third phrase"],
-                dimensions=2048,
-                encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
-                input_type=sdk.models.EmbeddingInputType.QUERY,
-                model_extras={
-                    "key1": 1,
-                    "key2": True,
-                    "key3": "Some value",
-                    "key4": [1, 2, 3],
-                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                },
-                raw_request_hook=self.request_callback)
-        except ServiceRequestError as _:
-            headers = self.pipeline_request.http_request.headers
-            print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
-            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert headers["Content-Type"] == "application/json"
-            assert headers["Content-Length"] == "285"
-            assert headers["extra-parameters"] == "pass_through"
-            assert headers["Accept"] == "application/json"
-            assert headers["some_header"] == "some_header_value"
-            assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
-            assert " Python/" in headers["User-Agent"]
-            assert headers["Authorization"] == "Bearer key-value"
-            assert self.pipeline_request.http_request.data == self.EMBEDDINGDS_JSON_REQUEST_PAYLOAD1
+        for _ in range(2):
+            try:
+                response = await client.embed(
+                    input=["first phrase", "second phrase", "third phrase"],
+                    dimensions=2048,
+                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+                    input_type=sdk.models.EmbeddingInputType.QUERY,
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    model="some-model-id",
+                    raw_request_hook=self.request_callback)
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_embeddings_json_request_payload()
+                continue
             await client.close()
-            return
+            assert False
         await client.close()
-        assert False
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
+    # is the correct one after hand-inspection.
+    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_embeddings_request_payload_with_defaults(self, **kwargs):
+        client = async_sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            dimensions=2048,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+            input_type=sdk.models.EmbeddingInputType.QUERY,
+            model_extras={
+                "key1": 1,
+                "key2": True,
+                "key3": "Some value",
+                "key4": [1, 2, 3],
+                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+            },
+            model="some-model-id",
+        )
+        for _ in range(2):
+            try:
+                response = await client.embed(
+                    input=["first phrase", "second phrase", "third phrase"],
+                    raw_request_hook=self.request_callback)
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_embeddings_json_request_payload()
+                continue
+            await client.close()
+            assert False
+        await client.close()
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method, and all of them overwritten in the 'embed' call.
+    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
+    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_embeddings_request_payload_with_defaults_and_overrides(self, **kwargs):
+        client = async_sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            dimensions=1024,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
+            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
+            model_extras={
+                "hey1": 2,
+                "key2": False,
+                "key3": "Some other value",
+                "key9": "Yet another value",
+            },
+            model="some-other-model-id",
+        )
+        for _ in range(2):
+            try:
+                response = await client.embed(
+                    input=["first phrase", "second phrase", "third phrase"],
+                    dimensions=2048,
+                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+                    input_type=sdk.models.EmbeddingInputType.QUERY,
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    model="some-model-id",
+                    raw_request_hook=self.request_callback)
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_embeddings_json_request_payload()
+                continue
+            await client.close()
+            assert False
+        await client.close()
 
     # **********************************************************************************
     #
@@ -116,11 +190,11 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #         CHAT COMPLETIONS TESTS - NO SERVICE RESPONSER REQUIRED
+    #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
     #
     # **********************************************************************************
 
-    # Regression test. Send a request that includes almost all supported types of input objects. Make sure the resulting
+    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
     # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
     @ServicePreparerChatCompletions()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
     async def test_async_chat_completions_request_payload(self, **kwargs):
@@ -132,140 +206,72 @@ class TestModelAsyncClient(ModelClientTestBase):
             user_agent="MyAppId",
         )
 
-        try:
-            response = await client.complete(
-                messages=[
-                    sdk.models.SystemMessage(content="system prompt"),
-                    sdk.models.UserMessage(content="user prompt 1"),
-                    sdk.models.AssistantMessage(
-                        tool_calls=[
-                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
-                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
-                        ]
-                    ),
-                    sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
-                    sdk.models.AssistantMessage(content="assistant prompt"),
-                    sdk.models.UserMessage(
-                        content=[
-                            sdk.models.TextContentItem(text="user prompt 2"),
-                            sdk.models.ImageContentItem(
-                                image_url=sdk.models.ImageUrl(
-                                    url="https://does.not.exit/image.png",
-                                    detail=sdk.models.ImageDetailLevel.HIGH,
+        for _ in range(2):
+            try:
+                response = await client.complete(
+                    messages=[
+                        sdk.models.SystemMessage(content="system prompt"),
+                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.AssistantMessage(
+                            tool_calls=[
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            ]
+                        ),
+                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.UserMessage(
+                            content=[
+                                sdk.models.TextContentItem(text="user prompt 2"),
+                                sdk.models.ImageContentItem(
+                                    image_url=sdk.models.ImageUrl(
+                                        url="https://does.not.exit/image.png",
+                                        detail=sdk.models.ImageDetailLevel.HIGH,
+                                    ),
                                 ),
-                            ),
-                        ],
-                    ),
-                ],
-                model_extras={
-                    "key1": 1,
-                    "key2": True,
-                    "key3": "Some value",
-                    "key4": [1, 2, 3],
-                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                },
-                frequency_penalty=0.123,
-                max_tokens=321,
-                model="some-model-id",
-                presence_penalty=4.567,
-                response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
-                seed=654,
-                stop=["stop1", "stop2"],
-                stream=True,
-                temperature=8.976,
-                tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
-                tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
-                top_p=9.876,
-                raw_request_hook=self.request_callback,
-            )
-        except ServiceRequestError as _:
-            headers = self.pipeline_request.http_request.headers
-            print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
-            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert headers["Content-Type"] == "application/json"
-            assert headers["Content-Length"] == "1790"
-            assert headers["extra-parameters"] == "pass_through"
-            assert headers["Accept"] == "application/json"
-            assert headers["some_header"] == "some_header_value"
-            assert "MyAppId azsdk-python-ai-inference/" in headers["User-Agent"]
-            assert " Python/" in headers["User-Agent"]
-            assert headers["Authorization"] == "Bearer key-value"
-            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD1
+                            ],
+                        ),
+                    ],
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    frequency_penalty=0.123,
+                    max_tokens=321,
+                    model="some-model-id",
+                    presence_penalty=4.567,
+                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    seed=654,
+                    stop=["stop1", "stop2"],
+                    stream=True,
+                    temperature=8.976,
+                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
+                    top_p=9.876,
+                    raw_request_hook=self.request_callback,
+                )
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_chat_completions_json_request_payload()
+                continue
             await client.close()
-            return
+            assert False
         await client.close()
-        assert False
 
-    # Regression test. Send a request that includes almost all supported types of input objects, with input arguments
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
     # is the correct one after hand-inspection.
-    @ServicePreparerChatCompletions() # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_chat_completions_with_defaults_request_payload(self, **kwargs):
+    @ServicePreparerChatCompletions()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_chat_completions_request_payload_with_defaults(self, **kwargs):
 
         client = async_sdk.ChatCompletionsClient(
             endpoint="http://does.not.exist",
             credential=AzureKeyCredential("key-value"),
-        ).with_defaults(
-            model_extras={
-                "key1": 1,
-                "key2": True,
-                "key3": "Some value",
-                "key4": [1, 2, 3],
-                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-            },
-            frequency_penalty=0.123,
-            max_tokens=321,
-            model="some-model-id",
-            presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
-            seed=654,
-            stop=["stop1", "stop2"],
-            temperature=8.976,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
-            tools=[ModelClientTestBase.TOOL1],
-            top_p=9.876,
-        )
-
-        try:
-            response = await client.complete(
-                messages=[
-                    sdk.models.SystemMessage(content="system prompt"),
-                    sdk.models.UserMessage(content="user prompt 1"),
-                ],
-                model_extras={
-                    "key10": 1,
-                    "key11": True,
-                    "key12": "Some other value",
-                },
-                frequency_penalty=0.321,
-                max_tokens=123,
-                model="some-other-model-id",
-                presence_penalty=7.654,
-                response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
-                seed=456,
-                stop=["stop3"],
-                stream=False,
-                temperature=6.789,
-                tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.NONE,
-                tools=[ModelClientTestBase.TOOL2],
-                top_p=9.876,
-                raw_request_hook=self.request_callback,
-            )
-        except ServiceRequestError as _:
-            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD2
-            return
-        assert False
-
-    # Regression test. Send a request that includes almost all supported types of input objects, with input arguments
-    # specified via the `with_defaults` method, and all of them overwritten in the 'complete' call.
-    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
-    @ServicePreparerChatCompletions() # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
-    async def test_async_chat_completions_with_defaults_and_overrides_request_payload(self, **kwargs):
-
-        client = async_sdk.ChatCompletionsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
         ).with_defaults(
             model_extras={
                 "key1": 1,
@@ -287,20 +293,128 @@ class TestModelAsyncClient(ModelClientTestBase):
             top_p=9.876,
         )
 
-        try:
-            response = await client.complete(
-                messages=[
-                    sdk.models.SystemMessage(content="system prompt"),
-                    sdk.models.UserMessage(content="user prompt 1"),
-                ],
-                stream=True,
-                raw_request_hook=self.request_callback,
-            )
-        except ServiceRequestError as _:
-            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert self.pipeline_request.http_request.data == self.CHAT_COMPLETIONS_JSON_REQUEST_PAYLOAD3
-            return
-        assert False
+        for _ in range(2):
+            try:
+                response = await client.complete(
+                    messages=[
+                        sdk.models.SystemMessage(content="system prompt"),
+                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.AssistantMessage(
+                            tool_calls=[
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            ]
+                        ),
+                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.UserMessage(
+                            content=[
+                                sdk.models.TextContentItem(text="user prompt 2"),
+                                sdk.models.ImageContentItem(
+                                    image_url=sdk.models.ImageUrl(
+                                        url="https://does.not.exit/image.png",
+                                        detail=sdk.models.ImageDetailLevel.HIGH,
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                    stream=True,
+                    raw_request_hook=self.request_callback,
+                )
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_chat_completions_json_request_payload()
+                continue
+            await client.close()
+            assert False
+        await client.close()
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method, and all of them overwritten in the 'complete' call.
+    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
+    @ServicePreparerChatCompletions()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_chat_completions_request_payload_with_defaults_and_overrides(self, **kwargs):
+
+        client = async_sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            model_extras={
+                "key1": 2,
+                "key3": False,
+                "key4": "Some other value",
+                "key9": "Yet another value",
+            },
+            frequency_penalty=0.456,
+            max_tokens=768,
+            model="some-other-model-id",
+            presence_penalty=1.234,
+            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            seed=987,
+            stop=["stop3", "stop5"],
+            temperature=5.432,
+            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
+            tools=[ModelClientTestBase.TOOL2],
+            top_p=3.456,
+        )
+
+        for _ in range(2):
+            try:
+                response = await client.complete(
+                    messages=[
+                        sdk.models.SystemMessage(content="system prompt"),
+                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.AssistantMessage(
+                            tool_calls=[
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            ]
+                        ),
+                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.UserMessage(
+                            content=[
+                                sdk.models.TextContentItem(text="user prompt 2"),
+                                sdk.models.ImageContentItem(
+                                    image_url=sdk.models.ImageUrl(
+                                        url="https://does.not.exit/image.png",
+                                        detail=sdk.models.ImageDetailLevel.HIGH,
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    frequency_penalty=0.123,
+                    max_tokens=321,
+                    model="some-model-id",
+                    presence_penalty=4.567,
+                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    seed=654,
+                    stop=["stop1", "stop2"],
+                    stream=True,
+                    temperature=8.976,
+                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
+                    top_p=9.876,
+                    raw_request_hook=self.request_callback,
+                )
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_chat_completions_json_request_payload()
+                continue
+            await client.close()
+            assert False
+        await client.close()
 
     # **********************************************************************************
     #

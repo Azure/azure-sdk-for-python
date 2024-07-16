@@ -24,12 +24,6 @@ USAGE:
 def sample_chat_completions_with_defaults():
     import os
 
-    import sys
-    import logging
-    logger = logging.getLogger("azure")
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-
     try:
         endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
         key = os.environ["AZURE_AI_CHAT_KEY"]
@@ -44,7 +38,13 @@ def sample_chat_completions_with_defaults():
 
     # Create a client with defaults
     # [START chat_completions_with_defaults]
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True).with_defaults(temperature=0.5, max_tokens=1000)
+    client = ChatCompletionsClient(
+        endpoint=endpoint,
+        credential=AzureKeyCredential(key)
+    ).with_defaults(
+        temperature=0.5,
+        max_tokens=1000
+    )
     # [END chat_completions_with_defaults]
 
     # Call the service with the defaults specified above

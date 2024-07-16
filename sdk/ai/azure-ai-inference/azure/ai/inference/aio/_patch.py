@@ -625,7 +625,28 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         self._model_info: Optional[_models.ModelInfo] = None
+        self._model_extras: Optional[Dict[str, Any]] = None
+        self._dimensions: Optional[int] = None
+        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None
+        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = None
+        self._model: Optional[str] = None
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
+    def with_defaults(
+        self,
+        *,
+        model_extras: Optional[Dict[str, Any]] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
+    ) -> "EmbeddingsClient":
+        self._model_extras = model_extras
+        self._dimensions = dimensions
+        self._encoding_format = encoding_format
+        self._input_type = input_type
+        self._model = model
+        return self
 
     @overload
     async def embed(
@@ -637,6 +658,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embedding vectors for given text prompts.
@@ -668,6 +690,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -726,6 +751,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
@@ -758,6 +784,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -780,13 +809,17 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             if input is _Unset:
                 raise TypeError("missing required argument: input")
             body = {
-                "dimensions": dimensions,
-                "encoding_format": encoding_format,
                 "input": input,
-                "input_type": input_type,
+                "dimensions": dimensions if dimensions is not None else self._dimensions,
+                "encoding_format": encoding_format if encoding_format is not None else self._encoding_format,
+                "input_type": input_type if input_type is not None else self._input_type,
+                "model": model if model is not None else self._model,
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+            elif self._model_extras is not None and bool(self._model_extras):
+                body.update(self._model_extras)
                 _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
@@ -872,7 +905,28 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         self._model_info: Optional[_models.ModelInfo] = None
+        self._model_extras: Optional[Dict[str, Any]] = None
+        self._dimensions: Optional[int] = None
+        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None
+        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = None
+        self._model: Optional[str] = None
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
+    def with_defaults(
+        self,
+        *,
+        model_extras: Optional[Dict[str, Any]] = None,
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
+    ) -> "ImageEmbeddingsClient":
+        self._model_extras = model_extras
+        self._dimensions = dimensions
+        self._encoding_format = encoding_format
+        self._input_type = input_type
+        self._model = model
+        return self
 
     @overload
     async def embed(
@@ -884,6 +938,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         """Return the embedding vectors for given images.
@@ -915,6 +970,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -973,6 +1031,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
+        model: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.EmbeddingsResult:
         # pylint: disable=line-too-long
@@ -1005,6 +1064,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
          Returns a 422 error if the model doesn't support the value or parameter. Known values are:
          "text", "query", and "document". Default value is None.
         :paramtype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+        :keyword model: ID of the specific AI model to use, if more than one model is available on the
+         endpoint. Default value is None.
+        :paramtype model: str
         :return: EmbeddingsResult. The EmbeddingsResult is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1027,13 +1089,17 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             if input is _Unset:
                 raise TypeError("missing required argument: input")
             body = {
-                "dimensions": dimensions,
-                "encoding_format": encoding_format,
                 "input": input,
-                "input_type": input_type,
+                "dimensions": dimensions if dimensions is not None else self._dimensions,
+                "encoding_format": encoding_format if encoding_format is not None else self._encoding_format,
+                "input_type": input_type if input_type is not None else self._input_type,
+                "model": model if model is not None else self._model,
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+            elif self._model_extras is not None and bool(self._model_extras):
+                body.update(self._model_extras)
                 _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
