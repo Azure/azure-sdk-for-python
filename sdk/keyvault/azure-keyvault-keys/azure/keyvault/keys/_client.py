@@ -184,7 +184,8 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.create_key(vault_base_url=self.vault_url, key_name=name, parameters=parameters, **kwargs)
+        bundle = self._client.create_key( key_name=name, parameters=parameters, **kwargs
+        )
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -429,7 +430,6 @@ class KeyClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         pipeline_response, deleted_key_bundle = self._client.delete_key(
-            vault_base_url=self.vault_url,
             key_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
@@ -472,7 +472,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", **kwargs)
+        bundle = self._client.get_key(name, key_version=version or "", **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -497,7 +497,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = self._client.get_deleted_key(self.vault_url, name, **kwargs)
+        bundle = self._client.get_deleted_key(name, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -518,7 +518,6 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         return self._client.get_deleted_keys(
-            self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
             **kwargs
@@ -542,7 +541,6 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         return self._client.get_keys(
-            self._vault_url,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs
@@ -568,7 +566,6 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         return self._client.get_key_versions(
-            self._vault_url,
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
@@ -600,7 +597,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
+        self._client.purge_deleted_key(key_name=name, **kwargs)
 
     @distributed_trace
     def begin_recover_deleted_key(self, name: str, **kwargs: Any) -> LROPoller[KeyVaultKey]:
@@ -634,7 +631,6 @@ class KeyClient(KeyVaultClientBase):
         if polling_interval is None:
             polling_interval = 2
         pipeline_response, recovered_key_bundle = self._client.recover_deleted_key(
-            vault_base_url=self.vault_url,
             key_name=name,
             cls=lambda pipeline_response, deserialized, _: (pipeline_response, deserialized),
             **kwargs,
@@ -715,7 +711,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.update_key(
-            self.vault_url, name, key_version=version or "", parameters=parameters, **kwargs
+            name, key_version=version or "", parameters=parameters, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -745,7 +741,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, **kwargs)
+        backup_result = self._client.backup_key(name, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -775,7 +771,6 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.restore_key(
-            self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
             **kwargs
         )
@@ -841,7 +836,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, **kwargs)
+        bundle = self._client.import_key(name, parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -876,7 +871,6 @@ class KeyClient(KeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = self._client.release(
-            vault_base_url=self._vault_url,
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
@@ -911,7 +905,7 @@ class KeyClient(KeyVaultClientBase):
         if count < 1:
             raise ValueError("At least one random byte must be requested")
         parameters = self._models.GetRandomBytesRequest(count=count)
-        result = self._client.get_random_bytes(vault_base_url=self._vault_url, parameters=parameters, **kwargs)
+        result = self._client.get_random_bytes(parameters=parameters, **kwargs)
         return result.value
 
     @distributed_trace
@@ -925,7 +919,7 @@ class KeyClient(KeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
+        policy = self._client.get_key_rotation_policy(key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace
@@ -941,7 +935,7 @@ class KeyClient(KeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        bundle = self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        bundle = self._client.rotate_key(key_name=name, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -987,10 +981,9 @@ class KeyClient(KeyVaultClientBase):
                 for action in actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=expires_in or policy.expires_in)
-        new_policy = self._models.KeyRotationPolicy(lifetime_actions=actions or [], attributes=attributes)
-        result = self._client.update_key_rotation_policy(
-            vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy, **kwargs
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
+        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions or [], attributes=attributes)
+        result = self._client.update_key_rotation_policy( key_name=key_name, key_rotation_policy=new_policy
         )
         return KeyRotationPolicy._from_generated(result)
 
