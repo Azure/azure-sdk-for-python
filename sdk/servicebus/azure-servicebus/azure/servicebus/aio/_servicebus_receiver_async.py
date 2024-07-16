@@ -454,18 +454,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
         self._check_message_alive(message, settle_operation)
 
-        link = get_span_link_from_message(message)
-        trace_links = [link] if link else []
-        with settle_trace_context_manager(self, settle_operation, links=trace_links):
-            await self._do_retryable_operation(
-                self._settle_message,
-                timeout=None,
-                message=message,
-                settle_operation=settle_operation,
-                dead_letter_reason=dead_letter_reason,
-                dead_letter_error_description=dead_letter_error_description,
-            )
-            message._settled = True
+        await self._amqp_transport._settle_message_with_retry(message, settle_operation, dead_letter_reason, dead_letter_error_description)
 
     async def _settle_message(  # type: ignore
         self,

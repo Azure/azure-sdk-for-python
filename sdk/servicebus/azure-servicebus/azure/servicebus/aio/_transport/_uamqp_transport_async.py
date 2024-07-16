@@ -18,7 +18,12 @@ try:
     from ..._transport._uamqp_transport import UamqpTransport
     from ._base_async import AmqpTransportAsync
     from .._async_utils import get_running_loop
-    from ..._common.tracing import get_receive_links, receive_trace_context_manager
+    from ..._common.tracing import (
+        get_receive_links, 
+        receive_trace_context_manager,
+        settle_trace_context_manager,
+        get_span_link_from_message,
+    )
     from ..._common.constants import ServiceBusReceiveMode
     from ...exceptions import MessageLockLostError
 
@@ -400,5 +405,40 @@ try:
                     batch.append(amqp_receive_client._received_messages.get())
                     amqp_receive_client._received_messages.task_done()
             return [receiver._build_received_message(message) for message in batch]
+        
+    @staticmethod
+    async def _settle_message_with_retry(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        # The following condition check is a hot fix for settling a message received for non-session queue after
+        # lock expiration.
+        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+        if not receiver._session and message._lock_expired:
+            raise MessageLockLostError(
+                message="The lock on the message lock has expired.",
+                error=message.auto_renew_error,
+            )
+        link = get_span_link_from_message(message)
+        trace_links = [link] if link else []
+        with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
+            await receiver._do_retryable_operation(
+                receiver._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
+
+        
 except ImportError:
     pass
+
+
