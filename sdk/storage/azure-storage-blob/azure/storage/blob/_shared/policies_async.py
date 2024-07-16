@@ -64,10 +64,8 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
-        # try:
-        await response.http_response.load_body()
-        # except Exception as e:
-        #     pass
+        if not response.http_response.is_stream_consumed:
+                await response.http_response.read()
 
         will_retry = is_retry(response, request.context.options.get('mode'))
         # Auth error could come from Bearer challenge, in which case this request will be made again
