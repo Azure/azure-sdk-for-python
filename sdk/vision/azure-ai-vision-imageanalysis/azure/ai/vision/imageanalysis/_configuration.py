@@ -23,7 +23,7 @@ class ImageAnalysisClientConfiguration:  # pylint: disable=too-many-instance-att
     :param endpoint: Azure AI Computer Vision endpoint (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-10-01".
      Note that overriding this default value may result in unsupported behavior.

@@ -34,8 +34,7 @@ class AddOrUpdateTextBlocklistItemsOptions(_model_base.Model):
         self,
         *,
         blocklist_items: List["_models.TextBlocklistItem"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -51,7 +50,6 @@ class AddOrUpdateTextBlocklistItemsOptions(_model_base.Model):
 class AddOrUpdateTextBlocklistItemsResult(_model_base.Model):
     """The response of adding blocklistItems to the text blocklist.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_items: Array of blocklistItems have been added. Required.
     :vartype blocklist_items: list[~azure.ai.contentsafety.models.TextBlocklistItem]
@@ -65,8 +63,7 @@ class AddOrUpdateTextBlocklistItemsResult(_model_base.Model):
         self,
         *,
         blocklist_items: List["_models.TextBlocklistItem"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -110,8 +107,7 @@ class AnalyzeImageOptions(_model_base.Model):
         image: "_models.ImageData",
         categories: Optional[List[Union[str, "_models.ImageCategory"]]] = None,
         output_type: Optional[Union[str, "_models.AnalyzeImageOutputType"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -127,7 +123,6 @@ class AnalyzeImageOptions(_model_base.Model):
 class AnalyzeImageResult(_model_base.Model):
     """The image analysis response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar categories_analysis: Analysis result for categories. Required.
     :vartype categories_analysis: list[~azure.ai.contentsafety.models.ImageCategoriesAnalysis]
@@ -141,8 +136,7 @@ class AnalyzeImageResult(_model_base.Model):
         self,
         *,
         categories_analysis: List["_models.ImageCategoriesAnalysis"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -204,8 +198,7 @@ class AnalyzeTextOptions(_model_base.Model):
         blocklist_names: Optional[List[str]] = None,
         halt_on_blocklist_hit: Optional[bool] = None,
         output_type: Optional[Union[str, "_models.AnalyzeTextOutputType"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -221,7 +214,6 @@ class AnalyzeTextOptions(_model_base.Model):
 class AnalyzeTextResult(_model_base.Model):
     """The text analysis response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar blocklists_match: The blocklist match details.
     :vartype blocklists_match: list[~azure.ai.contentsafety.models.TextBlocklistMatch]
@@ -240,8 +232,7 @@ class AnalyzeTextResult(_model_base.Model):
         *,
         categories_analysis: List["_models.TextCategoriesAnalysis"],
         blocklists_match: Optional[List["_models.TextBlocklistMatch"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -257,7 +248,6 @@ class AnalyzeTextResult(_model_base.Model):
 class ImageCategoriesAnalysis(_model_base.Model):
     """Image analysis result.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar category: The image analysis category. Required. Known values are: "Hate", "SelfHarm",
      "Sexual", and "Violence".
@@ -282,8 +272,7 @@ class ImageCategoriesAnalysis(_model_base.Model):
         *,
         category: Union[str, "_models.ImageCategory"],
         severity: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -318,8 +307,7 @@ class ImageData(_model_base.Model):
         *,
         content: Optional[bytes] = None,
         blob_url: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -349,8 +337,7 @@ class RemoveTextBlocklistItemsOptions(_model_base.Model):
         self,
         *,
         blocklist_item_ids: List[str],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -385,8 +372,7 @@ class TextBlocklist(_model_base.Model):
         *,
         blocklist_name: str,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -428,8 +414,7 @@ class TextBlocklistItem(_model_base.Model):
         *,
         text: str,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -445,7 +430,6 @@ class TextBlocklistItem(_model_base.Model):
 class TextBlocklistMatch(_model_base.Model):
     """The result of blocklist match.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_name: The name of the matched blocklist. Required.
     :vartype blocklist_name: str
@@ -469,8 +453,7 @@ class TextBlocklistMatch(_model_base.Model):
         blocklist_name: str,
         blocklist_item_id: str,
         blocklist_item_text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -486,7 +469,6 @@ class TextBlocklistMatch(_model_base.Model):
 class TextCategoriesAnalysis(_model_base.Model):
     """Text analysis result.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar category: The text analysis category. Required. Known values are: "Hate", "SelfHarm",
      "Sexual", and "Violence".
@@ -513,8 +495,7 @@ class TextCategoriesAnalysis(_model_base.Model):
         *,
         category: Union[str, "_models.TextCategory"],
         severity: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

@@ -19,3 +19,5 @@ class SchemaContentTypeValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """JSON encoding"""
     CUSTOM = "text/plain; charset=utf-8"
     """Plain text custom encoding."""
+    PROTOBUF = "text/vnd.ms.protobuf"
+    """Protobuf encoding."""
