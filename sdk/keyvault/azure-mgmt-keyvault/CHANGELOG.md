@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (2024-07-16)
+## 10.3.1 (2024-07-16)
 
-change log generation failed!!!
+### Other Changes
+
+  - Fix docstring
 
 ## 10.3.0 (2023-10-23)
 
