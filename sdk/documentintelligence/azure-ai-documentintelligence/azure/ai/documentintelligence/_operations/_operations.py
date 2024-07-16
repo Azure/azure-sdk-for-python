@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -18,6 +18,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -61,6 +63,8 @@ def build_document_intelligence_analyze_document_request(  # pylint: disable=nam
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentModels/{modelId}:analyze"
     path_format_arguments = {
@@ -87,6 +91,7 @@ def build_document_intelligence_analyze_document_request(  # pylint: disable=nam
     # Construct headers
     if content_type is not None:
         _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -103,6 +108,8 @@ def build_document_intelligence_classify_document_request(  # pylint: disable=na
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentClassifiers/{classifierId}:analyze"
     path_format_arguments = {
@@ -121,6 +128,7 @@ def build_document_intelligence_classify_document_request(  # pylint: disable=na
     # Construct headers
     if content_type is not None:
         _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -133,6 +141,8 @@ def build_document_intelligence_administration_build_document_model_request(  # 
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentModels:build"
 
@@ -142,6 +152,7 @@ def build_document_intelligence_administration_build_document_model_request(  # 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -154,6 +165,8 @@ def build_document_intelligence_administration_compose_model_request(  # pylint:
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentModels:compose"
 
@@ -163,6 +176,7 @@ def build_document_intelligence_administration_compose_model_request(  # pylint:
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -184,9 +198,9 @@ def build_document_intelligence_administration_authorize_model_copy_request(  # 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -199,6 +213,8 @@ def build_document_intelligence_administration_copy_model_to_request(  # pylint:
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentModels/{modelId}:copyTo"
     path_format_arguments = {
@@ -213,6 +229,7 @@ def build_document_intelligence_administration_copy_model_to_request(  # pylint:
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -271,6 +288,8 @@ def build_document_intelligence_administration_delete_model_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentModels/{modelId}"
     path_format_arguments = {
@@ -283,6 +302,7 @@ def build_document_intelligence_administration_delete_model_request(  # pylint: 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -363,6 +383,8 @@ def build_document_intelligence_administration_build_classifier_request(  # pyli
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentClassifiers:build"
 
@@ -372,6 +394,7 @@ def build_document_intelligence_administration_build_classifier_request(  # pyli
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -430,6 +453,8 @@ def build_document_intelligence_administration_delete_classifier_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/documentClassifiers/{classifierId}"
     path_format_arguments = {
@@ -442,12 +467,14 @@ def build_document_intelligence_administration_delete_classifier_request(  # pyl
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinABC):  # pylint: disable=name-too-long
-    def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
+
+    def _analyze_document_initial(
         self,
         model_id: str,
         analyze_request: Optional[Union[_models.AnalyzeDocumentRequest, JSON, IO[bytes]]] = None,
@@ -459,7 +486,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         query_fields: Optional[List[str]] = None,
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
         **kwargs: Any,
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -472,7 +499,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -499,11 +526,11 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -511,8 +538,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -521,8 +550,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_analyze_document(
@@ -539,7 +572,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Analyzes document with document model.
 
         :param model_id: Unique document model name. Required.
@@ -578,292 +610,177 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # JSON input template you can fill out and use as your body input.
                 analyze_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),  # Optional. Base64
-                      encoding of the document to analyze.  Either urlSource or base64Source must be
-                      specified.
-                    "urlSource": "str"  # Optional. Document URL to analyze.  Either urlSource or
-                      base64Source must be specified.
+                    "base64Source": bytes("bytes", encoding="utf-8"),
+                    "urlSource": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -872,92 +789,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -965,56 +850,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -1023,17 +889,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -1042,258 +903,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -1317,7 +1089,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Analyzes document with document model.
 
         :param model_id: Unique document model name. Required.
@@ -1356,283 +1127,171 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -1641,92 +1300,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -1734,56 +1361,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -1792,17 +1400,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -1811,258 +1414,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -2086,7 +1600,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Analyzes document with document model.
 
         :param model_id: Unique document model name. Required.
@@ -2125,283 +1638,171 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -2410,92 +1811,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -2503,56 +1872,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -2561,17 +1911,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -2580,258 +1925,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -2854,7 +2110,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         output_content_format: Optional[Union[str, _models.ContentFormat]] = None,
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Analyzes document with document model.
 
         :param model_id: Unique document model name. Required.
@@ -2892,292 +2147,177 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # JSON input template you can fill out and use as your body input.
                 analyze_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),  # Optional. Base64
-                      encoding of the document to analyze.  Either urlSource or base64Source must be
-                      specified.
-                    "urlSource": "str"  # Optional. Document URL to analyze.  Either urlSource or
-                      base64Source must be specified.
+                    "base64Source": bytes("bytes", encoding="utf-8"),
+                    "urlSource": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -3186,92 +2326,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -3279,56 +2387,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -3337,17 +2426,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -3356,258 +2440,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -3624,7 +2619,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_document_initial(  # type: ignore
+            raw_result = self._analyze_document_initial(
                 model_id=model_id,
                 analyze_request=analyze_request,
                 pages=pages,
@@ -3639,6 +2634,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -3655,7 +2651,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -3677,7 +2673,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _classify_document_initial(  # pylint: disable=inconsistent-return-statements
+    def _classify_document_initial(
         self,
         classifier_id: str,
         classify_request: Union[_models.ClassifyDocumentRequest, JSON, IO[bytes]],
@@ -3685,7 +2681,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
         split: Optional[Union[str, _models.SplitMode]] = None,
         **kwargs: Any,
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3698,7 +2694,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -3718,11 +2714,11 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3730,8 +2726,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3740,8 +2738,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_classify_document(
@@ -3754,7 +2756,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Classifies document with document classifier.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -3780,292 +2781,177 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # JSON input template you can fill out and use as your body input.
                 classify_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),  # Optional. Base64
-                      encoding of the document to classify.  Either urlSource or base64Source must be
-                      specified.
-                    "urlSource": "str"  # Optional. Document URL to classify.  Either urlSource
-                      or base64Source must be specified.
+                    "base64Source": bytes("bytes", encoding="utf-8"),
+                    "urlSource": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -4074,92 +2960,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -4167,56 +3021,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -4225,17 +3060,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -4244,258 +3074,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -4515,7 +3256,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Classifies document with document classifier.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -4541,283 +3281,171 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -4826,92 +3454,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -4919,56 +3515,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -4977,17 +3554,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -4996,258 +3568,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -5267,7 +3750,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Classifies document with document classifier.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -5293,283 +3775,171 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -5578,92 +3948,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -5671,56 +4009,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -5729,17 +4048,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -5748,258 +4062,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -6018,7 +4243,6 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         split: Optional[Union[str, _models.SplitMode]] = None,
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeResult]:
-        # pylint: disable=line-too-long
         """Classifies document with document classifier.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -6043,292 +4267,177 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 
                 # JSON input template you can fill out and use as your body input.
                 classify_request = {
-                    "base64Source": bytes("bytes", encoding="utf-8"),  # Optional. Base64
-                      encoding of the document to classify.  Either urlSource or base64Source must be
-                      specified.
-                    "urlSource": "str"  # Optional. Document URL to classify.  Either urlSource
-                      or base64Source must be specified.
+                    "base64Source": bytes("bytes", encoding="utf-8"),
+                    "urlSource": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to produce this result. Required.
-                    "content": "str",  # Concatenate string representation of all textual and
-                      visual elements in reading order. Required.
-                    "modelId": "str",  # Document model ID used to produce this result. Required.
+                    "apiVersion": "str",
+                    "content": "str",
+                    "modelId": "str",
                     "pages": [
                         {
-                            "pageNumber": 0,  # 1-based page number in the input
-                              document. Required.
+                            "pageNumber": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "angle": 0.0,  # Optional. The general orientation of the
-                              content in clockwise direction, measured in degrees between (-180, 180].
+                            "angle": 0.0,
                             "barcodes": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the barcode. Required.
-                                    "kind": "str",  # Barcode kind. Required.
-                                      Known values are: "QRCode", "PDF417", "UPCA", "UPCE", "Code39",
-                                      "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar",
-                                      "DataBarExpanded", "ITF", "MicroQRCode", "Aztec", "DataMatrix",
-                                      and "MaxiCode".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # Barcode value. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the barcode, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "formulas": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the formula. Required.
-                                    "kind": "str",  # Formula kind. Required.
-                                      Known values are: "inline" and "display".
+                                    "confidence": 0.0,
+                                    "kind": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "value": "str",  # LaTex expression
-                                      describing the formula. Required.
+                                    "value": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the formula, with coordinates specified relative to the
-                                          top-left of the page. The numbers represent the x, y values
-                                          of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "height": 0.0,  # Optional. The height of the image/PDF in
-                              pixels/inches, respectively.
+                            "height": 0.0,
                             "lines": [
                                 {
-                                    "content": "str",  # Concatenated content of
-                                      the contained elements in reading order. Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the line, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
                             "selectionMarks": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the selection mark. Required.
+                                    "confidence": 0.0,
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
-                                    "state": "str",  # State of the selection
-                                      mark. Required. Known values are: "selected" and "unselected".
+                                    "state": "str",
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the selection mark, with coordinates specified relative to
-                                          the top-left of the page. The numbers represent the x, y
-                                          values of the polygon vertices, clockwise from the left (-180
-                                          degrees inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "unit": "str",  # Optional. The unit used by the width,
-                              height, and polygon properties. For images, the unit is "pixel". For PDF,
-                              the unit is "inch". Known values are: "pixel" and "inch".
-                            "width": 0.0,  # Optional. The width of the image/PDF in
-                              pixels/inches, respectively.
+                            "unit": "str",
+                            "width": 0.0,
                             "words": [
                                 {
-                                    "confidence": 0.0,  # Confidence of correctly
-                                      extracting the word. Required.
-                                    "content": "str",  # Text content of the
-                                      word. Required.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "span": {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     },
                                     "polygon": [
-                                        0.0  # Optional. Bounding polygon of
-                                          the word, with coordinates specified relative to the top-left
-                                          of the page. The numbers represent the x, y values of the
-                                          polygon vertices, clockwise from the left (-180 degrees
-                                          inclusive) relative to the element orientation.
+                                        0.0
                                     ]
                                 }
                             ]
                         }
                     ],
-                    "stringIndexType": "str",  # Method used to compute string offset and length.
-                      Required. Known values are: "textElements", "unicodeCodePoint", and
-                      "utf16CodeUnit".
-                    "contentFormat": "str",  # Optional. Format of the analyze result top-level
-                      content. Known values are: "text" and "markdown".
+                    "stringIndexType": "str",
+                    "contentFormat": "str",
                     "documents": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              document. Required.
-                            "docType": "str",  # Document type. Required.
+                            "confidence": 0.0,
+                            "docType": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "fields": {
                                 "str": {
-                                    "type": "str",  # Data type of the field
-                                      value. Required. Known values are: "string", "date", "time",
-                                      "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
+                                    "type": "str",
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "confidence": 0.0,  # Optional. Confidence of
-                                      correctly extracting the field.
-                                    "content": "str",  # Optional. Field content.
+                                    "confidence": 0.0,
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "valueAddress": {
-                                        "city": "str",  # Optional. Name of
-                                          city, town, village, etc.
-                                        "cityDistrict": "str",  # Optional.
-                                          Districts or boroughs within a city, such as Brooklyn in New
-                                          York City or City of Westminster in London.
-                                        "countryRegion": "str",  # Optional.
-                                          Country/region.
-                                        "house": "str",  # Optional. Build
-                                          name, such as World Trade Center.
-                                        "houseNumber": "str",  # Optional.
-                                          House or building number.
-                                        "level": "str",  # Optional. Floor
-                                          number, such as 3F.
-                                        "poBox": "str",  # Optional. Post
-                                          office box number.
-                                        "postalCode": "str",  # Optional.
-                                          Postal code used for mail sorting.
-                                        "road": "str",  # Optional. Street
-                                          name.
-                                        "state": "str",  # Optional.
-                                          First-level administrative division.
-                                        "stateDistrict": "str",  # Optional.
-                                          Second-level administrative division used in certain locales.
-                                        "streetAddress": "str",  # Optional.
-                                          Street-level address, excluding city, state, countryRegion,
-                                          and postalCode.
-                                        "suburb": "str",  # Optional.
-                                          Unofficial neighborhood name, like Chinatown.
-                                        "unit": "str"  # Optional. Apartment
-                                          or office number.
+                                        "city": "str",
+                                        "cityDistrict": "str",
+                                        "countryRegion": "str",
+                                        "house": "str",
+                                        "houseNumber": "str",
+                                        "level": "str",
+                                        "poBox": "str",
+                                        "postalCode": "str",
+                                        "road": "str",
+                                        "state": "str",
+                                        "stateDistrict": "str",
+                                        "streetAddress": "str",
+                                        "suburb": "str",
+                                        "unit": "str"
                                     },
                                     "valueArray": [
                                         ...
                                     ],
-                                    "valueBoolean": bool,  # Optional. Boolean
-                                      value.
-                                    "valueCountryRegion": "str",  # Optional.
-                                      3-letter country code value (ISO 3166-1 alpha-3).
+                                    "valueBoolean": bool,
+                                    "valueCountryRegion": "str",
                                     "valueCurrency": {
-                                        "amount": 0.0,  # Currency amount.
-                                          Required.
-                                        "currencyCode": "str",  # Optional.
-                                          Resolved currency code (ISO 4217), if any.
-                                        "currencySymbol": "str"  # Optional.
-                                          Currency symbol label, if any.
+                                        "amount": 0.0,
+                                        "currencyCode": "str",
+                                        "currencySymbol": "str"
                                     },
-                                    "valueDate": "2020-02-20",  # Optional. Date
-                                      value in YYYY-MM-DD format (ISO 8601).
-                                    "valueInteger": 0,  # Optional. Integer
-                                      value.
-                                    "valueNumber": 0.0,  # Optional. Floating
-                                      point value.
+                                    "valueDate": "2020-02-20",
+                                    "valueInteger": 0,
+                                    "valueNumber": 0.0,
                                     "valueObject": {
                                         "str": ...
                                     },
-                                    "valuePhoneNumber": "str",  # Optional. Phone
-                                      number value in E.164 format (ex. +19876543210).
+                                    "valuePhoneNumber": "str",
                                     "valueSelectionGroup": [
-                                        "str"  # Optional. Selection group
-                                          value.
+                                        "str"
                                     ],
-                                    "valueSelectionMark": "str",  # Optional.
-                                      Selection mark value. Known values are: "selected" and
-                                      "unselected".
-                                    "valueSignature": "str",  # Optional.
-                                      Presence of signature. Known values are: "signed" and "unsigned".
-                                    "valueString": "str",  # Optional. String
-                                      value.
-                                    "valueTime": "12:30:00"  # Optional. Time
-                                      value in hh:mm:ss format (ISO 8601).
+                                    "valueSelectionMark": "str",
+                                    "valueSignature": "str",
+                                    "valueString": "str",
+                                    "valueTime": "12:30:00"
                                 }
                             }
                         }
@@ -6337,92 +4446,60 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "elements": [
-                                "str"  # Optional. Child elements of the figure,
-                                  excluding any caption or footnotes.
+                                "str"
                             ],
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -6430,56 +4507,37 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "keyValuePairs": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly extracting the
-                              key-value pair. Required.
+                            "confidence": 0.0,
                             "key": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
                             },
                             "value": {
-                                "content": "str",  # Concatenated content of the
-                                  key-value element in reading order. Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ]
@@ -6488,17 +4546,12 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                     ],
                     "languages": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              language. Required.
-                            "locale": "str",  # Detected language.  Value may an ISO
-                              639-1 language code (ex. "en", "fr") or BCP 47 language tag (ex.
-                              "zh-Hans"). Required.
+                            "confidence": 0.0,
+                            "locale": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
@@ -6507,258 +4560,169 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                         {
                             "items": [
                                 {
-                                    "content": "str",  # Content of the list
-                                      item. Required.
-                                    "level": 0,  # Level of the list item
-                                      (1-indexed). Required.
+                                    "content": "str",
+                                    "level": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the list item.
+                                        "str"
                                     ]
                                 }
                             ],
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ]
                         }
                     ],
                     "paragraphs": [
                         {
-                            "content": "str",  # Concatenated content of the paragraph in
-                              reading order. Required.
+                            "content": "str",
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
-                            "role": "str"  # Optional. Semantic role of the paragraph.
-                              Known values are: "pageHeader", "pageFooter", "pageNumber", "title",
-                              "sectionHeading", "footnote", and "formulaBlock".
+                            "role": "str"
                         }
                     ],
                     "sections": [
                         {
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "elements": [
-                                "str"  # Optional. Child elements of the section.
+                                "str"
                             ]
                         }
                     ],
                     "styles": [
                         {
-                            "confidence": 0.0,  # Confidence of correctly identifying the
-                              style. Required.
+                            "confidence": 0.0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
-                            "backgroundColor": "str",  # Optional. Background color in
-                              #rrggbb hexadecimal format..
-                            "color": "str",  # Optional. Foreground color in #rrggbb
-                              hexadecimal format.
-                            "fontStyle": "str",  # Optional. Font style. Known values
-                              are: "normal" and "italic".
-                            "fontWeight": "str",  # Optional. Font weight. Known values
-                              are: "normal" and "bold".
-                            "isHandwritten": bool,  # Optional. Is content handwritten?.
-                            "similarFontFamily": "str"  # Optional. Visually most similar
-                              font from among the set of supported font families, with fallback fonts
-                              following CSS convention (ex. 'Arial, sans-serif').
+                            "backgroundColor": "str",
+                            "color": "str",
+                            "fontStyle": "str",
+                            "fontWeight": "str",
+                            "isHandwritten": bool,
+                            "similarFontFamily": "str"
                         }
                     ],
                     "tables": [
                         {
                             "cells": [
                                 {
-                                    "columnIndex": 0,  # Column index of the
-                                      cell. Required.
-                                    "content": "str",  # Concatenated content of
-                                      the table cell in reading order. Required.
-                                    "rowIndex": 0,  # Row index of the cell.
-                                      Required.
+                                    "columnIndex": 0,
+                                    "content": "str",
+                                    "rowIndex": 0,
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
-                                    "columnSpan": 0,  # Optional. Number of
-                                      columns spanned by this cell.
+                                    "columnSpan": 0,
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the table cell.
+                                        "str"
                                     ],
-                                    "kind": "str",  # Optional. Table cell kind.
-                                      Known values are: "content", "rowHeader", "columnHeader",
-                                      "stubHead", and "description".
-                                    "rowSpan": 0  # Optional. Number of rows
-                                      spanned by this cell.
+                                    "kind": "str",
+                                    "rowSpan": 0
                                 }
                             ],
-                            "columnCount": 0,  # Number of columns in the table.
-                              Required.
-                            "rowCount": 0,  # Number of rows in the table. Required.
+                            "columnCount": 0,
+                            "rowCount": 0,
                             "spans": [
                                 {
-                                    "length": 0,  # Number of characters in the
-                                      content represented by the span. Required.
-                                    "offset": 0  # Zero-based index of the
-                                      content represented by the span. Required.
+                                    "length": 0,
+                                    "offset": 0
                                 }
                             ],
                             "boundingRegions": [
                                 {
-                                    "pageNumber": 0,  # 1-based page number of
-                                      page containing the bounding region. Required.
+                                    "pageNumber": 0,
                                     "polygon": [
-                                        0.0  # Bounding polygon on the page,
-                                          or the entire page if not specified. Coordinates specified
-                                          relative to the top-left of the page. The numbers represent
-                                          the x, y values of the polygon vertices, clockwise from the
-                                          left (-180 degrees inclusive) relative to the element
-                                          orientation. Required.
+                                        0.0
                                     ]
                                 }
                             ],
                             "caption": {
-                                "content": "str",  # Content of the caption.
-                                  Required.
+                                "content": "str",
                                 "spans": [
                                     {
-                                        "length": 0,  # Number of characters
-                                          in the content represented by the span. Required.
-                                        "offset": 0  # Zero-based index of
-                                          the content represented by the span. Required.
+                                        "length": 0,
+                                        "offset": 0
                                     }
                                 ],
                                 "boundingRegions": [
                                     {
-                                        "pageNumber": 0,  # 1-based page
-                                          number of page containing the bounding region. Required.
+                                        "pageNumber": 0,
                                         "polygon": [
-                                            0.0  # Bounding polygon on
-                                              the page, or the entire page if not specified.
-                                              Coordinates specified relative to the top-left of the
-                                              page. The numbers represent the x, y values of the
-                                              polygon vertices, clockwise from the left (-180 degrees
-                                              inclusive) relative to the element orientation. Required.
+                                            0.0
                                         ]
                                     }
                                 ],
                                 "elements": [
-                                    "str"  # Optional. Child elements of the
-                                      caption.
+                                    "str"
                                 ]
                             },
                             "footnotes": [
                                 {
-                                    "content": "str",  # Content of the footnote.
-                                      Required.
+                                    "content": "str",
                                     "spans": [
                                         {
-                                            "length": 0,  # Number of
-                                              characters in the content represented by the span.
-                                              Required.
-                                            "offset": 0  # Zero-based
-                                              index of the content represented by the span. Required.
+                                            "length": 0,
+                                            "offset": 0
                                         }
                                     ],
                                     "boundingRegions": [
                                         {
-                                            "pageNumber": 0,  # 1-based
-                                              page number of page containing the bounding region.
-                                              Required.
+                                            "pageNumber": 0,
                                             "polygon": [
-                                                0.0  # Bounding
-                                                  polygon on the page, or the entire page if not
-                                                  specified. Coordinates specified relative to the
-                                                  top-left of the page. The numbers represent the x, y
-                                                  values of the polygon vertices, clockwise from the
-                                                  left (-180 degrees inclusive) relative to the element
-                                                  orientation. Required.
+                                                0.0
                                             ]
                                         }
                                     ],
                                     "elements": [
-                                        "str"  # Optional. Child elements of
-                                          the footnote.
+                                        "str"
                                     ]
                                 }
                             ]
@@ -6775,7 +4739,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._classify_document_initial(  # type: ignore
+            raw_result = self._classify_document_initial(
                 classifier_id=classifier_id,
                 classify_request=classify_request,
                 string_index_type=string_index_type,
@@ -6786,6 +4750,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -6802,7 +4767,7 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -6828,9 +4793,10 @@ class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinA
 class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
     DocumentIntelligenceAdministrationClientMixinABC
 ):
-    def _build_document_model_initial(  # pylint: disable=inconsistent-return-statements
+
+    def _build_document_model_initial(
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6843,7 +4809,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6860,11 +4826,11 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -6872,8 +4838,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6882,14 +4850,17 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_build_document_model(
         self, build_request: _models.BuildDocumentModelRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document analysis model.
 
         :param build_request: Build request parameters. Required.
@@ -6908,86 +4879,66 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 build_request = {
-                    "buildMode": "str",  # Custom document model build mode. Required. Known
-                      values are: "template" and "neural".
-                    "modelId": "str",  # Unique document model name. Required.
+                    "buildMode": "str",
+                    "modelId": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "description": "str",  # Optional. Document model description.
+                    "description": "str",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -6997,7 +4948,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_build_document_model(
         self, build_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document analysis model.
 
         :param build_request: Build request parameters. Required.
@@ -7016,65 +4966,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7084,7 +5017,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_build_document_model(
         self, build_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document analysis model.
 
         :param build_request: Build request parameters. Required.
@@ -7103,65 +5035,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7171,7 +5086,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_build_document_model(
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document analysis model.
 
         :param build_request: Build request parameters. Is one of the following types:
@@ -7189,86 +5103,66 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 build_request = {
-                    "buildMode": "str",  # Custom document model build mode. Required. Known
-                      values are: "template" and "neural".
-                    "modelId": "str",  # Unique document model name. Required.
+                    "buildMode": "str",
+                    "modelId": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "description": "str",  # Optional. Document model description.
+                    "description": "str",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7282,7 +5176,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._build_document_model_initial(  # type: ignore
+            raw_result = self._build_document_model_initial(
                 build_request=build_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -7290,6 +5184,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -7306,7 +5201,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -7328,9 +5223,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _compose_model_initial(  # pylint: disable=inconsistent-return-statements
+    def _compose_model_initial(
         self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7343,7 +5238,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7360,11 +5255,11 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7372,8 +5267,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7382,8 +5279,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_compose_model(
@@ -7393,7 +5294,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters. Required.
@@ -7414,78 +5314,60 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 compose_request = {
                     "componentModels": [
                         {
-                            "modelId": "str"  # Unique document model name. Required.
+                            "modelId": "str"
                         }
                     ],
-                    "modelId": "str",  # Unique document model name. Required.
-                    "description": "str",  # Optional. Document model description.
+                    "modelId": "str",
+                    "description": "str",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7495,7 +5377,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_compose_model(
         self, compose_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters. Required.
@@ -7514,65 +5395,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7582,7 +5446,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_compose_model(
         self, compose_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters. Required.
@@ -7601,65 +5464,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7669,7 +5515,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_compose_model(
         self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters. Is one of the following types:
@@ -7689,78 +5534,60 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 compose_request = {
                     "componentModels": [
                         {
-                            "modelId": "str"  # Unique document model name. Required.
+                            "modelId": "str"
                         }
                     ],
-                    "modelId": "str",  # Unique document model name. Required.
-                    "description": "str",  # Optional. Document model description.
+                    "modelId": "str",
+                    "description": "str",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -7774,7 +5601,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._compose_model_initial(  # type: ignore
+            raw_result = self._compose_model_initial(
                 compose_request=compose_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -7782,6 +5609,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -7798,7 +5626,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -7828,7 +5656,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models.CopyAuthorization:
-        # pylint: disable=line-too-long
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -7846,26 +5673,21 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 authorize_copy_request = {
-                    "modelId": "str",  # Unique document model name. Required.
-                    "description": "str",  # Optional. Document model description.
+                    "modelId": "str",
+                    "description": "str",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "accessToken": "str",  # Token used to authorize the request. Required.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Date/time when the access
-                      token expires. Required.
-                    "targetModelId": "str",  # Identifier of the target document model. Required.
-                    "targetModelLocation": "str",  # URL of the copied document model in the
-                      target account. Required.
-                    "targetResourceId": "str",  # ID of the target Azure resource where the
-                      document model should be copied to. Required.
-                    "targetResourceRegion": "str"  # Location of the target Azure resource where
-                      the document model should be copied to. Required.
+                    "accessToken": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
+                    "targetModelId": "str",
+                    "targetModelLocation": "str",
+                    "targetResourceId": "str",
+                    "targetResourceRegion": "str"
                 }
         """
 
@@ -7873,7 +5695,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def authorize_model_copy(
         self, authorize_copy_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CopyAuthorization:
-        # pylint: disable=line-too-long
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -7891,16 +5712,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 200
                 response == {
-                    "accessToken": "str",  # Token used to authorize the request. Required.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Date/time when the access
-                      token expires. Required.
-                    "targetModelId": "str",  # Identifier of the target document model. Required.
-                    "targetModelLocation": "str",  # URL of the copied document model in the
-                      target account. Required.
-                    "targetResourceId": "str",  # ID of the target Azure resource where the
-                      document model should be copied to. Required.
-                    "targetResourceRegion": "str"  # Location of the target Azure resource where
-                      the document model should be copied to. Required.
+                    "accessToken": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
+                    "targetModelId": "str",
+                    "targetModelLocation": "str",
+                    "targetResourceId": "str",
+                    "targetResourceRegion": "str"
                 }
         """
 
@@ -7908,7 +5725,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def authorize_model_copy(
         self, authorize_copy_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CopyAuthorization:
-        # pylint: disable=line-too-long
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -7926,16 +5742,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 200
                 response == {
-                    "accessToken": "str",  # Token used to authorize the request. Required.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Date/time when the access
-                      token expires. Required.
-                    "targetModelId": "str",  # Identifier of the target document model. Required.
-                    "targetModelLocation": "str",  # URL of the copied document model in the
-                      target account. Required.
-                    "targetResourceId": "str",  # ID of the target Azure resource where the
-                      document model should be copied to. Required.
-                    "targetResourceRegion": "str"  # Location of the target Azure resource where
-                      the document model should be copied to. Required.
+                    "accessToken": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
+                    "targetModelId": "str",
+                    "targetModelLocation": "str",
+                    "targetResourceId": "str",
+                    "targetResourceRegion": "str"
                 }
         """
 
@@ -7943,7 +5755,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def authorize_model_copy(
         self, authorize_copy_request: Union[_models.AuthorizeCopyRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CopyAuthorization:
-        # pylint: disable=line-too-long
         """Generates authorization to copy a document model to this location with
         specified modelId and optional description.
 
@@ -7960,26 +5771,21 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 authorize_copy_request = {
-                    "modelId": "str",  # Unique document model name. Required.
-                    "description": "str",  # Optional. Document model description.
+                    "modelId": "str",
+                    "description": "str",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "accessToken": "str",  # Token used to authorize the request. Required.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Date/time when the access
-                      token expires. Required.
-                    "targetModelId": "str",  # Identifier of the target document model. Required.
-                    "targetModelLocation": "str",  # URL of the copied document model in the
-                      target account. Required.
-                    "targetResourceId": "str",  # ID of the target Azure resource where the
-                      document model should be copied to. Required.
-                    "targetResourceRegion": "str"  # Location of the target Azure resource where
-                      the document model should be copied to. Required.
+                    "accessToken": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
+                    "targetModelId": "str",
+                    "targetModelLocation": "str",
+                    "targetResourceId": "str",
+                    "targetResourceRegion": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -8011,7 +5817,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8024,7 +5830,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8039,9 +5848,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         return deserialized  # type: ignore
 
-    def _copy_model_to_initial(  # pylint: disable=inconsistent-return-statements
+    def _copy_model_to_initial(
         self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8054,7 +5863,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -8072,11 +5881,11 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -8084,8 +5893,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8094,8 +5905,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_copy_model_to(
@@ -8106,7 +5921,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
@@ -8127,79 +5941,58 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 copy_to_request = {
-                    "accessToken": "str",  # Token used to authorize the request. Required.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Date/time when the access
-                      token expires. Required.
-                    "targetModelId": "str",  # Identifier of the target document model. Required.
-                    "targetModelLocation": "str",  # URL of the copied document model in the
-                      target account. Required.
-                    "targetResourceId": "str",  # ID of the target Azure resource where the
-                      document model should be copied to. Required.
-                    "targetResourceRegion": "str"  # Location of the target Azure resource where
-                      the document model should be copied to. Required.
+                    "accessToken": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
+                    "targetModelId": "str",
+                    "targetModelLocation": "str",
+                    "targetResourceId": "str",
+                    "targetResourceRegion": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -8209,7 +6002,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_copy_model_to(
         self, model_id: str, copy_to_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
@@ -8230,65 +6022,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -8298,7 +6073,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_copy_model_to(
         self, model_id: str, copy_to_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
@@ -8319,65 +6093,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -8387,7 +6144,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_copy_model_to(
         self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
-        # pylint: disable=line-too-long
         """Copies document model to the target resource, region, and modelId.
 
         :param model_id: Unique document model name. Required.
@@ -8407,79 +6163,58 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 copy_to_request = {
-                    "accessToken": "str",  # Token used to authorize the request. Required.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Date/time when the access
-                      token expires. Required.
-                    "targetModelId": "str",  # Identifier of the target document model. Required.
-                    "targetModelLocation": "str",  # URL of the copied document model in the
-                      target account. Required.
-                    "targetResourceId": "str",  # ID of the target Azure resource where the
-                      document model should be copied to. Required.
-                    "targetResourceRegion": "str"  # Location of the target Azure resource where
-                      the document model should be copied to. Required.
+                    "accessToken": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
+                    "targetModelId": "str",
+                    "targetModelLocation": "str",
+                    "targetResourceId": "str",
+                    "targetResourceRegion": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -8493,7 +6228,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._copy_model_to_initial(  # type: ignore
+            raw_result = self._copy_model_to_initial(
                 model_id=model_id,
                 copy_to_request=copy_to_request,
                 content_type=content_type,
@@ -8502,6 +6237,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -8518,7 +6254,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -8542,7 +6278,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def get_model(self, model_id: str, **kwargs: Any) -> _models.DocumentModelDetails:
-        # pylint: disable=line-too-long
         """Gets detailed document model information.
 
         :param model_id: Unique document model name. Required.
@@ -8556,65 +6291,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 200
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -8639,7 +6357,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8652,7 +6370,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8674,7 +6395,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def list_models(self, **kwargs: Any) -> Iterable["_models.DocumentModelDetails"]:
-        # pylint: disable=line-too-long
         """List all document models.
 
         :return: An iterator like instance of DocumentModelDetails
@@ -8687,65 +6407,48 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 200
                 response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document model was created. Required.
-                    "modelId": "str",  # Unique document model name. Required.
-                    "apiVersion": "str",  # Optional. API version used to create this document
-                      model.
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "modelId": "str",
+                    "apiVersion": "str",
                     "azureBlobFileListSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "fileList": "str"  # Path to a JSONL file within the container
-                          specifying a subset of documents. Required.
+                        "containerUrl": "str",
+                        "fileList": "str"
                     },
                     "azureBlobSource": {
-                        "containerUrl": "str",  # Azure Blob Storage container URL. Required.
-                        "prefix": "str"  # Optional. Blob name prefix.
+                        "containerUrl": "str",
+                        "prefix": "str"
                     },
-                    "buildMode": "str",  # Optional. Custom document model build mode. Known
-                      values are: "template" and "neural".
-                    "description": "str",  # Optional. Document model description.
+                    "buildMode": "str",
+                    "description": "str",
                     "docTypes": {
                         "str": {
                             "fieldSchema": {
                                 "str": {
-                                    "type": "str",  # Semantic data type of the
-                                      field value. Required. Known values are: "string", "date",
-                                      "time", "phoneNumber", "number", "integer", "selectionMark",
-                                      "countryRegion", "signature", "array", "object", "currency",
-                                      "address", "boolean", and "selectionGroup".
-                                    "description": "str",  # Optional. Field
-                                      description.
-                                    "example": "str",  # Optional. Example field
-                                      content.
+                                    "type": "str",
+                                    "description": "str",
+                                    "example": "str",
                                     "items": ...,
                                     "properties": {
                                         "str": ...
                                     }
                                 }
                             },
-                            "buildMode": "str",  # Optional. Custom document model build
-                              mode. Known values are: "template" and "neural".
-                            "description": "str",  # Optional. Document model
-                              description.
+                            "buildMode": "str",
+                            "description": "str",
                             "fieldConfidence": {
-                                "str": 0.0  # Optional. Estimated confidence for each
-                                  field.
+                                "str": 0.0
                             }
                         }
                     },
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document model will expire.
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     },
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -8772,9 +6475,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8792,9 +6493,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8817,8 +6516,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -8857,7 +6554,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8869,8 +6566,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8885,7 +6580,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def get_resource_info(self, **kwargs: Any) -> _models.ResourceDetails:
-        # pylint: disable=line-too-long
         """Return information about the current resource.
 
         :return: ResourceDetails. The ResourceDetails is compatible with MutableMapping
@@ -8898,16 +6592,13 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 # response body for status code(s): 200
                 response == {
                     "customDocumentModels": {
-                        "count": 0,  # Number of custom document models in the current
-                          resource. Required.
-                        "limit": 0  # Maximum number of custom document models supported in
-                          the current resource. Required.
+                        "count": 0,
+                        "limit": 0
                     },
                     "customNeuralDocumentModelBuilds": {
-                        "quota": 0,  # Resource quota limit. Required.
-                        "quotaResetDateTime": "2020-02-20 00:00:00",  # Date/time when the
-                          resource quota usage will be reset. Required.
-                        "used": 0  # Amount of the resource quota used. Required.
+                        "quota": 0,
+                        "quotaResetDateTime": "2020-02-20 00:00:00",
+                        "used": 0
                     }
                 }
         """
@@ -8930,7 +6621,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -8943,7 +6634,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8960,7 +6654,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def get_operation(self, operation_id: str, **kwargs: Any) -> _models.OperationDetails:
-        # pylint: disable=line-too-long
         """Gets operation info.
 
         :param operation_id: Operation ID. Required.
@@ -8977,287 +6670,279 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template for discriminator value "documentClassifierBuild":
                 operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "kind": "documentClassifierBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status.  notStarted, running, completed, or
-                      failed. Required. Known values are: "notStarted", "running", "failed",
-                      "succeeded", "completed", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
+                            "message": "str"
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "percentCompleted": 0,
                     "result": {
-                        "apiVersion": "str",  # API version used to create this document
-                          classifier. Required.
-                        "classifierId": "str",  # Unique document classifier name. Required.
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document classifier was created. Required.
+                        "apiVersion": "str",
+                        "classifierId": "str",
+                        "createdDateTime": "2020-02-20 00:00:00",
                         "docTypes": {
                             "str": {
                                 "azureBlobFileListSource": {
-                                    "containerUrl": "str",  # Azure Blob Storage
-                                      container URL. Required.
-                                    "fileList": "str"  # Path to a JSONL file
-                                      within the container specifying a subset of documents. Required.
+                                    "containerUrl": "str",
+                                    "fileList": "str"
                                 },
                                 "azureBlobSource": {
-                                    "containerUrl": "str",  # Azure Blob Storage
-                                      container URL. Required.
-                                    "prefix": "str"  # Optional. Blob name
-                                      prefix.
+                                    "containerUrl": "str",
+                                    "prefix": "str"
                                 },
-                                "sourceKind": "str"  # Optional. Type of training
-                                  data source. Known values are: "url", "base64", "azureBlob", and
-                                  "azureBlobFileList".
+                                "sourceKind": "str"
                             }
                         },
-                        "baseClassifierId": "str",  # Optional. Base classifierId on top of
-                          which the classifier was trained.
-                        "description": "str",  # Optional. Document classifier description.
-                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document classifier will expire.
+                        "baseClassifierId": "str",
+                        "description": "str",
+                        "expirationDateTime": "2020-02-20 00:00:00",
                         "warnings": [
                             {
-                                "code": "str",  # One of a server-defined set of
-                                  warning codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the warning. Required.
-                                "target": "str"  # Optional. The target of the error.
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
                             }
                         ]
                     },
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "documentModelBuild":
+                operation_details = {
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "kind": "documentModelBuild",
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "innererror": ...,
+                            "message": "str"
+                        },
+                        "target": "str"
+                    },
+                    "percentCompleted": 0,
+                    "result": {
+                        "createdDateTime": "2020-02-20 00:00:00",
+                        "modelId": "str",
+                        "apiVersion": "str",
+                        "azureBlobFileListSource": {
+                            "containerUrl": "str",
+                            "fileList": "str"
+                        },
+                        "azureBlobSource": {
+                            "containerUrl": "str",
+                            "prefix": "str"
+                        },
+                        "buildMode": "str",
+                        "description": "str",
+                        "docTypes": {
+                            "str": {
+                                "fieldSchema": {
+                                    "str": {
+                                        "type": "str",
+                                        "description": "str",
+                                        "example": "str",
+                                        "items": ...,
+                                        "properties": {
+                                            "str": ...
+                                        }
+                                    }
+                                },
+                                "buildMode": "str",
+                                "description": "str",
+                                "fieldConfidence": {
+                                    "str": 0.0
+                                }
+                            }
+                        },
+                        "expirationDateTime": "2020-02-20 00:00:00",
+                        "tags": {
+                            "str": "str"
+                        },
+                        "warnings": [
+                            {
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
+                            }
+                        ]
+                    },
+                    "tags": {
+                        "str": "str"
                     }
                 }
 
                 # JSON input template for discriminator value "documentModelCompose":
                 operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "kind": "documentModelCompose",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status.  notStarted, running, completed, or
-                      failed. Required. Known values are: "notStarted", "running", "failed",
-                      "succeeded", "completed", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
+                            "message": "str"
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "percentCompleted": 0,
                     "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document model was created. Required.
-                        "modelId": "str",  # Unique document model name. Required.
-                        "apiVersion": "str",  # Optional. API version used to create this
-                          document model.
+                        "createdDateTime": "2020-02-20 00:00:00",
+                        "modelId": "str",
+                        "apiVersion": "str",
                         "azureBlobFileListSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "fileList": "str"  # Path to a JSONL file within the
-                              container specifying a subset of documents. Required.
+                            "containerUrl": "str",
+                            "fileList": "str"
                         },
                         "azureBlobSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "prefix": "str"  # Optional. Blob name prefix.
+                            "containerUrl": "str",
+                            "prefix": "str"
                         },
-                        "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
-                        "description": "str",  # Optional. Document model description.
+                        "buildMode": "str",
+                        "description": "str",
                         "docTypes": {
                             "str": {
                                 "fieldSchema": {
                                     "str": {
-                                        "type": "str",  # Semantic data type
-                                          of the field value. Required. Known values are: "string",
-                                          "date", "time", "phoneNumber", "number", "integer",
-                                          "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", "boolean", and
-                                          "selectionGroup".
-                                        "description": "str",  # Optional.
-                                          Field description.
-                                        "example": "str",  # Optional.
-                                          Example field content.
+                                        "type": "str",
+                                        "description": "str",
+                                        "example": "str",
                                         "items": ...,
                                         "properties": {
                                             "str": ...
                                         }
                                     }
                                 },
-                                "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
-                                "description": "str",  # Optional. Document model
-                                  description.
+                                "buildMode": "str",
+                                "description": "str",
                                 "fieldConfidence": {
-                                    "str": 0.0  # Optional. Estimated confidence
-                                      for each field.
+                                    "str": 0.0
                                 }
                             }
                         },
-                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document model will expire.
+                        "expirationDateTime": "2020-02-20 00:00:00",
                         "tags": {
-                            "str": "str"  # Optional. List of key-value tag attributes
-                              associated with the document model.
+                            "str": "str"
                         },
                         "warnings": [
                             {
-                                "code": "str",  # One of a server-defined set of
-                                  warning codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the warning. Required.
-                                "target": "str"  # Optional. The target of the error.
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
                             }
                         ]
                     },
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # JSON input template for discriminator value "documentModelCopyTo":
                 operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "kind": "documentModelCopyTo",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status.  notStarted, running, completed, or
-                      failed. Required. Known values are: "notStarted", "running", "failed",
-                      "succeeded", "completed", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
+                            "message": "str"
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "percentCompleted": 0,
                     "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document model was created. Required.
-                        "modelId": "str",  # Unique document model name. Required.
-                        "apiVersion": "str",  # Optional. API version used to create this
-                          document model.
+                        "createdDateTime": "2020-02-20 00:00:00",
+                        "modelId": "str",
+                        "apiVersion": "str",
                         "azureBlobFileListSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "fileList": "str"  # Path to a JSONL file within the
-                              container specifying a subset of documents. Required.
+                            "containerUrl": "str",
+                            "fileList": "str"
                         },
                         "azureBlobSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "prefix": "str"  # Optional. Blob name prefix.
+                            "containerUrl": "str",
+                            "prefix": "str"
                         },
-                        "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
-                        "description": "str",  # Optional. Document model description.
+                        "buildMode": "str",
+                        "description": "str",
                         "docTypes": {
                             "str": {
                                 "fieldSchema": {
                                     "str": {
-                                        "type": "str",  # Semantic data type
-                                          of the field value. Required. Known values are: "string",
-                                          "date", "time", "phoneNumber", "number", "integer",
-                                          "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", "boolean", and
-                                          "selectionGroup".
-                                        "description": "str",  # Optional.
-                                          Field description.
-                                        "example": "str",  # Optional.
-                                          Example field content.
+                                        "type": "str",
+                                        "description": "str",
+                                        "example": "str",
                                         "items": ...,
                                         "properties": {
                                             "str": ...
                                         }
                                     }
                                 },
-                                "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
-                                "description": "str",  # Optional. Document model
-                                  description.
+                                "buildMode": "str",
+                                "description": "str",
                                 "fieldConfidence": {
-                                    "str": 0.0  # Optional. Estimated confidence
-                                      for each field.
+                                    "str": 0.0
                                 }
                             }
                         },
-                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document model will expire.
+                        "expirationDateTime": "2020-02-20 00:00:00",
                         "tags": {
-                            "str": "str"  # Optional. List of key-value tag attributes
-                              associated with the document model.
+                            "str": "str"
                         },
                         "warnings": [
                             {
-                                "code": "str",  # One of a server-defined set of
-                                  warning codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the warning. Required.
-                                "target": "str"  # Optional. The target of the error.
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
                             }
                         ]
                     },
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
@@ -9284,7 +6969,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9297,7 +6982,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9319,7 +7007,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def list_operations(self, **kwargs: Any) -> Iterable["_models.OperationDetails"]:
-        # pylint: disable=line-too-long
         """Lists all operations.
 
         :return: An iterator like instance of OperationDetails
@@ -9334,287 +7021,279 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template for discriminator value "documentClassifierBuild":
                 operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "kind": "documentClassifierBuild",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status.  notStarted, running, completed, or
-                      failed. Required. Known values are: "notStarted", "running", "failed",
-                      "succeeded", "completed", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
+                            "message": "str"
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "percentCompleted": 0,
                     "result": {
-                        "apiVersion": "str",  # API version used to create this document
-                          classifier. Required.
-                        "classifierId": "str",  # Unique document classifier name. Required.
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document classifier was created. Required.
+                        "apiVersion": "str",
+                        "classifierId": "str",
+                        "createdDateTime": "2020-02-20 00:00:00",
                         "docTypes": {
                             "str": {
                                 "azureBlobFileListSource": {
-                                    "containerUrl": "str",  # Azure Blob Storage
-                                      container URL. Required.
-                                    "fileList": "str"  # Path to a JSONL file
-                                      within the container specifying a subset of documents. Required.
+                                    "containerUrl": "str",
+                                    "fileList": "str"
                                 },
                                 "azureBlobSource": {
-                                    "containerUrl": "str",  # Azure Blob Storage
-                                      container URL. Required.
-                                    "prefix": "str"  # Optional. Blob name
-                                      prefix.
+                                    "containerUrl": "str",
+                                    "prefix": "str"
                                 },
-                                "sourceKind": "str"  # Optional. Type of training
-                                  data source. Known values are: "url", "base64", "azureBlob", and
-                                  "azureBlobFileList".
+                                "sourceKind": "str"
                             }
                         },
-                        "baseClassifierId": "str",  # Optional. Base classifierId on top of
-                          which the classifier was trained.
-                        "description": "str",  # Optional. Document classifier description.
-                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document classifier will expire.
+                        "baseClassifierId": "str",
+                        "description": "str",
+                        "expirationDateTime": "2020-02-20 00:00:00",
                         "warnings": [
                             {
-                                "code": "str",  # One of a server-defined set of
-                                  warning codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the warning. Required.
-                                "target": "str"  # Optional. The target of the error.
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
                             }
                         ]
                     },
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
+                    }
+                }
+
+                # JSON input template for discriminator value "documentModelBuild":
+                operation_details = {
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "kind": "documentModelBuild",
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "innererror": ...,
+                            "message": "str"
+                        },
+                        "target": "str"
+                    },
+                    "percentCompleted": 0,
+                    "result": {
+                        "createdDateTime": "2020-02-20 00:00:00",
+                        "modelId": "str",
+                        "apiVersion": "str",
+                        "azureBlobFileListSource": {
+                            "containerUrl": "str",
+                            "fileList": "str"
+                        },
+                        "azureBlobSource": {
+                            "containerUrl": "str",
+                            "prefix": "str"
+                        },
+                        "buildMode": "str",
+                        "description": "str",
+                        "docTypes": {
+                            "str": {
+                                "fieldSchema": {
+                                    "str": {
+                                        "type": "str",
+                                        "description": "str",
+                                        "example": "str",
+                                        "items": ...,
+                                        "properties": {
+                                            "str": ...
+                                        }
+                                    }
+                                },
+                                "buildMode": "str",
+                                "description": "str",
+                                "fieldConfidence": {
+                                    "str": 0.0
+                                }
+                            }
+                        },
+                        "expirationDateTime": "2020-02-20 00:00:00",
+                        "tags": {
+                            "str": "str"
+                        },
+                        "warnings": [
+                            {
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
+                            }
+                        ]
+                    },
+                    "tags": {
+                        "str": "str"
                     }
                 }
 
                 # JSON input template for discriminator value "documentModelCompose":
                 operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "kind": "documentModelCompose",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status.  notStarted, running, completed, or
-                      failed. Required. Known values are: "notStarted", "running", "failed",
-                      "succeeded", "completed", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
+                            "message": "str"
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "percentCompleted": 0,
                     "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document model was created. Required.
-                        "modelId": "str",  # Unique document model name. Required.
-                        "apiVersion": "str",  # Optional. API version used to create this
-                          document model.
+                        "createdDateTime": "2020-02-20 00:00:00",
+                        "modelId": "str",
+                        "apiVersion": "str",
                         "azureBlobFileListSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "fileList": "str"  # Path to a JSONL file within the
-                              container specifying a subset of documents. Required.
+                            "containerUrl": "str",
+                            "fileList": "str"
                         },
                         "azureBlobSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "prefix": "str"  # Optional. Blob name prefix.
+                            "containerUrl": "str",
+                            "prefix": "str"
                         },
-                        "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
-                        "description": "str",  # Optional. Document model description.
+                        "buildMode": "str",
+                        "description": "str",
                         "docTypes": {
                             "str": {
                                 "fieldSchema": {
                                     "str": {
-                                        "type": "str",  # Semantic data type
-                                          of the field value. Required. Known values are: "string",
-                                          "date", "time", "phoneNumber", "number", "integer",
-                                          "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", "boolean", and
-                                          "selectionGroup".
-                                        "description": "str",  # Optional.
-                                          Field description.
-                                        "example": "str",  # Optional.
-                                          Example field content.
+                                        "type": "str",
+                                        "description": "str",
+                                        "example": "str",
                                         "items": ...,
                                         "properties": {
                                             "str": ...
                                         }
                                     }
                                 },
-                                "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
-                                "description": "str",  # Optional. Document model
-                                  description.
+                                "buildMode": "str",
+                                "description": "str",
                                 "fieldConfidence": {
-                                    "str": 0.0  # Optional. Estimated confidence
-                                      for each field.
+                                    "str": 0.0
                                 }
                             }
                         },
-                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document model will expire.
+                        "expirationDateTime": "2020-02-20 00:00:00",
                         "tags": {
-                            "str": "str"  # Optional. List of key-value tag attributes
-                              associated with the document model.
+                            "str": "str"
                         },
                         "warnings": [
                             {
-                                "code": "str",  # One of a server-defined set of
-                                  warning codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the warning. Required.
-                                "target": "str"  # Optional. The target of the error.
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
                             }
                         ]
                     },
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
                 # JSON input template for discriminator value "documentModelCopyTo":
                 operation_details = {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      operation was created. Required.
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "kind": "documentModelCopyTo",
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      status was last updated. Required.
-                    "operationId": "str",  # Operation ID. Required.
-                    "resourceLocation": "str",  # URL of the resource targeted by this operation.
-                      Required.
-                    "status": "str",  # Operation status.  notStarted, running, completed, or
-                      failed. Required. Known values are: "notStarted", "running", "failed",
-                      "succeeded", "completed", and "canceled".
-                    "apiVersion": "str",  # Optional. API version used to create this operation.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "resourceLocation": "str",
+                    "status": "str",
+                    "apiVersion": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...,
-                            "message": "str"  # Optional. A human-readable representation
-                              of the error.
+                            "message": "str"
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "percentCompleted": 0,  # Optional. Operation progress (0-100).
+                    "percentCompleted": 0,
                     "result": {
-                        "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when
-                          the document model was created. Required.
-                        "modelId": "str",  # Unique document model name. Required.
-                        "apiVersion": "str",  # Optional. API version used to create this
-                          document model.
+                        "createdDateTime": "2020-02-20 00:00:00",
+                        "modelId": "str",
+                        "apiVersion": "str",
                         "azureBlobFileListSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "fileList": "str"  # Path to a JSONL file within the
-                              container specifying a subset of documents. Required.
+                            "containerUrl": "str",
+                            "fileList": "str"
                         },
                         "azureBlobSource": {
-                            "containerUrl": "str",  # Azure Blob Storage container URL.
-                              Required.
-                            "prefix": "str"  # Optional. Blob name prefix.
+                            "containerUrl": "str",
+                            "prefix": "str"
                         },
-                        "buildMode": "str",  # Optional. Custom document model build mode.
-                          Known values are: "template" and "neural".
-                        "description": "str",  # Optional. Document model description.
+                        "buildMode": "str",
+                        "description": "str",
                         "docTypes": {
                             "str": {
                                 "fieldSchema": {
                                     "str": {
-                                        "type": "str",  # Semantic data type
-                                          of the field value. Required. Known values are: "string",
-                                          "date", "time", "phoneNumber", "number", "integer",
-                                          "selectionMark", "countryRegion", "signature", "array",
-                                          "object", "currency", "address", "boolean", and
-                                          "selectionGroup".
-                                        "description": "str",  # Optional.
-                                          Field description.
-                                        "example": "str",  # Optional.
-                                          Example field content.
+                                        "type": "str",
+                                        "description": "str",
+                                        "example": "str",
                                         "items": ...,
                                         "properties": {
                                             "str": ...
                                         }
                                     }
                                 },
-                                "buildMode": "str",  # Optional. Custom document
-                                  model build mode. Known values are: "template" and "neural".
-                                "description": "str",  # Optional. Document model
-                                  description.
+                                "buildMode": "str",
+                                "description": "str",
                                 "fieldConfidence": {
-                                    "str": 0.0  # Optional. Estimated confidence
-                                      for each field.
+                                    "str": 0.0
                                 }
                             }
                         },
-                        "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and
-                          time (UTC) when the document model will expire.
+                        "expirationDateTime": "2020-02-20 00:00:00",
                         "tags": {
-                            "str": "str"  # Optional. List of key-value tag attributes
-                              associated with the document model.
+                            "str": "str"
                         },
                         "warnings": [
                             {
-                                "code": "str",  # One of a server-defined set of
-                                  warning codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the warning. Required.
-                                "target": "str"  # Optional. The target of the error.
+                                "code": "str",
+                                "message": "str",
+                                "target": "str"
                             }
                         ]
                     },
                     "tags": {
-                        "str": "str"  # Optional. List of key-value tag attributes associated
-                          with the document model.
+                        "str": "str"
                     }
                 }
 
@@ -9643,9 +7322,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9663,9 +7340,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -9688,8 +7363,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -9698,9 +7371,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         return ItemPaged(get_next, extract_data)
 
-    def _build_classifier_initial(  # pylint: disable=inconsistent-return-statements
+    def _build_classifier_initial(
         self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -9713,7 +7386,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9730,11 +7403,11 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9742,8 +7415,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            if _stream:
+            try:
                 response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9752,8 +7427,12 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     def begin_build_classifier(
@@ -9763,7 +7442,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> LROPoller[_models.DocumentClassifierDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document classifier.
 
         :param build_request: Build request parameters. Required.
@@ -9782,67 +7460,50 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 build_request = {
-                    "classifierId": "str",  # Unique document classifier name. Required.
+                    "classifierId": "str",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which to
-                      train the classifier.
-                    "description": "str"  # Optional. Document classifier description.
+                    "baseClassifierId": "str",
+                    "description": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to create this document classifier.
-                      Required.
-                    "classifierId": "str",  # Unique document classifier name. Required.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document classifier was created. Required.
+                    "apiVersion": "str",
+                    "classifierId": "str",
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
-                      classifier was trained.
-                    "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document classifier will expire.
+                    "baseClassifierId": "str",
+                    "description": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -9852,7 +7513,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_build_classifier(
         self, build_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentClassifierDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document classifier.
 
         :param build_request: Build request parameters. Required.
@@ -9871,41 +7531,30 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to create this document classifier.
-                      Required.
-                    "classifierId": "str",  # Unique document classifier name. Required.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document classifier was created. Required.
+                    "apiVersion": "str",
+                    "classifierId": "str",
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
-                      classifier was trained.
-                    "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document classifier will expire.
+                    "baseClassifierId": "str",
+                    "description": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -9915,7 +7564,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_build_classifier(
         self, build_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentClassifierDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document classifier.
 
         :param build_request: Build request parameters. Required.
@@ -9934,41 +7582,30 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to create this document classifier.
-                      Required.
-                    "classifierId": "str",  # Unique document classifier name. Required.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document classifier was created. Required.
+                    "apiVersion": "str",
+                    "classifierId": "str",
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
-                      classifier was trained.
-                    "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document classifier will expire.
+                    "baseClassifierId": "str",
+                    "description": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -9978,7 +7615,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
     def begin_build_classifier(
         self, build_request: Union[_models.BuildDocumentClassifierRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DocumentClassifierDetails]:
-        # pylint: disable=line-too-long
         """Builds a custom document classifier.
 
         :param build_request: Build request parameters. Is one of the following types:
@@ -9996,67 +7632,50 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # JSON input template you can fill out and use as your body input.
                 build_request = {
-                    "classifierId": "str",  # Unique document classifier name. Required.
+                    "classifierId": "str",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which to
-                      train the classifier.
-                    "description": "str"  # Optional. Document classifier description.
+                    "baseClassifierId": "str",
+                    "description": "str"
                 }
 
                 # response body for status code(s): 202
                 response == {
-                    "apiVersion": "str",  # API version used to create this document classifier.
-                      Required.
-                    "classifierId": "str",  # Unique document classifier name. Required.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document classifier was created. Required.
+                    "apiVersion": "str",
+                    "classifierId": "str",
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
-                      classifier was trained.
-                    "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document classifier will expire.
+                    "baseClassifierId": "str",
+                    "description": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -10070,7 +7689,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._build_classifier_initial(  # type: ignore
+            raw_result = self._build_classifier_initial(
                 build_request=build_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -10078,6 +7697,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                 params=_params,
                 **kwargs,
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -10094,7 +7714,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         if polling is True:
@@ -10118,7 +7738,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def get_classifier(self, classifier_id: str, **kwargs: Any) -> _models.DocumentClassifierDetails:
-        # pylint: disable=line-too-long
         """Gets detailed document classifier information.
 
         :param classifier_id: Unique document classifier name. Required.
@@ -10133,41 +7752,30 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 200
                 response == {
-                    "apiVersion": "str",  # API version used to create this document classifier.
-                      Required.
-                    "classifierId": "str",  # Unique document classifier name. Required.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document classifier was created. Required.
+                    "apiVersion": "str",
+                    "classifierId": "str",
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
-                      classifier was trained.
-                    "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document classifier will expire.
+                    "baseClassifierId": "str",
+                    "description": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -10192,7 +7800,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -10205,7 +7813,10 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -10227,7 +7838,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
     @distributed_trace
     def list_classifiers(self, **kwargs: Any) -> Iterable["_models.DocumentClassifierDetails"]:
-        # pylint: disable=line-too-long
         """List all document classifiers.
 
         :return: An iterator like instance of DocumentClassifierDetails
@@ -10240,41 +7850,30 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
 
                 # response body for status code(s): 200
                 response == {
-                    "apiVersion": "str",  # API version used to create this document classifier.
-                      Required.
-                    "classifierId": "str",  # Unique document classifier name. Required.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Date and time (UTC) when the
-                      document classifier was created. Required.
+                    "apiVersion": "str",
+                    "classifierId": "str",
+                    "createdDateTime": "2020-02-20 00:00:00",
                     "docTypes": {
                         "str": {
                             "azureBlobFileListSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "fileList": "str"  # Path to a JSONL file within the
-                                  container specifying a subset of documents. Required.
+                                "containerUrl": "str",
+                                "fileList": "str"
                             },
                             "azureBlobSource": {
-                                "containerUrl": "str",  # Azure Blob Storage
-                                  container URL. Required.
-                                "prefix": "str"  # Optional. Blob name prefix.
+                                "containerUrl": "str",
+                                "prefix": "str"
                             },
-                            "sourceKind": "str"  # Optional. Type of training data
-                              source. Known values are: "url", "base64", "azureBlob", and
-                              "azureBlobFileList".
+                            "sourceKind": "str"
                         }
                     },
-                    "baseClassifierId": "str",  # Optional. Base classifierId on top of which the
-                      classifier was trained.
-                    "description": "str",  # Optional. Document classifier description.
-                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. Date and time (UTC)
-                      when the document classifier will expire.
+                    "baseClassifierId": "str",
+                    "description": "str",
+                    "expirationDateTime": "2020-02-20 00:00:00",
                     "warnings": [
                         {
-                            "code": "str",  # One of a server-defined set of warning
-                              codes. Required.
-                            "message": "str",  # A human-readable representation of the
-                              warning. Required.
-                            "target": "str"  # Optional. The target of the error.
+                            "code": "str",
+                            "message": "str",
+                            "target": "str"
                         }
                     ]
                 }
@@ -10301,9 +7900,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -10321,9 +7918,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -10346,8 +7941,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = _deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
@@ -10388,7 +7981,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -10400,8 +7993,6 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disabl
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)

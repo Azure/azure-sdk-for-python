@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -244,8 +246,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions:
-        # pylint: disable=line-too-long
-        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes"
@@ -337,87 +337,46 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
                     "messages": [
                         chat_request_message
                     ],
-                    "frequency_penalty": 0.0,  # Optional. A value that influences the
-                      probability of generated tokens appearing based on their cumulative frequency in
-                      generated text. Positive values will make tokens less likely to appear as their
-                      frequency increases and decrease the likelihood of the model repeating the same
-                      statements verbatim. Supported range is [-2, 2].
-                    "max_tokens": 0,  # Optional. The maximum number of tokens to generate.
-                    "model": "str",  # Optional. ID of the specific AI model to use, if more than
-                      one model is available on the endpoint.
-                    "presence_penalty": 0.0,  # Optional. A value that influences the probability
-                      of generated tokens appearing based on their existing presence in generated text.
-                      Positive values will make tokens less likely to appear when they already exist
-                      and increase the model's likelihood to output new topics. Supported range is [-2,
-                      2].
-                    "response_format": "str",  # Optional. An object specifying the format that
-                      the model must output. Used to enable JSON mode. Known values are: "text" and
-                      "json_object".
-                    "seed": 0,  # Optional. If specified, the system will make a best effort to
-                      sample deterministically such that repeated requests with the same seed and
-                      parameters should return the same result. Determinism is not guaranteed.
+                    "frequency_penalty": 0.0,
+                    "max_tokens": 0,
+                    "model": "str",
+                    "presence_penalty": 0.0,
+                    "response_format": "str",
+                    "seed": 0,
                     "stop": [
-                        "str"  # Optional. A collection of textual sequences that will end
-                          completions generation.
+                        "str"
                     ],
-                    "stream": bool,  # Optional. A value indicating whether chat completions
-                      should be streamed for this request.
-                    "temperature": 0.0,  # Optional. The sampling temperature to use that
-                      controls the apparent creativity of generated completions. Higher values will
-                      make output more random while lower values will make results more focused and
-                      deterministic. It is not recommended to modify temperature and top_p for the same
-                      completions request as the interaction of these two settings is difficult to
-                      predict. Supported range is [0, 1].
-                    "tool_choice": "str",  # Optional. If specified, the model will configure
-                      which of the provided tools it can use for the chat completions response. Is
-                      either a Union[str, "_models.ChatCompletionsToolSelectionPreset"] type or a
-                      ChatCompletionsNamedToolSelection type.
+                    "stream": bool,
+                    "temperature": 0.0,
+                    "tool_choice": "str",
                     "tools": [
                         chat_completions_tool_definition
                     ],
-                    "top_p": 0.0  # Optional. An alternative to sampling with temperature called
-                      nucleus sampling. This value causes the model to consider the results of tokens
-                      with the provided probability mass. As an example, a value of 0.15 will cause
-                      only the tokens comprising the top 15% of probability mass to be considered. It
-                      is not recommended to modify temperature and top_p for the same completions
-                      request as the interaction of these two settings is difficult to predict.
-                      Supported range is [0, 1].
+                    "top_p": 0.0
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "choices": [
                         {
-                            "finish_reason": "str",  # The reason that this chat
-                              completions choice completed its generated. Required. Known values are:
-                              "stop", "length", "content_filter", and "tool_calls".
-                            "index": 0,  # The ordered index associated with this chat
-                              completions choice. Required.
+                            "finish_reason": "str",
+                            "index": 0,
                             "message": {
-                                "content": "str",  # The content of the message.
-                                  Required.
-                                "role": "str",  # The chat role associated with the
-                                  message. Required. Known values are: "system", "user", "assistant",
-                                  and "tool".
+                                "content": "str",
+                                "role": "str",
                                 "tool_calls": [
                                     chat_completions_tool_call
                                 ]
                             }
                         }
                     ],
-                    "created": "2020-02-20 00:00:00",  # The first timestamp associated with
-                      generation activity for this completions response, represented as seconds since
-                      the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
-                    "id": "str",  # A unique identifier associated with this chat completions
-                      response. Required.
-                    "model": "str",  # The model used for the chat completion. Required.
+                    "created": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "model": "str",
                     "usage": {
-                        "completion_tokens": 0,  # The number of tokens generated across all
-                          completions emissions. Required.
-                        "prompt_tokens": 0,  # The number of tokens in the provided prompts
-                          for the completions request. Required.
-                        "total_tokens": 0  # The total number of tokens processed for the
-                          completions request and response. Required.
+                        "completion_tokens": 0,
+                        "prompt_tokens": 0,
+                        "total_tokens": 0
                     }
                 }
         """
@@ -483,7 +442,10 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -499,7 +461,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
     @distributed_trace
     def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
-        # pylint: disable=line-too-long
         """Returns information about the AI model.
         The method makes a REST API call to the ``/info`` route on the given endpoint.
 
@@ -512,13 +473,9 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "model_name": "str",  # The name of the AI model. For example: ``Phi21``.
-                      Required.
-                    "model_provider_name": "str",  # The model provider name. For example:
-                      ``Microsoft Research``. Required.
-                    "model_type": "str"  # The type of the AI model. A Unique identifier for the
-                      profile. Required. Known values are: "embeddings", "image_generation",
-                      "text_generation", "image_embeddings", "audio_generation", and "chat".
+                    "model_name": "str",
+                    "model_provider_name": "str",
+                    "model_type": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -553,7 +510,10 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -613,7 +573,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
         """Return the embedding vectors for given text prompts.
         The method makes a REST API call to the ``/embeddings`` route on the given endpoint.
 
@@ -651,20 +610,11 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "input": [
-                        "str"  # Input text to embed, encoded as a string or array of tokens.
-                          To embed multiple inputs in a single request, pass an array of strings or
-                          array of token arrays. Required.
+                        "str"
                     ],
-                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter.
-                    "encoding_format": "str",  # Optional. Optional. The desired format for the
-                      returned embeddings. Known values are: "base64", "binary", "float", "int8",
-                      "ubinary", and "uint8".
-                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
-                      422 error if the model doesn't support the value or parameter. Known values are:
-                      "text", "query", and "document".
+                    "dimensions": 0,
+                    "encoding_format": "str",
+                    "input_type": "str"
                 }
 
                 # response body for status code(s): 200
@@ -672,25 +622,17 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
                     "data": [
                         {
                             "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
+                                0.0
                             ],
-                            "index": 0  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
+                            "index": 0
                         }
                     ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
+                    "id": "str",
+                    "model": "str",
                     "usage": {
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
+                        "input_tokens": 0,
+                        "prompt_tokens": 0,
+                        "total_tokens": 0
                     }
                 }
         """
@@ -747,7 +689,10 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -763,7 +708,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
     @distributed_trace
     def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
-        # pylint: disable=line-too-long
         """Returns information about the AI model.
         The method makes a REST API call to the ``/info`` route on the given endpoint.
 
@@ -776,13 +720,9 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "model_name": "str",  # The name of the AI model. For example: ``Phi21``.
-                      Required.
-                    "model_provider_name": "str",  # The model provider name. For example:
-                      ``Microsoft Research``. Required.
-                    "model_type": "str"  # The type of the AI model. A Unique identifier for the
-                      profile. Required. Known values are: "embeddings", "image_generation",
-                      "text_generation", "image_embeddings", "audio_generation", and "chat".
+                    "model_name": "str",
+                    "model_provider_name": "str",
+                    "model_type": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -817,7 +757,10 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -877,7 +820,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         **kwargs: Any
     ) -> _models.EmbeddingsResult:
-        # pylint: disable=line-too-long
         """Return the embedding vectors for given images.
         The method makes a REST API call to the ``/images/embeddings`` route on the given endpoint.
 
@@ -919,24 +861,13 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
                 body = {
                     "input": [
                         {
-                            "image": "str",  # The input image, in PNG format. Required.
-                            "text": "str"  # Optional. Optional. The text input to feed
-                              into the model (like DINO, CLIP). Returns a 422 error if the model
-                              doesn't support the value or parameter.
+                            "image": "str",
+                            "text": "str"
                         }
                     ],
-                    "dimensions": 0,  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter.
-                    "encoding_format": "str",  # Optional. Optional. The number of dimensions the
-                      resulting output embeddings should have. Passing null causes the model to use its
-                      default value. Returns a 422 error if the model doesn't support the value or
-                      parameter. Known values are: "base64", "binary", "float", "int8", "ubinary", and
-                      "uint8".
-                    "input_type": "str"  # Optional. Optional. The type of the input. Returns a
-                      422 error if the model doesn't support the value or parameter. Known values are:
-                      "text", "query", and "document".
+                    "dimensions": 0,
+                    "encoding_format": "str",
+                    "input_type": "str"
                 }
 
                 # response body for status code(s): 200
@@ -944,25 +875,17 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
                     "data": [
                         {
                             "embedding": [
-                                0.0  # List of embeddings value for the input prompt.
-                                  These represent a measurement of the vector-based relatedness of the
-                                  provided input. Required.
+                                0.0
                             ],
-                            "index": 0  # Index of the prompt to which the EmbeddingItem
-                              corresponds. Required.
+                            "index": 0
                         }
                     ],
-                    "id": "str",  # Unique identifier for the embeddings result. Required.
-                    "model": "str",  # The model ID used to generate this result. Required.
+                    "id": "str",
+                    "model": "str",
                     "usage": {
-                        "input_tokens": 0,  # Number of tokens in the request prompt.
-                          Required.
-                        "prompt_tokens": 0,  # Number of tokens used for the prompt sent to
-                          the AI model. Typically identical to ``input_tokens``. However, certain AI
-                          models may add extra tokens to the input hence the number can be higher. (for
-                          example when input_type="query"). Required.
-                        "total_tokens": 0  # Total number of tokens transacted in this
-                          request/response. Required.
+                        "input_tokens": 0,
+                        "prompt_tokens": 0,
+                        "total_tokens": 0
                     }
                 }
         """
@@ -1019,7 +942,10 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1035,7 +961,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
     @distributed_trace
     def _get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
-        # pylint: disable=line-too-long
         """Returns information about the AI model.
         The method makes a REST API call to the ``/info`` route on the given endpoint.
 
@@ -1048,13 +973,9 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "model_name": "str",  # The name of the AI model. For example: ``Phi21``.
-                      Required.
-                    "model_provider_name": "str",  # The model provider name. For example:
-                      ``Microsoft Research``. Required.
-                    "model_type": "str"  # The type of the AI model. A Unique identifier for the
-                      profile. Required. Known values are: "embeddings", "image_generation",
-                      "text_generation", "image_embeddings", "audio_generation", and "chat".
+                    "model_name": "str",
+                    "model_provider_name": "str",
+                    "model_type": "str"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -1089,7 +1010,10 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

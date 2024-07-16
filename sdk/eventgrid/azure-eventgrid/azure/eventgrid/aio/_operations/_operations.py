@@ -17,6 +17,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -54,7 +56,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
     async def _send(  # pylint: disable=protected-access
         self, topic_name: str, event: _models._models.CloudEvent, **kwargs: Any
     ) -> _models._models.PublishResult:
-        # pylint: disable=line-too-long
         """Publish a single Cloud Event to a namespace topic.
 
         :param topic_name: Topic Name. Required.
@@ -70,23 +71,16 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 event = {
-                    "id": "str",  # An identifier for the event. The combination of id and source
-                      must be unique for each distinct event. Required.
-                    "source": "str",  # Identifies the context in which an event happened. The
-                      combination of id and source must be unique for each distinct event. Required.
-                    "specversion": "str",  # The version of the CloudEvents specification which
-                      the event uses. Required.
-                    "type": "str",  # Type of event related to the originating occurrence.
-                      Required.
-                    "data": {},  # Optional. Event data specific to the event type.
-                    "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event data
-                      specific to the event type, encoded as a base64 string.
-                    "datacontenttype": "str",  # Optional. Content type of data value.
-                    "dataschema": "str",  # Optional. Identifies the schema that data adheres to.
-                    "subject": "str",  # Optional. This describes the subject of the event in the
-                      context of the event producer (identified by source).
-                    "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the event was
-                      generated, in RFC3339 format.
+                    "id": "str",
+                    "source": "str",
+                    "specversion": "str",
+                    "type": "str",
+                    "data": {},
+                    "data_base64": bytes("bytes", encoding="utf-8"),
+                    "datacontenttype": "str",
+                    "dataschema": "str",
+                    "subject": "str",
+                    "time": "2020-02-20 00:00:00"
                 }
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -129,7 +123,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -149,7 +146,6 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
     async def _send_events(  # pylint: disable=protected-access
         self, topic_name: str, events: List[_models._models.CloudEvent], **kwargs: Any
     ) -> _models._models.PublishResult:
-        # pylint: disable=line-too-long
         """Publish a batch of Cloud Events to a namespace topic.
 
         :param topic_name: Topic Name. Required.
@@ -166,25 +162,16 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 events = [
                     {
-                        "id": "str",  # An identifier for the event. The combination of id
-                          and source must be unique for each distinct event. Required.
-                        "source": "str",  # Identifies the context in which an event
-                          happened. The combination of id and source must be unique for each distinct
-                          event. Required.
-                        "specversion": "str",  # The version of the CloudEvents specification
-                          which the event uses. Required.
-                        "type": "str",  # Type of event related to the originating
-                          occurrence. Required.
-                        "data": {},  # Optional. Event data specific to the event type.
-                        "data_base64": bytes("bytes", encoding="utf-8"),  # Optional. Event
-                          data specific to the event type, encoded as a base64 string.
-                        "datacontenttype": "str",  # Optional. Content type of data value.
-                        "dataschema": "str",  # Optional. Identifies the schema that data
-                          adheres to.
-                        "subject": "str",  # Optional. This describes the subject of the
-                          event in the context of the event producer (identified by source).
-                        "time": "2020-02-20 00:00:00"  # Optional. The time (in UTC) the
-                          event was generated, in RFC3339 format.
+                        "id": "str",
+                        "source": "str",
+                        "specversion": "str",
+                        "type": "str",
+                        "data": {},
+                        "data_base64": bytes("bytes", encoding="utf-8"),
+                        "datacontenttype": "str",
+                        "dataschema": "str",
+                        "subject": "str",
+                        "time": "2020-02-20 00:00:00"
                     }
                 ]
         """
@@ -228,7 +215,10 @@ class EventGridPublisherClientOperationsMixin(EventGridPublisherClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -257,7 +247,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         max_wait_time: Optional[int] = None,
         **kwargs: Any
     ) -> _models._models.ReceiveResult:
-        # pylint: disable=line-too-long
         """Receive a batch of Cloud Events from a subscription.
 
         :param topic_name: Topic Name. Required.
@@ -285,36 +274,20 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                     "value": [
                         {
                             "brokerProperties": {
-                                "deliveryCount": 0,  # The attempt count for
-                                  delivering the event. Required.
-                                "lockToken": "str"  # The token of the lock on the
-                                  event. Required.
+                                "deliveryCount": 0,
+                                "lockToken": "str"
                             },
                             "event": {
-                                "id": "str",  # An identifier for the event. The
-                                  combination of id and source must be unique for each distinct event.
-                                  Required.
-                                "source": "str",  # Identifies the context in which
-                                  an event happened. The combination of id and source must be unique
-                                  for each distinct event. Required.
-                                "specversion": "str",  # The version of the
-                                  CloudEvents specification which the event uses. Required.
-                                "type": "str",  # Type of event related to the
-                                  originating occurrence. Required.
-                                "data": {},  # Optional. Event data specific to the
-                                  event type.
-                                "data_base64": bytes("bytes", encoding="utf-8"),  #
-                                  Optional. Event data specific to the event type, encoded as a base64
-                                  string.
-                                "datacontenttype": "str",  # Optional. Content type
-                                  of data value.
-                                "dataschema": "str",  # Optional. Identifies the
-                                  schema that data adheres to.
-                                "subject": "str",  # Optional. This describes the
-                                  subject of the event in the context of the event producer (identified
-                                  by source).
-                                "time": "2020-02-20 00:00:00"  # Optional. The time
-                                  (in UTC) the event was generated, in RFC3339 format.
+                                "id": "str",
+                                "source": "str",
+                                "specversion": "str",
+                                "type": "str",
+                                "data": {},
+                                "data_base64": bytes("bytes", encoding="utf-8"),
+                                "datacontenttype": "str",
+                                "dataschema": "str",
+                                "subject": "str",
+                                "time": "2020-02-20 00:00:00"
                             }
                         }
                     ]
@@ -356,7 +329,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -436,7 +412,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
+                        "str"
                     ]
                 }
 
@@ -445,27 +421,22 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                     "failedLockTokens": [
                         {
                             "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
+                                "code": "str",
+                                "message": "str",
                                 "details": [
                                     ...
                                 ],
                                 "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
+                                    "code": "str",
                                     "innererror": ...
                                 },
-                                "target": "str"  # Optional. The target of the error.
+                                "target": "str"
                             },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
+                            "lockToken": "str"
                         }
                     ],
                     "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully acknowledged cloud
-                          events. Required.
+                        "str"
                     ]
                 }
         """
@@ -518,7 +489,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -533,9 +507,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )
     async def _release(
         self,
         topic_name: str,
@@ -547,9 +518,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.ReleaseResult: ...
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )
     async def _release(
         self,
         topic_name: str,
@@ -561,9 +529,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.ReleaseResult: ...
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-01-preview": ["release_delay_in_seconds"]},
-    )
     async def _release(
         self,
         topic_name: str,
@@ -614,7 +579,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
+                        "str"
                     ]
                 }
 
@@ -623,27 +588,22 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                     "failedLockTokens": [
                         {
                             "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
+                                "code": "str",
+                                "message": "str",
                                 "details": [
                                     ...
                                 ],
                                 "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
+                                    "code": "str",
                                     "innererror": ...
                                 },
-                                "target": "str"  # Optional. The target of the error.
+                                "target": "str"
                             },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
+                            "lockToken": "str"
                         }
                     ],
                     "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully released cloud
-                          events. Required.
+                        "str"
                     ]
                 }
         """
@@ -697,7 +657,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -774,7 +737,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
+                        "str"
                     ]
                 }
 
@@ -783,27 +746,22 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                     "failedLockTokens": [
                         {
                             "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
+                                "code": "str",
+                                "message": "str",
                                 "details": [
                                     ...
                                 ],
                                 "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
+                                    "code": "str",
                                     "innererror": ...
                                 },
-                                "target": "str"  # Optional. The target of the error.
+                                "target": "str"
                             },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
+                            "lockToken": "str"
                         }
                     ],
                     "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully rejected cloud
-                          events. Required.
+                        "str"
                     ]
                 }
         """
@@ -856,7 +814,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -871,12 +832,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
-        },
-    )
     async def _renew_locks(
         self,
         topic_name: str,
@@ -887,12 +842,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
     @overload
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
-        },
-    )
     async def _renew_locks(
         self,
         topic_name: str,
@@ -903,12 +852,6 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
     @overload
-    @api_version_validation(
-        method_added_on="2023-10-01-preview",
-        params_added_on={
-            "2023-10-01-preview": ["api_version", "topic_name", "event_subscription_name", "content_type", "accept"]
-        },
-    )
     async def _renew_locks(
         self,
         topic_name: str,
@@ -958,7 +901,7 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "lockTokens": [
-                        "str"  # Array of lock tokens. Required.
+                        "str"
                     ]
                 }
 
@@ -967,27 +910,22 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
                     "failedLockTokens": [
                         {
                             "error": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required.
-                                "message": "str",  # A human-readable representation
-                                  of the error. Required.
+                                "code": "str",
+                                "message": "str",
                                 "details": [
                                     ...
                                 ],
                                 "innererror": {
-                                    "code": "str",  # Optional. One of a
-                                      server-defined set of error codes.
+                                    "code": "str",
                                     "innererror": ...
                                 },
-                                "target": "str"  # Optional. The target of the error.
+                                "target": "str"
                             },
-                            "lockToken": "str"  # The lock token of an entry in the
-                              request. Required.
+                            "lockToken": "str"
                         }
                     ],
                     "succeededLockTokens": [
-                        "str"  # Array of lock tokens for the successfully renewed locks.
-                          Required.
+                        "str"
                     ]
                 }
         """
@@ -1040,7 +978,10 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

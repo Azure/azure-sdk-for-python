@@ -62,8 +62,8 @@ def print_table(header_names, table_data):
 
 async def analyze_custom_documents(custom_model_id):
     # For the Form_1.jpg, it should be the test file under the traning dataset which storage at the Azure Blob Storage path
-    # combined by DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX, 
-    # or it can also be a test file with the format similar to the training dataset. 
+    # combined by DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX,
+    # or it can also be a test file with the format similar to the training dataset.
     # Put it here locally just for presenting documents visually in sample.
 
     # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
@@ -112,10 +112,7 @@ async def analyze_custom_documents(custom_model_id):
             if not doc.fields is None:
                 for field_name, field_value in doc.fields.items():
                     # Dynamic Table cell information store as array in document field.
-                    if (
-                        field_value.type == SYMBOL_OF_TABLE_TYPE
-                        and field_value.value_array
-                    ):
+                    if field_value.type == SYMBOL_OF_TABLE_TYPE and field_value.value_array:
                         col_names = []
                         sample_obj = field_value.value_array[0]
                         if KEY_OF_VALUE_OBJECT in sample_obj:
@@ -144,9 +141,7 @@ async def analyze_custom_documents(custom_model_id):
                         is_fixed_table = all(
                             (
                                 rows_of_column["type"] == SYMBOL_OF_OBJECT_TYPE
-                                and Counter(
-                                    list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys())
-                                )
+                                and Counter(list(rows_by_columns[0][KEY_OF_VALUE_OBJECT].keys()))
                                 == Counter(list(rows_of_column[KEY_OF_VALUE_OBJECT].keys()))
                             )
                             for rows_of_column in rows_by_columns
@@ -160,14 +155,9 @@ async def analyze_custom_documents(custom_model_id):
                                 rows = rows_of_column[KEY_OF_VALUE_OBJECT]
                                 for row_key in list(rows.keys()):
                                     if row_key in row_dict:
-                                        row_dict[row_key].append(
-                                            rows[row_key].get(KEY_OF_CELL_CONTENT)
-                                        )
+                                        row_dict[row_key].append(rows[row_key].get(KEY_OF_CELL_CONTENT))
                                     else:
-                                        row_dict[row_key] = [
-                                            row_key,
-                                            rows[row_key].get(KEY_OF_CELL_CONTENT)
-                                        ]
+                                        row_dict[row_key] = [row_key, rows[row_key].get(KEY_OF_CELL_CONTENT)]
 
                             col_names.insert(0, "")
                             print_table(col_names, list(row_dict.values()))
@@ -199,9 +189,7 @@ async def main():
             request = BuildDocumentModelRequest(
                 model_id=str(uuid.uuid4()),
                 build_mode=DocumentBuildMode.TEMPLATE,
-                azure_blob_source=AzureBlobContentSource(
-                        container_url=blob_container_sas_url, prefix=blob_prefix
-                    ),
+                azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url, prefix=blob_prefix),
             )
             document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
