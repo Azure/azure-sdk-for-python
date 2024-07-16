@@ -231,6 +231,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             use_tls=config.use_tls,
             **kwargs,
         )
+    
+    # Flow control with window size
+    # concurrent on_events -> batch events (javascript delivers an array of events for on_event) ?
 
     @staticmethod
     async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
@@ -253,7 +256,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 await asyncio.sleep(0.05)
 
     @staticmethod
-    async def _receive_task(consumer):
+    async def _receive_task(consumer, max_batch_size):
         # pylint:disable=protected-access
         max_retries = consumer._client._config.max_retries
         retried_times = 0
@@ -262,7 +265,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
                     await consumer._open() # pylint: disable=protected-access
-                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
+                    if len(consumer._message_buffer) < max_batch_size:
+                        running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # every call would send 1 flow link credit
+                    # max_message_count ***/batch_size
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
@@ -314,7 +319,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         callback_task = asyncio.create_task(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )
-        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
+        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer, max_batch_size))
 
         tasks = [callback_task, receive_task]
         try:
