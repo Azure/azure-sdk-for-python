@@ -34,7 +34,7 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
 class TestStorageQueueClient(StorageRecordedTestCase):
     def setUp(self):
         self.sas_token = self.generate_fake_sas_token()
-        self.token_credential = self.generate_oauth_token()
+        self.token_credential = self.get_credential(QueueServiceClient)
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, url_type, account_name, account_key):
