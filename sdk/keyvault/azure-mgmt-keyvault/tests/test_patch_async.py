@@ -23,7 +23,8 @@ class TestKeyVaultManagementVaultsPatchAsync(AzureMgmtRecordedTestCase):
         api_versions = all_api_versions()
         assert api_versions
         for api_version in api_versions:
-            self.client.DEFAULT_API_VERSION = api_version
+            # make sure the client uses api_version we set
+            self.client._get_api_version = lambda x: api_version
             response = self.client.vaults.list(
                 filter="resourceType eq 'Microsoft.KeyVault/vaults'",
             )
