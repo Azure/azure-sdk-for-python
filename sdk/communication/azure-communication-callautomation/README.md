@@ -32,12 +32,12 @@ pip install azure-communication-callautomation
 ## Examples
 ### Initialize CallAutomationClient
 ```Python
-from azure.identity import ManagedIdentityCredential
+from azure.identity import DefaultAzureCredential
 from azure.communication.callautomation import (CallAutomationClient)
 
 # Your unique Azure Communication service endpoint
 endpoint_url = '<ENDPOINT>'
-credential = ManagedIdentityCredential()
+credential = DefaultAzureCredential()
 client = CallAutomationClient(endpoint_url, credential)
 ```
 
