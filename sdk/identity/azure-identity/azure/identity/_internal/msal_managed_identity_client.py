@@ -125,7 +125,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
                 self.__class__.__name__,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
-            raise CredentialUnavailableError(self.get_unavailable_message(str(ex)))
+            raise CredentialUnavailableError(self.get_unavailable_message())
         except msal.ManagedIdentityError as ex:
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
@@ -134,7 +134,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
                 ex,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
-            raise ClientAuthenticationError(self.get_unavailable_message(str(ex)))
+            raise ClientAuthenticationError(self.get_unavailable_message(str(ex))) from ex
         except Exception as ex:  # pylint:disable=broad-except
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
