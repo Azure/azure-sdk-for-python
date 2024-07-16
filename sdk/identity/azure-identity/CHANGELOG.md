@@ -1,5 +1,15 @@
 # Release History
 
+## 1.18.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.18.0b1 (2024-07-16)
 
 - Fixed the issue that `SharedTokenCacheCredential` was not picklable.
