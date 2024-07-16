@@ -243,6 +243,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     consumer._next_message_in_buffer() # pylint: disable=protected-access
                     for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
                 ]
+                print(f"EVENTS WE HAVE GOTTEN {len(events)}")
             now_time = time.time()
             if len(events) > 0:
                 await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
@@ -262,12 +263,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         retried_times = 0
         running = True
         try:
+            print(f"Max batch size: {max_batch_size}")
             while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
                     await consumer._open() # pylint: disable=protected-access
                     if len(consumer._message_buffer) < max_batch_size:
                         running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # every call would send 1 flow link credit
-                    # max_message_count ***/batch_size
+                    await asyncio.sleep(0.05)
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
