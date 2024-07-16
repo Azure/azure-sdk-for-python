@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2024-07-26)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+* Add method `with_defaults()` to `ChatCompletionsClient` and `EmbeddingsClient`, to set default options for all the following operations.
+* Add `model` as an optional input argument to the `embed` method of `EmbeddingsClient`.
 
 ## 1.0.0b2 (2024-06-24)
 

@@ -103,6 +103,25 @@ client = ChatCompletionsClient(
 
 During application development, you would typically set up the environment for authentication using Entra ID by first [Installing the Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), running `az login` in your console window, then entering your credentials in the browser window that was opened. The call to `DefaultAzureCredential()` will then succeed. Setting `exclude_interactive_browser_credential=False` in that call will enable launching a browser window if the user isn't already logged in.
 
+### Defining default settings while creating the clients
+
+The method `with_defaults` can be called on the clients, in order to define default input settings that will apply to all future service calls.
+
+For example, here we create a `ChatCompletionsClient` using API key authentication, and apply two settings, `temperature` and `max_tokens`:
+
+```python
+from azure.ai.inference import ChatCompletionsClient
+from azure.core.credentials import AzureKeyCredential
+
+client = ChatCompletionsClient(
+    endpoint=endpoint,
+    credential=AzureKeyCredential(key)
+).with_defaults(
+    temperature=0.5,
+    max_tokens=1000
+)
+```
+
 ### Create and authentice clients using `load_client`
 
 As an alternative to creating a specific client directly, you can use the function `load_client` to return the relevant client (of types `ChatCompletionsClient` or `EmbeddingsClient`) based on the provided endpoint:
@@ -288,7 +307,7 @@ To generate completions for additional messages, simply call `client.complete` m
 
 In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are intended for AI models that require extra parameters beyond what is defined in the REST API.
 
-Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"unknown_params": "pass_through"`.
+Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra_parameters": "pass_through"`.
 
 The input argument `model_extras` is not restricted to chat completions. It is suppored on other client methods as well.
 

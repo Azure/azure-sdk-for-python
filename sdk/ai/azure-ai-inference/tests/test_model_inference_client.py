@@ -6,7 +6,7 @@ import inspect
 import os
 import azure.ai.inference as sdk
 
-from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerEmbeddings
+from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerAOAIChatCompletions, ServicePreparerEmbeddings
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
@@ -17,7 +17,139 @@ class TestModelClient(ModelClientTestBase):
 
     # **********************************************************************************
     #
-    #                      HAPPY PATH TESTS - TEXT EMBEDDINGS
+    #                               UNIT TESTS
+    #
+    # **********************************************************************************
+
+    def test_image_url_load(self, **kwargs):
+        local_folder = os.path.dirname(os.path.abspath(__file__))
+        image_file = os.path.join(local_folder, "test_image1.png")
+        image_url = sdk.models.ImageUrl.load(
+            image_file=image_file,
+            image_format="png",
+            detail=sdk.models.ImageDetailLevel.AUTO,
+        )
+        assert image_url
+        assert image_url.url.startswith("data:image/png;base64,iVBORw")
+        assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
+
+    # **********************************************************************************
+    #
+    #         EMBEDDINGS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
+    #
+    # **********************************************************************************
+
+    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
+    # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
+    def test_embeddings_request_payload(self, **kwargs):
+        client = sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        )
+        for _ in range(2):
+            try:
+                response = client.embed(
+                    input=["first phrase", "second phrase", "third phrase"],
+                    dimensions=2048,
+                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+                    input_type=sdk.models.EmbeddingInputType.QUERY,
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    model="some-model-id",
+                    raw_request_hook=self.request_callback)
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_embeddings_json_request_payload()
+                continue
+            assert False
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
+    # is the correct one after hand-inspection.
+    def test_embeddings_request_payload_with_defaults(self, **kwargs):
+        client = sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            dimensions=2048,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+            input_type=sdk.models.EmbeddingInputType.QUERY,
+            model_extras={
+                "key1": 1,
+                "key2": True,
+                "key3": "Some value",
+                "key4": [1, 2, 3],
+                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+            },
+            model="some-model-id",
+        )
+
+        for _ in range(2):
+            try:
+                response = client.embed(
+                    input=["first phrase", "second phrase", "third phrase"],
+                    raw_request_hook=self.request_callback)
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_embeddings_json_request_payload()
+                continue
+            assert False
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method, and all of them overwritten in the 'embed' call.
+    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
+    def test_embeddings_request_payload_with_defaults_and_overrides(self, **kwargs):
+        client = sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            dimensions=1024,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
+            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
+            model_extras={
+                "hey1": 2,
+                "key2": False,
+                "key3": "Some other value",
+                "key9": "Yet another value",
+            },
+            model="some-other-model-id",
+        )
+        for _ in range(2):
+            try:
+                response = client.embed(
+                    input=["first phrase", "second phrase", "third phrase"],
+                    dimensions=2048,
+                    encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+                    input_type=sdk.models.EmbeddingInputType.QUERY,
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    model="some-model-id",
+                    raw_request_hook=self.request_callback)
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_embeddings_json_request_payload()
+                continue
+            assert False
+
+    # **********************************************************************************
+    #
+    #                      HAPPY PATH SERVICE TESTS - TEXT EMBEDDINGS
     #
     # **********************************************************************************
 
@@ -67,25 +199,13 @@ class TestModelClient(ModelClientTestBase):
         self._validate_embeddings_result(response)
         client.close()
 
-    def test_image_url_load(self, **kwargs):
-        local_folder = os.path.dirname(os.path.abspath(__file__))
-        image_file = os.path.join(local_folder, "../samples/sample1.png")
-        image_url = sdk.models.ImageUrl.load(
-            image_file=image_file,
-            image_format="png",
-            detail=sdk.models.ImageDetailLevel.AUTO,
-        )
-        assert image_url
-        assert image_url.url.startswith("data:image/png;base64,iVBORw")
-        assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
-
     # **********************************************************************************
     #
-    #                      HAPPY PATH TESTS - CHAT COMPLETIONS
+    #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
     #
     # **********************************************************************************
 
-    # Regression test. Send a request that includes almost all supported types of input objects. Make sure the resulting
+    # Regression test. Send a request that includes all supported types of input objects. Make sure the resulting
     # JSON payload that goes up to the service (including headers) is the correct one after hand-inspection.
     def test_chat_completions_request_payload(self, **kwargs):
 
@@ -93,109 +213,216 @@ class TestModelClient(ModelClientTestBase):
             endpoint="http://does.not.exist",
             credential=AzureKeyCredential("key-value"),
             headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
         )
 
-        tool1 = sdk.models.ChatCompletionsFunctionToolDefinition(
-            function=sdk.models.FunctionDefinition(
-                name="my-first-function-name",
-                description="My first function description",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "first_argument": {
-                            "type": "string",
-                            "description": "First argument description",
-                        },
-                        "second_argument": {
-                            "type": "string",
-                            "description": "Second argument description",
-                        },
-                    },
-                    "required": ["first_argument", "second_argument"],
-                },
-            )
-        )
-
-        tool2 = sdk.models.ChatCompletionsFunctionToolDefinition(
-            function=sdk.models.FunctionDefinition(
-                name="my-second-function-name",
-                description="My second function description",
-                parameters={
-                    "type": "object",
-                    "properties": {
-                        "first_argument": {
-                            "type": "int",
-                            "description": "First argument description",
-                        },
-                    },
-                    "required": ["first_argument"],
-                },
-            )
-        )
-
-        try:
-            response = client.complete(
-                messages=[
-                    sdk.models.SystemMessage(content="system prompt"),
-                    sdk.models.UserMessage(content="user prompt 1"),
-                    sdk.models.AssistantMessage(
-                        tool_calls=[
-                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
-                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
-                        ]
-                    ),
-                    sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
-                    sdk.models.AssistantMessage(content="assistant prompt"),
-                    sdk.models.UserMessage(
-                        content=[
-                            sdk.models.TextContentItem(text="user prompt 2"),
-                            sdk.models.ImageContentItem(
-                                image_url=sdk.models.ImageUrl(
-                                    url="https://does.not.exit/image.png",
-                                    detail=sdk.models.ImageDetailLevel.HIGH,
+        for _ in range(2):
+            try:
+                response = client.complete(
+                    messages=[
+                        sdk.models.SystemMessage(content="system prompt"),
+                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.AssistantMessage(
+                            tool_calls=[
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            ]
+                        ),
+                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.UserMessage(
+                            content=[
+                                sdk.models.TextContentItem(text="user prompt 2"),
+                                sdk.models.ImageContentItem(
+                                    image_url=sdk.models.ImageUrl(
+                                        url="https://does.not.exit/image.png",
+                                        detail=sdk.models.ImageDetailLevel.HIGH,
+                                    ),
                                 ),
-                            ),
-                        ],
-                    ),
-                ],
-                model_extras={
-                    "key1": 1,
-                    "key2": True,
-                    "key3": "Some value",
-                    "key4": [1, 2, 3],
-                    "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-                },
-                frequency_penalty=0.123,
-                max_tokens=321,
-                model="some-model-id",
-                presence_penalty=4.567,
-                response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
-                seed=654,
-                stop=["stop1", "stop2"],
-                stream=True,
-                temperature=8.976,
-                tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
-                tools=[tool1, tool2],
-                top_p=9.876,
-                raw_request_hook=self.request_callback,
-            )
-        except ServiceRequestError as e:
-            headers = self.pipeline_request.http_request.headers
-            print(f"Actual HTTP request headers: {self.pipeline_request.http_request.headers}")
-            print(f"Actual JSON request payload: {self.pipeline_request.http_request.data}")
-            assert headers["Content-Type"] == "application/json"
-            assert headers["Content-Length"] == "1790"
-            assert headers["unknown-parameters"] == "pass_through"
-            assert headers["Accept"] == "application/json"
-            assert headers["some_header"] == "some_header_value"
-            assert "azsdk-python-ai-inference/" in headers["User-Agent"]
-            assert headers["Authorization"] == "Bearer key-value"
-            assert (
-                self.pipeline_request.http_request.data
-                == '{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}'
-            )
-            return
-        assert False
+                            ],
+                        ),
+                    ],
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    frequency_penalty=0.123,
+                    max_tokens=321,
+                    model="some-model-id",
+                    presence_penalty=4.567,
+                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    seed=654,
+                    stop=["stop1", "stop2"],
+                    stream=True,
+                    temperature=8.976,
+                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
+                    top_p=9.876,
+                    raw_request_hook=self.request_callback,
+                )
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_chat_completions_json_request_payload()
+                continue
+            assert False
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
+    # is the correct one after hand-inspection.
+    def test_chat_completions_request_payload_with_defaults(self, **kwargs):
+
+        client = sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            model_extras={
+                "key1": 1,
+                "key2": True,
+                "key3": "Some value",
+                "key4": [1, 2, 3],
+                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+            },
+            frequency_penalty=0.123,
+            max_tokens=321,
+            model="some-model-id",
+            presence_penalty=4.567,
+            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+            seed=654,
+            stop=["stop1", "stop2"],
+            temperature=8.976,
+            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+            tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
+            top_p=9.876,
+        )
+
+        for _ in range(2):
+            try:
+                response = client.complete(
+                    messages=[
+                        sdk.models.SystemMessage(content="system prompt"),
+                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.AssistantMessage(
+                            tool_calls=[
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            ]
+                        ),
+                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.UserMessage(
+                            content=[
+                                sdk.models.TextContentItem(text="user prompt 2"),
+                                sdk.models.ImageContentItem(
+                                    image_url=sdk.models.ImageUrl(
+                                        url="https://does.not.exit/image.png",
+                                        detail=sdk.models.ImageDetailLevel.HIGH,
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                    stream=True,
+                    raw_request_hook=self.request_callback,
+                )
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_chat_completions_json_request_payload()
+                continue
+            assert False
+
+    # Regression test. Send a request that includes all supported types of input objects, with input arguments
+    # specified via the `with_defaults` method, and all of them overwritten in the 'complete' call.
+    # Make sure the resulting JSON payload that goes up to the service is the correct one after hand-inspection.
+    def test_chat_completions_request_payload_with_defaults_and_overrides(self, **kwargs):
+
+        client = sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            headers={"some_header": "some_header_value"},
+            user_agent="MyAppId",
+        ).with_defaults(
+            model_extras={
+                "key1": 2,
+                "key3": False,
+                "key4": "Some other value",
+                "key9": "Yet another value",
+            },
+            frequency_penalty=0.456,
+            max_tokens=768,
+            model="some-other-model-id",
+            presence_penalty=1.234,
+            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            seed=987,
+            stop=["stop3", "stop5"],
+            temperature=5.432,
+            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
+            tools=[ModelClientTestBase.TOOL2],
+            top_p=3.456,
+        )
+
+        for _ in range(2):
+            try:
+                response = client.complete(
+                    messages=[
+                        sdk.models.SystemMessage(content="system prompt"),
+                        sdk.models.UserMessage(content="user prompt 1"),
+                        sdk.models.AssistantMessage(
+                            tool_calls=[
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            ]
+                        ),
+                        sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
+                        sdk.models.AssistantMessage(content="assistant prompt"),
+                        sdk.models.UserMessage(
+                            content=[
+                                sdk.models.TextContentItem(text="user prompt 2"),
+                                sdk.models.ImageContentItem(
+                                    image_url=sdk.models.ImageUrl(
+                                        url="https://does.not.exit/image.png",
+                                        detail=sdk.models.ImageDetailLevel.HIGH,
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                    model_extras={
+                        "key1": 1,
+                        "key2": True,
+                        "key3": "Some value",
+                        "key4": [1, 2, 3],
+                        "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
+                    },
+                    frequency_penalty=0.123,
+                    max_tokens=321,
+                    model="some-model-id",
+                    presence_penalty=4.567,
+                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    seed=654,
+                    stop=["stop1", "stop2"],
+                    stream=True,
+                    temperature=8.976,
+                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
+                    top_p=9.876,
+                    raw_request_hook=self.request_callback,
+                )
+            except ServiceRequestError as _:
+                # The test should throw this exception!
+                self._validate_chat_completions_json_request_payload()
+                continue
+            assert False
+
+    # **********************************************************************************
+    #
+    #                      HAPPY PATH SERVICE TESTS - CHAT COMPLETIONS
+    #
+    # **********************************************************************************
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
@@ -259,13 +486,7 @@ class TestModelClient(ModelClientTestBase):
         client = self._create_chat_client(**kwargs)
         response = client.complete(
             messages=[sdk.models.UserMessage(content="How many feet are in a mile?")],
-            model_extras={
-                "key1": 1,
-                "key2": True,
-                "key3": "Some value",
-                "key4": [1, 2, 3],
-                "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
-            },
+            model_extras={"n": 1},
             raw_request_hook=self.request_callback,
         )
 
@@ -373,9 +594,66 @@ class TestModelClient(ModelClientTestBase):
         self._validate_chat_completions_result(response, ["62"])
         client.close()
 
+    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
+    # input input.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_input_image_file(self, **kwargs):
+        client = self._create_aoai_chat_client(**kwargs)
+
+        # Construct the full path to the image file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        image_file_path = os.path.join(script_dir, "test_image1.png")
+
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(content="You are an AI assistant that describes images in details."),
+                sdk.models.UserMessage(
+                    content=[
+                        sdk.models.TextContentItem(text="What's in this image?"),
+                        sdk.models.ImageContentItem(
+                            image_url=sdk.models.ImageUrl.load(
+                                image_file=image_file_path,
+                                image_format="png",
+                                detail=sdk.models.ImageDetailLevel.HIGH,
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        client.close()
+
+    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
+    # input input.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_input_image_url(self, **kwargs):
+        # TODO: Update this to point to Main branch
+        url = "https://aka.ms/azsdk/azure-ai-inference/python/tests/test_image1.png"
+        client = self._create_aoai_chat_client(**kwargs)
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(content="You are an AI assistant that describes images in details."),
+                sdk.models.UserMessage(
+                    content=[
+                        sdk.models.TextContentItem(text="What's in this image?"),
+                        sdk.models.ImageContentItem(
+                            image_url=sdk.models.ImageUrl(url=url, detail=sdk.models.ImageDetailLevel.AUTO)
+                        ),
+                    ],
+                ),
+            ],
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        client.close()
+
     # **********************************************************************************
     #
-    #                            ERROR TESTS
+    #                            ERROR TESTS - CHAT COMPLETIONS
     #
     # **********************************************************************************
 
