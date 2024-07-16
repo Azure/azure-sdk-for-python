@@ -27,7 +27,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ._vaults_operations import VaultsOperations as _VaultsOperations, ClsType, build_list_request
 from .. import models as _models
-from .._vendor import _convert_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
