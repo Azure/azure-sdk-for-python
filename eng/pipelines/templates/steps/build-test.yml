@@ -138,6 +138,14 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
+      if ($IsWindows) {
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
+      }
+      Write-Host (Get-Command python).Source
+
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
@@ -156,6 +164,13 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          if ($IsWindows) {
+            . $(VENV_LOCATION)/Scripts/Activate.ps1
+          }
+          else {
+            . $(VENV_LOCATION)/bin/activate.ps1
+          }
+          Write-Host (Get-Command python).Source
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
@@ -166,18 +181,22 @@ steps:
           --toxenv="samples";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
-
   - ${{ else }}:
-    - task: PythonScript@0
+    - pwsh: |
+        if ($IsWindows) {
+          . $(VENV_LOCATION)/Scripts/Activate.ps1
+        }
+        else {
+          . $(VENV_LOCATION)/bin/activate.ps1
+        }
+        Write-Host (Get-Command python).Source
+        python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
+          --service="${{ parameters.ServiceDirectory }}" `
+          --toxenv="samples"
+        exit $LASTEXITCODE;
+      env: ${{ parameters.EnvVars }}
       displayName: 'Test Samples'
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
-      inputs:
-        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-        arguments: >-
-          "$(TargetingString)"
-          --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="samples"
-      env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: always()

@@ -2,4 +2,3 @@
 pyright = false
 type_check_samples = false
 verifytypes = false
-strict_sphinx = true
