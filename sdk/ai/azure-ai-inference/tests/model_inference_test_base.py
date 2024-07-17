@@ -90,8 +90,8 @@ class ModelClientTestBase(AzureRecordedTestCase):
     )
 
     # Regular expression describing the pattern of a result ID returned from AOAI endpoint.
-    # For example: "chatcmpl-9jscXwejvOMnGrxRfACmNrCCdiwWb" or "Sanitized" (when runing tests from recordings)
-    REGEX_AOAI_RESULT_ID = re.compile(r"^chatcmpl-[0-9a-zA-Z]{29}$|^Sanitized$")
+    # For example: "chatcmpl-9jscXwejvOMnGrxRfACmNrCCdiwWb" or "Sanitized" (when runing tests from recordings) # cspell:disable-line
+    REGEX_AOAI_RESULT_ID = re.compile(r"^chatcmpl-[0-9a-zA-Z]{29}$|^Sanitized$") # cspell:disable-line
 
     # A couple of tool definitions to use in the tests
     TOOL1 = sdk.models.ChatCompletionsFunctionToolDefinition(

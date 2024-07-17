@@ -114,7 +114,7 @@ async def load_client(
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
-class ChatCompletionsClient(ChatCompletionsClientGenerated):
+class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
     :param endpoint: Service host. Required.
@@ -613,7 +613,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
                 _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access                
+                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]

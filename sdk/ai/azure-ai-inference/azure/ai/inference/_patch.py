@@ -131,7 +131,7 @@ def load_client(
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
-class ChatCompletionsClient(ChatCompletionsClientGenerated):
+class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
     :param endpoint: Service host. Required.
