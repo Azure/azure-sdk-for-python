@@ -26,7 +26,7 @@ With some minor adjustments, this client library can also be configured to do in
 * An [Azure subscription](https://azure.microsoft.com/free).
 * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Studio.
 * To construct the client library, you will need to pass in the endpoint URL. The endpoint URL has the form `https://your-host-name.your-azure-region.inference.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
-* Depending on your model deployment and authentication preference, you either need a key to authenticate against the service, or Entra ID credentials. The key is a 32-character string.
+* Depending on your model deployment and authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The AP key is a 32-character string.
 
 ### Install the package
 
@@ -182,10 +182,6 @@ TODO: Add overview and link to explain image embeddings.
 Embeddings operations target the URL route `images/embeddings` on the provided endpoint.
 -->
 
-### Sending proprietary model parameters
-
-The REST API defines common model parameters for chat completions, text embeddings, etc. If the model you are targeting has additional parameters you would like to set, the client library allows you easily do so. See [Chat completions with additional model-specific parameters](#chat-completions-with-additional-model-specific-parameters). It similarly applies to other clients.
-
 ### Inference using Azure OpenAI endpoints
 
 The request and response payloads of the [Azure AI Model Inference API](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-api) is mostly compatible with OpenAI REST APIs for chat completions and text embeddings. Therefore, with some minor adjustments, this client library can be configured to do inference using Azure OpenAI endpoints. See samples with `azure_openai` in their name, in the [samples folder](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples), and the comments there.
@@ -305,11 +301,7 @@ To generate completions for additional messages, simply call `client.complete` m
 
 ### Chat completions with additional model-specific parameters
 
-In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are intended for AI models that require extra parameters beyond what is defined in the REST API.
-
-Note that by default, the service will reject any request payload that includes unknown parameters (ones that are not defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body)). In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra_parameters": "pass_through"`.
-
-The input argument `model_extras` is not restricted to chat completions. It is suppored on other client methods as well.
+In this example, extra JSON elements are inserted at the root of the request body by setting `model_extras` when calling the `complete` method. These are intended for AI models that require additional model-specific parameters beyond what is defined in the REST API [Request Body table](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#request-body).
 
 <!-- SNIPPET:sample_chat_completions_with_model_extras.model_extras -->
 
@@ -337,6 +329,8 @@ In the above example, this will be the JSON payload in the HTTP request:
     "key2": "value2"
 }
 ```
+
+Note that by default, the service will reject any request payload that includes extra parameters. In order to change the default service behaviour, when the `complete` method includes `model_extras`, the client library will automatically add the HTTP request header `"extra-parameters": "pass_through"`.
 
 ### Text Embeddings example
 
