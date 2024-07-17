@@ -86,7 +86,7 @@ class Metrics(GeneratedMetrics):
         The version of Storage Analytics to configure. The default value is 1.0.
     :keyword bool enabled:
         Indicates whether metrics are enabled for the File service.
-    :keyword Optional[bool] include_apis:
+    :keyword bool include_apis:
         Indicates whether metrics should generate summary statistics for called API operations.
     :keyword ~azure.storage.fileshare.RetentionPolicy retention_policy:
         Determines how long the associated data should persist.
@@ -96,7 +96,7 @@ class Metrics(GeneratedMetrics):
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the File service."""
-    include_apis: Optional[bool] = None
+    include_apis: bool
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """Determines how long the associated data should persist."""
@@ -104,7 +104,7 @@ class Metrics(GeneratedMetrics):
     def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
+        self.include_apis = kwargs.get('include_apis')  # type: ignore [assignment]
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
@@ -640,14 +640,14 @@ class Handle(DictMixin):
     :keyword str handle_id: XSMB service handle ID.
     :keyword str path: File or directory name including full path starting from share root.
     :keyword str file_id: FileId uniquely identifies the file or directory.
-    :keyword Optional[str] parent_id: ParentId uniquely identifies the parent directory of the object.
+    :keyword str parent_id: ParentId uniquely identifies the parent directory of the object.
     :keyword str session_id: SMB session ID in context of which the file handle was opened.
     :keyword str client_ip: Client IP that opened the handle.
     :keyword ~datetime.datetime open_time: Time when the session that previously opened
         the handle has last been reconnected. (UTC)
-    :keyword Optional[~datetime.datetime] last_reconnect_time: Time handle was last connected to. (UTC)
+    :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to. (UTC)
     :keyword access_rights: Access rights of the handle.
-    :paramtype access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]]
+    :paramtype access_rights: List[Literal['Read', 'Write', 'Delete']]
     """
 
     client_name: str
@@ -658,7 +658,7 @@ class Handle(DictMixin):
     """File or directory name including full path starting from share root."""
     file_id: str
     """FileId uniquely identifies the file or directory."""
-    parent_id: Optional[str] = None
+    parent_id: str
     """ParentId uniquely identifies the parent directory of the object."""
     session_id: str
     """SMB session ID in context of which the file handle was opened."""
@@ -666,9 +666,9 @@ class Handle(DictMixin):
     """Client IP that opened the handle."""
     open_time: "datetime"
     """Time when the session that previously opened the handle was last been reconnected. (UTC)"""
-    last_reconnect_time: Optional["datetime"] = None
+    last_reconnect_time: "datetime"
     """Time handle that was last connected to. (UTC)"""
-    access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]] = None
+    access_rights: List[Literal['Read', 'Write', 'Delete']]
     """Access rights of the handle."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -676,12 +676,12 @@ class Handle(DictMixin):
         self.id = kwargs.get('handle_id')  # type: ignore [assignment]
         self.path = kwargs.get('path')  # type: ignore [assignment]
         self.file_id = kwargs.get('file_id')  # type: ignore [assignment]
-        self.parent_id = kwargs.get('parent_id')
+        self.parent_id = kwargs.get('parent_id')  # type: ignore [assignment]
         self.session_id = kwargs.get('session_id')  # type: ignore [assignment]
         self.client_ip = kwargs.get('client_ip')  # type: ignore [assignment]
         self.open_time = kwargs.get('open_time')  # type: ignore [assignment]
-        self.last_reconnect_time = kwargs.get('last_reconnect_time')
-        self.access_rights = kwargs.get('access_right_list')
+        self.last_reconnect_time = kwargs.get('last_reconnect_time')  # type: ignore [assignment]
+        self.access_rights = kwargs.get('access_right_list')  # type: ignore [assignment]
 
     @classmethod
     def _from_generated(cls, generated):
