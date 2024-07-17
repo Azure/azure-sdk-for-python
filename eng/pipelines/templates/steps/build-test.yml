@@ -33,25 +33,22 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - template: /eng/pipelines/templates/steps/use-venv.yml
-
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - pwsh: |
-      if ($IsWindows) {
-        . $(VENV_LOCATION)/Scripts/Activate.ps1
-      }
-      else {
-        . $(VENV_LOCATION)/bin/activate.ps1
-      }
+      Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip install --force -r eng/ci_tools.txt
-      python -m pip freeze --all
-      Write-Host (Get-Command python).Source
-    displayName: 'Prep Environment'
+      python -m pip freeze
+      python -m pip install pip==23.2.1
+      python -m pip install wheel==0.43.0 --force-reinstall
+      python -m pip install setuptools==69.2.0 --force-reinstall
+      python -m pip install -r eng/ci_tools.txt
+      pip --version
+      pip freeze
+    displayName: 'Prep Environment Linux/Mac'
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -80,12 +77,6 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
-          if ($IsWindows) {
-            . $(VENV_LOCATION)/Scripts/Activate.ps1
-          }
-          else {
-            . $(VENV_LOCATION)/bin/activate.ps1
-          }
           Write-Host (Get-Command python).Source
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
@@ -104,25 +95,20 @@ steps:
           exit $LASTEXITCODE;
 
   - ${{ else }}:
-    - pwsh: |
-        if ($IsWindows) {
-          . $(VENV_LOCATION)/Scripts/Activate.ps1
-        }
-        else {
-          . $(VENV_LOCATION)/bin/activate.ps1
-        }
-        Write-Host (Get-Command python).Source
-        python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
-          ${{ parameters.AdditionalTestArgs }} `
-          ${{ parameters.CoverageArg }} `
-          --mark_arg="${{ parameters.TestMarkArgument }}" `
-          --service="${{ parameters.ServiceDirectory }}" `
-          --toxenv="${{ parameters.ToxTestEnv }}" `
-          --injected-packages="${{ parameters.InjectedPackages }}" `
+    - task: PythonScript@0
+      displayName: 'Run Tests'
+      inputs:
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        arguments: >-
+          "$(TargetingString)"
+          ${{ parameters.AdditionalTestArgs }}
+          ${{ parameters.CoverageArg }}
+          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv="${{ parameters.ToxTestEnv }}"
+          --injected-packages="${{ parameters.InjectedPackages }}"
           ${{ parameters.ToxEnvParallel }}
-        exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
-      displayName: Run Tests
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
