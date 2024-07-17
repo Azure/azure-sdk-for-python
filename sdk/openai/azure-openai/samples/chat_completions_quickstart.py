@@ -24,6 +24,7 @@ USAGE:
 
 
 def chat_completion_quickstart() -> None:
+    #[START chat_completion_quickstart]
     import os
     from openai import AzureOpenAI
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -55,6 +56,7 @@ def chat_completion_quickstart() -> None:
     )
 
     print(response.to_json())
+    #[END chat_completion_quickstart]
 
 
 if __name__ == "__main__":

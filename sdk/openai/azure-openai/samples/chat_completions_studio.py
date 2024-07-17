@@ -24,6 +24,7 @@ USAGE:
 
 
 def chat_completion_studio_viewcode() -> None:
+    #[START chat_completion_studio_viewcode]
     import os
     from openai import AzureOpenAI
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -57,6 +58,7 @@ def chat_completion_studio_viewcode() -> None:
     )
 
     print(completion.to_json())
+    #[END chat_completion_studio_viewcode]
 
 
 if __name__ == "__main__":
