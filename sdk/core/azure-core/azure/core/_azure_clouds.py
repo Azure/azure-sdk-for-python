@@ -23,17 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+# pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+
 from enum import Enum
 
 
 class AzureClouds(str, Enum):
     """An enum to describe Azure Cloud."""
 
-    AzurePublicCloud = "AzurePublicCloud"
+    AZURE_PUBLIC_CLOUD = "AZURE_PUBLIC_CLOUD"
     """Azure public cloud"""
 
-    AzureChinaCloud = "AzureChinaCloud"
+    AZURE_CHINA_CLOUD = "AZURE_CHINA_CLOUD"
     """Azure China cloud"""
 
-    AzureUSGovernment = "AzureUSGovernment"
+    AZURE_US_GOVERNMENT = "AZURE_US_GOVERNMENT"
     """Azure US government cloud"""
