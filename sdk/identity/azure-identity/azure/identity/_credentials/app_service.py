@@ -5,23 +5,15 @@
 import functools
 import os
 from typing import Optional, Dict, Any
-
 from azure.core.pipeline.transport import HttpRequest
 
 from .._constants import EnvironmentVariables
-from .._internal.managed_identity_base import ManagedIdentityBase
-from .._internal.managed_identity_client import ManagedIdentityClient
+from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
 
-class AppServiceCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
-        client_args = _get_client_args(**kwargs)
-        if client_args:
-            return ManagedIdentityClient(**client_args)
-        return None
-
-    def get_unavailable_message(self) -> str:
-        return "App Service managed identity configuration not found in environment"
+class AppServiceCredential(MsalManagedIdentityClient):
+    def get_unavailable_message(self, desc: str = "") -> str:
+        return f"App Service managed identity configuration not found in environment. {desc}"
 
 
 def _get_client_args(**kwargs: Any) -> Optional[Dict]:

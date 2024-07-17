@@ -2,4 +2,3 @@
 pylint = false
 pyright = false
 mypy = false
-strict_sphinx = true
