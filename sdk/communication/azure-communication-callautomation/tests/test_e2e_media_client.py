@@ -593,6 +593,35 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
     
     @recorded_by_proxy
+    def test_play_with_invalid_and_valid_file_sources_with_play_media_all(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
+
+        call_connection.play_media_to_all(
+            play_source=file_prompt
+        )
+
+        play_failed_event = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_failed_event is None:
+            raise ValueError("PlayFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+
+    @recorded_by_proxy
     def test_play_with_invalid_file_sources_with_play_media(self):
         # try to establish the call
         caller = self.identity_client.create_user()
@@ -616,6 +645,37 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         )
 
         play_failed_event_to_target = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_failed_event_to_target is None:
+            raise ValueError("PlayFailed event is None")
+        
+        self.terminate_call(unique_id)
+        return
+
+    @recorded_by_proxy
+    def test_play_with_invalid_and_valid_file_sources_with_play_media(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        file_prompt = [FileSource(url=self.file_source_url), FileSource(url="https://dummy.com/dummyurl.wav")]
+
+        call_connection._play_media(
+            play_source=file_prompt,
+            play_to=[target]
+        )
+
+        play_failed_event_to_target = self.check_for_event('PlayFailed', call_connection._call_connection_id, timedelta(seconds=30))
+        print(play_failed_event_to_target)
         if play_failed_event_to_target is None:
             raise ValueError("PlayFailed event is None")
         
