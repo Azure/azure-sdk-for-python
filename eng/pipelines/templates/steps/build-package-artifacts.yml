@@ -75,7 +75,7 @@ steps:
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
         arguments: >
-          -ServiceInput $(Build.ArtifactStagingDirectory)/diff/diff.json
+          -PrDiff $(Build.ArtifactStagingDirectory)/diff/diff.json
           -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
@@ -85,7 +85,7 @@ steps:
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
         arguments: >
-          -ServiceInput ${{parameters.ServiceDirectory}}
+          -ServiceDirectory ${{parameters.ServiceDirectory}}
           -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
         pwsh: true
         workingDirectory: $(Pipeline.Workspace)
