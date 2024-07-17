@@ -10,6 +10,7 @@ from typing import (
     Any, Callable, Dict, List, Literal, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 from urllib.parse import unquote
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -127,19 +128,19 @@ class CorsRule(GeneratedCorsRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param list[str] allowed_origins:
+    :param List[str] allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
         all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
-    :param list[str] allowed_methods:
+    :param List[str] allowed_methods:
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :keyword list[str] allowed_headers:
+    :keyword List[str] allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
-    :keyword list[str] exposed_headers:
+    :keyword List[str] exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
@@ -202,11 +203,11 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     :keyword SmbMultichannel multichannel: Sets the multichannel settings.
     """
 
-    multichannel: Optional[SmbMultichannel]
+    multichannel: SmbMultichannel
     """Sets the multichannel settings."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.multichannel = kwargs.get('multichannel')
+        self.multichannel = kwargs.get('multichannel')  # type: ignore [assignment]
         if self.multichannel is None:
             raise ValueError("The value 'multichannel' must be specified.")
 
@@ -219,11 +220,11 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     :keyword ShareSmbSettings smb: Sets SMB settings.
     """
 
-    smb: Optional[ShareSmbSettings]
+    smb: ShareSmbSettings
     """Sets the SMB settings."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.smb = kwargs.get('smb')
+        self.smb = kwargs.get('smb')  # type: ignore [assignment]
         if self.smb is None:
             raise ValueError("The value 'smb' must be specified.")
 
@@ -289,7 +290,7 @@ class ShareSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission: str) -> "ShareSasPermissions":
+    def from_string(cls, permission: str) -> Self:
         """Create a ShareSasPermissions from a string.
 
         To specify read, create, write, delete, or list permissions you need only to
@@ -813,7 +814,7 @@ class NTFSAttributes(object):
         return concatenated_params.strip('|')
 
     @classmethod
-    def from_string(cls, string: str) -> "NTFSAttributes":
+    def from_string(cls, string: str) -> Self:
         """Create a NTFSAttributes from a string.
 
         To specify permissions you can pass in a string with the
@@ -1190,7 +1191,7 @@ class FileSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission: str) -> "FileSasPermissions":
+    def from_string(cls, permission: str) -> Self:
         """Create a FileSasPermissions from a string.
 
         To specify read, create, write, or delete permissions you need only to

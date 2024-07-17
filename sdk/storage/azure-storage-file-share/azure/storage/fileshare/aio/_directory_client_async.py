@@ -511,7 +511,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :param str name_starts_with:
             Filters the results to return only entities whose names
             begin with the specified prefix.
-        :keyword list[str] include:
+        :keyword List[str] include:
             Include this parameter to specify one or more datasets to include in the response.
             Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
 
