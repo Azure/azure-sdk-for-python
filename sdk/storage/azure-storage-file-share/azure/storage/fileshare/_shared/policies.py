@@ -373,8 +373,10 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+            if not response.http_response.is_stream_consumed:
+                response.http_response.read()
             computed_md5 = request.context.get('validate_content_md5') or \
-                encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+                encode_base64(StorageContentValidation.get_content_md5(response.http_response.content))
             if response.http_response.headers['content-md5'] != computed_md5:
                 raise AzureError((
                     f"MD5 mismatch. Expected value is '{response.http_response.headers['content-md5']}', "

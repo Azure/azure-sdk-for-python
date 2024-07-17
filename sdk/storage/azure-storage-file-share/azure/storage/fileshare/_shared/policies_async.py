@@ -10,8 +10,9 @@ import logging
 import random
 from typing import Any, Dict, TYPE_CHECKING
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
+from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 
 from .authentication import StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
@@ -65,9 +66,14 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
 
         response = await self.next.send(request)
         try:
-            await response.http_response.load_body()
-        except Exception as e:
+            await response.http_response.read()
+        except (StreamClosedError, StreamConsumedError):
             pass
+        except AttributeError:
+            if isinstance(response.http_response, AioHttpTransportResponse):
+                pass
+            else:
+                raise ValueError("HttpResponse object:", response.http_response, "has no attribute read().")
 
         will_retry = is_retry(response, request.context.options.get('mode'))
         # Auth error could come from Bearer challenge, in which case this request will be made again
