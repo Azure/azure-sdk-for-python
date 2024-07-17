@@ -118,6 +118,7 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
         {
             $filePath = Resolve-Path (Join-Path $RepoRoot $file)
             $shouldInclude = $filePath -like "$($pkg.DirectoryPath)*"
+            Write-Host "Full Filepath is $filePath and shouldInclude is: $shouldInclude for package $($pkg.DirectoryPath)"
             if ($shouldInclude) {
                 $packagesWithChanges += $pkg
             }
