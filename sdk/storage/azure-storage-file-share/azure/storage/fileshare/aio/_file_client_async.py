@@ -744,7 +744,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def abort_copy(self, copy_id: Union[Optional[str], FileProperties], **kwargs: Any) -> None:
+    async def abort_copy(self, copy_id: Union[str, FileProperties], **kwargs: Any) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination file with zero length and full metadata.

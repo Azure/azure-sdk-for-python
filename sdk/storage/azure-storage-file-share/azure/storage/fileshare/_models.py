@@ -981,7 +981,7 @@ class CopyProperties(DictMixin):
     File operation, or if this file has been modified after a concluded Copy File operation.
     """
 
-    id: Optional[str] = None
+    id: str
     """String identifier for the last attempted Copy File operation where this file
         was the destination file. This header does not appear if this file has never
         been the destination in a Copy File operation, or if this file has been
@@ -1021,7 +1021,7 @@ class CopyProperties(DictMixin):
         failed copy attempt."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get('x-ms-copy-id')
+        self.id = kwargs.get('x-ms-copy-id')  # type: ignore [assignment]
         self.source = kwargs.get('x-ms-copy-source')
         self.status = get_enum_value(kwargs.get('x-ms-copy-status'))
         self.progress = kwargs.get('x-ms-copy-progress')
