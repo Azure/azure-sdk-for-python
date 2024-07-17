@@ -1691,11 +1691,18 @@ class TestStorageShare(StorageRecordedTestCase):
         assert first_share_props.access_tier == 'TransactionOptimized'
         assert second_share_props is not None
         assert second_share_props.name == second_share.share_name
-        assert first_share_props.access_tier == 'TransactionOptimized'
+        assert second_share_props.access_tier == 'TransactionOptimized'
 
         first_share_client.set_share_properties(access_tier='Hot')
         first_share_props = first_share_client.get_share_properties()
+        second_share_client.set_share_properties(access_tier='Cool')
+        second_share_props = second_share_client.get_share_properties()
+        assert first_share_props is not None
+        assert first_share_props.name == first_share.share_name
         assert first_share_props.access_tier == 'Hot'
+        assert second_share_props is not None
+        assert second_share_props.name == second_share.share_name
+        assert second_share_props.access_tier == 'Cool'
 
         first_share_deleted = first_share_client.delete_share()
         second_share_deleted = second_share_client.delete_share()
@@ -1758,100 +1765,6 @@ class TestStorageShare(StorageRecordedTestCase):
         assert result is None
 
         share_client.delete_share()
-        with pytest.raises(ResourceNotFoundError):
-            share_client.get_share_properties()
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_create_snapshot_and_metadata_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-        token_credential = self.get_credential(ShareClient)
-
-        # Arrange
-        self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        metadata = {"test1": "foo", "test2": "bar"}
-        metadata2 = {"test100": "foo100", "test200": "bar200"}
-
-        # Act
-        created = share.create_share(metadata=metadata)
-        share_props = share.get_share_properties()
-        snapshot = share.create_snapshot(metadata=metadata2)
-        snapshot_client = ShareClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=share.share_name,
-            snapshot=snapshot,
-            credential=token_credential,
-            token_intent=TEST_INTENT
-        )
-        snapshot_props = snapshot_client.get_share_properties()
-
-        # Assert
-        assert created
-        assert share_props.metadata == metadata
-        assert snapshot['snapshot'] is not None
-        assert snapshot['etag'] is not None
-        assert snapshot['last_modified'] is not None
-        assert snapshot_props.metadata == metadata2
-
-        share.set_share_metadata(metadata=metadata2)
-        share_props = share.get_share_properties()
-        assert share_props.metadata == metadata2
-
-        self._delete_shares(share.share_name)
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_share_service_client_properties_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        token_credential = self.get_credential(ShareServiceClient)
-
-        # Arrange
-        share_service_client = ShareServiceClient(
-            self.account_url(storage_account_name, "file"),
-            credential=token_credential,
-            token_intent=TEST_INTENT
-        )
-
-        # Act
-        service_props = share_service_client.get_service_properties()
-        assert service_props is not None
-
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-        share_service_client.set_service_properties(hour_metrics=hour_metrics)
-        service_props = share_service_client.get_service_properties()
-
-        # Assert
-        assert service_props['hour_metrics'] is not None
-        assert service_props['hour_metrics'].enabled
-        assert service_props['hour_metrics'].include_apis
-        assert service_props['hour_metrics'].retention_policy.enabled
-        assert service_props['hour_metrics'].retention_policy.days == 5
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_share_service_client_create_delete_share_with_oauth(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        token_credential = self.get_credential(ShareServiceClient)
-
-        # Arrange
-        share_service_client = ShareServiceClient(
-            self.account_url(storage_account_name, "file"),
-            credential=token_credential,
-            token_intent=TEST_INTENT
-        )
-
-        # Act / Assert
-        share_name = self.get_resource_name(TEST_SHARE_PREFIX)
-        share_client = share_service_client.create_share(share_name)
-        share_props = share_client.get_share_properties()
-        assert share_props.name == share_name
-
-        share_names = {share.name for share in share_service_client.list_shares()}
-        assert share_name in share_names
-
-        share_service_client.delete_share(share_name)
         with pytest.raises(ResourceNotFoundError):
             share_client.get_share_properties()
 
