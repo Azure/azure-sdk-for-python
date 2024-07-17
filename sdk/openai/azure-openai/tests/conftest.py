@@ -20,7 +20,7 @@ from ci_tools.variables import in_ci
 
 
 # for pytest.parametrize
-GA = "2024-02-01"
+GA = "2024-06-01"
 PREVIEW = "2024-05-01-preview"
 LATEST = PREVIEW
 
