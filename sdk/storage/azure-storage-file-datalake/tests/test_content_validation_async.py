@@ -14,7 +14,13 @@ from azure.storage.filedatalake.aio import (
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
 from settings.testcase import DataLakePreparer
-from test_content_validation import assert_content_crc64, assert_content_md5, assert_structured_message
+from test_content_validation import (
+    assert_content_crc64,
+    assert_content_md5,
+    assert_content_md5_get,
+    assert_structured_message,
+    assert_structured_message_get
+)
 
 
 class TestStorageContentValidation(AsyncStorageRecordedTestCase):
@@ -138,4 +144,75 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
         # Assert
         result = await file.download_file()
         assert await result.readall() == content * len(data_list)
+        await self._teardown()
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_file(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file = self.file_system.get_file_client(self._get_file_reference())
+        data = b'abc' * 512
+        await file.upload_data(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        # Assert
+        assert content == data
+        await self._teardown()
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_file_chunks(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.file_system._config.max_single_get_size = 512
+        self.file_system._config.max_chunk_get_size = 512
+        file = self.file_system.get_file_client(self._get_file_reference())
+        data = b'abc' * 512 + b'abcde'
+        await file.upload_data(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = await file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = await downloader.read()
+
+        downloader2 = await file.download_file(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        content2 = await downloader2.read()
+
+        # Assert
+        assert content == data
+        assert content2 == data[10:1010]
+        await self._teardown()
+
+    @DataLakePreparer()
+    @pytest.mark.live_test_only
+    async def test_download_file_large_chunks(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file = self.file_system.get_file_client(self._get_file_reference())
+        # The service will use 4 MiB for structured message chunk size, so make chunk size larger
+        self.file_system._config.max_chunk_get_size = 10 * 1024 * 1024
+        data = b'abcde' * 30 * 1024 * 1024 + b'abcde'  # 150 MiB + 5
+        await file.upload_data(data, overwrite=True, max_concurrency=5)
+
+        # Act
+        downloader = await file.download_file(validate_content='crc64', max_concurrency=3)
+        content = await downloader.read()
+
+        # Assert
+        assert content == data
         await self._teardown()

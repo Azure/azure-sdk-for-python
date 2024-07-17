@@ -21,6 +21,11 @@ def assert_content_md5(request):
         assert request.http_request.headers.get('Content-MD5') is not None
 
 
+def assert_content_md5_get(response):
+    assert response.http_request.headers.get('x-ms-range-get-content-md5') == 'true'
+    assert response.http_response.headers.get('Content-MD5') is not None
+
+
 def assert_content_crc64(request):
     if request.http_request.query.get('action') == 'append':
         assert request.http_request.headers.get('x-ms-content-crc64') is not None
@@ -29,6 +34,11 @@ def assert_content_crc64(request):
 def assert_structured_message(request):
     if request.http_request.query.get('action') == 'append':
         assert request.http_request.headers.get('x-ms-structured-body') is not None
+
+
+def assert_structured_message_get(response):
+    assert response.http_request.headers.get('x-ms-structured-body') is not None
+    assert response.http_response.headers.get('x-ms-structured-body') is not None
 
 
 class TestStorageContentValidation(StorageRecordedTestCase):
@@ -148,3 +158,71 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         result = file.download_file()
         assert result.readall() == content * len(data_list)
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_download_file(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file = self.file_system.get_file_client(self._get_file_reference())
+        data = b'abc' * 512
+        file.upload_data(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = downloader.read()
+
+        # Assert
+        assert content == data
+
+    @DataLakePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_download_file_chunks(self, a, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.file_system._config.max_single_get_size = 512
+        self.file_system._config.max_chunk_get_size = 512
+        file = self.file_system.get_file_client(self._get_file_reference())
+        data = b'abc' * 512 + b'abcde'
+        file.upload_data(data, overwrite=True)
+        assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Act
+        downloader = file.download_file(validate_content=a, raw_response_hook=assert_method)
+        content = downloader.read()
+
+        downloader2 = file.download_file(offset=10, length=1000, validate_content=a, raw_response_hook=assert_method)
+        content2 = downloader2.read()
+
+        # Assert
+        assert content == data
+        assert content2 == data[10:1010]
+
+    @DataLakePreparer()
+    @pytest.mark.live_test_only
+    def test_download_file_large_chunks(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        file = self.file_system.get_file_client(self._get_file_reference())
+        # The service will use 4 MiB for structured message chunk size, so make chunk size larger
+        self.file_system._config.max_chunk_get_size = 10 * 1024 * 1024
+        data = b'abcde' * 30 * 1024 * 1024 + b'abcde'  # 150 MiB + 5
+        file.upload_data(data, overwrite=True, max_concurrency=5)
+
+        # Act
+        downloader = file.download_file(validate_content='crc64', max_concurrency=3)
+        content = downloader.read()
+
+        # Assert
+        assert content == data

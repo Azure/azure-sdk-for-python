@@ -612,8 +612,11 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def download_file(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+    async def download_file(
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -624,6 +627,25 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :keyword validate_content:
+            Enables checksum validation for the transfer.
+
+            bool - Passing a boolean is now deprecated. Will perform basic checksum validation via a pipeline
+            policy that calculates an MD5 hash for each data chunk and verifies it matches what the service sent.
+            This is primarily valuable for detecting bit-flips on the wire if using http instead of https.
+
+            "auto" - Allows the SDK to choose the best checksum algorithm to use. Currently, chooses 'crc64'.
+
+            "crc64" - This is currently the preferred choice for performance reasons and the level of validation.
+            Performs validation using Azure Storage's specific implementation of CRC64 with a custom
+            polynomial. This also uses a more sophisticated algorithm internally that may help catch
+            client-side data integrity issues.
+            NOTE: This requires the `azure-storage-extensions` package to be installed.
+
+            "md5" - Performs validation using MD5. Where available this may use a more sophisticated algorithm
+            internally that may help catch client-side data integrity issues (similar to 'crc64') but it is
+            not possible in all scenarios and may revert to the naive approach of using a pipeline policy.
+        :paramtype validate_content: Literal['auto', 'crc64', 'md5']
         :keyword lease:
             If specified, download only succeeds if the file's lease is active
             and matches this ID. Required if the file has an active lease.
