@@ -266,7 +266,7 @@ class ShareSasPermissions(object):
     list: bool = False
     """The list permission for share SAS."""
     create: bool = False
-    """Create a new file in the share, or copy a file to a new file in the share."""
+    """The create permission for share SAS."""
 
     def __init__(
         self, read: bool = False,
