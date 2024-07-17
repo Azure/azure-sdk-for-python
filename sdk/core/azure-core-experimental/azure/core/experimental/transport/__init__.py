@@ -23,42 +23,49 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
+# pylint:disable=undefined-all-variable
 from typing import List
 
-# pylint: disable=undefined-all-variable
 
-if sys.version_info >= (3, 7):
-    __all__ = [
-        "PyodideTransport",
-        "HttpXTransport",
-        "AsyncHttpXTransport",
-    ]
+__all__ = [
+    "PyodideTransport",
+    "HttpXTransport",
+    "AsyncHttpXTransport",
+    "Urllib3Transport",
+]
 
-    def __dir__() -> List[str]:
-        return __all__
 
-    def __getattr__(name: str):
-        if name == "PyodideTransport":
-            try:
-                from ._pyodide import PyodideTransport
+def __dir__() -> List[str]:
+    return __all__
 
-                return PyodideTransport
-            except ImportError as err:
-                raise ImportError("pyodide package is not installed") from err
-        if name == "HttpXTransport":
-            try:
-                from ._httpx import HttpXTransport
 
-                return HttpXTransport
-            except ImportError as err:
-                raise ImportError("httpx package is not installed") from err
-        if name == "AsyncHttpXTransport":
-            try:
-                from ._httpx_async import AsyncHttpXTransport
+def __getattr__(name: str):
+    if name == "PyodideTransport":
+        try:
+            from ._pyodide import PyodideTransport
 
-                return AsyncHttpXTransport
-            except ImportError as err:
-                raise ImportError("httpx package is not installed") from err
+            return PyodideTransport
+        except ImportError as err:
+            raise ImportError("pyodide package is not installed") from err
+    if name == "HttpXTransport":
+        try:
+            from ._httpx import HttpXTransport
 
-        raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
+            return HttpXTransport
+        except ImportError as err:
+            raise ImportError("httpx package is not installed") from err
+    if name == "AsyncHttpXTransport":
+        try:
+            from ._httpx_async import AsyncHttpXTransport
+
+            return AsyncHttpXTransport
+        except ImportError as err:
+            raise ImportError("httpx package is not installed") from err
+    if name == "Urllib3Transport":
+        try:
+            from ._urllib3 import Urllib3Transport
+
+            return Urllib3Transport
+        except ImportError as err:
+            raise ImportError("urllib3 package is not installed") from err
+    raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")

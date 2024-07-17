@@ -742,7 +742,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     async def test_chat_completion_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
+            {"role": "user", "content": "What languages have libraries you know about for Azure OpenAI?"}
         ]
 
         completion = await client_async.chat.completions.create(
@@ -761,7 +761,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                     }
                 ],
             },
-            model="gpt-4"
+            model="gpt-4-0613"
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -781,7 +781,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     async def test_streamed_chat_completions_byod(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
+            {"role": "user", "content": "What languages have libraries you know about for Azure OpenAI?"}
         ]
 
         response = await client_async.chat.completions.create(
@@ -801,7 +801,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                 ],
             },
             stream=True,
-            model="gpt-4"
+            model="gpt-4-0613"
         )
         async for chunk in response:
             assert chunk.id
@@ -834,7 +834,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, GA), (GPT_4_OPENAI, "v1")])
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, GA), (GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     async def test_chat_completion_json_response(self, client_async, api_type, api_version, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -868,8 +868,8 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         err = e.value.body
         assert err["code"] == "content_filter"
         content_filter_result = err["innererror"]["content_filter_result"]
-        assert content_filter_result["custom_blocklists"][0]["filtered"] is True
-        assert content_filter_result["custom_blocklists"][0]["id"].startswith("CustomBlockList")
+        assert content_filter_result["custom_blocklists"]["filtered"] is True
+        assert content_filter_result["custom_blocklists"]["details"][0]["id"].startswith("CustomBlockList")
         assert content_filter_result["hate"]["filtered"] is False
         assert content_filter_result["hate"]["severity"] == "safe"
         assert content_filter_result["self_harm"]["filtered"] is False

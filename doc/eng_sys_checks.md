@@ -119,8 +119,6 @@ Starting with [this pr](https://github.com/Azure/azure-sdk-for-python/pull/28345
 
 We default to **enabling** most of our checks like `pylint`, `mypy`, etc. Due to that, most `pyproject.toml` settings will likely be **disabling** checks.
 
-There is also an additional setting to turn on strict sphinx validation, for docstring validation.
-
 Here's an example:
 
 ```toml
@@ -133,7 +131,7 @@ verifytypes = false
 pyright = false
 pylint = false
 black = false
-strict_sphinx = false
+sphinx = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
@@ -216,14 +214,11 @@ Note that the `pylint` environment is configured to run against the **earliest s
 
 ### Sphinx and docstring checker
 
-[`Sphinx`](https://www.sphinx-doc.org/en/master/) is the preferred documentation builder for Python libraries. The documentation is always built and attached to each PR builds. Sphinx can be configured to
+[`Sphinx`](https://www.sphinx-doc.org/en/master/) is the preferred documentation builder for Python libraries. The documentation is always built and attached to each PR builds. Sphinx is configured to
 fail if docstring are invalid, helping to ensure the resulting documentation will be of high quality. Following are the steps to run `sphinx` locally for a specific package with strict docstring checking:
 
 1. Go to root of the package.
-2. Make sure the `pyproject.toml` file contains `strict_sphinx = true`
-3. Execute following command: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root .`
-
-Note: While as of now the default value is `False`, it will become `True` by mid 2024.
+2. Execute following command: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root .`
 
 ### Bandit
 

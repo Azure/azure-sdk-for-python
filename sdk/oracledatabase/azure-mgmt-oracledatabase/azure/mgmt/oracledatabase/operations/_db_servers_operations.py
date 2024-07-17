@@ -47,7 +47,7 @@ def build_list_by_cloud_exadata_infrastructure_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,7 +61,7 @@ def build_list_by_cloud_exadata_infrastructure_request(  # pylint: disable=name-
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
     }
 
@@ -86,7 +86,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,9 +100,11 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "cloudexadatainfrastructurename": _SERIALIZER.url(
-            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str"
+            "cloudexadatainfrastructurename", cloudexadatainfrastructurename, "str", pattern=r".*"
         ),
-        "dbserverocid": _SERIALIZER.url("dbserverocid", dbserverocid, "str", max_length=255, min_length=1),
+        "dbserverocid": _SERIALIZER.url(
+            "dbserverocid", dbserverocid, "str", max_length=255, min_length=1, pattern=r".*"
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

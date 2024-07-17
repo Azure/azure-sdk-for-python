@@ -1,4 +1,3 @@
 [tool.azure-sdk-build]
 pyright = false
-strict_sphinx = true
 verify_keywords = false

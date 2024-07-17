@@ -22,6 +22,7 @@ INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 RESOURCE_ARG = "resource"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 SPAN_PROCESSORS_ARG = "span_processors"
+VIEWS_ARG = "views"
 
 
 # --------------------Autoinstrumentation Configuration------------------------------------------

@@ -16,11 +16,12 @@ from azure.identity.aio import (
     DefaultAzureCredential as AsyncDefaultAzureCredential,
     get_bearer_token_provider as get_bearer_token_provider_async,
 )
+from ci_tools.variables import in_ci
 
 
 # for pytest.parametrize
 GA = "2024-02-01"
-PREVIEW = "2024-03-01-preview"
+PREVIEW = "2024-05-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
@@ -39,12 +40,7 @@ ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT = "AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT"
 ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT = "AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"
-ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
-ENV_TENANT_ID = "AZURE_TENANT_ID"
-ENV_CLIENT_ID = "AZURE_CLIENT_ID"
-ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
-ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "gpt-35-turbo-instruct"
@@ -65,8 +61,15 @@ ENV_OPENAI_CHAT_COMPLETIONS_GPT4_MODEL = "gpt-4-1106-preview"
 ENV_OPENAI_TTS_MODEL = "tts-1"
 
 
+def skip_openai_test(api_type) -> bool:
+    return in_ci() and "openai" in api_type and "tests-weekly" not in os.getenv("SYSTEM_DEFINITIONNAME", "")
+
+
 @pytest.fixture
 def client(api_type, api_version):
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+
     if api_type == "azure":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -100,6 +103,9 @@ def client(api_type, api_version):
 
 @pytest.fixture
 def client_async(api_type, api_version):
+    if skip_openai_test(api_type):
+        pytest.skip("Skipping openai tests - they only run on tests-weekly.")
+
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),

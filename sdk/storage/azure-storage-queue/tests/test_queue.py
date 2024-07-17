@@ -27,7 +27,7 @@ from azure.storage.queue import (
     ResourceTypes
 )
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
 
@@ -877,7 +877,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(QueueServiceClient)
 
         # Action 1: make sure token works
         service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=token_credential)
@@ -885,7 +885,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         assert queues is not None
 
         # Action 2: change token value to make request fail
-        fake_credential = self.generate_fake_token()
+        fake_credential = FakeTokenCredential()
         service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=fake_credential)
         with pytest.raises(ClientAuthenticationError):
             list(service.list_queues())
@@ -1360,7 +1360,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         qsc.get_service_properties()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(QueueServiceClient)
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
             audience=f'https://{storage_account_name}.queue.core.windows.net'
@@ -1381,15 +1381,14 @@ class TestStorageQueue(StorageRecordedTestCase):
         qsc.get_service_properties()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(QueueServiceClient)
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
             audience=f'https://badaudience.queue.core.windows.net'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            qsc.get_service_properties()
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        qsc.get_service_properties()
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -1402,7 +1401,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue.create_queue()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(QueueServiceClient)
         queue = QueueClient(
             self.account_url(storage_account_name, "queue"), 'testqueue1', credential=token_credential,
             audience=f'https://{storage_account_name}.queue.core.windows.net'
@@ -1423,15 +1422,14 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue.create_queue()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(QueueServiceClient)
         queue = QueueClient(
             self.account_url(storage_account_name, "queue"), 'testqueue2', credential=token_credential,
             audience=f'https://badaudience.queue.core.windows.net'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            queue.get_queue_properties()
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        queue.get_queue_properties()
 
 
 # ------------------------------------------------------------------------------

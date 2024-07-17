@@ -77,7 +77,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
         destination_blob_client = await self._create_blob(bsc)
-        access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         # Assert this operation fails without a credential
@@ -1521,7 +1521,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('vlwcontainerasync')
         if self.is_live:
-            token_credential = self.generate_oauth_token()
+            token_credential = self.get_credential(BlobServiceClient, is_async=True)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(

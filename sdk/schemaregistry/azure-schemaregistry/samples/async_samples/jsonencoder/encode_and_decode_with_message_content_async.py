@@ -30,8 +30,8 @@ DESCRIPTION:
      - Authenticating an async SchemaRegistryClient to be used by the JsonSchemaEncoder.
      - Passing in content and schema to the JsonSchemaEncoder, which will return a TypedDict containing
       encoded and validated content and corresponding content type.
-     - Manually setting the content and content type on a MessageType object, specifically EventData.
-     - Manually retrieving the content and content type from a MessageType object, and passing it to the
+     - Manually setting the content and content type on a OutboundMessageContent object, specifically EventData.
+     - Manually retrieving the content and content type from a InboundMessageContent object, and passing it to the
       JsonSchemaEncoder, which will return the decoded and validated content.
 USAGE:
     python encode_and_decode_with_message_content_async.py
@@ -55,7 +55,6 @@ from typing import cast, List
 from azure.identity.aio import ClientSecretCredential
 from azure.schemaregistry import MessageContent
 from azure.schemaregistry.aio import SchemaRegistryClient
-from azure.schemaregistry.encoder.jsonencoder import JsonSchemaDraftIdentifier
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 from azure.eventhub import EventData
 
@@ -63,8 +62,8 @@ TENANT_ID = os.environ["AZURE_TENANT_ID"]
 CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
 CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
-SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE']
-GROUP_NAME = os.environ['SCHEMAREGISTRY_GROUP']
+SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
+GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
 
 SCHEMA_JSON = {
     "$id": "https://example.com/person.schema.json",
@@ -72,26 +71,18 @@ SCHEMA_JSON = {
     "title": "Person",
     "type": "object",
     "properties": {
-        "name": {
-            "type": "string",
-            "description": "Person's name."
-        },
-        "favorite_color": {
-            "type": "string",
-            "description": "Favorite color."
-        },
+        "name": {"type": "string", "description": "Person's name."},
+        "favorite_color": {"type": "string", "description": "Favorite color."},
         "favorite_number": {
             "description": "Favorite number.",
             "type": "integer",
-        }
-    }
+        },
+    },
 }
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
-)
+token_credential = ClientSecretCredential(tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
 
 
 async def encode_message_content_dict(encoder: JsonSchemaEncoder):
@@ -103,6 +94,7 @@ async def encode_message_content_dict(encoder: JsonSchemaEncoder):
         encoded_message_content_ben["content"],
         encoded_message_content_ben["content_type"],
     )
+
 
 async def decode_with_content_and_content_type(encoder: JsonSchemaEncoder, event_data: EventData):
     # get content as bytes
@@ -123,12 +115,13 @@ async def main():
         credential=token_credential,
     )
     encoder = JsonSchemaEncoder(
-        client=schema_registry, group_name=GROUP_NAME, validate=JsonSchemaDraftIdentifier.DRAFT2020_12
+        client=schema_registry, group_name=GROUP_NAME, validate=cast(str, SCHEMA_JSON["$schema"])
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)
     await encoder.close()
     await token_credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

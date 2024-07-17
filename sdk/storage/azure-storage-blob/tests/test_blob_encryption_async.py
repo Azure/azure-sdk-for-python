@@ -859,6 +859,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc._config.max_single_get_size = 1024
+        self.bsc._config.max_chunk_get_size = 1024
 
         data = b'12345' * 205 * 10  # 10250 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
