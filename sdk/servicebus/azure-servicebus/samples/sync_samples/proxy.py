@@ -11,8 +11,9 @@ Example to show sending message through http proxy to a Service Bus Queue.
 
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
@@ -29,8 +30,10 @@ def send_single_message(sender):
     sender.send_messages(message)
 
 
-servicebus_client = ServiceBusClient.from_connection_string(
-    conn_str=CONNECTION_STR,
+credential = DefaultAzureCredential()
+servicebus_client = ServiceBusClient(
+    FULLY_QUALIFIED_NAMESPACE,
+    credential,
     http_proxy=HTTP_PROXY
 )
 
