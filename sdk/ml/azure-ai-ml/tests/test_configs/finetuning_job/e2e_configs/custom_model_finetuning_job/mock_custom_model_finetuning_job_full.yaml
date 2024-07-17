@@ -9,11 +9,9 @@ model:
   path: "azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
   type: mlflow_model
 
-training_data:
-  path: "https://foo/bar/train.jsonl"
-  type: uri_file
+training_data: ./samsum_dataset/small_train.jsonl
 validation_data:
-  path: "https://foo/bar/validation.jsonl"
+  path: ./samsum_dataset/small_validation.jsonl
   type: uri_file
 hyperparameters:
   num_train_epochs: "1"
