@@ -166,6 +166,7 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
 
         # Assert
         assert content == data
+        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -193,6 +194,7 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert content2 == data[10:1010]
+        await self._teardown()
 
     @DataLakePreparer()
     @pytest.mark.live_test_only
@@ -213,3 +215,4 @@ class TestStorageContentValidation(AsyncStorageRecordedTestCase):
 
         # Assert
         assert content == data
+        await self._teardown()
