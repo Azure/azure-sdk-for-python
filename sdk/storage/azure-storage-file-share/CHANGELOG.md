@@ -1,6 +1,6 @@
 # Release History
 
-## 12.17.0 (2024-07-16)
+## 12.17.0 (2024-07-17)
 
 ### Features Added
 - Stable release of features from 12.17.0b1
