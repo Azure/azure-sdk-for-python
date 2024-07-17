@@ -47,7 +47,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     All required parameters must be populated in order to send to Azure.
 
     :param bool enabled:
-        Required. Indicates whether a retention policy is enabled for the storage service.
+        Indicates whether a retention policy is enabled for the storage service.
     :param Optional[int] days:
         Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted.
@@ -84,7 +84,7 @@ class Metrics(GeneratedMetrics):
     :keyword str version:
         The version of Storage Analytics to configure. The default value is 1.0.
     :keyword bool enabled:
-        Required. Indicates whether metrics are enabled for the File service.
+        Indicates whether metrics are enabled for the File service.
     :keyword Optional[bool] include_apis:
         Indicates whether metrics should generate summary statistics for called API operations.
     :keyword ~azure.storage.fileshare.RetentionPolicy retention_policy:
@@ -635,14 +635,14 @@ class Handle(DictMixin):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword str client_name: Required. Name of the client machine where the share is being mounted.
-    :keyword str handle_id: Required. XSMB service handle ID.
-    :keyword str path: Required. File or directory name including full path starting from share root.
-    :keyword str file_id: Required. FileId uniquely identifies the file or directory.
+    :keyword str client_name: Name of the client machine where the share is being mounted.
+    :keyword str handle_id: XSMB service handle ID.
+    :keyword str path: File or directory name including full path starting from share root.
+    :keyword str file_id: FileId uniquely identifies the file or directory.
     :keyword Optional[str] parent_id: ParentId uniquely identifies the parent directory of the object.
-    :keyword str session_id: Required. SMB session ID in context of which the file handle was opened.
-    :keyword str client_ip: Required. Client IP that opened the handle.
-    :keyword ~datetime.datetime open_time: Required. Time when the session that previously opened
+    :keyword str session_id: SMB session ID in context of which the file handle was opened.
+    :keyword str client_ip: Client IP that opened the handle.
+    :keyword ~datetime.datetime open_time: Time when the session that previously opened
         the handle has last been reconnected. (UTC)
     :keyword Optional[~datetime.datetime] last_reconnect_time: Time handle was last connected to. (UTC)
     :keyword access_rights: Access rights of the handle.
