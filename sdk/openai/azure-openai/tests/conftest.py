@@ -194,6 +194,10 @@ def configure_async(f):
             return await f(*args, client_async=client_async, api_type=api_type, api_version=api_version, **kwargs)
         except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+        except openai.BadRequestError as e:
+            if e.body.get("code") == "content_policy_violation":
+                pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Triggered content filter.")
+            raise
 
     return wrapper
 
@@ -209,6 +213,10 @@ def configure(f):
             return f(*args, client=client, api_type=api_type, api_version=api_version, **kwargs)
         except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+        except openai.BadRequestError as e:
+            if e.body.get("code") == "content_policy_violation":
+                pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Triggered content filter.")
+            raise
 
     return wrapper
 
