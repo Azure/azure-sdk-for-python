@@ -10,8 +10,8 @@ from typing import (
     Any, Callable, Dict, List, Literal, Optional, Union,
     TYPE_CHECKING
 )
-from typing_extensions import Self
 from urllib.parse import unquote
+from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
