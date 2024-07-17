@@ -13,10 +13,11 @@ import os
 import asyncio
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
 SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 SESSION_ID = os.environ['SERVICEBUS_SESSION_ID']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 
 
 async def send_single_message(sender):
@@ -55,7 +56,8 @@ async def receive_batch_messages(receiver):
 
 
 async def main():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
     async with servicebus_client:
         sender = servicebus_client.get_queue_sender(queue_name=SESSION_QUEUE_NAME)
