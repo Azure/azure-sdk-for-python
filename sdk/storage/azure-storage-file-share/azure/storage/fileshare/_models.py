@@ -359,7 +359,7 @@ class AccessPolicy(GenAccessPolicy):
 
     permission: Optional[Union[ShareSasPermissions, str]]  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
-            operations allowed by the permissions."""
+        operations allowed by the permissions."""
     expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
     """The time at which the shared access signature becomes invalid."""
     start: Optional[Union["datetime", str]]  # type: ignore [assignment]
@@ -844,7 +844,7 @@ class NTFSAttributes(object):
 class DirectoryProperties(DictMixin):
     """Directory's properties class."""
 
-    name: Optional[str] = None
+    name: str
     """The name of the directory."""
     last_modified: "datetime"
     """A datetime object representing the last time the directory was modified."""
@@ -874,7 +874,7 @@ class DirectoryProperties(DictMixin):
     """Whether input is a directory."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = None
+        self.name = None  # type: ignore [assignment]
         self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
         self.etag = kwargs.get('ETag')  # type: ignore [assignment]
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')  # type: ignore [assignment]
@@ -1048,7 +1048,7 @@ class CopyProperties(DictMixin):
 class FileProperties(DictMixin):
     """File's properties class."""
 
-    name: Optional[str] = None
+    name: str
     """The name of the file."""
     path: Optional[str] = None
     """The path of the file."""
@@ -1099,7 +1099,7 @@ class FileProperties(DictMixin):
     """Whether input is a directory."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')
+        self.name = kwargs.get('name')  # type: ignore [assignment]
         self.path = None
         self.share = None
         self.snapshot = None
