@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import platform
-import time
 from datetime import datetime, timedelta
 
 import pytest
@@ -20,7 +19,6 @@ from azure.storage.blob import (
     VERSION,
 )
 from azure.storage.blob._shared.base_client import create_configuration
-from azure.storage.blob._shared.authentication import AzureSigningError
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase

@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import platform
-import time
 from datetime import datetime, timedelta
 
 import pytest
@@ -21,7 +20,6 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobServiceClient
 )
-from azure.storage.blob._shared.authentication import AzureSigningError
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
