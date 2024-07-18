@@ -69,11 +69,11 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
             await response.http_response.read()
         except (StreamClosedError, StreamConsumedError):
             pass
-        except AttributeError:
+        except AttributeError as exc:
             if isinstance(response.http_response, AioHttpTransportResponse):
                 pass
             else:
-                raise ValueError("HttpResponse object:", response.http_response, "has no attribute read().")
+                raise ValueError("HttpResponse object:", response.http_response, "has no attribute read().") from exc
 
         will_retry = is_retry(response, request.context.options.get('mode'))
         # Auth error could come from Bearer challenge, in which case this request will be made again
