@@ -241,7 +241,7 @@ class HttpHeaders:
     NumberOfReadRegions = "x-ms-number-of-read-regions"
     TransportRequestId = "x-ms-transport-request-id"
     ItemLsn = "x-ms-item-lsn"
-    CosmosItemLsn = "x-ms-cosmos-item-llsn"
+    CosmosItemLsn = "x-ms-cosmos-item-llsn"  # cspell:disable-line
     CosmosLsn = "x-ms-cosmos-llsn"  # cspell:disable-line
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
