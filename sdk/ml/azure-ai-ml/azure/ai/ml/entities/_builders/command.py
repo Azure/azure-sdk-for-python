@@ -394,7 +394,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
     @property
     def command(self) -> Optional[str]:
-        """Sets the command to be executed.
+        """The command to be executed.
 
         :rtype: Optional[str]
         """
@@ -408,7 +408,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
     @command.setter
     def command(self, value: str) -> None:
-        """The command to be executed.
+        """Sets the command to be executed.
 
         :param value: The command to be executed.
         :type value: str
