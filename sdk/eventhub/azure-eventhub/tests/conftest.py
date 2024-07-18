@@ -10,10 +10,9 @@ import logging
 import uuid
 import warnings
 import datetime
+from functools import partial
 from logging.handlers import RotatingFileHandler
 
-from azure.identity import DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as DefaultAzureCredentialAsync
 from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
 from azure.eventhub._pyamqp import ReceiveClient
@@ -28,7 +27,7 @@ except (ModuleNotFoundError, ImportError):
     uamqp_transport_params = [False]
     uamqp_transport_ids = ["pyamqp"]
 
-from devtools_testutils import get_region_override
+from devtools_testutils import get_region_override, get_credential as get_devtools_credential
 from tracing_common import FakeSpan
 
 collect_ignore = []
@@ -67,13 +66,13 @@ def storage_url():
         return
 
 @pytest.fixture()    
-def checkpoint_store(storage_url, get_credential):
-    checkpoint_store = BlobCheckpointStore(storage_url, "blobcontainer" + str(uuid.uuid4()), credential=get_credential())
+def checkpoint_store(storage_url):
+    checkpoint_store = BlobCheckpointStore(storage_url, "blobcontainer" + str(uuid.uuid4()), credential=get_devtools_credential())
     return checkpoint_store
 
 @pytest.fixture()    
-def checkpoint_store_aio(storage_url, get_credential_async):
-    checkpoint_store = BlobCheckpointStoreAsync(storage_url, "blobcontainer" + str(uuid.uuid4()), credential=get_credential_async())
+def checkpoint_store_aio(storage_url):
+    checkpoint_store = BlobCheckpointStoreAsync(storage_url, "blobcontainer" + str(uuid.uuid4()), credential=get_devtools_credential(is_async=True))
     return checkpoint_store
 
 def get_logger(filename, level=logging.INFO):
@@ -115,41 +114,11 @@ def fake_span():
 
 @pytest.fixture(scope="session")
 def get_credential():
-    use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
-    use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
-
-    # User-based authentication through Azure PowerShell, if requested
-    if use_pwsh.lower() == "true":
-        log.info(
-            "Environment variable AZURE_TEST_USE_PWSH_AUTH set to 'true'. Using AzurePowerShellCredential."
-        )
-        from azure.identity import AzurePowerShellCredential
-        return AzurePowerShellCredential
-    # User-based authentication through Azure CLI, if requested
-    elif use_cli.lower() == "true":
-        log.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
-        from azure.identity import AzureCliCredential
-        return AzureCliCredential
-    return DefaultAzureCredential
+    return get_devtools_credential
 
 @pytest.fixture(scope="session")
 def get_credential_async():
-    use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
-    use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
-
-    # User-based authentication through Azure PowerShell, if requested
-    if use_pwsh.lower() == "true":
-        log.info(
-            "Environment variable AZURE_TEST_USE_PWSH_AUTH set to 'true'. Using AzurePowerShellCredential."
-        )
-        from azure.identity.aio import AzurePowerShellCredential
-        return AzurePowerShellCredential
-    # User-based authentication through Azure CLI, if requested
-    elif use_cli.lower() == "true":
-        log.info("Environment variable AZURE_TEST_USE_CLI_AUTH set to 'true'. Using AzureCliCredential.")
-        from azure.identity.aio import AzureCliCredential
-        return AzureCliCredential
-    return DefaultAzureCredentialAsync
+    return partial(get_devtools_credential, is_async=True)
 
 @pytest.fixture(scope="session")
 def resource_group():
@@ -161,7 +130,7 @@ def resource_group():
     return resource_group_name
 
 @pytest.fixture(scope="session")
-def eventhub_namespace(resource_group, get_credential):
+def eventhub_namespace(resource_group):
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -169,7 +138,7 @@ def eventhub_namespace(resource_group, get_credential):
         return
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = EventHubManagementClient(get_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = EventHubManagementClient(get_devtools_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     try:
         namespace_name = os.environ["EVENT_HUB_NAMESPACE"]
     except KeyError:
@@ -184,7 +153,7 @@ def eventhub_namespace(resource_group, get_credential):
 
 
 @pytest.fixture()
-def live_eventhub(resource_group, eventhub_namespace, get_credential):  # pylint: disable=redefined-outer-name
+def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefined-outer-name
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -193,7 +162,7 @@ def live_eventhub(resource_group, eventhub_namespace, get_credential):  # pylint
 
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = EventHubManagementClient(get_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = EventHubManagementClient(get_devtools_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     eventhub_name = EVENTHUB_PREFIX + str(uuid.uuid4())
     eventhub_ns_name, connection_string, key_name, primary_key = eventhub_namespace
     eventhub_endpoint_suffix = os.environ.get("EVENT_HUB_ENDPOINT_SUFFIX", ".servicebus.windows.net")
@@ -220,7 +189,7 @@ def live_eventhub(resource_group, eventhub_namespace, get_credential):  # pylint
             warnings.warn(UserWarning("eventhub teardown failed"))
 
 @pytest.fixture()
-def resource_mgmt_client(get_credential):
+def resource_mgmt_client():
     try:
         SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
     except KeyError:
@@ -229,7 +198,7 @@ def resource_mgmt_client(get_credential):
 
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
-    resource_client = EventHubManagementClient(get_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    resource_client = EventHubManagementClient(get_devtools_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     yield resource_client
 
 @pytest.fixture()
@@ -295,15 +264,15 @@ def connstr_receivers(live_eventhub, uamqp_transport):
         r.close()
 
 @pytest.fixture()
-def auth_credentials(live_eventhub, get_credential):
-    return live_eventhub['hostname'], live_eventhub['event_hub'], get_credential
+def auth_credentials(live_eventhub):
+    return live_eventhub['hostname'], live_eventhub['event_hub'], get_devtools_credential
 
 @pytest.fixture()
-def auth_credentials_async(live_eventhub, get_credential_async):
-    return live_eventhub['hostname'], live_eventhub['event_hub'], get_credential_async
+def auth_credentials_async(live_eventhub):
+    return live_eventhub['hostname'], live_eventhub['event_hub'], partial(get_devtools_credential, is_async=True)
 
 @pytest.fixture()
-def auth_credential_receivers(live_eventhub, get_credential, uamqp_transport):
+def auth_credential_receivers(live_eventhub, uamqp_transport):
     fully_qualified_namespace = live_eventhub['hostname']
     eventhub_name = live_eventhub['event_hub']
     partitions = [str(i) for i in range(PARTITION_COUNT)]
@@ -327,12 +296,12 @@ def auth_credential_receivers(live_eventhub, get_credential, uamqp_transport):
             receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500)
         receiver.open()
         receivers.append(receiver)
-    yield fully_qualified_namespace, eventhub_name, get_credential, receivers
+    yield fully_qualified_namespace, eventhub_name, get_devtools_credential, receivers
     for r in receivers:
         r.close()
 
 @pytest.fixture()
-def auth_credential_receivers_async(live_eventhub, get_credential_async, uamqp_transport):
+def auth_credential_receivers_async(live_eventhub, uamqp_transport):
     fully_qualified_namespace = live_eventhub['hostname']
     eventhub_name = live_eventhub['event_hub']
     partitions = [str(i) for i in range(PARTITION_COUNT)]
@@ -356,18 +325,18 @@ def auth_credential_receivers_async(live_eventhub, get_credential_async, uamqp_t
             receiver = ReceiveClient(live_eventhub['hostname'], source, auth=sas_auth, network_trace=False, timeout=30, link_credit=500)
         receiver.open()
         receivers.append(receiver)
-    yield fully_qualified_namespace, eventhub_name, get_credential_async, receivers
+    yield fully_qualified_namespace, eventhub_name, partial(get_devtools_credential, is_async=True), receivers
     for r in receivers:
         r.close()
 
 @pytest.fixture()
-def auth_credential_senders(live_eventhub, get_credential, uamqp_transport):
+def auth_credential_senders(live_eventhub, uamqp_transport):
     fully_qualified_namespace = live_eventhub['hostname']
     eventhub_name = live_eventhub['event_hub']
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
-        credential=get_credential(),
+        credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport
     )
     partitions = client.get_partition_ids()
@@ -376,19 +345,19 @@ def auth_credential_senders(live_eventhub, get_credential, uamqp_transport):
     for p in partitions:
         sender = client._create_producer(partition_id=p)
         senders.append(sender)
-    yield fully_qualified_namespace, eventhub_name, get_credential, senders
+    yield fully_qualified_namespace, eventhub_name, get_devtools_credential, senders
     for s in senders:
         s.close()
     client.close()
 
 @pytest.fixture()
-def auth_credential_senders_async(live_eventhub, get_credential, get_credential_async, uamqp_transport):
+def auth_credential_senders_async(live_eventhub, uamqp_transport):
     fully_qualified_namespace = live_eventhub['hostname']
     eventhub_name = live_eventhub['event_hub']
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
-        credential=get_credential(),
+        credential=get_devtools_credential(),
         uamqp_transport=uamqp_transport
     )
     partitions = client.get_partition_ids()
@@ -397,7 +366,7 @@ def auth_credential_senders_async(live_eventhub, get_credential, get_credential_
     for p in partitions:
         sender = client._create_producer(partition_id=p)
         senders.append(sender)
-    yield fully_qualified_namespace, eventhub_name, get_credential_async, senders
+    yield fully_qualified_namespace, eventhub_name, partial(get_devtools_credential, is_async=True), senders
     for s in senders:
         s.close()
     client.close()
