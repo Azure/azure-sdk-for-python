@@ -571,7 +571,7 @@ class SearchOperations:
 
     @overload
     def get_geocoding_batch(
-        self, geocoding_batch_request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
@@ -641,9 +641,9 @@ class SearchOperations:
           ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
         this case.
 
-        :param geocoding_batch_request_body: The list of address geocoding queries/requests to process.
+        :param body: The list of address geocoding queries/requests to process.
          The list can contain a max of 100 queries and must contain at least 1 query. Required.
-        :type geocoding_batch_request_body: JSON
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -655,7 +655,7 @@ class SearchOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                geocoding_batch_request_body = {
+                body = {
                     "batchItems": [
                         {
                             "addressLine": "str",  # Optional. The official street line
@@ -925,7 +925,7 @@ class SearchOperations:
 
     @overload
     def get_geocoding_batch(
-        self, geocoding_batch_request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
@@ -995,9 +995,9 @@ class SearchOperations:
           ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
         this case.
 
-        :param geocoding_batch_request_body: The list of address geocoding queries/requests to process.
+        :param body: The list of address geocoding queries/requests to process.
          The list can contain a max of 100 queries and must contain at least 1 query. Required.
-        :type geocoding_batch_request_body: IO[bytes]
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1222,7 +1222,7 @@ class SearchOperations:
         """
 
     @distributed_trace
-    def get_geocoding_batch(self, geocoding_batch_request_body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+    def get_geocoding_batch(self, body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
         a single request.
@@ -1291,10 +1291,10 @@ class SearchOperations:
           ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
         this case.
 
-        :param geocoding_batch_request_body: The list of address geocoding queries/requests to process.
+        :param body: The list of address geocoding queries/requests to process.
          The list can contain a max of 100 queries and must contain at least 1 query. Is either a JSON
          type or a IO[bytes] type. Required.
-        :type geocoding_batch_request_body: JSON or IO[bytes]
+        :type body: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1303,7 +1303,7 @@ class SearchOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                geocoding_batch_request_body = {
+                body = {
                     "batchItems": [
                         {
                             "addressLine": "str",  # Optional. The official street line
@@ -1587,10 +1587,10 @@ class SearchOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(geocoding_batch_request_body, (IOBase, bytes)):
-            _content = geocoding_batch_request_body
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _json = geocoding_batch_request_body
+            _json = body
 
         _request = build_search_get_geocoding_batch_request(
             client_id=self._config.client_id,
@@ -2113,7 +2113,7 @@ class SearchOperations:
 
     @overload
     def get_reverse_geocoding_batch(
-        self, reverse_geocoding_batch_request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
@@ -2182,9 +2182,9 @@ class SearchOperations:
           ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
         this case.
 
-        :param reverse_geocoding_batch_request_body: The list of reverse geocoding queries/requests to
+        :param body: The list of reverse geocoding queries/requests to
          process. The list can contain a max of 100 queries and must contain at least 1 query. Required.
-        :type reverse_geocoding_batch_request_body: JSON
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2196,7 +2196,7 @@ class SearchOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                reverse_geocoding_batch_request_body = {
+                body = {
                     "batchItems": [
                         {
                             "coordinates": [
@@ -2444,7 +2444,7 @@ class SearchOperations:
 
     @overload
     def get_reverse_geocoding_batch(
-        self, reverse_geocoding_batch_request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
@@ -2513,9 +2513,9 @@ class SearchOperations:
           ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
         this case.
 
-        :param reverse_geocoding_batch_request_body: The list of reverse geocoding queries/requests to
+        :param body: The list of reverse geocoding queries/requests to
          process. The list can contain a max of 100 queries and must contain at least 1 query. Required.
-        :type reverse_geocoding_batch_request_body: IO[bytes]
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2741,7 +2741,7 @@ class SearchOperations:
 
     @distributed_trace
     def get_reverse_geocoding_batch(
-        self, reverse_geocoding_batch_request_body: Union[JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
@@ -2810,10 +2810,10 @@ class SearchOperations:
           ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
         this case.
 
-        :param reverse_geocoding_batch_request_body: The list of reverse geocoding queries/requests to
+        :param body: The list of reverse geocoding queries/requests to
          process. The list can contain a max of 100 queries and must contain at least 1 query. Is either
          a JSON type or a IO[bytes] type. Required.
-        :type reverse_geocoding_batch_request_body: JSON or IO[bytes]
+        :type body: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2822,7 +2822,7 @@ class SearchOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                reverse_geocoding_batch_request_body = {
+                body = {
                     "batchItems": [
                         {
                             "coordinates": [
@@ -3084,10 +3084,10 @@ class SearchOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(reverse_geocoding_batch_request_body, (IOBase, bytes)):
-            _content = reverse_geocoding_batch_request_body
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _json = reverse_geocoding_batch_request_body
+            _json = body
 
         _request = build_search_get_reverse_geocoding_batch_request(
             client_id=self._config.client_id,

@@ -8,7 +8,7 @@
 
 from ._version import VERSION
 from ._client import MapsSearchClient
-from ._search_client import AzureMapsSearchClient
+from ._patch import AzureMapsSearchClient
 from ._enums import (
     LocalizedMapView,
     BoundaryResultType,

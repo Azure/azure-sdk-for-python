@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._client import MapsSearchClient
-from ._search_client_async import AzureMapsSearchClient
+from ._patch import AzureMapsSearchClient
 
 try:
     from ._patch import __all__ as _patch_all
