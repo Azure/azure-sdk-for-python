@@ -9,65 +9,95 @@
 from ._models_py3 import AvailabilitySet
 from ._models_py3 import AvailabilitySetListItem
 from ._models_py3 import AvailabilitySetListResult
+from ._models_py3 import AvailabilitySetProperties
+from ._models_py3 import AvailabilitySetTagsUpdate
 from ._models_py3 import Checkpoint
 from ._models_py3 import Cloud
 from ._models_py3 import CloudCapacity
 from ._models_py3 import CloudInventoryItem
 from ._models_py3 import CloudListResult
-from ._models_py3 import ErrorDefinition
+from ._models_py3 import CloudProperties
+from ._models_py3 import CloudTagsUpdate
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtendedLocation
+from ._models_py3 import GuestAgent
+from ._models_py3 import GuestAgentListResult
+from ._models_py3 import GuestAgentProperties
+from ._models_py3 import GuestCredential
 from ._models_py3 import HardwareProfile
 from ._models_py3 import HardwareProfileUpdate
+from ._models_py3 import HttpProxyConfiguration
+from ._models_py3 import InfrastructureProfile
+from ._models_py3 import InfrastructureProfileUpdate
 from ._models_py3 import InventoryItem
 from ._models_py3 import InventoryItemDetails
+from ._models_py3 import InventoryItemListResult
 from ._models_py3 import InventoryItemProperties
-from ._models_py3 import InventoryItemsList
-from ._models_py3 import NetworkInterfaces
-from ._models_py3 import NetworkInterfacesUpdate
+from ._models_py3 import NetworkInterface
+from ._models_py3 import NetworkInterfaceUpdate
 from ._models_py3 import NetworkProfile
 from ._models_py3 import NetworkProfileUpdate
-from ._models_py3 import OsProfile
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OsProfileForVmInstance
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
-from ._models_py3 import ResourcePatch
-from ._models_py3 import ResourceProviderOperation
-from ._models_py3 import ResourceProviderOperationDisplay
-from ._models_py3 import ResourceProviderOperationList
 from ._models_py3 import StopVirtualMachineOptions
 from ._models_py3 import StorageProfile
 from ._models_py3 import StorageProfileUpdate
-from ._models_py3 import StorageQoSPolicy
-from ._models_py3 import StorageQoSPolicyDetails
+from ._models_py3 import StorageQosPolicy
+from ._models_py3 import StorageQosPolicyDetails
 from ._models_py3 import SystemData
-from ._models_py3 import VMMServer
-from ._models_py3 import VMMServerListResult
-from ._models_py3 import VMMServerPropertiesCredentials
+from ._models_py3 import TrackedResource
 from ._models_py3 import VirtualDisk
 from ._models_py3 import VirtualDiskUpdate
-from ._models_py3 import VirtualMachine
 from ._models_py3 import VirtualMachineCreateCheckpoint
 from ._models_py3 import VirtualMachineDeleteCheckpoint
+from ._models_py3 import VirtualMachineInstance
+from ._models_py3 import VirtualMachineInstanceListResult
+from ._models_py3 import VirtualMachineInstanceProperties
+from ._models_py3 import VirtualMachineInstanceUpdate
+from ._models_py3 import VirtualMachineInstanceUpdateProperties
 from ._models_py3 import VirtualMachineInventoryItem
-from ._models_py3 import VirtualMachineListResult
 from ._models_py3 import VirtualMachineRestoreCheckpoint
 from ._models_py3 import VirtualMachineTemplate
 from ._models_py3 import VirtualMachineTemplateInventoryItem
 from ._models_py3 import VirtualMachineTemplateListResult
-from ._models_py3 import VirtualMachineUpdate
-from ._models_py3 import VirtualMachineUpdateProperties
+from ._models_py3 import VirtualMachineTemplateProperties
+from ._models_py3 import VirtualMachineTemplateTagsUpdate
 from ._models_py3 import VirtualNetwork
 from ._models_py3 import VirtualNetworkInventoryItem
 from ._models_py3 import VirtualNetworkListResult
+from ._models_py3 import VirtualNetworkProperties
+from ._models_py3 import VirtualNetworkTagsUpdate
+from ._models_py3 import VmInstanceHybridIdentityMetadata
+from ._models_py3 import VmInstanceHybridIdentityMetadataListResult
+from ._models_py3 import VmInstanceHybridIdentityMetadataProperties
+from ._models_py3 import VmmCredential
+from ._models_py3 import VmmServer
+from ._models_py3 import VmmServerListResult
+from ._models_py3 import VmmServerProperties
+from ._models_py3 import VmmServerTagsUpdate
 
-from ._scvmm_enums import AllocationMethod
-from ._scvmm_enums import CreateDiffDisk
-from ._scvmm_enums import CreatedByType
-from ._scvmm_enums import DynamicMemoryEnabled
-from ._scvmm_enums import InventoryType
-from ._scvmm_enums import IsCustomizable
-from ._scvmm_enums import LimitCpuForMigration
-from ._scvmm_enums import OsType
+from ._sc_vmm_mgmt_client_enums import ActionType
+from ._sc_vmm_mgmt_client_enums import AllocationMethod
+from ._sc_vmm_mgmt_client_enums import CreateDiffDisk
+from ._sc_vmm_mgmt_client_enums import CreatedByType
+from ._sc_vmm_mgmt_client_enums import DeleteFromHost
+from ._sc_vmm_mgmt_client_enums import DynamicMemoryEnabled
+from ._sc_vmm_mgmt_client_enums import ForceDelete
+from ._sc_vmm_mgmt_client_enums import InventoryType
+from ._sc_vmm_mgmt_client_enums import IsCustomizable
+from ._sc_vmm_mgmt_client_enums import IsHighlyAvailable
+from ._sc_vmm_mgmt_client_enums import LimitCpuForMigration
+from ._sc_vmm_mgmt_client_enums import Origin
+from ._sc_vmm_mgmt_client_enums import OsType
+from ._sc_vmm_mgmt_client_enums import ProvisioningAction
+from ._sc_vmm_mgmt_client_enums import ProvisioningState
+from ._sc_vmm_mgmt_client_enums import SkipShutdown
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -76,64 +106,94 @@ __all__ = [
     "AvailabilitySet",
     "AvailabilitySetListItem",
     "AvailabilitySetListResult",
+    "AvailabilitySetProperties",
+    "AvailabilitySetTagsUpdate",
     "Checkpoint",
     "Cloud",
     "CloudCapacity",
     "CloudInventoryItem",
     "CloudListResult",
-    "ErrorDefinition",
+    "CloudProperties",
+    "CloudTagsUpdate",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
     "ExtendedLocation",
+    "GuestAgent",
+    "GuestAgentListResult",
+    "GuestAgentProperties",
+    "GuestCredential",
     "HardwareProfile",
     "HardwareProfileUpdate",
+    "HttpProxyConfiguration",
+    "InfrastructureProfile",
+    "InfrastructureProfileUpdate",
     "InventoryItem",
     "InventoryItemDetails",
+    "InventoryItemListResult",
     "InventoryItemProperties",
-    "InventoryItemsList",
-    "NetworkInterfaces",
-    "NetworkInterfacesUpdate",
+    "NetworkInterface",
+    "NetworkInterfaceUpdate",
     "NetworkProfile",
     "NetworkProfileUpdate",
-    "OsProfile",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "OsProfileForVmInstance",
     "ProxyResource",
     "Resource",
-    "ResourcePatch",
-    "ResourceProviderOperation",
-    "ResourceProviderOperationDisplay",
-    "ResourceProviderOperationList",
     "StopVirtualMachineOptions",
     "StorageProfile",
     "StorageProfileUpdate",
-    "StorageQoSPolicy",
-    "StorageQoSPolicyDetails",
+    "StorageQosPolicy",
+    "StorageQosPolicyDetails",
     "SystemData",
-    "VMMServer",
-    "VMMServerListResult",
-    "VMMServerPropertiesCredentials",
+    "TrackedResource",
     "VirtualDisk",
     "VirtualDiskUpdate",
-    "VirtualMachine",
     "VirtualMachineCreateCheckpoint",
     "VirtualMachineDeleteCheckpoint",
+    "VirtualMachineInstance",
+    "VirtualMachineInstanceListResult",
+    "VirtualMachineInstanceProperties",
+    "VirtualMachineInstanceUpdate",
+    "VirtualMachineInstanceUpdateProperties",
     "VirtualMachineInventoryItem",
-    "VirtualMachineListResult",
     "VirtualMachineRestoreCheckpoint",
     "VirtualMachineTemplate",
     "VirtualMachineTemplateInventoryItem",
     "VirtualMachineTemplateListResult",
-    "VirtualMachineUpdate",
-    "VirtualMachineUpdateProperties",
+    "VirtualMachineTemplateProperties",
+    "VirtualMachineTemplateTagsUpdate",
     "VirtualNetwork",
     "VirtualNetworkInventoryItem",
     "VirtualNetworkListResult",
+    "VirtualNetworkProperties",
+    "VirtualNetworkTagsUpdate",
+    "VmInstanceHybridIdentityMetadata",
+    "VmInstanceHybridIdentityMetadataListResult",
+    "VmInstanceHybridIdentityMetadataProperties",
+    "VmmCredential",
+    "VmmServer",
+    "VmmServerListResult",
+    "VmmServerProperties",
+    "VmmServerTagsUpdate",
+    "ActionType",
     "AllocationMethod",
     "CreateDiffDisk",
     "CreatedByType",
+    "DeleteFromHost",
     "DynamicMemoryEnabled",
+    "ForceDelete",
     "InventoryType",
     "IsCustomizable",
+    "IsHighlyAvailable",
     "LimitCpuForMigration",
+    "Origin",
     "OsType",
+    "ProvisioningAction",
+    "ProvisioningState",
+    "SkipShutdown",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

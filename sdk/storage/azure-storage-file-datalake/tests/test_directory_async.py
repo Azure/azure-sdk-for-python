@@ -205,7 +205,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         # generate a token with directory level create permission
         directory_name = self._get_directory_reference()
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         directory_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, directory_name,
                                                    credential=token_credential)
         response = await directory_client.create_directory()
@@ -348,7 +348,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         new_acl = acl + "," + f"user:{object_id}:rwx"
         await root_directory.set_access_control_recursive(new_acl)
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         directory_client_oauth = DataLakeDirectoryClient(
             self.dsc.url,
             self.file_system_name,
@@ -631,7 +631,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
@@ -827,7 +827,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
@@ -902,7 +902,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await self.dsc.get_directory_client(self.file_system_name, directory_name + '/dir3').create_directory()
 
         # User delegation SAS with provided owner permissions
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
@@ -1049,7 +1049,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         owner_dsc = DataLakeServiceClient(url, credential=token_credential)
@@ -1520,7 +1520,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.create_directory()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
             credential=token_credential,
@@ -1547,16 +1547,15 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         await directory_client.create_directory()
 
         # Act
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
             credential=token_credential, audience=f'https://badaudience.blob.core.windows.net/'
         )
 
-        # Assert
-        with pytest.raises(ClientAuthenticationError):
-            await directory_client.exists()
-            await directory_client.create_sub_directory('testsubdir')
+        # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
+        await directory_client.exists()
+        await directory_client.create_sub_directory('testsubdir')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/scvmm/azure-mgmt-scvmm",
+    "Tag": "python/scvmm/azure-mgmt-scvmm_3e1282e8af"
+}

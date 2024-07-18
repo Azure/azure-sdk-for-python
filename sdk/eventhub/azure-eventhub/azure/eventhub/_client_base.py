@@ -318,7 +318,8 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential  # type: ignore
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
+        self._auth_uri: str
+        self._eventhub_auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
             amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
@@ -348,14 +349,20 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
+    def _create_auth(self, *, auth_uri: Optional[str] = None) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
 
+        :keyword auth_uri: The URI to authenticate with.
+        :paramtype auth_uri: str or None
+
         :return: The auth for the session.
         :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         """
+        # if auth_uri is not provided, use the default hub one
+        entity_auth_uri = auth_uri if auth_uri else self._eventhub_auth_uri
+
         try:
             # ignore mypy's warning because token_type is Optional
             token_type = self._credential.token_type  # type: ignore
@@ -363,14 +370,14 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
             return self._amqp_transport.create_token_auth(
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
+                entity_auth_uri,
+                functools.partial(self._credential.get_token, entity_auth_uri),
                 token_type=token_type,
                 config=self._config,
                 update_token=True,
             )
         return self._amqp_transport.create_token_auth(
-            self._auth_uri,
+            entity_auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
             config=self._config,
@@ -563,7 +570,7 @@ class ConsumerProducerMixin():
         if not self.running:
             if self._handler:
                 self._handler.close()
-            auth = self._client._create_auth()
+            auth = self._client._create_auth(auth_uri=self._client._auth_uri)
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
                 endpoint=self._client._address.hostname, auth=auth

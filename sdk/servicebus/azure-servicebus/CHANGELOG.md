@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+ 
+ - Fixed a bug where token refreshes were not happening on long running operations ([35717](https://github.com/Azure/azure-sdk-for-python/issues/35717))
 
 ### Other Changes
 

@@ -1,9 +1,14 @@
 # Release History
 
-## 12.17.0b1 (Unreleased)
+## 12.17.0 (2024-07-17)
 
 ### Features Added
+- Stable release of features from 12.17.0b1
 
+## 12.17.0b1 (2024-06-11)
+
+### Features Added
+- Added a more descriptive authorization error message when facing authorization errors.
 
 ## 12.16.0 (2024-05-07)
 

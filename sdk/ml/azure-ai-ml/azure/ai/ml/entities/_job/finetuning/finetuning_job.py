@@ -12,6 +12,8 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     ModelProvider as RestModelProvider,
     JobBase as RestJobBase,
 )
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.constants._job.finetuning import FineTuningConstants
@@ -24,6 +26,7 @@ class FineTuningJob(Job, JobIOMixin):
         self,
         **kwargs: Any,
     ) -> None:
+        kwargs[TYPE] = JobType.FINE_TUNING
         self.outputs = kwargs.pop("outputs", None)
         super().__init__(**kwargs)
 

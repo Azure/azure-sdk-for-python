@@ -58,8 +58,12 @@ parameters:
     default:
       Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        ServiceConnection: azure-sdk-tests
+        SubscriptionConfigurationFilePaths:
+          - eng/common/TestResources/sub-config/AzurePublicMsft.json
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+        ServiceConnection: azure-sdk-tests-preview
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         Location: 'centraluseuap'
@@ -98,7 +102,9 @@ parameters:
   - name: Packages
     type: object
     default: []
-
+  - name: UseFederatedAuth
+    type: boolean
+    default: false
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -141,6 +147,7 @@ extends:
                                 TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
                                 TestProxy: ${{ parameters.TestProxy }}
                                 ToxTestEnv: ${{ parameters.ToxTestEnv }}
+                                UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
                               MatrixConfigs:
                                 # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
                                 - ${{ each config in parameters.MatrixConfigs }}:
@@ -160,6 +167,8 @@ extends:
                                 SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
                                 Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                                 Cloud: ${{ cloud.key }}
+                                ServiceConnection: ${{ cloud.value.ServiceConnection }}
+                                SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
       - ${{ else }}:
         - ${{ each cloud in parameters.CloudConfig }}:
             - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
@@ -195,6 +204,7 @@ extends:
                               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
                               TestProxy: ${{ parameters.TestProxy }}
                               ToxTestEnv: ${{ parameters.ToxTestEnv }}
+                              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
                             MatrixConfigs:
                               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
                               - ${{ each config in parameters.MatrixConfigs }}:
@@ -214,6 +224,8 @@ extends:
                               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
                               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
                               Cloud: ${{ cloud.key }}
+                              ServiceConnection: ${{ cloud.value.ServiceConnection }}
+                              SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
       - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}

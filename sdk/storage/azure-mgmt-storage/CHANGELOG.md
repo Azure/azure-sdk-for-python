@@ -1,5 +1,34 @@
 # Release History
 
+## 21.2.1 (2024-06-27)
+
+### Bugs Fixed
+
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentInstancesReportOperations.list from str to int
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentsInstancesReportOperations.list from str to int
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentsOperations.list from str to int
+
+## 21.2.0 (2024-06-17)
+
+### Features Added
+
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Added operation group StorageTaskAssignmentInstancesReportOperations
+  - Added operation group StorageTaskAssignmentsInstancesReportOperations
+  - Added operation group StorageTaskAssignmentsOperations
+  - Model LocalUser has a new parameter allow_acl_authorization
+  - Model LocalUser has a new parameter extended_groups
+  - Model LocalUser has a new parameter group_id
+  - Model LocalUser has a new parameter is_nf_sv3_enabled
+  - Model LocalUser has a new parameter user_id
+  - Model LocalUsers has a new parameter next_link
+  - Model StorageAccount has a new parameter enable_extended_groups
+  - Model StorageAccountCreateParameters has a new parameter enable_extended_groups
+  - Model StorageAccountUpdateParameters has a new parameter enable_extended_groups
+  - Operation LocalUsersOperations.list has a new optional parameter filter
+  - Operation LocalUsersOperations.list has a new optional parameter include
+  - Operation LocalUsersOperations.list has a new optional parameter maxpagesize
+
 ## 21.1.0 (2023-08-18)
 
 ### Features Added

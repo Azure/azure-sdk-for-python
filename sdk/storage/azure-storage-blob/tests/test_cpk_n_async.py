@@ -971,7 +971,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # Arrange
         # to get user delegation key
-        oauth_token_credential = self.generate_oauth_token()
+        oauth_token_credential = self.get_credential(BlobServiceClient, is_async=True)
         service_client = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=oauth_token_credential,
