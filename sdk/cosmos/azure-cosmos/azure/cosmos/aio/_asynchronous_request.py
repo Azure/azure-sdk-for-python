@@ -31,7 +31,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
-from .._synchronized_request import _request_body_from_data
+from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs):
@@ -65,11 +65,15 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
-        base_url = request_params.endpoint_override
+        base_url = request_params.location_endpoint_to_route
     else:
         base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
-    if base_url != pipeline_client._base_url:
-        request.url = request.url.replace(pipeline_client._base_url, base_url)
+    if base_url != request.url:
+        # TODO: remove this comment for the PR
+        # this was checking the wrong thing, pipeline_client.base_url will always be the base non-locational url
+        # due to this, the request url will never get updated since you won't find the base_url in the locational one
+        # trying to find and replace contoso.documents.azure.com in contoso-west.documents.azure.com will never happen
+        request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
 
