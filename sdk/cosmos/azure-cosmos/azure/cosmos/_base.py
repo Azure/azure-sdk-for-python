@@ -114,7 +114,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         path: str,
         resource_id: Optional[str],
         resource_type: str,
-        options: Mapping[str, Any],
+        options: Dict[str, Any],
         partition_key_range_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
@@ -131,7 +131,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :rtype: dict
     """
     headers = dict(default_headers)
-    options = dict(options) or {}
+    options = options or {}
 
     if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"

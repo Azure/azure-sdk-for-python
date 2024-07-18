@@ -25,7 +25,6 @@ class TestContainerPropertiesCache(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
-    last_headers = []
     client: cosmos_client.CosmosClient = None
 
 
@@ -439,6 +438,69 @@ class TestContainerPropertiesCache(unittest.TestCase):
             self.assertEqual(e.status_code, 404)
         created_db.delete_container(container_name)
 
+    def test_container_recreate_query(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # create an item to read
+        try:
+            item_to_read = created_container.create_item(body={'id': 'item1', container_pk: 'val'})
+            item_to_read2 = created_container.create_item(body={'id': 'item2', container_pk: 'OtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
+            created_container.create_item(body={'id': 'item2', container2_pk: 'DifferentValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        # Will succeed because item id and partition key value are the same as an existing one in the new container
+        # But queried items are not the same as their RID will be different
+        try:
+            query = "SELECT * FROM c WHERE c.id = @id"
+            parameters = [{"name": "@id", "value": item_to_read['id']}]
+            query_result = list(created_container.query_items(query=query,
+                                                              parameters=parameters,
+                                                              enable_cross_partition_query=True))
+            self.assertEqual(1, len(query_result))
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("Query should still succeed as item has same id despite the RID not matching.")
+        # Will succeed because item id and partition key value are the same as an existing one in the new container
+        # But queried items are not the same as their RID will be different
+        query = "SELECT * FROM c WHERE c.id = @id"
+        parameters = [{"name": "@id", "value": 'item1'}]
+        query_result = list(
+            created_container.query_items(query=query, parameters=parameters, enable_cross_partition_query=True))
+        self.assertNotEqual(query_result[0], item_to_read)
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            # Trying to query for item from old container will return empty query
+            query = "SELECT * FROM c WHERE c.partKey = @partKey"
+            parameters = [{"name": "@partKey", "value": item_to_read2['PK']}]
+            query_result = list(created_container.query_items(query=query,
+                                                              parameters=parameters,
+                                                              enable_cross_partition_query=True))
+            self.assertEqual(0, len(query_result))
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("Query should still succeed if container is recreated.")
+        created_db.delete_container(container_name)
 
 
 if __name__ == '__main__':

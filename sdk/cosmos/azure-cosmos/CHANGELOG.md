@@ -9,9 +9,11 @@
 
 #### Bugs Fixed
 * Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR 35731](https://github.com/Azure/azure-sdk-for-python/pull/35731)
-* Incomplete Partition Key Extractions in documents for Subpartitioning now gives 400/1001 errors to match other SDKs. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 
 #### Other Changes
+* Getting offer thoughput when it has not been defined in a container will now give a 404/10004 instead of just a 404. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
+* Incomplete Partition Key Extractions in documents for Subpartitioning now gives 400/1001 instead of just a 400. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
+
 
 ### 4.7.0 (2024-05-15)
 

@@ -453,6 +453,68 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 404
         await created_db.delete_container(container_name)
 
+    async def test_container_recreate_query_async(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+        # Create The Container
+        try:
+            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        # create an item to read
+        try:
+            item_to_read = await created_container.create_item(body={'id': 'item1', container_pk: 'val'})
+            item_to_read2 = await created_container.create_item(body={'id': 'item2', container_pk: 'OtherValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Recreate container
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        await created_db.delete_container(created_container)
+        try:
+            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+                path="/" + container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+        try:
+            await created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
+            await created_container.create_item(body={'id': 'item2', container2_pk: 'DifferentValue'})
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        # Will succeed because item id and partition key value are the same as an existing one in the new container
+        # But queried items are not the same as their RID will be different
+        try:
+            query = "SELECT * FROM c WHERE c.id = @id"
+            parameters = [{"name": "@id", "value": item_to_read['id']}]
+            query_result = [item async for item in created_container.query_items(query=query,
+                                                                                 parameters=parameters)]
+            assert len(query_result) == 1
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("Query should still succeed as item has same id despite the RID not matching.")
+        # Will succeed because item id and partition key value are the same as an existing one in the new container
+        # But queried items are not the same as their RID will be different
+        query = "SELECT * FROM c WHERE c.id = @id"
+        parameters = [{"name": "@id", "value": 'item1'}]
+        query_result = [item async for item in created_container.query_items(query=query,
+                                                                             parameters=parameters)]
+        assert query_result[0] != item_to_read
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            # Trying to query for item from old container will return empty query
+            query = "SELECT * FROM c WHERE c.partKey = @partKey"
+            parameters = [{"name": "@partKey", "value": item_to_read2['PK']}]
+            query_result = [item async for item in created_container.query_items(query=query,
+                                                                                 parameters=parameters)]
+            assert len(query_result) == 0
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("Query should still succeed if container is recreated.")
+        await created_db.delete_container(container_name)
+
 
 if __name__ == '__main__':
     unittest.main()

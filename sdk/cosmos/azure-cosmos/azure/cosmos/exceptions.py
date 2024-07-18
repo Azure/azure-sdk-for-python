@@ -66,7 +66,6 @@ class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError
             super(CosmosResourceNotFoundError, self).__init__(status_code, message, response, **kwargs)
 
 
-
 class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
     """An HTTP error response with status code 409."""
 
@@ -140,11 +139,15 @@ def _partition_range_is_gone(e):
     return False
 
 
-def _container_recreate_exception(e):
-    if (e.status_code in (
-            http_constants.StatusCodes.BAD_REQUEST, http_constants.StatusCodes.NOT_FOUND)) and e.sub_status in (
-            http_constants.SubStatusCodes.COLLECTION_RID_MISMATCH,
-            http_constants.SubStatusCodes.OWNER_RESOURCE_NOT_FOUND,
-            http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND):
-        return True
-    return False
+def _container_recreate_exception(e) -> bool:
+    is_bad_request = e.status_code == http_constants.StatusCodes.BAD_REQUEST
+    is_collection_rid_mismatch = e.sub_status == http_constants.SubStatusCodes.COLLECTION_RID_MISMATCH
+
+    is_not_found = e.status_code == http_constants.StatusCodes.NOT_FOUND
+    is_owner_or_throughput_not_found = e.sub_status in (
+        http_constants.SubStatusCodes.OWNER_RESOURCE_NOT_FOUND,
+        http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND
+    )
+
+    return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_owner_or_throughput_not_found)
+

@@ -51,7 +51,7 @@ from .partition_key import (
 
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
@@ -86,7 +86,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._scripts: Optional[ScriptsProxy] = None
         if properties:
             self.client_connection._set_container_properties_cache(self.container_link,
-                                                                   _set_properties_cache(properties))  # pylint: disable=protected-access, line-too-long
+                                                                   _set_properties_cache(properties))
 
     def __repr__(self) -> str:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
@@ -129,8 +129,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    def __get_client_container_caches(self):
-        return self.client_connection._container_properties_cache  # pylint: disable=protected-access
+    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
+        return self.client_connection._container_properties_cache
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param

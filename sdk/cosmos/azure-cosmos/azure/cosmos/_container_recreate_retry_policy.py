@@ -22,12 +22,13 @@
 """Internal class for container recreate retry policy implementation in the Azure
 Cosmos database service.
 """
-import ast
 import json
-
 from typing import Optional, Dict, Any, List, Union
+
 from . import http_constants
 from .partition_key import _Empty, _Undefined
+
+from azure.core.pipeline.transport._base import HttpRequest
 
 
 # pylint: disable=protected-access
@@ -35,7 +36,7 @@ from .partition_key import _Empty, _Undefined
 
 class ContainerRecreateRetryPolicy:
     def __init__(self, client: Optional[Any], container_caches: Optional[Dict[str, Dict[str, Any]]],
-                 headers: Dict[str, Any], *args: Optional[List]):
+                 request: Optional[HttpRequest], *args: Optional[List]):
         self.retry_after_in_milliseconds = 0  # Same as in .net
         self.refresh_container_properties_cache = True
         self.args = args
@@ -43,7 +44,8 @@ class ContainerRecreateRetryPolicy:
         self.container_rid = None
         self.container_link = None
         self.link = None
-        self._headers = headers
+        self._request = request
+        self._headers = dict(request.headers) if request else {}
         if self._headers and self._intended_headers in self._headers:
             self.container_rid = self._headers[self._intended_headers]
             if container_caches:
@@ -83,16 +85,16 @@ class ContainerRecreateRetryPolicy:
             return container_properties_caches[container_link]["_rid"] == rid
         return not rid
 
-    def should_extract_partition_key(self, headers: Dict[str, Any], container_cache: Optional[Dict[str, Any]]) -> bool:
-        if headers and http_constants.HttpHeaders.PartitionKey in headers:
-            current_partition_key = headers[http_constants.HttpHeaders.PartitionKey]
+    def should_extract_partition_key(self, container_cache: Optional[Dict[str, Any]]) -> bool:
+        if self._headers and http_constants.HttpHeaders.PartitionKey in self._headers:
+            current_partition_key = self._headers[http_constants.HttpHeaders.PartitionKey]
             partition_key_definition = container_cache["partitionKey"] if container_cache else None
             if partition_key_definition and partition_key_definition["kind"] == "MultiHash":
                 # A null in the multihash partition key indicates a failure in extracting partition keys
                 # from the document definition
                 return 'null' in current_partition_key
             # These values indicate the partition key was not successfully extracted from the document definition
-            return current_partition_key in ('[{}]', '[]')
+            return current_partition_key in ('[{}]', '[]', [{}], [])
         return False
 
     def _extract_partition_key(self, client: Optional[Any], container_cache: Optional[Dict[str, Any]], body: str)\
@@ -158,8 +160,8 @@ class ContainerRecreateRetryPolicy:
 
     def __str_to_dict(self, dict_string: str) -> Dict:
         try:
-            # Use ast.literal_eval() to convert string to dictionary
-            dict_obj = ast.literal_eval(dict_string)
+            # Use json.loads() to convert string to dictionary
+            dict_obj = json.loads(dict_string)
             return dict_obj
         except (SyntaxError, ValueError):
             return {}

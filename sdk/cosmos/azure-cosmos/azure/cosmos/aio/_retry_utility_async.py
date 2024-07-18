@@ -21,13 +21,14 @@
 
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
-
+import json
 import time
 import asyncio
-import ast
+from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy
+from azure.core.pipeline.transport._base import HttpRequest
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
@@ -76,13 +77,16 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-
+    # HttpRequest we would need to modify for Container Recreate Retry Policy
+    request: Optional[HttpRequest] = None
     if args and len(args) > 3:
+        # Reference HttpRequest instance in args
+        request = args[3]
         container_recreate_retry_policy = ContainerRecreateRetryPolicy(
-            client, client._container_properties_cache, args[3].headers, *args)
+            client, client._container_properties_cache, request, *args)
     else:
         container_recreate_retry_policy = ContainerRecreateRetryPolicy(
-            client, client._container_properties_cache, {}, *args)
+            client, client._container_properties_cache, None, *args)
 
     while True:
         client_timeout = kwargs.get('timeout')
@@ -105,9 +109,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # If container does not have throughput, results will return empty list, but to align with other SDKs
             # we manually raise a 404. We raise it here, so we can handle it in retry utilities
             if result and isinstance(result[0], dict) and 'Offers' in result[0] and not result[0]['Offers'] \
-                    and args[3].method == 'POST':
+                    and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
-                link = ast.literal_eval(args[3].body)["parameters"][0]["value"]
+                link = json.loads(request.body)["parameters"][0]["value"]
                 raise exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
                     message="Could not find ThroughputProperties for container " + link,
@@ -130,31 +134,29 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 retry_policy = partition_key_range_gone_retry_policy
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
-                # pylint: disable=protected-access
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the
                 # container properties and pass in the new RID in the headers.
                 await client._refresh_container_properties_cache(retry_policy.container_link)
-                if retry_policy.check_if_rid_different(
+                if not e.sub_status == SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
                         retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
                     retry_policy.refresh_container_properties_cache = False
                 else:
                     cached_container = client._container_properties_cache[retry_policy.container_link]
                     # If partition key value was previously extracted from the document definition
                     # reattempt to extract partition key with updated partition key definition
-                    if retry_policy.should_extract_partition_key(args[3].headers, cached_container):
+                    if retry_policy.should_extract_partition_key(cached_container):
                         new_partition_key = await retry_policy._extract_partition_key_async(
-                            client, container_cache=cached_container, body=args[3].body
+                            client, container_cache=cached_container, body=request.body
                         )
-                        args[3].headers[HttpHeaders.PartitionKey] = new_partition_key
+                        request.headers[HttpHeaders.PartitionKey] = new_partition_key
                     # If getting throughput, we have to replace the container link received from stale cache
                     # with refreshed cache
-                    if retry_policy.should_update_throughput_link(args[3].body, cached_container):
-                        new_body = retry_policy._update_throughput_link(args[3].body)
-                        args[3].body = new_body
-                        args[3].data = new_body
+                    if retry_policy.should_update_throughput_link(request.body, cached_container):
+                        new_body = retry_policy._update_throughput_link(request.body)
+                        request.body = new_body
 
                     retry_policy.container_rid = cached_container["_rid"]
-                    args[3].headers[retry_policy._intended_headers] = retry_policy.container_rid
+                    request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
                 retry_policy = timeout_failover_retry_policy
             else:
