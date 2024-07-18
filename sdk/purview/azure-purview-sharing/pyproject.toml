@@ -2,3 +2,4 @@
 pylint = false
 pyright = false
 verifytypes = false
+sphinx = false
