@@ -20,4 +20,3 @@ class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
     def test_policy_list(self):
         result = list(self.client.policy_assignments.list())
         assert len(result) > 0
-

@@ -34,7 +34,18 @@ stages:
                 deploy:
                   steps:
                     - checkout: self
+
+                    - task: UsePythonVersion@0
+                      inputs:
+                        versionSpec: '3.12'
+
+                    - script: |
+                        set -e
+                        python -m pip install -r eng/release_requirements.txt
+                      displayName: Install Release Dependencies
+
                     - template: /eng/common/pipelines/templates/steps/retain-run.yml
+
                     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
                       parameters:
                         PackageName: "azure-template"
@@ -191,7 +202,6 @@ stages:
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
-                          BlobSASKey: '$(azure-sdk-docs-prod-sas)'
                           BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
                           ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'

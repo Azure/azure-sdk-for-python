@@ -19,17 +19,14 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
-from ._graph_resources_operations import GraphResourcesOperations
 from ._sql_resources_operations import SqlResourcesOperations
 from ._mongo_db_resources_operations import MongoDBResourcesOperations
 from ._table_resources_operations import TableResourcesOperations
 from ._cassandra_resources_operations import CassandraResourcesOperations
 from ._gremlin_resources_operations import GremlinResourcesOperations
 from ._locations_operations import LocationsOperations
-from ._data_transfer_jobs_operations import DataTransferJobsOperations
 from ._cassandra_clusters_operations import CassandraClustersOperations
 from ._cassandra_data_centers_operations import CassandraDataCentersOperations
-from ._mongo_clusters_operations import MongoClustersOperations
 from ._notebook_workspaces_operations import NotebookWorkspacesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
@@ -46,10 +43,6 @@ from ._restorable_gremlin_resources_operations import RestorableGremlinResources
 from ._restorable_tables_operations import RestorableTablesOperations
 from ._restorable_table_resources_operations import RestorableTableResourcesOperations
 from ._service_operations import ServiceOperations
-from ._throughput_pools_operations import ThroughputPoolsOperations
-from ._throughput_pool_operations import ThroughputPoolOperations
-from ._throughput_pool_accounts_operations import ThroughputPoolAccountsOperations
-from ._throughput_pool_account_operations import ThroughputPoolAccountOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -69,17 +62,14 @@ __all__ = [
     "CollectionPartitionOperations",
     "PartitionKeyRangeIdOperations",
     "PartitionKeyRangeIdRegionOperations",
-    "GraphResourcesOperations",
     "SqlResourcesOperations",
     "MongoDBResourcesOperations",
     "TableResourcesOperations",
     "CassandraResourcesOperations",
     "GremlinResourcesOperations",
     "LocationsOperations",
-    "DataTransferJobsOperations",
     "CassandraClustersOperations",
     "CassandraDataCentersOperations",
-    "MongoClustersOperations",
     "NotebookWorkspacesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
@@ -96,10 +86,6 @@ __all__ = [
     "RestorableTablesOperations",
     "RestorableTableResourcesOperations",
     "ServiceOperations",
-    "ThroughputPoolsOperations",
-    "ThroughputPoolOperations",
-    "ThroughputPoolAccountsOperations",
-    "ThroughputPoolAccountOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

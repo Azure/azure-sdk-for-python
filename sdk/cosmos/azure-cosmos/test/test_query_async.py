@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import asyncio
+
+import os
 import unittest
 import uuid
 from asyncio import sleep, gather
@@ -45,6 +46,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
+        if self.host == "https://localhost:8081/":
+            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     async def asyncTearDown(self):
         await self.client.close()
