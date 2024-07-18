@@ -31,7 +31,6 @@ extends:
   template: /eng/common/pipelines/templates/jobs/perf.yml
   parameters:
     TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
-    UseFederatedAuth: true
     Language: Python
     LanguageVersion: ${{ parameters.LanguageVersion }}
     Variables:
