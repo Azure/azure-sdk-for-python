@@ -8,10 +8,9 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -20,45 +19,278 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from ... import models as _models
-from ...operations._frontends_interface_operations import (
-    build_create_or_update_request,
-    build_delete_request,
-    build_get_request,
-    build_list_by_traffic_controller_request,
-    build_update_request,
-)
+from .. import models as _models
+from .._serialization import Serializer
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-class FrontendsInterfaceOperations:
+def build_list_by_traffic_controller_request(
+    resource_group_name: str, traffic_controller_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceNetworking/trafficControllers/{trafficControllerName}/securityPolicy",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "trafficControllerName": _SERIALIZER.url(
+            "traffic_controller_name",
+            traffic_controller_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_request(
+    resource_group_name: str,
+    traffic_controller_name: str,
+    security_policy_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceNetworking/trafficControllers/{trafficControllerName}/securityPolicy/{securityPolicyName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "trafficControllerName": _SERIALIZER.url(
+            "traffic_controller_name",
+            traffic_controller_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+        "securityPolicyName": _SERIALIZER.url(
+            "security_policy_name",
+            security_policy_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_create_or_update_request(
+    resource_group_name: str,
+    traffic_controller_name: str,
+    security_policy_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceNetworking/trafficControllers/{trafficControllerName}/securityPolicy/{securityPolicyName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "trafficControllerName": _SERIALIZER.url(
+            "traffic_controller_name",
+            traffic_controller_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+        "securityPolicyName": _SERIALIZER.url(
+            "security_policy_name",
+            security_policy_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_update_request(
+    resource_group_name: str,
+    traffic_controller_name: str,
+    security_policy_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceNetworking/trafficControllers/{trafficControllerName}/securityPolicy/{securityPolicyName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "trafficControllerName": _SERIALIZER.url(
+            "traffic_controller_name",
+            traffic_controller_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+        "securityPolicyName": _SERIALIZER.url(
+            "security_policy_name",
+            security_policy_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_delete_request(
+    resource_group_name: str,
+    traffic_controller_name: str,
+    security_policy_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceNetworking/trafficControllers/{trafficControllerName}/securityPolicy/{securityPolicyName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "trafficControllerName": _SERIALIZER.url(
+            "traffic_controller_name",
+            traffic_controller_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+        "securityPolicyName": _SERIALIZER.url(
+            "security_policy_name",
+            security_policy_name,
+            "str",
+            pattern=r"^[A-Za-z0-9]([A-Za-z0-9-_.]{0,62}[A-Za-z0-9])?$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class SecurityPoliciesInterfaceOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicenetworking.aio.ServiceNetworkingMgmtClient`'s
-        :attr:`frontends_interface` attribute.
+        :class:`~azure.mgmt.servicenetworking.ServiceNetworkingMgmtClient`'s
+        :attr:`security_policies_interface` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -68,23 +300,23 @@ class FrontendsInterfaceOperations:
     @distributed_trace
     def list_by_traffic_controller(
         self, resource_group_name: str, traffic_controller_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Frontend"]:
-        """List Frontend resources by TrafficController.
+    ) -> Iterable["_models.SecurityPolicy"]:
+        """List SecurityPolicy resources by TrafficController.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :return: An iterator like instance of either Frontend or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicenetworking.models.Frontend]
+        :return: An iterator like instance of either SecurityPolicy or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.servicenetworking.models.SecurityPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.FrontendListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SecurityPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -124,18 +356,18 @@ class FrontendsInterfaceOperations:
                 _request.method = "GET"
             return _request
 
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("FrontendListResult", pipeline_response)
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("SecurityPolicyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -147,23 +379,23 @@ class FrontendsInterfaceOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def get(
-        self, resource_group_name: str, traffic_controller_name: str, frontend_name: str, **kwargs: Any
-    ) -> _models.Frontend:
-        """Get a Frontend.
+    @distributed_trace
+    def get(
+        self, resource_group_name: str, traffic_controller_name: str, security_policy_name: str, **kwargs: Any
+    ) -> _models.SecurityPolicy:
+        """Get a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
-        :return: Frontend or the result of cls(response)
-        :rtype: ~azure.mgmt.servicenetworking.models.Frontend
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
+        :return: SecurityPolicy or the result of cls(response)
+        :rtype: ~azure.mgmt.servicenetworking.models.SecurityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -178,12 +410,12 @@ class FrontendsInterfaceOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.Frontend] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SecurityPolicy] = kwargs.pop("cls", None)
 
         _request = build_get_request(
             resource_group_name=resource_group_name,
             traffic_controller_name=traffic_controller_name,
-            frontend_name=frontend_name,
+            security_policy_name=security_policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -192,7 +424,7 @@ class FrontendsInterfaceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -203,21 +435,21 @@ class FrontendsInterfaceOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Frontend", pipeline_response.http_response)
+        deserialized = self._deserialize("SecurityPolicy", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _create_or_update_initial(
+    def _create_or_update_initial(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
-        resource: Union[_models.Frontend, IO[bytes]],
+        security_policy_name: str,
+        resource: Union[_models.SecurityPolicy, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -231,7 +463,7 @@ class FrontendsInterfaceOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -239,12 +471,12 @@ class FrontendsInterfaceOperations:
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _json = self._serialize.body(resource, "Frontend")
+            _json = self._serialize.body(resource, "SecurityPolicy")
 
         _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             traffic_controller_name=traffic_controller_name,
-            frontend_name=frontend_name,
+            security_policy_name=security_policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -256,14 +488,14 @@ class FrontendsInterfaceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            await response.read()  # Load the body in memory and close the socket
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -283,91 +515,91 @@ class FrontendsInterfaceOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_create_or_update(
+    def begin_create_or_update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
-        resource: _models.Frontend,
+        security_policy_name: str,
+        resource: _models.SecurityPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.Frontend]:
-        """Create a Frontend.
+    ) -> LROPoller[_models.SecurityPolicy]:
+        """Create a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.servicenetworking.models.Frontend
+        :type resource: ~azure.mgmt.servicenetworking.models.SecurityPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either Frontend or the result of
+        :return: An instance of LROPoller that returns either SecurityPolicy or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.Frontend]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicenetworking.models.SecurityPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def begin_create_or_update(
+    def begin_create_or_update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
+        security_policy_name: str,
         resource: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.Frontend]:
-        """Create a Frontend.
+    ) -> LROPoller[_models.SecurityPolicy]:
+        """Create a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns either Frontend or the result of
+        :return: An instance of LROPoller that returns either SecurityPolicy or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.Frontend]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicenetworking.models.SecurityPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def begin_create_or_update(
+    @distributed_trace
+    def begin_create_or_update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
-        resource: Union[_models.Frontend, IO[bytes]],
+        security_policy_name: str,
+        resource: Union[_models.SecurityPolicy, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.Frontend]:
-        """Create a Frontend.
+    ) -> LROPoller[_models.SecurityPolicy]:
+        """Create a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
-        :param resource: Resource create parameters. Is either a Frontend type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.mgmt.servicenetworking.models.Frontend or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns either Frontend or the result of
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
+        :param resource: Resource create parameters. Is either a SecurityPolicy type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.SecurityPolicy or IO[bytes]
+        :return: An instance of LROPoller that returns either SecurityPolicy or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.Frontend]
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.servicenetworking.models.SecurityPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -375,15 +607,15 @@ class FrontendsInterfaceOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Frontend] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        cls: ClsType[_models.SecurityPolicy] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(
+            raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 traffic_controller_name=traffic_controller_name,
-                frontend_name=frontend_name,
+                security_policy_name=security_policy_name,
                 resource=resource,
                 api_version=api_version,
                 content_type=content_type,
@@ -392,118 +624,117 @@ class FrontendsInterfaceOperations:
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Frontend", pipeline_response.http_response)
+            deserialized = self._deserialize("SecurityPolicy", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
             )
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.Frontend].from_continuation_token(
+            return LROPoller[_models.SecurityPolicy].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.Frontend](
+        return LROPoller[_models.SecurityPolicy](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
     @overload
-    async def update(
+    def update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
-        properties: _models.FrontendUpdate,
+        security_policy_name: str,
+        properties: _models.SecurityPolicyUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Frontend:
-        """Update a Frontend.
+    ) -> _models.SecurityPolicy:
+        """Update a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.servicenetworking.models.FrontendUpdate
+        :type properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Frontend or the result of cls(response)
-        :rtype: ~azure.mgmt.servicenetworking.models.Frontend
+        :return: SecurityPolicy or the result of cls(response)
+        :rtype: ~azure.mgmt.servicenetworking.models.SecurityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update(
+    def update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
+        security_policy_name: str,
         properties: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Frontend:
-        """Update a Frontend.
+    ) -> _models.SecurityPolicy:
+        """Update a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Frontend or the result of cls(response)
-        :rtype: ~azure.mgmt.servicenetworking.models.Frontend
+        :return: SecurityPolicy or the result of cls(response)
+        :rtype: ~azure.mgmt.servicenetworking.models.SecurityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update(
+    @distributed_trace
+    def update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        frontend_name: str,
-        properties: Union[_models.FrontendUpdate, IO[bytes]],
+        security_policy_name: str,
+        properties: Union[_models.SecurityPolicyUpdate, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Frontend:
-        """Update a Frontend.
+    ) -> _models.SecurityPolicy:
+        """Update a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
-        :param properties: The resource properties to be updated. Is either a FrontendUpdate type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.servicenetworking.models.FrontendUpdate or IO[bytes]
-        :return: Frontend or the result of cls(response)
-        :rtype: ~azure.mgmt.servicenetworking.models.Frontend
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
+        :param properties: The resource properties to be updated. Is either a SecurityPolicyUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyUpdate or IO[bytes]
+        :return: SecurityPolicy or the result of cls(response)
+        :rtype: ~azure.mgmt.servicenetworking.models.SecurityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -519,7 +750,7 @@ class FrontendsInterfaceOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Frontend] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SecurityPolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -527,12 +758,12 @@ class FrontendsInterfaceOperations:
         if isinstance(properties, (IOBase, bytes)):
             _content = properties
         else:
-            _json = self._serialize.body(properties, "FrontendUpdate")
+            _json = self._serialize.body(properties, "SecurityPolicyUpdate")
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
             traffic_controller_name=traffic_controller_name,
-            frontend_name=frontend_name,
+            security_policy_name=security_policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -544,7 +775,7 @@ class FrontendsInterfaceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -555,16 +786,16 @@ class FrontendsInterfaceOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Frontend", pipeline_response.http_response)
+        deserialized = self._deserialize("SecurityPolicy", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _delete_initial(
-        self, resource_group_name: str, traffic_controller_name: str, frontend_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    def _delete_initial(
+        self, resource_group_name: str, traffic_controller_name: str, security_policy_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -577,12 +808,12 @@ class FrontendsInterfaceOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
             resource_group_name=resource_group_name,
             traffic_controller_name=traffic_controller_name,
-            frontend_name=frontend_name,
+            security_policy_name=security_policy_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -591,14 +822,14 @@ class FrontendsInterfaceOperations:
         _request.url = self._client.format_url(_request.url)
 
         _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            await response.read()  # Load the body in memory and close the socket
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -618,21 +849,21 @@ class FrontendsInterfaceOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def begin_delete(
-        self, resource_group_name: str, traffic_controller_name: str, frontend_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Delete a Frontend.
+    @distributed_trace
+    def begin_delete(
+        self, resource_group_name: str, traffic_controller_name: str, security_policy_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a SecurityPolicy.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param frontend_name: Frontends. Required.
-        :type frontend_name: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :param security_policy_name: SecurityPolicy. Required.
+        :type security_policy_name: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -640,21 +871,21 @@ class FrontendsInterfaceOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(
+            raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 traffic_controller_name=traffic_controller_name,
-                frontend_name=frontend_name,
+                security_policy_name=security_policy_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-            await raw_result.http_response.read()  # type: ignore
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -662,18 +893,18 @@ class FrontendsInterfaceOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
             )
         elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+            polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

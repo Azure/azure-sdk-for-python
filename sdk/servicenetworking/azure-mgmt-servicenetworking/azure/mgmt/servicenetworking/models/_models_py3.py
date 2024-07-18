@@ -23,7 +23,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -64,10 +64,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -117,10 +117,10 @@ class Association(TrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -193,7 +193,7 @@ class Association(TrackedResource):
 class AssociationListResult(_serialization.Model):
     """The response of a Association list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The Association items on this page. Required.
     :vartype value: list[~azure.mgmt.servicenetworking.models.Association]
@@ -225,7 +225,7 @@ class AssociationListResult(_serialization.Model):
 class AssociationSubnet(_serialization.Model):
     """Association Subnet.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Association ID. Required.
     :vartype id: str
@@ -400,14 +400,14 @@ class ErrorResponse(_serialization.Model):
 
 
 class Frontend(TrackedResource):
-    """Frontend Subresource of Traffic Controller.
+    """Frontend Sub Resource of Traffic Controller.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -466,7 +466,7 @@ class Frontend(TrackedResource):
 class FrontendListResult(_serialization.Model):
     """The response of a Frontend list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The Frontend items on this page. Required.
     :vartype value: list[~azure.mgmt.servicenetworking.models.Frontend]
@@ -639,7 +639,7 @@ class OperationListResult(_serialization.Model):
 class ResourceId(_serialization.Model):
     """Resource ID definition used by parent to reference child resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Resource ID of child resource. Required.
     :vartype id: str
@@ -660,6 +660,194 @@ class ResourceId(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.id = id
+
+
+class SecurityPolicy(TrackedResource):
+    """SecurityPolicy Subresource of Traffic Controller.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicenetworking.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar policy_type: Type of the Traffic Controller Security Policy. "waf"
+    :vartype policy_type: str or ~azure.mgmt.servicenetworking.models.PolicyType
+    :ivar waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
+    :vartype waf_policy: ~azure.mgmt.servicenetworking.models.WafPolicy
+    :ivar provisioning_state: Provisioning State of Traffic Controller SecurityPolicy Resource.
+     Known values are: "Provisioning", "Updating", "Deleting", "Accepted", "Succeeded", "Failed",
+     and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.servicenetworking.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "policy_type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "policy_type": {"key": "properties.policyType", "type": "str"},
+        "waf_policy": {"key": "properties.wafPolicy", "type": "WafPolicy"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        waf_policy: Optional["_models.WafPolicy"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
+        :paramtype waf_policy: ~azure.mgmt.servicenetworking.models.WafPolicy
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.policy_type = None
+        self.waf_policy = waf_policy
+        self.provisioning_state = None
+
+
+class SecurityPolicyConfigurations(_serialization.Model):
+    """SecurityPolicyConfigurations Subresource of Traffic Controller.
+
+    :ivar waf_security_policy: Contains reference to a WAF-type security policy that is applied at
+     the Traffic Controller level.
+    :vartype waf_security_policy: ~azure.mgmt.servicenetworking.models.WafSecurityPolicy
+    """
+
+    _attribute_map = {
+        "waf_security_policy": {"key": "wafSecurityPolicy", "type": "WafSecurityPolicy"},
+    }
+
+    def __init__(self, *, waf_security_policy: Optional["_models.WafSecurityPolicy"] = None, **kwargs: Any) -> None:
+        """
+        :keyword waf_security_policy: Contains reference to a WAF-type security policy that is applied
+         at the Traffic Controller level.
+        :paramtype waf_security_policy: ~azure.mgmt.servicenetworking.models.WafSecurityPolicy
+        """
+        super().__init__(**kwargs)
+        self.waf_security_policy = waf_security_policy
+
+
+class SecurityPolicyConfigurationsUpdate(_serialization.Model):
+    """SecurityPolicyConfigurations Subresource of Traffic Controller.
+
+    :ivar waf_security_policy: Contains reference to a WAF-type security policy that is applied at
+     the Traffic Controller level.
+    :vartype waf_security_policy: ~azure.mgmt.servicenetworking.models.WafSecurityPolicyUpdate
+    """
+
+    _attribute_map = {
+        "waf_security_policy": {"key": "wafSecurityPolicy", "type": "WafSecurityPolicyUpdate"},
+    }
+
+    def __init__(
+        self, *, waf_security_policy: Optional["_models.WafSecurityPolicyUpdate"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword waf_security_policy: Contains reference to a WAF-type security policy that is applied
+         at the Traffic Controller level.
+        :paramtype waf_security_policy: ~azure.mgmt.servicenetworking.models.WafSecurityPolicyUpdate
+        """
+        super().__init__(**kwargs)
+        self.waf_security_policy = waf_security_policy
+
+
+class SecurityPolicyListResult(_serialization.Model):
+    """The response of a SecurityPolicy list operation.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The SecurityPolicy items on this page. Required.
+    :vartype value: list[~azure.mgmt.servicenetworking.models.SecurityPolicy]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SecurityPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: List["_models.SecurityPolicy"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The SecurityPolicy items on this page. Required.
+        :paramtype value: list[~azure.mgmt.servicenetworking.models.SecurityPolicy]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class SecurityPolicyUpdate(_serialization.Model):
+    """The type used for update operations of the SecurityPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
+    :vartype waf_policy: ~azure.mgmt.servicenetworking.models.WafPolicyUpdate
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "waf_policy": {"key": "properties.wafPolicy", "type": "WafPolicyUpdate"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        waf_policy: Optional["_models.WafPolicyUpdate"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword waf_policy: Web Application Firewall Policy of the Traffic Controller Security Policy.
+        :paramtype waf_policy: ~azure.mgmt.servicenetworking.models.WafPolicyUpdate
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.waf_policy = waf_policy
 
 
 class SystemData(_serialization.Model):
@@ -726,16 +914,16 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TrafficController(TrackedResource):
+class TrafficController(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -755,6 +943,11 @@ class TrafficController(TrackedResource):
     :vartype frontends: list[~azure.mgmt.servicenetworking.models.ResourceId]
     :ivar associations: Associations References List.
     :vartype associations: list[~azure.mgmt.servicenetworking.models.ResourceId]
+    :ivar security_policies: Security Policies References List.
+    :vartype security_policies: list[~azure.mgmt.servicenetworking.models.ResourceId]
+    :ivar security_policy_configurations: Security Policy Configuration.
+    :vartype security_policy_configurations:
+     ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
     :ivar provisioning_state: The status of the last operation. Known values are: "Provisioning",
      "Updating", "Deleting", "Accepted", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.servicenetworking.models.ProvisioningState
@@ -769,6 +962,7 @@ class TrafficController(TrackedResource):
         "configuration_endpoints": {"readonly": True},
         "frontends": {"readonly": True},
         "associations": {"readonly": True},
+        "security_policies": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -782,27 +976,44 @@ class TrafficController(TrackedResource):
         "configuration_endpoints": {"key": "properties.configurationEndpoints", "type": "[str]"},
         "frontends": {"key": "properties.frontends", "type": "[ResourceId]"},
         "associations": {"key": "properties.associations", "type": "[ResourceId]"},
+        "security_policies": {"key": "properties.securityPolicies", "type": "[ResourceId]"},
+        "security_policy_configurations": {
+            "key": "properties.securityPolicyConfigurations",
+            "type": "SecurityPolicyConfigurations",
+        },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        security_policy_configurations: Optional["_models.SecurityPolicyConfigurations"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword security_policy_configurations: Security Policy Configuration.
+        :paramtype security_policy_configurations:
+         ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurations
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.configuration_endpoints = None
         self.frontends = None
         self.associations = None
+        self.security_policies = None
+        self.security_policy_configurations = security_policy_configurations
         self.provisioning_state = None
 
 
 class TrafficControllerListResult(_serialization.Model):
     """The response of a TrafficController list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The TrafficController items on this page. Required.
     :vartype value: list[~azure.mgmt.servicenetworking.models.TrafficController]
@@ -838,16 +1049,125 @@ class TrafficControllerUpdate(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar security_policy_configurations: Security Policy Configuration.
+    :vartype security_policy_configurations:
+     ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurationsUpdate
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
+        "security_policy_configurations": {
+            "key": "properties.securityPolicyConfigurations",
+            "type": "SecurityPolicyConfigurationsUpdate",
+        },
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        security_policy_configurations: Optional["_models.SecurityPolicyConfigurationsUpdate"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword security_policy_configurations: Security Policy Configuration.
+        :paramtype security_policy_configurations:
+         ~azure.mgmt.servicenetworking.models.SecurityPolicyConfigurationsUpdate
         """
         super().__init__(**kwargs)
         self.tags = tags
+        self.security_policy_configurations = security_policy_configurations
+
+
+class WafPolicy(_serialization.Model):
+    """Web Application Firewall Policy.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Resource ID of the WAF. Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource ID of the WAF. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class WafPolicyUpdate(_serialization.Model):
+    """Web Application Firewall Policy.
+
+    :ivar id: Resource ID of the WAF.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource ID of the WAF.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class WafSecurityPolicy(_serialization.Model):
+    """Web Application Firewall Security Policy.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Resource ID of the Waf Security Policy. Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource ID of the Waf Security Policy. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class WafSecurityPolicyUpdate(_serialization.Model):
+    """Web Application Firewall Security Policy.
+
+    :ivar id: Resource ID of the Waf Security Policy.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource ID of the Waf Security Policy.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id

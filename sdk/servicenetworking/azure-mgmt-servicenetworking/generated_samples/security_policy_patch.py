@@ -17,7 +17,7 @@ from azure.mgmt.servicenetworking import ServiceNetworkingMgmtClient
     pip install azure-identity
     pip install azure-mgmt-servicenetworking
 # USAGE
-    python frontend_put.py
+    python security_policy_patch.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,15 +32,21 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.frontends_interface.begin_create_or_update(
+    response = client.security_policies_interface.update(
         resource_group_name="rg1",
         traffic_controller_name="tc1",
-        frontend_name="fe1",
-        resource={"location": "NorthCentralUS", "properties": {}},
-    ).result()
+        security_policy_name="sp1",
+        properties={
+            "properties": {
+                "wafPolicy": {
+                    "id": "/subscriptions/subid/resourcegroups/rg1/providers/Microsoft.Networking/applicationGatewayWebApplicationFirewallPolicies/wp-0"
+                }
+            }
+        },
+    )
     print(response)
 
 
-# x-ms-original-file: specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/preview/2024-05-01-preview/examples/FrontendPut.json
+# x-ms-original-file: specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/preview/2024-05-01-preview/examples/SecurityPolicyPatch.json
 if __name__ == "__main__":
     main()
