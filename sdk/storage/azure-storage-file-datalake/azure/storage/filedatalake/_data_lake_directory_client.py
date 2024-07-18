@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
+import functools
 from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING
@@ -19,6 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._data_lake_file_client import DataLakeFileClient
 from ._deserialize import deserialize_dir_properties
+from ._list_paths_helper import PathPropertiesPaged
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
 from ._shared.base_client import TransportWrapper, parse_connection_str
@@ -686,14 +688,15 @@ class DataLakeDirectoryClient(PathClient):
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
         """
-        return self._file_system_client.get_paths(
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.file_system.list_paths,
             path=self.path_name,
-            recursive=recursive,
-            max_results=max_results,
-            upn=upn,
             timeout=timeout,
-            **kwargs
-        )
+            **kwargs)
+        return ItemPaged(
+            command, recursive, path=self.path_name, max_results=max_results,
+            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):
