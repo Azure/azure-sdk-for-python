@@ -19,7 +19,7 @@ import logging
 import inspect
 import subprocess
 from enum import Enum
-from typing import Dict, Union, Type, Callable
+from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
@@ -295,7 +295,8 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         current = json.load(fd)
     diff = jsondiff.diff(stable, current)
 
-    checker = BreakingChangesTracker(stable, current, diff, package_name)
+    from register_checkers import CHECKERS
+    checker = BreakingChangesTracker(stable, current, diff, package_name, checkers=CHECKERS)
     if changelog:
         checker = ChangelogTracker(stable, current, diff, package_name)
     checker.run_checks()
@@ -325,8 +326,8 @@ def main(
         pkg_dir: str,
         changelog: bool,
         code_report: bool,
-        source_report: Path,
-        target_report: Path,
+        source_report: Optional[Path],
+        target_report: Optional[Path],
     ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:

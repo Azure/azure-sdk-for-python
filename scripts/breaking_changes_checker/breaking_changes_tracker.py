@@ -11,7 +11,7 @@ from enum import Enum
 from typing import Any, Dict, List, Union, Optional, NamedTuple
 from copy import deepcopy
 from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
-
+from models import Checker, ClassChangesChecker
 
 class Suppression(NamedTuple):
     change_type: str
@@ -108,12 +108,22 @@ class BreakingChangesTracker:
         self.function_name = None
         self.parameter_name = None
         self.ignore = kwargs.get("ignore", None)
+        self.checkers: Dict[str, List[Checker]] = kwargs.get("checkers", {})
 
     def run_checks(self) -> None:
         self.run_breaking_change_diff_checks()
         self.check_parameter_ordering()  # not part of diff
 
     def run_breaking_change_diff_checks(self) -> None:
+        for module_name, module in self.diff.items():
+            self.module_name = module_name
+            for check in self.checkers["class"]:
+                if isinstance(check, ClassChangesChecker):
+                    bc = check.run_check(class_nodes=module.get("class_nodes", {}), previous_nodes=self.stable, module_name=self.module_name)
+
+                    if len(bc) > 0:
+                        self.breaking_changes.append(*bc)
+
         for module_name, module in self.diff.items():
             self.module_name = module_name
             if self.module_name not in self.stable and not isinstance(self.module_name, jsondiff.Symbol):
@@ -519,7 +529,7 @@ class BreakingChangesTracker:
                         BreakingChangeType.REMOVED_OR_RENAMED_CLASS,
                         self.module_name, name
                     )
-                self.breaking_changes.append(bc)
+                # self.breaking_changes.append(bc)
             return True
 
     def check_class_method_removed_or_renamed(
