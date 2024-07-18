@@ -80,6 +80,10 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
           if ($IsWindows) {
             . $(VENV_LOCATION)/Scripts/Activate.ps1
           }
@@ -87,9 +91,6 @@ steps:
             . $(VENV_LOCATION)/bin/activate.ps1
           }
           Write-Host (Get-Command python).Source
-          $account = (Get-AzContext).Account;
-          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
-          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
@@ -164,6 +165,10 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
+          $account = (Get-AzContext).Account;
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
+
           if ($IsWindows) {
             . $(VENV_LOCATION)/Scripts/Activate.ps1
           }
@@ -171,9 +176,6 @@ steps:
             . $(VENV_LOCATION)/bin/activate.ps1
           }
           Write-Host (Get-Command python).Source
-          $account = (Get-AzContext).Account;
-          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
-          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
           scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
