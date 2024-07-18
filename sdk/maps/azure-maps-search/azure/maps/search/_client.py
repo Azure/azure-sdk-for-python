@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MapsSearchClient:  # pylint: disable=client-accepts-api-version-keyword
+class MapsSearchClient(SearchOperations):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Search REST APIs.
 
     :ivar search: SearchOperations operations
@@ -80,7 +80,9 @@ class MapsSearchClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.search = SearchOperations(self._client, self._config, self._serialize, self._deserialize)
+
+        # Initialize the base SearchOperations
+        super().__init__(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
