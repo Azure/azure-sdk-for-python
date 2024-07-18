@@ -95,7 +95,7 @@ def get_parameter_default(param: inspect.Parameter) -> None:
             default_value = default_value.__name__
         elif inspect.isclass(default_value):
             default_value = default_value.__name__
-        elif hasattr(default_value, "__class__") and default_value.__class__ == object:
+        elif hasattr(default_value, "__class__"):
             # Some default values are objects, e.g. _UNSET = object()
             default_value = default_value.__class__.__name__
 
@@ -139,7 +139,11 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                                     attr_type = assign.annotation.value.id
                             if isinstance(assign, ast.Assign):
                                 if isinstance(assign.value, ast.Call):
-                                    attr_type = assign.value.func.id
+                                    # FIXME: Do we want the attr or the type defined in value?
+                                    if isinstance(assign.value.func, ast.Attribute):
+                                        attr_type = assign.value.func.attr
+                                    else:
+                                        attr_type = assign.value.func.id
                                 elif isinstance(assign.value, ast.Name):
                                     attr_type = assign.value.id
                                 elif isinstance(assign.value, ast.Constant):
