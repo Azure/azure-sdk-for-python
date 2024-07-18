@@ -81,7 +81,7 @@ IGNORE_BREAKING_CHANGES = {
 
 ### Comparing against the latest package version on PyPi
 
-If you want to compare changes against the latest package version on PyPi, including preview releases, use the `--latest-pypi-version` flag with the command.
+By default, this tool will only compare against past stable releases on PyPi. If you want to compare changes against the latest package version on PyPi, including preview releases, use the `--latest-pypi-version` flag with the command.
 
 Example:
 
