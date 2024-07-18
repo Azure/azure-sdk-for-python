@@ -34,6 +34,8 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
+    parameters:
+      Activate: false
 
   - template: set-dev-build.yml
     parameters:
