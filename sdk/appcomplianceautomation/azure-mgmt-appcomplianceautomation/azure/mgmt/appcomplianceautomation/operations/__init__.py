@@ -6,22 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._provider_actions_operations import ProviderActionsOperations
 from ._operations import Operations
-from ._reports_operations import ReportsOperations
 from ._report_operations import ReportOperations
-from ._snapshots_operations import SnapshotsOperations
+from ._evidence_operations import EvidenceOperations
+from ._scoping_configuration_operations import ScopingConfigurationOperations
 from ._snapshot_operations import SnapshotOperations
+from ._webhook_operations import WebhookOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ProviderActionsOperations",
     "Operations",
-    "ReportsOperations",
     "ReportOperations",
-    "SnapshotsOperations",
+    "EvidenceOperations",
+    "ScopingConfigurationOperations",
     "SnapshotOperations",
+    "WebhookOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

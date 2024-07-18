@@ -31,9 +31,8 @@ from azure.data.tables import (
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX, DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _decode_error
 from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetime
-from azure.identity import DefaultAzureCredential
 
-from devtools_testutils import is_live
+from devtools_testutils import is_live, get_credential
 
 TEST_TABLE_PREFIX = "pytablesync"
 
@@ -102,7 +101,7 @@ class TableTestCase(object):
 
     def get_token_credential(self):
         if is_live():
-            return DefaultAzureCredential()
+            return get_credential()
         return self.generate_fake_token_credential()
 
     def generate_fake_token_credential(self):

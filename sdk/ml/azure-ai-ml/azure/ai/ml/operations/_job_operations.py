@@ -300,7 +300,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return cast(
             Iterable[Job],
-            self._operation_2023_02_preview.list(
+            self.service_client_01_2024_preview.jobs.list(
                 self._operation_scope.resource_group_name,
                 self._workspace_name,
                 cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -721,7 +721,6 @@ class JobOperations(_ScopeDependentOperations):
         self, rest_job_resource: JobBase, **kwargs: Any
     ) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
@@ -1027,7 +1026,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._operation_2023_02_preview.get(
+        return self.service_client_01_2024_preview.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
