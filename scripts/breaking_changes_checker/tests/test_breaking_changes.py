@@ -8,7 +8,9 @@
 import os
 import json
 import jsondiff
+import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
+from breaking_changes_checker.detect_breaking_changes import main
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -386,3 +388,18 @@ def test_replace_all_modules():
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
     assert changes == expected_msg
+
+
+def test_pass_custom_reports_breaking(capsys):
+    source_report = "test_stable.json"
+    target_report = "test_current.json"
+
+    try:
+        main(None, None, None, None, "tests", False, False, source_report, target_report)
+    except SystemExit as e:
+        if e.code == 1:
+            out, _ = capsys.readouterr()
+            # Check if we have some breaking changes reported
+            assert out.endswith("See aka.ms/azsdk/breaking-changes-tool to resolve any reported breaking changes or false positives.\n\n")
+        else:
+            pytest.fail("test_compare_reports failed to report breaking changes when passing custom reports")

@@ -23,7 +23,7 @@ USAGE:
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
     3) CUSTOM_BUILT_MODEL_ID - the ID of your custom built model.
         -OR-
-       DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
+       DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
        A model will be built and used to run the sample.
 """
 
@@ -62,7 +62,7 @@ def print_table(header_names, table_data):
 
 async def analyze_custom_documents(custom_model_id):
     # For the Form_1.jpg, it should be the test file under the traning dataset which storage at the Azure Blob Storage path
-    # combined by DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX, 
+    # combined by DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX, 
     # or it can also be a test file with the format similar to the training dataset. 
     # Put it here locally just for presenting documents visually in sample.
 
@@ -177,7 +177,7 @@ async def analyze_custom_documents(custom_model_id):
 
 async def main():
     model_id = None
-    if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
+    if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
         import uuid
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
@@ -193,7 +193,7 @@ async def main():
         if not endpoint or not key:
             raise ValueError("Please provide endpoint and API key to run the samples.")
 
-        blob_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL")
+        blob_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL")
         blob_prefix = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_PREFIX")
         if blob_container_sas_url is not None:
             request = BuildDocumentModelRequest(

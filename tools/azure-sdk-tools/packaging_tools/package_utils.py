@@ -30,7 +30,7 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False)
         else:
             last_version[-1] = str(last_release)
     except:
-        return "  - Initial Release"
+        return "### Other Changes\n\n  - Initial version"
     else:
         return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 

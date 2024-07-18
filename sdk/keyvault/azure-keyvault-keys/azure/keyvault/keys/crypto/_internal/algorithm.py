@@ -3,22 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from abc import abstractmethod
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from typing import Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Optional, Union
     from cryptography.hazmat.primitives import hashes
+
 
 _alg_registry = {}
 
 
 class Algorithm(object):
-    _name: "Optional[str]" = None
+    _name: Optional[str] = None
 
     @classmethod
     def name(cls):
