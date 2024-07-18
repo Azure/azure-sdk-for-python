@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, Optional
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -105,7 +106,7 @@ class AzureDataLakeStorageRESTAPI:  # pylint: disable=client-accepts-api-version
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureDataLakeStorageRESTAPI":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
