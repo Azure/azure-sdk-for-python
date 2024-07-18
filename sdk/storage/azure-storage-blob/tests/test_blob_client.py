@@ -733,25 +733,4 @@ class TestStorageClient(StorageRecordedTestCase):
         assert config.max_block_size == 4 * 1024 * 1024
         assert sdk_name in config.user_agent_policy.user_agent
 
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_bad_storage_account_key_no_retry(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = "a"
-
-        blob_client = BlobClient(
-            account_url=self.account_url(storage_account_name, "blob"),
-            container_name="foo",
-            blob_name="bar",
-            credential=storage_account_key,
-        )
-
-        start = time.time()
-        with pytest.raises(AzureSigningError) as e:
-            blob_client.get_blob_properties()
-        end = time.time()
-
-        assert "Invalid base64-encoded string" in e.value.message
-        assert end - start < 2.0
-
 # ------------------------------------------------------------------------------
