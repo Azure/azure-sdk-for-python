@@ -56,6 +56,27 @@ class TestModelAsyncClient(ModelClientTestBase):
             assert False
         await client.close()
 
+    # Make sure that a call to .with_defaults() returns a new client and not
+    # the same client.
+    @ServicePreparerEmbeddings()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_embeddings_with_defaults_client_identity(self, **kwargs):
+
+        client1 = async_sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+        )
+        print(f"\nclient1 = {client1}")
+
+        client2 = client1.with_defaults()
+        print(f"\nclient2 = {client2}")
+        assert client2 is not client1
+        # assert client2 == client1 # TODO: Why is this not True here?
+
+        client3 = client1.with_defaults(dimensions=123)
+        print(f"\nclient3 = {client3}")
+        assert client3 is not client1
+        assert client3 != client1
+
     # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
     # is the correct one after hand-inspection.
@@ -162,10 +183,10 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_embeddings_client(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        assert not client._model_info
+        assert not client._model_info # pylint: disable=protected-access
 
         response1 = await client.get_model_info()
-        assert client._model_info
+        assert client._model_info # pylint: disable=protected-access
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "embedding"
@@ -177,7 +198,14 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
 
+        # Make sure that you get a new client from .with_defaults(),
+        # and that client has the model info cached.
+        client2 = client.with_defaults(dimensions=123)
+        assert client2._model_info # pylint: disable=protected-access
+        print(client2._model_info) # pylint: disable=protected-access
+
         await client.close()
+        await client2.close()
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy_async
@@ -260,6 +288,24 @@ class TestModelAsyncClient(ModelClientTestBase):
             await client.close()
             assert False
         await client.close()
+
+    # Make sure that a call to .with_defaults() returns a new client and not
+    # the same client.
+    @ServicePreparerChatCompletions()  # Not sure why this is needed. It errors out if not present. We don't use the env variables in this test.
+    async def test_async_chat_completions_with_defaults_client_identity(self, **kwargs):
+
+        client1 = async_sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+        )
+        client2 = client1.with_defaults()
+        assert client2 is not client1
+        client3 = client1.with_defaults(temperature=0.5)
+        assert client3 is not client1
+
+        await client1.close()
+        await client2.close()
+        await client3.close()
 
     # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
@@ -441,10 +487,10 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_chat_client(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
-        assert not client._model_info
+        assert not client._model_info # pylint: disable=protected-access
 
         response1 = await client.get_model_info()
-        assert client._model_info
+        assert client._model_info # pylint: disable=protected-access
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "completion"
@@ -456,7 +502,14 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
 
+        # Make sure that you get a new client from .with_defaults(),
+        # and that client has the model info cached.
+        client2 = client.with_defaults(temperature=0.5)
+        assert client2._model_info # pylint: disable=protected-access
+        print(client2._model_info) # pylint: disable=protected-access
+
         await client.close()
+        await client2.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy_async

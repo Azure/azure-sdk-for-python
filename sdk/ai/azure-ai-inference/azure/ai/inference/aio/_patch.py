@@ -132,21 +132,24 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        self._model_info: Optional[_models.ModelInfo] = None
-        self._model_extras: Optional[Dict[str, Any]] = None
-        self._frequency_penalty: Optional[float] = None
-        self._presence_penalty: Optional[float] = None
-        self._temperature: Optional[float] = None
-        self._top_p: Optional[float] = None
-        self._max_tokens: Optional[int] = None
-        self._response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None
-        self._stop: Optional[List[str]] = None
-        self._tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None
+        self._endpoint = endpoint
+        self._credential = credential
+        self._init_kwargs = kwargs
+        self._model_info: Optional[_models.ModelInfo] = kwargs.get("model_info")
+        self._model_extras: Optional[Dict[str, Any]] = kwargs.get("model_extras")
+        self._frequency_penalty: Optional[float] = kwargs.get("frequency_penalty")
+        self._presence_penalty: Optional[float] = kwargs.get("presence_penalty")
+        self._temperature: Optional[float] = kwargs.get("temperature")
+        self._top_p: Optional[float] = kwargs.get("top_p")
+        self._max_tokens: Optional[int] = kwargs.get("max_tokens")
+        self._response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = kwargs.get("response_format")
+        self._stop: Optional[List[str]] = kwargs.get("stop")
+        self._tools: Optional[List[_models.ChatCompletionsToolDefinition]] = kwargs.get("tools")
         self._tool_choice: Optional[
             Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
-        ] = None
-        self._seed: Optional[int] = None
-        self._model: Optional[str] = None
+        ] = kwargs.get("tool_choice")
+        self._seed: Optional[int] = kwargs.get("seed")
+        self._model: Optional[str] = kwargs.get("model")
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     def with_defaults(
@@ -166,8 +169,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
-    ) -> "ChatCompletionsClient":
-        """Set defaults for all following chat completion operations.
+    ) -> Self:
+        """Returns a copy of the client with additional chat completion default settings that will be applied
+        in all future `complete` calls.
 
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
@@ -240,19 +244,24 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
         :return: this ChatCompletionsClient object, with defaults set.
         :rtype: ~azure.ai.inference.aio.ChatCompletionsClient
         """
-        self._model_extras = model_extras
-        self._frequency_penalty = frequency_penalty
-        self._presence_penalty = presence_penalty
-        self._temperature = temperature
-        self._top_p = top_p
-        self._max_tokens = max_tokens
-        self._response_format = response_format
-        self._stop = stop
-        self._tools = tools
-        self._tool_choice = tool_choice
-        self._seed = seed
-        self._model = model
-        return self
+        return self.__class__(
+            endpoint=self._endpoint,
+            credential=self._credential,
+            model_info=self._model_info,
+            model_extras=model_extras,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+            response_format=response_format,
+            stop=stop,
+            tools=tools,
+            tool_choice=tool_choice,
+            seed=seed,
+            model=model,
+            **self._init_kwargs
+        )
 
     @overload
     async def complete(
@@ -697,12 +706,15 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        self._model_info: Optional[_models.ModelInfo] = None
-        self._model_extras: Optional[Dict[str, Any]] = None
-        self._dimensions: Optional[int] = None
-        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None
-        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = None
-        self._model: Optional[str] = None
+        self._endpoint = endpoint
+        self._credential = credential
+        self._init_kwargs = kwargs
+        self._model_info: Optional[_models.ModelInfo] = kwargs.get("model_info")
+        self._model_extras: Optional[Dict[str, Any]] = kwargs.get("model_extras")
+        self._dimensions: Optional[int] = kwargs.get("dimensions")
+        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = kwargs.get("encoding_format")
+        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.get("input_type")
+        self._model: Optional[str] = kwargs.get("model")
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     def with_defaults(
@@ -713,8 +725,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
-    ) -> "EmbeddingsClient":
-        """Set defaults for all following embedding operations.
+    ) -> Self:
+        """Returns a copy of the client with additional embeddings default settings that will be applied
+        in all future `embed` calls.
 
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
@@ -738,15 +751,20 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :keyword model: ID of the specific AI model to use, if more than one model is available on the
          endpoint. Default value is None.
         :paramtype model: str
-        :return: this EmbeddingsClient object, with defaults set.
+        :return: A new EmbeddingsClient object with defaults set.
         :rtype: ~azure.ai.inference.aio.EmbeddingsClient
         """
-        self._model_extras = model_extras
-        self._dimensions = dimensions
-        self._encoding_format = encoding_format
-        self._input_type = input_type
-        self._model = model
-        return self
+        return self.__class__(
+            endpoint=self._endpoint,
+            credential=self._credential,
+            model_info=self._model_info,
+            model_extras=model_extras,
+            dimensions=dimensions,
+            encoding_format=encoding_format,
+            input_type=input_type,
+            model=model,
+            **self._init_kwargs
+        )
 
     @overload
     async def embed(
@@ -1004,12 +1022,15 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        self._model_info: Optional[_models.ModelInfo] = None
-        self._model_extras: Optional[Dict[str, Any]] = None
-        self._dimensions: Optional[int] = None
-        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None
-        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = None
-        self._model: Optional[str] = None
+        self._endpoint = endpoint
+        self._credential = credential
+        self._init_kwargs = kwargs
+        self._model_info: Optional[_models.ModelInfo] = kwargs.get("model_info")
+        self._model_extras: Optional[Dict[str, Any]] = kwargs.get("model_extras")
+        self._dimensions: Optional[int] = kwargs.get("dimensions")
+        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = kwargs.get("encoding_format")
+        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.get("input_type")
+        self._model: Optional[str] = kwargs.get("model")
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     def with_defaults(
@@ -1020,8 +1041,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
-    ) -> "ImageEmbeddingsClient":
-        """Set defaults for all following image embeddings operations.
+    ) -> Self:
+        """Returns a copy of the client with additional image embeddings default settings that will be applied
+        in all future `embed` calls.
 
         :keyword model_extras: Additional, model-specific parameters that are not in the
          standard request payload. They will be added as-is to the root of the JSON in the request body.
@@ -1045,15 +1067,20 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :keyword model: ID of the specific AI model to use, if more than one model is available on the
          endpoint. Default value is None.
         :paramtype model: str
-        :return: This ImageEmbeddingsClient object, with defaults set.
+        :return: A new ImageEmbeddingsClient object with defaults set.
         :rtype: ~azure.ai.inference.aio.ImageEmbeddingsClient
         """
-        self._model_extras = model_extras
-        self._dimensions = dimensions
-        self._encoding_format = encoding_format
-        self._input_type = input_type
-        self._model = model
-        return self
+        return self.__class__(
+            endpoint=self._endpoint,
+            credential=self._credential,
+            model_info=self._model_info,
+            model_extras=model_extras,
+            dimensions=dimensions,
+            encoding_format=encoding_format,
+            input_type=input_type,
+            model=model,
+            **self._init_kwargs
+        )
 
     @overload
     async def embed(

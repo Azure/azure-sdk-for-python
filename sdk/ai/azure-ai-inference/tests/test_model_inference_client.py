@@ -70,6 +70,19 @@ class TestModelClient(ModelClientTestBase):
                 continue
             assert False
 
+    # Make sure that a call to .with_defaults() returns a new client and not
+    # the same client.
+    def test_embeddings_with_defaults_client_identity(self, **kwargs):
+
+        client1 = sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+        )
+        client2 = client1.with_defaults()
+        assert client2 is not client1
+        client3 = client1.with_defaults(dimensions=123)
+        assert client3 is not client1
+
     # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
     # is the correct one after hand-inspection.
@@ -172,10 +185,10 @@ class TestModelClient(ModelClientTestBase):
     def test_get_model_info_on_embeddings_client(self, **kwargs):
 
         client = self._create_embeddings_client(**kwargs)
-        assert not client._model_info
+        assert not client._model_info # pylint: disable=protected-access
 
         response1 = client.get_model_info()
-        assert client._model_info
+        assert client._model_info # pylint: disable=protected-access
 
         self._print_model_info_result(response1)
         self._validate_model_info_result(
@@ -188,7 +201,14 @@ class TestModelClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
 
+        # Make sure that you get a new client from .with_defaults(),
+        # and that client has the model info cached.
+        client2 = client.with_defaults(dimensions=123)
+        assert client2._model_info # pylint: disable=protected-access
+        print(client2._model_info) # pylint: disable=protected-access
+
         client.close()
+        client2.close()
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
@@ -268,6 +288,20 @@ class TestModelClient(ModelClientTestBase):
                 self._validate_chat_completions_json_request_payload()
                 continue
             assert False
+
+    # Make sure that a call to .with_defaults() returns a new client and not
+    # the same client.
+    def test_chat_completions_with_defaults_client_identity(self, **kwargs):
+
+        client1 = sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+        )
+        client2 = client1.with_defaults()
+        assert client2 is not client1
+        client3 = client1.with_defaults(temperature=0.5)
+        assert client3 is not client1
+
 
     # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
@@ -447,7 +481,7 @@ class TestModelClient(ModelClientTestBase):
         assert not client._model_info
 
         response1 = client.get_model_info()
-        assert client._model_info
+        assert client._model_info # pylint: disable=protected-access
 
         self._print_model_info_result(response1)
         self._validate_model_info_result(
@@ -460,7 +494,14 @@ class TestModelClient(ModelClientTestBase):
         self._print_model_info_result(response2)
         assert response1 == response2
 
+        # Make sure that you get a new client from .with_defaults(),
+        # and that client has the model info cached.
+        client2 = client.with_defaults(temperature=0.5)
+        assert client2._model_info # pylint: disable=protected-access
+        print(client2._model_info) # pylint: disable=protected-access
+
         client.close()
+        client2.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
