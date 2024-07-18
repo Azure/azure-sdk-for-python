@@ -273,7 +273,8 @@ def get_credential(**kwargs):
         # This is for testing purposes only, to ensure that the AzurePipelinesCredential is used when available
         else:
             force_fallback_dac = os.environ.get("AZURE_TEST_FORCE_FALLBACK_DAC", "false")
-            if (service_connection_id or system_access_token) and force_fallback_dac:
+            if (service_connection_id or system_access_token) and not(force_fallback_dac):
+                # if service_connection_id or system_access_token is set, we assume it is running in CI
                 system_access_token = SANITIZED if system_access_token else None
                 raise ValueError(
                     "Running in Azure Pipelines. Environment variables not set for service principal authentication. "
