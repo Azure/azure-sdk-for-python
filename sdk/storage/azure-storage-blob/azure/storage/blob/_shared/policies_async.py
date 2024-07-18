@@ -128,7 +128,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                 break
             except AzureError as err:
                 if isinstance(err, AzureSigningError):
-                    raise err
+                    raise
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
