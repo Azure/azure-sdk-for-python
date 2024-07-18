@@ -23,7 +23,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     @MapsTimezonePreparer()
     @recorded_by_proxy
     def test_get_timezone_by_coordinates(self):
-        result = self.client.get_timezone_by_coordinates(timezone_id="sr-Latn-RS")
+        result = self.client.get_timezone_by_coordinates(coordinates=[25.0338053, 121.5640089])
 
         assert result is not None
 
@@ -31,7 +31,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     @MapsTimezonePreparer()
     @recorded_by_proxy
     def test_get_timezone_by_id(self):
-        result = self.client.get_timezone_by_id(coordinates=[25.0338053, 121.5640089])
+        result = self.client.get_timezone_by_id(timezone_id="sr-Latn-RS")
 
         assert result is not None
 

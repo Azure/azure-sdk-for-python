@@ -1,0 +1,33 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.microsoft.com/timezone/ianaVersion/json?api-version=1.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "subscription-key": "Sanitized",
+        "User-Agent": "azsdk-python-maps-timezone/unknown Python/3.12.3 (Windows-11-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 18 Jul 2024 11:30:30 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-azuremaps-region": "West Europe",
+        "X-MSEdge-Ref": "Ref A: 8D60162B1C18408E956EB31D4770C337 Ref B: DUS30EDGE0306 Ref C: 2024-07-18T11:30:30Z"
+      },
+      "ResponseBody": {
+        "Version": "2024a"
+      }
+    }
+  ],
+  "Variables": {}
+}
