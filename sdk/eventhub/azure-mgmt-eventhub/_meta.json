@@ -1,11 +1,20 @@
 {
-  "commit": "8a28143c7271d4496296ed47f70c3cb5a9981e57",
+  "commit": "b8bf9af0df9b688bf2de1eb0972810ac0e0b6185",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.4.7",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.15.0",
+    "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/eventhub/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.4.7 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
-  "readme": "specification/eventhub/resource-manager/readme.md"
+  "autorest_command": "autorest specification/eventhub/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/eventhub/resource-manager/readme.md",
+  "package-2024-01": "2024-04-17 10:03:55 -0700 bcb917a6cf4a1e47544a3acd36779cfbd58a9899 Microsoft.EventHub/stable/2024-01-01/eventhubs.json",
+  "package-2021-11": "2022-11-29 14:20:04 +0530 d85953a9cb1b464824fae7c1fd300a99d086c8e4 Microsoft.EventHub/stable/2021-11-01/namespaces-preview.json",
+  "package-2022-01-preview": "2023-04-13 07:46:59 +0530 0a5ed101ca3f969cf50d420b5e6717cbdf1edb3c Microsoft.EventHub/preview/2022-01-01-preview/disasterRecoveryConfigs.json",
+  "package-2022-10-preview": "2023-06-04 23:37:07 -0700 83e7e598117cbd24cd0f032f4404a0711cf70497 Microsoft.EventHub/preview/2022-10-01-preview/eventhubs.json",
+  "package-2021-06-preview": "2021-09-16 00:30:29 -0700 c9992af7235a6550087d4fed8f081ed35019f605 Microsoft.EventHub/preview/2021-06-01-preview/quotaConfiguration-preview.json",
+  "package-2021-01-preview": "2021-06-02 19:37:56 -0700 916568aafe943c0be88e7f845d38de5f189d4b68 Microsoft.EventHub/preview/2021-01-01-preview/namespaces-preview.json",
+  "package-2018-01-preview": "2021-06-02 19:37:56 -0700 916568aafe943c0be88e7f845d38de5f189d4b68 Microsoft.EventHub/preview/2018-01-01-preview/namespaces-preview.json",
+  "package-2017-04": "2020-09-10 00:27:04 -0700 b813f80c7058b9ee180161f6eeb9ce45f2c7e197 Microsoft.EventHub/stable/2017-04-01/sku.json",
+  "package-2015-08": "2019-06-23 18:47:43 -0700 724c8cc36785a0a34d0ba5b6a48d1d7855be5ffb Microsoft.EventHub/stable/2015-08-01/EventHub.json"
 }
