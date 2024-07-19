@@ -96,17 +96,15 @@ def analyze_general_documents():
         if page.lines:
             for line_idx, line in enumerate(page.lines):
                 words = []
-                for word in page.words:
-                    if _in_span(word, line.spans):
-                        words.append(word)
+                if page.words:
+                    for word in page.words:
+                        print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                        if _in_span(word, line.spans):
+                            words.append(word)
                 print(
                     f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
                     f"bounding polygon '{_format_polygon(line.polygon)}'"
                 )
-
-        if page.words:
-            for word in page.words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
