@@ -98,7 +98,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
                 credential = get_client_credential(
-                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
+                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate,send_certificate_chain=kwargs.pop("send_certificate_chain", False)
                 )
             except ValueError as ex:
                 # client_certificate isn't a valid cert.
