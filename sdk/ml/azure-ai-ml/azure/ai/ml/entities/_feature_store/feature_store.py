@@ -19,8 +19,8 @@ from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManaged
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace.workspace import Workspace
-
-from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
+from azure.ai.ml.constants._common import WorkspaceKind
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION
 from .materialization_store import MaterializationStore
 
 
@@ -124,9 +124,11 @@ class FeatureStore(Workspace):
         feature_store_settings = kwargs.pop(
             "feature_store_settings",
             FeatureStoreSettings(
-                compute_runtime=compute_runtime
-                if compute_runtime
-                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+                compute_runtime=(
+                    compute_runtime
+                    if compute_runtime
+                    else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION)
+                ),
             ),
         )
         # TODO: Refactor this so that super().__init__() is not called twice coming from _from_rest_object()
@@ -134,7 +136,7 @@ class FeatureStore(Workspace):
             name=name,
             description=description,
             tags=tags,
-            kind=FEATURE_STORE_KIND,
+            kind=WorkspaceKind.FEATURE_STORE,
             display_name=display_name,
             location=location,
             resource_group=resource_group,

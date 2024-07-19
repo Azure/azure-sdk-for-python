@@ -1,5 +1,11 @@
 # Release History
 
+## 10.3.1 (2024-07-16)
+
+### Other Changes
+
+  - Fix docstring
+
 ## 10.3.0 (2023-10-23)
 
 ### Features Added

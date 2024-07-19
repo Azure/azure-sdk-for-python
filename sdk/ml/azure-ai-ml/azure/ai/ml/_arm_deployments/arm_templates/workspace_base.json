@@ -122,7 +122,8 @@
             "defaultValue": "new",
             "allowedValues": [
                 "new",
-                "existing"
+                "existing",
+                "none"
             ],
             "metadata": {
                 "description": "Determines whether or not new ApplicationInsights should be provisioned."
@@ -161,7 +162,6 @@
             "type": "string",
             "defaultValue": "none",
             "allowedValues": [
-                "new",
                 "existing",
                 "none"
             ],
@@ -417,6 +417,17 @@
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         },
+        "allowRoleAssignmentOnRG": {
+            "type": "string",
+            "defaultValue": "true",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "metadata": {
+                "description": "A flag to determine if workspace should be created/update with allow role assignment on resource group level."
+            }
+        },
         "spark_runtime_version": {
             "type": "string",
             "defaultValue": "",
@@ -580,6 +591,13 @@
             "defaultValue": {},
             "metadata": {
                 "description": "Serverless compute settings to be used for the workspace."
+            }
+        },
+        "systemDatastoresAuthMode": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The authentication mode for system datastores"
             }
         },
         "endpoint_resource_id": {
@@ -779,24 +797,6 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'))]",
-            "type": "Microsoft.ContainerRegistry/registries",
-            "apiVersion": "2019-05-01",
-            "tags": "[parameters('tagValues')]",
-            "name": "[parameters('containerRegistryName')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "location": "[parameters('containerRegistryLocation')]",
-            "sku": {
-                "name": "[parameters('containerRegistrySku')]"
-            },
-            "properties": {
-                "adminUserEnabled": true,
-                "networkRuleSet": "[if(equals(parameters('containerRegistryBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
-            }
-        },
-        {
             "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
             "type": "Microsoft.OperationalInsights/workspaces",
             "tags": "[parameters('tagValues')]",
@@ -835,8 +835,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
+                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
             ],
             "identity": "[parameters('identity')]",
             "properties": {
@@ -844,8 +843,8 @@
                 "description": "[parameters('description')]",
                 "storageAccount": "[variables('storageAccount')]",
                 "keyVault": "[variables('keyVault')]",
-                "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
+                "applicationInsights": "[if(not(equals(parameters('applicationInsightsOption'), 'none')), variables('applicationInsights'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
@@ -862,6 +861,8 @@
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
+                "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                 "managedNetwork": "[parameters('managedNetwork')]",
                 "featureStoreSettings": {
                     "computeruntime": {
@@ -920,55 +921,13 @@
                             "resourceid": "[variables('materializationIdentity')]"
                         }
                     }
-                },
-                {
-                    "condition": "[and(equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
-                    "type": "endpoints",
-                    "apiVersion": "2023-08-01-preview",
-                    "name": "Azure.OpenAI",
-                    "properties": {
-                      "name": "Azure.OpenAI",
-                      "endpointType": "Azure.OpenAI",
-                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
-                    },
-                    "dependsOn": [
-                      "[parameters('workspaceName')]"
-                    ]
-                },
-                {
-                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
-                    "type": "endpoints",
-                    "apiVersion": "2023-08-01-preview",
-                    "name": "Azure.ContentSafety",
-                    "properties": {
-                        "name": "Azure.ContentSafety",
-                        "endpointType": "Azure.ContentSafety",
-                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
-                    },
-                    "dependsOn": [
-                        "[parameters('workspaceName')]"
-                    ]
-                },
-                {
-                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
-                    "type": "endpoints",
-                    "apiVersion": "2023-08-01-preview",
-                    "name": "Azure.Speech",
-                    "properties": {
-                        "name": "Azure.Speech",
-                        "endpointType": "Azure.Speech",
-                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
-                    },
-                    "dependsOn": [
-                        "[parameters('workspaceName')]"
-                    ]
                 }
             ]
         },
         {
             "condition":"[equals(parameters('kind'), 'featurestore')]",
 			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2022-05-01",
+			"apiVersion": "2024-03-01",
 			"name": "[concat(parameters('workspaceName'), '-deploy-feature-store')]",
 			"dependsOn": [
                 "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
@@ -1000,7 +959,7 @@
                                 "description": "[parameters('description')]",
                                 "storageAccount": "[variables('storageAccount')]",
                                 "keyVault": "[variables('keyVault')]",
-                                "applicationInsights": "[variables('applicationInsights')]",
+                                "applicationInsights": "[if(not(equals(parameters('applicationInsightsOption'), 'none')), variables('applicationInsights'), json('null'))]",
                                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                                 "hbiWorkspace": "[parameters('confidential_data')]",
                                 "imageBuildCompute": "[parameters('imageBuildCompute')]",
@@ -1018,6 +977,8 @@
                                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                                 },
                                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                                "systemDatastoresAuthMode": "[parameters('systemDatastoresAuthMode')]",
+                                "allowRoleAssignmentOnRG": "[parameters('allowRoleAssignmentOnRG')]",
                                 "managedNetwork": "[parameters('managedNetwork')]",
                                 "featureStoreSettings": {
                                     "computeruntime": {
@@ -1121,6 +1082,38 @@
                             "location": "[parameters('location')]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                                "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2023-01-31').principalId, '')]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(equals(parameters('materializationIdentityOption'), 'none')))]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat('ws-storage-role-assign-', guid(variables('materializationIdentity'), variables('storageAccount'), 'storage blob data contributor'))]",
+            "apiVersion": "2020-06-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
+            ],
+            "resourceGroup": "[parameters('storageAccountResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(variables('materializationIdentity'), variables('storageAccount'), 'storage blob data contributor')]",
+                            "scope": "[variables('storageAccount')]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
                                 "principalId": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), reference(variables('materializationIdentity'), '2023-01-31').principalId, '')]",
                                 "principalType": "ServicePrincipal"
                             }

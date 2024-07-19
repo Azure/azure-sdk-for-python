@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import asyncio
+
+import os
 import unittest
 import uuid
 from asyncio import sleep, gather
@@ -45,6 +46,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
+        if self.host == "https://localhost:8081/":
+            os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
 
     async def asyncTearDown(self):
         await self.client.close()
@@ -379,12 +382,13 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Should equal batch size
         assert totalCount == batchSize
 
-        # test an invalid value, will ignore start time option
+        # test an invalid value, Attribute error will be raised for passing non datetime object
         invalid_time = "Invalid value"
-        change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
-        totalCount = len(change_feed_iter)
-        # Should not equal batch size
-        assert totalCount != batchSize
+        try:
+            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
+            self.fail("Cannot format date on a non datetime object.")
+        except AttributeError as e:
+            assert ("'str' object has no attribute 'astimezone'" == e.args[0])
 
         await self.created_db.delete_container(created_collection.id)
 

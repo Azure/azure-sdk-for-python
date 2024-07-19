@@ -69,7 +69,13 @@ from azure.ai.ml.exceptions import (
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
+    from azure.ai.ml.operations import (
+        ComponentOperations,
+        DataOperations,
+        EnvironmentOperations,
+        IndexOperations,
+        ModelOperations,
+    )
 
 hash_type = type(hashlib.md5())  # nosec
 
@@ -928,18 +934,22 @@ def _archive_or_restore(
             )
         )
         version_resource.properties.is_archived = is_archived
-        version_operation.begin_create_or_update(  # pylint: disable=expression-not-assigned
-            name=name,
-            version=version,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            body=version_resource,
-        ) if registry_name else version_operation.create_or_update(
-            name=name,
-            version=version,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            body=version_resource,
+        (  # pylint: disable=expression-not-assigned
+            version_operation.begin_create_or_update(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=version_resource,
+            )
+            if registry_name
+            else version_operation.create_or_update(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=version_resource,
+            )
         )
     else:
         container_resource = (
@@ -956,16 +966,20 @@ def _archive_or_restore(
             )
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update(  # pylint: disable=expression-not-assigned
-            name=name,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            body=container_resource,
-        ) if registry_name else container_operation.create_or_update(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            body=container_resource,
+        (  # pylint: disable=expression-not-assigned
+            container_operation.create_or_update(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=container_resource,
+            )
+            if registry_name
+            else container_operation.create_or_update(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=container_resource,
+            )
         )
 
 
@@ -975,6 +989,7 @@ def _resolve_label_to_asset(
         "ComponentOperations",
         "EnvironmentOperations",
         "ModelOperations",
+        "IndexOperations",
     ],
     name: str,
     label: str,
@@ -984,7 +999,8 @@ def _resolve_label_to_asset(
     Throws if label does not refer to a version of the named asset
 
     :param assetOperations: The operations class used to retrieve the asset
-    :type assetOperations: Union["DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations"]
+    :type assetOperations:
+        Union["DataOperations", "ComponentOperations", "EnvironmentOperations", "ModelOperations", "IndexOperations"]
     :param name: The name of the asset
     :type name: str
     :param label: The label to resolve

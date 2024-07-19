@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
-from .._utils import get_authentication_policy
+from .._utils import get_authentication_policy, get_answer_query
 from .._generated.aio import SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
@@ -30,6 +30,7 @@ from .._generated.models import (
     SemanticErrorMode,
     QueryDebugMode,
     SuggestRequest,
+    HybridSearch,
 )
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
@@ -178,6 +179,7 @@ class SearchClient(HeadersMixin):
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
+        hybrid_search: Optional[HybridSearch] = None,
         **kwargs
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -295,6 +297,8 @@ class SearchClient(HeadersMixin):
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
@@ -329,8 +333,7 @@ class SearchClient(HeadersMixin):
         include_total_result_count = include_total_count
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
-        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
-        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
+        answers = get_answer_query(query_answer, query_answer_count, query_answer_threshold)
         captions = (
             query_caption
             if not query_caption_highlight_enabled
@@ -370,6 +373,7 @@ class SearchClient(HeadersMixin):
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
+            hybrid_search=hybrid_search,
         )
         if isinstance(select, list):
             query.select(select)

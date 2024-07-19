@@ -68,20 +68,20 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
-
 def _parse_conn_str(
         conn_str: str,  # pylint:disable=unused-argument
         *,
         eventhub_name: Optional[str] = None,
         check_case: bool = False,
         **kwargs: Any
-    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
+    use_emulator: Optional[str] = None
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )
@@ -95,6 +95,7 @@ def _parse_conn_str(
             # only sas check is non case sensitive for both conn str properties and internal use
             if key.lower() == "sharedaccesssignature":
                 shared_access_signature = value
+        use_emulator = conn_settings.get("UseDevelopmentEmulator")
 
     if not check_case:
         endpoint = conn_settings.get("endpoint") or conn_settings.get("hostname")
@@ -104,6 +105,7 @@ def _parse_conn_str(
         shared_access_key = conn_settings.get("sharedaccesskey")
         entity_path = conn_settings.get("entitypath")
         shared_access_signature = conn_settings.get("sharedaccesssignature")
+        use_emulator = conn_settings.get("usedevelopmentemulator")
 
     if shared_access_signature:
         try:
@@ -124,10 +126,13 @@ def _parse_conn_str(
     # check that endpoint is valid
     if not endpoint:
         raise ValueError("Connection string is either blank or malformed.")
+
     parsed = urlparse(endpoint)
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
+
+    emulator = use_emulator=="true"
 
     if any([shared_access_key, shared_access_key_name]) and not all(
         [shared_access_key, shared_access_key_name]
@@ -154,6 +159,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
+        emulator
     )
 
 
@@ -312,7 +318,8 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential  # type: ignore
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
-        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
+        self._auth_uri: str
+        self._eventhub_auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
             amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
@@ -327,25 +334,35 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry = _parse_conn_str(
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
             conn_str, **kwargs
         )
+
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
+        # Check if emulator is in use, unset tls if it is
+        if emulator:
+            kwargs["use_tls"] = False
         if token and token_expiry:
             kwargs["credential"] = EventHubSASTokenCredential(token, token_expiry)
         elif policy and key:
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
+    def _create_auth(self, *, auth_uri: Optional[str] = None) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
 
+        :keyword auth_uri: The URI to authenticate with.
+        :paramtype auth_uri: str or None
+
         :return: The auth for the session.
         :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         """
+        # if auth_uri is not provided, use the default hub one
+        entity_auth_uri = auth_uri if auth_uri else self._eventhub_auth_uri
+
         try:
             # ignore mypy's warning because token_type is Optional
             token_type = self._credential.token_type  # type: ignore
@@ -353,14 +370,14 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             token_type = b"jwt"
         if token_type == b"servicebus.windows.net:sastoken":
             return self._amqp_transport.create_token_auth(
-                self._auth_uri,
-                functools.partial(self._credential.get_token, self._auth_uri),
+                entity_auth_uri,
+                functools.partial(self._credential.get_token, entity_auth_uri),
                 token_type=token_type,
                 config=self._config,
                 update_token=True,
             )
         return self._amqp_transport.create_token_auth(
-            self._auth_uri,
+            entity_auth_uri,
             functools.partial(self._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
             config=self._config,
@@ -401,7 +418,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
-    def _management_request(
+    def _management_request(# pylint:disable=inconsistent-return-statements
         self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
     ) -> Any:
         # pylint:disable=assignment-from-none
@@ -414,7 +431,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             )
             try:
                 conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
-                    host=self._address.hostname, auth=mgmt_auth
+                    endpoint=self._address.hostname, auth=mgmt_auth
                 )
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
@@ -553,10 +570,10 @@ class ConsumerProducerMixin():
         if not self.running:
             if self._handler:
                 self._handler.close()
-            auth = self._client._create_auth()
+            auth = self._client._create_auth(auth_uri=self._client._auth_uri)
             self._create_handler(auth)
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
-                host=self._client._address.hostname, auth=auth
+                endpoint=self._client._address.hostname, auth=auth
             )
             self._handler.open(connection=conn)
             while not self._handler.client_ready():
@@ -584,7 +601,7 @@ class ConsumerProducerMixin():
             exception, self, is_consumer=is_consumer
         )
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs): # pylint:disable=inconsistent-return-statements
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0

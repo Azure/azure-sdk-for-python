@@ -21,6 +21,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient
 )
 
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
@@ -144,7 +145,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
     async def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_fake_token()
+        token_credential = AsyncFakeCredential()
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -160,7 +161,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
     async def test_create_service_with_token_and_http(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_fake_token()
+        token_credential = AsyncFakeCredential()
         for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError):

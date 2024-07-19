@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Literal, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -33,10 +33,10 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -300,7 +300,7 @@ def build_clear_legal_hold_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_immutability_policy_request(
+def build_create_or_update_immutability_policy_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     account_name: str,
     container_name: str,
@@ -639,7 +639,6 @@ class BlobContainersOperations:
         :param include: Optional, used to include the properties for soft deleted blob containers.
          "deleted" Default value is None.
         :type include: str or ~azure.mgmt.storage.v2022_05_01.models.ListContainersInclude
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListContainerItem or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.v2022_05_01.models.ListContainerItem]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -650,7 +649,7 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.ListContainerItems] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -661,7 +660,7 @@ class BlobContainersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
@@ -669,12 +668,11 @@ class BlobContainersOperations:
                     filter=filter,
                     include=include,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -685,14 +683,14 @@ class BlobContainersOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ListContainerItems", pipeline_response)
@@ -702,11 +700,11 @@ class BlobContainersOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -717,10 +715,6 @@ class BlobContainersOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers"
-    }
 
     @overload
     def create(
@@ -754,7 +748,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -766,7 +759,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: IO,
+        blob_container: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -788,11 +781,10 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param blob_container: Properties of the blob container to create. Required.
-        :type blob_container: IO
+        :type blob_container: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -804,7 +796,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: Union[_models.BlobContainer, IO],
+        blob_container: Union[_models.BlobContainer, IO[bytes]],
         **kwargs: Any
     ) -> _models.BlobContainer:
         """Creates a new container under the specified account as described by request body. The container
@@ -824,17 +816,13 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param blob_container: Properties of the blob container to create. Is either a BlobContainer
-         type or a IO type. Required.
-        :type blob_container: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type blob_container: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer or IO[bytes]
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -857,7 +845,7 @@ class BlobContainersOperations:
         else:
             _json = self._serialize.body(blob_container, "BlobContainer")
 
-        request = build_create_request(
+        _request = build_create_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -866,16 +854,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -894,10 +881,6 @@ class BlobContainersOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
-    }
 
     @overload
     def update(
@@ -930,7 +913,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -942,7 +924,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: IO,
+        blob_container: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -963,11 +945,10 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param blob_container: Properties to update for the blob container. Required.
-        :type blob_container: IO
+        :type blob_container: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -979,7 +960,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: Union[_models.BlobContainer, IO],
+        blob_container: Union[_models.BlobContainer, IO[bytes]],
         **kwargs: Any
     ) -> _models.BlobContainer:
         """Updates container properties as specified in request body. Properties not mentioned in the
@@ -998,17 +979,13 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param blob_container: Properties to update for the blob container. Is either a BlobContainer
-         type or a IO type. Required.
-        :type blob_container: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type blob_container: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer or IO[bytes]
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1031,7 +1008,7 @@ class BlobContainersOperations:
         else:
             _json = self._serialize.body(blob_container, "BlobContainer")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -1040,16 +1017,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1061,13 +1037,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("BlobContainer", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(
@@ -1087,12 +1059,11 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BlobContainer or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1106,22 +1077,21 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.BlobContainer] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1133,13 +1103,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("BlobContainer", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1159,12 +1125,11 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1178,22 +1143,21 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1203,11 +1167,7 @@ class BlobContainersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def set_legal_hold(
@@ -1241,7 +1201,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LegalHold or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1253,7 +1212,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: IO,
+        legal_hold: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1275,11 +1234,10 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be set to a blob container. Required.
-        :type legal_hold: IO
+        :type legal_hold: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LegalHold or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1291,7 +1249,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: Union[_models.LegalHold, IO],
+        legal_hold: Union[_models.LegalHold, IO[bytes]],
         **kwargs: Any
     ) -> _models.LegalHold:
         """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
@@ -1311,17 +1269,13 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be set to a blob container. Is either a
-         LegalHold type or a IO type. Required.
-        :type legal_hold: ~azure.mgmt.storage.v2022_05_01.models.LegalHold or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         LegalHold type or a IO[bytes] type. Required.
+        :type legal_hold: ~azure.mgmt.storage.v2022_05_01.models.LegalHold or IO[bytes]
         :return: LegalHold or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1344,7 +1298,7 @@ class BlobContainersOperations:
         else:
             _json = self._serialize.body(legal_hold, "LegalHold")
 
-        request = build_set_legal_hold_request(
+        _request = build_set_legal_hold_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -1353,16 +1307,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.set_legal_hold.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1374,13 +1327,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("LegalHold", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    set_legal_hold.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/setLegalHold"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def clear_legal_hold(
@@ -1413,7 +1362,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LegalHold or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1425,7 +1373,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: IO,
+        legal_hold: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1446,11 +1394,10 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be clear from a blob container. Required.
-        :type legal_hold: IO
+        :type legal_hold: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LegalHold or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1462,7 +1409,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: Union[_models.LegalHold, IO],
+        legal_hold: Union[_models.LegalHold, IO[bytes]],
         **kwargs: Any
     ) -> _models.LegalHold:
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
@@ -1481,17 +1428,13 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be clear from a blob container. Is either a
-         LegalHold type or a IO type. Required.
-        :type legal_hold: ~azure.mgmt.storage.v2022_05_01.models.LegalHold or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         LegalHold type or a IO[bytes] type. Required.
+        :type legal_hold: ~azure.mgmt.storage.v2022_05_01.models.LegalHold or IO[bytes]
         :return: LegalHold or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1514,7 +1457,7 @@ class BlobContainersOperations:
         else:
             _json = self._serialize.body(legal_hold, "LegalHold")
 
-        request = build_clear_legal_hold_request(
+        _request = build_clear_legal_hold_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -1523,16 +1466,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.clear_legal_hold.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1544,13 +1486,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("LegalHold", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    clear_legal_hold.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/clearLegalHold"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update_immutability_policy(
@@ -1589,11 +1527,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword immutability_policy_name: The name of the blob container immutabilityPolicy within the
-         specified storage account. ImmutabilityPolicy Name must be 'default'. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype immutability_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1606,7 +1539,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: Optional[str] = None,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1632,15 +1565,10 @@ class BlobContainersOperations:
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be created or updated to a blob
          container. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword immutability_policy_name: The name of the blob container immutabilityPolicy within the
-         specified storage account. ImmutabilityPolicy Name must be 'default'. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype immutability_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1653,7 +1581,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: Optional[str] = None,
-        parameters: Optional[Union[_models.ImmutabilityPolicy, IO]] = None,
+        parameters: Optional[Union[_models.ImmutabilityPolicy, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ImmutabilityPolicy:
         """Creates or updates an unlocked immutability policy. ETag in If-Match is honored if given but
@@ -1676,21 +1604,13 @@ class BlobContainersOperations:
          omitted, this operation will always be applied. Default value is None.
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be created or updated to a blob
-         container. Is either a ImmutabilityPolicy type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy or IO
-        :keyword immutability_policy_name: The name of the blob container immutabilityPolicy within the
-         specified storage account. ImmutabilityPolicy Name must be 'default'. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype immutability_policy_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         container. Is either a ImmutabilityPolicy type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy or IO[bytes]
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1717,7 +1637,7 @@ class BlobContainersOperations:
             else:
                 _json = None
 
-        request = build_create_or_update_immutability_policy_request(
+        _request = build_create_or_update_immutability_policy_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -1728,16 +1648,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1752,13 +1671,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    create_or_update_immutability_policy.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_immutability_policy(
@@ -1788,16 +1703,11 @@ class BlobContainersOperations:
          of "*" can be used to apply the operation only if the immutability policy already exists. If
          omitted, this operation will always be applied. Default value is None.
         :type if_match: str
-        :keyword immutability_policy_name: The name of the blob container immutabilityPolicy within the
-         specified storage account. ImmutabilityPolicy Name must be 'default'. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype immutability_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1812,7 +1722,7 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        request = build_get_immutability_policy_request(
+        _request = build_get_immutability_policy_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -1820,16 +1730,15 @@ class BlobContainersOperations:
             if_match=if_match,
             immutability_policy_name=immutability_policy_name,
             api_version=api_version,
-            template_url=self.get_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1844,13 +1753,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_immutability_policy.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete_immutability_policy(
@@ -1877,16 +1782,11 @@ class BlobContainersOperations:
          of "*" can be used to apply the operation only if the immutability policy already exists. If
          omitted, this operation will always be applied. Required.
         :type if_match: str
-        :keyword immutability_policy_name: The name of the blob container immutabilityPolicy within the
-         specified storage account. ImmutabilityPolicy Name must be 'default'. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype immutability_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1901,7 +1801,7 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        request = build_delete_immutability_policy_request(
+        _request = build_delete_immutability_policy_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -1909,16 +1809,15 @@ class BlobContainersOperations:
             if_match=if_match,
             immutability_policy_name=immutability_policy_name,
             api_version=api_version,
-            template_url=self.delete_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1933,13 +1832,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    delete_immutability_policy.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/{immutabilityPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def lock_immutability_policy(
@@ -1964,12 +1859,11 @@ class BlobContainersOperations:
          of "*" can be used to apply the operation only if the immutability policy already exists. If
          omitted, this operation will always be applied. Required.
         :type if_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1983,23 +1877,22 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[_models.ImmutabilityPolicy] = kwargs.pop("cls", None)
 
-        request = build_lock_immutability_policy_request(
+        _request = build_lock_immutability_policy_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
             api_version=api_version,
-            template_url=self.lock_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2014,13 +1907,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    lock_immutability_policy.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/lock"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def extend_immutability_policy(
@@ -2060,7 +1949,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2073,7 +1961,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2100,11 +1988,10 @@ class BlobContainersOperations:
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
          container. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2117,7 +2004,7 @@ class BlobContainersOperations:
         account_name: str,
         container_name: str,
         if_match: str,
-        parameters: Optional[Union[_models.ImmutabilityPolicy, IO]] = None,
+        parameters: Optional[Union[_models.ImmutabilityPolicy, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ImmutabilityPolicy:
         """Extends the immutabilityPeriodSinceCreationInDays of a locked immutabilityPolicy. The only
@@ -2141,17 +2028,13 @@ class BlobContainersOperations:
          omitted, this operation will always be applied. Required.
         :type if_match: str
         :param parameters: The ImmutabilityPolicy Properties that will be extended for a blob
-         container. Is either a ImmutabilityPolicy type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         container. Is either a ImmutabilityPolicy type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy or IO[bytes]
         :return: ImmutabilityPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.ImmutabilityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2177,7 +2060,7 @@ class BlobContainersOperations:
             else:
                 _json = None
 
-        request = build_extend_immutability_policy_request(
+        _request = build_extend_immutability_policy_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -2187,16 +2070,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.extend_immutability_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2211,13 +2093,9 @@ class BlobContainersOperations:
         deserialized = self._deserialize("ImmutabilityPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    extend_immutability_policy.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/immutabilityPolicies/default/extend"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def lease(
@@ -2250,7 +2128,6 @@ class BlobContainersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LeaseContainerResponse or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2262,7 +2139,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2283,11 +2160,10 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param parameters: Lease Container request body. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LeaseContainerResponse or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2299,7 +2175,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[Union[_models.LeaseContainerRequest, IO]] = None,
+        parameters: Optional[Union[_models.LeaseContainerRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.LeaseContainerResponse:
         """The Lease Container operation establishes and manages a lock on a container for delete
@@ -2317,18 +2193,14 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: Lease Container request body. Is either a LeaseContainerRequest type or a IO
-         type. Default value is None.
-        :type parameters: ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param parameters: Lease Container request body. Is either a LeaseContainerRequest type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequest or IO[bytes]
         :return: LeaseContainerResponse or the result of cls(response)
         :rtype: ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2354,7 +2226,7 @@ class BlobContainersOperations:
             else:
                 _json = None
 
-        request = build_lease_request(
+        _request = build_lease_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
@@ -2363,16 +2235,15 @@ class BlobContainersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2384,18 +2255,14 @@ class BlobContainersOperations:
         deserialized = self._deserialize("LeaseContainerResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    lease.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/lease"
-    }
+        return deserialized  # type: ignore
 
     def _object_level_worm_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, account_name: str, container_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2409,22 +2276,21 @@ class BlobContainersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_object_level_worm_request(
+        _request = build_object_level_worm_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             container_name=container_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._object_level_worm_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2434,11 +2300,7 @@ class BlobContainersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _object_level_worm_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/migrate"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_object_level_worm(
@@ -2461,14 +2323,6 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2496,7 +2350,7 @@ class BlobContainersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2507,14 +2361,10 @@ class BlobContainersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_object_level_worm.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/migrate"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

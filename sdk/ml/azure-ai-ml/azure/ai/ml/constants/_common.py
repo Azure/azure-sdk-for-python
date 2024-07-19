@@ -56,6 +56,11 @@ PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
 KEY = "key"
+AAD_TOKEN = "aadtoken"
+AAD_TOKEN_RESOURCE_ENDPOINT = "https://ml.azure.com"
+EMPTY_CREDENTIALS_ERROR = (
+    "Credentials unavailable. Initialize credentials using 'MLClient' for SDK or 'az login' for CLI."
+)
 DEFAULT_ARM_RETRY_INTERVAL = 60
 COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
@@ -134,7 +139,6 @@ CREATE_ENVIRONMENT_ERROR_MESSAGE = (
     "--file/-f is reserved for the Azure ML Environment definition (see schema here: {}). "
     "To specify a conda file via command-line argument, please use --conda-file/-c argument."
 )
-API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
@@ -188,6 +192,28 @@ CONNECTION_API_TYPE_KEY = "ApiType"
 CONNECTION_KIND_KEY = "Kind"
 CONNECTION_CONTAINER_NAME_KEY = "ContainerName"
 CONNECTION_ACCOUNT_NAME_KEY = "AccountName"
+CONNECTION_RESOURCE_ID_KEY = "ResourceId"
+
+# Deprecated tag keys that cause workspace patch operations to fail
+# Patch operations are used by the workspace begin_upcate operation,
+# but not begin_create_or_update. Once the former is replaced with the
+# latter, we can remove this list.
+WORKSPACE_PATCH_REJECTED_KEYS = ["AttachKeyVaultToWorkspace", "AttachAppInsightsToWorkspace"]
+
+
+class WorkspaceDiscoveryUrlKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that captures keys URL types returned from querying a workspace's discovery url."""
+
+    API = "api"
+    CATALOG = "catalog"
+    EXPERIMENTATION = "experimentation"
+    GALLERY = "gallery"
+    HISTORY = "history"
+    HYPERDRIVE = "hyperdrive"
+    LABELING = "labeling"
+    MODEL_MANAGEMENT = "modelmanagement"
+    PIPELINES = "pipelines"
+    STUDIO = "studio"
 
 
 class DefaultOpenEncoding:
@@ -230,8 +256,8 @@ class AzureMLResourceType:
     """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
     """Workspace resource type."""
-    WORKSPACE_CONNECTION = "workspace_connections"
-    """Workspace connection resource type."""
+    CONNECTION = "connections"
+    """connection resource type."""
     COMPONENT = "components"
     """Component resource type."""
     SCHEDULE = "schedules"
@@ -246,8 +272,16 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
-    WORKSPACE_HUB = "workspace_hub"
-    """WorkspaceHub resource type."""
+    HUB = "hub"
+    """Hub resource type."""
+    PROJECT = "project"
+    """Project resource type."""
+    SERVERLESS_ENDPOINT = "serverless_endpoints"
+    """Serverless endpoint resource type."""
+    MARKETPLACE_SUBSCRIPTION = "marketplace_subscriptions"
+    """Marketplace subscription resource type."""
+    INDEX = "indexes"
+    """Index resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -258,7 +292,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY, INDEX}
 
 
 class ArmConstants:
@@ -390,6 +424,7 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+    KIND = "kind"
 
 
 class SchemaUrl:
@@ -490,7 +525,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
-    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
+    HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -792,11 +827,31 @@ class InputOutputModes:
     """Direct asset type."""
 
 
-class WorkspaceConnectionTypes:
-    """Names for workspace connection types that are different from that underlying api enum values
+class ConnectionTypes:
+    """Names for connection types that are different from that underlying api enum values
     from the ConnectionCategory class."""
 
     CUSTOM = "custom"  # Corresponds to "custom_keys".
+    AZURE_DATA_LAKE_GEN_2 = "azure_data_lake_gen2"  # Corresponds to "alds_gen2".
+    AZURE_CONTENT_SAFETY = "azure_content_safety"  # Corresponds to "cognitive_service" with kind "content_safety".
+    AZURE_SPEECH_SERVICES = "azure_speech_services"  # Corresponds to "cognitive_service" with kind "speech".
+    AZURE_SEARCH = "azure_ai_search"  # Corresponds to "cognitive_search"
+    AZURE_AI_SERVICES = "azure_ai_services"  # Corresponds to "ai_services"
+    AI_SERVICES_REST_PLACEHOLDER = "AIServices"  # placeholder until REST enum "ai_services" is published.
+
+
+class OneLakeArtifactTypes:
+    """Names for fabric types that specific sub-types of MicrosoftOneLakeConnections"""
+
+    ONE_LAKE = "lake_house"
+
+
+class CognitiveServiceKinds:
+    """Subtypes for connections using the Cognitive service type. These
+    values are plugged into the connection's metadata."""
+
+    CONTENT_SAFETY = "Content Safety"
+    SPEECH = "speech"
 
 
 class LegacyAssetTypes:
@@ -901,6 +956,24 @@ class AzureDevopsArtifactsType:
     ARTIFACT = "artifact"
 
 
+class DataIndexTypes:
+    """DataIndexTypes is an enumeration of values for the types out indexes which can be written to by DataIndex."""
+
+    ACS = "acs"
+    """Azure Cognitive Search index type."""
+    PINECONE = "pinecone"
+    """Pinecone index type."""
+    FAISS = "faiss"
+    """Faiss index type."""
+
+
+class IndexInputType:
+    """An enumeration of values for the types of input data for an index."""
+
+    GIT = "git"
+    LOCAL = "local"
+
+
 class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JOB = "job"
     MONITOR = "monitor"
@@ -910,3 +983,12 @@ class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED_GREATER_THAN = "created_greater_than"
     LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"
+
+
+class WorkspaceKind:
+    """Enum of workspace categories."""
+
+    DEFAULT = "default"
+    HUB = "hub"
+    PROJECT = "project"
+    FEATURE_STORE = "featurestore"

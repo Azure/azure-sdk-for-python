@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -74,7 +74,6 @@ class ManagedDatabaseMoveOperationsOperations:
         :param filter: An OData filter expression that filters elements in the collection. Default
          value is None.
         :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ManagedDatabaseMoveOperationResult or the result
          of cls(response)
         :rtype:
@@ -98,26 +97,25 @@ class ManagedDatabaseMoveOperationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_location_request(
+                _request = build_list_by_location_request(
                     resource_group_name=resource_group_name,
                     location_name=location_name,
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     filter=filter,
                     api_version=api_version,
-                    template_url=self.list_by_location.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ManagedDatabaseMoveOperationListResult", pipeline_response)
@@ -127,11 +125,11 @@ class ManagedDatabaseMoveOperationsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -142,10 +140,6 @@ class ManagedDatabaseMoveOperationsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_location.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/managedDatabaseMoveOperationResults"
-    }
 
     @distributed_trace_async
     async def get(
@@ -160,7 +154,6 @@ class ManagedDatabaseMoveOperationsOperations:
         :type location_name: str
         :param operation_id: Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ManagedDatabaseMoveOperationResult or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ManagedDatabaseMoveOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -179,22 +172,21 @@ class ManagedDatabaseMoveOperationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01-preview"))
         cls: ClsType[_models.ManagedDatabaseMoveOperationResult] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             location_name=location_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -206,10 +198,6 @@ class ManagedDatabaseMoveOperationsOperations:
         deserialized = self._deserialize("ManagedDatabaseMoveOperationResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/locations/{locationName}/managedDatabaseMoveOperationResults/{operationId}"
-    }
+        return deserialized  # type: ignore

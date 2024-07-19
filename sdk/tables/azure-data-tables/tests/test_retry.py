@@ -233,7 +233,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # prepare a table
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
-        time.sleep(10)
+        if self.is_live:
+            time.sleep(15)
 
         # test get_entity() without the entity
         with TableClient(
@@ -262,7 +263,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # prepare an entity
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_entity(entity)
-        time.sleep(10)
+        if self.is_live:
+            time.sleep(15)
 
         # test get_entity() when the entity is ready
         with TableClient(
@@ -329,7 +331,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # prepare a table
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
-        time.sleep(10)
+        if self.is_live:
+            time.sleep(15)
 
         # test get_entity() without the entity
         with TableClient(
@@ -358,7 +361,8 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # prepare an entity
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_entity(entity)
-        time.sleep(10)
+        if self.is_live:
+            time.sleep(15)
 
         # test get_entity() when the entity is ready
         with TableClient(

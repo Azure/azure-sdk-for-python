@@ -34,8 +34,9 @@ async def list_definitions():
             response = client.list_metric_definitions(metrics_uri)
             async for item in response:
                 print(item.name)
-                for availability in item.metric_availabilities:
-                    print(availability.granularity)
+                if item.metric_availabilities:
+                    for availability in item.metric_availabilities:
+                        print(availability.granularity)
         except HttpResponseError as err:
             print("something fatal happened")
             print(err)

@@ -300,6 +300,6 @@ class ParallelComponent(
         try:
             toYaml: str = self._to_yaml()
             return toYaml
-        except BaseException:  # pylint: disable=broad-except
+        except BaseException:  # pylint: disable=W0718
             toStr: str = super(ParallelComponent, self).__str__()
             return toStr

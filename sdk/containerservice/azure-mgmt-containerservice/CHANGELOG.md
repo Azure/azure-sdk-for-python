@@ -1,5 +1,42 @@
 # Release History
 
+## 31.0.0 (2024-07-18)
+
+### Features Added
+
+  - Added operation group LoadBalancersOperations
+  - Model ManagedClusterAzureMonitorProfileAppMonitoring has a new parameter auto_instrumentation
+  - Model ManagedClusterAzureMonitorProfileAppMonitoring has a new parameter open_telemetry_logs
+  - Model ManagedClusterAzureMonitorProfileAppMonitoring has a new parameter open_telemetry_metrics
+  - Model ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics has a new parameter port
+  - Model ManagedClusterAzureMonitorProfileContainerInsights has a new parameter disable_custom_metrics
+  - Model ManagedClusterAzureMonitorProfileContainerInsights has a new parameter disable_prometheus_metrics_scraping
+  - Model ManagedClusterAzureMonitorProfileContainerInsights has a new parameter syslog_port
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter daemonset_eviction_for_empty_nodes
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter daemonset_eviction_for_occupied_nodes
+  - Model ManagedClusterPropertiesAutoScalerProfile has a new parameter ignore_daemonsets_utilization
+  - Model ScaleProfile has a new parameter autoscale
+
+### Breaking Changes
+
+  - Model ManagedClusterAzureMonitorProfileAppMonitoring no longer has parameter enabled
+  - Model ManagedClusterAzureMonitorProfileContainerInsights no longer has parameter windows_host_logs
+  - Removed operation ManagedClustersOperations.get_os_options
+
+## 30.0.0 (2024-04-22)
+
+### Features Added
+
+  - Model AgentPool has a new parameter windows_profile
+  - Model KubernetesVersion has a new parameter is_default
+  - Model ManagedCluster has a new parameter metrics_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter windows_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter windows_profile
+
+### Breaking Changes
+
+  - Model IstioEgressGateway no longer has parameter node_selector
+
 ## 29.1.0 (2024-02-20)
 
 ### Features Added

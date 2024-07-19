@@ -1,6 +1,22 @@
 # Release History
 
-## 12.10.0b1 (Unreleased)
+## 12.11.0 (2024-07-17)
+
+### Features Added
+- Stable release of features from 12.11.0b1
+
+## 12.11.0b1 (2024-06-11)
+
+### Features Added
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
+- Fixed an issue where client specified service versions may be ignored.
+
+## 12.10.0 (2024-05-07)
+
+### Features Added
+- Stable release of features from 12.10.0b1
+
+## 12.10.0b1 (2024-04-16)
 
 This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 

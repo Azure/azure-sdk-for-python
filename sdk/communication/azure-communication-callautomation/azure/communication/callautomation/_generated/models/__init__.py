@@ -15,7 +15,6 @@ from ._models import AnswerFailed
 from ._models import AzureOpenAIDialog
 from ._models import AzureOpenAIDialogUpdate
 from ._models import BaseDialog
-from ._models import BlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -61,6 +60,10 @@ from ._models import FileSource
 from ._models import HoldFailed
 from ._models import HoldRequest
 from ._models import MediaStreamingConfiguration
+from ._models import MediaStreamingFailed
+from ._models import MediaStreamingStarted
+from ._models import MediaStreamingStopped
+from ._models import MediaStreamingUpdate
 from ._models import MicrosoftTeamsAppIdentifierModel
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -98,11 +101,11 @@ from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import StartDialogRequest
 from ._models import StartHoldMusicRequest
+from ._models import StartMediaStreamingRequest
 from ._models import StartTranscriptionRequest
 from ._models import StopHoldMusicRequest
+from ._models import StopMediaStreamingRequest
 from ._models import StopTranscriptionRequest
-from ._models import TeamsComplianceRecordingStateChanged
-from ._models import TeamsRecordingStateChanged
 from ._models import TextSource
 from ._models import TranscriptionConfiguration
 from ._models import TranscriptionFailed
@@ -128,6 +131,8 @@ from ._enums import DialogInputType
 from ._enums import DtmfTone
 from ._enums import MediaStreamingAudioChannelType
 from ._enums import MediaStreamingContentType
+from ._enums import MediaStreamingStatus
+from ._enums import MediaStreamingStatusDetails
 from ._enums import MediaStreamingTransportType
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
@@ -135,9 +140,9 @@ from ._enums import RecognizeInputType
 from ._enums import RecordingChannel
 from ._enums import RecordingContent
 from ._enums import RecordingFormat
+from ._enums import RecordingKind
 from ._enums import RecordingState
-from ._enums import RecordingStorage
-from ._enums import RecordingType
+from ._enums import RecordingStorageKind
 from ._enums import TranscriptionStatus
 from ._enums import TranscriptionStatusDetails
 from ._enums import TranscriptionTransportType
@@ -156,7 +161,6 @@ __all__ = [
     "AzureOpenAIDialog",
     "AzureOpenAIDialogUpdate",
     "BaseDialog",
-    "BlobStorage",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
@@ -202,6 +206,10 @@ __all__ = [
     "HoldFailed",
     "HoldRequest",
     "MediaStreamingConfiguration",
+    "MediaStreamingFailed",
+    "MediaStreamingStarted",
+    "MediaStreamingStopped",
+    "MediaStreamingUpdate",
     "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -239,11 +247,11 @@ __all__ = [
     "StartCallRecordingRequest",
     "StartDialogRequest",
     "StartHoldMusicRequest",
+    "StartMediaStreamingRequest",
     "StartTranscriptionRequest",
     "StopHoldMusicRequest",
+    "StopMediaStreamingRequest",
     "StopTranscriptionRequest",
-    "TeamsComplianceRecordingStateChanged",
-    "TeamsRecordingStateChanged",
     "TextSource",
     "TranscriptionConfiguration",
     "TranscriptionFailed",
@@ -268,6 +276,8 @@ __all__ = [
     "DtmfTone",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
+    "MediaStreamingStatus",
+    "MediaStreamingStatusDetails",
     "MediaStreamingTransportType",
     "PlaySourceType",
     "RecognitionType",
@@ -275,9 +285,9 @@ __all__ = [
     "RecordingChannel",
     "RecordingContent",
     "RecordingFormat",
+    "RecordingKind",
     "RecordingState",
-    "RecordingStorage",
-    "RecordingType",
+    "RecordingStorageKind",
     "TranscriptionStatus",
     "TranscriptionStatusDetails",
     "TranscriptionTransportType",

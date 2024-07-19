@@ -17,7 +17,7 @@
 # ----------------------
 
 import os
-import unittest
+import pytest
 from dotenv import load_dotenv
 
 import azure.mgmt.keyvault
@@ -26,13 +26,14 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = 'eastus'
 load_dotenv()
 
+@pytest.mark.live_test_only
 class TestMgmtKeyVault(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.keyvault.KeyVaultManagementClient
         )
-    
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_keyvault(self, resource_group):
@@ -170,7 +171,7 @@ class TestMgmtKeyVault(AzureMgmtRecordedTestCase):
             ]
           }
         }
-        
+
         result = self.mgmt_client.vaults.update_access_policy(resource_group_name=RESOURCE_GROUP, vault_name=VAULT_NAME, operation_kind=OPERATION_KIND, parameters=PARAMETERS)
 
         # /PrivateEndpointConnections/put/KeyVaultPutPrivateEndpointConnection[put]
@@ -287,7 +288,3 @@ class TestMgmtKeyVault(AzureMgmtRecordedTestCase):
         # /Vaults/post/Purge a deleted vault[post]
         result = self.mgmt_client.vaults.begin_purge_deleted(location=LOCATION, vault_name=VAULT_NAME)
         result = result.result()
-
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
