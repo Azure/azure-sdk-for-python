@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import inspect
 import os
 import azure.ai.inference as sdk
 
@@ -10,7 +9,6 @@ from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCo
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
-
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelClient(ModelClientTestBase):
@@ -32,6 +30,146 @@ class TestModelClient(ModelClientTestBase):
         assert image_url
         assert image_url.url.startswith("data:image/png;base64,iVBORw")
         assert image_url.detail == sdk.models.ImageDetailLevel.AUTO
+
+    def test_chat_completions_with_defaults(self, **kwargs):
+        # pylint: disable=protected-access
+        client1 = sdk.ChatCompletionsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            some_input_arg="some_input_value"
+        )
+
+        client2 = client1.with_defaults(
+            model_extras={"key1": 1},
+            model="some-model-id",
+            frequency_penalty=0.123,
+            max_tokens=321,
+            presence_penalty=4.567,
+            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+            seed=654,
+            stop=["stop1", "stop2"],
+            temperature=8.976,
+            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+            tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
+            top_p=9.876,
+        )
+        assert client2 is not client1
+        assert client2._model_extras == {"key1": 1}
+        assert client2._model == "some-model-id"
+        assert client2._frequency_penalty == 0.123
+        assert client2._max_tokens == 321
+        assert client2._presence_penalty == 4.567
+        assert client2._response_format == sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT
+        assert client2._seed == 654
+        assert client2._stop == ["stop1", "stop2"]
+        assert client2._temperature == 8.976
+        assert client2._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.AUTO
+        assert client2._tools == [ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2]
+        assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
+
+        client3 = client2.with_defaults(
+            model_extras={"key2": "value2"},
+            model="some-other-model-id",
+            frequency_penalty=0.456,
+            max_tokens=768,
+            presence_penalty=1.234,
+            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            seed=987,
+            stop=["stop3"],
+            temperature=5.432,
+            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
+            tools=[ModelClientTestBase.TOOL2],
+            top_p=3.456,
+        )
+        assert client3._model_extras == {"key2": "value2"}
+        assert client3._model == "some-other-model-id"
+        assert client3._frequency_penalty == 0.456
+        assert client3._max_tokens == 768
+        assert client3._presence_penalty == 1.234
+        assert client3._response_format == sdk.models.ChatCompletionsResponseFormat.TEXT
+        assert client3._seed == 987
+        assert client3._stop == ["stop3"]
+        assert client3._temperature == 5.432
+        assert client3._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED
+        assert client3._tools == [ModelClientTestBase.TOOL2]
+        assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
+        # pylint: enable=protected-access
+
+    def test_embeddings_with_defaults(self, **kwargs):
+        # pylint: disable=protected-access
+        client1 = sdk.EmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            some_input_arg="some_input_value"
+        )
+
+        client2 = client1.with_defaults(
+            dimensions=2048,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+            input_type=sdk.models.EmbeddingInputType.QUERY,
+            model_extras={ "key1": 1},
+            model="some-model-id",
+        )
+        assert client2 is not client1
+        assert client2._dimensions == 2048
+        assert client2._encoding_format == sdk.models.EmbeddingEncodingFormat.UBINARY
+        assert client2._input_type == sdk.models.EmbeddingInputType.QUERY
+        assert client2._model_extras == { "key1": 1}
+        assert client2._model == "some-model-id"
+        assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
+
+        client3 = client2.with_defaults(
+            dimensions=1024,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
+            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
+            model_extras={ "key2": "value2"},
+            model="some-other-model-id",
+        )
+        assert client3._dimensions == 1024
+        assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
+        assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
+        assert client3._model_extras == { "key2": "value2"}
+        assert client3._model == "some-other-model-id"
+        assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
+        # pylint: enable=protected-access
+
+    def test_image_embeddings_with_defaults(self, **kwargs):
+        # pylint: disable=protected-access
+        client1 = sdk.ImageEmbeddingsClient(
+            endpoint="http://does.not.exist",
+            credential=AzureKeyCredential("key-value"),
+            some_input_arg="some_input_value"
+        )
+
+        client2 = client1.with_defaults(
+            dimensions=2048,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
+            input_type=sdk.models.EmbeddingInputType.QUERY,
+            model_extras={ "key1": 1},
+            model="some-model-id",
+        )
+        assert client2 is not client1
+        assert client2._dimensions == 2048
+        assert client2._encoding_format == sdk.models.EmbeddingEncodingFormat.UBINARY
+        assert client2._input_type == sdk.models.EmbeddingInputType.QUERY
+        assert client2._model_extras == { "key1": 1}
+        assert client2._model == "some-model-id"
+        assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
+
+        client3 = client2.with_defaults(
+            dimensions=1024,
+            encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
+            input_type=sdk.models.EmbeddingInputType.DOCUMENT,
+            model_extras={ "key2": "value2"},
+            model="some-other-model-id",
+        )
+        assert client3._dimensions == 1024
+        assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
+        assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
+        assert client3._model_extras == { "key2": "value2"}
+        assert client3._model == "some-other-model-id"
+        assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
+        # pylint: enable=protected-access
 
     # **********************************************************************************
     #
@@ -69,19 +207,6 @@ class TestModelClient(ModelClientTestBase):
                 self._validate_embeddings_json_request_payload()
                 continue
             assert False
-
-    # Make sure that a call to .with_defaults() returns a new client and not
-    # the same client.
-    def test_embeddings_with_defaults_client_identity(self, **kwargs):
-
-        client1 = sdk.EmbeddingsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-        )
-        client2 = client1.with_defaults()
-        assert client2 is not client1
-        client3 = client1.with_defaults(dimensions=123)
-        assert client3 is not client1
 
     # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
@@ -200,15 +325,7 @@ class TestModelClient(ModelClientTestBase):
         response2 = client.get_model_info()
         self._print_model_info_result(response2)
         assert response1 == response2
-
-        # Make sure that you get a new client from .with_defaults(),
-        # and that client has the model info cached.
-        client2 = client.with_defaults(dimensions=123)
-        assert client2._model_info # pylint: disable=protected-access
-        print(client2._model_info) # pylint: disable=protected-access
-
         client.close()
-        client2.close()
 
     @ServicePreparerEmbeddings()
     @recorded_by_proxy
@@ -288,20 +405,6 @@ class TestModelClient(ModelClientTestBase):
                 self._validate_chat_completions_json_request_payload()
                 continue
             assert False
-
-    # Make sure that a call to .with_defaults() returns a new client and not
-    # the same client.
-    def test_chat_completions_with_defaults_client_identity(self, **kwargs):
-
-        client1 = sdk.ChatCompletionsClient(
-            endpoint="http://does.not.exist",
-            credential=AzureKeyCredential("key-value"),
-        )
-        client2 = client1.with_defaults()
-        assert client2 is not client1
-        client3 = client1.with_defaults(temperature=0.5)
-        assert client3 is not client1
-
 
     # Regression test. Send a request that includes all supported types of input objects, with input arguments
     # specified via the `with_defaults` method. Make sure the resulting JSON payload that goes up to the service
@@ -493,15 +596,7 @@ class TestModelClient(ModelClientTestBase):
         response2 = client.get_model_info()
         self._print_model_info_result(response2)
         assert response1 == response2
-
-        # Make sure that you get a new client from .with_defaults(),
-        # and that client has the model info cached.
-        client2 = client.with_defaults(temperature=0.5)
-        assert client2._model_info # pylint: disable=protected-access
-        print(client2._model_info) # pylint: disable=protected-access
-
         client.close()
-        client2.close()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy

@@ -132,27 +132,47 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
+        # First pop out any unlisted embedding settings, since we need to remove them before saving kwargs
+        model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
+        model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
+        frequency_penalty: Optional[float] = kwargs.pop("frequency_penalty", None)
+        presence_penalty: Optional[float] = kwargs.pop("presence_penalty", None)
+        temperature: Optional[float] = kwargs.pop("temperature", None)
+        top_p: Optional[float] = kwargs.pop("top_p", None)
+        max_tokens: Optional[int] = kwargs.pop("max_tokens", None)
+        response_format: Optional[
+            Union[str, _models.ChatCompletionsResponseFormat]
+        ] = kwargs.pop("response_format", None)
+        stop: Optional[List[str]] = kwargs.pop("stop", None)
+        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = kwargs.pop("tools", None)
+        tool_choice: Optional[
+            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+        ] = kwargs.pop("tool_choice", None)
+        seed: Optional[int] = kwargs.pop("seed", None)
+        model: Optional[str] = kwargs.pop("model", None)
+
+        # Remember all listed input arguments, as we may need to re-apply them when a new client is
+        # construced in the `with_defaults` method
         self._endpoint = endpoint
         self._credential = credential
         self._init_kwargs = kwargs
-        self._model_info: Optional[_models.ModelInfo] = kwargs.get("model_info")
-        self._model_extras: Optional[Dict[str, Any]] = kwargs.get("model_extras")
-        self._frequency_penalty: Optional[float] = kwargs.get("frequency_penalty")
-        self._presence_penalty: Optional[float] = kwargs.get("presence_penalty")
-        self._temperature: Optional[float] = kwargs.get("temperature")
-        self._top_p: Optional[float] = kwargs.get("top_p")
-        self._max_tokens: Optional[int] = kwargs.get("max_tokens")
-        self._response_format: Optional[
-            Union[str, _models.ChatCompletionsResponseFormat]
-        ] = kwargs.get("response_format")
-        self._stop: Optional[List[str]] = kwargs.get("stop")
-        self._tools: Optional[List[_models.ChatCompletionsToolDefinition]] = kwargs.get("tools")
-        self._tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
-        ] = kwargs.get("tool_choice")
-        self._seed: Optional[int] = kwargs.get("seed")
-        self._model: Optional[str] = kwargs.get("model")
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
+        # Store default embedding settings, to be applied in all future service calls
+        self._model_info = model_info
+        self._model_extras = model_extras
+        self._frequency_penalty = frequency_penalty
+        self._presence_penalty = presence_penalty
+        self._temperature = temperature
+        self._top_p = top_p
+        self._max_tokens = max_tokens
+        self._response_format = response_format
+        self._stop = stop
+        self._tools = tools
+        self._tool_choice = tool_choice
+        self._seed = seed
+        self._model = model
+    
+        super().__init__(endpoint, credential, **kwargs)
 
     def with_defaults(
         self,
@@ -250,18 +270,18 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
             endpoint=self._endpoint,
             credential=self._credential,
             model_info=self._model_info,
-            model_extras=model_extras,
-            frequency_penalty=frequency_penalty,
-            presence_penalty=presence_penalty,
-            temperature=temperature,
-            top_p=top_p,
-            max_tokens=max_tokens,
-            response_format=response_format,
-            stop=stop,
-            tools=tools,
-            tool_choice=tool_choice,
-            seed=seed,
-            model=model,
+            model_extras=model_extras or self._model_extras,
+            frequency_penalty=frequency_penalty or self._frequency_penalty,
+            presence_penalty=presence_penalty or self._presence_penalty,
+            temperature=temperature or self._temperature,
+            top_p=top_p or self._top_p,
+            max_tokens=max_tokens or self._max_tokens,
+            response_format=response_format or self._response_format,
+            stop=stop or self._stop,
+            tools=tools or self._tools,
+            tool_choice=tool_choice or self._tool_choice,
+            seed=seed or self._seed,
+            model=model or self._model,
             **self._init_kwargs
         )
 
@@ -708,16 +728,29 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
+        # First pop out any unlisted embedding settings, since we need to remove them before saving kwargs
+        model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
+        model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
+        dimensions: Optional[int] = kwargs.pop("dimensions", None)
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]]  = kwargs.pop("encoding_format", None)
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.pop("input_type", None)
+        model: Optional[str] = kwargs.pop("model", None)
+
+        # Remember all listed input arguments, as we may need to re-apply them when a new client is
+        # construced in the `with_defaults` method
         self._endpoint = endpoint
         self._credential = credential
         self._init_kwargs = kwargs
-        self._model_info: Optional[_models.ModelInfo] = kwargs.get("model_info")
-        self._model_extras: Optional[Dict[str, Any]] = kwargs.get("model_extras")
-        self._dimensions: Optional[int] = kwargs.get("dimensions")
-        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = kwargs.get("encoding_format")
-        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.get("input_type")
-        self._model: Optional[str] = kwargs.get("model")
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
+        # Store default embedding settings, to be applied in all future service calls
+        self._model_info = model_info
+        self._model_extras = model_extras
+        self._dimensions = dimensions
+        self._encoding_format= encoding_format
+        self._input_type = input_type
+        self._model = model
+
+        super().__init__(endpoint, credential, **kwargs)
 
     def with_defaults(
         self,
@@ -760,11 +793,11 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             endpoint=self._endpoint,
             credential=self._credential,
             model_info=self._model_info,
-            model_extras=model_extras,
-            dimensions=dimensions,
-            encoding_format=encoding_format,
-            input_type=input_type,
-            model=model,
+            model_extras=model_extras or self._model_extras,
+            dimensions=dimensions or self._dimensions,
+            encoding_format=encoding_format or self._encoding_format,
+            input_type=input_type or self._input_type,
+            model=model or self._model,
             **self._init_kwargs
         )
 
@@ -1024,16 +1057,29 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
+        # First pop out any unlisted embedding settings, since we need to remove them before saving kwargs
+        model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
+        model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
+        dimensions: Optional[int] = kwargs.pop("dimensions", None)
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]]  = kwargs.pop("encoding_format", None)
+        input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.pop("input_type", None)
+        model: Optional[str] = kwargs.pop("model", None)
+
+        # Remember all listed input arguments, as we may need to re-apply them when a new client is
+        # construced in the `with_defaults` method
         self._endpoint = endpoint
         self._credential = credential
         self._init_kwargs = kwargs
-        self._model_info: Optional[_models.ModelInfo] = kwargs.get("model_info")
-        self._model_extras: Optional[Dict[str, Any]] = kwargs.get("model_extras")
-        self._dimensions: Optional[int] = kwargs.get("dimensions")
-        self._encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = kwargs.get("encoding_format")
-        self._input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.get("input_type")
-        self._model: Optional[str] = kwargs.get("model")
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+
+        # Store default embedding settings, to be applied in all future service calls
+        self._model_info = model_info
+        self._model_extras = model_extras
+        self._dimensions = dimensions
+        self._encoding_format= encoding_format
+        self._input_type = input_type
+        self._model = model
+
+        super().__init__(endpoint, credential, **kwargs)
 
     def with_defaults(
         self,
@@ -1076,13 +1122,14 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             endpoint=self._endpoint,
             credential=self._credential,
             model_info=self._model_info,
-            model_extras=model_extras,
-            dimensions=dimensions,
-            encoding_format=encoding_format,
-            input_type=input_type,
-            model=model,
+            model_extras=model_extras or self._model_extras,
+            dimensions=dimensions or self._dimensions,
+            encoding_format=encoding_format or self._encoding_format,
+            input_type=input_type or self._input_type,
+            model=model or self._model,
             **self._init_kwargs
         )
+
 
     @overload
     async def embed(
