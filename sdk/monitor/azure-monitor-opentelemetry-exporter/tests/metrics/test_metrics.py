@@ -344,6 +344,16 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
 
+        point.attributes["http.status_code"] = None
+        envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
+        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
+
+        point.attributes["http.status_code"] = "None"
+        envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
+        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
+
 
     def test_point_to_envelope_std_metric_server_duration(self):
         exporter = self._exporter
@@ -378,9 +388,20 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
         # Success/Failure
-        point.attributes["http.status_code"] = 600
+        point.attributes["http.status_code"] = 500
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
+
+        point.attributes["http.status_code"] = None
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
+        self.assertEqual(envelope.data.base_data.properties.get('request/resultCode'), "0")
+
+        point.attributes["http.status_code"] = "None"
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
+        self.assertEqual(envelope.data.base_data.properties.get('request/resultCode'), "0")
+
 
     def test_point_to_envelope_std_metric_unsupported(self):
         exporter = self._exporter

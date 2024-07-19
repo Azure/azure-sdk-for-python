@@ -17,6 +17,9 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: ''
+  - name: UseVirtualEnvironment
+    type: boolean
+    default: true
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -114,11 +117,11 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - script: |
-      pip install -r eng/release_requirements.txt
+      python -m pip install -r eng/release_requirements.txt
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
 

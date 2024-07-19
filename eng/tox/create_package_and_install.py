@@ -18,7 +18,7 @@ from ci_tools.scenario.generation import create_package_and_install
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Build a package directory into wheel or sdist. Then install it. To install dev dependencies, set environment variable "SetDevVersion" to "true" and set "PIP_INDEX_URL" to a python feed.'
+        description='Build a package directory into wheel or sdist. Then install it. To install dev dependencies, set environment variable "SETDEVVERSION" to "true" and set "PIP_INDEX_URL" to a python feed.'
     )
     parser.add_argument(
         "-d",

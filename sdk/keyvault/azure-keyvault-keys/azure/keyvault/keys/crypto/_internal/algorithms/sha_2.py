@@ -2,20 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Union, Type
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 
 from ..algorithm import HashAlgorithm
 from ..transform import DigestTransform
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Union, Type
 
 
 class _Sha2DigestTransform(DigestTransform):
@@ -32,7 +25,7 @@ class _Sha2DigestTransform(DigestTransform):
 
 class _Sha2HashAlgorithm(HashAlgorithm):
 
-    _algorithm_cls = None  # type: Union[Type[hashes.SHA256], Type[hashes.SHA384], Type[hashes.SHA512], None]
+    _algorithm_cls: Union[Type[hashes.SHA256], Type[hashes.SHA384], Type[hashes.SHA512], None] = None
 
     def create_digest(self):
         return _Sha2DigestTransform(self._algorithm_cls())  # pylint:disable=not-callable

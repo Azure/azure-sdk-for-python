@@ -52,16 +52,22 @@ async def sample_document_status_checks_async():
             async for document in doc_statuses:
                 if document.id not in completed_docs:
                     if document.status == "Succeeded":
-                        print(f"Document at {document.source_document_url} was translated to {document.translated_to} "
-                              f"language. You can find translated document at {document.translated_document_url}")
+                        print(
+                            f"Document at {document.source_document_url} was translated to {document.translated_to} "
+                            f"language. You can find translated document at {document.translated_document_url}"
+                        )
                         completed_docs.append(document.id)
                     if document.status == "Failed" and document.error:
-                        print(f"Document at {document.source_document_url} failed translation. "
-                              f"Error Code: {document.error.code}, Message: {document.error.message}")
+                        print(
+                            f"Document at {document.source_document_url} failed translation. "
+                            f"Error Code: {document.error.code}, Message: {document.error.message}"
+                        )
                         completed_docs.append(document.id)
                     if document.status == "Running":
-                        print(f"Document ID: {document.id}, translation progress is "
-                              f"{document.translation_progress * 100} percent")
+                        print(
+                            f"Document ID: {document.id}, translation progress is "
+                            f"{document.translation_progress * 100} percent"
+                        )
 
         print("\nTranslation completed.")
     # [END list_document_statuses_async]
@@ -70,5 +76,6 @@ async def sample_document_status_checks_async():
 async def main():
     await sample_document_status_checks_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -38,6 +39,10 @@ from ...operations._automations_operations import (
     build_validate_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -67,7 +72,6 @@ class AutomationsOperations:
         """Lists all the security automations in the specified subscription. Use the 'nextLink' property
         in the response to get the next page of security automations for the specified subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Automation or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.v2019_01_01_preview.models.Automation]
@@ -81,7 +85,7 @@ class AutomationsOperations:
         )
         cls: ClsType[_models.AutomationList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -92,15 +96,14 @@ class AutomationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -111,14 +114,14 @@ class AutomationsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AutomationList", pipeline_response)
@@ -128,11 +131,11 @@ class AutomationsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -143,8 +146,6 @@ class AutomationsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/automations"}
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.Automation"]:
@@ -154,7 +155,6 @@ class AutomationsOperations:
         :param resource_group_name: The name of the resource group within the user's subscription. The
          name is case insensitive. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Automation or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.v2019_01_01_preview.models.Automation]
@@ -168,7 +168,7 @@ class AutomationsOperations:
         )
         cls: ClsType[_models.AutomationList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -179,16 +179,15 @@ class AutomationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -199,14 +198,14 @@ class AutomationsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AutomationList", pipeline_response)
@@ -216,11 +215,11 @@ class AutomationsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -231,10 +230,6 @@ class AutomationsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations"
-    }
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, automation_name: str, **kwargs: Any) -> _models.Automation:
@@ -245,12 +240,11 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Automation or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.Automation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -266,21 +260,20 @@ class AutomationsOperations:
         )
         cls: ClsType[_models.Automation] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             automation_name=automation_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -292,13 +285,9 @@ class AutomationsOperations:
         deserialized = self._deserialize("Automation", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -323,7 +312,6 @@ class AutomationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Automation or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.Automation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -334,7 +322,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: IO,
+        automation: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -348,11 +336,10 @@ class AutomationsOperations:
         :param automation_name: The security automation name. Required.
         :type automation_name: str
         :param automation: The security automation resource. Required.
-        :type automation: IO
+        :type automation: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Automation or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.Automation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -360,7 +347,11 @@ class AutomationsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, resource_group_name: str, automation_name: str, automation: Union[_models.Automation, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        automation_name: str,
+        automation: Union[_models.Automation, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Automation:
         """Creates or updates a security automation. If a security automation is already created and a
         subsequent request is issued for the same automation id, then it will be updated.
@@ -370,18 +361,14 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :param automation: The security automation resource. Is either a Automation type or a IO type.
-         Required.
-        :type automation: ~azure.mgmt.security.v2019_01_01_preview.models.Automation or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param automation: The security automation resource. Is either a Automation type or a IO[bytes]
+         type. Required.
+        :type automation: ~azure.mgmt.security.v2019_01_01_preview.models.Automation or IO[bytes]
         :return: Automation or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.Automation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -406,7 +393,7 @@ class AutomationsOperations:
         else:
             _json = self._serialize.body(automation, "Automation")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             automation_name=automation_name,
             subscription_id=self._config.subscription_id,
@@ -414,16 +401,15 @@ class AutomationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -443,10 +429,6 @@ class AutomationsOperations:
 
         return deserialized  # type: ignore
 
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}"
-    }
-
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, automation_name: str, **kwargs: Any
@@ -458,12 +440,11 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -479,21 +460,20 @@ class AutomationsOperations:
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             automation_name=automation_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -503,11 +483,7 @@ class AutomationsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def validate(
@@ -532,7 +508,6 @@ class AutomationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutomationValidationStatus or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AutomationValidationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -543,7 +518,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: IO,
+        automation: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -557,11 +532,10 @@ class AutomationsOperations:
         :param automation_name: The security automation name. Required.
         :type automation_name: str
         :param automation: The security automation resource. Required.
-        :type automation: IO
+        :type automation: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutomationValidationStatus or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AutomationValidationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -569,7 +543,11 @@ class AutomationsOperations:
 
     @distributed_trace_async
     async def validate(
-        self, resource_group_name: str, automation_name: str, automation: Union[_models.Automation, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        automation_name: str,
+        automation: Union[_models.Automation, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AutomationValidationStatus:
         """Validates the security automation model before create or update. Any validation errors are
         returned to the client.
@@ -579,18 +557,14 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :param automation: The security automation resource. Is either a Automation type or a IO type.
-         Required.
-        :type automation: ~azure.mgmt.security.v2019_01_01_preview.models.Automation or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param automation: The security automation resource. Is either a Automation type or a IO[bytes]
+         type. Required.
+        :type automation: ~azure.mgmt.security.v2019_01_01_preview.models.Automation or IO[bytes]
         :return: AutomationValidationStatus or the result of cls(response)
         :rtype: ~azure.mgmt.security.v2019_01_01_preview.models.AutomationValidationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -615,7 +589,7 @@ class AutomationsOperations:
         else:
             _json = self._serialize.body(automation, "Automation")
 
-        request = build_validate_request(
+        _request = build_validate_request(
             resource_group_name=resource_group_name,
             automation_name=automation_name,
             subscription_id=self._config.subscription_id,
@@ -623,16 +597,15 @@ class AutomationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -644,10 +617,6 @@ class AutomationsOperations:
         deserialized = self._deserialize("AutomationValidationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    validate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/automations/{automationName}/validate"
-    }
+        return deserialized  # type: ignore

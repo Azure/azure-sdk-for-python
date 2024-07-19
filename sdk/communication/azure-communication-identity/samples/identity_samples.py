@@ -28,6 +28,7 @@ from datetime import timedelta
 import os
 from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
+from devtools_testutils import get_credential
 
 
 class CommunicationIdentityClientSamples(object):
@@ -53,11 +54,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+            
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -81,11 +81,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+          
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -112,11 +111,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+          
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -138,11 +136,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+            
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -163,11 +160,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+            
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -191,11 +187,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+            
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -217,11 +212,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+           
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(
@@ -243,11 +237,10 @@ class CommunicationIdentityClientSamples(object):
             and self.client_secret is not None
             and self.tenant_id is not None
         ):
-            from azure.identity import DefaultAzureCredential
-
+         
             endpoint, _ = parse_connection_str(self.connection_string)
             identity_client = CommunicationIdentityClient(
-                endpoint, DefaultAzureCredential()
+                endpoint, get_credential()
             )
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(

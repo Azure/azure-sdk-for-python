@@ -15,6 +15,8 @@ parameters:
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
   TestProxy: false
+  UseFederatedAuth: false
+  ServiceConnection: ''
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -139,6 +141,14 @@ steps:
   - ${{ parameters.AfterTestSteps }}
 
   - pwsh: |
+      if ($IsWindows) {
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
+      }
+      Write-Host (Get-Command python).Source
+
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report

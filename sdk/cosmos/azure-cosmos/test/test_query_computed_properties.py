@@ -58,7 +58,7 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         for item in items:
             created_collection.create_item(body=item)
         # Check that computed properties were properly sent
-        self.assertListEqual(computed_properties, created_collection._get_properties()["computedProperties"])
+        self.assertListEqual(computed_properties, created_collection.read()["computedProperties"])
 
         # Test 0: Negative test, test if using non-existent computed property
         queried_items = list(

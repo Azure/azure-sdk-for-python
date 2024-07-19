@@ -25,10 +25,11 @@ These sample programs show common scenarios for the Document Translation client'
 |[sample_translation_with_glossaries.py][begin_translation_with_glossaries] and [sample_translation_with_glossaries_async.py][begin_translation_with_glossaries_async]|Translate your documents using custom glossaries|
 |[sample_check_document_statuses.py][check_document_statuses] and [sample_check_document_statuses_async.py][check_document_statuses_async]|Check status of submitted documents|
 |[sample_list_translations.py][list_translations] and [sample_list_translations_async.py][list_translations_async]|Check status of all submitted translation operations|
+|[sample_single_document_translation.py][document_translation] and [sample_single_document_translation_async.py][document_translation_async]|Translate your documents|
 
 
 ## Prerequisites
-* Python 3.7 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription][azure_subscription] and an
 [Azure Translator account][azure_document_translation_account] to run these samples.
 
@@ -37,7 +38,7 @@ These sample programs show common scenarios for the Document Translation client'
 1. Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-translation-document
+pip install --pre azure-ai-translation-document
 ```
 For more information about how the versioning of the SDK corresponds to the versioning of the service's API, see [here][versioning_story_readme].
 
@@ -93,3 +94,5 @@ what you can do with the Azure Document Translation client library.
 [azure_document_translation_account]: https://learn.microsoft.com/azure/ai-services/translator/document-translation/overview
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [api_reference_documentation]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+[document_translation]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/sample_single_document_translation.py
+[document_translation_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_single_document_translation_async.py

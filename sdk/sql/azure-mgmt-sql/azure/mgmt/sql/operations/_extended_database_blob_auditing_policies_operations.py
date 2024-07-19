@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, Literal, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -30,10 +29,6 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -144,7 +139,7 @@ def build_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ExtendedDatabaseBlobAuditingPoliciesOperations:
+class ExtendedDatabaseBlobAuditingPoliciesOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -176,7 +171,6 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExtendedDatabaseBlobAuditingPolicy or the result
          of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy]
@@ -199,25 +193,24 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_database_request(
+                _request = build_list_by_database_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     database_name=database_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_database.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ExtendedDatabaseBlobAuditingPolicyListResult", pipeline_response)
@@ -227,11 +220,11 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -242,10 +235,6 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_database.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings"
-    }
 
     @distributed_trace
     def get(
@@ -260,10 +249,6 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype blob_auditing_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedDatabaseBlobAuditingPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -283,23 +268,22 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
         cls: ClsType[_models.ExtendedDatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
             blob_auditing_policy_name=blob_auditing_policy_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -311,13 +295,9 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         deserialized = self._deserialize("ExtendedDatabaseBlobAuditingPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def create_or_update(
@@ -344,10 +324,6 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype blob_auditing_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedDatabaseBlobAuditingPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -359,7 +335,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -374,14 +350,10 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The extended database blob auditing policy. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype blob_auditing_policy_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExtendedDatabaseBlobAuditingPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -393,7 +365,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        parameters: Union[_models.ExtendedDatabaseBlobAuditingPolicy, IO],
+        parameters: Union[_models.ExtendedDatabaseBlobAuditingPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.ExtendedDatabaseBlobAuditingPolicy:
         """Creates or updates an extended database's blob auditing policy.
@@ -406,15 +378,8 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The extended database blob auditing policy. Is either a
-         ExtendedDatabaseBlobAuditingPolicy type or a IO type. Required.
-        :type parameters: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or IO
-        :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
-         "default". Note that overriding this default value may result in unsupported behavior.
-        :paramtype blob_auditing_policy_name: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ExtendedDatabaseBlobAuditingPolicy type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or IO[bytes]
         :return: ExtendedDatabaseBlobAuditingPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -443,7 +408,7 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         else:
             _json = self._serialize.body(parameters, "ExtendedDatabaseBlobAuditingPolicy")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             database_name=database_name,
@@ -453,16 +418,15 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -481,7 +445,3 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/extendedAuditingSettings/{blobAuditingPolicyName}"
-    }

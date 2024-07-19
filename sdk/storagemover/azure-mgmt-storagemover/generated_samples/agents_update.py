@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagemover import StorageMoverMgmtClient
 
 """
@@ -33,11 +36,25 @@ def main():
         resource_group_name="examples-rg",
         storage_mover_name="examples-storageMoverName",
         agent_name="examples-agentName",
-        agent={"properties": {"description": "Updated Agent Description"}},
+        agent={
+            "properties": {
+                "description": "Example Agent Description",
+                "uploadLimitSchedule": {
+                    "weeklyRecurrences": [
+                        {
+                            "days": ["Monday"],
+                            "endTime": {"hour": 18, "minute": 30},
+                            "limitInMbps": 2000,
+                            "startTime": {"hour": 9, "minute": 0},
+                        }
+                    ]
+                },
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-10-01/examples/Agents_Update.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2024-07-01/examples/Agents_Update.json
 if __name__ == "__main__":
     main()

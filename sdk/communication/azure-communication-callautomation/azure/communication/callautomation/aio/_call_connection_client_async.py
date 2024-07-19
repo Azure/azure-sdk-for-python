@@ -281,8 +281,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
-         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as the
          transferor's(Contoso) caller id when transfering a call a pstn target.
+        :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -909,7 +910,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request sent out to a participant.
-        :param  invitation_id: The invitation ID that was used to add the participant.
+
+        :param invitation_id: The invitation ID that was used to add the participant.
         :type invitation_id: str
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
@@ -1029,8 +1031,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
+        :keyword play_source: A PlaySource representing the source to play.
+        :paramtype play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource
         :keyword operation_context: Value that can be used to track this call and its associated events.
