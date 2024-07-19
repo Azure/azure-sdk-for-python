@@ -1,6 +1,16 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b1 (2024-05-21)
 
 ### Features Added
 - Added SingleDocumentTranslationClient that is used to invoke `document_translate` API.
@@ -8,11 +18,12 @@
 - `DocumentTranslateContent` has been added to specify the `document_translate` request content.
 
 ### Breaking Changes
-- Version `v1.0` is not supported
+- Version `v1.0` is not supported.
+- The service has changed to date-based API versioning and v1.0 service behavior is supported through the new version: 2024-05-01.
 
 ### Other Changes
 
-- This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+- This version and all future versions will require Python 3.8+. Python 3.7 is no longer supported.
 
 ## 1.0.0 (2022-06-07)
 

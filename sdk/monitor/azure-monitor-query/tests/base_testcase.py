@@ -21,7 +21,7 @@ LOGS_ENVIRONMENT_ENDPOINT_MAP = {
 METRICS_CLIENT_ENVIRONMENT_AUDIENCE_MAP = {
     "AzureCloud": "https://metrics.monitor.azure.com",
     "AzureChinaCloud": "https://metrics.monitor.azure.cn",
-    "AzureUSGovernment": "https:/metrics.monitor.azure.us"
+    "AzureUSGovernment": "https://metrics.monitor.azure.us"
 }
 
 TLD_MAP = {

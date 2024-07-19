@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -54,6 +55,10 @@ from ...operations._app_service_certificate_orders_operations import (
     build_verify_domain_ownership_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -84,7 +89,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
 
         List all certificate orders in a subscription.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AppServiceCertificateOrder or the result of
          cls(response)
         :rtype:
@@ -97,7 +101,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[_models.AppServiceCertificateOrderCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -108,15 +112,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -127,14 +130,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AppServiceCertificateOrderCollection", pipeline_response)
@@ -144,11 +147,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -159,10 +162,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.CertificateRegistration/certificateOrders"
-    }
 
     @overload
     async def validate_purchase_information(  # pylint: disable=inconsistent-return-statements
@@ -182,7 +181,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -190,18 +188,17 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
 
     @overload
     async def validate_purchase_information(  # pylint: disable=inconsistent-return-statements
-        self, app_service_certificate_order: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, app_service_certificate_order: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Validate information for a certificate order.
 
         Validate information for a certificate order.
 
         :param app_service_certificate_order: Information for a certificate order. Required.
-        :type app_service_certificate_order: IO
+        :type app_service_certificate_order: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -209,25 +206,21 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
 
     @distributed_trace_async
     async def validate_purchase_information(  # pylint: disable=inconsistent-return-statements
-        self, app_service_certificate_order: Union[_models.AppServiceCertificateOrder, IO], **kwargs: Any
+        self, app_service_certificate_order: Union[_models.AppServiceCertificateOrder, IO[bytes]], **kwargs: Any
     ) -> None:
         """Validate information for a certificate order.
 
         Validate information for a certificate order.
 
         :param app_service_certificate_order: Information for a certificate order. Is either a
-         AppServiceCertificateOrder type or a IO type. Required.
+         AppServiceCertificateOrder type or a IO[bytes] type. Required.
         :type app_service_certificate_order:
-         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -250,22 +243,21 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(app_service_certificate_order, "AppServiceCertificateOrder")
 
-        request = build_validate_purchase_information_request(
+        _request = build_validate_purchase_information_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.validate_purchase_information.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -275,11 +267,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    validate_purchase_information.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.CertificateRegistration/validateCertificateRegistrationInformation"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(
@@ -291,7 +279,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
 
         :param resource_group_name: Name of the resource group to which the resource belongs. Required.
         :type resource_group_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AppServiceCertificateOrder or the result of
          cls(response)
         :rtype:
@@ -304,7 +291,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[_models.AppServiceCertificateOrderCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -315,16 +302,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_resource_group_request(
+                _request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -335,14 +321,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AppServiceCertificateOrderCollection", pipeline_response)
@@ -352,11 +338,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -367,10 +353,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders"
-    }
 
     @distributed_trace_async
     async def get(
@@ -384,12 +366,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order.. Required.
         :type certificate_order_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServiceCertificateOrder or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -403,21 +384,20 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[_models.AppServiceCertificateOrder] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -429,22 +409,18 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         deserialized = self._deserialize("AppServiceCertificateOrder", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: Union[_models.AppServiceCertificateOrder, IO],
+        certificate_distinguished_name: Union[_models.AppServiceCertificateOrder, IO[bytes]],
         **kwargs: Any
     ) -> _models.AppServiceCertificateOrder:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -467,7 +443,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(certificate_distinguished_name, "AppServiceCertificateOrder")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
@@ -475,16 +451,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -503,10 +478,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -533,14 +504,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServiceCertificateOrder or the
          result of cls(response)
         :rtype:
@@ -553,7 +516,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: IO,
+        certificate_distinguished_name: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -568,18 +531,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type certificate_order_name: str
         :param certificate_distinguished_name: Distinguished name to use for the certificate order.
          Required.
-        :type certificate_distinguished_name: IO
+        :type certificate_distinguished_name: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServiceCertificateOrder or the
          result of cls(response)
         :rtype:
@@ -592,7 +547,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: Union[_models.AppServiceCertificateOrder, IO],
+        certificate_distinguished_name: Union[_models.AppServiceCertificateOrder, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AppServiceCertificateOrder]:
         """Create or update a certificate purchase order.
@@ -604,20 +559,9 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param certificate_distinguished_name: Distinguished name to use for the certificate order. Is
-         either a AppServiceCertificateOrder type or a IO type. Required.
+         either a AppServiceCertificateOrder type or a IO[bytes] type. Required.
         :type certificate_distinguished_name:
-         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either AppServiceCertificateOrder or the
          result of cls(response)
         :rtype:
@@ -650,7 +594,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("AppServiceCertificateOrder", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -660,17 +604,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.AppServiceCertificateOrder].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}"
-    }
+        return AsyncLROPoller[_models.AppServiceCertificateOrder](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -684,12 +626,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -703,21 +644,20 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -727,11 +667,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update(
@@ -758,7 +694,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServiceCertificateOrder or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -769,7 +704,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: IO,
+        certificate_distinguished_name: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -784,11 +719,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type certificate_order_name: str
         :param certificate_distinguished_name: Distinguished name to use for the certificate order.
          Required.
-        :type certificate_distinguished_name: IO
+        :type certificate_distinguished_name: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServiceCertificateOrder or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -799,7 +733,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        certificate_distinguished_name: Union[_models.AppServiceCertificateOrderPatchResource, IO],
+        certificate_distinguished_name: Union[_models.AppServiceCertificateOrderPatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AppServiceCertificateOrder:
         """Create or update a certificate purchase order.
@@ -811,18 +745,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param certificate_distinguished_name: Distinguished name to use for the certificate order. Is
-         either a AppServiceCertificateOrderPatchResource type or a IO type. Required.
+         either a AppServiceCertificateOrderPatchResource type or a IO[bytes] type. Required.
         :type certificate_distinguished_name:
-         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrderPatchResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrderPatchResource or IO[bytes]
         :return: AppServiceCertificateOrder or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateOrder
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -845,7 +775,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(certificate_distinguished_name, "AppServiceCertificateOrderPatchResource")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
@@ -853,16 +783,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -882,10 +811,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
 
         return deserialized  # type: ignore
 
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}"
-    }
-
     @distributed_trace
     def list_certificates(
         self, resource_group_name: str, certificate_order_name: str, **kwargs: Any
@@ -898,7 +823,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AppServiceCertificateResource or the result of
          cls(response)
         :rtype:
@@ -911,7 +835,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[_models.AppServiceCertificateCollection] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -922,17 +846,16 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_certificates_request(
+                _request = build_list_certificates_request(
                     resource_group_name=resource_group_name,
                     certificate_order_name=certificate_order_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_certificates.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -943,14 +866,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _next_request_params["api-version"] = self._api_version
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("AppServiceCertificateCollection", pipeline_response)
@@ -960,11 +883,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -975,10 +898,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_certificates.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates"
-    }
 
     @distributed_trace_async
     async def get_certificate(
@@ -994,12 +913,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type certificate_order_name: str
         :param name: Name of the certificate. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServiceCertificateResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1013,22 +931,21 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[_models.AppServiceCertificateResource] = kwargs.pop("cls", None)
 
-        request = build_get_certificate_request(
+        _request = build_get_certificate_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_certificate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1040,23 +957,19 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         deserialized = self._deserialize("AppServiceCertificateResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_certificate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_certificate_initial(
         self,
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: Union[_models.AppServiceCertificateResource, IO],
+        key_vault_certificate: Union[_models.AppServiceCertificateResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AppServiceCertificateResource:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1079,7 +992,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(key_vault_certificate, "AppServiceCertificateResource")
 
-        request = build_create_or_update_certificate_request(
+        _request = build_create_or_update_certificate_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             name=name,
@@ -1088,16 +1001,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_certificate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1116,10 +1028,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_certificate_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}"
-    }
 
     @overload
     async def begin_create_or_update_certificate(
@@ -1147,14 +1055,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServiceCertificateResource or the
          result of cls(response)
         :rtype:
@@ -1168,7 +1068,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: IO,
+        key_vault_certificate: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1184,18 +1084,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param name: Name of the certificate. Required.
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id. Required.
-        :type key_vault_certificate: IO
+        :type key_vault_certificate: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either AppServiceCertificateResource or the
          result of cls(response)
         :rtype:
@@ -1209,7 +1101,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: Union[_models.AppServiceCertificateResource, IO],
+        key_vault_certificate: Union[_models.AppServiceCertificateResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AppServiceCertificateResource]:
         """Creates or updates a certificate and associates with key vault secret.
@@ -1223,20 +1115,9 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param name: Name of the certificate. Required.
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id. Is either a
-         AppServiceCertificateResource type or a IO type. Required.
+         AppServiceCertificateResource type or a IO[bytes] type. Required.
         :type key_vault_certificate: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either AppServiceCertificateResource or the
          result of cls(response)
         :rtype:
@@ -1270,7 +1151,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("AppServiceCertificateResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1280,17 +1161,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.AppServiceCertificateResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_certificate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}"
-    }
+        return AsyncLROPoller[_models.AppServiceCertificateResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def delete_certificate(  # pylint: disable=inconsistent-return-statements
@@ -1306,12 +1185,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type certificate_order_name: str
         :param name: Name of the certificate. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1325,22 +1203,21 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_certificate_request(
+        _request = build_delete_certificate_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete_certificate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1350,11 +1227,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete_certificate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def update_certificate(
@@ -1383,7 +1256,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServiceCertificateResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1395,7 +1267,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: IO,
+        key_vault_certificate: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1411,11 +1283,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param name: Name of the certificate. Required.
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id. Required.
-        :type key_vault_certificate: IO
+        :type key_vault_certificate: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AppServiceCertificateResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1427,7 +1298,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         resource_group_name: str,
         certificate_order_name: str,
         name: str,
-        key_vault_certificate: Union[_models.AppServiceCertificatePatchResource, IO],
+        key_vault_certificate: Union[_models.AppServiceCertificatePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AppServiceCertificateResource:
         """Creates or updates a certificate and associates with key vault secret.
@@ -1441,18 +1312,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param name: Name of the certificate. Required.
         :type name: str
         :param key_vault_certificate: Key vault certificate resource Id. Is either a
-         AppServiceCertificatePatchResource type or a IO type. Required.
+         AppServiceCertificatePatchResource type or a IO[bytes] type. Required.
         :type key_vault_certificate:
-         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificatePatchResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificatePatchResource or IO[bytes]
         :return: AppServiceCertificateResource or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.AppServiceCertificateResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1475,7 +1342,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(key_vault_certificate, "AppServiceCertificatePatchResource")
 
-        request = build_update_certificate_request(
+        _request = build_update_certificate_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             name=name,
@@ -1484,16 +1351,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_certificate.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1512,10 +1378,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    update_certificate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/certificates/{name}"
-    }
 
     @overload
     async def reissue(  # pylint: disable=inconsistent-return-statements
@@ -1541,7 +1403,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1552,7 +1413,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        reissue_certificate_order_request: IO,
+        reissue_certificate_order_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1566,11 +1427,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param reissue_certificate_order_request: Parameters for the reissue. Required.
-        :type reissue_certificate_order_request: IO
+        :type reissue_certificate_order_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1581,7 +1441,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        reissue_certificate_order_request: Union[_models.ReissueCertificateOrderRequest, IO],
+        reissue_certificate_order_request: Union[_models.ReissueCertificateOrderRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Reissue an existing certificate order.
@@ -1593,18 +1453,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param reissue_certificate_order_request: Parameters for the reissue. Is either a
-         ReissueCertificateOrderRequest type or a IO type. Required.
+         ReissueCertificateOrderRequest type or a IO[bytes] type. Required.
         :type reissue_certificate_order_request:
-         ~azure.mgmt.web.v2015_08_01.models.ReissueCertificateOrderRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2015_08_01.models.ReissueCertificateOrderRequest or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1627,7 +1483,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(reissue_certificate_order_request, "ReissueCertificateOrderRequest")
 
-        request = build_reissue_request(
+        _request = build_reissue_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
@@ -1635,16 +1491,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.reissue.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1654,11 +1509,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    reissue.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/reissue"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def renew(  # pylint: disable=inconsistent-return-statements
@@ -1684,7 +1535,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1695,7 +1545,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        renew_certificate_order_request: IO,
+        renew_certificate_order_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1709,11 +1559,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param renew_certificate_order_request: Renew parameters. Required.
-        :type renew_certificate_order_request: IO
+        :type renew_certificate_order_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1724,7 +1573,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        renew_certificate_order_request: Union[_models.RenewCertificateOrderRequest, IO],
+        renew_certificate_order_request: Union[_models.RenewCertificateOrderRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Renew an existing certificate order.
@@ -1736,18 +1585,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param renew_certificate_order_request: Renew parameters. Is either a
-         RenewCertificateOrderRequest type or a IO type. Required.
+         RenewCertificateOrderRequest type or a IO[bytes] type. Required.
         :type renew_certificate_order_request:
-         ~azure.mgmt.web.v2015_08_01.models.RenewCertificateOrderRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         ~azure.mgmt.web.v2015_08_01.models.RenewCertificateOrderRequest or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1770,7 +1615,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(renew_certificate_order_request, "RenewCertificateOrderRequest")
 
-        request = build_renew_request(
+        _request = build_renew_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
@@ -1778,16 +1623,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.renew.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1797,11 +1641,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    renew.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/renew"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def resend_email(  # pylint: disable=inconsistent-return-statements
@@ -1815,12 +1655,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1834,21 +1673,20 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resend_email_request(
+        _request = build_resend_email_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.resend_email.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1858,11 +1696,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    resend_email.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/resendEmail"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def resend_request_emails(  # pylint: disable=inconsistent-return-statements
@@ -1887,7 +1721,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1898,7 +1731,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        name_identifier: IO,
+        name_identifier: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1912,11 +1745,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param name_identifier: Email address. Required.
-        :type name_identifier: IO
+        :type name_identifier: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1927,7 +1759,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        name_identifier: Union[_models.NameIdentifier, IO],
+        name_identifier: Union[_models.NameIdentifier, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Verify domain ownership for this certificate order.
@@ -1938,17 +1770,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
-        :param name_identifier: Email address. Is either a NameIdentifier type or a IO type. Required.
-        :type name_identifier: ~azure.mgmt.web.v2015_08_01.models.NameIdentifier or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param name_identifier: Email address. Is either a NameIdentifier type or a IO[bytes] type.
+         Required.
+        :type name_identifier: ~azure.mgmt.web.v2015_08_01.models.NameIdentifier or IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1971,7 +1800,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(name_identifier, "NameIdentifier")
 
-        request = build_resend_request_emails_request(
+        _request = build_resend_request_emails_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
@@ -1979,16 +1808,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.resend_request_emails.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1998,11 +1826,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    resend_request_emails.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/resendRequestEmails"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def retrieve_site_seal(
@@ -2027,7 +1851,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteSeal or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.SiteSeal
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2038,7 +1861,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        site_seal_request: IO,
+        site_seal_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2052,11 +1875,10 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
         :param site_seal_request: Site seal request. Required.
-        :type site_seal_request: IO
+        :type site_seal_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SiteSeal or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.SiteSeal
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2067,7 +1889,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         self,
         resource_group_name: str,
         certificate_order_name: str,
-        site_seal_request: Union[_models.SiteSealRequest, IO],
+        site_seal_request: Union[_models.SiteSealRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.SiteSeal:
         """Verify domain ownership for this certificate order.
@@ -2078,18 +1900,14 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
-        :param site_seal_request: Site seal request. Is either a SiteSealRequest type or a IO type.
-         Required.
-        :type site_seal_request: ~azure.mgmt.web.v2015_08_01.models.SiteSealRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param site_seal_request: Site seal request. Is either a SiteSealRequest type or a IO[bytes]
+         type. Required.
+        :type site_seal_request: ~azure.mgmt.web.v2015_08_01.models.SiteSealRequest or IO[bytes]
         :return: SiteSeal or the result of cls(response)
         :rtype: ~azure.mgmt.web.v2015_08_01.models.SiteSeal
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2112,7 +1930,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         else:
             _json = self._serialize.body(site_seal_request, "SiteSealRequest")
 
-        request = build_retrieve_site_seal_request(
+        _request = build_retrieve_site_seal_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
@@ -2120,16 +1938,15 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.retrieve_site_seal.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2141,13 +1958,9 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         deserialized = self._deserialize("SiteSeal", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    retrieve_site_seal.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/retrieveSiteSeal"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def verify_domain_ownership(  # pylint: disable=inconsistent-return-statements
@@ -2161,12 +1974,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param certificate_order_name: Name of the certificate order. Required.
         :type certificate_order_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2180,21 +1992,20 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_verify_domain_ownership_request(
+        _request = build_verify_domain_ownership_request(
             resource_group_name=resource_group_name,
             certificate_order_name=certificate_order_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.verify_domain_ownership.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2204,11 +2015,7 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    verify_domain_ownership.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/verifyDomainOwnership"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def retrieve_certificate_actions(
@@ -2222,12 +2029,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param name: Name of the certificate order. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CertificateOrderAction or the result of cls(response)
         :rtype: list[~azure.mgmt.web.v2015_08_01.models.CertificateOrderAction]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2241,21 +2047,20 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[List[_models.CertificateOrderAction]] = kwargs.pop("cls", None)
 
-        request = build_retrieve_certificate_actions_request(
+        _request = build_retrieve_certificate_actions_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.retrieve_certificate_actions.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2267,13 +2072,9 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         deserialized = self._deserialize("[CertificateOrderAction]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    retrieve_certificate_actions.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveCertificateActions"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def retrieve_certificate_email_history(
@@ -2287,12 +2088,11 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         :type resource_group_name: str
         :param name: Name of the certificate order. Required.
         :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of CertificateEmail or the result of cls(response)
         :rtype: list[~azure.mgmt.web.v2015_08_01.models.CertificateEmail]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2306,21 +2106,20 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2015-08-01"))
         cls: ClsType[List[_models.CertificateEmail]] = kwargs.pop("cls", None)
 
-        request = build_retrieve_certificate_email_history_request(
+        _request = build_retrieve_certificate_email_history_request(
             resource_group_name=resource_group_name,
             name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.retrieve_certificate_email_history.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2332,10 +2131,6 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         deserialized = self._deserialize("[CertificateEmail]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    retrieve_certificate_email_history.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveEmailHistory"
-    }
+        return deserialized  # type: ignore

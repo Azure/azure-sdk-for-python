@@ -191,6 +191,8 @@ class EventHubConsumerClient(
             network_tracing=network_tracing,
             **kwargs,
         )
+        # consumer auth URI additionally includes consumer group
+        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}/consumergroups/{self._consumer_group}"
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 

@@ -1,7 +1,7 @@
 name: test_ws_conn_blob_store2
 type: azure_blob
 url: my_endpoint
-tags:
+metadata:
   four: five
 credentials:
   type: sas
