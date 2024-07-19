@@ -159,7 +159,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
         self._temperature: Optional[float] = kwargs.get("temperature")
         self._top_p: Optional[float] = kwargs.get("top_p")
         self._max_tokens: Optional[int] = kwargs.get("max_tokens")
-        self._response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = kwargs.get("response_format")
+        self._response_format: Optional[
+            Union[str, _models.ChatCompletionsResponseFormat]
+        ] = kwargs.get("response_format")
         self._stop: Optional[List[str]] = kwargs.get("stop")
         self._tools: Optional[List[_models.ChatCompletionsToolDefinition]] = kwargs.get("tools")
         self._tool_choice: Optional[
