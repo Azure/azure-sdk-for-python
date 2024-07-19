@@ -171,7 +171,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
         self._tool_choice = tool_choice
         self._seed = seed
         self._model = model
-    
+
         super().__init__(endpoint, credential, **kwargs)
 
     def with_defaults(

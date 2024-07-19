@@ -188,7 +188,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
         self._tool_choice = tool_choice
         self._seed = seed
         self._model = model
-    
+
         super().__init__(endpoint, credential, **kwargs)
 
     def with_defaults(
@@ -1074,7 +1074,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
     ) -> None:
-        
+
         # First pop out any unlisted embedding settings, since we need to remove them before saving kwargs
         model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
         model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
@@ -1096,6 +1096,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._encoding_format= encoding_format
         self._input_type = input_type
         self._model = model
+
+        super().__init__(endpoint, credential, **kwargs)
 
     def with_defaults(
         self,
