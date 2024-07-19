@@ -414,7 +414,9 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     async def _upload_chunk(self, chunk_info):
-        chunk_end = chunk_info.offset + chunk_info.length - 1
+        # Files is unique in self.service here is a ShareFileClient rather than a generated client
+        # Pass through any value of validate_content to let upload_range use it
+        self.request_options['validate_content'] = self.validate_content
         response = await self.service.upload_range(
             chunk_info.data,
             chunk_info.offset,
@@ -423,8 +425,8 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        range_id = f'bytes={chunk_info.offset}-{chunk_end}'
-        return range_id, response
+        chunk_end = chunk_info.offset + chunk_info.length - 1
+        return f'bytes={chunk_info.offset}-{chunk_end}', response
 
     # TODO: Implement this method.
     async def _upload_substream_block(self, index, block_stream):

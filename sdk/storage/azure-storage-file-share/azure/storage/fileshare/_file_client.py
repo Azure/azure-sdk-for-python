@@ -616,7 +616,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         metadata = kwargs.pop('metadata', None)
         content_settings = kwargs.pop('content_settings', None)
         max_concurrency = kwargs.pop('max_concurrency', 1)
-        validate_content = kwargs.pop('validate_content', False)
+        validate_content = kwargs.pop('validate_content', None)
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')

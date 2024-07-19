@@ -39,6 +39,49 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
+    async def test_upload_file(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        file = self.share_client.get_file_client(self._get_file_reference())
+        data = b'abc' * 512
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        # Act
+        await file.upload_file(data, validate_content=a, raw_request_hook=assert_method)
+
+        # Assert
+        content = await file.download_file()
+        assert await content.readall() == data
+        await self._teardown()
+
+    @FileSharePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_upload_file_chunks(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        self.share_client._config.max_range_size = 1024
+        file = self.share_client.get_file_client(self._get_file_reference())
+        data = b'abcde' * 512
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        # Act
+        await file.upload_file(data, validate_content=a, raw_request_hook=assert_method)
+
+        # Assert
+        content = await file.download_file()
+        assert await content.readall() == data
+        await self._teardown()
+
+    @FileSharePreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
     async def test_upload_range(self, a, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -58,6 +101,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await file.download_file()
         assert await content.readall() == data1 + encoded
+        await self._teardown()
 
     @FileSharePreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
@@ -90,3 +134,4 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         content = await file.download_file()
         assert await content.readall() == data * len(data_list)
+        await self._teardown()
