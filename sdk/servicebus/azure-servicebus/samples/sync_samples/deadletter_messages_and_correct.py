@@ -92,7 +92,7 @@ def fix_deadletters(servicebus_client):
                 receiver.complete_message(msg)
 
 if __name__=="__main__":
-    credential = DefaultAzureCredential
+    credential = DefaultAzureCredential()
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 

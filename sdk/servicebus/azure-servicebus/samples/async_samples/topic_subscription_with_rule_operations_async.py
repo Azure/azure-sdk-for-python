@@ -91,7 +91,8 @@ async def create_rule_with_filter(servicebus_mgmt_client, subscription_name, fil
         pass
 
 async def send_messages():
-    servicebus_client = ServiceBusClient.from_connection_string(CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
     print("====================== Sending messages to topic ======================")
     msgs_to_send = []
     async with servicebus_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:

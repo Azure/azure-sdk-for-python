@@ -48,12 +48,12 @@ async def message_processing(servicebus_client, queue_name):
             return
 
 
-async def sample_session_send_receive_with_pool_async(connection_string, queue_name):
+async def sample_session_send_receive_with_pool_async(fully_qualified_namespace, queue_name):
 
     concurrent_receivers = 5
     sessions = [str(uuid.uuid4()) for i in range(concurrent_receivers)]
     credential = DefaultAzureCredential()
-    client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
+    client = ServiceBusClient(fully_qualified_namespace, credential)
 
     for session_id in sessions:
         async with client.get_queue_sender(queue_name) as sender:
@@ -65,4 +65,4 @@ async def sample_session_send_receive_with_pool_async(connection_string, queue_n
 
 
 if __name__ == '__main__':
-    asyncio.run(sample_session_send_receive_with_pool_async(CONNECTION_STR, SESSION_QUEUE_NAME))
+    asyncio.run(sample_session_send_receive_with_pool_async(FULLY_QUALIFIED_NAMESPACE, SESSION_QUEUE_NAME))

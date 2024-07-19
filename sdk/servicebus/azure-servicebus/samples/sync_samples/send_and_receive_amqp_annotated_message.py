@@ -12,7 +12,7 @@ Example to show sending, receiving and parsing amqp annotated message(s) to a Se
 import os
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
