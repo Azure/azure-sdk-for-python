@@ -710,7 +710,7 @@ class TestModelClient(ModelClientTestBase):
             print(e)
             assert hasattr(e, "status_code")
             assert e.status_code == 401
-            assert "unauthorized" in e.message.lower()
+            assert "auth token validation failed" in e.message.lower()
         client.close()
         assert exception_caught
 

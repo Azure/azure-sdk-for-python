@@ -669,6 +669,6 @@ class TestModelAsyncClient(ModelClientTestBase):
             print(e)
             assert hasattr(e, "status_code")
             assert e.status_code == 401
-            assert "unauthorized" in e.message.lower()
+            assert "auth token validation failed" in e.message.lower()
         await client.close()
         assert exception_caught
