@@ -44,6 +44,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
+# pylint: disable=C4748
 class AzureMapsRenderClient(MapsRenderClient):
     def __init__(
         self,
