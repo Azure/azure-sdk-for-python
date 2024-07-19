@@ -104,7 +104,7 @@
 
 # ServiceLabel: %Communication - Email
 # PRLabel: %Communication - Email
-/sdk/communication/azure-communication-email/                        @yogeshmo
+/sdk/communication/azure-communication-email/                        @kagbakpem @yogeshmo @matthohn-msft
 
 # ServiceLabel: %Communication - Job Router
 # PRLabel: %Communication - Job Router
