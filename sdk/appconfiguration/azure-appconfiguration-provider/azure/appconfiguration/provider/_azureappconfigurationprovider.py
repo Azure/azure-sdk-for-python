@@ -119,6 +119,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_refresh_enabled: bool
+    :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
+     is True.
+    :paramtype replica_discovery_enabled: bool
     """
 
 
@@ -174,6 +177,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_refresh_enabled: bool
+    :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
+     is True.
+    :paramtype replica_discovery_enabled: bool
     """
 
 
@@ -312,6 +318,8 @@ def _buildprovider(
     provider = AzureAppConfigurationProvider(endpoint, **kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
+    replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
+
 
     if "user_agent" in kwargs:
         user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
@@ -325,7 +333,7 @@ def _buildprovider(
                 endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **kwargs
             )
         )
-        failover_endpoints = find_auto_failover_endpoints(endpoint)
+        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
         for failover_endpoint in failover_endpoints:
             failover_connection_string = connection_string.replace(endpoint, failover_endpoint)
             clients.append(
@@ -341,7 +349,7 @@ def _buildprovider(
                 endpoint, credential, user_agent, retry_total, retry_backoff_max, **kwargs
             )
         )
-        failover_endpoints = find_auto_failover_endpoints(endpoint)
+        failover_endpoints = find_auto_failover_endpoints(endpoint, replica_discovery_enabled)
         for failover_endpoint in failover_endpoints:
             clients.append(
                 ConfigurationClientWrapper.from_credential(

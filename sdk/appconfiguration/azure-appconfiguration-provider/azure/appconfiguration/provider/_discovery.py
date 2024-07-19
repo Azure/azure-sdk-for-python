@@ -10,7 +10,7 @@ import dns.resolver
 from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
 from urllib.parse import urlparse
-from ._constants import DISABLE_APPCONFIGURATION_DISCOVERY, HTTPS_PREFIX
+from ._constants import HTTPS_PREFIX
 
 request_retry_period = 5  # seconds
 
@@ -28,8 +28,8 @@ class SRVRecord:
         self.target = str(answer.target).rstrip(".")
 
 
-def find_auto_failover_endpoints(endpoint: str):
-    if os.environ.get(DISABLE_APPCONFIGURATION_DISCOVERY, "").lower() == "true":
+def find_auto_failover_endpoints(endpoint: str, replica_discovery_enabled: bool):
+    if replica_discovery_enabled:
         return []
     known_domain = _get_known_domains(endpoint)
     if known_domain is None:
