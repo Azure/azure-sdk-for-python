@@ -132,8 +132,8 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                         attr = assign.target
                         attribute_names.update({attr.attr: attr.attr})
                 if hasattr(assign, "targets"):
-                    for attr in assign.targets:
-                        if hasattr(attr, "attr") and not attr.attr.startswith("_"):
+                    for target in assign.targets:
+                        if hasattr(target, "attr") and not target.attr.startswith("_"):
                             if isinstance(assign, ast.AnnAssign):
                                 if isinstance(assign.annotation, ast.Name):
                                     attr_type = assign.annotation.value.id
@@ -148,7 +148,9 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                                     attr_type = assign.value.id
                                 elif isinstance(assign.value, ast.Constant):
                                     default = assign.value.value 
-                            attribute_names.update({attr.attr: {
+                            if target.attr == "queue_name":
+                                breakpoint()
+                            attribute_names.update({target.attr: {
                                 "attr_type": attr_type,
                                 "default": default
                             }})
@@ -328,12 +330,12 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
 
 
 def remove_json_files(pkg_dir: str) -> None:
-    stable_json = os.path.join(pkg_dir, "stable.json")
-    current_json = os.path.join(pkg_dir, "current.json")
-    if os.path.isfile(stable_json):
-        os.remove(stable_json)
-    if os.path.isfile(current_json):
-        os.remove(current_json)
+    # stable_json = os.path.join(pkg_dir, "stable.json")
+    # current_json = os.path.join(pkg_dir, "current.json")
+    # if os.path.isfile(stable_json):
+    #     os.remove(stable_json)
+    # if os.path.isfile(current_json):
+    #     os.remove(current_json)
     _LOGGER.info("cleaning up")
 
 
