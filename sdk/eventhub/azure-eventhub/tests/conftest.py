@@ -12,6 +12,7 @@ import warnings
 import datetime
 from functools import partial
 from logging.handlers import RotatingFileHandler
+from azure.core.settings import settings
 
 from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
@@ -160,6 +161,7 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
         warnings.warn(UserWarning('AZURE_SUBSCRIPTION_ID undefined - skipping test'))
         pytest.skip('AZURE_SUBSCRIPTION_ID defined')
 
+    settings.tracing_implementation.set_value(None)
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
     resource_client = EventHubManagementClient(get_devtools_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
