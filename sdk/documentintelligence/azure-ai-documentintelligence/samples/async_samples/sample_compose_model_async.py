@@ -37,7 +37,6 @@ import os
 
 
 async def sample_compose_model():
-    # [START composed_model]
     import uuid
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
@@ -128,7 +127,6 @@ async def sample_compose_model():
         print("Warnings encountered while building the model:")
         for warning in model.warnings:
             print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
-    # [END composed_model]
 
 
 async def main():

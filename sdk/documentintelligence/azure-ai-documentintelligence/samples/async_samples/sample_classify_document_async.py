@@ -42,7 +42,6 @@ async def classify_document(classifier_id):
         )
     )
 
-    # [START classify_document]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -67,7 +66,6 @@ async def classify_document(classifier_id):
                     f"Found document of type '{doc.doc_type or 'N/A'}' with a confidence of {doc.confidence} contained on "
                     f"the following pages: {[region.page_number for region in doc.bounding_regions]}"
                 )
-    # [END classify_document]
 
 
 async def main():

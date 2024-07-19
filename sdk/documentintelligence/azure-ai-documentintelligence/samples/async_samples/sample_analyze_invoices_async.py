@@ -37,7 +37,6 @@ async def analyze_invoice():
         )
     )
 
-    # [START analyze_invoices]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
@@ -217,7 +216,6 @@ async def analyze_invoice():
                     print(
                         f"Remittance Address Recipient: {remittance_address_recipient.get('content')} has confidence: {remittance_address_recipient.get('confidence')}"
                     )
-    # [END analyze_invoices]
 
 
 async def main():

@@ -25,7 +25,6 @@ import os
 
 
 async def analyze_documents_output_in_markdown():
-    # [START analyze_documents_output_in_markdown]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, ContentFormat, AnalyzeResult
@@ -45,7 +44,6 @@ async def analyze_documents_output_in_markdown():
 
     print(f"Here's the full content in format {result.content_format}:\n")
     print(result.content)
-    # [END analyze_documents_output_in_markdown]
 
 
 async def main():

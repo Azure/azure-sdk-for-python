@@ -27,7 +27,6 @@ import os
 
 
 async def sample_manage_classifiers():
-    # [START build_classifier]
     import uuid
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
@@ -74,29 +73,22 @@ async def sample_manage_classifiers():
             print(f"Document type: {doc_type}")
             if details.azure_blob_source:
                 print(f"Container source: {details.azure_blob_source.container_url}\n")
-        # [END build_classifier]
 
         # Next, we get a paged list of all of our document classifiers
-        # [START list_classifiers]
         classifiers = document_intelligence_admin_client.list_classifiers()
 
         print("We have the following 'ready' models with IDs and descriptions:")
         async for classifier in classifiers:
             print(f"{classifier.classifier_id} | {classifier.description}")
-        # [END list_classifiers]
 
-        # [START get_classifier]
         my_classifier = await document_intelligence_admin_client.get_classifier(classifier_id=classifier.classifier_id)
         print(f"\nClassifier ID: {my_classifier.classifier_id}")
         print(f"Description: {my_classifier.description}")
         print(f"Classifier created on: {my_classifier.created_date_time}")
         print(f"Classifier expires on: {my_classifier.expiration_date_time}")
-        # [END get_classifier]
 
         # Finally, we will delete this classifier by ID
-        # [START delete_classifier]
         await document_intelligence_admin_client.delete_classifier(classifier_id=my_classifier.classifier_id)
-        # [END delete_document_classifier]
 
         from azure.core.exceptions import ResourceNotFoundError
 
