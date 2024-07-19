@@ -82,7 +82,12 @@ class MapsSearchClient(SearchOperations):  # pylint: disable=client-accepts-api-
         self._serialize.client_side_validation = False
 
         # Initialize the base SearchOperations
-        super().__init__(self._client, self._config, self._serialize, self._deserialize)
+        super().__init__(
+            client=self._client,
+            config=self._config,
+            serializer=self._serialize,
+            deserializer=self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

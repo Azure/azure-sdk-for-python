@@ -44,6 +44,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
+# pylint: disable=C4748
 class AzureMapsSearchClient(MapsSearchClient):
 
     def __init__(
@@ -51,10 +52,10 @@ class AzureMapsSearchClient(MapsSearchClient):
         credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any
     ) -> None:
-
         super().__init__(
             credential=credential,  # type: ignore
             endpoint=kwargs.pop("endpoint", "https://atlas.microsoft.com"),
+            api_version=kwargs.pop("api_version", "2023-06-01"),
             client_id=kwargs.pop("client_id", None),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
