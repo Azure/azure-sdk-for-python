@@ -311,7 +311,7 @@ jobs:
           inputs:
             versionSpec: '3.12'
         - pwsh: |
-            python -m pip install "./tools/azure-sdk-tools"
+            python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:
