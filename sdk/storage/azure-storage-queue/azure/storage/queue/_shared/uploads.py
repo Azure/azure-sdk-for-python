@@ -37,6 +37,9 @@ def prepare_upload_data(
     # Encode raw string data
     if isinstance(data, str):
         data = data.encode(encoding)
+        # The user provided length was in terms of characters and has already been used to slice input.
+        # Now convert to a byte length.
+        data_length = len(data)
 
     # Attempt to determine length of data if it's not provided
     if data_length is None:
@@ -46,6 +49,7 @@ def prepare_upload_data(
         data_length, data = read_length(data)
 
     structured_message = validate_content == ChecksumAlgorithm.CRC64
+    md5 = validate_content in (True, ChecksumAlgorithm.MD5)
     if isinstance(data, bytes):
         # Structured message requires a stream
         if structured_message:
@@ -57,6 +61,12 @@ def prepare_upload_data(
         data = IterStreamer(cast(Iterable[AnyStr], data), encoding=encoding)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
+
+    # TODO: Do something about this?
+    # If MD5, read data out of IterStreamer because the pipeline
+    # will require a seekable stream which IterStreamer is not.
+    if isinstance(data, IterStreamer) and md5:
+        data = data.read(data_length)
 
     content_length = data_length
     if structured_message:
@@ -451,7 +461,9 @@ class DataLakeFileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-met
 class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_info):
-        chunk_end = chunk_info.offset + chunk_info.length - 1
+        # Files is unique in self.service here is a ShareFileClient rather than a generated client
+        # Pass through any value of validate_content to let upload_range use it
+        self.request_options['validate_content'] = self.validate_content
         response = self.service.upload_range(
             chunk_info.data,
             chunk_info.offset,
@@ -460,6 +472,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
+        chunk_end = chunk_info.offset + chunk_info.length - 1
         return f'bytes={chunk_info.offset}-{chunk_end}', response
 
     # TODO: Implement this method.
