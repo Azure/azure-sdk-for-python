@@ -71,6 +71,8 @@ module_logger = logging.getLogger(__name__)
 class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     """Sweep job for hyperparameter tuning.
 
+    Note that for sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix AZUREML_SWEEP_
+
     :keyword name: Name of the job.
     :paramtype name: str
     :keyword display_name: Display name of the job.

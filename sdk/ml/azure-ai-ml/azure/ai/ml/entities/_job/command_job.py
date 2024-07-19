@@ -60,6 +60,8 @@ module_logger = logging.getLogger(__name__)
 
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
+    
+    Note that for command components, inputs, outputs, and parameters are accessible as environment variables using the prefix AZUREML_PARAMETER_
 
     :keyword services: Read-only information on services associated with the job.
     :paramtype services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
