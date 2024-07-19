@@ -2819,7 +2819,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
                     if results:
                         # add up all the query results from all over lapping ranges
-                        results["Documents"].extend(result["Documents"])
+                        if result:
+                            results["Documents"].extend(result["Documents"])
                     else:
                         results = result
                     if response_hook:
