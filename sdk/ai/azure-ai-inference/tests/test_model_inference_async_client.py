@@ -6,10 +6,16 @@ import os
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
 
-from model_inference_test_base import ModelClientTestBase, ServicePreparerChatCompletions, ServicePreparerAOAIChatCompletions, ServicePreparerEmbeddings
+from model_inference_test_base import (
+    ModelClientTestBase,
+    ServicePreparerChatCompletions,
+    ServicePreparerAOAIChatCompletions,
+    ServicePreparerEmbeddings,
+)
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
+
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestModelAsyncClient(ModelClientTestBase):
@@ -26,7 +32,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         client1 = async_sdk.ChatCompletionsClient(
             endpoint="http://does.not.exist",
             credential=AzureKeyCredential("key-value"),
-            some_input_arg="some_input_value"
+            some_input_arg="some_input_value",
         )
 
         client2 = client1.with_defaults(
@@ -91,21 +97,21 @@ class TestModelAsyncClient(ModelClientTestBase):
         client1 = async_sdk.EmbeddingsClient(
             endpoint="http://does.not.exist",
             credential=AzureKeyCredential("key-value"),
-            some_input_arg="some_input_value"
+            some_input_arg="some_input_value",
         )
 
         client2 = client1.with_defaults(
             dimensions=2048,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
             input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={ "key1": 1},
+            model_extras={"key1": 1},
             model="some-model-id",
         )
         assert client2 is not client1
         assert client2._dimensions == 2048
         assert client2._encoding_format == sdk.models.EmbeddingEncodingFormat.UBINARY
         assert client2._input_type == sdk.models.EmbeddingInputType.QUERY
-        assert client2._model_extras == { "key1": 1}
+        assert client2._model_extras == {"key1": 1}
         assert client2._model == "some-model-id"
         assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
 
@@ -113,13 +119,13 @@ class TestModelAsyncClient(ModelClientTestBase):
             dimensions=1024,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
             input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={ "key2": "value2"},
+            model_extras={"key2": "value2"},
             model="some-other-model-id",
         )
         assert client3._dimensions == 1024
         assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
         assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
-        assert client3._model_extras == { "key2": "value2"}
+        assert client3._model_extras == {"key2": "value2"}
         assert client3._model == "some-other-model-id"
         assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
         # pylint: enable=protected-access
@@ -130,21 +136,21 @@ class TestModelAsyncClient(ModelClientTestBase):
         client1 = async_sdk.ImageEmbeddingsClient(
             endpoint="http://does.not.exist",
             credential=AzureKeyCredential("key-value"),
-            some_input_arg="some_input_value"
+            some_input_arg="some_input_value",
         )
 
         client2 = client1.with_defaults(
             dimensions=2048,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UBINARY,
             input_type=sdk.models.EmbeddingInputType.QUERY,
-            model_extras={ "key1": 1},
+            model_extras={"key1": 1},
             model="some-model-id",
         )
         assert client2 is not client1
         assert client2._dimensions == 2048
         assert client2._encoding_format == sdk.models.EmbeddingEncodingFormat.UBINARY
         assert client2._input_type == sdk.models.EmbeddingInputType.QUERY
-        assert client2._model_extras == { "key1": 1}
+        assert client2._model_extras == {"key1": 1}
         assert client2._model == "some-model-id"
         assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
 
@@ -152,13 +158,13 @@ class TestModelAsyncClient(ModelClientTestBase):
             dimensions=1024,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
             input_type=sdk.models.EmbeddingInputType.DOCUMENT,
-            model_extras={ "key2": "value2"},
+            model_extras={"key2": "value2"},
             model="some-other-model-id",
         )
         assert client3._dimensions == 1024
         assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
         assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
-        assert client3._model_extras == { "key2": "value2"}
+        assert client3._model_extras == {"key2": "value2"}
         assert client3._model == "some-other-model-id"
         assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
         # pylint: enable=protected-access
@@ -194,7 +200,8 @@ class TestModelAsyncClient(ModelClientTestBase):
                         "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
                     },
                     model="some-model-id",
-                    raw_request_hook=self.request_callback)
+                    raw_request_hook=self.request_callback,
+                )
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_embeddings_json_request_payload()
@@ -229,8 +236,8 @@ class TestModelAsyncClient(ModelClientTestBase):
         for _ in range(2):
             try:
                 response = await client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    raw_request_hook=self.request_callback)
+                    input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
+                )
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_embeddings_json_request_payload()
@@ -276,7 +283,8 @@ class TestModelAsyncClient(ModelClientTestBase):
                         "key5": {"key6": 2, "key7": False, "key8": "Some other value", "key9": [4, 5, 6, 7]},
                     },
                     model="some-model-id",
-                    raw_request_hook=self.request_callback)
+                    raw_request_hook=self.request_callback,
+                )
             except ServiceRequestError as _:
                 # The test should throw this exception!
                 self._validate_embeddings_json_request_payload()
@@ -309,10 +317,10 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_embeddings_client(self, **kwargs):
         client = self._create_async_embeddings_client(**kwargs)
-        assert not client._model_info # pylint: disable=protected-access
+        assert not client._model_info  # pylint: disable=protected-access
 
         response1 = await client.get_model_info()
-        assert client._model_info # pylint: disable=protected-access
+        assert client._model_info  # pylint: disable=protected-access
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "embedding"
@@ -360,8 +368,17 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
-                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(
+                                    function=sdk.models.FunctionCall(
+                                        name="my-first-function-name",
+                                        arguments={"first_argument": "value1", "second_argument": "value2"},
+                                    )
+                                ),
+                                sdk.models.ChatCompletionsFunctionToolCall(
+                                    function=sdk.models.FunctionCall(
+                                        name="my-second-function-name", arguments={"first_argument": "value1"}
+                                    )
+                                ),
                             ]
                         ),
                         sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
@@ -447,8 +464,17 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
-                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(
+                                    function=sdk.models.FunctionCall(
+                                        name="my-first-function-name",
+                                        arguments={"first_argument": "value1", "second_argument": "value2"},
+                                    )
+                                ),
+                                sdk.models.ChatCompletionsFunctionToolCall(
+                                    function=sdk.models.FunctionCall(
+                                        name="my-second-function-name", arguments={"first_argument": "value1"}
+                                    )
+                                ),
                             ]
                         ),
                         sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
@@ -515,8 +541,17 @@ class TestModelAsyncClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
-                                sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                                sdk.models.ChatCompletionsFunctionToolCall(
+                                    function=sdk.models.FunctionCall(
+                                        name="my-first-function-name",
+                                        arguments={"first_argument": "value1", "second_argument": "value2"},
+                                    )
+                                ),
+                                sdk.models.ChatCompletionsFunctionToolCall(
+                                    function=sdk.models.FunctionCall(
+                                        name="my-second-function-name", arguments={"first_argument": "value1"}
+                                    )
+                                ),
                             ]
                         ),
                         sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
@@ -587,10 +622,10 @@ class TestModelAsyncClient(ModelClientTestBase):
     @recorded_by_proxy_async
     async def test_async_get_model_info_on_chat_client(self, **kwargs):
         client = self._create_async_chat_client(**kwargs)
-        assert not client._model_info # pylint: disable=protected-access
+        assert not client._model_info  # pylint: disable=protected-access
 
         response1 = await client.get_model_info()
-        assert client._model_info # pylint: disable=protected-access
+        assert client._model_info  # pylint: disable=protected-access
         self._print_model_info_result(response1)
         self._validate_model_info_result(
             response1, "completion"

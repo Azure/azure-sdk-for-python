@@ -111,7 +111,7 @@ def load_client(
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
-        chat_completion_client._model_info = ( # pylint: disable=protected-access,attribute-defined-outside-init
+        chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
         )
         return chat_completion_client
@@ -131,7 +131,7 @@ def load_client(
     raise ValueError(f"No client available to support AI model type `{model_info.model_type}`")
 
 
-class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=too-many-instance-attributes
+class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
     :param endpoint: Service host. Required.
@@ -146,9 +146,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         # First pop out any unlisted embedding settings, since we need to remove them before saving kwargs
         model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
         model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
@@ -157,9 +155,9 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
         temperature: Optional[float] = kwargs.pop("temperature", None)
         top_p: Optional[float] = kwargs.pop("top_p", None)
         max_tokens: Optional[int] = kwargs.pop("max_tokens", None)
-        response_format: Optional[
-            Union[str, _models.ChatCompletionsResponseFormat]
-        ] = kwargs.pop("response_format", None)
+        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = kwargs.pop(
+            "response_format", None
+        )
         stop: Optional[List[str]] = kwargs.pop("stop", None)
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = kwargs.pop("tools", None)
         tool_choice: Optional[
@@ -299,7 +297,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated): # pylint: disable=t
             tool_choice=tool_choice or self._tool_choice,
             seed=seed or self._seed,
             model=model or self._model,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
     @overload
@@ -749,7 +747,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
         model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
         dimensions: Optional[int] = kwargs.pop("dimensions", None)
-        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]]  = kwargs.pop("encoding_format", None)
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = kwargs.pop("encoding_format", None)
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.pop("input_type", None)
         model: Optional[str] = kwargs.pop("model", None)
 
@@ -763,7 +761,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self._model_info = model_info
         self._model_extras = model_extras
         self._dimensions = dimensions
-        self._encoding_format= encoding_format
+        self._encoding_format = encoding_format
         self._input_type = input_type
         self._model = model
 
@@ -815,7 +813,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             encoding_format=encoding_format or self._encoding_format,
             input_type=input_type or self._input_type,
             model=model or self._model,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
     @overload
@@ -1071,15 +1069,13 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
 
         # First pop out any unlisted embedding settings, since we need to remove them before saving kwargs
         model_info: Optional[_models.ModelInfo] = kwargs.pop("model_info", None)
         model_extras: Optional[Dict[str, Any]] = kwargs.pop("model_extras", None)
         dimensions: Optional[int] = kwargs.pop("dimensions", None)
-        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]]  = kwargs.pop("encoding_format", None)
+        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = kwargs.pop("encoding_format", None)
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = kwargs.pop("input_type", None)
         model: Optional[str] = kwargs.pop("model", None)
 
@@ -1093,7 +1089,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._model_info = model_info
         self._model_extras = model_extras
         self._dimensions = dimensions
-        self._encoding_format= encoding_format
+        self._encoding_format = encoding_format
         self._input_type = input_type
         self._model = model
 
@@ -1145,7 +1141,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             encoding_format=encoding_format or self._encoding_format,
             input_type=input_type or self._input_type,
             model=model or self._model,
-            **self._init_kwargs
+            **self._init_kwargs,
         )
 
     @overload
