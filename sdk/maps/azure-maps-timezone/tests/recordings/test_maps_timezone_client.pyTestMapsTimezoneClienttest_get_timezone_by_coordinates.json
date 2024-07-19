@@ -15,18 +15,18 @@
       "ResponseHeaders": {
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Jul 2024 20:34:59 GMT",
+        "Date": "Fri, 19 Jul 2024 21:32:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West Europe",
-        "X-MSEdge-Ref": "Ref A: 9C8E144205D944F0BC9D1AA70CB51CA8 Ref B: ATH01EDGE0315 Ref C: 2024-07-19T20:35:00Z"
+        "X-MSEdge-Ref": "Ref A: 1420F3F5D3894A32B30C7B5F36337B03 Ref B: ATH01EDGE0311 Ref C: 2024-07-19T21:32:43Z"
       },
       "ResponseBody": {
         "Version": "2024a",
-        "ReferenceUtcTimestamp": "2024-07-19T20:35:00.2156566Z",
+        "ReferenceUtcTimestamp": "2024-07-19T21:32:44.0582379Z",
         "TimeZones": [
           {
             "Id": "Asia/Taipei",
@@ -40,7 +40,7 @@
               "Tag": "CST",
               "StandardOffset": "08:00:00",
               "DaylightSavings": "00:00:00",
-              "WallTime": "2024-07-20T04:35:00.2156566+08:00",
+              "WallTime": "2024-07-20T05:32:44.0582379+08:00",
               "PosixTzValidYear": 2024,
               "PosixTz": "CST-8",
               "Sunrise": "2024-07-20T05:15:32.4061983+08:00",

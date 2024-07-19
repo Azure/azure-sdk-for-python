@@ -14,14 +14,14 @@
       "ResponseHeaders": {
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Jul 2024 20:35:07 GMT",
+        "Date": "Fri, 19 Jul 2024 21:32:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West Europe",
-        "X-MSEdge-Ref": "Ref A: 41798227DEB84F038EE5F708F8586E2F Ref B: ATH01EDGE0315 Ref C: 2024-07-19T20:35:08Z"
+        "X-MSEdge-Ref": "Ref A: D8B188F1F1F84DB790C736BA6F68D2F8 Ref B: ATH01EDGE0311 Ref C: 2024-07-19T21:32:52Z"
       },
       "ResponseBody": "[{\"Id\":\"America/Vancouver\",\"IsAlias\":false,\"HasZone1970Location\":true},{\"Id\":\"America/Los_Angeles\",\"IsAlias\":false,\"HasZone1970Location\":true},{\"Id\":\"PST8PDT\",\"IsAlias\":false,\"HasZone1970Location\":false}]"
     }

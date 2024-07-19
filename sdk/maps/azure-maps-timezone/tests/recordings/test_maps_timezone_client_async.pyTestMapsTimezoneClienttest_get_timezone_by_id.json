@@ -14,18 +14,18 @@
       "ResponseHeaders": {
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Jul 2024 20:35:05 GMT",
+        "Date": "Fri, 19 Jul 2024 21:32:49 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West Europe",
-        "X-MSEdge-Ref": "Ref A: F3ABD4D645CB4C1A9287957E100AE41C Ref B: ATH01EDGE0315 Ref C: 2024-07-19T20:35:05Z"
+        "X-MSEdge-Ref": "Ref A: 7EFF7B9765FC49CF93EA0D97402AC2AE Ref B: ATH01EDGE0311 Ref C: 2024-07-19T21:32:49Z"
       },
       "ResponseBody": {
         "Version": "2024a",
-        "ReferenceUtcTimestamp": "2024-07-19T20:35:05.9708812Z",
+        "ReferenceUtcTimestamp": "2024-07-19T21:32:49.9592725Z",
         "TimeZones": []
       }
     }
