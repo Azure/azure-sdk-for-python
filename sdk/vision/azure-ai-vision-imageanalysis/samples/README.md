@@ -13,7 +13,7 @@ urlFragment: image-analysis-samples
 These are runnable console Python programs that show how to use the Image Analysis client library.
 
 - They cover all the supported visual features.
-- Most use the a synchronous client to analyze an image file or image URL. Three samples (located in the `async_samples` folder) use the asynchronous client.
+- Most use the synchronous client to analyze an image file or image URL. Three samples (located in the `async_samples` folder) use the asynchronous client.
 - Most use API key authentication. Two samples (having `_entra_id_auth` in their name) use Entra ID authentication.
 
 The concepts are similar, you can easily modify any of the samples to your needs.
