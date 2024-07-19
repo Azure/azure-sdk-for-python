@@ -1,7 +1,6 @@
 import pytest
 import asyncio
 
-from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubConsumerClient
@@ -363,9 +362,9 @@ async def test_receive_batch_early_callback_async(auth_credential_senders_async,
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_transport, fake_span):
+async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_transport, enable_tracing):
     """Test that that receive and process spans are properly created and linked."""
-    settings.tracing_implementation.set_value(fake_span)
+    fake_span = enable_tracing
     fully_qualified_namespace, eventhub_name, credential, senders = auth_credential_senders_async
 
     with fake_span(name="SendSpan") as root_send:
@@ -423,8 +422,6 @@ async def test_receive_batch_tracing_async(auth_credential_senders_async, uamqp_
     assert len(root_receive.children[1].links) == 2
     assert root_receive.children[1].links[0].headers["traceparent"] == traceparent1
     assert root_receive.children[1].links[1].headers["traceparent"] == traceparent2
-
-    settings.tracing_implementation.set_value(None)
 
 
 @pytest.mark.liveTest

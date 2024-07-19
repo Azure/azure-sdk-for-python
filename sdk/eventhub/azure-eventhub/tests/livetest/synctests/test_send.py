@@ -11,7 +11,6 @@ import time
 import json
 import sys
 
-from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
@@ -295,11 +294,11 @@ def test_send_amqp_annotated_message(auth_credential_receivers, uamqp_transport)
 @pytest.mark.parametrize("payload", [b"", b"A single event"])
 @pytest.mark.liveTest
 def test_send_and_receive_small_body(
-    auth_credential_receivers, payload, uamqp_transport, timeout_factor, fake_span
+    auth_credential_receivers, payload, uamqp_transport, timeout_factor, enable_tracing 
 ):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
 
-    settings.tracing_implementation.set_value(fake_span)
+    fake_span = enable_tracing
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
@@ -367,9 +366,6 @@ def test_send_and_receive_small_body(
         root_span.children[4].links[0].headers["traceparent"]
         == root_span.children[3].traceparent
     )
-
-    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
-    settings.tracing_implementation.set_value(None)
 
 
 @pytest.mark.liveTest

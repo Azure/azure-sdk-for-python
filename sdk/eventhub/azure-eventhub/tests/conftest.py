@@ -112,6 +112,12 @@ def timeout_factor(uamqp_transport):
 def fake_span():
     return FakeSpan
 
+@pytest.fixture()
+def enable_tracing(fake_span):
+    settings.tracing_implementation.set_value(fake_span)
+    yield fake_span
+    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
+    settings.tracing_implementation.set_value(None)
 
 @pytest.fixture(scope="session")
 def get_credential():
@@ -161,7 +167,6 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
         warnings.warn(UserWarning('AZURE_SUBSCRIPTION_ID undefined - skipping test'))
         pytest.skip('AZURE_SUBSCRIPTION_ID defined')
 
-    settings.tracing_implementation.set_value(None)
     base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
     credential_scopes = ["{}.default".format(base_url)]
     resource_client = EventHubManagementClient(get_devtools_credential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)

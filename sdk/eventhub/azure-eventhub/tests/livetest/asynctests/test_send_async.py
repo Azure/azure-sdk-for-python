@@ -11,7 +11,6 @@ import pytest
 import time
 import json
 
-from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
@@ -258,11 +257,11 @@ async def test_send_with_partition_key_async(
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_and_receive_small_body_async(
-    auth_credential_receivers_async, payload, uamqp_transport, timeout_factor, fake_span
+    auth_credential_receivers_async, payload, uamqp_transport, timeout_factor, enable_tracing 
 ):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers_async
 
-    settings.tracing_implementation.set_value(fake_span)
+    fake_span = enable_tracing
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
@@ -328,9 +327,6 @@ async def test_send_and_receive_small_body_async(
         root_span.children[4].links[0].headers["traceparent"]
         == root_span.children[3].traceparent
     )
-
-    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
-    settings.tracing_implementation.set_value(None)
 
 
 @pytest.mark.liveTest
