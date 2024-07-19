@@ -351,8 +351,8 @@ def main(
         try:
             if latest_pypi_version:
                 versions = client.get_ordered_versions(package_name)
-                version = str(versions[-1]) if len(versions) > 0 else None
-            if not version:
+                version = str(versions[-1])
+            else:
                 version = str(client.get_relevant_versions(package_name)[1])
         except IndexError:
             _LOGGER.warning(f"No revelant version for {package_name} on PyPi. Exiting...")
