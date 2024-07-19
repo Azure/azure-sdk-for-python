@@ -19,8 +19,8 @@ from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 
 @pytest.mark.liveTest
-def test_client_secret_credential(live_eventhub, uamqp_transport):
-    credential = EnvironmentCredential()
+def test_client_token_credential(live_eventhub, get_credential, uamqp_transport):
+    credential = get_credential()
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
         eventhub_name=live_eventhub["event_hub"],

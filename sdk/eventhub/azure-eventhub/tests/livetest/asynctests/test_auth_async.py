@@ -20,8 +20,8 @@ from azure.eventhub.aio._client_base_async import EventHubSASTokenCredential
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_client_secret_credential_async(live_eventhub, uamqp_transport):
-    credential = EnvironmentCredential()
+async def test_client_token_credential_async(live_eventhub, get_credential_async, uamqp_transport):
+    credential = get_credential_async()
     producer_client = EventHubProducerClient(
         fully_qualified_namespace=live_eventhub["hostname"],
         eventhub_name=live_eventhub["event_hub"],
