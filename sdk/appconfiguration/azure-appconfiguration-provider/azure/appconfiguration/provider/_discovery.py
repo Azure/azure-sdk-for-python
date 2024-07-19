@@ -31,7 +31,7 @@ class SRVRecord:
 def find_auto_failover_endpoints(endpoint: str, replica_discovery_enabled: bool):
     if replica_discovery_enabled:
         return []
-    known_domain = _get_known_domains(endpoint)
+    known_domain = _get_known_domain(endpoint)
     if known_domain is None:
         return []
 
@@ -85,14 +85,10 @@ def _request_record(request):
 
 
 def _validate(known_domain, endpoint):
-    if not isinstance(known_domain, str) or known_domain == "":
-        return False
-    if not isinstance(endpoint, str) or endpoint == "":
-        return False
     return endpoint.endswith(known_domain)
 
 
-def _get_known_domains(known_host):
+def _get_known_domain(known_host):
     trusted_domain_labels = ["appconfig", "azconfig"]  # cspell:disable-line
 
     for label in trusted_domain_labels:
