@@ -13,7 +13,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+
 class TestAzureRedHatOpenShift4Operations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AzureRedHatOpenShiftClient)
@@ -22,8 +22,8 @@ class TestAzureRedHatOpenShift4Operations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2020-04-30",
+            api_version="2023-11-22",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
+        assert result
+        

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.redhatopenshift.aio import AzureRedHatOpenShift4Client
+from azure.mgmt.redhatopenshift.aio import AzureRedHatOpenShiftClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -17,7 +17,7 @@ AZURE_LOCATION = "eastus"
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
 class TestAzureRedHatOpenShift4OpenShiftClustersOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureRedHatOpenShift4Client, is_async=True)
+        self.client = self.create_mgmt_client(AzureRedHatOpenShiftClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
