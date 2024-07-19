@@ -23,7 +23,7 @@ USAGE:
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
     3) CUSTOM_BUILT_MODEL_ID - the ID of your custom built model.
         -OR-
-       DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
+       DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
        A model will be built and used to run the sample.
 """
 
@@ -32,6 +32,13 @@ from collections import Counter
 
 
 def analyze_custom_documents(custom_model_id):
+    # For the Form_1.jpg, it should be the test file under the traning dataset which storage at the Azure Blob Storage path
+    # combined by DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL and DOCUMENTINTELLIGENCE_STORAGE_PREFIX, 
+    # or it can also be a test file with the format similar to the training dataset. 
+    # Put it here locally just for presenting documents visually in sample.
+
+    # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
+    # train a model. For more information, access https://aka.ms/build-a-custom-model please.
     path_to_sample_documents = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg")
     )
@@ -154,7 +161,7 @@ if __name__ == "__main__":
     try:
         load_dotenv(find_dotenv())
         model_id = None
-        if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
+        if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
             import uuid
             from azure.core.credentials import AzureKeyCredential
             from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
@@ -173,7 +180,7 @@ if __name__ == "__main__":
             document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
-            blob_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL")
+            blob_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_ADVANCED_CONTAINER_SAS_URL")
             blob_prefix = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_PREFIX")
             if blob_container_sas_url is not None:
                 request = BuildDocumentModelRequest(

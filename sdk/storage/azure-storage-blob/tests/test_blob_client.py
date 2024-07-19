@@ -157,7 +157,7 @@ class TestStorageClient(StorageRecordedTestCase):
     def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -173,7 +173,7 @@ class TestStorageClient(StorageRecordedTestCase):
     def test_create_service_with_token_and_http(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.get_credential(BlobServiceClient)
         for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError):
