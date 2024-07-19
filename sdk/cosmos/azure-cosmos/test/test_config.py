@@ -179,8 +179,26 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
         ]
     }
 
+
 class FakeResponse:
     def __init__(self, headers):
         self.headers = headers
         self.reason = "foo"
         self.status_code = "bar"
+
+
+class FakePipelineResponse:
+    def __init__(self, headers=None, status_code=200, message="test-message"):
+        self.http_response = FakeHttpResponse(headers, status_code, message)
+
+
+class FakeHttpResponse:
+    def __init__(self, headers=None, status_code=200, message="test-message"):
+        if headers is None:
+            headers = {}
+        self.headers = headers
+        self.status_code = status_code
+        self.reason = message
+
+    def body(self):
+        return None

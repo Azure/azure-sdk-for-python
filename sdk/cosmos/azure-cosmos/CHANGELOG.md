@@ -9,10 +9,11 @@
 
 #### Bugs Fixed
 * Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR 35731](https://github.com/Azure/azure-sdk-for-python/pull/35731).
-* Fixed bug with client hangs when running into Write Forbidden exceptions. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
+* Fixed bug with client hangs when running into WriteForbidden exceptions. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
+* Added retry handling logic for DatabaseAccountNotFound exceptions. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
 
 #### Other Changes
-* Improvements to our client documentation. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
+
 
 ### 4.7.0 (2024-05-15)
 
