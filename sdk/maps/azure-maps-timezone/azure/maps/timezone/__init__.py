@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._client import TimezoneClient
-from ._timezone_client import AzureTimezoneClient
+from ._patch import AzureTimezoneClient
 
 try:
     from ._patch import __all__ as _patch_all

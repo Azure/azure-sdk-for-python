@@ -20,7 +20,7 @@ from ._configuration import TimezoneClientConfiguration
 from .operations import TimezoneOperations
 
 
-class TimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
+class TimezoneClient(TimezoneOperations):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Time Zone REST APIs.
 
     :ivar timezone: TimezoneOperations operations
@@ -71,7 +71,13 @@ class TimezoneClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.timezone = TimezoneOperations(self._client, self._config, self._serialize, self._deserialize)
+
+        super().__init__(
+            client=self._client,
+            config=self._config,
+            serializer=self._serialize,
+            deserializer=self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
