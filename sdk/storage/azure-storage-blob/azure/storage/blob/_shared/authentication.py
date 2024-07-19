@@ -58,12 +58,8 @@ def compare(lhs: str, rhs: str) -> int:  # pylint:disable=too-many-return-statem
     lhs_len = len(lhs)
     rhs_len = len(rhs)
     while curr_level < n:
-        if curr_level == (n - 1) and i != j:
-            if i > j:
-                return -1
-            if i < j:
-                return 1
-            return 0
+        if (curr_level < (n - 1) and i != j):
+            return j - i
 
         w1 = tables[curr_level][ord(lhs[i])] if i < lhs_len else 0x1
         w2 = tables[curr_level][ord(rhs[j])] if j < rhs_len else 0x1
@@ -80,11 +76,7 @@ def compare(lhs: str, rhs: str) -> int:  # pylint:disable=too-many-return-statem
         elif w2 == 0:
             j += 1
         else:
-            if w1 < w2:
-                return -1
-            if w1 > w2:
-                return 1
-            return 0
+            return w1 - w2
     return 0
 
 
