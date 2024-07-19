@@ -32,7 +32,6 @@ import os
 
 
 async def sample_copy_model_to(custom_model_id):
-    # [START begin_copy_document_model_to]
     import uuid
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
@@ -83,7 +82,6 @@ async def sample_copy_model_to(custom_model_id):
         print("Warnings encountered while building the model:")
         for warning in copied_over_model.warnings:
             print(f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}")
-    # [END begin_copy_document_model_to]
 
 
 async def main():

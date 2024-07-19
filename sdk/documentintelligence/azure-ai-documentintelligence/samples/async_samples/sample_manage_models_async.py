@@ -27,7 +27,6 @@ import os
 
 
 async def sample_manage_models():
-    # [START build_model]
     # Let's build a model to use for this sample
     import uuid
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
@@ -75,9 +74,7 @@ async def sample_manage_models():
                 print(
                     f"warning code: {warning.code}, message: {warning.message}, target of the error: {warning.target}"
                 )
-        # [END build_model]
 
-        # [START get_resource_info]
         account_details = await document_intelligence_admin_client.get_resource_info()
         print(
             f"Our resource has {account_details.custom_document_models.count} custom models, "
@@ -88,26 +85,20 @@ async def sample_manage_models():
             f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
             f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}"
         )
-        # [END get_resource_info]
 
-        # [START list_models]
         # Next, we get a paged list of all of our custom models
         models = document_intelligence_admin_client.list_models()
 
         print("We have the following 'ready' models with IDs and descriptions:")
         async for model in models:
             print(f"{model.model_id} | {model.description}")
-        # [END list_models]
 
-        # [START get_model]
         my_model = await document_intelligence_admin_client.get_model(model_id=model.model_id)
         print(f"\nModel ID: {my_model.model_id}")
         print(f"Description: {my_model.description}")
         print(f"Model created on: {my_model.created_date_time}")
         print(f"Model expires on: {my_model.expiration_date_time}")
-        # [END get_model]
 
-        # [START delete_model]
         # Finally, we will delete this model by ID
         await document_intelligence_admin_client.delete_model(model_id=my_model.model_id)
 
@@ -117,7 +108,6 @@ async def sample_manage_models():
             await document_intelligence_admin_client.get_model(model_id=my_model.model_id)
         except ResourceNotFoundError:
             print(f"Successfully deleted model with ID {my_model.model_id}")
-        # [END delete_model]
 
 
 async def main():

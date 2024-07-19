@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_languages_async.py
+FILE: sample_analyze_addon_query_fields_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to detect languages from the document using the
-    add-on 'LANGUAGES' capability.
+    This sample demonstrates how to extract additional fields using the
+    add-on 'QUERY_FIELDS' capability.
 
     This sample uses Layout model to demonstrate.
 
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_languages_async.py
+    python sample_analyze_addon_query_fields_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -43,52 +43,37 @@ import asyncio
 import os
 
 
-async def analyze_languages():
-    path_to_sample_documents = os.path.abspath(
-        os.path.join(
-            os.path.abspath(__file__),
-            "..",
-            "..",
-            "sample_forms/add_ons/fonts_and_languages.png",
-        )
-    )
-    # [START analyze_languages]
+async def analyze_query_fields():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/forms/Invoice_1.pdf"
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_intelligence_client:
         # Specify which add-on capabilities to enable.
-        with open(path_to_sample_documents, "rb") as f:
-            poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-layout",
-                analyze_request=f,
-                features=[DocumentAnalysisFeature.LANGUAGES],
-                content_type="application/octet-stream",
-            )
+        poller = await document_intelligence_client.begin_analyze_document(
+            "prebuilt-layout",
+            AnalyzeDocumentRequest(url_source=url),
+            features=[DocumentAnalysisFeature.QUERY_FIELDS],
+            query_fields=["Address", "InvoiceNumber"],
+        )
         result: AnalyzeResult = await poller.result()
-
-    print("----Languages detected in the document----")
-    if result.languages:
-        print(f"Detected {len(result.languages)} languages:")
-        for lang_idx, lang in enumerate(result.languages):
-            print(f"- Language #{lang_idx}: locale '{lang.locale}'")
-            print(f"  Confidence: {lang.confidence}")
-            print(
-                f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'"
-            )
-
-    print("----------------------------------------")
-    # [END analyze_languages]
+    print("Here are extra fields in result:\n")
+    if result.documents:
+        for doc in result.documents:
+            if doc.fields and doc.fields["Address"]:
+                print(f"Address: {doc.fields['Address'].value_string}")
+            if doc.fields and doc.fields["InvoiceNumber"]:
+                print(f"Invoice number: {doc.fields['InvoiceNumber'].value_string}")
 
 
 async def main():
-    await analyze_languages()
+    await analyze_query_fields()
 
 
 if __name__ == "__main__":
