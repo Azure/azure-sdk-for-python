@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
+class MapsRenderClient(RenderOperations):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Maps Render REST APIs.
 
     :ivar render: RenderOperations operations
@@ -76,7 +76,13 @@ class MapsRenderClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.render = RenderOperations(self._client, self._config, self._serialize, self._deserialize)
+
+        super().__init__(
+            client=self._client,
+            config=self._config,
+            serializer=self._serialize,
+            deserializer=self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

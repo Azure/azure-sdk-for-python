@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._render_client import MapsRenderClient
+from ._patch import AzureMapsRenderClient
 from ._version import VERSION
 from ._enums import (
     TilesetID,
@@ -21,7 +21,7 @@ from ._enums import (
 
 __version__ = VERSION
 __all__ = [
-    'MapsRenderClient',
+    'AzureMapsRenderClient',
     'TilesetID',
     'StaticMapLayer',
     'ResponseFormat',

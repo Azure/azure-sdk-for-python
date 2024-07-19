@@ -24,9 +24,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 def get_copyright_from_bounding_box():
     # [START get_copyright_from_bounding_box]
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.render import MapsRenderClient
+    from azure.maps.render import AzureMapsRenderClient
 
-    maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
+    maps_render_client = AzureMapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_render_client.get_copyright_from_bounding_box(
         south_west=[42.982261, 24.980233],

@@ -7,7 +7,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+
+from typing import Union, Any, List
+
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+
+from ._client import MapsRenderClient
+from ._version import API_VERSION
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
@@ -19,3 +26,34 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+# To check the credential is either AzureKeyCredential or TokenCredential
+def _authentication_policy(credential):
+    authentication_policy = None
+    if credential is None:
+        raise ValueError("Parameter 'credential' must not be None.")
+    if isinstance(credential, AzureKeyCredential):
+        authentication_policy = AzureKeyCredentialPolicy(
+            name="subscription-key", credential=credential
+        )
+    elif credential is not None and not hasattr(credential, "get_token"):
+        raise TypeError(
+            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity".format(type(credential))
+        )
+    return authentication_policy
+
+
+class AzureMapsRenderClient(MapsRenderClient):
+    def __init__(
+        self,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
+    ) -> None:
+
+        super().__init__(
+            credential=credential,  # type: ignore
+            api_version=kwargs.pop("api_version", API_VERSION),
+            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            **kwargs
+        )

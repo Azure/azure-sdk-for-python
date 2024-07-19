@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._render_client_async import MapsRenderClient
-__all__ = ['MapsRenderClient']
+from ._patch import AzureMapsRenderClient
+__all__ = ['AzureMapsRenderClient']
