@@ -1,36 +1,36 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://deid-service-endpoint.com/deid?api-version=2024-01-16-preview",
+      "RequestUri": "deid-service-endpoint.com/deid?api-version=2024-07-12-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "136",
+        "Content-Length": "97",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.11.9 (Windows-10-10.0.22631-SP0)"
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.12.4 (Windows-11-10.0.22631-SP0)"
       },
       "RequestBody": {
         "inputText": "Hello, my name is John Smith.",
         "operation": "Surrogate",
-        "dataType": "Plaintext",
-        "stringIndexType": "UnicodeCodePoint"
+        "dataType": "Plaintext"
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-deprecated-versions": "1",
-        "api-supported-versions": "2024-01-16-preview",
+        "api-deprecated-versions": "1, 2024-01-16-preview",
+        "api-supported-versions": "2024-07-12-preview",
+        "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 05 Jul 2024 22:09:25 GMT",
-        "Request-Context": "appId=cid-v1:a76c5940-1f58-4a73-8ed5-ad2696fe4ae8",
-        "Server": "Kestrel",
+        "Date": "Thu, 18 Jul 2024 23:18:28 GMT",
+        "Request-Context": "appId=cid-v1:3849b6db-c9d6-4719-b725-ab6dfffaef3f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-id": "08904168-a164-42f5-9806-79a211cf18ee"
+        "x-ms-correlation-id": "c209a99d-bbc5-4d55-8d7c-6640ec91f953"
       },
       "ResponseBody": {
-        "outputText": "Hello, my name is Larkin Schwarzer."
+        "outputText": "Hello, my name is Alva Kirchharr."
       }
     }
   ],

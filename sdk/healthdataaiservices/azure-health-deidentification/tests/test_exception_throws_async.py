@@ -4,8 +4,8 @@ from azure.core.exceptions import HttpResponseError
 
 import pytest
 from deid_base_test_case import DeidBaseTestCase, BatchEnv
-from devtools_testutils import (
-    recorded_by_proxy,
+from devtools_testutils.aio import (
+    recorded_by_proxy_async,
 )
 
 from azure.health.deidentification.models import *
@@ -14,11 +14,12 @@ from azure.core.polling import LROPoller
 
 class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
     @BatchEnv()
-    @recorded_by_proxy
+    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     def test_exception_throws(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         storage_location: str = self.get_storage_location(kwargs)
-        client = self.make_client(endpoint)
+        client = self.make_client_async(endpoint)
         assert client is not None
 
         jobname = self.generate_job_name()

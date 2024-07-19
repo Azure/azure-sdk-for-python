@@ -16,7 +16,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the endpoint to your Deidentification Service resource.
     2) AZURE_STORAGE_ACCOUNT_LOCATION - the location of the storage account where the input and output files are stored.
-        This can be either a URL (which is configured with Managed Identity) or a SasURI.
+        This is an Azure Storage url to a container which must be configured with Managed Identity..
     3) INPUT_PREFIX - the prefix of the input files in the storage account.
 """
 
@@ -47,11 +47,7 @@ def sample_create_and_wait_job():
 
     credential = DefaultAzureCredential()
 
-    client = DeidentificationClient(
-        endpoint,
-        DefaultAzureCredential(),
-        connection_verify="localhost" not in endpoint,
-    )
+    client = DeidentificationClient(endpoint, credential)
 
     jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
 
@@ -60,9 +56,7 @@ def sample_create_and_wait_job():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location, prefix=outputPrefix
-        ),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
         operation=OperationType.SURROGATE,
         data_type=DocumentDataType.PLAINTEXT,
     )

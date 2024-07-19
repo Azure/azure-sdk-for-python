@@ -35,7 +35,7 @@ def sample_realtime_deidentification():
 
     credential = DefaultAzureCredential()
 
-    client = DeidentificationClient(endpoint, DefaultAzureCredential())
+    client = DeidentificationClient(endpoint, credential)
 
     body = DeidentificationContent(
         input_text="Hello, my name is John Smith.",

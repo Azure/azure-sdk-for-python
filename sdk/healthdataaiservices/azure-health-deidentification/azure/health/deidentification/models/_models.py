@@ -19,45 +19,38 @@ if TYPE_CHECKING:
 
 
 class DeidentificationContent(_model_base.Model):
-    """Request for synchronous De-Identify operation.
+    """Request body for de-identification operation.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar input_text: Input text to deidentify. Required.
+    :ivar input_text: Input text to de-identify. Required.
     :vartype input_text: str
-    :ivar operation: Operation to perform on the input. Required. Known values are: "Redact",
-     "Surrogate", and "Tag".
+    :ivar operation: Operation to perform on the input. Known values are: "Redact", "Surrogate",
+     and "Tag".
     :vartype operation: str or ~azure.health.deidentification.models.OperationType
-    :ivar data_type: Data type of the input. Required. "Plaintext"
+    :ivar data_type: Data type of the input. "Plaintext"
     :vartype data_type: str or ~azure.health.deidentification.models.DocumentDataType
-    :ivar string_index_type: Requested Encoding of the tag response indices. Known values are:
-     "TextElement_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.health.deidentification.models.StringIndexType
-    :ivar redaction_format: Format of the redacted output. Only valid when OperationType is Redact.
+    :ivar redaction_format: Format of the redacted output. Only valid when OperationType is
+     "Redact".
     :vartype redaction_format: str
     """
 
     input_text: str = rest_field(name="inputText")
-    """Input text to deidentify. Required."""
-    operation: Union[str, "_models.OperationType"] = rest_field()
-    """Operation to perform on the input. Required. Known values are: \"Redact\", \"Surrogate\", and
-     \"Tag\"."""
-    data_type: Union[str, "_models.DocumentDataType"] = rest_field(name="dataType")
-    """Data type of the input. Required. \"Plaintext\""""
-    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(name="stringIndexType")
-    """Requested Encoding of the tag response indices. Known values are: \"TextElement_v8\",
-     \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+    """Input text to de-identify. Required."""
+    operation: Optional[Union[str, "_models.OperationType"]] = rest_field()
+    """Operation to perform on the input. Known values are: \"Redact\", \"Surrogate\", and \"Tag\"."""
+    data_type: Optional[Union[str, "_models.DocumentDataType"]] = rest_field(name="dataType")
+    """Data type of the input. \"Plaintext\""""
     redaction_format: Optional[str] = rest_field(name="redactionFormat")
-    """Format of the redacted output. Only valid when OperationType is Redact."""
+    """Format of the redacted output. Only valid when OperationType is \"Redact\"."""
 
     @overload
     def __init__(
         self,
         *,
         input_text: str,
-        operation: Union[str, "_models.OperationType"],
-        data_type: Union[str, "_models.DocumentDataType"],
-        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        operation: Optional[Union[str, "_models.OperationType"]] = None,
+        data_type: Optional[Union[str, "_models.DocumentDataType"]] = None,
         redaction_format: Optional[str] = None,
     ): ...
 
@@ -73,7 +66,7 @@ class DeidentificationContent(_model_base.Model):
 
 
 class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """A job containing a batch of documents to deidentify.
+    """A job containing a batch of documents to de-identify.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -85,10 +78,10 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
     :vartype source_location: ~azure.health.deidentification.models.SourceStorageLocation
     :ivar target_location: Target location to store output of operation. Required.
     :vartype target_location: ~azure.health.deidentification.models.TargetStorageLocation
-    :ivar operation: Operation to perform on the input documents. Required. Known values are:
-     "Redact", "Surrogate", and "Tag".
+    :ivar operation: Operation to perform on the input documents. Known values are: "Redact",
+     "Surrogate", and "Tag".
     :vartype operation: str or ~azure.health.deidentification.models.OperationType
-    :ivar data_type: Data type of the input documents. Required. "Plaintext"
+    :ivar data_type: Data type of the input documents. "Plaintext"
     :vartype data_type: str or ~azure.health.deidentification.models.DocumentDataType
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
     :vartype redaction_format: str
@@ -97,16 +90,16 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
     :vartype status: str or ~azure.health.deidentification.models.JobStatus
     :ivar error: Error when job fails in it's entirety.
     :vartype error: ~azure.health.deidentification.models.Error
-    :ivar created_at: Date and time when the job was created. Required.
-    :vartype created_at: ~datetime.datetime
-    :ivar started_at: Date and time when the job was started.
-    :vartype started_at: ~datetime.datetime
     :ivar last_updated_at: Date and time when the job was completed.
 
      If the job is canceled, this is the time when the job was canceled.
 
-     If the job failed, this is the time when the job failed.
+     If the job failed, this is the time when the job failed. Required.
     :vartype last_updated_at: ~datetime.datetime
+    :ivar created_at: Date and time when the job was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar started_at: Date and time when the job was started.
+    :vartype started_at: ~datetime.datetime
     :ivar summary: Summary of a job. Exists only when the job is completed.
     :vartype summary: ~azure.health.deidentification.models.JobSummary
     """
@@ -117,11 +110,11 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
     """Storage location to perform the operation on. Required."""
     target_location: "_models.TargetStorageLocation" = rest_field(name="targetLocation")
     """Target location to store output of operation. Required."""
-    operation: Union[str, "_models.OperationType"] = rest_field()
-    """Operation to perform on the input documents. Required. Known values are: \"Redact\",
-     \"Surrogate\", and \"Tag\"."""
-    data_type: Union[str, "_models.DocumentDataType"] = rest_field(name="dataType")
-    """Data type of the input documents. Required. \"Plaintext\""""
+    operation: Optional[Union[str, "_models.OperationType"]] = rest_field()
+    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
+     \"Tag\"."""
+    data_type: Optional[Union[str, "_models.DocumentDataType"]] = rest_field(name="dataType")
+    """Data type of the input documents. \"Plaintext\""""
     redaction_format: Optional[str] = rest_field(name="redactionFormat")
     """Format of the redacted output. Only valid when Operation is Redact."""
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
@@ -129,18 +122,16 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
      \"Succeeded\", \"PartialFailed\", \"Failed\", and \"Canceled\"."""
     error: Optional["_models.Error"] = rest_field(visibility=["read"])
     """Error when job fails in it's entirety."""
-    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
-    """Date and time when the job was created. Required."""
-    started_at: Optional[datetime.datetime] = rest_field(name="startedAt", visibility=["read"], format="rfc3339")
-    """Date and time when the job was started."""
-    last_updated_at: Optional[datetime.datetime] = rest_field(
-        name="lastUpdatedAt", visibility=["read"], format="rfc3339"
-    )
+    last_updated_at: datetime.datetime = rest_field(name="lastUpdatedAt", visibility=["read"], format="rfc3339")
     """Date and time when the job was completed.
      
      If the job is canceled, this is the time when the job was canceled.
      
-     If the job failed, this is the time when the job failed."""
+     If the job failed, this is the time when the job failed. Required."""
+    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Date and time when the job was created. Required."""
+    started_at: Optional[datetime.datetime] = rest_field(name="startedAt", visibility=["read"], format="rfc3339")
+    """Date and time when the job was started."""
     summary: Optional["_models.JobSummary"] = rest_field(visibility=["read"])
     """Summary of a job. Exists only when the job is completed."""
 
@@ -150,8 +141,8 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
         *,
         source_location: "_models.SourceStorageLocation",
         target_location: "_models.TargetStorageLocation",
-        operation: Union[str, "_models.OperationType"],
-        data_type: Union[str, "_models.DocumentDataType"],
+        operation: Optional[Union[str, "_models.OperationType"]] = None,
+        data_type: Optional[Union[str, "_models.DocumentDataType"]] = None,
         redaction_format: Optional[str] = None,
     ): ...
 
@@ -167,18 +158,18 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
 
 
 class DeidentificationResult(_model_base.Model):
-    """Response for synchronous De-Identify operation.
+    """Response body for de-identification operation.
 
-    :ivar output_text: Output text after de-identifying. Not available for Tag Operation.
+    :ivar output_text: Output text after de-identification. Not available for "Tag" operation.
     :vartype output_text: str
-    :ivar tagger_result: Result of the tag operation. Only available for Tag Operation.
+    :ivar tagger_result: Result of the "Tag" operation. Only available for "Tag" Operation.
     :vartype tagger_result: ~azure.health.deidentification.models.PhiTaggerResult
     """
 
     output_text: Optional[str] = rest_field(name="outputText")
-    """Output text after de-identifying. Not available for Tag Operation."""
+    """Output text after de-identification. Not available for \"Tag\" operation."""
     tagger_result: Optional["_models.PhiTaggerResult"] = rest_field(name="taggerResult")
-    """Result of the tag operation. Only available for Tag Operation."""
+    """Result of the \"Tag\" operation. Only available for \"Tag\" Operation."""
 
     @overload
     def __init__(
@@ -186,6 +177,93 @@ class DeidentificationResult(_model_base.Model):
         *,
         output_text: Optional[str] = None,
         tagger_result: Optional["_models.PhiTaggerResult"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class DocumentDetails(_model_base.Model):
+    """Details of a single document in a job.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar id: Id of the document details. Required.
+    :vartype id: str
+    :ivar input: Location for the input. Required.
+    :vartype input: ~azure.health.deidentification.models.DocumentLocation
+    :ivar output: Location for the output.
+    :vartype output: ~azure.health.deidentification.models.DocumentLocation
+    :ivar status: Status of the document. Required. Known values are: "NotStarted", "Running",
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.health.deidentification.models.OperationState
+    :ivar error: Error when document fails.
+    :vartype error: ~azure.health.deidentification.models.Error
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Id of the document details. Required."""
+    input: "_models.DocumentLocation" = rest_field()
+    """Location for the input. Required."""
+    output: Optional["_models.DocumentLocation"] = rest_field()
+    """Location for the output."""
+    status: Union[str, "_models.OperationState"] = rest_field()
+    """Status of the document. Required. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    error: Optional["_models.Error"] = rest_field()
+    """Error when document fails."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: "_models.DocumentLocation",
+        status: Union[str, "_models.OperationState"],
+        output: Optional["_models.DocumentLocation"] = None,
+        error: Optional["_models.Error"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class DocumentLocation(_model_base.Model):
+    """Location of a document.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar path: Path of document in storage. Required.
+    :vartype path: str
+    :ivar etag: The entity tag for this resource. Required.
+    :vartype etag: str
+    """
+
+    path: str = rest_field()
+    """Path of document in storage. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: str,
     ): ...
 
     @overload
@@ -250,95 +328,6 @@ class Error(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FileLocation(_model_base.Model):
-    """Location of a file.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar path: Absolute path to the file in storage. Required.
-    :vartype path: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
-    """
-
-    path: str = rest_field()
-    """Absolute path to the file in storage. Required."""
-    etag: str = rest_field(visibility=["read"])
-    """The entity tag for this resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        path: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class HealthFileDetails(_model_base.Model):
-    """File report once job has completed.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Id of the file report. Required.
-    :vartype id: str
-    :ivar input: File Location for the input. Required.
-    :vartype input: ~azure.health.deidentification.models.FileLocation
-    :ivar output: File Location for the output.
-    :vartype output: ~azure.health.deidentification.models.FileLocation
-    :ivar status: Status of the file. Required. Known values are: "NotStarted", "Running",
-     "Succeeded", "Failed", and "Canceled".
-    :vartype status: str or ~azure.health.deidentification.models.OperationState
-    :ivar error: Error when file fails.
-    :vartype error: ~azure.health.deidentification.models.Error
-    """
-
-    id: str = rest_field(visibility=["read"])
-    """Id of the file report. Required."""
-    input: "_models.FileLocation" = rest_field()
-    """File Location for the input. Required."""
-    output: Optional["_models.FileLocation"] = rest_field()
-    """File Location for the output."""
-    status: Union[str, "_models.OperationState"] = rest_field()
-    """Status of the file. Required. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
-     \"Failed\", and \"Canceled\"."""
-    error: Optional["_models.Error"] = rest_field()
-    """Error when file fails."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        input: "_models.FileLocation",
-        status: Union[str, "_models.OperationState"],
-        output: Optional["_models.FileLocation"] = None,
-        error: Optional["_models.Error"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class InnerError(_model_base.Model):
     """An object containing more specific information about the error. As per Microsoft One API
     guidelines -
@@ -375,30 +364,29 @@ class InnerError(_model_base.Model):
 
 
 class JobSummary(_model_base.Model):
-    """Summary metrics the documents pertaining to a job.
+    """Summary metrics of a job.
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar successful: Number of blobs that have completed. Required.
+    :ivar successful: Number of documents that have completed. Required.
     :vartype successful: int
-    :ivar failed: Number of blobs that have failed. Required.
+    :ivar failed: Number of documents that have failed. Required.
     :vartype failed: int
-    :ivar canceled: Number of blobs that have been canceled. Required.
+    :ivar canceled: Number of documents that have been canceled. Required.
     :vartype canceled: int
-    :ivar total: Number of blobs total. Required.
+    :ivar total: Number of documents total. Required.
     :vartype total: int
     :ivar bytes_processed: Number of bytes processed. Required.
     :vartype bytes_processed: int
     """
 
     successful: int = rest_field()
-    """Number of blobs that have completed. Required."""
+    """Number of documents that have completed. Required."""
     failed: int = rest_field()
-    """Number of blobs that have failed. Required."""
+    """Number of documents that have failed. Required."""
     canceled: int = rest_field()
-    """Number of blobs that have been canceled. Required."""
+    """Number of documents that have been canceled. Required."""
     total: int = rest_field()
-    """Number of blobs total. Required."""
+    """Number of documents total. Required."""
     bytes_processed: int = rest_field(name="bytesProcessed")
     """Number of bytes processed. Required."""
 
@@ -425,48 +413,47 @@ class JobSummary(_model_base.Model):
 
 
 class PhiEntity(_model_base.Model):
-    """Phi Entity tag in the input.
+    """PHI Entity tag in the input.
 
-    All required parameters must be populated in order to send to server.
 
-    :ivar category: Phi Category of the entity. Required. Known values are: "Unknown", "Account",
+    :ivar category: PHI Category of the entity. Required. Known values are: "Unknown", "Account",
      "Age", "BioID", "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email", "Fax",
      "HealthPlan", "Hospital", "IDNum", "IPAddress", "License", "LocationOther", "MedicalRecord",
      "Organization", "Patient", "Phone", "Profession", "SocialSecurity", "State", "Street", "Url",
      "Username", "Vehicle", and "Zip".
     :vartype category: str or ~azure.health.deidentification.models.PhiCategory
     :ivar offset: Starting index of the location from within the input text. Required.
-    :vartype offset: int
+    :vartype offset: ~azure.health.deidentification.models.StringIndex
     :ivar length: Length of the input text. Required.
-    :vartype length: int
+    :vartype length: ~azure.health.deidentification.models.StringIndex
     :ivar text: Text of the entity.
     :vartype text: str
-    :ivar confidence_score: Confidence score of the text/type pairing.
+    :ivar confidence_score: Confidence score of the category match.
     :vartype confidence_score: float
     """
 
     category: Union[str, "_models.PhiCategory"] = rest_field()
-    """Phi Category of the entity. Required. Known values are: \"Unknown\", \"Account\", \"Age\",
+    """PHI Category of the entity. Required. Known values are: \"Unknown\", \"Account\", \"Age\",
      \"BioID\", \"City\", \"CountryOrRegion\", \"Date\", \"Device\", \"Doctor\", \"Email\", \"Fax\",
      \"HealthPlan\", \"Hospital\", \"IDNum\", \"IPAddress\", \"License\", \"LocationOther\",
      \"MedicalRecord\", \"Organization\", \"Patient\", \"Phone\", \"Profession\",
      \"SocialSecurity\", \"State\", \"Street\", \"Url\", \"Username\", \"Vehicle\", and \"Zip\"."""
-    offset: int = rest_field()
+    offset: "_models.StringIndex" = rest_field()
     """Starting index of the location from within the input text. Required."""
-    length: int = rest_field()
+    length: "_models.StringIndex" = rest_field()
     """Length of the input text. Required."""
     text: Optional[str] = rest_field()
     """Text of the entity."""
     confidence_score: Optional[float] = rest_field(name="confidenceScore")
-    """Confidence score of the text/type pairing."""
+    """Confidence score of the category match."""
 
     @overload
     def __init__(
         self,
         *,
         category: Union[str, "_models.PhiCategory"],
-        offset: int,
-        length: int,
+        offset: "_models.StringIndex",
+        length: "_models.StringIndex",
         text: Optional[str] = None,
         confidence_score: Optional[float] = None,
     ): ...
@@ -483,40 +470,31 @@ class PhiEntity(_model_base.Model):
 
 
 class PhiTaggerResult(_model_base.Model):
-    """Result of the tag operation.
+    """Result of the "Tag" operation.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar entities: List of entities detected in the input. Required.
     :vartype entities: list[~azure.health.deidentification.models.PhiEntity]
-    :ivar string_index_type: Requested Encoding of the tag response indices. Required. Known values
-     are: "TextElement_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-    :vartype string_index_type: str or ~azure.health.deidentification.models.StringIndexType
-    :ivar path: Path to the file in the storage container.
+    :ivar path: Path to the document in storage.
     :vartype path: str
-    :ivar etag: The entity tag for this resource. Required.
+    :ivar etag: The entity tag for this resource.
     :vartype etag: str
     """
 
     entities: List["_models.PhiEntity"] = rest_field()
     """List of entities detected in the input. Required."""
-    string_index_type: Union[str, "_models.StringIndexType"] = rest_field(name="stringIndexType")
-    """Requested Encoding of the tag response indices. Required. Known values are: \"TextElement_v8\",
-     \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
     path: Optional[str] = rest_field()
-    """Path to the file in the storage container."""
-    etag: str = rest_field(visibility=["read"])
-    """The entity tag for this resource. Required."""
+    """Path to the document in storage."""
+    etag: Optional[str] = rest_field()
+    """The entity tag for this resource."""
 
     @overload
     def __init__(
         self,
         *,
         entities: List["_models.PhiEntity"],
-        string_index_type: Union[str, "_models.StringIndexType"],
         path: Optional[str] = None,
+        etag: Optional[str] = None,
     ): ...
 
     @overload
@@ -535,20 +513,20 @@ class SourceStorageLocation(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar location: URL to storage location. Must be a valid Azure Storage SAS URI. Required.
+    :ivar location: URL to storage location. Required.
     :vartype location: str
-    :ivar prefix: Prefix to filter blobs by. Required.
+    :ivar prefix: Prefix to filter path by. Required.
     :vartype prefix: str
-    :ivar extensions: List of extensions to filter blobs by. Required.
+    :ivar extensions: List of extensions to filter path by.
     :vartype extensions: list[str]
     """
 
     location: str = rest_field()
-    """URL to storage location. Must be a valid Azure Storage SAS URI. Required."""
+    """URL to storage location. Required."""
     prefix: str = rest_field()
-    """Prefix to filter blobs by. Required."""
-    extensions: List[str] = rest_field()
-    """List of extensions to filter blobs by. Required."""
+    """Prefix to filter path by. Required."""
+    extensions: Optional[List[str]] = rest_field()
+    """List of extensions to filter path by."""
 
     @overload
     def __init__(
@@ -556,7 +534,54 @@ class SourceStorageLocation(_model_base.Model):
         *,
         location: str,
         prefix: str,
-        extensions: List[str],
+        extensions: Optional[List[str]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class StringIndex(_model_base.Model):
+    """String index encoding model.
+
+
+    :ivar utf8: The offset or length of the substring in UTF-8 encoding. Required.
+    :vartype utf8: int
+    :ivar utf16: The offset or length of the substring in UTF-16 encoding.
+
+     Primary encoding used by .NET, Java, and JavaScript. Required.
+    :vartype utf16: int
+    :ivar code_point: The offset or length of the substring in CodePoint encoding.
+
+     Primary encoding used by Python. Required.
+    :vartype code_point: int
+    """
+
+    utf8: int = rest_field()
+    """The offset or length of the substring in UTF-8 encoding. Required."""
+    utf16: int = rest_field()
+    """The offset or length of the substring in UTF-16 encoding.
+     
+     Primary encoding used by .NET, Java, and JavaScript. Required."""
+    code_point: int = rest_field(name="codePoint")
+    """The offset or length of the substring in CodePoint encoding.
+     
+     Primary encoding used by Python. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        utf8: int,
+        utf16: int,
+        code_point: int,
     ): ...
 
     @overload
@@ -575,16 +600,16 @@ class TargetStorageLocation(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar location: URL to storage location. Must be a valid Azure Storage SAS URI. Required.
+    :ivar location: URL to storage location. Required.
     :vartype location: str
-    :ivar prefix: Prefix to filter blobs by. Required.
+    :ivar prefix: Prefix to filter path by. Required.
     :vartype prefix: str
     """
 
     location: str = rest_field()
-    """URL to storage location. Must be a valid Azure Storage SAS URI. Required."""
+    """URL to storage location. Required."""
     prefix: str = rest_field()
-    """Prefix to filter blobs by. Required."""
+    """Prefix to filter path by. Required."""
 
     @overload
     def __init__(

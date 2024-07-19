@@ -5,6 +5,9 @@ import random
 import datetime
 import uuid
 from azure.health.deidentification import DeidentificationClient
+from azure.health.deidentification.aio import (
+    DeidentificationClient as DeidentificationClientAsync,
+)
 
 
 from devtools_testutils import (
@@ -24,7 +27,6 @@ BatchEnv = functools.partial(
     healthdataaiservices_deid_service_endpoint="deid-service-endpoint.com",
     healthdataaiservices_storage_account_name="blobstorageaccount",
     healthdataaiservices_storage_container_name="containername",
-    healthdataaiservices_sas_uri="https://blobstorageaccount.blob.core.windows.net:443/containername",  # Rely on SASURI sanitizer instead
 )
 
 
@@ -38,8 +40,20 @@ class DeidBaseTestCase(AzureRecordedTestCase):
             credential=credential,
             # Client library expects just hostname
             endpoint=endpoint.replace("https://", ""),
-            # Skip SSL verification for localhost
-            connection_verify="localhost" not in endpoint,
+            # TODO: test-proxy not playing well with SSL verification
+            connection_verify=False,
+        )
+        return client
+
+    def make_client_async(self, endpoint) -> DeidentificationClientAsync:
+        credential = self.get_credential(DeidentificationClientAsync)
+        client = self.create_client_from_credential(
+            DeidentificationClientAsync,
+            credential=credential,
+            # Client library expects just hostname
+            endpoint=endpoint.replace("https://", ""),
+            # TODO: test-proxy not playing well with SSL verification
+            connection_verify=False,
         )
         return client
 
@@ -52,6 +66,5 @@ class DeidBaseTestCase(AzureRecordedTestCase):
     def get_storage_location(self, kwargs):
         storage_name: str = kwargs.pop("healthdataaiservices_storage_account_name")
         container_name: str = kwargs.pop("healthdataaiservices_storage_container_name")
-        # storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
-        storage_location: str = kwargs.pop("healthdataaiservices_sas_uri")
+        storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
         return storage_location

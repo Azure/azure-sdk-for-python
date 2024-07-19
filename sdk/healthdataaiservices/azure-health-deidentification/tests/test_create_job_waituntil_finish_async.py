@@ -1,20 +1,22 @@
 from deid_base_test_case import *
-from devtools_testutils import (
-    recorded_by_proxy,
+from devtools_testutils.aio import (
+    recorded_by_proxy_async,
 )
 
 from azure.health.deidentification.models import *
 from azure.core.polling import LROPoller
+import pytest
 
 
 class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
     @BatchEnv()
-    @recorded_by_proxy
+    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     def test_create_job_wait_finish(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         inputPrefix = "example_patient_1"
         storage_location: str = self.get_storage_location(kwargs)
-        client = self.make_client(endpoint)
+        client = self.make_client_async(endpoint)
         assert client is not None
 
         jobname = self.generate_job_name()

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -27,12 +28,12 @@ class DeidentificationClient(
 ):  # pylint: disable=client-accepts-api-version-keyword
     """DeidentificationClient.
 
-    :param endpoint: Url of your Deid Service. Required.
+    :param endpoint: Url of your De-identification Service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-01-16-preview". Note that overriding this default value may result in unsupported
+     "2024-07-12-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -96,7 +97,7 @@ class DeidentificationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DeidentificationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

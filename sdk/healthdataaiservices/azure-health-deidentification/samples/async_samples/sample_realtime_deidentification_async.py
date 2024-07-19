@@ -36,11 +36,7 @@ async def sample_realtime_deidentification_async():
 
     credential = DefaultAzureCredential()
 
-    client = DeidentificationClient(
-        endpoint,
-        DefaultAzureCredential(),
-        connection_verify="localhost" not in endpoint,
-    )
+    client = DeidentificationClient(endpoint, credential)
 
     body = DeidentificationContent(
         input_text="Hello, my name is John Smith.",

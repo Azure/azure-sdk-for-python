@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -49,7 +49,7 @@ def build_deidentification_get_job_request(name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -74,7 +74,7 @@ def build_deidentification_create_job_request(name: str, **kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,7 +102,7 @@ def build_deidentification_list_jobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,17 +123,17 @@ def build_deidentification_list_jobs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deidentification_list_job_files_request(  # pylint: disable=name-too-long
+def build_deidentification_list_job_documents_request(  # pylint: disable=name-too-long
     name: str, *, maxpagesize: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/jobs/{name}/files"
+    _url = "/jobs/{name}/documents"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -159,7 +159,7 @@ def build_deidentification_cancel_job_request(name: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -183,7 +183,7 @@ def build_deidentification_delete_job_request(name: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,7 +208,7 @@ def build_deidentification_deidentify_request(**kwargs: Any) -> HttpRequest:  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-16-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-12-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -229,8 +229,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @distributed_trace
     def get_job(self, name: str, **kwargs: Any) -> _models.DeidentificationJob:
-        # pylint: disable=line-too-long
-        """Get a De-Identify Job.
+        """Get a de-identification job.
 
         Resource read operation template.
 
@@ -245,55 +244,43 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -351,7 +338,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     def _create_job_initial(
         self, name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
-    ) -> JSON:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -364,7 +351,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -386,7 +373,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -394,8 +381,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
+            response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -408,7 +394,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(JSON, response.json())
+            deserialized = response.iter_bytes()
 
         if response.status_code == 201:
             response_headers["x-ms-client-request-id"] = self._deserialize(
@@ -418,7 +404,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(JSON, response.json())
+            deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -429,8 +415,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def begin_create_job(
         self, name: str, resource: _models.DeidentificationJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
-        # pylint: disable=line-too-long
-        """Create a De-Identify Job.
+        """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
@@ -452,109 +437,85 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 resource = {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -563,8 +524,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def begin_create_job(
         self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
-        # pylint: disable=line-too-long
-        """Create a De-Identify Job.
+        """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
@@ -586,55 +546,43 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -643,8 +591,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def begin_create_job(
         self, name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
-        # pylint: disable=line-too-long
-        """Create a De-Identify Job.
+        """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
@@ -666,55 +613,43 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -723,8 +658,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def begin_create_job(
         self, name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
-        # pylint: disable=line-too-long
-        """Create a De-Identify Job.
+        """Create a de-identification job.
 
         Long-running resource create or replace operation template.
 
@@ -744,109 +678,85 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 resource = {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
 
                 # response body for status code(s): 201, 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -868,6 +778,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -912,8 +823,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def list_jobs(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
     ) -> Iterable["_models.DeidentificationJob"]:
-        # pylint: disable=line-too-long
-        """List De-Identify Jobs.
+        """List de-identification jobs.
 
         Resource list operation template.
 
@@ -929,55 +839,43 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -1047,8 +945,6 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1057,11 +953,10 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_job_files(
+    def list_job_documents(
         self, name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.HealthFileDetails"]:
-        # pylint: disable=line-too-long
-        """List processed files within a Job.
+    ) -> Iterable["_models.DocumentDetails"]:
+        """List processed documents within a job.
 
         Resource list operation template.
 
@@ -1070,8 +965,8 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         :keyword continuation_token_parameter: Token to continue a previous query. Default value is
          None.
         :paramtype continuation_token_parameter: str
-        :return: An iterator like instance of HealthFileDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.HealthFileDetails]
+        :return: An iterator like instance of DocumentDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.health.deidentification.models.DocumentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1079,31 +974,27 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # Id of the file report. Required.
+                    "id": "str",
                     "input": {
-                        "etag": "str",  # The entity tag for this resource. Required.
-                        "path": "str"  # Absolute path to the file in storage. Required.
+                        "etag": "str",
+                        "path": "str"
                     },
-                    "status": "str",  # Status of the file. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
+                    "status": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
                     "output": {
-                        "etag": "str",  # The entity tag for this resource. Required.
-                        "path": "str"  # Absolute path to the file in storage. Required.
+                        "etag": "str",
+                        "path": "str"
                     }
                 }
         """
@@ -1111,7 +1002,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.HealthFileDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DocumentDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -1124,7 +1015,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deidentification_list_job_files_request(
+                _request = build_deidentification_list_job_documents_request(
                     name=name,
                     maxpagesize=maxpagesize,
                     continuation_token_parameter=continuation_token_parameter,
@@ -1159,7 +1050,7 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.HealthFileDetails], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DocumentDetails], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1174,8 +1065,6 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1185,13 +1074,12 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @distributed_trace
     def cancel_job(self, name: str, **kwargs: Any) -> _models.DeidentificationJob:
-        # pylint: disable=line-too-long
-        """Cancel a De-Identify Job.
+        """Cancel a de-identification job.
 
         Cancels a job that is in progress.
 
         The job will be marked as canceled and the service will stop processing the job. The service
-        will not delete any files that have already been processed.
+        will not delete any documents that have already been processed.
 
         If the job is already complete, this will have no effect.
 
@@ -1206,55 +1094,43 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "createdAt": "2020-02-20 00:00:00",  # Date and time when the job was
-                      created. Required.
-                    "dataType": "str",  # Data type of the input documents. Required. "Plaintext"
-                    "name": "str",  # The name of a job. Required.
-                    "operation": "str",  # Operation to perform on the input documents. Required.
-                      Known values are: "Redact", "Surrogate", and "Tag".
+                    "createdAt": "2020-02-20 00:00:00",
+                    "lastUpdatedAt": "2020-02-20 00:00:00",
+                    "name": "str",
                     "sourceLocation": {
+                        "location": "str",
+                        "prefix": "str",
                         "extensions": [
-                            "str"  # List of extensions to filter blobs by. Required.
-                        ],
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                            "str"
+                        ]
                     },
-                    "status": "str",  # Current status of a job. Required. Known values are:
-                      "NotStarted", "Running", "Succeeded", "PartialFailed", "Failed", and "Canceled".
+                    "status": "str",
                     "targetLocation": {
-                        "location": "str",  # URL to storage location. Must be a valid Azure
-                          Storage SAS URI. Required.
-                        "prefix": "str"  # Prefix to filter blobs by. Required.
+                        "location": "str",
+                        "prefix": "str"
                     },
+                    "dataType": "str",
                     "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
+                        "code": "str",
+                        "message": "str",
                         "details": [
                             ...
                         ],
                         "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
+                            "code": "str",
                             "innererror": ...
                         },
-                        "target": "str"  # Optional. The target of the error.
+                        "target": "str"
                     },
-                    "lastUpdatedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the
-                      job was completed.  If the job is canceled, this is the time when the job was
-                      canceled.  If the job failed, this is the time when the job failed.
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when Operation is Redact.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional. Date and time when the job
-                      was started.
+                    "operation": "str",
+                    "redactionFormat": "str",
+                    "startedAt": "2020-02-20 00:00:00",
                     "summary": {
-                        "bytesProcessed": 0,  # Number of bytes processed. Required.
-                        "canceled": 0,  # Number of blobs that have been canceled. Required.
-                        "failed": 0,  # Number of blobs that have failed. Required.
-                        "successful": 0,  # Number of blobs that have completed. Required.
-                        "total": 0  # Number of blobs total. Required.
+                        "bytesProcessed": 0,
+                        "canceled": 0,
+                        "failed": 0,
+                        "successful": 0,
+                        "total": 0
                     }
                 }
         """
@@ -1312,9 +1188,9 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
     @distributed_trace
     def delete_job(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete a De-Identify Job.
+        """Delete a de-identification job.
 
-        Removes the record of the job from the service. Does not delete any files.
+        Removes the record of the job from the service. Does not delete any documents.
 
         :param name: The name of a job. Required.
         :type name: str
@@ -1354,8 +1230,6 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1371,12 +1245,11 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def deidentify(
         self, body: _models.DeidentificationContent, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
-        # pylint: disable=line-too-long
-        """Realtime Synchronous Deidentification.
+        """De-identify text.
 
         A remote procedure call (RPC) operation.
 
-        :param body: The request body for realtime deidentification. Required.
+        :param body: Request body for de-identification operation. Required.
         :type body: ~azure.health.deidentification.models.DeidentificationContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1390,44 +1263,35 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "dataType": "str",  # Data type of the input. Required. "Plaintext"
-                    "inputText": "str",  # Input text to deidentify. Required.
-                    "operation": "str",  # Operation to perform on the input. Required. Known
-                      values are: "Redact", "Surrogate", and "Tag".
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when OperationType is Redact.
-                    "stringIndexType": "str"  # Optional. Requested Encoding of the tag response
-                      indices. Known values are: "TextElement_v8", "UnicodeCodePoint", and
-                      "Utf16CodeUnit".
+                    "inputText": "str",
+                    "dataType": "str",
+                    "operation": "str",
+                    "redactionFormat": "str"
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "outputText": "str",  # Optional. Output text after de-identifying. Not
-                      available for Tag Operation.
+                    "outputText": "str",
                     "taggerResult": {
                         "entities": [
                             {
-                                "category": "str",  # Phi Category of the entity.
-                                  Required. Known values are: "Unknown", "Account", "Age", "BioID",
-                                  "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email",
-                                  "Fax", "HealthPlan", "Hospital", "IDNum", "IPAddress", "License",
-                                  "LocationOther", "MedicalRecord", "Organization", "Patient", "Phone",
-                                  "Profession", "SocialSecurity", "State", "Street", "Url", "Username",
-                                  "Vehicle", and "Zip".
-                                "length": 0,  # Length of the input text. Required.
-                                "offset": 0,  # Starting index of the location from
-                                  within the input text. Required.
-                                "confidenceScore": 0.0,  # Optional. Confidence score
-                                  of the text/type pairing.
-                                "text": "str"  # Optional. Text of the entity.
+                                "category": "str",
+                                "length": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "offset": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "confidenceScore": 0.0,
+                                "text": "str"
                             }
                         ],
-                        "etag": "str",  # The entity tag for this resource. Required.
-                        "stringIndexType": "str",  # Requested Encoding of the tag response
-                          indices. Required. Known values are: "TextElement_v8", "UnicodeCodePoint",
-                          and "Utf16CodeUnit".
-                        "path": "str"  # Optional. Path to the file in the storage container.
+                        "etag": "str",
+                        "path": "str"
                     }
                 }
         """
@@ -1436,12 +1300,11 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def deidentify(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
-        # pylint: disable=line-too-long
-        """Realtime Synchronous Deidentification.
+        """De-identify text.
 
         A remote procedure call (RPC) operation.
 
-        :param body: The request body for realtime deidentification. Required.
+        :param body: Request body for de-identification operation. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1455,31 +1318,27 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "outputText": "str",  # Optional. Output text after de-identifying. Not
-                      available for Tag Operation.
+                    "outputText": "str",
                     "taggerResult": {
                         "entities": [
                             {
-                                "category": "str",  # Phi Category of the entity.
-                                  Required. Known values are: "Unknown", "Account", "Age", "BioID",
-                                  "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email",
-                                  "Fax", "HealthPlan", "Hospital", "IDNum", "IPAddress", "License",
-                                  "LocationOther", "MedicalRecord", "Organization", "Patient", "Phone",
-                                  "Profession", "SocialSecurity", "State", "Street", "Url", "Username",
-                                  "Vehicle", and "Zip".
-                                "length": 0,  # Length of the input text. Required.
-                                "offset": 0,  # Starting index of the location from
-                                  within the input text. Required.
-                                "confidenceScore": 0.0,  # Optional. Confidence score
-                                  of the text/type pairing.
-                                "text": "str"  # Optional. Text of the entity.
+                                "category": "str",
+                                "length": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "offset": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "confidenceScore": 0.0,
+                                "text": "str"
                             }
                         ],
-                        "etag": "str",  # The entity tag for this resource. Required.
-                        "stringIndexType": "str",  # Requested Encoding of the tag response
-                          indices. Required. Known values are: "TextElement_v8", "UnicodeCodePoint",
-                          and "Utf16CodeUnit".
-                        "path": "str"  # Optional. Path to the file in the storage container.
+                        "etag": "str",
+                        "path": "str"
                     }
                 }
         """
@@ -1488,12 +1347,11 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def deidentify(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
-        # pylint: disable=line-too-long
-        """Realtime Synchronous Deidentification.
+        """De-identify text.
 
         A remote procedure call (RPC) operation.
 
-        :param body: The request body for realtime deidentification. Required.
+        :param body: Request body for de-identification operation. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1507,31 +1365,27 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "outputText": "str",  # Optional. Output text after de-identifying. Not
-                      available for Tag Operation.
+                    "outputText": "str",
                     "taggerResult": {
                         "entities": [
                             {
-                                "category": "str",  # Phi Category of the entity.
-                                  Required. Known values are: "Unknown", "Account", "Age", "BioID",
-                                  "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email",
-                                  "Fax", "HealthPlan", "Hospital", "IDNum", "IPAddress", "License",
-                                  "LocationOther", "MedicalRecord", "Organization", "Patient", "Phone",
-                                  "Profession", "SocialSecurity", "State", "Street", "Url", "Username",
-                                  "Vehicle", and "Zip".
-                                "length": 0,  # Length of the input text. Required.
-                                "offset": 0,  # Starting index of the location from
-                                  within the input text. Required.
-                                "confidenceScore": 0.0,  # Optional. Confidence score
-                                  of the text/type pairing.
-                                "text": "str"  # Optional. Text of the entity.
+                                "category": "str",
+                                "length": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "offset": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "confidenceScore": 0.0,
+                                "text": "str"
                             }
                         ],
-                        "etag": "str",  # The entity tag for this resource. Required.
-                        "stringIndexType": "str",  # Requested Encoding of the tag response
-                          indices. Required. Known values are: "TextElement_v8", "UnicodeCodePoint",
-                          and "Utf16CodeUnit".
-                        "path": "str"  # Optional. Path to the file in the storage container.
+                        "etag": "str",
+                        "path": "str"
                     }
                 }
         """
@@ -1540,12 +1394,11 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
     def deidentify(
         self, body: Union[_models.DeidentificationContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DeidentificationResult:
-        # pylint: disable=line-too-long
-        """Realtime Synchronous Deidentification.
+        """De-identify text.
 
         A remote procedure call (RPC) operation.
 
-        :param body: The request body for realtime deidentification. Is one of the following types:
+        :param body: Request body for de-identification operation. Is one of the following types:
          DeidentificationContent, JSON, IO[bytes] Required.
         :type body: ~azure.health.deidentification.models.DeidentificationContent or JSON or IO[bytes]
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
@@ -1557,44 +1410,35 @@ class DeidentificationClientOperationsMixin(DeidentificationClientMixinABC):
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "dataType": "str",  # Data type of the input. Required. "Plaintext"
-                    "inputText": "str",  # Input text to deidentify. Required.
-                    "operation": "str",  # Operation to perform on the input. Required. Known
-                      values are: "Redact", "Surrogate", and "Tag".
-                    "redactionFormat": "str",  # Optional. Format of the redacted output. Only
-                      valid when OperationType is Redact.
-                    "stringIndexType": "str"  # Optional. Requested Encoding of the tag response
-                      indices. Known values are: "TextElement_v8", "UnicodeCodePoint", and
-                      "Utf16CodeUnit".
+                    "inputText": "str",
+                    "dataType": "str",
+                    "operation": "str",
+                    "redactionFormat": "str"
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "outputText": "str",  # Optional. Output text after de-identifying. Not
-                      available for Tag Operation.
+                    "outputText": "str",
                     "taggerResult": {
                         "entities": [
                             {
-                                "category": "str",  # Phi Category of the entity.
-                                  Required. Known values are: "Unknown", "Account", "Age", "BioID",
-                                  "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email",
-                                  "Fax", "HealthPlan", "Hospital", "IDNum", "IPAddress", "License",
-                                  "LocationOther", "MedicalRecord", "Organization", "Patient", "Phone",
-                                  "Profession", "SocialSecurity", "State", "Street", "Url", "Username",
-                                  "Vehicle", and "Zip".
-                                "length": 0,  # Length of the input text. Required.
-                                "offset": 0,  # Starting index of the location from
-                                  within the input text. Required.
-                                "confidenceScore": 0.0,  # Optional. Confidence score
-                                  of the text/type pairing.
-                                "text": "str"  # Optional. Text of the entity.
+                                "category": "str",
+                                "length": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "offset": {
+                                    "codePoint": 0,
+                                    "utf16": 0,
+                                    "utf8": 0
+                                },
+                                "confidenceScore": 0.0,
+                                "text": "str"
                             }
                         ],
-                        "etag": "str",  # The entity tag for this resource. Required.
-                        "stringIndexType": "str",  # Requested Encoding of the tag response
-                          indices. Required. Known values are: "TextElement_v8", "UnicodeCodePoint",
-                          and "Utf16CodeUnit".
-                        "path": "str"  # Optional. Path to the file in the storage container.
+                        "etag": "str",
+                        "path": "str"
                     }
                 }
         """

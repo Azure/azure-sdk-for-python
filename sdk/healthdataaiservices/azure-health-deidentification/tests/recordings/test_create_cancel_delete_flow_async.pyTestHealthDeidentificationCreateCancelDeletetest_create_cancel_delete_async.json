@@ -1,0 +1,52 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "deid-service-endpoint.com/jobs/test_create_cancel_delete_async-db64a4?api-version=2024-07-12-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "294",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-health-deidentification/1.0.0b1 Python/3.12.4 (Windows-11-10.0.22631-SP0)"
+      },
+      "RequestBody": {
+        "sourceLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "example_patient_1"
+        },
+        "targetLocation": {
+          "location": "https://blobstorageaccount.blob.core.windows.net:443/containername",
+          "prefix": "_output"
+        },
+        "operation": "Surrogate",
+        "dataType": "Plaintext"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 19 Jul 2024 00:09:55 GMT",
+        "Request-Context": "appId=cid-v1:3849b6db-c9d6-4719-b725-ab6dfffaef3f",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-id": "2dd9d1c2-b830-4c3a-8d99-0ab9847613d3"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "RequestValidationFailed",
+          "message": "Model validation for request failed.",
+          "details": [
+            {
+              "code": "FieldInvalid",
+              "message": "The field \"name\" must be between 3 and 36 characters long.",
+              "target": "name"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -4,18 +4,18 @@
 # ------------------------------------
 
 """
-FILE: sample_list_job_files.py
+FILE: sample_list_job_documents.py
 
 DESCRIPTION:
     This sample demonstrates how to create a job, wait for it to finish, and then list the files associated with the job.
 
 USAGE:
-    python sample_list_job_files.py
+    python sample_list_job_documents.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT - the endpoint to your Deidentification Service resource.
     2) AZURE_STORAGE_ACCOUNT_LOCATION - the location of the storage account where the input and output files are stored.
-        This can be either a URL (which is configured with Managed Identity) or a SasURI.
+        This is an Azure Storage url to a container which must be configured with Managed Identity..
     3) INPUT_PREFIX - the prefix of the input files in the storage account.
 """
 
@@ -23,8 +23,8 @@ USAGE:
 import uuid
 
 
-def sample_list_job_files():
-    # [START sample_list_job_files]
+def sample_list_job_documents():
+    # [START sample_list_job_documents]
     import os
     from azure.identity import DefaultAzureCredential
     from azure.health.deidentification import DeidentificationClient
@@ -46,11 +46,7 @@ def sample_list_job_files():
 
     credential = DefaultAzureCredential()
 
-    client = DeidentificationClient(
-        endpoint,
-        DefaultAzureCredential(),
-        connection_verify="localhost" not in endpoint,
-    )
+    client = DeidentificationClient(endpoint, credential)
 
     jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
 
@@ -59,9 +55,7 @@ def sample_list_job_files():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location, prefix=outputPrefix
-        ),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
         operation=OperationType.SURROGATE,
         data_type=DocumentDataType.PLAINTEXT,
     )
@@ -73,7 +67,7 @@ def sample_list_job_files():
     job = poller.result()
     print(f"Job Status: {job.status}")
 
-    files = client.list_job_files(job.name)
+    files = client.list_job_documents(job.name)
 
     print("Completed files (Max 10):")
     filesToLookThrough = 10
@@ -84,8 +78,8 @@ def sample_list_job_files():
         if filesToLookThrough <= 0:
             break
 
-    # [END sample_list_job_files]
+    # [END sample_list_job_documents]
 
 
 if __name__ == "__main__":
-    sample_list_job_files()
+    sample_list_job_documents()

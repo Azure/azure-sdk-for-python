@@ -15,6 +15,7 @@ param (
 )
 
 # Retrieve the connection string from environment variables
+$resourceGroup = $DeploymentOutputs['HEALTHDATAAISERVICES_RESOURCE_GROUP']
 $storageAccountName = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME']
 $containerName = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME']
 
@@ -32,6 +33,16 @@ Import-Module Az.Storage
 
 # Connect to the storage account
 $storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -UseConnectedAccount
+
+# FIXME Remove once vpn team fixes the network acl issue
+$networkRuleSet = New-Object -TypeName Microsoft.Azure.Commands.Management.Storage.Models.PSNetworkRuleSet
+$networkRuleSet.DefaultAction = "Allow"
+Set-AzStorageAccount -ResourceGroupName $resourceGroup -Name $storageAccountName -NetworkRuleSet $networkRuleSet
+
+# Sleep for 30 seconds to allow the network rule to take effect
+Write-Host "[Fix] Temporary sleep to allow network rule to take effect."
+Start-Sleep -Seconds 30
+
 Get-AzStorageContainer -Name $containerName -Context $storageContext
 
 # Upload the folder and its contents to the container
