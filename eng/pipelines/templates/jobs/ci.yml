@@ -307,8 +307,11 @@ jobs:
             Selection: sparse
             GenerateVMJobs: true
       PreGenerationSteps:
+        - task: UsePythonVersion@0
+          inputs:
+            versionSpec: '3.12'
         - pwsh: |
-            python -m pip install "./tools/azure-sdk-tools[build]"
+            python -m pip install "./tools/azure-sdk-tools"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:
