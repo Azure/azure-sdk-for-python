@@ -1,12 +1,11 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.microsoft.com/timezone/windowsToIana/json?api-version=1.0&query=Pacific%20Standard%20Time",
+      "RequestUri": "https://Sanitized.microsoft.com/timezone/ianaVersion/json?api-version=1.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "subscription-key": "Sanitized",
         "User-Agent": "azsdk-python-maps-timezone/unknown Python/3.12.3 (Windows-11-10.0.22621-SP0)"
       },
@@ -15,16 +14,18 @@
       "ResponseHeaders": {
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 19 Jul 2024 20:35:03 GMT",
+        "Date": "Fri, 19 Jul 2024 20:35:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West Europe",
-        "X-MSEdge-Ref": "Ref A: 101339AD06B743F6BAE49EE54C8E7F38 Ref B: ATH01EDGE0315 Ref C: 2024-07-19T20:35:04Z"
+        "X-MSEdge-Ref": "Ref A: B3CF68F922874B2485B5090DBB057F55 Ref B: ATH01EDGE0315 Ref C: 2024-07-19T20:35:06Z"
       },
-      "ResponseBody": "[{\"Id\":\"America/Vancouver\",\"IsAlias\":false,\"HasZone1970Location\":true},{\"Id\":\"America/Los_Angeles\",\"IsAlias\":false,\"HasZone1970Location\":true},{\"Id\":\"PST8PDT\",\"IsAlias\":false,\"HasZone1970Location\":false}]"
+      "ResponseBody": {
+        "Version": "2024a"
+      }
     }
   ],
   "Variables": {}

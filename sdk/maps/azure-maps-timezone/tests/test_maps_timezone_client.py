@@ -16,7 +16,7 @@ from timezone_preparer import MapsTimezonePreparer
 class TestMapsTimezoneClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = AzureTimezoneClient(
-            credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
+            credential=AzureKeyCredential(os.getenv("AZURE_SUBSCRIPTION_KEY", "AzureSubscriptionKey"))
         )
         assert self.client is not None
 
@@ -27,14 +27,12 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
 
         assert result is not None
 
-
     @MapsTimezonePreparer()
     @recorded_by_proxy
     def test_get_timezone_by_id(self):
         result = self.client.get_timezone_by_id(timezone_id="sr-Latn-RS")
 
         assert result is not None
-
 
     @MapsTimezonePreparer()
     @recorded_by_proxy
@@ -43,16 +41,12 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
 
         assert result is not None
 
-
-
     @MapsTimezonePreparer()
     @recorded_by_proxy
     def test_get_iana_timezone_ids(self):
         result = self.client.get_iana_timezone_ids()
 
         assert result is not None
-
-
 
     @MapsTimezonePreparer()
     @recorded_by_proxy
