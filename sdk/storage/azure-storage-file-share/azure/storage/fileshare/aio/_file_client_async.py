@@ -26,12 +26,14 @@ from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
 from .._generated.models import FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
+from .._shared.uploads import prepare_upload_data
 from .._shared.uploads_async import FileChunkUploader, upload_data_chunks
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._shared.streams import IterStreamer
 from .._shared.streams_async import AsyncIterStreamer
+from .._shared.validation import ChecksumAlgorithm, parse_validation_option, SM_HEADER_V1_CRC64
 from .._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from .._serialize import (
     get_access_conditions,
@@ -1090,14 +1092,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_range(  # type: ignore
-        self,
-        data,  # type: bytes
-        offset,  # type: int
-        length,  # type: int
-        **kwargs
-    ):
-        # type: (...) -> Dict[str, Any]
+    async def upload_range(
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
+        offset: int,
+        length: int,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """Upload a range of bytes to a file.
 
         :param bytes data:
@@ -1143,24 +1143,34 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        validate_content = kwargs.pop('validate_content', False)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        data, data_length, content_length = prepare_upload_data(data, encoding, length, validate_content)
+
+        structured_type, structured_length = None, None
+        if validate_content == ChecksumAlgorithm.CRC64:
+            structured_type = SM_HEADER_V1_CRC64
+            structured_length = data_length
+
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)
         if isinstance(data, str):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        md5_validation = True if validate_content is True or validate_content == ChecksumAlgorithm.MD5 else None
         try:
             return await self._client.file.upload_range(  # type: ignore
                 range=content_range,
-                content_length=length,
+                content_length=content_length,
                 optionalbody=data,
                 timeout=timeout,
-                validate_content=validate_content,
+                validate_content=md5_validation,
                 file_last_written_mode=file_last_write_mode,
                 lease_access_conditions=access_conditions,
+                structured_body_type=structured_type,
+                structured_content_length=structured_length,
                 cls=return_response_headers,
                 **kwargs
             )
