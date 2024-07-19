@@ -38,7 +38,7 @@ def analyze_custom_documents(custom_model_id):
     # Put it here locally just for presenting documents visually in sample.
 
     # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
-    # train a model. For more information, access https://aka.ms/build-a-custom-model please.
+    # train a model. For more information, see https://aka.ms/build-a-custom-model.
     path_to_sample_documents = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg")
     )

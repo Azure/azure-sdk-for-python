@@ -33,20 +33,7 @@ from collections import Counter
 
 
 def print_table(header_names, table_data):
-    """Print a two-dimensional array like a table.
-
-    Based on provided column header names and two two-dimensional array data, print the strings like table.
-
-    Args:
-        header_names: An array of string, it's the column header names.  e.g. ["name", "gender", "age"]
-        table_data: A two-dimensional array, they're the table data.  e.g. [["Mike", "M", 25], ["John", "M", 19], ["Lily", "F", 23]]
-    Return: None
-        It's will print the string like table in output window. e.g.
-         Name    Gender    Age
-         Mike    M         25
-         John    M         19
-         Lily    F         23
-    """
+    # Print a two-dimensional array like a table.
     max_len_list = []
     for i in range(len(header_names)):
         col_values = list(map(lambda row: len(str(row[i])), table_data))
@@ -67,7 +54,7 @@ async def analyze_custom_documents(custom_model_id):
     # Put it here locally just for presenting documents visually in sample.
 
     # Before analyzing a custom document, should upload the related training dataset into Azure Storage Blob and
-    # train a model. For more information, access https://aka.ms/build-a-custom-model please.
+    # train a model. For more information, see https://aka.ms/build-a-custom-model.
     path_to_sample_documents = os.path.abspath(
         os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg")
     )
