@@ -91,7 +91,7 @@ steps:
       $(VENV_ACTIVATION_SCRIPT)
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Linux/Mac'
+    displayName: 'Generate Packages'
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
