@@ -15,6 +15,7 @@ from ._models import (
 
 DataType = TypeVar("DataType")
 
+
 class ReceiveDetails(InternalReceiveDetails, Generic[DataType]):
     """Receive operation details per Cloud Event.
 

@@ -114,6 +114,7 @@ class ChatChoice(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
@@ -158,6 +159,7 @@ class ChatCompletions(_model_base.Model):
     "completes"
     provided prompt data.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -470,6 +472,7 @@ class ChatCompletionsNamedFunctionToolSelection(
 class ChatResponseMessage(_model_base.Model):
     """A representation of a chat message as received in a response.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
      "user", "assistant", and "tool".
@@ -517,6 +520,7 @@ class CompletionsUsage(_model_base.Model):
     Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
     other consumers.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
@@ -630,6 +634,7 @@ class EmbeddingInput(_model_base.Model):
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar embedding: List of embeddings value for the input prompt. These represent a measurement
      of the
@@ -670,6 +675,7 @@ class EmbeddingsResult(_model_base.Model):
     clustering,
     recommendations, and other similar scenarios.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique identifier for the embeddings result. Required.
     :vartype id: str
@@ -714,24 +720,34 @@ class EmbeddingsResult(_model_base.Model):
 class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
+    All required parameters must be populated in order to send to server.
 
-    :ivar prompt_tokens: Number of tokens in the request. Required.
+    :ivar input_tokens: Number of tokens in the request prompt. Required.
+    :vartype input_tokens: int
+    :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
+     identical to ``input_tokens``.
+     However, certain AI models may add extra tokens to the input hence the number can be higher.
+     (for example when input_type="query"). Required.
     :vartype prompt_tokens: int
-    :ivar total_tokens: Total number of tokens transacted in this request/response.
-     Should equal the number of tokens in the request. Required.
+    :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
     :vartype total_tokens: int
     """
 
+    input_tokens: int = rest_field()
+    """Number of tokens in the request prompt. Required."""
     prompt_tokens: int = rest_field()
-    """Number of tokens in the request. Required."""
+    """Number of tokens used for the prompt sent to the AI model. Typically identical to
+     ``input_tokens``.
+     However, certain AI models may add extra tokens to the input hence the number can be higher.
+     (for example when input_type=\"query\"). Required."""
     total_tokens: int = rest_field()
-    """Total number of tokens transacted in this request/response.
-    Should equal the number of tokens in the request. Required."""
+    """Total number of tokens transacted in this request/response. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        input_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
     ): ...
@@ -914,6 +930,7 @@ class ImageUrl(_model_base.Model):
 class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar model_name: The name of the AI model. For example: ``Phi21``. Required.
     :vartype model_name: str
@@ -1195,7 +1212,7 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
     role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: Union["str", List["_models.ContentItem"]] = rest_field()
+    content: Union[str, List["_models.ContentItem"]] = rest_field()
     """The contents of the user message, with available input types varying by selected model.
      Required. Is either a str type or a [ContentItem] type."""
 

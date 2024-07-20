@@ -31,8 +31,6 @@ from ._models import OsProfile
 from ._models import Pool
 from ._models import PoolImage
 from ._models import PoolProperties
-from ._models import PoolUpdate
-from ._models import PoolUpdateProperties
 from ._models import ProxyResource
 from ._models import Quota
 from ._models import QuotaName
@@ -103,8 +101,6 @@ __all__ = [
     "Pool",
     "PoolImage",
     "PoolProperties",
-    "PoolUpdate",
-    "PoolUpdateProperties",
     "ProxyResource",
     "Quota",
     "QuotaName",

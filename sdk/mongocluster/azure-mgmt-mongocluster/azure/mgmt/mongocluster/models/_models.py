@@ -568,91 +568,6 @@ class MongoClusterRestoreParameters(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoClusterUpdate(_model_base.Model):
-    """The type used for update operations of the MongoCluster.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties:
-    :vartype properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdateProperties
-    """
-
-    tags: Optional[Dict[str, str]] = rest_field()
-    """Resource tags."""
-    properties: Optional["_models.MongoClusterUpdateProperties"] = rest_field()
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.MongoClusterUpdateProperties"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class MongoClusterUpdateProperties(_model_base.Model):
-    """The updatable properties of the MongoCluster.
-
-    :ivar administrator_login: The administrator's login for the mongo cluster.
-    :vartype administrator_login: str
-    :ivar administrator_login_password: The password of the administrator login.
-    :vartype administrator_login_password: str
-    :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
-     not specified.
-    :vartype server_version: str
-    :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
-     cluster. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.mongocluster.models.PublicNetworkAccess
-    :ivar node_group_specs: The list of node group specs in the cluster.
-    :vartype node_group_specs: list[~azure.mgmt.mongocluster.models.NodeGroupSpec]
-    """
-
-    administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["read", "create", "update"])
-    """The administrator's login for the mongo cluster."""
-    administrator_login_password: Optional[str] = rest_field(
-        name="administratorLoginPassword", visibility=["create", "update"]
-    )
-    """The password of the administrator login."""
-    server_version: Optional[str] = rest_field(name="serverVersion")
-    """The Mongo DB server version. Defaults to the latest available version if not specified."""
-    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(name="publicNetworkAccess")
-    """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
-     \"Enabled\" and \"Disabled\"."""
-    node_group_specs: Optional[List["_models.NodeGroupSpec"]] = rest_field(name="nodeGroupSpecs")
-    """The list of node group specs in the cluster."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        administrator_login: Optional[str] = None,
-        administrator_login_password: Optional[str] = None,
-        server_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        node_group_specs: Optional[List["_models.NodeGroupSpec"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class NodeGroupSpec(_model_base.Model):
     """Specification for a node group.
 
@@ -733,7 +648,7 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field()
+    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
@@ -747,7 +662,6 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        display: Optional["_models.OperationDisplay"] = None,
         action_type: Optional[Union[str, "_models.ActionType"]] = None,
     ): ...
 
@@ -765,6 +679,8 @@ class Operation(_model_base.Model):
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
@@ -779,38 +695,18 @@ class OperationDisplay(_model_base.Model):
     :vartype description: str
     """
 
-    provider: Optional[str] = rest_field()
+    provider: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
      Insights\" or \"Microsoft Compute\"."""
-    resource: Optional[str] = rest_field()
+    resource: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
      Machines\" or \"Job Schedule Collections\"."""
-    operation: Optional[str] = rest_field()
+    operation: Optional[str] = rest_field(visibility=["read"])
     """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
      or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class PrivateEndpoint(_model_base.Model):

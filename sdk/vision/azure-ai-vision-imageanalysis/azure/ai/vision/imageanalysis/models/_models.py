@@ -43,8 +43,7 @@ class CaptionResult(_model_base.Model):
         *,
         confidence: float,
         text: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -91,8 +90,7 @@ class CropRegion(_model_base.Model):
         *,
         aspect_ratio: float,
         bounding_box: "_models.ImageBoundingBox",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -137,8 +135,7 @@ class DenseCaption(_model_base.Model):
         confidence: float,
         text: str,
         bounding_box: "_models.ImageBoundingBox",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -169,8 +166,7 @@ class DenseCaptionsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DenseCaption"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -205,8 +201,7 @@ class DetectedObject(_model_base.Model):
         *,
         bounding_box: "_models.ImageBoundingBox",
         tags: List["_models.DetectedTag"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -270,8 +265,7 @@ class DetectedTag(_model_base.Model):
         *,
         confidence: float,
         name: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -301,8 +295,7 @@ class DetectedTextBlock(_model_base.Model):
         self,
         *,
         lines: List["_models.DetectedTextLine"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -344,8 +337,7 @@ class DetectedTextLine(_model_base.Model):
         text: str,
         bounding_polygon: List["_models.ImagePoint"],
         words: List["_models.DetectedTextWord"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -392,8 +384,7 @@ class DetectedTextWord(_model_base.Model):
         text: str,
         bounding_polygon: List["_models.ImagePoint"],
         confidence: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -473,8 +464,7 @@ class ImageAnalysisResult(_model_base.Model):
         read: Optional["_models.ReadResult"] = None,
         smart_crops: Optional["_models.SmartCropsResult"] = None,
         tags: Optional["_models.TagsResult"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -519,8 +509,7 @@ class ImageBoundingBox(_model_base.Model):
         y: int,
         width: int,
         height: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -555,8 +544,7 @@ class ImageMetadata(_model_base.Model):
         *,
         height: int,
         width: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -595,8 +583,7 @@ class ImagePoint(_model_base.Model):
         *,
         x: int,
         y: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -639,8 +626,7 @@ class ObjectsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedObject"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -670,8 +656,7 @@ class PeopleResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedPerson"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -703,8 +688,7 @@ class ReadResult(_model_base.Model):
         self,
         *,
         blocks: List["_models.DetectedTextBlock"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -737,8 +721,7 @@ class SmartCropsResult(_model_base.Model):
         self,
         *,
         list: List["_models.CropRegion"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -770,8 +753,7 @@ class TagsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedTag"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

@@ -236,27 +236,6 @@ class CreateLivenessSessionContent(_model_base.Model):
     auth_token_time_to_live_in_seconds: Optional[int] = rest_field(name="authTokenTimeToLiveInSeconds")
     """Seconds the session should last for. Range is 60 to 86400 seconds. Default value is 600."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        liveness_operation_mode: Union[str, "_models.LivenessOperationMode"],
-        send_results_to_client: Optional[bool] = None,
-        device_correlation_id_set_in_client: Optional[bool] = None,
-        device_correlation_id: Optional[str] = None,
-        auth_token_time_to_live_in_seconds: Optional[int] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class CreateLivenessSessionResult(_model_base.Model):
     """Response of liveness session creation.
@@ -298,25 +277,6 @@ class CreateLivenessSessionResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class CreateLivenessWithVerifySessionContent(_model_base.Model):
-    """Request of liveness with verify session creation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar parameters: The parameters for creating session. Required.
-    :vartype parameters: ~azure.ai.vision.face.models.CreateLivenessSessionContent
-    :ivar verify_image: The image stream for verify. Content-Disposition header field for this part
-     must have filename. Required.
-    :vartype verify_image: bytes
-    """
-
-    parameters: "_models.CreateLivenessSessionContent" = rest_field(name="Parameters")
-    """The parameters for creating session. Required."""
-    verify_image: FileType = rest_field(name="VerifyImage", is_multipart_file_input=True)
-    """The image stream for verify. Content-Disposition header field for this part must have filename.
-     Required."""
 
 
 class CreateLivenessWithVerifySessionResult(_model_base.Model):
@@ -827,7 +787,7 @@ class FaceLandmarks(_model_base.Model):  # pylint: disable=too-many-instance-att
     """The coordinates of the under lip bottom. Required."""
 
     @overload
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         pupil_left: "_models.LandmarkCoordinate",

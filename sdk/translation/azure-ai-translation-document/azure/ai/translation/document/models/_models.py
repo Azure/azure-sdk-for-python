@@ -8,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+import sys
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_field
 from .._vendor import FileType
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class BatchRequest(_model_base.Model):
@@ -64,23 +71,6 @@ class DocumentFilter(_model_base.Model):
     """A case-sensitive suffix string to filter documents in the source path for
      translation.
      This is most often use for file extensions."""
-
-
-class DocumentsStatus(_model_base.Model):
-    """Documents Status Response.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The detail status of individual documents. Required.
-    :vartype value: list[~azure.ai.translation.document.models._models.DocumentStatus]
-    :ivar next_link: Url for the next page.  Null if no more pages available.
-    :vartype next_link: str
-    """
-
-    value: List["_models._models.DocumentStatus"] = rest_field()
-    """The detail status of individual documents. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """Url for the next page.  Null if no more pages available."""
 
 
 class DocumentStatus(_model_base.Model):
@@ -137,41 +127,6 @@ class DocumentStatus(_model_base.Model):
     """Document Id. Required."""
     character_charged: Optional[int] = rest_field(name="characterCharged")
     """Character charged by the API."""
-
-
-class DocumentTranslateContent(_model_base.Model):
-    """Document Translate Request Content.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar document: Document to be translated in the form. Required.
-    :vartype document: bytes
-    :ivar glossary: Glossary-translation memory will be used during translation in the form.
-    :vartype glossary: list[bytes]
-    """
-
-    document: FileType = rest_field(is_multipart_file_input=True)
-    """Document to be translated in the form. Required."""
-    glossary: Optional[List[FileType]] = rest_field(is_multipart_file_input=True)
-    """Glossary-translation memory will be used during translation in the form."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        document: FileType,
-        glossary: Optional[List[FileType]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class FileFormat(_model_base.Model):
@@ -316,19 +271,6 @@ class SourceInput(_model_base.Model):
     """Storage Source. \"AzureBlob\""""
 
 
-class StartTranslationDetails(_model_base.Model):
-    """Translation job submission batch request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar inputs: The input list of documents or folders containing documents. Required.
-    :vartype inputs: list[~azure.ai.translation.document.models._models.BatchRequest]
-    """
-
-    inputs: List["_models._models.BatchRequest"] = rest_field()
-    """The input list of documents or folders containing documents. Required."""
-
-
 class StatusSummary(_model_base.Model):
     """Status Summary.
 
@@ -454,21 +396,22 @@ class TranslationError(_model_base.Model):
      details(key value pair), inner error(this can be nested)."""
 
 
-class TranslationsStatus(_model_base.Model):
-    """Translation job Status Response.
+class TranslationErrorResponse(_model_base.Model):
+    """Contains unified error information used for HTTP responses across any Cognitive
+    Service. Instances
+    can be created either through
+    Microsoft.CloudAI.Containers.HttpStatusExceptionV2 or by returning it directly
+    from
+    a controller.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The summary status of individual operation. Required.
-    :vartype value: list[~azure.ai.translation.document.models._models.TranslationStatus]
-    :ivar next_link: Url for the next page.  Null if no more pages available.
-    :vartype next_link: str
+    :ivar error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :vartype error: ~azure.ai.translation.document.models._models.TranslationError
     """
 
-    value: List["_models._models.TranslationStatus"] = rest_field()
-    """The summary status of individual operation. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """Url for the next page.  Null if no more pages available."""
+    error: Optional["_models._models.TranslationError"] = rest_field()
+    """This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details."""
 
 
 class TranslationStatus(_model_base.Model):
