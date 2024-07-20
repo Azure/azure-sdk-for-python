@@ -29,6 +29,11 @@ steps:
       artifactName: 'packages'
       targetPath: $(Build.ArtifactStagingDirectory)
 
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.11'
+    inputs:
+      versionSpec: '3.11'
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
@@ -41,11 +46,6 @@ steps:
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
-
-  - task: UsePythonVersion@0
-    displayName: 'Use Python 3.11'
-    inputs:
-      versionSpec: '3.11'
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
@@ -69,8 +69,8 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
-        "$(TargetingString)" 
-        --service="${{ parameters.ServiceDirectory }}" 
+        "$(TargetingString)"
+        --service="${{ parameters.ServiceDirectory }}"
         --toxenv=sphinx
         --wheel_dir="$(Build.ArtifactStagingDirectory)"
 
@@ -94,7 +94,7 @@ steps:
       $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
       Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
     displayName: Check if docs directory exists
-  
+
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'

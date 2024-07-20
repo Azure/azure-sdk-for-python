@@ -326,8 +326,9 @@ def main(
         pkg_dir: str,
         changelog: bool,
         code_report: bool,
+        latest_pypi_version: bool,
         source_report: Optional[Path],
-        target_report: Optional[Path],
+        target_report: Optional[Path]
     ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
@@ -349,9 +350,13 @@ def main(
         client = PyPIClient()
 
         try:
-            version = str(client.get_relevant_versions(package_name)[1])
+            if latest_pypi_version:
+                versions = client.get_ordered_versions(package_name)
+                version = str(versions[-1])
+            else:
+                version = str(client.get_relevant_versions(package_name)[1])
         except IndexError:
-            _LOGGER.warning(f"No stable version for {package_name} on PyPi. Exiting...")
+            _LOGGER.warning(f"No revelant version for {package_name} on PyPi. Exiting...")
             exit(0)
 
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
@@ -473,6 +478,14 @@ if __name__ == "__main__":
         help="Path to the code report for the new package version.",
     )
 
+    parser.add_argument(
+        "--latest-pypi-version",
+        dest="latest_pypi_version",
+        help="Use the latest package version on PyPi (can be preview or stable).",
+        action="store_true",
+        default=False,
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -506,4 +519,4 @@ if __name__ == "__main__":
             _LOGGER.exception("If providing the `--target-report` flag, the `--source-report` flag is also required.")
             exit(1)
 
-    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.source_report, args.target_report)
+    main(package_name, target_module, stable_version, in_venv, pkg_dir, changelog, args.code_report, args.latest_pypi_version, args.source_report, args.target_report)

@@ -1,8 +1,20 @@
+# cSpell:ignore pscore
+# cSpell:ignore issecret
 trigger: none
 
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
+      PreSteps:
+        - task: AzureCLI@2
+          displayName: Set OIDC variables
+          inputs:
+            azureSubscription: azure-sdk-tests
+            scriptType: pscore
+            scriptLocation: inlineScript
+            addSpnToEnvironment: true
+            inlineScript: |
+              Write-Host "##vso[task.setvariable variable=ARM_OIDC_TOKEN;issecret=true]$($env:idToken)"
       ServiceDirectory: monitor
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
@@ -10,15 +22,19 @@ extends:
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
+          ServiceConnection: azure-sdk-tests
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
         China:
+          ServiceConnection: azure-sdk-tests
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           Location: chinanorth3
+      UseFederatedAuth: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(MONITOR_SUBSCRIPTION_ID)
-        AZURE_TENANT_ID: $(MONITOR_TENANT_ID)
-        AZURE_CLIENT_ID: $(MONITOR_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(MONITOR_CLIENT_SECRET)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'true'
+        ARM_OIDC_TOKEN: $(ARM_OIDC_TOKEN)
