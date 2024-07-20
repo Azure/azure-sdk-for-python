@@ -456,6 +456,9 @@ class TestGlobalDB(unittest.TestCase):
         container.create_item(document_definition)
         _synchronized_request._PipelineRunFunction = self.original_pipeline_function
 
+        cc_copy.GetDatabaseAccount = self.OriginalGetDatabaseAccount
+        client.client_connection = cc_copy
+
 
 if __name__ == '__main__':
     unittest.main()
