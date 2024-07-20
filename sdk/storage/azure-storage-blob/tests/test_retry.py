@@ -574,7 +574,8 @@ class TestStorageRetry(StorageRecordedTestCase):
             blob_client.get_blob_properties(retry_hook=retry_callback)
 
         # Assert
-        assert "Invalid base64-encoded string" in e.value.message
+        assert ("This is likely due to an invalid shared key. Please check your shared key and try again." in
+                e.value.message)
         assert retry_counter.count == 0
 
     # ------------------------------------------------------------------------------
