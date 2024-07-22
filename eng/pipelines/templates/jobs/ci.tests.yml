@@ -124,8 +124,18 @@ jobs:
         BeforeTestSteps:
           - task: DownloadPipelineArtifact@2
             inputs:
-              artifactName: 'packages'
-              targetPath: $(Build.ArtifactStagingDirectory)
+              artifactName: 'packages_windows'
+              targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'packages_mac'
+              targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifactName: 'packages_linux'
+              targetPath: $(Build.ArtifactStagingDirectory)/packages
 
           - template: ../steps/set-dev-build.yml
             parameters:
