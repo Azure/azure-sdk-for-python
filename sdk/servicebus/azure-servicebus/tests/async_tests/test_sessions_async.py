@@ -644,8 +644,8 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                             assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
-                                await receiver.complete_message(message)
                                 messages.append(message)
+                                await receiver.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockExpired")
                             except SessionLockLostError as e:
                                 raise
