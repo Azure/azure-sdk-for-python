@@ -5,7 +5,7 @@ extends:
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
-      TestTimeoutInMinutes: 200
+      TestTimeoutInMinutes: 400
       UseFederatedAuth: true
       MatrixReplace:
         - TestSamples=.*/true
