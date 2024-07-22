@@ -122,7 +122,7 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
-rule_id = os.environ['LOGS_DCR_RULE_ID']
+rule_id = os.environ['LOGS_DCR_ID']
 stream_name = os.environ['LOGS_DCR_STREAM_NAME']
 
 credential = DefaultAzureCredential()
@@ -160,7 +160,7 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient
 
 endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
-rule_id = os.environ['LOGS_DCR_RULE_ID']
+rule_id = os.environ['LOGS_DCR_ID']
 stream_name = os.environ["LOGS_DCR_STREAM_NAME"]
 
 credential = DefaultAzureCredential()

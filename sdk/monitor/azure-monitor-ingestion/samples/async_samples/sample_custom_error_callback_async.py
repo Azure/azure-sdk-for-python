@@ -17,7 +17,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
-    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    2) LOGS_DCR_ID - your data collection rule immutable ID
     3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
 
     If using an application service principal for authentication, set the following:
@@ -38,7 +38,7 @@ from azure.monitor.ingestion.aio import LogsIngestionClient
 
 async def send_logs():
     endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
-    rule_id = os.environ["LOGS_DCR_RULE_ID"]
+    rule_id = os.environ["LOGS_DCR_ID"]
     body: List[MutableMapping[str, str]] = [
         {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer1", "AdditionalContext": "context-2"},
         {"Time": "2021-12-08T23:51:14.1104269Z", "Computer": "Computer2", "AdditionalContext": "context"},

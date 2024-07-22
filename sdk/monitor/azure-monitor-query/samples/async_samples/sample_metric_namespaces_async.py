@@ -7,7 +7,7 @@ DESCRIPTION:
 USAGE:
     python sample_metric_namespaces_async.py
     Set the environment variables with your own values before running the sample:
-    1) METRICS_RESOURCE_URI - The resource URI of the resource for which the metrics are being queried.
+    1) METRICS_RESOURCE_ID - The resource ID/URI of the resource for which the metrics are being queried.
 
     This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
     For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
@@ -28,10 +28,10 @@ async def list_namespaces():
     credential = DefaultAzureCredential()
     client = MetricsQueryClient(credential)
 
-    metrics_uri = os.environ["METRICS_RESOURCE_URI"]
+    resource_id = os.environ["METRICS_RESOURCE_ID"]
     async with client:
         try:
-            response = client.list_metric_namespaces(metrics_uri)
+            response = client.list_metric_namespaces(resource_id)
             async for item in response:
                 print(item.fully_qualified_namespace)
                 print(item.type)

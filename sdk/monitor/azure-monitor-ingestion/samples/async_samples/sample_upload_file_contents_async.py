@@ -18,7 +18,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
-    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    2) LOGS_DCR_ID - your data collection rule immutable ID
     3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
 
     If using an application service principal for authentication, set the following:
@@ -44,7 +44,7 @@ async def upload_file_contents() -> None:
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
     # Update this to point to a file containing a list of JSON objects.
-    FILE_PATH = "../../test-logs.json"
+    FILE_PATH = "../sample-data.json"
 
     async with client:
         # Option 1: Upload the file contents by passing in the file stream. With this option, no chunking is done, and the
@@ -52,7 +52,7 @@ async def upload_file_contents() -> None:
         with open(FILE_PATH, "rb") as f:
             try:
                 await client.upload(
-                    rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=f
+                    rule_id=os.environ["LOGS_DCR_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=f
                 )
             except HttpResponseError as e:
                 print(f"File stream upload failed: {e}")
@@ -63,7 +63,7 @@ async def upload_file_contents() -> None:
             logs = json.load(f)
             try:
                 await client.upload(
-                    rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=logs
+                    rule_id=os.environ["LOGS_DCR_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=logs
                 )
             except HttpResponseError as e:
                 print(f"List upload failed: {e}")

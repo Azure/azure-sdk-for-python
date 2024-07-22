@@ -242,3 +242,12 @@ output AZURE_MONITOR_DCR_ID string = dataCollectionRule.properties.immutableId
 output AZURE_MONITOR_STREAM_NAME string = streamName
 output AZURE_MONITOR_TABLE_NAME string = tableName
 output AZURE_MONITOR_TENANT_ID string = tenantId
+
+// Samples environment variables
+output LOGS_WORKSPACE_ID string = primaryWorkspace.properties.customerId
+output LOGS_RESOURCE_ID string = applicationInsightsComponent.id
+output SECONDARY_WORKSPACE_ID string = secondaryWorkspace.properties.customerId
+output DATA_COLLECTION_ENDPOINT string = dataCollectionEndpoint.properties.logsIngestion.endpoint
+output LOGS_DCR_ID string = dataCollectionRule.properties.immutableId
+output LOGS_DCR_STREAM_NAME string = streamName
+

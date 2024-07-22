@@ -1,0 +1,18 @@
+[
+    {
+        "Time": "2021-12-08T23:51:14.1104269Z",
+        "Computer": "Computer1",
+        "AdditionalContext": {
+            "testContextKey": 3,
+            "CounterName": "AppMetric1"
+        }
+    },
+    {
+        "Time": "2021-12-08T23:51:14.1104269Z",
+        "Computer": "Computer2",
+        "AdditionalContext": {
+            "testContextKey": 2,
+            "CounterName": "AppMetric1"
+        }
+    }
+]
