@@ -8,23 +8,24 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
-
-
-def patch_sdk():
-    """Do not remove from this file.
-
-    `patch_sdk` is a last resort escape hatch that allows you to do customizations
-    you can't accomplish using the techniques described in
-    https://aka.ms/azsdk/python/dpcodegen/python/customize
-    """
+__all__: List[str] = [
+    "RadiologyInsightsClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
+import logging
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -34,10 +35,19 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import build_radiology_insights_infer_radiology_insights_request
+from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
     @overload
     async def begin_infer_radiology_insights(
@@ -48,7 +58,7 @@ from ..._operations._operations import build_radiology_insights_infer_radiology_
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:...
         
 
     @overload
@@ -60,7 +70,7 @@ from ..._operations._operations import build_radiology_insights_infer_radiology_
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:...
         
 
     @overload
@@ -72,7 +82,7 @@ from ..._operations._operations import build_radiology_insights_infer_radiology_
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
+    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:...
         
 
 
@@ -89,40 +99,35 @@ from ..._operations._operations import build_radiology_insights_infer_radiology_
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.RadiologyInsightsInferenceResult] = kwargs.pop(
-            'cls', None
-        )
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop('polling', True)
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token: Optional[str] = kwargs.pop('continuation_token', None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._infer_radiology_insights_initial(
                 id=id,
                 resource=resource,
                 expand=expand,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
-            )
-            await raw_result.http_response.read() # type: ignore
+            )# type: ignore
+            await raw_result.http_response.read()
+            logger.debug(f"Raw result: {raw_result}")
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-            response_headers['Operation-Location']=self._deserialize('str', response.headers.get('Operation-Location'))
-            
-            deserialized = _deserialize(
-                _models.RadiologyInsightsInferenceResult,
-                response.json().get("result")
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
             )
+
+            deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers) # type: ignore
             return deserialized
@@ -133,14 +138,14 @@ from ..._operations._operations import build_radiology_insights_infer_radiology_
         }
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
                 polling_method=polling_method,
@@ -152,5 +157,11 @@ from ..._operations._operations import build_radiology_insights_infer_radiology_
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
             )
 
+def patch_sdk():
+    """Do not remove from this file.
 
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
 
