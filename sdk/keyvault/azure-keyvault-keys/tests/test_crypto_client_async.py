@@ -607,7 +607,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_client = self.create_crypto_client(imported_key.id, is_async=True, api_version=key_client.api_version)
 
         parameters = KeySignParameters(algorithm=SignatureAlgorithm.rs256, value=digest)
-        json = Serializer().body(parameters, "KeySignParameters")
+        json = parameters.as_dict()
 
         # sign using a custom request
         request = HttpRequest(
@@ -617,6 +617,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             json=json
         )
         response = await crypto_client.send_request(request)
+        response.raise_for_status()
         result = response.json()
         signature = Deserializer().deserialize_base64(result["value"])
         assert result["kid"] == imported_key.id

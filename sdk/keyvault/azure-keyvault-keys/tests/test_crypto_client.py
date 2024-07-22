@@ -5,6 +5,7 @@
 import codecs
 from datetime import datetime, timezone
 import hashlib
+from json import dumps
 import os
 import time
 from datetime import datetime, timezone
@@ -35,7 +36,7 @@ from azure.keyvault.keys.crypto import (
     SignatureAlgorithm,
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
-from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
+from azure.keyvault.keys._generated._serialization import Deserializer
 from azure.keyvault.keys._generated.models import KeySignParameters
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
@@ -735,7 +736,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
 
         parameters = KeySignParameters(algorithm=SignatureAlgorithm.rs256, value=digest)
-        json = Serializer().body(parameters, "KeySignParameters")
+        json = parameters.as_dict()
 
         # sign using a custom request
         request = HttpRequest(
@@ -745,6 +746,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             json=json
         )
         response = crypto_client.send_request(request)
+        response.raise_for_status()
         result = response.json()
         signature = Deserializer().deserialize_base64(result["value"])
         assert result["kid"] == imported_key.id
