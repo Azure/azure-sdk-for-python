@@ -86,7 +86,7 @@ class TestResourceIds(unittest.TestCase):
             "ID\r_with_return_carriage",
             "ID_with_newline\n",
             "ID_with_newline\n2",
-            "ID_with_more_than_255" + "_" * 255,
+            "ID_with_more_than_255" + "_add" * 255,
             "ID_with_trailing_spaces   "
         ]
 
