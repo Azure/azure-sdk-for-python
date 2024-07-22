@@ -68,5 +68,5 @@ class PyPIClient:
         If there are different, it means the latest is not a stable
         """
         versions = self.get_ordered_versions(package_name)
-        pre_releases = [version for version in versions if not version.is_prerelease]
-        return (versions[-1], pre_releases[-1])
+        stable_releases = [version for version in versions if not version.is_prerelease]
+        return (versions[-1], stable_releases[-1])

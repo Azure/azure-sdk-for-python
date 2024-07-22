@@ -34,6 +34,11 @@ parameters:
 # However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
 # to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
 steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(PythonVersion)'
+    inputs:
+      versionSpec: $(PythonVersion)
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
       PackageName: "azure-template"
@@ -46,12 +51,6 @@ steps:
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
-
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    inputs:
-      versionSpec: $(PythonVersion)
-
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
     parameters:
