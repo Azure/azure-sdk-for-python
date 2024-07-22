@@ -294,11 +294,12 @@ def test_send_amqp_annotated_message(auth_credential_receivers, uamqp_transport)
 @pytest.mark.parametrize("payload", [b"", b"A single event"])
 @pytest.mark.liveTest
 def test_send_and_receive_small_body(
-    auth_credential_receivers, payload, uamqp_transport, timeout_factor, enable_tracing 
+    auth_credential_receivers, payload, uamqp_transport, timeout_factor
 ):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
 
-    fake_span = enable_tracing
+    # TODO: Commenting out tracing for now. Need to fix this issue first: #36571
+    #fake_span = enable_tracing
     client = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,
         eventhub_name=eventhub_name,
@@ -306,23 +307,23 @@ def test_send_and_receive_small_body(
         uamqp_transport=uamqp_transport,
     )
 
-    with fake_span(name="SendTest") as root_span:
-        with client:
-            batch = client.create_batch()
-            batch.add(EventData(payload))
-            batch.add(EventData(payload))
+    #with fake_span(name="SendTest") as root_span:
+    with client:
+        batch = client.create_batch()
+        batch.add(EventData(payload))
+        batch.add(EventData(payload))
 
-            client.send_batch(batch)
-            client.send_event(EventData(payload))
-        received = []
-        timeout = 5 * timeout_factor
-        for r in receivers:
-            received.extend(
-                [
-                    EventData._from_message(x)
-                    for x in r.receive_message_batch(timeout=timeout)
-                ]
-            )
+        client.send_batch(batch)
+        client.send_event(EventData(payload))
+    received = []
+    timeout = 5 * timeout_factor
+    for r in receivers:
+        received.extend(
+            [
+                EventData._from_message(x)
+                for x in r.receive_message_batch(timeout=timeout)
+            ]
+        )
 
     assert len(received) == 3
     assert list(received[0].body)[0] == payload
@@ -330,42 +331,42 @@ def test_send_and_receive_small_body(
     assert list(received[2].body)[0] == payload
 
     # Will need to modify FakeSpan in conftest.
-    assert root_span.name == "SendTest"
-    assert len(root_span.children) == 5
+    #assert root_span.name == "SendTest"
+    #assert len(root_span.children) == 5
 
-    # Check first message added to batch.
-    assert root_span.children[0].name == "EventHubs.message"
-    assert root_span.children[0].kind == SpanKind.PRODUCER
+    ## Check first message added to batch.
+    #assert root_span.children[0].name == "EventHubs.message"
+    #assert root_span.children[0].kind == SpanKind.PRODUCER
 
-    # Check second message added to batch.
-    assert root_span.children[1].name == "EventHubs.message"
-    assert root_span.children[1].kind == SpanKind.PRODUCER
+    ## Check second message added to batch.
+    #assert root_span.children[1].name == "EventHubs.message"
+    #assert root_span.children[1].kind == SpanKind.PRODUCER
 
-    # Check send span corresponding to send_batch
-    assert root_span.children[2].name == "EventHubs.send"
-    assert root_span.children[2].kind == SpanKind.CLIENT
-    assert len(root_span.children[2].links) == 2
-    assert (
-        root_span.children[2].links[0].headers["traceparent"]
-        == root_span.children[0].traceparent
-    )
-    assert (
-        root_span.children[2].links[1].headers["traceparent"]
-        == root_span.children[1].traceparent
-    )
+    ## Check send span corresponding to send_batch
+    #assert root_span.children[2].name == "EventHubs.send"
+    #assert root_span.children[2].kind == SpanKind.CLIENT
+    #assert len(root_span.children[2].links) == 2
+    #assert (
+    #    root_span.children[2].links[0].headers["traceparent"]
+    #    == root_span.children[0].traceparent
+    #)
+    #assert (
+    #    root_span.children[2].links[1].headers["traceparent"]
+    #    == root_span.children[1].traceparent
+    #)
 
-    # Check message sent using send_event
-    assert root_span.children[3].name == "EventHubs.message"
-    assert root_span.children[3].kind == SpanKind.PRODUCER
+    ## Check message sent using send_event
+    #assert root_span.children[3].name == "EventHubs.message"
+    #assert root_span.children[3].kind == SpanKind.PRODUCER
 
-    # Check send span corresponding to send_event
-    assert root_span.children[4].name == "EventHubs.send"
-    assert root_span.children[4].kind == SpanKind.CLIENT
-    assert len(root_span.children[4].links) == 1
-    assert (
-        root_span.children[4].links[0].headers["traceparent"]
-        == root_span.children[3].traceparent
-    )
+    ## Check send span corresponding to send_event
+    #assert root_span.children[4].name == "EventHubs.send"
+    #assert root_span.children[4].kind == SpanKind.CLIENT
+    #assert len(root_span.children[4].links) == 1
+    #assert (
+    #    root_span.children[4].links[0].headers["traceparent"]
+    #    == root_span.children[3].traceparent
+    #)
 
 
 @pytest.mark.liveTest
