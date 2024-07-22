@@ -7,26 +7,40 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout_async.py
+FILE: sample_analyze_addon_highres_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
-    given through a file.
+    This sample demonstrates how to recognize documents with improved quality using
+    the add-on 'OCR_HIGH_RESOLUTION' capability.
 
-    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
-    associated with the checkbox. For the API to return this information, build a custom model to analyze the
-    checkbox and its text. See sample_build_model.py for more information.
+    This sample uses Layout model to demonstrate.
+
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
+    enum class. For more information, see:
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
+
+    The following capabilities are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following capabilities will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+    - QUERY_FIELDS
+
+    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_layout_async.py
+    python sample_analyze_addon_highres_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
-import os
 import asyncio
+import os
 
 
 def get_words(page, line):
@@ -44,41 +58,38 @@ def _in_span(word, spans):
     return False
 
 
-def format_bounding_region(bounding_regions):
-    if not bounding_regions:
-        return "N/A"
-    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
-
-
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
     return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
 
-async def analyze_layout():
+async def analyze_with_highres():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
-            "./sample_forms/forms/tabular_and_general_data.docx",
+            "sample_forms/add_ons/highres.png",
         )
     )
-
-    # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeResult
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     async with document_intelligence_client:
+        # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+                "prebuilt-layout",
+                analyze_request=f,
+                features=[DocumentAnalysisFeature.OCR_HIGH_RESOLUTION],
+                content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
 
@@ -110,18 +121,6 @@ async def analyze_layout():
                     f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
                 )
 
-    if result.paragraphs:
-        print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
-        # Sort all paragraphs by span's offset to read in the right order.
-        result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
-        print("-----Print sorted paragraphs-----")
-        for paragraph in result.paragraphs:
-            print(
-                f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
-            )
-            print(f"...with content: '{paragraph.content}'")
-            print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
-
     if result.tables:
         for table_idx, table in enumerate(result.tables):
             print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
@@ -139,11 +138,10 @@ async def analyze_layout():
                         )
 
     print("----------------------------------------")
-    # [END extract_layout]
 
 
 async def main():
-    await analyze_layout()
+    await analyze_with_highres()
 
 
 if __name__ == "__main__":

@@ -62,7 +62,6 @@ async def analyze_general_documents():
         )
     )
 
-    # [START analyze_general_documents]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -141,7 +140,6 @@ async def analyze_general_documents():
                             f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"
                         )
     print("----------------------------------------")
-    # [END analyze_general_documents]
 
 
 async def main():
