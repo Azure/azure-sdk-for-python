@@ -4,12 +4,14 @@
 
 ### Bugs Fixed
 - Workspace update no longer broken for older workspaces due to deprecated tags.
+- Support credential-less fileshare datastore
 
 ## 1.18.0 (2024-07-09)
 
 ### Features Added
 
 - Expose `public_ip_address` in `AmlComputeNodeInfo`, to get the public ip address with the ssh port when calling `ml_client.compute.list_nodes`
+- Support `update_sso_settings` in `ComputeOperations`, to enable or disable single sign-on settings of a compute instance.
 
 ### Bugs Fixed
 - InputTypes exported in constants module
@@ -20,6 +22,12 @@
 
 ### Other Changes
 - WorkspaceConnections are officially GA'd and no longer experimental. But its much newer subclasses remain experimental.
+
+## 1.17.1 (2024-07-04)
+
+### Bugs Fixed
+- Workspace Create operation works without an application insights being provided, and creates a default appIn resource for normal workspaces in that case.
+- Project create operations works in general.
 
 ## 1.17.0 (2024-06-18)
 

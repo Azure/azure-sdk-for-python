@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     JobBase as RestJobBase,
 )
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._job.finetuning.finetuning_vertical import FineTuningVertical
 from azure.ai.ml.entities._util import load_from_dict
@@ -29,6 +29,11 @@ class CustomModelFineTuningJob(FineTuningVertical):
         # Extract any task specific settings
         model = kwargs.pop("model", None)
         task = kwargs.pop("task", None)
+        # Convert task to lowercase first letter, this is when we create
+        # object from the schema, using dict object from the REST api response.
+        # TextCompletion => textCompletion
+        if task:
+            task = task[0].lower() + task[1:]
         training_data = kwargs.pop("training_data", None)
         validation_data = kwargs.pop("validation_data", None)
         self._hyperparameters = kwargs.pop("hyperparameters", None)
@@ -206,6 +211,15 @@ class CustomModelFineTuningJob(FineTuningVertical):
         #    )
         # else:
         loaded_data = load_from_dict(CustomModelFineTuningSchema, data, context, additional_message, **kwargs)
+
+        training_data = loaded_data.get("training_data", None)
+        if isinstance(training_data, str):
+            loaded_data["training_data"] = Input(type="uri_file", path=training_data)
+
+        validation_data = loaded_data.get("validation_data", None)
+        if isinstance(validation_data, str):
+            loaded_data["validation_data"] = Input(type="uri_file", path=validation_data)
+
         job_instance = cls._create_instance_from_schema_dict(loaded_data)
         return job_instance
 
