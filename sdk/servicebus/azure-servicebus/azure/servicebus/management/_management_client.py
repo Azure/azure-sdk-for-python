@@ -229,6 +229,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         kwargs["headers"] = kwargs.get("headers", {})
 
         def _populate_header_within_kwargs(uri, header):
+            if not isinstance(
+                self._credential,
+                (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential)):
+                uri = JWT_TOKEN_SCOPE
             token = self._credential.get_token(uri).token
             if not isinstance(
                 self._credential,
