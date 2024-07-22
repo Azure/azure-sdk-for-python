@@ -4,4 +4,3 @@ verifytypes = false
 pyright = false
 pylint = true
 bandit = true
-strict_sphinx = true
