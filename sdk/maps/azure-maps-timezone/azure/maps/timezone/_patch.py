@@ -42,6 +42,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
+# pylint: disable=C4748
 class AzureTimezoneClient(TimezoneClient):
     def __init__(
         self,
