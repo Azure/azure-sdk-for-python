@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout.py
+FILE: sample_analyze_layout_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extract text, selection marks, and layout information from a document
@@ -18,7 +18,7 @@ DESCRIPTION:
     checkbox and its text. See sample_build_model.py for more information.
 
 USAGE:
-    python sample_analyze_layout.py
+    python sample_analyze_layout_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -26,42 +26,60 @@ USAGE:
 """
 
 import os
+import asyncio
 
 
-def analyze_layout():
+def get_words(page, line):
+    result = []
+    for word in page.words:
+        if _in_span(word, line.spans):
+            result.append(word)
+    return result
+
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
+
+
+def format_polygon(polygon):
+    if not polygon:
+        return "N/A"
+    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+
+
+async def analyze_layout():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "./sample_forms/forms/tabular_and_general_data.docx",
         )
     )
 
-    # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
-
-    def _in_span(word, spans):
-        for span in spans:
-            if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
-                return True
-        return False
-
-    def _format_polygon(polygon):
-        if not polygon:
-            return "N/A"
-        return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_intelligence_client.begin_analyze_document(
-            "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
-        )
-    result: AnalyzeResult = poller.result()
+    async with document_intelligence_client:
+        with open(path_to_sample_documents, "rb") as f:
+            poller = await document_intelligence_client.begin_analyze_document(
+                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+            )
+        result: AnalyzeResult = await poller.result()
 
     if result.styles and any([style.is_handwritten for style in result.styles]):
         print("Document contains handwritten content")
@@ -74,22 +92,21 @@ def analyze_layout():
 
         if page.lines:
             for line_idx, line in enumerate(page.lines):
-                words = []
-                if page.words:
-                    for word in page.words:
-                        print(f"......Word '{word.content}' has a confidence of {word.confidence}")
-                        if _in_span(word, line.spans):
-                            words.append(word)
+                words = get_words(page, line)
                 print(
                     f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                    f"within bounding polygon '{_format_polygon(line.polygon)}'"
+                    f"within bounding polygon '{format_polygon(line.polygon)}'"
                 )
+
+        if page.words:
+            for word in page.words:
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
                 print(
                     f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                    f"'{_format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
+                    f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
                 )
 
     if result.paragraphs:
@@ -98,16 +115,9 @@ def analyze_layout():
         result.paragraphs.sort(key=lambda p: (p.spans.sort(key=lambda s: s.offset), p.spans[0].offset))
         print("-----Print sorted paragraphs-----")
         for paragraph in result.paragraphs:
-            if not paragraph.bounding_regions:
-                print(f"Found paragraph with role: '{paragraph.role}' within N/A bounding region")
-            else:
-                print(f"Found paragraph with role: '{paragraph.role}' within")
-                print(
-                    ", ".join(
-                        f" Page #{region.page_number}: {_format_polygon(region.polygon)} bounding region"
-                        for region in paragraph.bounding_regions
-                    )
-                )
+            print(
+                f"Found paragraph with role: '{paragraph.role}' within {format_bounding_region(paragraph.bounding_regions)} bounding region"
+            )
             print(f"...with content: '{paragraph.content}'")
             print(f"...with offset: {paragraph.spans[0].offset} and length: {paragraph.spans[0].length}")
 
@@ -117,18 +127,21 @@ def analyze_layout():
             if table.bounding_regions:
                 for region in table.bounding_regions:
                     print(
-                        f"Table # {table_idx} location on page: {region.page_number} is {_format_polygon(region.polygon)}"
+                        f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
                     )
             for cell in table.cells:
                 print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
                 if cell.bounding_regions:
                     for region in cell.bounding_regions:
                         print(
-                            f"...content on page {region.page_number} is within bounding polygon '{_format_polygon(region.polygon)}'"
+                            f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
                         )
 
     print("----------------------------------------")
-    # [END extract_layout]
+
+
+async def main():
+    await analyze_layout()
 
 
 if __name__ == "__main__":
@@ -137,7 +150,7 @@ if __name__ == "__main__":
 
     try:
         load_dotenv(find_dotenv())
-        analyze_layout()
+        asyncio.run(main())
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:

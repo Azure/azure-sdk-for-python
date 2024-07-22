@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_barcodes_async.py
+FILE: sample_analyze_addon_fonts_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract all identified barcodes using the
-    add-on 'BARCODES' capability.
+    This sample demonstrates how to extract font information using the add-on
+    'STYLE_FONT' capability.
 
     This sample uses Layout model to demonstrate.
 
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_barcodes_async.py
+    python sample_analyze_addon_fonts_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -41,24 +41,25 @@ USAGE:
 
 import asyncio
 import os
+from collections import defaultdict
 
 
-def format_polygon(polygon):
-    if not polygon:
-        return "N/A"
-    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
+def get_styled_text(styles, content):
+    # Iterate over the styles and merge the spans from each style.
+    spans = [span for style in styles for span in style.spans]
+    spans.sort(key=lambda span: span.offset)
+    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
 
-async def analyze_barcodes():
+async def analyze_fonts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
-            "sample_forms/add_ons/barcodes.jpg",
+            "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-    # [START analyze_barcodes]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
@@ -67,35 +68,75 @@ async def analyze_barcodes():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
     async with document_intelligence_client:
         # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
                 "prebuilt-layout",
                 analyze_request=f,
-                features=[DocumentAnalysisFeature.BARCODES],
+                features=[DocumentAnalysisFeature.STYLE_FONT],
                 content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
 
-    # Iterate over extracted barcodes on each page.
-    for page in result.pages:
-        print(f"----Barcodes detected from page #{page.page_number}----")
-        if page.barcodes:
-            print(f"Detected {len(page.barcodes)} barcodes:")
-            for barcode_idx, barcode in enumerate(page.barcodes):
-                print(f"- Barcode #{barcode_idx}: {barcode.value}")
-                print(f"  Kind: {barcode.kind}")
-                print(f"  Confidence: {barcode.confidence}")
-                print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
+    # DocumentStyle has the following font related attributes:
+    similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
+    font_styles = defaultdict(list)  # e.g, 'italic'
+    font_weights = defaultdict(list)  # e.g., 'bold'
+    font_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
+    font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
+
+    if result.styles and any([style.is_handwritten for style in result.styles]):
+        print("Document contains handwritten content")
+    else:
+        print("Document does not contain handwritten content")
+        return
+
+    print("\n----Fonts styles detected in the document----")
+
+    # Iterate over the styles and group them by their font attributes.
+    for style in result.styles:
+        if style.similar_font_family:
+            similar_font_families[style.similar_font_family].append(style)
+        if style.font_style:
+            font_styles[style.font_style].append(style)
+        if style.font_weight:
+            font_weights[style.font_weight].append(style)
+        if style.color:
+            font_colors[style.color].append(style)
+        if style.background_color:
+            font_background_colors[style.background_color].append(style)
+
+    print(f"Detected {len(similar_font_families)} font families:")
+    for font_family, styles in similar_font_families.items():
+        print(f"- Font family: '{font_family}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print(f"\nDetected {len(font_styles)} font styles:")
+    for font_style, styles in font_styles.items():
+        print(f"- Font style: '{font_style}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print(f"\nDetected {len(font_weights)} font weights:")
+    for font_weight, styles in font_weights.items():
+        print(f"- Font weight: '{font_weight}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print(f"\nDetected {len(font_colors)} font colors:")
+    for font_color, styles in font_colors.items():
+        print(f"- Font color: '{font_color}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print(f"\nDetected {len(font_background_colors)} font background colors:")
+    for font_background_color, styles in font_background_colors.items():
+        print(f"- Font background color: '{font_background_color}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
     print("----------------------------------------")
-    # [END analyze_barcodes]
 
 
 async def main():
-    await analyze_barcodes()
+    await analyze_fonts()
 
 
 if __name__ == "__main__":
