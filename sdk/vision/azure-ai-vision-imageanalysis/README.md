@@ -91,12 +91,11 @@ from azure.ai.vision.imageanalysis import ImageAnalysisClient
 from azure.ai.vision.imageanalysis.models import VisualFeatures
 from azure.identity import DefaultAzureCredential
 
-# Set the values of your computer vision endpoint and computer vision key
-# as environment variables:
+# Set the value of your computer vision endpoint as environment variable:
 try:
     endpoint = os.environ["VISION_ENDPOINT"]
 except KeyError:
-    print("Missing environment variable 'VISION_ENDPOINT'")
+    print("Missing environment variable 'VISION_ENDPOINT'.")
     print("Set it before running this sample.")
     exit()
 
