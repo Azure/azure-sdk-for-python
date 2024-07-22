@@ -35,6 +35,7 @@ extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: healthdataaiservices
+    TestProxy: true
     Artifacts:
       - name: azure-health-deidentification
         safeName: azurehealthdeidentification
