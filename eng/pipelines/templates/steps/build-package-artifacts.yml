@@ -57,21 +57,12 @@ steps:
       VirtualEnvironmentName: "venv"
       Activate: false
 
-  - bash: |
-      source $(VENV_LOCATION)/bin/activate
-      which python
-      python -m pip install --force -r eng/ci_tools.txt
-      python -m pip freeze --all
-    displayName: 'Prep Environment Linux/Mac'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-
   - pwsh: |
-      . $(VENV_LOCATION)/Scripts/Activate.ps1
+      $(VENV_ACTIVATION_SCRIPT)
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
-    displayName: 'Prep Environment Windows'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Prep Environment'
 
   - template: set-dev-build.yml@self
     parameters:
@@ -96,22 +87,11 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - bash: |
-      source $(VENV_LOCATION)/bin/activate
-      which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Linux/Mac'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    timeoutInMinutes: 80
-    env:
-      CIBW_BUILD_VERBOSITY: 3
-
   - pwsh: |
-      . $(VENV_LOCATION)/Scripts/Activate.ps1
+      $(VENV_ACTIVATION_SCRIPT)
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Windows'
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Generate Packages'
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
