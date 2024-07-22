@@ -255,7 +255,6 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
     
-    @pytest.mark.skip(reason="Currently the cognitive service is not available to test")
     @recorded_by_proxy
     def test_start_stop_transcription_in_call(self):
         # try to establish the call
@@ -474,9 +473,43 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @pytest.mark.skip(reason="Currently the cognitive service is not available to test")
     @recorded_by_proxy
     def test_play_multiple_text_sources_with_play_media(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_multiple_text_source = [
+            TextSource(text="this is test one", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test two", voice_name="en-US-NancyNeural"),
+            TextSource(text="this is test three", voice_name="en-US-NancyNeural")
+        ]
+
+        call_connection.play_media(
+            play_source=play_multiple_text_source,
+            play_to=[target]
+        )
+
+        # check for PlayCompleted event
+        play_completed_event_text_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_text_source_to_target is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_play_multiple_text_sources_with_play_media_all(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
@@ -505,27 +538,50 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         play_completed_event_text_source = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
         if play_completed_event_text_source is None:
             raise ValueError("PlayCompleted event is None")
-
-        call_connection.play_media(
-            play_source=play_multiple_text_source,
-            play_to=[target]
-        )
-
-        # check for PlayCompleted event
-        play_completed_event_text_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
-        if play_completed_event_text_source_to_target is None:
-            raise ValueError("PlayCompleted event is None")
         
         self.terminate_call(unique_id)
         return
     
-    @pytest.mark.skip(reason="Currently the cognitive service is not available to test")
     @recorded_by_proxy
     def test_play_combined_file_and_text_sources_with_play_media(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
-        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target, True)
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
+
+        # check returned events
+        connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
+        participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
+
+        if connected_event is None:
+            raise ValueError("Caller CallConnected event is None")
+        if participant_updated_event is None:
+            raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        play_multiple_source = [
+            FileSource(url=self.file_source_url),
+            TextSource(text="this is test.", voice_name="en-US-NancyNeural"),
+        ]
+
+        call_connection.play_media(
+            play_source=play_multiple_source,
+            play_to=[target]
+        )
+
+         # check for PlayCompleted event
+        play_completed_event_multiple_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
+        if play_completed_event_multiple_source_to_target is None:
+            raise ValueError("PlayCompleted event is None")
+        
+        self.terminate_call(unique_id)
+        return
+    
+    @recorded_by_proxy
+    def test_play_combined_file_and_text_sources_with_play_media_all(self):
+        # try to establish the call
+        caller = self.identity_client.create_user()
+        target = self.identity_client.create_user()
+        unique_id, call_connection, _ = self.establish_callconnection_voip(caller, target, cognitive_service_enabled=True)
 
         # check returned events
         connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
@@ -550,16 +606,6 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if play_completed_event_multiple_source is None:
             raise ValueError("PlayCompleted event is None")
 
-        call_connection.play_media(
-            play_source=play_multiple_source,
-            play_to=[target]
-        )
-
-         # check for PlayCompleted event
-        play_completed_event_multiple_source_to_target = self.check_for_event('PlayCompleted', call_connection._call_connection_id, timedelta(seconds=30))
-        if play_completed_event_multiple_source_to_target is None:
-            raise ValueError("PlayCompleted event is None")
-        
         self.terminate_call(unique_id)
         return
     

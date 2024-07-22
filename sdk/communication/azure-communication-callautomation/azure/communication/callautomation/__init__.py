@@ -30,6 +30,7 @@ from ._models import (
     CallInvite,
     ServerCallLocator,
     GroupCallLocator,
+    RoomCallLocator,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage
 )
@@ -127,6 +128,7 @@ __all__ = [
     "CallInvite",
     "ServerCallLocator",
     "GroupCallLocator",
+    "RoomCallLocator",
 ]
 __version__ = VERSION
 

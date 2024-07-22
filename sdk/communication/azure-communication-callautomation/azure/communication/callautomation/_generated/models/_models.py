@@ -4375,30 +4375,25 @@ class StopMediaStreamingRequest(_serialization.Model):
         self.operation_context = operation_context
 
 
-class StopMediaStreamingRequest(_serialization.Model):
-    """StopMediaStreamingRequest.
+class StopTranscriptionRequest(_serialization.Model):
+    """StopTranscriptionRequest.
 
-    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
-     CreateCall/AnswerCall for this operation.
-     This setup is per-action. If this is not set, the default callback URI set by
-     CreateCall/AnswerCall will be used.
-    :vartype operation_callback_uri: str
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
     """
 
     _attribute_map = {
-        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(self, *, operation_callback_uri: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, operation_context: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URI set by
-         CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_uri: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         """
         super().__init__(**kwargs)
-        self.operation_callback_uri = operation_callback_uri
+        self.operation_context = operation_context
+
 
 class TextSource(_serialization.Model):
     """TextSource.
