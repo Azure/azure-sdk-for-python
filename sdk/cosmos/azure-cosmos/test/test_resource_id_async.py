@@ -123,7 +123,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
                 assert str(e) in error_strings
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-                assert "Ensure to provide a unique non-empty string less than '1023' characters." in e.message
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
 
             try:
                 await created_container.upsert_item({"id": resource_id})
@@ -132,7 +132,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
                 assert str(e) in error_strings
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-                assert "Ensure to provide a unique non-empty string less than '1023' characters." in e.message
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
 
         await self.client.delete_database(created_database)
 
