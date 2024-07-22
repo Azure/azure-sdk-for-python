@@ -2226,7 +2226,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert read_permission.id == created_permission.id
 
 
-    async def test_delete_all_items_by_partition_key(self):
+    async def test_delete_all_items_by_partition_key_async(self):
         # enable the test only for the emulator
         if "localhost" not in self.host and "127.0.0.1" not in self.host:
             return
