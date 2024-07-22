@@ -4,8 +4,8 @@ from typing import Optional, Dict
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     UriFileJobInput,
     MLFlowModelJobInput,
-    FineTuningTaskType,
 )
+from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
 from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import AzureOpenAIFineTuningJob
 from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
@@ -18,17 +18,17 @@ class TestCustomModelFineTuningJob:
     @pytest.mark.parametrize(
         "task",
         [
-            FineTuningTaskType.CHAT_COMPLETION,
-            FineTuningTaskType.TEXT_COMPLETION,
-            FineTuningTaskType.TEXT_CLASSIFICATION,
-            FineTuningTaskType.QUESTION_ANSWERING,
-            FineTuningTaskType.TEXT_SUMMARIZATION,
-            FineTuningTaskType.TOKEN_CLASSIFICATION,
-            FineTuningTaskType.TEXT_TRANSLATION,
-            FineTuningTaskType.IMAGE_CLASSIFICATION,
-            FineTuningTaskType.IMAGE_INSTANCE_SEGMENTATION,
-            FineTuningTaskType.IMAGE_OBJECT_DETECTION,
-            FineTuningTaskType.VIDEO_MULTI_OBJECT_TRACKING,
+            FineTuningTaskTypes.CHAT_COMPLETION,
+            FineTuningTaskTypes.TEXT_COMPLETION,
+            FineTuningTaskTypes.TEXT_CLASSIFICATION,
+            FineTuningTaskTypes.QUESTION_ANSWERING,
+            FineTuningTaskTypes.TEXT_SUMMARIZATION,
+            FineTuningTaskTypes.TOKEN_CLASSIFICATION,
+            FineTuningTaskTypes.TEXT_TRANSLATION,
+            FineTuningTaskTypes.IMAGE_CLASSIFICATION,
+            FineTuningTaskTypes.IMAGE_INSTANCE_SEGMENTATION,
+            FineTuningTaskTypes.IMAGE_OBJECT_DETECTION,
+            FineTuningTaskTypes.VIDEO_MULTI_OBJECT_TRACKING,
         ],
     )
     def test_custom_model_finetuning_job_conversion(self, task: str):
@@ -61,7 +61,7 @@ class TestCustomModelFineTuningJob:
 
         original_obj = CustomModelFineTuningJob._from_rest_object(rest_obj)
         assert custom_model_finetuning_job == original_obj, "Conversion to/from rest object failed"
-        assert original_obj.task == task, "Task not set correctly"
+        assert original_obj.task.lower() == task.lower(), "Task not set correctly"
         assert original_obj.display_name == "llama-display-name", "Display name not set correctly"
         assert original_obj.name == "llama-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
@@ -89,7 +89,71 @@ class TestCustomModelFineTuningJob:
     @pytest.mark.parametrize(
         "task",
         [
-            FineTuningTaskType.CHAT_COMPLETION,
+            FineTuningTaskTypes.CHAT_COMPLETION,
+            FineTuningTaskTypes.TEXT_COMPLETION,
+            FineTuningTaskTypes.TEXT_CLASSIFICATION,
+            FineTuningTaskTypes.QUESTION_ANSWERING,
+            FineTuningTaskTypes.TEXT_SUMMARIZATION,
+            FineTuningTaskTypes.TOKEN_CLASSIFICATION,
+            FineTuningTaskTypes.TEXT_TRANSLATION,
+            FineTuningTaskTypes.IMAGE_CLASSIFICATION,
+            FineTuningTaskTypes.IMAGE_INSTANCE_SEGMENTATION,
+            FineTuningTaskTypes.IMAGE_OBJECT_DETECTION,
+            FineTuningTaskTypes.VIDEO_MULTI_OBJECT_TRACKING,
+        ],
+    )
+    def test_custom_model_finetuning_job_read_from_wire(self, task: str):
+        custom_model_finetuning_job = self._get_custom_model_finetuning_job(
+            task=task,
+            display_name="llama-display-name",
+            training_data=Input(type=AssetTypes.URI_FILE, path="./samsum_dataset/small_train.jsonl"),
+            validation_data=Input(type=AssetTypes.URI_FILE, path="./samsum_dataset/small_validation.jsonl"),
+            hyperparameters={"foo": "bar"},
+            model=Input(
+                type=AssetTypes.MLFLOW_MODEL, path="azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+            ),
+            name="llama-finetuning",
+            experiment_name="foo_exp",
+            tags={"foo_tag": "bar"},
+            properties={"my_property": True},
+            outputs={"registered_model": Output(type="mlflow_model", name="llama-finetune-registered")},
+        )
+        dict_obj = custom_model_finetuning_job._to_dict()
+        assert dict_obj["task"].lower() == task.lower(), "Task not set correctly"
+        assert dict_obj["display_name"] == "llama-display-name", "Display name not set correctly"
+        assert dict_obj["name"] == "llama-finetuning", "Name not set correctly"
+        assert dict_obj["experiment_name"] == "foo_exp", "Experiment name not set correctly"
+        assert dict_obj["tags"] == {"foo_tag": "bar"}, "Tags not set correctly"
+        assert dict_obj["properties"]["my_property"] == "True", "Properties not set correctly"
+        # check if the original job inputs were restored
+        assert dict_obj["training_data"]["type"] == AssetTypes.URI_FILE, "Training data type not set correctly"
+        assert (
+            dict_obj["training_data"]["path"] == "azureml:./samsum_dataset/small_train.jsonl"
+        ), "Training data path not set correctly"
+        assert dict_obj["validation_data"]["type"] == AssetTypes.URI_FILE, "validation data type not set correctly"
+        assert (
+            dict_obj["validation_data"]["path"] == "azureml:./samsum_dataset/small_validation.jsonl"
+        ), "Validation data path not set correctly"
+        assert dict_obj["hyperparameters"] == {"foo": "bar"}, "Hyperparameters not set correctly"
+        assert dict_obj["model"]["type"] == AssetTypes.MLFLOW_MODEL, "Model type not set correctly"
+        assert (
+            dict_obj["model"]["path"] == "azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+        ), "Model path not set correctly"
+
+    @pytest.mark.parametrize(
+        "task",
+        [
+            FineTuningTaskTypes.CHAT_COMPLETION,
+            FineTuningTaskTypes.TEXT_COMPLETION,
+            FineTuningTaskTypes.TEXT_CLASSIFICATION,
+            FineTuningTaskTypes.QUESTION_ANSWERING,
+            FineTuningTaskTypes.TEXT_SUMMARIZATION,
+            FineTuningTaskTypes.TOKEN_CLASSIFICATION,
+            FineTuningTaskTypes.TEXT_TRANSLATION,
+            FineTuningTaskTypes.IMAGE_CLASSIFICATION,
+            FineTuningTaskTypes.IMAGE_INSTANCE_SEGMENTATION,
+            FineTuningTaskTypes.IMAGE_OBJECT_DETECTION,
+            FineTuningTaskTypes.VIDEO_MULTI_OBJECT_TRACKING,
         ],
     )
     def test_azure_openai_finetuning_job_conversion(self, task: str):
@@ -120,7 +184,7 @@ class TestCustomModelFineTuningJob:
 
         original_obj = AzureOpenAIFineTuningJob._from_rest_object(rest_obj)
         assert custom_model_finetuning_job == original_obj, "Conversion to/from rest object failed"
-        assert original_obj.task == task, "Task not set correctly"
+        assert original_obj.task.lower() == task.lower(), "Task not set correctly"
         assert original_obj.name == "gpt4-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"

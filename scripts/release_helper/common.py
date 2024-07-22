@@ -360,8 +360,16 @@ class IssueProcess:
             self.target_date = 'fail to get.'
             self.date_from_target = 1000  # make a ridiculous data to remind failure when error happens
 
+    def update_owner(self) -> None:
+        issue_body = self.get_issue_body()
+        for line in issue_body:
+            if "Requested by" in line:
+                self.owner = line.split('@')[-1].strip(', *\r\n')
+                break
+
     def run(self) -> None:
         # common part(don't change the order)
+        self.update_owner()
         self.auto_assign()  # necessary flow
         self.auto_parse()  # necessary flow
         self.get_target_date()
@@ -420,7 +428,7 @@ class Common:
             idx,
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
-            item.issue_package.issue.user.login,
+            item.owner,
             item.package_name,
             item.assignee,
             ' '.join(item.bot_advice),

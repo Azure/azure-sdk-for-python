@@ -43,7 +43,7 @@ def get_sync_client(client_cls, **kwargs):
     if is_live():
         form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
         if not polling_interval:
-            polling_interval = 5
+            polling_interval = 1
     else:
         form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
         if not polling_interval:
@@ -71,7 +71,7 @@ def get_async_client(client_cls, **kwargs):
     if is_live():
         form_recognizer_account = os.environ["FORMRECOGNIZER_TEST_ENDPOINT"]
         if not polling_interval:
-            polling_interval = 5
+            polling_interval = 1
     else:
         form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
         if not polling_interval:

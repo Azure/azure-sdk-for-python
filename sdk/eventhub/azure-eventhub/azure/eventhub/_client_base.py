@@ -354,6 +354,9 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
 
+        :keyword auth_uri: The URI to authenticate with.
+        :paramtype auth_uri: str or None
+
         :return: The auth for the session.
         :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         """

@@ -273,6 +273,9 @@ class ClientBaseAsync(ClientBase):
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
 
+        :keyword auth_uri: The URI to authenticate with.
+        :paramtype auth_uri: str or None
+        
         :return: A JWTTokenAuthAsync instance to authenticate the session.
         :rtype: ~uamqp.authentication.JWTTokenAsync or JWTTokenAuthAsync
         """

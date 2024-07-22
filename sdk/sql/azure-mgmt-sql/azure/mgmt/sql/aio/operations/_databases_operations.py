@@ -36,7 +36,6 @@ from ...operations._databases_operations import (
     build_export_request,
     build_failover_request,
     build_get_request,
-    build_import_method_request,
     build_import_request,
     build_list_by_elastic_pool_request,
     build_list_by_server_request,
