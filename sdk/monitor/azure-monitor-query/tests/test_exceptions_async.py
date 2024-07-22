@@ -65,9 +65,9 @@ class TestQueryExceptionsAsync(AzureMonitorQueryLogsTestCase):
     @pytest.mark.asyncio
     async def test_logs_batch_query_fatal_exception(self, recorded_test, monitor_info):
         credential  = ClientSecretCredential(
-            client_id = monitor_info['client_id'],
-            client_secret = 'bad_secret',
-            tenant_id = monitor_info['tenant_id']
+            client_id = "00000000-0000-0000-0000-000000000000",
+            client_secret = "bad_secret",
+            tenant_id = "00000000-0000-0000-0000-000000000000"
         )
         client = self.get_client(LogsQueryClient, credential)
         async with client:

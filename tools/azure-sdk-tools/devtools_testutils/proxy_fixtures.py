@@ -23,7 +23,7 @@ except:
 from .helpers import get_test_id, is_live, is_live_and_not_recording
 from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request
 from .proxy_startup import test_proxy
-from .sanitizers import add_general_string_sanitizer
+from .sanitizers import add_batch_sanitizers, add_general_string_sanitizer, Sanitizer
 
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, Tuple
@@ -55,7 +55,7 @@ class EnvironmentVariableSanitizer:
         self._fake_values[variable] = value
         real_value = os.getenv(variable)
         if real_value:
-            add_general_string_sanitizer(target=real_value, value=value)
+            add_general_string_sanitizer(target=real_value, value=value, function_scoped=True)
         else:
             _LOGGER.info(f"No value for {variable} was found, so a sanitizer could not be registered for the variable.")
 
@@ -70,8 +70,19 @@ class EnvironmentVariableSanitizer:
         :returns: A dictionary mapping environment variables to their real values in live mode, or their sanitized
             values in playback.
         """
-        current_values = {variable: self.sanitize(variable, variables[variable]) for variable in variables}
-        return current_values
+        real_values = {}
+        sanitizers = {Sanitizer.GENERAL_STRING: []}
+
+        for variable in variables:
+            self._fake_values[variable] = variables[variable]
+            real_value = os.getenv(variable)
+            real_values[variable] = real_value
+            # If the variable has a value to be sanitized, add a general string sanitizer for it to our batch request
+            if real_value:
+                sanitizers[Sanitizer.GENERAL_STRING].append({"target": real_value, "value": variables[variable]})
+
+        add_batch_sanitizers(sanitizers)
+        return real_values if is_live() else self._fake_values
 
     def get(self, variable: str) -> str:
         """Returns the value of the specified environment variable in live mode, or the sanitized value in playback.

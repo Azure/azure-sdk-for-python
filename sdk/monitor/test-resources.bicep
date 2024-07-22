@@ -4,6 +4,9 @@ param baseName string = resourceGroup().name
 @description('Which Azure Region to deploy the resource to. Defaults to the resource group location.')
 param location string = resourceGroup().location
 
+@description('The tenant ID')
+param tenantId string = ''
+
 @description('The principal to assign the role to. This is application object id.')
 param testApplicationOid string
 
@@ -238,3 +241,4 @@ output AZURE_MONITOR_DCE string = dataCollectionEndpoint.properties.logsIngestio
 output AZURE_MONITOR_DCR_ID string = dataCollectionRule.properties.immutableId
 output AZURE_MONITOR_STREAM_NAME string = streamName
 output AZURE_MONITOR_TABLE_NAME string = tableName
+output AZURE_MONITOR_TENANT_ID string = tenantId
