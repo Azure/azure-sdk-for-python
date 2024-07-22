@@ -37,6 +37,23 @@ Use the returned token credential to authenticate the client:
 >>> client = DeidentificationClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+## Key concepts
+
+**Operation Modes**
+- Tag: Will return a structure of offset and length with the PHI category of the related text spans.
+- Redact: Will return output text with placeholder stubbed text. ex. `[name]`
+- Surrogate: Will return output text with synthetic replacements.
+  - `My name is John Smith`
+  - `My name is Tom Jones`
+
+**Job Integration with Azure Storage**
+Instead of sending text, you can send an Azure Storage Location to the service. We will asynchronously
+process the list of files and output the deidentified files to a location of your choice.
+
+Limitations:
+- Maximum file count per job: 1000 documents
+- Maximum file size per file: 2 MB
+
 ## Examples
 
 ```python
@@ -51,6 +68,17 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+
+## Next steps
+
+- Find a bug, or have feedback? Raise an issue with "Health Deidentification" Label.
+
+
+## Troubleshooting
+
+- **Unabled to Access Source or Target Storage**
+  - Ensure you create your deid service with a system assigned managed identity
+  - Ensure your storage account has given permissions to that managed identity
 
 ## Contributing
 

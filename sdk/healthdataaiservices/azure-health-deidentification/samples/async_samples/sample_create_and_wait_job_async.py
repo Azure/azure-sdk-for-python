@@ -27,7 +27,7 @@ import uuid
 async def sample_create_and_wait_job_async():
     # [START sample_create_and_wait_job_async]
     import os
-    from azure.identity import DefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.health.deidentification.aio import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationJob,
@@ -56,7 +56,9 @@ async def sample_create_and_wait_job_async():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
+        target_location=TargetStorageLocation(
+            location=storage_location, prefix=outputPrefix
+        ),
         operation=OperationType.SURROGATE,
         data_type=DocumentDataType.PLAINTEXT,
     )
@@ -64,6 +66,8 @@ async def sample_create_and_wait_job_async():
     async with client:
         lro: LROPoller = await client.begin_create_job(jobname, job)
         finished_job: DeidentificationJob = await lro.result()
+
+    await credential.close()
 
     print(f"Job Name: {finished_job.name}")
     print(f"Job Status: {finished_job.status}")  # Succeeded

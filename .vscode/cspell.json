@@ -441,6 +441,7 @@
     "BUILDID",
     "documentdb",
     "chdir",
+    "radiculopathy",
     "reqs",
     "rgpy",
     "swaggertosdk",
@@ -1846,10 +1847,12 @@
       "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
       "words": [
         "deid",
+        "deidservices",
         "deidentification",
         "healthdataaiservices",
         "deidentify",
-        "deidentified"
+        "deidentified",
+        "healthdataaiservices"
       ]
     }
   ],

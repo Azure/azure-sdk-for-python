@@ -2,7 +2,7 @@
 Azure Health Deidentification is Microsoft's solution to anonymize unstructured health text.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/azure/health/deidentification)
-| [Package (PyPI)](https://pypi.org/project/azure-health-deidentification/)
+<!-- TODO: | [Package (PyPI)](https://pypi.org/project/azure-health-deidentification/) -->
 <!-- TODO: | [API reference documentation](https://aka.ms/azsdk-python-storage-blob-ref) -->
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthdataaiservices/azure-health-deidentification/samples)
 

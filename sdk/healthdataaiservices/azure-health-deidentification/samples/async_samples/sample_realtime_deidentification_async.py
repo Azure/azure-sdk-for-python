@@ -22,7 +22,8 @@ import asyncio
 async def sample_realtime_deidentification_async():
     # [START realtime_deidentification]
     import os
-    from azure.identity import DefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.health.deidentification.aio import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationResult,
@@ -47,6 +48,7 @@ async def sample_realtime_deidentification_async():
     async with client:
         result: DeidentificationResult = await client.deidentify(body)
 
+    await credential.close()
     print(f'Original Text:     "{body.input_text}"')
     print(f'Deidentified Text: "{result.output_text}"')
     # [END realtime_deidentification]

@@ -26,7 +26,7 @@ import uuid
 async def sample_list_jobs_async():
     # [START sample_list_jobs_async]
     import os
-    from azure.identity import DefaultAzureCredential
+    from azure.identity.aio import DefaultAzureCredential
     from azure.health.deidentification.aio import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationJob,
@@ -55,7 +55,9 @@ async def sample_list_jobs_async():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
+        target_location=TargetStorageLocation(
+            location=storage_location, prefix=outputPrefix
+        ),
         operation=OperationType.SURROGATE,
         data_type=DocumentDataType.PLAINTEXT,
     )
@@ -75,6 +77,7 @@ async def sample_list_jobs_async():
             if jobsToLookThrough <= 0:
                 break
 
+    await credential.close()
     # [END sample_list_jobs_async]
 
 
