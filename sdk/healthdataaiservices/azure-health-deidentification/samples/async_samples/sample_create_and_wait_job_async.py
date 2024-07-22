@@ -36,7 +36,7 @@ async def sample_create_and_wait_job_async():
         OperationType,
         DocumentDataType,
     )
-    from azure.core.polling import LROPoller
+    from azure.core.polling import AsyncLROPoller
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     endpoint = endpoint.replace("https://", "")
@@ -64,14 +64,16 @@ async def sample_create_and_wait_job_async():
     )
 
     async with client:
-        lro: LROPoller = await client.begin_create_job(jobname, job)
+        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
         finished_job: DeidentificationJob = await lro.result()
 
     await credential.close()
 
     print(f"Job Name: {finished_job.name}")
     print(f"Job Status: {finished_job.status}")  # Succeeded
-    print(f"File Count: {finished_job.summary.total}")
+    print(
+        f"File Count: {finished_job.summary.total if finished_job.summary is not None else 0}"
+    )
     # [END sample_create_and_wait_job_async]
 
 

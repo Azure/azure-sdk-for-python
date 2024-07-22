@@ -35,7 +35,7 @@ async def sample_list_job_documents_async():
         OperationType,
         DocumentDataType,
     )
-    from azure.core.polling import LROPoller
+    from azure.core.polling import AsyncLROPoller
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     endpoint = endpoint.replace("https://", "")
@@ -64,7 +64,7 @@ async def sample_list_job_documents_async():
 
     print(f"Creating job with name: {jobname}")
     async with client:
-        poller: LROPoller = await client.begin_create_job(jobname, job)
+        poller: AsyncLROPoller = await client.begin_create_job(jobname, job)
         job = await poller.result()
         print(f"Job Status: {job.status}")
 
