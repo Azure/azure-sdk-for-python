@@ -9,14 +9,14 @@ from devtools_testutils.aio import (
 )
 
 from azure.health.deidentification.models import *
-from azure.core.polling import LROPoller
+from azure.core.polling import AsyncLROPoller
 
 
 class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
     @BatchEnv()
     @pytest.mark.asyncio
     @recorded_by_proxy_async
-    def test_exception_throws(self, **kwargs):
+    async def test_exception_throws_async(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         storage_location: str = self.get_storage_location(kwargs)
         client = self.make_client_async(endpoint)
@@ -29,16 +29,18 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
                 location=storage_location,
                 prefix="no_files_in_this_folder",
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        lro: LROPoller = client.begin_create_job(jobname, job)
+        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
         with pytest.raises(HttpResponseError):
-            lro.wait(timeout=60)
+            await lro.wait()
 
-        job = client.get_job(jobname)
+        job = await client.get_job(jobname)
 
         assert job.status == JobStatus.FAILED
         assert job.error is not None

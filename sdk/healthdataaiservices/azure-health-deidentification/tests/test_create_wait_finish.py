@@ -10,7 +10,7 @@ from azure.core.polling import LROPoller
 class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
     @BatchEnv()
     @recorded_by_proxy
-    def test_create_job_wait_finish(self, **kwargs):
+    def test_create_wait_finish(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         inputPrefix = "example_patient_1"
         storage_location: str = self.get_storage_location(kwargs)
@@ -24,7 +24,9 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )

@@ -11,7 +11,7 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
     @RealtimeEnv()
     @pytest.mark.asyncio
     @recorded_by_proxy_async
-    def test_hello_world(self, healthdataaiservices_deid_service_endpoint):
+    async def test_hello_world_async(self, healthdataaiservices_deid_service_endpoint):
         client = self.make_client_async(healthdataaiservices_deid_service_endpoint)
         assert client is not None
 
@@ -21,7 +21,7 @@ class TestHealthDeidentificationHelloWorld(DeidBaseTestCase):
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        result: DeidentificationResult = client.deidentify(content)
+        result: DeidentificationResult = await client.deidentify(content)
 
         assert result is not None
         assert result.output_text is not None

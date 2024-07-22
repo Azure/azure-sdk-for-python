@@ -4,7 +4,7 @@ from devtools_testutils.aio import (
 )
 
 from azure.health.deidentification.models import *
-from azure.core.polling import LROPoller
+from azure.core.polling import AsyncLROPoller
 import pytest
 
 
@@ -12,7 +12,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
     @BatchEnv()
     @pytest.mark.asyncio
     @recorded_by_proxy_async
-    def test_create_job_wait_finish(self, **kwargs):
+    async def test_create_wait_finish_async(self, **kwargs):
         endpoint: str = kwargs.pop("healthdataaiservices_deid_service_endpoint")
         inputPrefix = "example_patient_1"
         storage_location: str = self.get_storage_location(kwargs)
@@ -26,15 +26,17 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
                 location=storage_location,
                 prefix=inputPrefix,
             ),
-            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH),
+            target_location=TargetStorageLocation(
+                location=storage_location, prefix=self.OUTPUT_PATH
+            ),
             operation=OperationType.SURROGATE,
             data_type=DocumentDataType.PLAINTEXT,
         )
 
-        lro: LROPoller = client.begin_create_job(jobname, job)
-        lro.wait(timeout=60)
+        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
+        lro.wait()
 
-        finished_job: DeidentificationJob = lro.result()
+        finished_job: DeidentificationJob = await lro.result()
 
         assert finished_job.status == JobStatus.SUCCEEDED
         assert finished_job.name == jobname
@@ -51,7 +53,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
 
         files = client.list_job_documents(jobname)
         count = 0
-        for my_file in files:
+        async for my_file in files:
             assert len(my_file.id) == 36  # GUID
             assert my_file.input.path.startswith(inputPrefix)
             assert my_file.status == OperationState.SUCCEEDED

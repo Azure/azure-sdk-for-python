@@ -18,13 +18,13 @@ from devtools_testutils import (
 RealtimeEnv = functools.partial(
     EnvironmentVariableLoader,
     "healthdataaiservices",
-    healthdataaiservices_deid_service_endpoint="deid-service-endpoint.com",
+    healthdataaiservices_deid_service_endpoint="https://example-deid.api.deid.azure.com",
 )
 
 BatchEnv = functools.partial(
     EnvironmentVariableLoader,
     "healthdataaiservices",
-    healthdataaiservices_deid_service_endpoint="deid-service-endpoint.com",
+    healthdataaiservices_deid_service_endpoint="https://example-deid.api.deid.azure.com",
     healthdataaiservices_storage_account_name="blobstorageaccount",
     healthdataaiservices_storage_container_name="containername",
 )
@@ -41,7 +41,7 @@ class DeidBaseTestCase(AzureRecordedTestCase):
             # Client library expects just hostname
             endpoint=endpoint.replace("https://", ""),
             # TODO: test-proxy not playing well with SSL verification
-            connection_verify=False,
+            # connection_verify=False,
         )
         return client
 
@@ -60,11 +60,13 @@ class DeidBaseTestCase(AzureRecordedTestCase):
     def generate_job_name(self) -> str:
         caller_function_name = inspect.stack()[1].function
         uniquifier = os.environ.get("HEALTHDATAAISERVICES_UNIQUIFIER", "")
-        job_name = f"{caller_function_name}-{uniquifier}"
+        job_name = f"{caller_function_name[:28]}-{uniquifier}"
         return job_name
 
     def get_storage_location(self, kwargs):
         storage_name: str = kwargs.pop("healthdataaiservices_storage_account_name")
         container_name: str = kwargs.pop("healthdataaiservices_storage_container_name")
-        storage_location = f"https://{storage_name}.blob.core.windows.net/{container_name}"
+        storage_location = (
+            f"https://{storage_name}.blob.core.windows.net/{container_name}"
+        )
         return storage_location
