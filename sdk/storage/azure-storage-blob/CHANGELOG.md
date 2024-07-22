@@ -1,12 +1,19 @@
 # Release History
 
-## 12.22.0b1 (Unreleased)
+## 12.23.0b1 (Unreleased)
 
 ### Features Added
 
-## 12.21.0 (Unreleased)
+
+## 12.22.0 (Unreleased)
 
 ### Features Added
+
+
+## 12.21.0 (2024-07-18)
+
+### Features Added
+- Stable release of features from 12.21.0b1
 - Added new `chars` keyword to the `StorageStreamDownloader.read` method to support reading an arbitrary number of
 characters from the stream rather than bytes. This can only be used when `encoding` is specified on `download_blob`
 but can help prevent decoding errors in certain scenarios.
