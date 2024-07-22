@@ -20,6 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._data_lake_file_client import DataLakeFileClient
 from ._deserialize import deserialize_dir_properties
+from ._generated import AzureDataLakeStorageRESTAPI
 from ._list_paths_helper import PathPropertiesPaged
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
@@ -689,13 +690,23 @@ class DataLakeDirectoryClient(PathClient):
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
         """
         timeout = kwargs.pop('timeout', None)
+        path_name = self.path_name
+        hostname = self._hosts[self._location_mode]
+        file_system_name = self.file_system_name
+        if isinstance(file_system_name, str):
+            file_system_name = file_system_name.encode('UTF-8')
+        url = f"{self.scheme}://{hostname}/{quote(file_system_name)}"
+        client = AzureDataLakeStorageRESTAPI(
+            url=url, base_url=url, file_system=file_system_name,
+            path=path_name, pipeline=self._pipeline)
         command = functools.partial(
-            self._client.file_system.list_paths,
-            path=self.path_name,
+            client.file_system.list_paths,
+            path=path_name,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return ItemPaged(
-            command, recursive, path=self.path_name, max_results=max_results,
+            command, recursive, path=path_name, max_results=max_results,
             page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def get_file_client(self, file  # type: Union[FileProperties, str]

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
+import functools
 from typing import (  # pylint: disable=unused-import
     Any, Dict, Optional, Union,
     TYPE_CHECKING)
@@ -18,12 +19,14 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._data_lake_file_client_async import DataLakeFileClient
 from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
-from .._models import DirectoryProperties, FileProperties
 from .._deserialize import deserialize_dir_properties
-from ._path_client_async import PathClient
+from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._models import DirectoryProperties, FileProperties
 from .._shared.base_client_async import AsyncTransportWrapper
+from ._data_lake_file_client_async import DataLakeFileClient
+from ._list_paths_helper import PathPropertiesPaged
+from ._path_client_async import PathClient
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -647,14 +650,25 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.storage.filedatalake.PathProperties]
         """
-        return self._file_system_client_async.get_paths(
-            path=self.path_name,
-            recursive=recursive,
-            max_results=max_results,
-            upn=upn,
+        timeout = kwargs.pop('timeout', None)
+        path_name = self.path_name
+        hostname = self._hosts[self._location_mode]
+        file_system_name = self.file_system_name
+        if isinstance(file_system_name, str):
+            file_system_name = file_system_name.encode('UTF-8')
+        url = f"{self.scheme}://{hostname}/{quote(file_system_name)}"
+        client = AzureDataLakeStorageRESTAPI(
+            url=url, base_url=url, file_system=file_system_name,
+            path=path_name, pipeline=self._pipeline)
+        command = functools.partial(
+            client.file_system.list_paths,
+            path=path_name,
             timeout=timeout,
             **kwargs
         )
+        return AsyncItemPaged(
+            command, recursive, path=path_name, max_results=max_results,
+            page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):
