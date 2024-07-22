@@ -331,7 +331,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     )
                     raise error
                 return iter(parts)
-            return parts
+            return parts  # type: ignore [no-any-return]
         except HttpResponseError as error:
             process_storage_error(error)
 
