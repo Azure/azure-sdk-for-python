@@ -320,7 +320,6 @@ def _buildprovider(
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
     replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
 
-
     if "user_agent" in kwargs:
         user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
     else:

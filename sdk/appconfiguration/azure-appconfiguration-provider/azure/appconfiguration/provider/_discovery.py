@@ -4,12 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import os
 import time
+from urllib.parse import urlparse
 import dns.resolver
 from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
-from urllib.parse import urlparse
 from ._constants import HTTPS_PREFIX
 
 request_retry_period = 5  # seconds
