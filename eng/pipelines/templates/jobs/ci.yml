@@ -63,59 +63,59 @@ parameters:
     default: false
 
 jobs:
-    - job: 'Build_Linux'
-      timeoutInMinutes: 90
+  - job: 'Build_Linux'
+    timeoutInMinutes: 90
 
-      pool:
-        name: $(LINUXPOOL)
-        image: $(LINUXVMIMAGE)
-        os: linux
+    pool:
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
+      os: linux
 
-      steps:
-      - template: /eng/pipelines/templates/steps/build.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          ArtifactSuffix: linux
-          Artifacts: ${{ parameters.Artifacts }}
+    steps:
+    - template: /eng/pipelines/templates/steps/build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactSuffix: linux
+        Artifacts: ${{ parameters.Artifacts }}
 
-    - job: 'Build_Windows'
-      timeoutInMinutes: 90
+  - job: 'Build_Windows'
+    timeoutInMinutes: 90
 
-      pool:
-        name: $(WINDOWSPOOL)
-        image: $(WINDOWSVMIMAGE)
-        os: windows
+    pool:
+      name: $(WINDOWSPOOL)
+      image: $(WINDOWSVMIMAGE)
+      os: windows
 
-      steps:
-      - template: /eng/pipelines/templates/steps/build.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          ArtifactSuffix: windows
-          Artifacts: ${{ parameters.Artifacts }}
+    steps:
+    - template: /eng/pipelines/templates/steps/build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactSuffix: windows
+        Artifacts: ${{ parameters.Artifacts }}
 
-    - job: 'Build_MacOS'
-      timeoutInMinutes: 90
+  - job: 'Build_MacOS'
+    timeoutInMinutes: 90
 
-      pool:
-        name: $(MACPOOL)
-        vmImage: $(MACVMIMAGE)
-        os: macOS
+    pool:
+      name: $(MACPOOL)
+      vmImage: $(MACVMIMAGE)
+      os: macOS
 
-      steps:
-      - template: /eng/pipelines/templates/steps/build.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          ArtifactSuffix: mac
-          Artifacts: ${{ parameters.Artifacts }}
+    steps:
+    - template: /eng/pipelines/templates/steps/build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactSuffix: mac
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
