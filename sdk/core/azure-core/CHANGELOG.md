@@ -6,6 +6,7 @@
 
 - `AccessToken` now has an optional `refresh_on` attribute that can be used to specify when the token should be refreshed.  #36183
   - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check the `refresh_on` attribute when determining if a token request should be made.
+- Introduced the keyword argument `additional_allowed_query_params` to `DistributedTracingPolicy` and `HttpLoggingPolicy` to allow users to specify additional URL query parameters that should not be sanitized in span attributes or logs.  #35546
 
 ### Breaking Changes
 
@@ -14,6 +15,7 @@
 ### Other Changes
 
 - The Azure Core OpenTelemetry tracing plugin will now be the preferred tracing plugin over the OpenCensus plugin. If both plugins are installed and `opentelemetry` is imported, then OpenTelemetry will be used to trace Azure SDK operations.  #35050
+- URL attributes in HTTP tracing spans will now have query parameters sanitized by default.  #35546
 
 ## 1.30.2 (2024-06-06)
 

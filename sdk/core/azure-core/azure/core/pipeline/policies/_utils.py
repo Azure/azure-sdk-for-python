@@ -25,8 +25,8 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional, cast, Union
-from urllib.parse import urlparse
+from typing import Optional, cast, Union, Set
+from urllib.parse import urlparse, urlunparse, parse_qsl
 
 from azure.core.pipeline.transport import (
     HttpResponse as LegacyHttpResponse,
@@ -36,7 +36,7 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, AsyncHttpResponse, HttpRequest
 
 
-from ...utils._utils import _FixedOffset, case_insensitive_dict
+from ...utils._utils import _FixedOffset, case_insensitive_dict, CaseInsensitiveSet
 from .. import PipelineResponse
 
 AllHttpResponseType = Union[HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse]
@@ -102,3 +102,28 @@ def get_domain(url: str) -> str:
     :return: The domain of the url.
     """
     return str(urlparse(url).netloc).lower()
+
+
+def sanitize_url_query_params(url: str, allowed_query_params: Set[str], placeholder: str = "REDACTED") -> str:
+    """Redact query parameters from the specified URL.
+
+    :param url: The URL to sanitize.
+    :type url: str
+    :param allowed_query_params: The set of query parameters to allow.
+    :type allowed_query_params: set[str]
+    :param placeholder: The placeholder to use for redacted query parameters.
+    :type placeholder: str
+    :rtype: str
+    :return: The sanitized URL.
+    """
+    allowed = allowed_query_params
+    # In the majority of cases, the allowed query parameters will be a CaseInsensitiveSet. If it's not,
+    # we'll convert it to one to maintain the case-insensitive membership check.
+    if not isinstance(allowed_query_params, CaseInsensitiveSet):
+        allowed = CaseInsensitiveSet(allowed_query_params)
+
+    scheme, netloc, path, params, query, fragment = urlparse(url)
+    parsed_qp = parse_qsl(query, keep_blank_values=True)
+    filtered_qp = ((key, value if key in allowed else placeholder) for key, value in parsed_qp)
+    query = "&".join(f"{k}={v}" for k, v in filtered_qp)
+    return urlunparse((scheme, netloc, path, params, query, fragment))

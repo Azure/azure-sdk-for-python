@@ -27,7 +27,7 @@ def test_distributed_tracing_policy_solo(http_request, http_response):
     with FakeSpan(name="parent") as root_span:
         policy = DistributedTracingPolicy()
 
-        request = http_request("GET", "http://localhost/temp?query=query")
+        request = http_request("GET", "http://localhost/temp")
         request.headers["x-ms-client-request-id"] = "some client request id"
 
         pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -53,7 +53,7 @@ def test_distributed_tracing_policy_solo(http_request, http_response):
     assert network_span.name == "/temp"
     assert network_span.attributes.get("http.method") == "GET"
     assert network_span.attributes.get("component") == "http"
-    assert network_span.attributes.get("http.url") == "http://localhost/temp?query=query"
+    assert network_span.attributes.get("http.url") == "http://localhost/temp"
     assert network_span.attributes.get("http.user_agent") is None
     assert network_span.attributes.get("x-ms-request-id") == "some request id"
     assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
@@ -65,7 +65,7 @@ def test_distributed_tracing_policy_solo(http_request, http_response):
     assert network_span.name == "/temp"
     assert network_span.attributes.get("http.method") == "GET"
     assert network_span.attributes.get("component") == "http"
-    assert network_span.attributes.get("http.url") == "http://localhost/temp?query=query"
+    assert network_span.attributes.get("http.url") == "http://localhost/temp"
     assert network_span.attributes.get("x-ms-client-request-id") == "some client request id"
     assert network_span.attributes.get("http.user_agent") is None
     assert network_span.attributes.get("x-ms-request-id") == None
@@ -292,3 +292,51 @@ def test_span_namer(http_request, http_response):
     # Check operation kwargs
     network_span = root_span.children[1]
     assert network_span.name == "operation level name"
+
+
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_distributed_tracing_policy_query_param_default_sanitization(http_request, http_response):
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
+
+        request = http_request("GET", "https://localhost/temp?foo=1&bar=2&api-version=2.2&BIZ=baz")
+        pipeline_request = PipelineRequest(request, PipelineContext(None))
+
+        policy = DistributedTracingPolicy()
+
+        policy.on_request(pipeline_request)
+
+        response = create_http_response(http_response, request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+    assert (
+        root_span.children[0].attributes[FakeSpan._HTTP_URL]
+        == "https://localhost/temp?foo=REDACTED&bar=REDACTED&api-version=2.2&BIZ=REDACTED"
+    )
+
+
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+def test_distributed_tracing_policy_query_param_custom_sanitization(http_request, http_response):
+    settings.tracing_implementation.set_value(FakeSpan)
+    with FakeSpan(name="parent") as root_span:
+
+        request = http_request("GET", "https://localhost/temp?foo=1&bar=2&api-version=2.2&BIZ=baz")
+        pipeline_request = PipelineRequest(request, PipelineContext(None))
+
+        additional_allowed_query_params = ["foo"]
+        policy = DistributedTracingPolicy(additional_allowed_query_params=additional_allowed_query_params)
+
+        policy.on_request(pipeline_request)
+
+        response = create_http_response(http_response, request, None)
+        response.headers = request.headers
+        response.status_code = 202
+
+        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+    assert (
+        root_span.children[0].attributes[FakeSpan._HTTP_URL]
+        == "https://localhost/temp?foo=1&bar=REDACTED&api-version=2.2&BIZ=REDACTED"
+    )

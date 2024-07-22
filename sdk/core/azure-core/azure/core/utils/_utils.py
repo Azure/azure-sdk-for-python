@@ -17,6 +17,7 @@ from typing import (
     Tuple,
     Union,
     Dict,
+    Set,
 )
 from datetime import timezone
 
@@ -163,6 +164,44 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+
+class CaseInsensitiveSet(Set[str]):
+    """A string set that is case-insensitive when it comes to checking for membership.
+
+    This is a normal set that stores the lowercase version of the strings for case-insensitive membership checks.
+
+    :param data: Initial data to store in the set.
+    :type data: Iterable[str]
+    """
+
+    def __init__(self, data: Optional[Iterable[str]] = None):
+        self._lowercase_set: Set[str] = set()
+        super().__init__()
+        if data:
+            self.update(data)
+
+    def __contains__(self, item: Any) -> bool:
+        if not isinstance(item, str):
+            return False
+        return item.lower() in self._lowercase_set
+
+    def update(self, *data: Iterable[str]) -> None:
+        for iter in data:
+            for value in iter:
+                self.add(value)
+
+    def add(self, item: str) -> None:
+        self._lowercase_set.add(item.lower())
+        super().add(item)
+
+    def discard(self, item: str) -> None:
+        self._lowercase_set.discard(item.lower())
+        super().discard(item)
+
+    def remove(self, item: str) -> None:
+        self._lowercase_set.remove(item.lower())
+        super().remove(item)
 
 
 def get_running_async_lock() -> AsyncContextManager:
