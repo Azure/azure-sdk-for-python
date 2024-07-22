@@ -27,6 +27,7 @@ USAGE:
 
 
 import os
+import sys
 import asyncio
 
 class AuthSamplesAsync(object):
@@ -44,6 +45,10 @@ class AuthSamplesAsync(object):
     active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     async def auth_connection_string_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: auth_connection_string_async")
+            sys.exit(1)
         # [START auth_from_connection_string]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -62,6 +67,10 @@ class AuthSamplesAsync(object):
         # [END auth_from_connection_string_blob]
 
     async def auth_shared_key_async(self):
+        if self.shared_access_key is None:
+            print("Missing required environment variable: AZURE_STORAGE_ACCESS_KEY." + '\n' +
+                  "Test: auth_shared_key_async")
+            sys.exit(1)
         # [START create_blob_service_client]
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
@@ -81,6 +90,10 @@ class AuthSamplesAsync(object):
         # [END create_blob_client_sas_url]
 
     async def auth_active_directory_async(self):
+        if self.active_directory_tenant_id is None or self.active_directory_application_id is None or self.active_directory_application_secret is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: auth_active_directory_async")
+            sys.exit(1)
         # [START create_blob_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
@@ -96,6 +109,10 @@ class AuthSamplesAsync(object):
         # [END create_blob_service_client_oauth]
 
     async def auth_shared_access_signature_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: auth_shared_access_signature_async")
+            sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
