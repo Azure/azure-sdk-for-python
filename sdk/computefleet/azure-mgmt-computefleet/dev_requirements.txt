@@ -1,4 +1,5 @@
 -e ../../../tools/azure-sdk-tools
+-e ../../resources/azure-mgmt-resource
 ../../core/azure-core
 ../../identity/azure-identity
 ../../core/azure-mgmt-core
