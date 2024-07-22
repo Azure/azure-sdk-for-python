@@ -6,7 +6,7 @@ parameters:
     type: boolean
     default: true
   - name: Condition
-    type: boolean
+    type: string
     default: succeeded()
 
 steps:
