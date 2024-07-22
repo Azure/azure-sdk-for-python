@@ -4,9 +4,9 @@ trigger:
   branches:
     include:
       - main
-      - feature/*
       - hotfix/*
       - release/*
+      - restapi*
   paths:
     include:
       - sdk/healthdataaiservices
@@ -22,6 +22,7 @@ pr:
       - feature/*
       - hotfix/*
       - release/*
+      - restapi*
   paths:
     include:
       - sdk/healthdataaiservices
