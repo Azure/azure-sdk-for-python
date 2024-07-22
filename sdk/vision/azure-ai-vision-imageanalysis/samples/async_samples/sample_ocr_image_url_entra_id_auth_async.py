@@ -36,7 +36,7 @@ async def sample_ocr_image_url_entra_id_auth_async():
     from azure.ai.vision.imageanalysis.models import VisualFeatures
     from azure.identity.aio import DefaultAzureCredential
 
-    # Set the values of your computer vision endpoint and computer vision key as environment variables:
+    # Set the value of your computer vision endpoint as environment variable:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
     except KeyError:
