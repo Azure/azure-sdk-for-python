@@ -26,7 +26,7 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
         pass
 
     @abc.abstractmethod
-    def get_unavailable_message(self) -> str:
+    def get_unavailable_message(self, desc: str = "") -> str:
         pass
 
     async def __aenter__(self: T) -> T:

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -30,6 +31,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import SearchManagementClientMixinABC, _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -49,7 +54,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -96,7 +101,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -140,7 +145,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -183,7 +188,7 @@ def build_list_by_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -266,7 +271,6 @@ class PrivateEndpointConnectionsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -278,7 +282,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         search_service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: IO,
+        private_endpoint_connection: IO[bytes],
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -300,14 +304,13 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
          update. Required.
-        :type private_endpoint_connection: IO
+        :type private_endpoint_connection: IO[bytes]
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -319,7 +322,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         search_service_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, IO],
+        private_endpoint_connection: Union[_models.PrivateEndpointConnection, IO[bytes]],
         search_management_request_options: Optional[_models.SearchManagementRequestOptions] = None,
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
@@ -338,20 +341,17 @@ class PrivateEndpointConnectionsOperations:
          Azure AI Search service with the specified resource group. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The definition of the private endpoint connection to
-         update. Is either a PrivateEndpointConnection type or a IO type. Required.
-        :type private_endpoint_connection: ~azure.mgmt.search.models.PrivateEndpointConnection or IO
+         update. Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type private_endpoint_connection: ~azure.mgmt.search.models.PrivateEndpointConnection or
+         IO[bytes]
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -377,7 +377,7 @@ class PrivateEndpointConnectionsOperations:
         else:
             _json = self._serialize.body(private_endpoint_connection, "PrivateEndpointConnection")
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             search_service_name=search_service_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
@@ -387,16 +387,15 @@ class PrivateEndpointConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -408,13 +407,9 @@ class PrivateEndpointConnectionsOperations:
         deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(
@@ -443,12 +438,11 @@ class PrivateEndpointConnectionsOperations:
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -466,23 +460,22 @@ class PrivateEndpointConnectionsOperations:
         if search_management_request_options is not None:
             _client_request_id = search_management_request_options.client_request_id
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             search_service_name=search_service_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             client_request_id=_client_request_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -494,13 +487,9 @@ class PrivateEndpointConnectionsOperations:
         deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(
@@ -528,12 +517,11 @@ class PrivateEndpointConnectionsOperations:
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or None or the result of cls(response)
         :rtype: ~azure.mgmt.search.models.PrivateEndpointConnection or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -551,23 +539,22 @@ class PrivateEndpointConnectionsOperations:
         if search_management_request_options is not None:
             _client_request_id = search_management_request_options.client_request_id
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             search_service_name=search_service_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             client_request_id=_client_request_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -581,13 +568,9 @@ class PrivateEndpointConnectionsOperations:
             deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections/{privateEndpointConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_service(
@@ -611,7 +594,6 @@ class PrivateEndpointConnectionsOperations:
         :param search_management_request_options: Parameter group. Default value is None.
         :type search_management_request_options:
          ~azure.mgmt.search.models.SearchManagementRequestOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpointConnection or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.search.models.PrivateEndpointConnection]
@@ -623,7 +605,7 @@ class PrivateEndpointConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.PrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -637,18 +619,17 @@ class PrivateEndpointConnectionsOperations:
                 if search_management_request_options is not None:
                     _client_request_id = search_management_request_options.client_request_id
 
-                request = build_list_by_service_request(
+                _request = build_list_by_service_request(
                     resource_group_name=resource_group_name,
                     search_service_name=search_service_name,
                     subscription_id=self._config.subscription_id,
                     client_request_id=_client_request_id,
                     api_version=api_version,
-                    template_url=self.list_by_service.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -660,13 +641,13 @@ class PrivateEndpointConnectionsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("PrivateEndpointConnectionListResult", pipeline_response)
@@ -676,11 +657,11 @@ class PrivateEndpointConnectionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -691,7 +672,3 @@ class PrivateEndpointConnectionsOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_service.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Search/searchServices/{searchServiceName}/privateEndpointConnections"
-    }
