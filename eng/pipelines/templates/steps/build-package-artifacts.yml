@@ -35,7 +35,6 @@ parameters:
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
-    condition: and(succeeded(), $())
     inputs:
       versionSpec: $(PythonVersion)
 
