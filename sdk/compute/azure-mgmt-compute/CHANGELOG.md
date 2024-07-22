@@ -1,6 +1,6 @@
 # Release History
 
-## 32.0.0 (2024-08-19)
+## 32.0.0 (2024-07-22)
 
 ### Features Added
 
