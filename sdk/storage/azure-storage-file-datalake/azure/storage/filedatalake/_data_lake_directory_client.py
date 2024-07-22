@@ -707,7 +707,7 @@ class DataLakeDirectoryClient(PathClient):
         )
         return ItemPaged(
             command, recursive, path=path_name, max_results=max_results,
-            page_iterator_class=PathPropertiesPaged, **kwargs)
+            upn=upn, page_iterator_class=PathPropertiesPaged, **kwargs)
 
     def get_file_client(self, file  # type: Union[FileProperties, str]
                         ):
