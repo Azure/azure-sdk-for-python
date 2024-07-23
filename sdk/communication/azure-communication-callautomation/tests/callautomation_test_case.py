@@ -45,7 +45,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             cls.servicebus_connection_str =  "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
             cls.file_source_url = "https://REDACTED/prompt.wav"
-            cls.cognitive_service_endpoint = "https://REDACTED.cognitiveservices.azure.com"
+            cls.cognitive_service_endpoint = "https://sanitized/"
             cls.transport_url ="wss://REDACTED"
 
         cls.dispatcher_callback = cls.dispatcher_endpoint + '/api/servicebuscallback/events'
