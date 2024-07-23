@@ -20,6 +20,7 @@ from ._recovery_points_operations import RecoveryPointsOperations
 from ._fetch_secondary_recovery_points_operations import FetchSecondaryRecoveryPointsOperations
 from ._fetch_cross_region_restore_job_operations import FetchCrossRegionRestoreJobOperations
 from ._fetch_cross_region_restore_jobs_operations import FetchCrossRegionRestoreJobsOperations
+from ._backup_instances_extension_routing_operations import BackupInstancesExtensionRoutingOperations
 from ._jobs_operations import JobsOperations
 from ._restorable_time_ranges_operations import RestorableTimeRangesOperations
 from ._export_jobs_operations import ExportJobsOperations
@@ -47,6 +48,7 @@ __all__ = [
     "FetchSecondaryRecoveryPointsOperations",
     "FetchCrossRegionRestoreJobOperations",
     "FetchCrossRegionRestoreJobsOperations",
+    "BackupInstancesExtensionRoutingOperations",
     "JobsOperations",
     "RestorableTimeRangesOperations",
     "ExportJobsOperations",

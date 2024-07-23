@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -179,7 +179,7 @@ def build_append_request(
     library_name: str,
     *,
     comp: Union[str, _models.Enum13],
-    content: IO,
+    content: IO[bytes],
     blob_condition_append_position: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -237,7 +237,6 @@ class LibraryOperations:
     def list(self, **kwargs: Any) -> Iterable["_models.LibraryResource"]:
         """Lists Library.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LibraryResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.LibraryResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -362,14 +361,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LibraryResourceInfo or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
@@ -413,13 +404,15 @@ class LibraryOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LibraryResourceInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.LibraryResourceInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_operation_result(
@@ -429,7 +422,6 @@ class LibraryOperations:
 
         :param operation_id: operation id for which status is requested. Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LibraryResource or OperationResult or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LibraryResource or
          ~azure.synapse.artifacts.models.OperationResult
@@ -537,14 +529,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LibraryResourceInfo or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
@@ -588,13 +572,15 @@ class LibraryOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LibraryResourceInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.LibraryResourceInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get(self, library_name: str, **kwargs: Any) -> Optional[_models.LibraryResource]:
@@ -603,7 +589,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LibraryResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LibraryResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -708,14 +693,6 @@ class LibraryOperations:
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
          the extension length. Required.
         :type library_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either LibraryResourceInfo or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.LibraryResourceInfo]
@@ -759,20 +736,22 @@ class LibraryOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.LibraryResourceInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.LibraryResourceInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def append(  # pylint: disable=inconsistent-return-statements
         self,
         comp: Union[str, _models.Enum13],
         library_name: str,
-        content: IO,
+        content: IO[bytes],
         blob_condition_append_position: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -785,13 +764,12 @@ class LibraryOperations:
          the extension length. Required.
         :type library_name: str
         :param content: Library file chunk. Required.
-        :type content: IO
+        :type content: IO[bytes]
         :param blob_condition_append_position: Set this header to a byte offset at which the block is
          expected to be appended. The request succeeds only if the current offset matches this value.
          Otherwise, the request fails with the AppendPositionConditionNotMet error (HTTP status code 412
          – Precondition Failed). Default value is None.
         :type blob_condition_append_position: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

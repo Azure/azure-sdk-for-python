@@ -1,5 +1,21 @@
 # Release History
 
+## 9.5.1 (2024-06-19)
+
+### Features Added
+
+  - Model ServiceResourceCreateUpdateParameters has a new parameter properties
+
+### Breaking Changes
+
+  - Model ServiceResourceCreateUpdateParameters no longer has parameter instance_count
+  - Model ServiceResourceCreateUpdateParameters no longer has parameter instance_size
+  - Model ServiceResourceCreateUpdateParameters no longer has parameter service_type
+
+### Bugs Fixed
+
+  - Disable parameter flatten for Model ServiceResourceCreateUpdateParameters to avoid deserializatin
+
 ## 9.5.0 (2024-05-20)
 
 ### Features Added

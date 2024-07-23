@@ -306,9 +306,13 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
                     return ImportJob._load_from_rest(obj)
 
                 res_command: Job = Command._load_from_rest_job(obj)
+                if hasattr(obj, "name"):
+                    res_command._name = obj.name  # type: ignore[attr-defined]
                 return res_command
             if obj.properties.job_type == RestJobType.SPARK:
                 res_spark: Job = Spark._load_from_rest_job(obj)
+                if hasattr(obj, "name"):
+                    res_spark._name = obj.name  # type: ignore[attr-defined]
                 return res_spark
             if obj.properties.job_type == RestJobType.SWEEP:
                 return SweepJob._load_from_rest(obj)

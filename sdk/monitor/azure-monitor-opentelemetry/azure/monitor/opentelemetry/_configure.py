@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from logging import getLogger
-from typing import Dict, cast
+from typing import Dict, List, cast
 
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
@@ -18,6 +18,7 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.view import View
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -37,6 +38,7 @@ from azure.monitor.opentelemetry._constants import (
     RESOURCE_ARG,
     SAMPLING_RATIO_ARG,
     SPAN_PROCESSORS_ARG,
+    VIEWS_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import enable_live_metrics  # pylint: disable=import-error,no-name-in-module
@@ -88,6 +90,8 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+    :keyword list[~opentelemetry.sdk.metrics.view.View] views: List of `View` objects to configure and filter
+     metric output.
     :rtype: None
     """
 
@@ -163,11 +167,13 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG] # type: ignore
+    views: List[View] = configurations[VIEWS_ARG] # type: ignore
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
         metric_readers=[reader],
-        resource=resource
+        resource=resource,
+        views=views,
     )
     set_meter_provider(meter_provider)
 

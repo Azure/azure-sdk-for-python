@@ -231,7 +231,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = StorageBearerTokenCredentialPolicy(credential, audience)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -331,7 +331,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     )
                     raise error
                 return iter(parts)
-            return parts
+            return parts  # type: ignore [no-any-return]
         except HttpResponseError as error:
             process_storage_error(error)
 

@@ -49,6 +49,18 @@ class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_KEY_VAULT_SMB = "AzureKeyVaultSmb"
 
 
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The day of week."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
+
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Endpoint resource type."""
 
@@ -77,6 +89,16 @@ class JobRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    PAUSED_BY_BANDWIDTH_MANAGEMENT = "PausedByBandwidthManagement"
+
+
+class Minute(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The minute element of the time. Allowed values are 0 and 30. If not specified, its value
+    defaults to 0.
+    """
+
+    ZERO = 0
+    THIRTY = 30
 
 
 class NfsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,6 +120,9 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of this resource."""
+    """The provisioning state of a resource."""
 
     SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    DELETING = "Deleting"

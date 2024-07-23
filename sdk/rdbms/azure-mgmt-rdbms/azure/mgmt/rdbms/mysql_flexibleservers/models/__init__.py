@@ -70,6 +70,7 @@ from ._models_py3 import ServerBackup
 from ._models_py3 import ServerBackupListResult
 from ._models_py3 import ServerBackupV2
 from ._models_py3 import ServerBackupV2ListResult
+from ._models_py3 import ServerDetachVNetParameter
 from ._models_py3 import ServerEditionCapability
 from ._models_py3 import ServerEditionCapabilityV2
 from ._models_py3 import ServerForUpdate
@@ -121,6 +122,7 @@ from ._my_sql_management_client_enums import ResetAllToDefault
 from ._my_sql_management_client_enums import ServerSkuTier
 from ._my_sql_management_client_enums import ServerState
 from ._my_sql_management_client_enums import ServerVersion
+from ._my_sql_management_client_enums import StorageRedundancyEnum
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -190,6 +192,7 @@ __all__ = [
     "ServerBackupListResult",
     "ServerBackupV2",
     "ServerBackupV2ListResult",
+    "ServerDetachVNetParameter",
     "ServerEditionCapability",
     "ServerEditionCapabilityV2",
     "ServerForUpdate",
@@ -240,6 +243,7 @@ __all__ = [
     "ServerSkuTier",
     "ServerState",
     "ServerVersion",
+    "StorageRedundancyEnum",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
