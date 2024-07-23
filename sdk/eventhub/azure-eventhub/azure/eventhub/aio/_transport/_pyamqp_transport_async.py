@@ -231,6 +231,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             use_tls=config.use_tls,
             **kwargs,
         )
+    
+    async def _get_message_buffer_length(consumer):
+        async with consumer._message_buffer_lock:
+            return len(consumer._message_buffer)
 
     @staticmethod
     async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
@@ -262,10 +266,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
                     await consumer._open() # pylint: disable=protected-access
-                    if len(consumer._message_buffer) < max_batch_size:
-                        running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(
-                            batch=consumer._prefetch
-                        )
+                    if await PyamqpTransportAsync._get_message_buffer_length(consumer) < max_batch_size : # pylint: disable=protected-access
+                            running = await cast(ReceiveClientAsync, consumer._handler)._client_run_async(
+                                batch=consumer._prefetch
+                            )
                     await asyncio.sleep(0.05)
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
