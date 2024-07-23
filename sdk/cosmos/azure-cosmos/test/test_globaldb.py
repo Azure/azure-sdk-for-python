@@ -5,15 +5,15 @@
 import time
 import unittest
 from urllib.parse import urlparse
-
 import pytest
 
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import documents, exceptions, \
-    DatabaseProxy, ContainerProxy, _synchronized_request, _endpoint_discovery_retry_policy
+from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy,\
+    _synchronized_request, _endpoint_discovery_retry_policy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from azure.core.exceptions import ServiceRequestError
 
 #   TODO: These tests need to be properly configured in the pipeline with locational endpoints.
 #    For now we use the is_not_default_host() method to skip regional checks.
@@ -457,6 +457,24 @@ class TestGlobalDB(unittest.TestCase):
 
         cc_copy.GetDatabaseAccount = self.OriginalGetDatabaseAccount
         client.client_connection = cc_copy
+
+    def test_global_db_service_request_errors(self):
+        connection_policy = documents.ConnectionPolicy()
+        retry_policy = test_config.MockConnectionRetryPolicy(
+            retry_total=9,
+            retry_connect=None,
+            retry_read=None,
+            retry_status=None,
+            retry_backoff_max=30,
+            retry_on_status_codes=[],
+            retry_backoff_factor=0.8,
+        )
+        connection_policy.ConnectionRetryConfiguration = retry_policy
+        try:
+            cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy)
+            pytest.fail("client initialization should have received ServiceRequestError")
+        except ServiceRequestError:
+            assert retry_policy.count == 3
 
 
 if __name__ == '__main__':
