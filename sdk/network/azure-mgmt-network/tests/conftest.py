@@ -13,6 +13,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers
 )
 
 load_dotenv()
