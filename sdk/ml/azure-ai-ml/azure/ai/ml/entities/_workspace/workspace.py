@@ -28,7 +28,13 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_field_in_override, load_from_dict
 from azure.ai.ml.entities._workspace.serverless_compute import ServerlessComputeSettings
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
@@ -222,7 +228,22 @@ class Workspace(Resource):
         :return: Returns mlflow tracking uri of the workspace.
         :rtype: str
         """
-        return self._mlflow_tracking_uri
+        # if _with_auth:
+        #     module_logger.warning(
+        #     "'_with_auth' is deprecated and will be removed in a future release. ")
+
+        try:
+            from azureml.mlflow import get_mlflow_tracking_uri_v2
+
+            return get_mlflow_tracking_uri_v2(self)
+        except ImportError as e:
+            error_msg = (
+                "azureml.mlflow could not be imported. "
+                "Please ensure that 'azureml-mlflow' has been installed in the current python environment."
+            )
+            raise UserErrorException(error_msg) from e
+
+        # return self._mlflow_tracking_uri
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the workspace spec into a file in yaml format.
