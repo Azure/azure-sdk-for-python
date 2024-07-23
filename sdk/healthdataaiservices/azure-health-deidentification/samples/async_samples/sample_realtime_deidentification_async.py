@@ -39,11 +39,7 @@ async def sample_realtime_deidentification_async():
 
     client = DeidentificationClient(endpoint, credential)
 
-    body = DeidentificationContent(
-        input_text="Hello, my name is John Smith.",
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
-    )
+    body = DeidentificationContent(input_text="Hello, my name is John Smith.")
 
     async with client:
         result: DeidentificationResult = await client.deidentify(body)

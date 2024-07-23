@@ -58,8 +58,6 @@ async def sample_list_job_documents_async():
         target_location=TargetStorageLocation(
             location=storage_location, prefix=outputPrefix
         ),
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
     )
 
     print(f"Creating job with name: {jobname}")

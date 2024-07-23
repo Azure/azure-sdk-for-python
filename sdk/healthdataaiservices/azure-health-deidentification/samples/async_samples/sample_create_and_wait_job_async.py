@@ -59,8 +59,6 @@ async def sample_create_and_wait_job_async():
         target_location=TargetStorageLocation(
             location=storage_location, prefix=outputPrefix
         ),
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
     )
 
     async with client:

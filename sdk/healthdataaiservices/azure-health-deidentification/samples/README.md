@@ -39,6 +39,17 @@ In order to create a Deidentification client you must obtain the **Service URL**
     client = DeidentificationClient(endpoint, DefaultAzureCredential())
 ```
 
+### Deidentify a string
+
+```python
+    body = DeidentificationContent(input_text="Hello, my name is John Smith.")
+
+    result: DeidentificationResult = client.deidentify(body)
+    
+    print(f'Original Text:     "{body.input_text}"')
+    print(f'Deidentified Text: "{result.output_text}"')
+```
+
 ## Key concepts
 Operation Modes:
 - Tag: Will return a structure of offset and length with the PHI category of the related text spans.

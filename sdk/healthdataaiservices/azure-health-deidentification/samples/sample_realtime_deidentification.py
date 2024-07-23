@@ -37,11 +37,7 @@ def sample_realtime_deidentification():
 
     client = DeidentificationClient(endpoint, credential)
 
-    body = DeidentificationContent(
-        input_text="Hello, my name is John Smith.",
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
-    )
+    body = DeidentificationContent(input_text="Hello, my name is John Smith.")
 
     result: DeidentificationResult = client.deidentify(body)
     print(f'Original Text:     "{body.input_text}"')
