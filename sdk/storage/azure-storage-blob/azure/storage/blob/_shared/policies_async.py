@@ -7,10 +7,8 @@
 
 import asyncio
 import base64
-import hashlib
 import logging
 import random
-from io import SEEK_SET
 from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
