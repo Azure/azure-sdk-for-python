@@ -41,6 +41,13 @@ class FileLastWrittenMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRESERVE = "Preserve"
 
 
+class FilePermissionKeyFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FilePermissionKeyFormat."""
+
+    SDDL = "SDDL"
+    BINARY = "binary"
+
+
 class FileRangeWriteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FileRangeWriteType."""
 

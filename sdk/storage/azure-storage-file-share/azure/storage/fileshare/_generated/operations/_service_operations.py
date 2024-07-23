@@ -18,14 +18,12 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -39,7 +37,12 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_set_properties_request(
-    url: str, *, content: Any, timeout: Optional[int] = None, **kwargs: Any
+    url: str,
+    *,
+    content: Any,
+    timeout: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -66,6 +69,8 @@ def build_set_properties_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -73,7 +78,13 @@ def build_set_properties_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_get_properties_request(url: str, *, timeout: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_get_properties_request(
+    url: str,
+    *,
+    timeout: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -98,6 +109,8 @@ def build_get_properties_request(url: str, *, timeout: Optional[int] = None, **k
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -111,6 +124,7 @@ def build_list_shares_segment_request(
     maxresults: Optional[int] = None,
     include: Optional[List[Union[str, _models.ListSharesIncludeType]]] = None,
     timeout: Optional[int] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -143,6 +157,8 @@ def build_list_shares_segment_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -206,6 +222,7 @@ class ServiceOperations:
         _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
@@ -214,7 +231,6 @@ class ServiceOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -268,13 +284,13 @@ class ServiceOperations:
         _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -293,7 +309,7 @@ class ServiceOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize("StorageServiceProperties", pipeline_response)
+        deserialized = self._deserialize("StorageServiceProperties", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -358,12 +374,12 @@ class ServiceOperations:
             maxresults=maxresults,
             include=include,
             timeout=timeout,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -382,7 +398,7 @@ class ServiceOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize("ListSharesResponse", pipeline_response)
+        deserialized = self._deserialize("ListSharesResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
