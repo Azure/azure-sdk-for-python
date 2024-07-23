@@ -8,6 +8,8 @@ import json
 import random
 import time
 import datetime
+import hashlib
+import base64
 from importlib.metadata import version, PackageNotFoundError
 from threading import Lock
 import logging
@@ -49,6 +51,11 @@ from ._constants import (
     ContainerAppEnvironmentVariable,
     KubernetesEnvironmentVariable,
     EMPTY_LABEL,
+    TELEMETRY_KEY,
+    METADATA_KEY,
+    ETAG_KEY,
+    FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_ID_KEY,
     PERCENTAGE_FILTER_NAMES,
     TIME_WINDOW_FILTER_NAMES,
     TARGETING_FILTER_NAMES,
@@ -84,30 +91,28 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :param str endpoint: Endpoint for App Configuration resource.
-    :param credential: Credential for App Configuration resource.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword selects: List of setting selectors to filter configuration settings
-    :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
-     keyvault_client_configs is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
-     credential will need to be in each set for each.
-    :paramtype keyvault_client_configs: Mapping[str, Mapping]
-    :keyword secret_resolver: A function that takes a URI and returns a value.
-    :paramtype secret_resolver: Callable[[str], str]
-    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_on: List[Tuple[str, str]]
+    :param  ~azure.core.credentials.TokenCredential credential: Credential for App Configuration resource.
+    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
+    filter configuration settings
+    :keyword Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
+    vault. This is optional if keyvault_client_configs is provided.
+    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
+    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
+    isn't provided a credential will need to be in each set for each.
+    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
+    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
+    not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
@@ -141,28 +146,27 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :keyword str connection_string: Connection string for App Configuration resource.
-    :keyword selects: List of setting selectors to filter configuration settings
-    :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
-     keyvault_client_configs is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
-     credential will need to be in each set for each.
-    :paramtype keyvault_client_configs: Mapping[str, Mapping]
-    :keyword secret_resolver: A function that takes a URI and returns a value.
-    :paramtype secret_resolver: Callable[[str], str]
-    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_on: List[Tuple[str, str]]
+    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
+    filter configuration settings
+    :keyword trim_prefixes: Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
+    vault. This is optional if keyvault_client_configs is provided.
+    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
+    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
+    isn't provided a credential will need to be in each set for each.
+    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
+    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
+    not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
@@ -344,7 +348,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     if endpoint is not None and credential is not None:
@@ -354,7 +358,7 @@ def _buildprovider(
             user_agent=user_agent,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
-            **kwargs
+            **kwargs,
         )
         return provider
     raise ValueError("Please pass either endpoint and credential, or a connection string.")
@@ -672,6 +676,16 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     sentinel_keys[(config.key, config.label)] = config.etag
         return configuration_settings, sentinel_keys
 
+    @staticmethod
+    def _calculate_feature_id(key, label):
+        basic_value = f"{key}\n"
+        if label and not label.isspace():
+            basic_value += f"{label}"
+        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
+        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
+
     def _load_feature_flags(self, **kwargs):
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
@@ -679,11 +693,27 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         kwargs.pop("sentinel_keys", None)
         filters_used = {}
         for select in self._feature_flag_selectors:
+            endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
             for feature_flag in feature_flags:
-                loaded_feature_flags.append(json.loads(feature_flag.value))
+                feature_flag_value = json.loads(feature_flag.value)
+                if TELEMETRY_KEY in feature_flag_value:
+                    if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+                        feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+                    if not endpoint.endswith("/"):
+                        endpoint += "/"
+                    feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
+                    if feature_flag.label and not feature_flag.label.isspace():
+                        feature_flag_reference += f"?label={feature_flag.label}"
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                        feature_flag.key, feature_flag.label
+                    )
+                loaded_feature_flags.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
