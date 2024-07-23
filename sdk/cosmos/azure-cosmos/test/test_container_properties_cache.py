@@ -502,6 +502,64 @@ class TestContainerPropertiesCache(unittest.TestCase):
             self.fail("Query should still succeed if container is recreated.")
         created_db.delete_container(container_name)
 
+    def test_container_recreate_transactional_batch(self):
+        client = self.client
+        created_db = self.databaseForTest
+        container_name = str(uuid.uuid4())
+        container_pk = "PK"
+        container2_pk = "partkey"
+
+        # Create The Container
+        try:
+            created_container = created_db.create_container(id=container_name,
+                                                            partition_key=PartitionKey(path="/" + container_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+
+        try:
+            batch_operations = []
+            for i in range(100):
+                batch_operations.append(("create", ({"id": "item" + str(i), container_pk: "Microsoft"},)))
+
+            batch_response = created_container.execute_item_batch(batch_operations=batch_operations,
+                                                                  partition_key="Microsoft")
+            self.assertEqual(len(batch_response), 100)
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Simulate a container recreate by saving the old cache and creating a new container with a different partition key definition
+        old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
+        created_db.delete_container(created_container)
+        try:
+            created_container = created_db.create_container(id=container_name,
+                                                            partition_key=PartitionKey(path="/" + container2_pk))
+        except exceptions.CosmosResourceExistsError:
+            self.fail("Container Should not Already Exist.")
+
+        # Test transactional batch operation by replacing current container properties cache with old one
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            batch_operations = []
+            for i in range(100):
+                batch_operations.append(("create", ({"id": "item" + str(i), container2_pk: "Microsoft"},)))
+
+            batch_response = created_container.execute_item_batch(batch_operations=batch_operations,
+                                                                  partition_key="Microsoft")
+            self.assertEqual(len(batch_response), 100)
+        except exceptions.CosmosHttpResponseError as e:
+            self.fail("{}".format(e.http_error_message))
+
+        # Negative test: Attempt to create an item with the old container properties cache, expecting a 400 error
+        client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
+        try:
+            batch_operations = [("create", ({"id": "item" + str(101), container2_pk: "Microsoft"},))]
+            batch_response = created_container.execute_item_batch(batch_operations=batch_operations,
+                                                                  partition_key="Microsoft")
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 400)
+
+        created_db.delete_container(container_name)
+
 
 if __name__ == '__main__':
     try:

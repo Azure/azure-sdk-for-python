@@ -114,7 +114,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         path: str,
         resource_id: Optional[str],
         resource_type: str,
-        options: Dict[str, Any],
+        options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
@@ -322,8 +322,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
     if resource_type != 'dbs' and options.get("containerRID"):
-        rid = options.pop("containerRID")
-        headers[http_constants.HttpHeaders.IntendedCollectionRID] = rid
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
 
     return headers
 
