@@ -1583,7 +1583,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
         server_returned_permission = share_client.get_permission_for_share(
             permission_key,
-            file_permission_key_format="binary"
+            file_permission_format="binary"
         )
         expected_server_permission = (
             'AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw'
@@ -1594,7 +1594,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
         server_returned_permission = share_client.get_permission_for_share(
             permission_key,
-            file_permission_key_format="SDDL"
+            file_permission_format="SDDL"
         )
         expected_server_permission = user_given_permission + 'S:NO_ACCESS_CONTROL'
         assert server_returned_permission == expected_server_permission

@@ -971,14 +971,14 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
         :param str permission_key:
             Key of the file permission to retrieve
-        :keyword file_permission_key_format:
+        :keyword file_permission_format:
             Optional. Available for version 2023-06-01 and later.
             Specifies the format in which the permission is returned. Acceptable values are SDDL or binary.
             If x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
             returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
             permission is returned as a base64 string representing the binary encoding of the permission.
             Known values are: "SDDL" and "binary". Default value is None.
-        :paramtype: str or ~azure.storage.fileshare.models.FilePermissionKeyFormat or None
+        :paramtype: str or ~azure.storage.fileshare.models.FilePermissionFormat or None
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
