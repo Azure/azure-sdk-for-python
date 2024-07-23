@@ -3096,41 +3096,6 @@ class VirtualMachineScaleSetIpTag(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineScaleSetListResult(_model_base.Model):
-    """The response of a VirtualMachineScaleSet list operation.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The VirtualMachineScaleSet items on this page. Required.
-    :vartype value: list[~azure.mgmt.computefleet.models.VirtualMachineScaleSet]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.VirtualMachineScaleSet"] = rest_field()
-    """The VirtualMachineScaleSet items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.VirtualMachineScaleSet"],
-        next_link: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class VirtualMachineScaleSetManagedDiskParameters(_model_base.Model):  # pylint: disable=name-too-long
     """Describes the parameters of a ScaleSet managed disk.
 

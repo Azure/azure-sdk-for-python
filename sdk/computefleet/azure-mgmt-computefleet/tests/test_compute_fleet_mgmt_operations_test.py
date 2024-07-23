@@ -13,7 +13,6 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-
 class TestComputeFleetMgmtOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeFleetMgmtClient)
@@ -24,4 +23,3 @@ class TestComputeFleetMgmtOperations(AzureMgmtRecordedTestCase):
         response = self.client.operations.list()
         result = [r for r in response]
         assert result
-        
