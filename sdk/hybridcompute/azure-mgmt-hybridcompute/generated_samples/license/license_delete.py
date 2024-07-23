@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-03-31-preview/examples/license/License_Delete.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/license/License_Delete.json
 if __name__ == "__main__":
     main()

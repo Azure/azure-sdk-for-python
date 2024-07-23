@@ -7,14 +7,13 @@
 import pytest
 from datetime import timedelta
 from azure.communication.identity import CommunicationTokenScope
-from devtools_testutils import is_live
+from devtools_testutils import is_live, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from test_communication_identity_client import ArgumentPasser
 from utils import is_token_expiration_within_allowed_deviation, token_scope_scenarios
 from acs_identity_test_case import ACSIdentityTestCase
 from azure.communication.identity.aio import CommunicationIdentityClient
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from azure.identity.aio import DefaultAzureCredential
 from _shared.utils import get_http_logging_policy
 
 
@@ -32,7 +31,7 @@ class TestClientAsync(ACSIdentityTestCase):
         if not is_live():
             credential = AsyncFakeCredential()
         else:
-            credential = DefaultAzureCredential()
+            credential = get_credential(is_async=True)
         return CommunicationIdentityClient(
             self.endpoint, credential, http_logging_policy=get_http_logging_policy()
         )

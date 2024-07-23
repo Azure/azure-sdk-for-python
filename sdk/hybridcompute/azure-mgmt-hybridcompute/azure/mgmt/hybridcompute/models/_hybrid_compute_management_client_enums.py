@@ -117,6 +117,16 @@ class GatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PUBLIC = "Public"
 
 
+class HotpatchEnablementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of hotpatch enablement or disablement."""
+
+    UNKNOWN = "Unknown"
+    PENDING_EVALUATION = "PendingEvaluation"
+    DISABLED = "Disabled"
+    ACTION_REQUIRED = "ActionRequired"
+    ENABLED = "Enabled"
+
+
 class LastAttemptStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the status of Agent Upgrade."""
 
@@ -159,6 +169,8 @@ class LicenseProfileSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumM
     ENABLING = "Enabling"
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    DISABLING = "Disabling"
+    FAILED = "Failed"
 
 
 class LicenseProfileSubscriptionStatusUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
