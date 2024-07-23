@@ -7387,10 +7387,10 @@ class FleetsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def list_virtual_machine_scale_sets(
+    @distributed_trace
+    def list_virtual_machine_scale_sets(
         self, resource_group_name: str, name: str, **kwargs: Any
-    ) -> _models.VirtualMachineScaleSetListResult:
+    ) -> AsyncIterable["_models.VirtualMachineScaleSet"]:
         """List VirtualMachineScaleSet resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -7398,9 +7398,9 @@ class FleetsOperations:
         :type resource_group_name: str
         :param name: The name of the Fleet. Required.
         :type name: str
-        :return: VirtualMachineScaleSetListResult. The VirtualMachineScaleSetListResult is compatible
-         with MutableMapping
-        :rtype: ~azure.mgmt.computefleet.models.VirtualMachineScaleSetListResult
+        :return: An iterator like instance of VirtualMachineScaleSet
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computefleet.models.VirtualMachineScaleSet]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -7408,32 +7408,32 @@ class FleetsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "value": [
-                        {
-                            "id": "str",
-                            "operationStatus": "str",
-                            "error": {
+                    "id": "str",
+                    "operationStatus": "str",
+                    "error": {
+                        "code": "str",
+                        "details": [
+                            {
                                 "code": "str",
-                                "details": [
-                                    {
-                                        "code": "str",
-                                        "message": "str",
-                                        "target": "str"
-                                    }
-                                ],
-                                "innererror": {
-                                    "errorDetail": "str",
-                                    "exceptionType": "str"
-                                },
                                 "message": "str",
                                 "target": "str"
-                            },
-                            "type": "str"
-                        }
-                    ],
-                    "nextLink": "str"
+                            }
+                        ],
+                        "innererror": {
+                            "errorDetail": "str",
+                            "exceptionType": "str"
+                        },
+                        "message": "str",
+                        "target": "str"
+                    },
+                    "type": "str"
                 }
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VirtualMachineScaleSet]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7442,44 +7442,57 @@ class FleetsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.VirtualMachineScaleSetListResult] = kwargs.pop("cls", None)
+                _request = build_fleets_list_virtual_machine_scale_sets_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
 
-        _request = build_fleets_list_virtual_machine_scale_sets_request(
-            resource_group_name=resource_group_name,
-            name=name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VirtualMachineScaleSet], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.VirtualMachineScaleSetListResult, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

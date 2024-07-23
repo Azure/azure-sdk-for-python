@@ -611,10 +611,10 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_virtual_machine_scale_sets(self, resource_group):
-        response = await self.client.fleets.list_virtual_machine_scale_sets(
+        response = self.client.fleets.list_virtual_machine_scale_sets(
             resource_group_name=resource_group.name,
             name="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

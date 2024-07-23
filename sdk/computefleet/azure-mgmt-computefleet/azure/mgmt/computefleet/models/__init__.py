@@ -71,7 +71,6 @@ from ._models import VirtualMachineScaleSetHardwareProfile
 from ._models import VirtualMachineScaleSetIPConfiguration
 from ._models import VirtualMachineScaleSetIPConfigurationProperties
 from ._models import VirtualMachineScaleSetIpTag
-from ._models import VirtualMachineScaleSetListResult
 from ._models import VirtualMachineScaleSetManagedDiskParameters
 from ._models import VirtualMachineScaleSetNetworkConfiguration
 from ._models import VirtualMachineScaleSetNetworkConfigurationDnsSettings
@@ -194,7 +193,6 @@ __all__ = [
     "VirtualMachineScaleSetIPConfiguration",
     "VirtualMachineScaleSetIPConfigurationProperties",
     "VirtualMachineScaleSetIpTag",
-    "VirtualMachineScaleSetListResult",
     "VirtualMachineScaleSetManagedDiskParameters",
     "VirtualMachineScaleSetNetworkConfiguration",
     "VirtualMachineScaleSetNetworkConfigurationDnsSettings",
