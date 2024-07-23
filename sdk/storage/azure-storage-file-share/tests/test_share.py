@@ -1599,7 +1599,7 @@ class TestStorageShare(StorageRecordedTestCase):
         expected_server_permission = user_given_permission + 'S:NO_ACCESS_CONTROL'
         assert server_returned_permission == expected_server_permission
 
-        self._delete_shares()
+        self._delete_shares(share_client.share_name)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
