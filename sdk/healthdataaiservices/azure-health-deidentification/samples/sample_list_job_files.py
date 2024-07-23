@@ -32,8 +32,6 @@ def sample_list_job_documents():
         DeidentificationJob,
         SourceStorageLocation,
         TargetStorageLocation,
-        OperationType,
-        DocumentDataType,
     )
     from azure.core.polling import LROPoller
 

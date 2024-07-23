@@ -29,40 +29,13 @@ def sample_list_jobs():
     import os
     from azure.identity import DefaultAzureCredential
     from azure.health.deidentification import DeidentificationClient
-    from azure.health.deidentification.models import (
-        DeidentificationJob,
-        SourceStorageLocation,
-        TargetStorageLocation,
-        OperationType,
-        DocumentDataType,
-    )
-    from azure.core.polling import LROPoller
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     endpoint = endpoint.replace("https://", "")
 
-    storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
-    inputPrefix = os.environ["INPUT_PREFIX"]
-    outputPrefix = "_output"
-
     credential = DefaultAzureCredential()
 
     client = DeidentificationClient(endpoint, credential)
-
-    jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
-
-    job = DeidentificationJob(
-        source_location=SourceStorageLocation(
-            location=storage_location,
-            prefix=inputPrefix,
-        ),
-        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
-    )
-
-    print(f"Creating job with name: {jobname}")
-    client.begin_create_job(jobname, job)
 
     jobs = client.list_jobs()
 

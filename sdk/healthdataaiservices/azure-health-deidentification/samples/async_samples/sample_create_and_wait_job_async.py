@@ -33,8 +33,6 @@ async def sample_create_and_wait_job_async():
         DeidentificationJob,
         SourceStorageLocation,
         TargetStorageLocation,
-        OperationType,
-        DocumentDataType,
     )
     from azure.core.polling import AsyncLROPoller
 

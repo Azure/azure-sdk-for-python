@@ -33,8 +33,6 @@ def sample_create_and_wait_job():
         DeidentificationJob,
         SourceStorageLocation,
         TargetStorageLocation,
-        OperationType,
-        DocumentDataType,
     )
     from azure.core.polling import LROPoller
 
@@ -59,8 +57,6 @@ def sample_create_and_wait_job():
         target_location=TargetStorageLocation(
             location=storage_location, prefix=outputPrefix
         ),
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
     )
 
     lro: LROPoller = client.begin_create_job(jobname, job)

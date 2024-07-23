@@ -28,43 +28,15 @@ async def sample_list_jobs_async():
     import os
     from azure.identity.aio import DefaultAzureCredential
     from azure.health.deidentification.aio import DeidentificationClient
-    from azure.health.deidentification.models import (
-        DeidentificationJob,
-        SourceStorageLocation,
-        TargetStorageLocation,
-        OperationType,
-        DocumentDataType,
-    )
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     endpoint = endpoint.replace("https://", "")
-
-    storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
-    inputPrefix = os.environ["INPUT_PREFIX"]
-    outputPrefix = "_output"
 
     credential = DefaultAzureCredential()
 
     client = DeidentificationClient(endpoint, credential)
 
-    jobname = f"sample-job-{uuid.uuid4().hex[:8]}"
-
-    job = DeidentificationJob(
-        source_location=SourceStorageLocation(
-            location=storage_location,
-            prefix=inputPrefix,
-        ),
-        target_location=TargetStorageLocation(
-            location=storage_location, prefix=outputPrefix
-        ),
-        operation=OperationType.SURROGATE,
-        data_type=DocumentDataType.PLAINTEXT,
-    )
-
-    print(f"Creating job with name: {jobname}")
-
     async with client:
-        await client.begin_create_job(jobname, job)
         jobs = client.list_jobs()
 
         print("Listing latest 5 jobs:")

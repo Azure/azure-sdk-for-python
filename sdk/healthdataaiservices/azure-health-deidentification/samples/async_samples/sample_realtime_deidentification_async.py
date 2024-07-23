@@ -20,16 +20,13 @@ import asyncio
 
 
 async def sample_realtime_deidentification_async():
-    # [START realtime_deidentification]
+    # [START realtime_deidentification_async]
     import os
     from azure.identity.aio import DefaultAzureCredential
-    from azure.core.credentials_async import AsyncTokenCredential
     from azure.health.deidentification.aio import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationResult,
         DeidentificationContent,
-        OperationType,
-        DocumentDataType,
     )
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]

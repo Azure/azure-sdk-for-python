@@ -32,8 +32,6 @@ async def sample_list_job_documents_async():
         DeidentificationJob,
         SourceStorageLocation,
         TargetStorageLocation,
-        OperationType,
-        DocumentDataType,
     )
     from azure.core.polling import AsyncLROPoller
 
