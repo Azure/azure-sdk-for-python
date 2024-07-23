@@ -5,7 +5,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to extract printed or hand-written text from a
-    publicly accessible image URL, using an asynchronous client.
+    publicly accessible image URL, using an asynchronous client and Entra ID authentication.
 
     The asynchronous `analyze` method call returns an `ImageAnalysisResult` object.
     Its `read` property (a `ReadResult` object) includes a list of `TextBlock` objects. Currently, the
@@ -21,35 +21,33 @@ DESCRIPTION:
       the recognition of the word. 
 
 USAGE:
-    python sample_ocr_image_url_async.py
+    python sample_ocr_image_url_entra_id_auth_async.py
 
-    Set these two environment variables before running the sample:
-    1) VISION_ENDPOINT - Your endpoint URL, in the form https://your-resource-name.cognitiveservices.azure.com
-                         where `your-resource-name` is your unique Azure Computer Vision resource name.
-    2) VISION_KEY - Your Computer Vision key (a 32-character Hexadecimal number)
+    Set this environment variables before running the sample:
+    VISION_ENDPOINT - Your endpoint URL, in the form https://your-resource-name.cognitiveservices.azure.com
+                      where `your-resource-name` is your unique Azure Computer Vision resource name.
 """
 import asyncio
 
 
-async def sample_ocr_image_url_async():
+async def sample_ocr_image_url_entra_id_auth_async():
     import os
     from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
-    from azure.core.credentials import AzureKeyCredential
+    from azure.identity.aio import DefaultAzureCredential
 
-    # Set the values of your computer vision endpoint and computer vision key as environment variables:
+    # Set the value of your computer vision endpoint as environment variable:
     try:
         endpoint = os.environ["VISION_ENDPOINT"]
-        key = os.environ["VISION_KEY"]
     except KeyError:
-        print("Missing environment variable 'VISION_ENDPOINT' or 'VISION_KEY'.")
-        print("Set them before running this sample.")
+        print("Missing environment variable 'VISION_ENDPOINT'.")
+        print("Set it before running this sample.")
         exit()
 
     # Create an asynchronous Image Analysis client
     client = ImageAnalysisClient(
         endpoint=endpoint,
-        credential=AzureKeyCredential(key)
+        credential=DefaultAzureCredential(exclude_interactive_browser_credential=False),
     )
 
     # Extract text (OCR) from an image URL, asynchronously.
@@ -74,7 +72,7 @@ async def sample_ocr_image_url_async():
 
 
 async def main():
-    await sample_ocr_image_url_async()
+    await sample_ocr_image_url_entra_id_auth_async()
 
 
 if __name__ == "__main__":
