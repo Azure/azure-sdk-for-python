@@ -25,10 +25,10 @@ Cosmos database service.
 import json
 from typing import Optional, Dict, Any, List, Union
 
+from azure.core.pipeline.transport._base import HttpRequest
+
 from . import http_constants
 from .partition_key import _Empty, _Undefined
-
-from azure.core.pipeline.transport._base import HttpRequest
 
 
 # pylint: disable=protected-access
@@ -44,7 +44,6 @@ class ContainerRecreateRetryPolicy:
         self.container_rid = None
         self.container_link = None
         self.link = None
-        self._request = request
         self._headers = dict(request.headers) if request else {}
         if self._headers and self._intended_headers in self._headers:
             self.container_rid = self._headers[self._intended_headers]
