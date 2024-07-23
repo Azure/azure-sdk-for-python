@@ -150,4 +150,3 @@ def _container_recreate_exception(e) -> bool:
     )
 
     return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_owner_or_throughput_not_found)
-
