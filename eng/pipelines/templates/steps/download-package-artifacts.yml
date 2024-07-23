@@ -1,0 +1,15 @@
+steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages_windows'
+        targetPath: $(Build.ArtifactStagingDirectory)
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages_mac'
+        targetPath: $(Build.ArtifactStagingDirectory)
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages_linux'
+        targetPath: $(Build.ArtifactStagingDirectory)

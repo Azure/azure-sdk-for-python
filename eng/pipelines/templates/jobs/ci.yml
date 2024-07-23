@@ -132,20 +132,7 @@ jobs:
       os: linux
 
     steps:
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        artifactName: 'packages_windows'
-        targetPath: $(Build.ArtifactStagingDirectory)/packages
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        artifactName: 'packages_mac'
-        targetPath: $(Build.ArtifactStagingDirectory)/packages
-
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        artifactName: 'packages_linux'
-        targetPath: $(Build.ArtifactStagingDirectory)/packages
+    - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
