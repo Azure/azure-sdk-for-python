@@ -57,6 +57,9 @@ steps:
     - template: auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
+  - pwsh: |
+      Get-ChildItem -R "$(Build.ArtifactStagingDirectory)" | % { Write-Host $_.FullName }
+    displayName: display visible files
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
