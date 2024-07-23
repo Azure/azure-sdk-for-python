@@ -35,7 +35,6 @@ async def sample_list_jobs_async():
         OperationType,
         DocumentDataType,
     )
-    from azure.core.polling import LROPoller
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
     endpoint = endpoint.replace("https://", "")
