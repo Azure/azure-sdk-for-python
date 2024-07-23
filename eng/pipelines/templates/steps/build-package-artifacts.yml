@@ -28,7 +28,7 @@ parameters:
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
-    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD', 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     inputs:
       versionSpec: $(PythonVersion)
 
@@ -49,7 +49,7 @@ steps:
     parameters:
       VirtualEnvironmentName: "venv"
       Activate: false
-      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD', 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - pwsh: |
       $(VENV_ACTIVATION_SCRIPT)
@@ -57,12 +57,12 @@ steps:
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
     displayName: 'Prep Environment'
-    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD', 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - template: set-dev-build.yml@self
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      CustomCondition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD', 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - task: Powershell@2
     inputs:
@@ -74,7 +74,7 @@ steps:
       pwsh: true
       workingDirectory: $(Pipeline.Workspace)
     displayName: Update package properties with dev version
-    condition: and(succeeded(), eq(variables['SetDevVersion'],'true'), or(eq(variables['ENABLE_EXTENSION_BUILD', 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    condition: and(succeeded(), eq(variables['SetDevVersion'],'true'), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - script: |
       sudo apt-get update
@@ -88,7 +88,7 @@ steps:
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
-    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD', 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
