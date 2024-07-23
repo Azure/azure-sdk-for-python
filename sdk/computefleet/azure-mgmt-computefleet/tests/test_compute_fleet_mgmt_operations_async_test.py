@@ -14,7 +14,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
-
 class TestComputeFleetMgmtOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeFleetMgmtClient, is_async=True)
@@ -25,4 +24,3 @@ class TestComputeFleetMgmtOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.operations.list()
         result = [r async for r in response]
         assert result
-        
