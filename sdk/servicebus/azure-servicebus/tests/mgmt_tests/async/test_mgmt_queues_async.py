@@ -13,7 +13,7 @@ from azure.servicebus.management import QueueProperties
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
 from azure.servicebus._common.utils import utc_now
 
-from devtools_testutils import AzureMgmtRecordedTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from tests.sb_env_loader import (
     ServiceBusPreparer
@@ -38,7 +38,11 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     async def test_async_mgmt_queue_list_basic(self, servicebus_connection_str,
                                                         servicebus_fully_qualified_namespace, servicebus_sas_policy,
                                                         servicebus_sas_key):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 0
@@ -65,10 +69,14 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_with_special_chars(self, servicebus_connection_str):
+    async def test_async_mgmt_queue_list_with_special_chars(self, servicebus_fully_qualified_namespace):
         # Queue names can contain letters, numbers, periods (.), hyphens (-), underscores (_), and slashes (/), up to 260 characters. Queue names are also case-insensitive.
         queue_name = 'txt/.-_123'
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         assert len(queues) == 0
@@ -81,9 +89,13 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_with_parameters(self, servicebus_connection_str):
+    async def test_async_mgmt_queue_list_with_parameters(self, servicebus_fully_qualified_namespace):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await run_test_async_mgmt_list_with_parameters(AsyncMgmtQueueListTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
@@ -118,15 +130,23 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_with_negative_parameters(self, servicebus_connection_str):
+    async def test_async_mgmt_queue_list_with_negative_parameters(self, servicebus_fully_qualified_namespace):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await run_test_async_mgmt_list_with_negative_parameters(AsyncMgmtQueueListTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_delete_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_delete_basic(self, servicebus_fully_qualified_namespace):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
         queues = await async_pageable_to_list(mgmt_service.list_queues())
@@ -148,8 +168,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_delete_one_and_check_not_existing(self, servicebus_fully_qualified_namespace):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         for i in range(10):
             await mgmt_service.create_queue("queue{}".format(i))
@@ -168,8 +192,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_delete_negtive(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_delete_negtive(self, servicebus_fully_qualified_namespace):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
         queues = await async_pageable_to_list(mgmt_service.list_queues())
@@ -193,8 +221,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_create_by_name(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_create_by_name(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "eidk"
         created_at_utc = utc_now()
@@ -210,8 +242,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_create_with_invalid_name(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_create_with_invalid_name(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
 
         with pytest.raises(HttpResponseError):
             await mgmt_service.create_queue(Exception())
@@ -221,8 +257,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_create_with_queue_description(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_create_with_queue_description(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "dkldf"
         queue_name_2 = "vjiqjx"
@@ -312,9 +352,13 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.skip("Unkip after creating premium account in arm template")
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_premium_create_with_queue_description(self, servicebus_connection_str,
+    async def test_async_mgmt_queue_premium_create_with_queue_description(self, servicebus_fully_qualified_namespace,
                                                                   **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "dkldf"
         queue_name_2 = "vjiqjx"
@@ -405,8 +449,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_create_duplicate(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_create_duplicate(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "eriodk"
         await mgmt_service.create_queue(queue_name)
@@ -420,7 +468,11 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_async_mgmt_queue_update_success(self, **kwargs):
         servicebus_connection_str, servicebus_fully_qualified_namespace = kwargs.pop('servicebus_connection_str'), kwargs.pop('servicebus_fully_qualified_namespace')
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "ewuidfj"
         topic_name = "dkfjaks"
@@ -537,8 +589,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_update_invalid(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_update_invalid(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "vbmfm"
         queue_description = await mgmt_service.create_queue(queue_name)
@@ -579,8 +635,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_runtime_properties_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_list_runtime_properties_basic(self, servicebus_fully_qualified_namespace):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queues = await async_pageable_to_list(mgmt_service.list_queues())
         queues_infos = await async_pageable_to_list(mgmt_service.list_queues_runtime_properties())
@@ -615,22 +675,34 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_runtime_prop_w_neg_params(self, servicebus_connection_str):
+    async def test_async_mgmt_queue_list_runtime_prop_w_neg_params(self, servicebus_fully_qualified_namespace):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await run_test_async_mgmt_list_with_negative_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_list_runtime_prop_w_param(self, servicebus_connection_str):
+    async def test_async_mgmt_queue_list_runtime_prop_w_param(self, servicebus_fully_qualified_namespace):
         pytest.skip("start_idx and max_count are currently removed, they might come back in the future.")
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await run_test_async_mgmt_list_with_parameters(AsyncMgmtQueueListRuntimeInfoTestHelper(mgmt_service))
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_get_runtime_properties_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_get_runtime_properties_basic(self, servicebus_fully_qualified_namespace):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         await mgmt_service.create_queue("test_queue")
         queue_runtime_properties = await mgmt_service.get_queue_runtime_properties("test_queue")
@@ -651,8 +723,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_queue_get_runtime_properties_negative(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_async_mgmt_queue_get_runtime_properties_negative(self, servicebus_fully_qualified_namespace):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         with pytest.raises(TypeError):
             await mgmt_service.get_queue_runtime_properties(None)
 
@@ -665,7 +741,11 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_mgmt_queue_async_update_dict_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "fjruid"
         queue_description = await mgmt_service.create_queue(queue_name)
@@ -752,8 +832,12 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     
     @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_queue_async_update_dict_error(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    async def test_mgmt_queue_async_update_dict_error(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential(is_async=True)
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         await clear_queues(mgmt_service)
         queue_name = "fjruid"
         queue_description = await mgmt_service.create_queue(queue_name)
