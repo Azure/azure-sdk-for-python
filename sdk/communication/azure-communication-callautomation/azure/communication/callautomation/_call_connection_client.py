@@ -7,7 +7,6 @@
 from typing import TYPE_CHECKING, Optional, List, Union, Dict, overload
 from urllib.parse import urlparse
 import warnings
-
 from typing_extensions import Literal
 
 from azure.core.paging import ItemPaged
@@ -904,6 +903,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         **kwargs
     ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request sent out to a participant.
+
         :param  invitation_id: The invitation ID that was used to add the participant.
         :type invitation_id: str
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -917,6 +917,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.callautomation.CancelAddParticipantOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         cancel_add_participant_request = CancelAddParticipantRequest(
             invitation_id=invitation_id,
             operation_context=operation_context,

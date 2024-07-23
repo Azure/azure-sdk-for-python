@@ -551,18 +551,6 @@ class TranscriptionSubscription:
         state: Optional[Union[str, "TranscriptionSubscriptionState"]] = None,
         subscribed_result_states: Optional[List[Union[str, "TranscriptionResultState"]]] = None
     ) -> None:
-        """
-        :keyword id: Subscription Id.
-        :paramtype id: str
-        :keyword state: Transcription subscription state. Known values are: "disabled", "inactive", and
-        "active".
-        :paramtype state: str or
-        ~azure.communication.callautomation.models.TranscriptionSubscriptionState
-        :keyword subscribed_result_states: Subscribed transcription result types.
-        :paramtype subscribed_result_states: list[str or
-        ~azure.communication.callautomation.models.TranscriptionResultState]
-        """
-
         self.id = id
         self.state = state
         self.subscribed_result_states = subscribed_result_states
