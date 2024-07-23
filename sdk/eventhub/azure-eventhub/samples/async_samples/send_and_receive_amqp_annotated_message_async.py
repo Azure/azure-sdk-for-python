@@ -13,9 +13,9 @@ import os
 import asyncio
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
+from azure.identity.aio import DefaultAzureCredential
 
-
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 async def send_data_message(producer):
@@ -94,9 +94,10 @@ async def receive_and_parse_message(consumer):
 
 async def main():
     # Send AmqpAnnotatedMessage
-    producer = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        eventhub_name=EVENTHUB_NAME
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
     )
     async with producer:
         await send_data_message(producer)
@@ -104,8 +105,9 @@ async def main():
         await send_value_message(producer)
 
     # Receive
-    consumer = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    consumer = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+        credential=DefaultAzureCredential(),
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,
     )
