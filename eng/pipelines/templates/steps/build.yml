@@ -27,7 +27,7 @@ steps:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-    - template: ../steps/build-package-artifacts.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
