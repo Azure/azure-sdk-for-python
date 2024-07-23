@@ -28,7 +28,7 @@ def example_create_eventhub_producer_client():
     eventhub_fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
     eventhub_name = os.environ['EVENT_HUB_NAME']
     producer = EventHubProducerClient(
-        conn_str=eventhub_fully_qualified_namespace,
+        fully_qualified_namespace=eventhub_fully_qualified_namespace,
         eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
         credential=DefaultAzureCredential()
     )

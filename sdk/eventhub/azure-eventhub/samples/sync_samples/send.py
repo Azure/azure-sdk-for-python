@@ -89,7 +89,6 @@ producer = EventHubProducerClient(
     fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
     credential=DefaultAzureCredential(),
-    eventhub_name=EVENTHUB_NAME
 )
 
 start_time = time.time()

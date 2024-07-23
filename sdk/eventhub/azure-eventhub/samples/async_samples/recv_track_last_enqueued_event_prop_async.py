@@ -37,7 +37,6 @@ async def main():
         eventhub_name=EVENTHUB_NAME,
         credential=DefaultAzureCredential(),
         consumer_group="$default",
-        eventhub_name=EVENTHUB_NAME,
     )
     async with client:
         await client.receive(

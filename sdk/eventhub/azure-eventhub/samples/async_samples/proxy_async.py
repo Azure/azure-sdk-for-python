@@ -38,7 +38,6 @@ async def main():
         eventhub_name=EVENTHUB_NAME,
         credential=DefaultAzureCredential(),
         consumer_group='$Default',
-        eventhub_name=EVENTHUB_NAME,
         http_proxy=HTTP_PROXY
     )
 
