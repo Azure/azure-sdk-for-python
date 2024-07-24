@@ -1572,7 +1572,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_get_permission_for_share_with_formatting(self, **kwargs):
+    def test_get_permission_format(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

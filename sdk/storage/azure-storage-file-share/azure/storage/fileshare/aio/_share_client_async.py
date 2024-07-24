@@ -778,8 +778,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param str file_permission:
             File permission, a Portable SDDL
         :keyword file_permission_format:
-            Specifies the format in which the permission is returned. Acceptable values are "SDDL" or "binary".
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat or None
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -809,8 +809,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :param str permission_key:
             Key of the file permission to retrieve
         :keyword file_permission_format:
-            Specifies the format in which the permission is returned. Acceptable values are "SDDL" or "binary".
-        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat or None
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

@@ -1607,7 +1607,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_get_permission_for_share_with_formatting(self, **kwargs):
+    async def test_get_permission_format(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

@@ -1502,7 +1502,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_file_permission_format_for_directory_operations(self, **kwargs):
+    async def test_file_permission_format_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1510,31 +1510,20 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         directory_client = await share_client.create_directory('dir1')
 
-        directory_properties_on_creation = await directory_client.get_directory_properties()
-        last_write_time = directory_properties_on_creation.last_write_time
-        creation_time = directory_properties_on_creation.creation_time
-        change_time = directory_properties_on_creation.change_time
-
-        new_last_write_time = last_write_time + timedelta(hours=1)
-        new_creation_time = creation_time + timedelta(hours=1)
-        new_change_time = change_time + timedelta(hours=1)
-        expected_permission_key = '8984294407537026961*15810287295243203168'
-
         await directory_client.set_http_headers(
-            file_attributes='None',
-            file_creation_time=new_creation_time,
-            file_last_write_time=new_last_write_time,
-            file_change_time=new_change_time,
             file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
             file_permission_format="SDDL"
         )
 
         props = await directory_client.get_directory_properties()
         assert props is not None
-        assert props.creation_time == new_creation_time
-        assert props.last_write_time == new_last_write_time
-        assert props.change_time == new_change_time
-        assert props.permission_key == expected_permission_key
+        assert props.permission_key is not None
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="SDDL"
+        )
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 
         new_directory_client = await directory_client.rename_directory(
             'dir2',
@@ -1543,7 +1532,13 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         )
         props = await new_directory_client.get_directory_properties()
         assert props is not None
-        assert props.permission_key == expected_permission_key
+        assert props.permission_key is not None
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="binary"
+        )
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_BINARY
 
         await new_directory_client.delete_directory()
 

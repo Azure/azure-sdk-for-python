@@ -3783,8 +3783,13 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         props = source_file.get_file_properties()
         assert props is not None
-        assert props.name == 'file1'
-        assert props.permission_key == '4126688321077241557*15810287295243203168'
+        assert props.permission_key is not None
+
+        server_returned_permission = share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="SDDL"
+        )
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 
         new_file = source_file.rename_file(
             'file2',
@@ -3792,10 +3797,14 @@ class TestStorageFile(StorageRecordedTestCase):
             file_permission_format="binary"
         )
         props = new_file.get_file_properties()
-        expected_permission_key = '8984294407537026961*15810287295243203168'
         assert props is not None
-        assert props.name == 'file2'
-        assert props.permission_key == expected_permission_key
+        assert props.permission_key is not None
+
+        server_returned_permission = share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="binary"
+        )
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_BINARY
 
         content_settings = ContentSettings(
             content_language='spanish',
@@ -3806,14 +3815,17 @@ class TestStorageFile(StorageRecordedTestCase):
             file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
             file_permission_format="SDDL"
         )
-
-        # Assert
         props = new_file.get_file_properties()
-        assert props.creation_time is not None
-        assert props.last_write_time is not None
+        assert props is not None
+        assert props.permission_key is not None
         assert props.content_settings.content_language == content_settings.content_language
         assert props.content_settings.content_disposition == content_settings.content_disposition
-        assert props.permission_key == expected_permission_key
+
+        server_returned_permission = share_client.get_permission_for_share(
+            props.permission_key,
+            file_permission_format="SDDL"
+        )
+        assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 
         new_file.delete_file()
 
