@@ -595,6 +595,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         self.assertNamedItemInContainer(file_systems, file_system.file_system_name)
         assert file_systems[0].metadata == metadata
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_set_file_system_acl(self, **kwargs):
@@ -653,6 +654,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         assert file_systems is not None
         assert len(file_systems) >= 3
 
+    @pytest.mark.playback_test_only
     @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_list_file_systems_with_public_access_async(self, **kwargs):
