@@ -22,7 +22,7 @@ These sample programs show common scenarios for using Azure OpenAI offerings.
 
 ## Prerequisites
 
-* Python 3.8 or later is required to use this package
+* Python 3.8 or greater
 * You must have an [Azure subscription][azure_subscription] and
 * Access granted to Azure OpenAI in the desired Azure subscription
   Currently, access to this service is granted only by application. You can apply for access to Azure OpenAI by completing the form at <https://aka.ms/oai/access>.
@@ -56,7 +56,7 @@ pip install openai
 
 ## Next steps
 
-Check out the [Azure OpenAI samples repo][aoai_samples] to learn more about
+Check out [Azure OpenAI samples][aoai_samples] to learn more about
 what you can do with Azure OpenAI.
 
 [versioning_history]: https://github.com/openai/openai-python/releases
@@ -66,5 +66,5 @@ what you can do with Azure OpenAI.
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[aoai_samples]: https://github.com/Azure-Samples/openai
-[aoai-resource_deployment]: https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/create-resource
+[aoai_samples]: https://aka.ms/azai
+[aoai-resource_deployment]: https://learn.microsoft.com/azure/ai-services/openai/how-to/create-resource

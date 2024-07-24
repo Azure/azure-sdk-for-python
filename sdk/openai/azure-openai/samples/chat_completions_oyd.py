@@ -23,15 +23,14 @@ USAGE:
     3) AZURE_OPENAI_SEARCH_ENDPOINT - the endpoint to your Azure Search resource.
     4) AZURE_OPENAI_SEARCH_INDEX - the index name you chose when creating your Azure Search index.
 """
-AZURE_OPENAI_CHAT_DEPLOYMENT="gpt-35-turbo"
-AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
+from ..tests.conftest import GA
 
 def chat_completion_oyd_studio_viewcode() -> None:
     import os
     from openai import AzureOpenAI
     from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-    endpoint = os.getenv(AZURE_OPENAI_ENDPOINT)
+    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
     deployment = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT")
 
     token_provider = get_bearer_token_provider(
@@ -41,7 +40,7 @@ def chat_completion_oyd_studio_viewcode() -> None:
     client = AzureOpenAI(
         azure_endpoint=endpoint,
         azure_ad_token_provider=token_provider,
-        api_version="2024-02-01",
+        api_version=GA,
     )
 
     completion = client.chat.completions.create(

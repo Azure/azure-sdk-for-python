@@ -8,7 +8,7 @@
 FILE: chat_completions_quickstart.py
 
 DESCRIPTION:
-    This sample demonstrates how to get started with Chat Completions using the Azure OpenAI SDK for Python.
+    This sample demonstrates how to get started with Azure OpenAI Chat Completions using the official OpenAI SDK for Python.
 
 USAGE:
     python chat_completions_quickstart.py
@@ -37,7 +37,7 @@ def chat_completion_quickstart() -> None:
     client = AzureOpenAI(
         azure_endpoint=os.environ[AZURE_OPENAI_ENDPOINT],
         azure_ad_token_provider=token_provider,
-        api_version="2024-02-01",
+        api_version="2024-05-13",
     )
 
     response = client.chat.completions.create(
