@@ -149,7 +149,7 @@ class ChangelogTracker(BreakingChangesTracker):
             buffer.append("")
             for _, bc in enumerate(content):
                 msg, _, *args = bc
-                buffer.append(msg.format(*args))
+                buffer.append("  - " + msg.format(*args))
             buffer.append("")
             return buffer
 
