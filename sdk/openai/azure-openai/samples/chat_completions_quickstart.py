@@ -8,7 +8,7 @@
 FILE: chat_completions_quickstart.py
 
 DESCRIPTION:
-    This sample demonstrates how to get started with Chat Completions using Azure OpenAI.
+    This sample demonstrates how to get started with Chat Completions using the Azure OpenAI SDK for Python.
 
 USAGE:
     python chat_completions_quickstart.py
@@ -22,6 +22,7 @@ USAGE:
     2) AZURE_OPENAI_CHAT_DEPLOYMENT - the deployment name you chose when deploying your model.
 """
 
+AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 
 def chat_completion_quickstart() -> None:
     #[START chat_completion_quickstart]
@@ -34,13 +35,13 @@ def chat_completion_quickstart() -> None:
     )
 
     client = AzureOpenAI(
-        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+        azure_endpoint=os.environ[AZURE_OPENAI_ENDPOINT],
         azure_ad_token_provider=token_provider,
         api_version="2024-02-01",
     )
 
     response = client.chat.completions.create(
-        model=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
+        model="gpt-4-0613", #os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {
