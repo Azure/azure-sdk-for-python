@@ -1,16 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import asyncio
-import datetime
-import os
-import uuid
-
-
-from azure.identity.aio import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_radiology_procedure_inference_async.py
 
@@ -32,8 +22,15 @@ USAGE:
 2. python sample_radiology_procedure_inference_async.py
    
 """
+import asyncio
+import datetime
+import os
+import uuid
 
 
+from azure.identity.aio import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 class HealthInsightsSamples:
     async def __aenter__(self):
         print("Opening connection...")
@@ -125,8 +122,7 @@ class HealthInsightsSamples:
             
             self.display_radiology_procedure(radiology_insights_result)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_radiology_procedure(self, radiology_insights_result):
         # [START display_radiology_procedure]
@@ -176,11 +172,9 @@ class HealthInsightsSamples:
 
     # [END display_radiology_procedure]
 
-
 async def main():
     async with HealthInsightsSamples() as sample:
         await sample.radiology_insights_async()
-
 
 if __name__ == "__main__":
     asyncio.run(main())

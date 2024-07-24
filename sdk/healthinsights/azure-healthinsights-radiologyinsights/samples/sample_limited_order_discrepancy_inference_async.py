@@ -20,14 +20,12 @@ USAGE:
    
 """
 
-
 import asyncio
 import datetime
 import os
 import uuid
 
 from azure.healthinsights.radiologyinsights import models
-
 
 async def radiology_insights_async() -> None:
 
@@ -117,9 +115,7 @@ async def radiology_insights_async() -> None:
             
             display_limited_order_discrepancy(radiology_insights_result)
     except Exception as ex:
-        print(str(ex))
-        return
-
+        raise ex
 
 def display_limited_order_discrepancy(radiology_insights_result):
     # [START display_limited_order_discrepancy]
@@ -149,9 +145,8 @@ def display_limited_order_discrepancy(radiology_insights_result):
 
     # [END display_limited_order_discrepancy]
 
-
 if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())
     except Exception as ex:
-        print(str(ex))
+       raise ex

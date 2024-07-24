@@ -31,7 +31,6 @@ import uuid
 
 from azure.healthinsights.radiologyinsights import models
 
-
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
@@ -120,8 +119,7 @@ async def radiology_insights_async() -> None:
             
             display_complete_order_discrepancy(radiology_insights_result)
     except Exception as ex:
-        print(str(ex))
-        return
+        raise ex
 
 
 def display_complete_order_discrepancy(radiology_insights_result):
@@ -157,4 +155,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())
     except Exception as ex:
-        print(str(ex))
+        raise ex

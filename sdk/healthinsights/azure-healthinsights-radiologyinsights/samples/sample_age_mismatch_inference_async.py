@@ -30,7 +30,6 @@ import os
 import uuid
 from azure.healthinsights.radiologyinsights import models
 
-
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
@@ -122,8 +121,7 @@ async def radiology_insights_async() -> None:
             radiology_insights_result = await poller.result()
             display_age_mismatch(radiology_insights_result, doc_content1)
     except Exception as ex:
-        print(str(ex))
-        return
+        raise ex
 
 
 def display_age_mismatch(radiology_insights_result, doc_content1):
@@ -154,12 +152,10 @@ def display_age_mismatch(radiology_insights_result, doc_content1):
                                             Tokens = Tokens + " " + evidence
                 print(f"Age Mismatch: Evidence: {Tokens}")
 
-
 # [END display_age_mismatch]
-
 
 if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())
     except Exception as ex:
-        print(str(ex))
+        raise ex

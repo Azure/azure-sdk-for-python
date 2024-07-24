@@ -29,9 +29,7 @@ import datetime
 import os
 import uuid
 
-
 from azure.healthinsights.radiologyinsights import models
-
 
 async def radiology_insights_async() -> None:
 
@@ -121,9 +119,7 @@ async def radiology_insights_async() -> None:
             
             display_followup_communication(radiology_insights_result)
     except Exception as ex:
-        print(str(ex))
-        return
-
+        raise ex
 
 def display_followup_communication(radiology_insights_result):
     # [START display_followup_communication]
@@ -145,9 +141,8 @@ def display_followup_communication(radiology_insights_result):
 
     # [END display_followup_communication]
 
-
 if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())
     except Exception as ex:
-        print(str(ex))
+        raise ex

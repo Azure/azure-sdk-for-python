@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload, MutableMapping
 
 __all__: List[str] = [
@@ -152,7 +153,6 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 params=_params,
                 **kwargs
             )# type: ignore
-            await raw_result.http_response.read()
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):

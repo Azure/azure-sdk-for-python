@@ -1,16 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import asyncio
-import datetime
-import os
-import uuid
-
-
-from azure.identity.aio import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_sex_mismatch_inference_async.py
 
@@ -29,8 +19,15 @@ USAGE:
 2. python sample_sex_mismatch_inference_async.py
 
 """
+import asyncio
+import datetime
+import os
+import uuid
 
 
+from azure.identity.aio import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 class HealthInsightsSamples:
     async def __aenter__(self):
         print("Opening connection...")
@@ -125,8 +122,7 @@ class HealthInsightsSamples:
             
             self.display_sex_mismatch(radiology_insights_result)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_sex_mismatch(self, radiology_insights_result):
         # [START display_sex_mismatch]

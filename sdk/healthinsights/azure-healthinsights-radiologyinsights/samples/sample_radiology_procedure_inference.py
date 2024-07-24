@@ -1,15 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import datetime
-import os
-import uuid
-
-
-from azure.identity import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_radiology_procedure_inference.py
 
@@ -31,7 +22,14 @@ USAGE:
 2. python sample_radiology_procedure_inference.py
    
 """
+import datetime
+import os
+import uuid
 
+
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
@@ -114,8 +112,7 @@ class HealthInsightsSyncSamples:
             radiology_insights_result = poller.result()
             self.display_radiology_procedure(radiology_insights_result)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_radiology_procedure(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:

@@ -1,15 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import datetime
-import os
-import uuid
-
-
-from azure.identity import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_finding_inference.py
 
@@ -45,6 +36,14 @@ USAGE:
    
 """
 
+import datetime
+import os
+import uuid
+
+
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
@@ -123,8 +122,7 @@ class HealthInsightsSyncSamples:
             radiology_insights_result = poller.result()
             self.display_finding(radiology_insights_result)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_finding(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
@@ -240,11 +238,9 @@ class HealthInsightsSyncSamples:
                                             f"Finding {counter}: INFERENCE EXTENSIONS: {attribute.capitalize()}: {extension.url}"
                                         )
 
-
 def main():
     sample = HealthInsightsSyncSamples()
     sample.radiology_insights_sync()
-
 
 if __name__ == "__main__":
     main()

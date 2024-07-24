@@ -1,15 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import datetime
-import os
-import uuid
-
-
-from azure.identity import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_age_mismatch_inference.py
 
@@ -33,7 +24,14 @@ USAGE:
 2. python sample_age_mismatch_inference.py
    
 """
+import datetime
+import os
+import uuid
 
+
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
@@ -119,8 +117,7 @@ class HealthInsightsSyncSamples:
             radiology_insights_result = poller.result()
             self.display_age_mismatch(radiology_insights_result, doc_content1)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_age_mismatch(self, radiology_insights_result, doc_content1):
         for patient_result in radiology_insights_result.patient_results:
@@ -148,7 +145,6 @@ class HealthInsightsSyncSamples:
                                             if not evidence in Tokens:
                                                 Tokens = Tokens + " " + evidence
                     print(f"Age Mismatch: Evidence: {Tokens}")
-
 
 def main():
     sample = HealthInsightsSyncSamples()

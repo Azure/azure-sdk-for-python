@@ -1,16 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import asyncio
-import datetime
-import os
-import uuid
-
-
-from azure.identity.aio import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_laterality_discrepancy_inference_async.py
 
@@ -29,7 +19,15 @@ USAGE:
 2. python sample_laterality_discrepancy_inference_async.py
    
 """
+import asyncio
+import datetime
+import os
+import uuid
 
+
+from azure.identity.aio import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 
 async def radiology_insights_async() -> None:
 
@@ -110,9 +108,7 @@ async def radiology_insights_async() -> None:
             
             display_laterality_discrepancy(radiology_insights_result)
     except Exception as ex:
-        print(str(ex))
-        return
-
+        raise ex
 
 def display_laterality_discrepancy(radiology_insights_result):
     # [START display_laterality_discrepancy]
@@ -127,9 +123,8 @@ def display_laterality_discrepancy(radiology_insights_result):
 
     # [END display_laterality_discrepancy]
 
-
 if __name__ == "__main__":
     try:
         asyncio.run(radiology_insights_async())
     except Exception as ex:
-        print(str(ex))
+        raise ex

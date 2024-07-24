@@ -1,15 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import datetime
-import os
-import uuid
-
-
-from azure.identity import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_followup_recommendation_inference.py
 
@@ -47,7 +38,14 @@ USAGE:
 2. python sample_followup_recommendation_inference.py
    
 """
+import datetime
+import os
+import uuid
 
+
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
@@ -130,8 +128,7 @@ class HealthInsightsSyncSamples:
             radiology_insights_result = poller.result()
             self.display_followup_recommendation(radiology_insights_result)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_followup_recommendation(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
@@ -246,7 +243,6 @@ class HealthInsightsSyncSamples:
                                                     )
                                     else:
                                         print(f"Follow-up Recommendation: IMAGING PROCEDURE: Modality: none")
-
 
 def main():
     sample = HealthInsightsSyncSamples()

@@ -1,15 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import datetime
-import os
-import uuid
-
-
-from azure.identity import DefaultAzureCredential
-from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
-from azure.healthinsights.radiologyinsights import models
-
 """
 FILE: sample_critical_result_inference.py
 
@@ -28,7 +19,14 @@ USAGE:
 2. python sample_critical_result_inference.py
    
 """
+import datetime
+import os
+import uuid
 
+
+from azure.identity import DefaultAzureCredential
+from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
+from azure.healthinsights.radiologyinsights import models
 
 class HealthInsightsSyncSamples:
     def radiology_insights_sync(self) -> None:
@@ -114,8 +112,7 @@ class HealthInsightsSyncSamples:
             radiology_insights_result = poller.result()
             self.display_critical_results(radiology_insights_result)
         except Exception as ex:
-            print(str(ex))
-            return
+            raise ex
 
     def display_critical_results(self, radiology_insights_result):
         for patient_result in radiology_insights_result.patient_results:
@@ -123,7 +120,6 @@ class HealthInsightsSyncSamples:
                 if ri_inference.kind == models.RadiologyInsightsInferenceType.CRITICAL_RESULT:
                     critical_result = ri_inference.result
                     print(f"Critical Result Inference found: {critical_result.description}")
-
 
 def main():
     sample = HealthInsightsSyncSamples()
