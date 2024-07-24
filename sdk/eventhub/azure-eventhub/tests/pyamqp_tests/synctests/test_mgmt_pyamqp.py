@@ -17,17 +17,8 @@ def test_mgmt_call_conn_str(connstr_receivers):
     client._start_producer("0",60)
 
 @pytest.mark.livetest
-def test_mgmt_call_default_azure_credential(live_eventhub):
-    credential = DefaultAzureCredential()
-    client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
-                                             eventhub_name=live_eventhub['event_hub'],
-                                             credential=credential,
-                                             user_agent='customized information')
-    client._start_producer("0",60)
-
-@pytest.mark.livetest
-def test_mgmt_call_credential(live_eventhub):
-    credential = EnvironmentCredential()
+def test_mgmt_call_token_credential(live_eventhub, get_credential):
+    credential = get_credential()
     client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=credential,
