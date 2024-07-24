@@ -14,6 +14,7 @@ from ._models import ChatCompletionsFunctionToolDefinition
 from ._models import ChatCompletionsFunctionToolSelection
 from ._models import ChatCompletionsNamedFunctionToolSelection
 from ._models import ChatCompletionsNamedToolSelection
+from ._models import ChatCompletionsResponseFormat
 from ._models import ChatCompletionsToolCall
 from ._models import ChatCompletionsToolDefinition
 from ._models import ChatRequestMessage
@@ -36,7 +37,6 @@ from ._models import TextContentItem
 from ._models import ToolMessage
 from ._models import UserMessage
 
-from ._enums import ChatCompletionsResponseFormat
 from ._enums import ChatCompletionsToolSelectionPreset
 from ._enums import ChatRole
 from ._enums import CompletionsFinishReason
@@ -60,6 +60,7 @@ __all__ = [
     "ChatCompletionsFunctionToolSelection",
     "ChatCompletionsNamedFunctionToolSelection",
     "ChatCompletionsNamedToolSelection",
+    "ChatCompletionsResponseFormat",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
     "ChatRequestMessage",
@@ -81,7 +82,6 @@ __all__ = [
     "TextContentItem",
     "ToolMessage",
     "UserMessage",
-    "ChatCompletionsResponseFormat",
     "ChatCompletionsToolSelectionPreset",
     "ChatRole",
     "CompletionsFinishReason",

@@ -140,8 +140,17 @@ class TestModelClient(ModelClientTestBase):
                     sdk.models.UserMessage(content="user prompt 1"),
                     sdk.models.AssistantMessage(
                         tool_calls=[
-                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-first-function-name", arguments={"first_argument": "value1", "second_argument": "value2"})),
-                            sdk.models.ChatCompletionsFunctionToolCall(function=sdk.models.FunctionCall(name="my-second-function-name", arguments={"first_argument": "value1"})),
+                            sdk.models.ChatCompletionsFunctionToolCall(
+                                function=sdk.models.FunctionCall(
+                                    name="my-first-function-name",
+                                    arguments={"first_argument": "value1", "second_argument": "value2"},
+                                )
+                            ),
+                            sdk.models.ChatCompletionsFunctionToolCall(
+                                function=sdk.models.FunctionCall(
+                                    name="my-second-function-name", arguments={"first_argument": "value1"}
+                                )
+                            ),
                         ]
                     ),
                     sdk.models.ToolMessage(tool_call_id="some id", content="function response"),
@@ -192,7 +201,7 @@ class TestModelClient(ModelClientTestBase):
             assert headers["Authorization"] == "Bearer key-value"
             assert (
                 self.pipeline_request.http_request.data
-                == '{\"frequency_penalty\": 0.123, \"max_tokens\": 321, \"messages\": [{\"role\": \"system\", \"content\": \"system prompt\"}, {\"role\": \"user\", \"content\": \"user prompt 1\"}, {\"role\": \"assistant\", \"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"arguments\": {\"first_argument\": \"value1\", \"second_argument\": \"value2\"}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"arguments\": {\"first_argument\": \"value1\"}}}]}, {\"role\": \"tool\", \"tool_call_id\": \"some id\", \"content\": \"function response\"}, {\"role\": \"assistant\", \"content\": \"assistant prompt\"}, {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"text\": \"user prompt 2\"}, {\"type\": \"image_url\", \"image_url\": {\"url\": \"https://does.not.exit/image.png\", \"detail\": \"high\"}}]}], \"model\": \"some-model-id\", \"presence_penalty\": 4.567, \"response_format\": \"json_object\", \"seed\": 654, \"stop\": [\"stop1\", \"stop2\"], \"stream\": true, \"temperature\": 8.976, \"tool_choice\": \"auto\", \"tools\": [{\"type\": \"function\", \"function\": {\"name\": \"my-first-function-name\", \"description\": \"My first function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"string\", \"description\": \"First argument description\"}, \"second_argument\": {\"type\": \"string\", \"description\": \"Second argument description\"}}, \"required\": [\"first_argument\", \"second_argument\"]}}}, {\"type\": \"function\", \"function\": {\"name\": \"my-second-function-name\", \"description\": \"My second function description\", \"parameters\": {\"type\": \"object\", \"properties\": {\"first_argument\": {\"type\": \"int\", \"description\": \"First argument description\"}}, \"required\": [\"first_argument\"]}}}], \"top_p\": 9.876, \"key1\": 1, \"key2\": true, \"key3\": \"Some value\", \"key4\": [1, 2, 3], \"key5\": {\"key6\": 2, \"key7\": false, \"key8\": \"Some other value\", \"key9\": [4, 5, 6, 7]}}'
+                == '{"frequency_penalty": 0.123, "max_tokens": 321, "messages": [{"role": "system", "content": "system prompt"}, {"role": "user", "content": "user prompt 1"}, {"role": "assistant", "tool_calls": [{"type": "function", "function": {"name": "my-first-function-name", "arguments": {"first_argument": "value1", "second_argument": "value2"}}}, {"type": "function", "function": {"name": "my-second-function-name", "arguments": {"first_argument": "value1"}}}]}, {"role": "tool", "tool_call_id": "some id", "content": "function response"}, {"role": "assistant", "content": "assistant prompt"}, {"role": "user", "content": [{"type": "text", "text": "user prompt 2"}, {"type": "image_url", "image_url": {"url": "https://does.not.exit/image.png", "detail": "high"}}]}], "model": "some-model-id", "presence_penalty": 4.567, "response_format": "json_object", "seed": 654, "stop": ["stop1", "stop2"], "stream": true, "temperature": 8.976, "tool_choice": "auto", "tools": [{"type": "function", "function": {"name": "my-first-function-name", "description": "My first function description", "parameters": {"type": "object", "properties": {"first_argument": {"type": "string", "description": "First argument description"}, "second_argument": {"type": "string", "description": "Second argument description"}}, "required": ["first_argument", "second_argument"]}}}, {"type": "function", "function": {"name": "my-second-function-name", "description": "My second function description", "parameters": {"type": "object", "properties": {"first_argument": {"type": "int", "description": "First argument description"}}, "required": ["first_argument"]}}}], "top_p": 9.876, "key1": 1, "key2": true, "key3": "Some value", "key4": [1, 2, 3], "key5": {"key6": 2, "key7": false, "key8": "Some other value", "key9": [4, 5, 6, 7]}}'
             )
             return
         assert False

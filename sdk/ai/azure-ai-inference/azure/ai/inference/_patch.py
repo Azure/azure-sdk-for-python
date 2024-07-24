@@ -110,7 +110,7 @@ def load_client(
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
     if model_info.model_type in (_models.ModelType.CHAT, "completion"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
-        chat_completion_client._model_info = ( # pylint: disable=protected-access,attribute-defined-outside-init
+        chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
         )
         return chat_completion_client
@@ -482,7 +482,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params: Union[_models._enums.UnknownParams, None] = None
+        _extra_params: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -506,7 +506,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_params = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -518,7 +518,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_chat_completions_complete_request(
-            unknown_params=_unknown_params,
+            extra_params=_extra_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -736,7 +736,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params: Union[_models._enums.UnknownParams, None] = None
+        _extra_params: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -751,7 +751,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_params = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -761,7 +761,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_embeddings_embed_request(
-            unknown_params=_unknown_params,
+            extra_params=_extra_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -981,7 +981,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _unknown_params: Union[_models._enums.UnknownParams, None] = None
+        _extra_params: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -996,7 +996,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _unknown_params = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_params = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1006,7 +1006,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_image_embeddings_embed_request(
-            unknown_params=_unknown_params,
+            extra_params=_extra_params,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

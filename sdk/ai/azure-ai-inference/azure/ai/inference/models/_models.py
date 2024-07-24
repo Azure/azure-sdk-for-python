@@ -114,6 +114,7 @@ class ChatChoice(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
@@ -158,6 +159,7 @@ class ChatCompletions(_model_base.Model):
     "completes"
     provided prompt data.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -467,9 +469,82 @@ class ChatCompletionsNamedFunctionToolSelection(
         super().__init__(*args, type="function", **kwargs)
 
 
+class ChatCompletionsResponseFormat(_model_base.Model):
+    """Represents the format that the model must output. Use this to enable JSON mode instead of the
+    default text mode.
+    Note that to enable JSON mode, some AI models may also require you to instruct the model to
+    produce JSON
+    via a system or user message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ChatCompletionsResponseFormatJSON, ChatCompletionsResponseFormatText
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The response format type to use for chat completions. Required. Default value is
+     None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The response format type to use for chat completions. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ChatCompletionsResponseFormatJSON(ChatCompletionsResponseFormat, discriminator="json_object"):
+    """A response format for Chat Completions that restricts responses to emitting valid JSON objects.
+    Note that to enable JSON mode, some AI models may also require you to instruct the model to
+    produce JSON
+    via a system or user message.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Response format type: always 'json_object' for this object. Required. Default value
+     is "json_object".
+    :vartype type: str
+    """
+
+    type: Literal["json_object"] = rest_discriminator(name="type")  # type: ignore
+    """Response format type: always 'json_object' for this object. Required. Default value is
+     \"json_object\"."""
+
+
+class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discriminator="text"):
+    """A response format for Chat Completions that emits text responses. This is the default response
+    format.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Response format type: always 'text' for this object. Required. Default value is
+     "text".
+    :vartype type: str
+    """
+
+    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    """Response format type: always 'text' for this object. Required. Default value is \"text\"."""
+
+
 class ChatResponseMessage(_model_base.Model):
     """A representation of a chat message as received in a response.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
      "user", "assistant", and "tool".
@@ -517,6 +592,7 @@ class CompletionsUsage(_model_base.Model):
     Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
     other consumers.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar completion_tokens: The number of tokens generated across all completions emissions.
      Required.
@@ -630,6 +706,7 @@ class EmbeddingInput(_model_base.Model):
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar embedding: List of embeddings value for the input prompt. These represent a measurement
      of the
@@ -670,6 +747,7 @@ class EmbeddingsResult(_model_base.Model):
     clustering,
     recommendations, and other similar scenarios.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique identifier for the embeddings result. Required.
     :vartype id: str
@@ -714,19 +792,21 @@ class EmbeddingsResult(_model_base.Model):
 class EmbeddingsUsage(_model_base.Model):
     """Measurement of the amount of tokens used in this request and response.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar prompt_tokens: Number of tokens in the request. Required.
     :vartype prompt_tokens: int
-    :ivar total_tokens: Total number of tokens transacted in this request/response.
-     Should equal the number of tokens in the request. Required.
+    :ivar total_tokens: Total number of tokens transacted in this request/response. Should equal
+     the
+     number of tokens in the request. Required.
     :vartype total_tokens: int
     """
 
     prompt_tokens: int = rest_field()
     """Number of tokens in the request. Required."""
     total_tokens: int = rest_field()
-    """Total number of tokens transacted in this request/response.
-    Should equal the number of tokens in the request. Required."""
+    """Total number of tokens transacted in this request/response. Should equal the
+     number of tokens in the request. Required."""
 
     @overload
     def __init__(
@@ -914,6 +994,7 @@ class ImageUrl(_model_base.Model):
 class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
 
+    All required parameters must be populated in order to send to server.
 
     :ivar model_name: The name of the AI model. For example: ``Phi21``. Required.
     :vartype model_name: str
@@ -1195,7 +1276,7 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
     role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: Union["str", List["_models.ContentItem"]] = rest_field()
+    content: Union[str, List["_models.ContentItem"]] = rest_field()
     """The contents of the user message, with available input types varying by selected model.
      Required. Is either a str type or a [ContentItem] type."""
 
