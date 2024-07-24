@@ -122,10 +122,10 @@ async def examples_async():
         # for the request sent to Azure Cosmos DB. Based on the priority specified by the user,
         # if there are more requests than the configured RU/s in a second,
         # then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
-        # Can be used for Read, Write, and Query operations. This is specified with the priority_level keyword.
+        # Can be used for Read, Write, and Query operations. This is specified with the `priority` keyword.
         # the value can either be low or high.
         async for item in container.query_items(
-                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority_level="High"
+                query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"', priority="High"
         ):
             print(json.dumps(item, indent=True))
         # [END priority_level option]
