@@ -1,10 +1,13 @@
+from typing import Optional, List
 from pathlib import Path
-
-from subprocess import check_call
+import logging
+from subprocess import check_call, check_output, CalledProcessError
 
 from .change_log import main as change_log_main
 
 DEFAULT_DEST_FOLDER = "./dist"
+
+_LOGGER = logging.getLogger(__name__)
 
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
 def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
@@ -15,8 +18,25 @@ def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
         cwd=absdirpath,
     )
 
+def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
+    cmd = "tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
+    if lastest_pypi_version:
+        cmd += "--latest-pypi-version"
+    try:
+        output = check_output(cmd, cwd=package_folder, shell=True)
+    except CalledProcessError as e:
+        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        raise e
+    result = output.decode("utf-8").split("\n")
+    begin = result.index("===== report changes begin =====")
+    end = result.index("===== report changes end =====")
+    if begin == -1 or end == -1:
+        error_info = "Failed to get changelog from breaking change detector"
+        _LOGGER.error(error_info)
+        raise Exception(error_info)
+    return "\n".join(result[begin + 1 : end]).strip()
 
-def change_log_generate(package_name, last_version, tag_is_stable: bool = False):
+def change_log_generate(package_name, last_version, tag_is_stable: bool = False, *, prefolder: Optional[str] = None):
     from pypi_tools.pypi import PyPIClient
 
     client = PyPIClient()
@@ -31,8 +51,16 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False)
             last_version[-1] = str(last_release)
     except:
         return "### Other Changes\n\n  - Initial version"
-    else:
-        return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
+    
+    # try new changelog tool
+    if prefolder:
+        try:
+            return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
+        except Exception:
+            pass
+
+    # fallback to old changelog tool
+    return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 
 def extract_breaking_change(changelog):
