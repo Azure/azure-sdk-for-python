@@ -15,6 +15,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._encoder import TableEntityEncoder, TableEntityEncoderABC
+from ._decoder import TableEntityDecoder, TableEntityDecoderABC
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
@@ -30,7 +31,7 @@ from ._serialize import (
     _parameter_filter_substitution,
     _get_match_condition,
 )
-from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
+from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _trim_service_metadata
 from ._table_batch import (
     TableBatchOperations,
     EntityType,
@@ -41,6 +42,7 @@ from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, 
 
 T = TypeVar("T")
 DEFAULT_ENCODER = TableEntityEncoder()
+DEFAULT_DECODER = TableEntityDecoder()
 
 
 class TableClient(TablesBaseClient):
@@ -292,7 +294,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -328,7 +330,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -363,7 +365,7 @@ class TableClient(TablesBaseClient):
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
@@ -419,7 +421,7 @@ class TableClient(TablesBaseClient):
         :type entity: Union[TableEntity, Mapping[str, Any]]
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.ResourceExistsError` If the entity already exists
@@ -441,7 +443,7 @@ class TableClient(TablesBaseClient):
         :param entity: The properties for the table entity.
         :type entity: Custom entity type
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -496,7 +498,7 @@ class TableClient(TablesBaseClient):
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -534,7 +536,7 @@ class TableClient(TablesBaseClient):
             Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
         :paramtype match_condition: ~azure.core.MatchConditions or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -598,12 +600,13 @@ class TableClient(TablesBaseClient):
             _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)
 
-    @distributed_trace
+    @overload
     def list_entities(
         self,
         *,
         results_per_page: Optional[int] = None,
         select: Optional[Union[str, List[str]]] = None,
+        decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> ItemPaged[TableEntity]:
         """Lists entities in a table.
@@ -612,6 +615,9 @@ class TableClient(TablesBaseClient):
         :paramtype results_per_page: int or None
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str] or None
+        :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityDecoder` will be used.
+        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: An iterator of :class:`~azure.data.tables.TableEntity`
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -625,6 +631,32 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Listing all entities held within a table
         """
+
+    @overload
+    def list_entities(
+        self,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        decoder: TableEntityDecoderABC[T],
+        **kwargs,
+    ) -> ItemPaged[T]:
+        """Lists entities in a table.
+
+        :keyword results_per_page: Number of entities returned per service request.
+        :paramtype results_per_page: int or None
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or list[str] or None
+        :keyword decoder: The decoder used to deserialize the incoming Tables entities.
+        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
+        :return: Queried entities.
+        :rtype: An iterator of custom entity type.
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+
+    @distributed_trace
+    def list_entities(self, **kwargs: Any) -> ItemPaged[Union[EntityType, T]]:
+        select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
 
@@ -632,12 +664,13 @@ class TableClient(TablesBaseClient):
         return ItemPaged(
             command,
             table=self.table_name,
-            results_per_page=results_per_page,
+            results_per_page=kwargs.pop("results_per_page", None),
             select=select,
+            decoder=kwargs.pop("decoder", DEFAULT_DECODER),
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
-    @distributed_trace
+    @overload
     def query_entities(
         self,
         query_filter: str,
@@ -645,6 +678,7 @@ class TableClient(TablesBaseClient):
         results_per_page: Optional[int] = None,
         select: Optional[Union[str, List[str]]] = None,
         parameters: Optional[Dict[str, Any]] = None,
+        decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> ItemPaged[TableEntity]:
         # pylint: disable=line-too-long
@@ -658,6 +692,9 @@ class TableClient(TablesBaseClient):
         :paramtype select: str or list[str] or None
         :keyword parameters: Dictionary for formatting query with additional, user defined parameters.
         :paramtype parameters: dict[str, Any] or None
+        :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityDecoder` will be used.
+        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: An iterator of :class:`~azure.data.tables.TableEntity`
         :rtype: ~azure.core.paging.ItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -671,6 +708,43 @@ class TableClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Querying entities held within a table
         """
+
+    @overload
+    def query_entities(
+        self,
+        query_filter: str,
+        *,
+        results_per_page: Optional[int] = None,
+        select: Optional[Union[str, List[str]]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        decoder: TableEntityDecoderABC[T],
+        **kwargs,
+    ) -> ItemPaged[T]:
+        # pylint: disable=line-too-long
+        """Queries entities in a table.
+
+        :param str query_filter: Specify a filter to return certain entities. For more information
+         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
+        :keyword results_per_page: Number of entities returned per service request.
+        :paramtype results_per_page: int or None
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or list[str] or None
+        :keyword parameters: Dictionary for formatting query with additional, user defined parameters.
+        :paramtype parameters: dict[str, Any] or None
+        :keyword decoder: The decoder used to deserialize the incoming Tables entities.
+        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
+        :return: Queried entities.
+        :rtype: An iterator of custom entity type.
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+
+    @distributed_trace
+    def query_entities(self, *args: str, **kwargs: Any) -> ItemPaged[Union[EntityType, T]]:
+        query_filter = args[0]
+        parameters = kwargs.pop("parameters", None)
+        results_per_page = kwargs.pop("results_per_page", None)
+        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
+
         query_filter = _parameter_filter_substitution(parameters, query_filter)
         if select and not isinstance(select, str):
             select = ",".join(select)
@@ -682,10 +756,11 @@ class TableClient(TablesBaseClient):
             results_per_page=results_per_page,
             filter=query_filter,
             select=select,
+            decoder=decoder,
             page_iterator_class=TableEntityPropertiesPaged,
         )
 
-    @distributed_trace
+    @overload
     def get_entity(
         self,
         partition_key: str,
@@ -693,6 +768,7 @@ class TableClient(TablesBaseClient):
         *,
         select: Optional[Union[str, List[str]]] = None,
         encoder: TableEntityEncoderABC = DEFAULT_ENCODER,
+        decoder: TableEntityDecoderABC = DEFAULT_DECODER,
         **kwargs,
     ) -> TableEntity:
         """Gets a single entity in a table.
@@ -705,7 +781,10 @@ class TableClient(TablesBaseClient):
         :paramtype select: str or list[str] or None
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :keyword decoder: The decoder used to deserialize the incoming Tables entities. By default, the built-in
+            `azure.data.tables.TableEntityDecoder` will be used.
+        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: ~azure.data.tables.TableEntity
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -719,13 +798,50 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Getting an entity with PartitionKey and RowKey from a table
         """
+
+    @overload
+    def get_entity(
+        self,
+        partition_key: str,
+        row_key: str,
+        *,
+        select: Optional[Union[str, List[str]]] = None,
+        encoder: TableEntityEncoderABC[T],
+        decoder: TableEntityDecoderABC[T],
+        **kwargs,
+    ) -> T:
+        """Gets a single entity in a table.
+
+        :param partition_key: The partition key of the entity.
+        :type partition_key: str
+        :param row_key: The row key of the entity.
+        :type row_key: str
+        :keyword select: Specify desired properties of an entity to return.
+        :paramtype select: str or list[str] or None
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities. 
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :keyword decoder: The decoder used to deserialize the incoming Tables entities.
+        :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
+        :return: Dictionary mapping operation metadata returned from the service.
+        :rtype: Custom entity type
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+
+    @distributed_trace
+    def get_entity(self, *args: str, **kwargs: Any) -> Union[EntityType, T]:
+        partition_key = args[0]
+        row_key = args[1]
+        select = kwargs.pop("select", None)
+        encoder = kwargs.pop("encoder", DEFAULT_ENCODER)
+        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
+
         user_select = None
         if select and not isinstance(select, str):
             user_select = ",".join(select)
         elif isinstance(select, str):
             user_select = select
         try:
-            entity = self._client.table.query_entity_with_partition_and_row_key(
+            entity_json = self._client.table.query_entity_with_partition_and_row_key(
                 table=self.table_name,
                 partition_key=encoder.prepare_key(partition_key),
                 row_key=encoder.prepare_key(row_key),
@@ -734,7 +850,7 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
-        return _convert_to_entity(entity)
+        return decoder.decode_entity(entity_json)
 
     @overload
     def upsert_entity(
@@ -753,7 +869,7 @@ class TableClient(TablesBaseClient):
         :type mode: ~azure.data.tables.UpdateMode or str
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -779,7 +895,7 @@ class TableClient(TablesBaseClient):
         :param mode: Merge or Replace entity.
         :type mode: ~azure.data.tables.UpdateMode or str
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: Dictionary mapping operation metadata returned from the service.
         :rtype: dict[str, Any]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -856,7 +972,7 @@ class TableClient(TablesBaseClient):
         :type operations: Iterable[Tuple[str, TableEntity, Mapping[str, Any]]]
         :keyword encoder: The encoder used to serialize the outgoing Tables entities. By default, the built-in
             `azure.data.tables.TableEntityEncoder` will be used.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: list[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`
@@ -892,7 +1008,7 @@ class TableClient(TablesBaseClient):
 
         :type operations: Iterable[Tuple[str, T, Mapping[str, Any]]]
         :keyword encoder: The encoder used to serialize the outgoing Tables entities.
-        :type encoder: ~azure.data.Tables.TableEntityEncoderABC
+        :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: list[Mapping[str, Any]]
         :raises: :class:`~azure.data.tables.TableTransactionError`

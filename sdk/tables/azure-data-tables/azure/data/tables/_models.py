@@ -20,10 +20,10 @@ from ._generated.models import (
     CorsRule as GeneratedCorsRule,
 )
 from ._deserialize import (
-    _convert_to_entity,
     _return_context_and_deserialized,
     _extract_continuation_token,
 )
+from ._decoder import TableEntityDecoderABC
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
 
@@ -329,6 +329,8 @@ class TableEntityPropertiesPaged(PageIterator):
     """The select filter to apply to results."""
     continuation_token: Optional[str]
     """The continuation token needed by get_next()."""
+    decoder: TableEntityDecoderABC
+    """The decoder used to deserialize the incoming Tables entities."""
 
     def __init__(self, command: Callable, table: str, **kwargs: Any) -> None:
         super(TableEntityPropertiesPaged, self).__init__(
@@ -339,11 +341,12 @@ class TableEntityPropertiesPaged(PageIterator):
         self._command = command
         self._headers = None
         self._response = None
+        self._location_mode = None
         self.table = table
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self._location_mode = None
+        self.decoder = kwargs.get("decoder")
 
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         next_partition_key, next_row_key = _extract_continuation_token(continuation_token)
@@ -363,7 +366,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [_convert_to_entity(t) for t in self._response.value]
+        props_list = [self.decoder.decode_entity(t) for t in self._response.value]
         next_entity = {}
         if self._headers[NEXT_PARTITION_KEY] or self._headers[NEXT_ROW_KEY]:
             next_entity = {
