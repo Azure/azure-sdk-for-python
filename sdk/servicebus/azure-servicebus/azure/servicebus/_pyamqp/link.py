@@ -228,6 +228,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
         if close:
             self._is_closed = True
+            self.links.pop(self.name, None)
+            self._input_handles.pop(self.remote_handle, None)
+            self._output_handles.pop(self.handle, None)
 
     def _incoming_detach(self, frame) -> None:
         if self.network_trace:
