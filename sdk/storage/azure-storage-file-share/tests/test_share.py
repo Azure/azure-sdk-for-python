@@ -42,7 +42,7 @@ TEST_SHARE_PREFIX = 'share'
 TEST_INTENT = "backup"
 TEST_SHARE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                          '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
-                         'S-1-5-21-397955417-626881126-188441444-3053964)'
+                         'S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL'
 # ------------------------------------------------------------------------------
 
 class TestStorageShare(StorageRecordedTestCase):
@@ -1593,8 +1593,7 @@ class TestStorageShare(StorageRecordedTestCase):
             permission_key,
             file_permission_format="SDDL"
         )
-        expected_server_permission = TEST_SHARE_PERMISSIONS + 'S:NO_ACCESS_CONTROL'
-        assert server_returned_permission == expected_server_permission
+        assert server_returned_permission == TEST_SHARE_PERMISSIONS
 
         self._delete_shares(share_client.share_name)
 

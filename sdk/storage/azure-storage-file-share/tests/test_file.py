@@ -42,7 +42,7 @@ TEST_FILE_PREFIX = 'file'
 LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
-                        'S-1-5-21-397955417-626881126-188441444-3053964)'
+                        'S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL'
 TEST_INTENT = "backup"
 # ------------------------------------------------------------------------------
 
@@ -3793,25 +3793,24 @@ class TestStorageFile(StorageRecordedTestCase):
         assert props.name == 'file2'
         assert props.permission_key == '8984294407537026961*15810287295243203168'
 
-        new_file_copy = ShareFileClient(
-            self.account_url(storage_account_name, "file"),
-            share_name=self.share_name,
-            file_path='file2copy',
-            credential=storage_account_key
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline'
         )
-        copy = new_file_copy.start_copy_from_url(
-            new_file.url,
+        new_file.set_http_headers(
+            content_settings=content_settings,
             file_permission=TEST_FILE_PERMISSIONS,
             file_permission_format="SDDL"
         )
-        assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
 
-        copy_file = new_file_copy.download_file().readall()
-        assert copy_file == self.short_byte_data
+        # Assert
+        properties = new_file.get_file_properties()
+        assert properties.content_settings.content_language == content_settings.content_language
+        assert properties.content_settings.content_disposition == content_settings.content_disposition
+        assert properties.last_write_time is not None
+        assert properties.creation_time is not None
+        assert properties.permission_key is not None
 
         new_file.delete_file()
-        new_file_copy.delete_file()
 
 # ------------------------------------------------------------------------------
