@@ -4,18 +4,26 @@
 # IMPORTANT: Do not invoke this file directly. Please instead run eng/New-TestResources.ps1 from the repository root.
 
 param (
-    [hashtable] $DeploymentOutputs
+    [hashtable] $DeploymentOutputs,
+
+    [Parameter()]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $TestApplicationId,
+
+    [Parameter()]
+    [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
+    [string] $SubscriptionId,
+
+    [Parameter(ValueFromRemainingArguments = $true)]
+    $RemoveTestResourcesRemainingArguments
 )
 
 # Outputs from the Bicep deployment passed in from New-TestResources
-$tenantId = $DeploymentOutputs['MONITOR_TENANT_ID']
-$clientId = $DeploymentOutputs['MONITOR_CLIENT_ID']
-$clientSecret = $DeploymentOutputs['MONITOR_CLIENT_SECRET']
+$tenantId = $DeploymentOutputs['AZURE_MONITOR_TENANT_ID']
 $dcrImmutableId = $DeploymentOutputs['AZURE_MONITOR_DCR_ID']
 $dceEndpoint = $DeploymentOutputs['AZURE_MONITOR_DCE']
 $streamName = $DeploymentOutputs['AZURE_MONITOR_STREAM_NAME']
 $environment = $DeploymentOutputs['MONITOR_ENVIRONMENT']
-$authorityHost = $DeploymentOutputs['AZURE_AUTHORITY_HOST']
 
 ##################
 ### Step 0: Wait for role assignment to propagate
@@ -35,11 +43,16 @@ $audienceMappings = @{
 
 $audience = $audienceMappings[$environment]
 
-$scope= [System.Web.HttpUtility]::UrlEncode("$audience/.default")
-$body = "client_id=$clientId&scope=$scope&client_secret=$clientSecret&grant_type=client_credentials";
-$headers = @{"Content-Type"="application/x-www-form-urlencoded"};
-$uri = "$authorityHost/$tenantId/oauth2/v2.0/token"
-$bearerToken = (Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers).access_token
+az cloud set --name $environment
+
+if ($CI) {
+    az login --service-principal -u $TestApplicationId --tenant $tenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
+} else {
+    az login
+}
+az account set --subscription $SubscriptionId
+
+$bearerToken = az account get-access-token --output json --resource $audience | ConvertFrom-Json | Select-Object -ExpandProperty accessToken
 
 ##################
 ### Step 2: Load up some sample data.
