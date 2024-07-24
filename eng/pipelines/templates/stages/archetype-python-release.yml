@@ -106,9 +106,10 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
-                      - download: current
-                        artifact: ${{parameters.ArtifactName}}
-                        timeoutInMinutes: 5
+
+                      - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+                        parameters:
+                          TargetPath: $(Pipeline.Workspace)
 
                       - task: UsePythonVersion@0
                         inputs:
@@ -229,7 +230,9 @@ stages:
                               Paths:
                                 - sdk/**/*.md
                                 - .github/CODEOWNERS
-                          - download: current
+                          - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+                            parameters:
+                              TargetPath: $(Pipeline.Workspace)
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
@@ -295,7 +298,9 @@ stages:
           os: linux
         steps:
         - checkout: none
-        - download: current
+        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+          parameters:
+            TargetPath: $(Pipeline.Workspace)
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
         - task: UsePythonVersion@0
@@ -338,7 +343,9 @@ stages:
               Paths:
                 - sdk/**/*.md
                 - .github/CODEOWNERS
-          - download: current
+          - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+            parameters:
+              TargetPath: $(Pipeline.Workspace)
           - pwsh: |
               Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
             displayName: Show visible artifacts
