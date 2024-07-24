@@ -11,7 +11,7 @@ urlFragment: openai-samples
 
 These code samples show common scenario operations calling to Azure OpenAI.
 
-You can authenticate your client with an API key or through Azure Active Directory with a token credential from [azure-identity][azure_identity].
+You can authenticate your client with an API key or through Microsoft Entra ID with a token credential from [azure-identity][azure_identity].
 
 These sample programs show common scenarios for using Azure OpenAI offerings.
 
