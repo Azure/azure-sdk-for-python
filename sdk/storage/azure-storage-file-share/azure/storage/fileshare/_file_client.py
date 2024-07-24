@@ -1002,7 +1002,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
                 This parameter was introduced in API version '2021-06-08'.
 
-        :keyword Dict[str,str] metadata:
+        :keyword Dict[str, str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
             Required if the source file has an active lease. Value can be a ShareLeaseClient object

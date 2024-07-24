@@ -3763,4 +3763,55 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         file_client.exists()
 
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_file_permission_format(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_file = share_client.get_file_client('file1')
+        source_file.create_file(
+            1024,
+            file_permission=TEST_FILE_PERMISSIONS,
+            file_permission_format="SDDL"
+        )
+        props = source_file.get_file_properties()
+        assert props is not None
+        assert props.name == 'file1'
+        assert props.permission_key == '4126688321077241557*15810287295243203168'
+
+        new_file = source_file.rename_file(
+            'file2',
+            file_permission=TEST_FILE_PERMISSIONS,
+            file_permission_format="SDDL"
+        )
+        props = new_file.get_file_properties()
+        assert props is not None
+        assert props.name == 'file2'
+        assert props.permission_key == '8984294407537026961*15810287295243203168'
+
+        new_file_copy = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='file2copy',
+            credential=storage_account_key
+        )
+        copy = new_file_copy.start_copy_from_url(
+            new_file.url,
+            file_permission=TEST_FILE_PERMISSIONS,
+            file_permission_format="SDDL"
+        )
+        assert copy is not None
+        assert copy['copy_status'] == 'success'
+        assert copy['copy_id'] is not None
+
+        copy_file = new_file_copy.download_file().readall()
+        assert copy_file == self.short_byte_data
+
+        new_file.delete_file()
+        new_file_copy.delete_file()
+
 # ------------------------------------------------------------------------------
