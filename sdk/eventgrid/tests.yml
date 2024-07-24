@@ -15,3 +15,4 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         EVENTGRID_SAS: $(python-sdk-test-eg-sas)
         STORAGE_QUEUE_NAME: $(python-storage-queue-name)
+        STORAGE_QUEUE_ACCOUNT_URL: $(python-storage-blob-storage-account-name)

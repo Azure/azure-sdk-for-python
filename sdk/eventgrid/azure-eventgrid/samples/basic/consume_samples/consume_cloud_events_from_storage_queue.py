@@ -16,7 +16,7 @@ USAGE:
 from typing import List
 from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
-from azure.core.credentials import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 import os
 import json
 
