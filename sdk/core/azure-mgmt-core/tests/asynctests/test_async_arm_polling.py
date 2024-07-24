@@ -33,7 +33,7 @@ import pytest
 
 from requests import Request, Response
 
-from azure.core.polling import async_poller
+from azure.core.polling import async_poller, AsyncLROPoller 
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline
@@ -510,23 +510,23 @@ async def test_long_running_negative():
     # Test LRO PUT throws for invalid json
     LOCATION_BODY = "{"
     response = TestArmPolling.mock_send("POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
     with pytest.raises(DecodeError):
-        await poll
+        await poll.result()
 
     LOCATION_BODY = "{'\"}"
     response = TestArmPolling.mock_send("POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
     with pytest.raises(DecodeError):
-        await poll
+        await poll.result()
 
     LOCATION_BODY = "{"
     POLLING_STATUS = 203
     response = TestArmPolling.mock_send("POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
     with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
-        await poll
-    assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        await poll.result()
+    assert error.value.continuation_token == poll.continuation_token()
 
     LOCATION_BODY = json.dumps({"name": TEST_NAME})
     POLLING_STATUS = 200

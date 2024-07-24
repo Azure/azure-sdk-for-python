@@ -528,7 +528,7 @@ class TestArmPolling(object):
         poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0))
         with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
             poll.result()
-        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        assert error.value.continuation_token == poll.continuation_token()
 
         LOCATION_BODY = json.dumps({"name": TEST_NAME})
         POLLING_STATUS = 200
