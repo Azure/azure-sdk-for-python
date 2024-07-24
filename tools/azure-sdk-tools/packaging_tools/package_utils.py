@@ -27,15 +27,15 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     try:
         output = check_output(cmd, cwd=package_folder, shell=True)
     except CalledProcessError as e:
-        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        _LOGGER.warning(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
     result = output.decode("utf-8").split("\n")
     begin = result.index("===== report changes begin =====")
     end = result.index("===== report changes end =====")
     if begin == -1 or end == -1:
-        error_info = "Failed to get changelog from breaking change detector"
-        _LOGGER.error(error_info)
-        raise Exception(error_info)
+        warn_info = "Failed to get changelog from breaking change detector"
+        _LOGGER.warning(warn_info)
+        raise Exception(warn_info)
     return "\n".join(result[begin + 1 : end]).strip()
 
 
