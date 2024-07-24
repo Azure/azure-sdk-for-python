@@ -154,10 +154,9 @@ class ChangelogTracker(BreakingChangesTracker):
             return buffer
 
         buffer = []
-
-        if self.breaking_changes:
-            _build_md(self.breaking_changes, "### Breaking Changes", buffer)
         if self.features_added:
             _build_md(self.features_added, "### Features Added", buffer)
+        if self.breaking_changes:
+            _build_md(self.breaking_changes, "### Breaking Changes", buffer)
         content =  "\n".join(buffer).strip()
         return content
