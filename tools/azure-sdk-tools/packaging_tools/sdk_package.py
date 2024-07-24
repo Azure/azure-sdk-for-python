@@ -47,9 +47,19 @@ def main(generate_input, generate_output):
         if "azure-mgmt-" not in package_name:
             try:
                 package_path = Path(sdk_folder, folder_name, package_name)
-                check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                            "/simple/"], cwd=package_path, timeout=300)
+                check_call(
+                    [
+                        "python",
+                        "-m" "pip",
+                        "install",
+                        "-r",
+                        "../../../eng/apiview_reqs.txt",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                        "/simple/",
+                    ],
+                    cwd=package_path,
+                    timeout=300,
+                )
                 check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
                 for file in os.listdir(package_path):
                     if "_python.json" in file and package_name in file:

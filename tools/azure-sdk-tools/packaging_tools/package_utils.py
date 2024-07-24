@@ -9,6 +9,7 @@ DEFAULT_DEST_FOLDER = "./dist"
 
 _LOGGER = logging.getLogger(__name__)
 
+
 # prefolder: "sdk/compute"; name: "azure-mgmt-compute"
 def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
     absdirpath = Path(prefolder, name).absolute()
@@ -17,6 +18,7 @@ def create_package(prefolder, name, dest_folder=DEFAULT_DEST_FOLDER):
         ["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder],
         cwd=absdirpath,
     )
+
 
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     cmd = "tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
@@ -36,6 +38,7 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         raise Exception(error_info)
     return "\n".join(result[begin + 1 : end]).strip()
 
+
 def change_log_generate(package_name, last_version, tag_is_stable: bool = False, *, prefolder: Optional[str] = None):
     from pypi_tools.pypi import PyPIClient
 
@@ -51,7 +54,7 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False,
             last_version[-1] = str(last_release)
     except:
         return "### Other Changes\n\n  - Initial version"
-    
+
     # try new changelog tool
     if prefolder:
         try:
