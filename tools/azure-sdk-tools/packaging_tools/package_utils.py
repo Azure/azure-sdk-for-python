@@ -1,4 +1,5 @@
-from typing import Optional, List
+import os
+from typing import Optional
 from pathlib import Path
 import logging
 from subprocess import check_call, check_output, CalledProcessError
@@ -29,7 +30,7 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     except CalledProcessError as e:
         _LOGGER.warning(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
-    result = output.decode("utf-8").split("\n")
+    result = [l for l in output.decode("utf-8").split(os.linesep)]
     begin = result.index("===== report changes begin =====")
     end = result.index("===== report changes end =====")
     if begin == -1 or end == -1:
@@ -59,18 +60,22 @@ def change_log_generate(package_name, last_version, tag_is_stable: bool = False,
     if prefolder:
         try:
             return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
-        except Exception:
-            pass
+        except Exception as e:
+            _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")
 
     # fallback to old changelog tool
+    _LOGGER.info("Fallback to old changelog tool")
     return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 
 def extract_breaking_change(changelog):
     log = changelog.split("\n")
     breaking_change = []
-    for i in range(0, len(log)):
-        if log[i].find("Breaking Changes") > -1:
-            breaking_change = log[min(i + 2, len(log) - 1) :]
-            break
+    idx = log.index("### Breaking Changes")
+    if idx > -1:
+        for i in range(idx + 1, len(log)):
+            if log[i].find("###") > -1:
+                break
+            if log[i]:
+                breaking_change.append(log[i])
     return sorted([x.replace("  - ", "") for x in breaking_change])
