@@ -34,7 +34,6 @@ extends:
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
-      UseFederatedAuth: true
       ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
           # Test Managed Identity integrations tests on weekly tests pipeline.
           AdditionalMatrixConfigs:

@@ -17,19 +17,21 @@ extends:
       SupportedClouds: 'Public,UsGov,China'
       CloudConfig:
         Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         Canary:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           Location: 'eastus2euap'
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePath: eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
-          SubscriptionConfiguration: $(sub-config-gov-test-resources)
-          ServiceConnection: azure-sdk-tests
+          ServiceConnection: usgov_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
           Location: 'usgovarizona'
         China:
-          SubscriptionConfiguration: $(sub-config-cn-test-resources)
-          ServiceConnection: azure-sdk-tests
+          ServiceConnection: china_azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzureChinaMsft.json
           Location: 'chinanorth3'
