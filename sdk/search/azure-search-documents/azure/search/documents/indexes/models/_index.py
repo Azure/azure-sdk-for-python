@@ -14,6 +14,17 @@ from .._generated.models import (
     LexicalAnalyzerName,
     VectorEncodingFormat,
     SearchFieldDataType,
+    ScoringProfile,
+    CorsOptions,
+    SearchSuggester,
+    LexicalAnalyzer,
+    LexicalTokenizer,
+    TokenFilter,
+    CharFilter,
+    LexicalNormalizer,
+    SimilarityAlgorithm,
+    SemanticSearch,
+    VectorSearch,
 )
 from ._models import (
     pack_analyzer,
@@ -641,24 +652,44 @@ class SearchIndex(_serialization.Model):
     :vartype e_tag: str
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        fields: List[SearchField],
+        scoring_profiles: Optional[List[ScoringProfile]] = None,
+        default_scoring_profile: Optional[str] = None,
+        cors_options: Optional[CorsOptions] = None,
+        suggesters: Optional[List[SearchSuggester]] = None,
+        analyzers: Optional[List[LexicalAnalyzer]] = None,
+        tokenizers: Optional[List[LexicalTokenizer]] = None,
+        token_filters: Optional[List[TokenFilter]] = None,
+        char_filters: Optional[List[CharFilter]] = None,
+        normalizers: Optional[List[LexicalNormalizer]] = None,
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        similarity: Optional[SimilarityAlgorithm] = None,
+        semantic_search: Optional[SemanticSearch] = None,
+        vector_search: Optional[VectorSearch] = None,
+        e_tag: Optional[str] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.fields = kwargs["fields"]
-        self.scoring_profiles = kwargs.get("scoring_profiles", None)
-        self.default_scoring_profile = kwargs.get("default_scoring_profile", None)
-        self.cors_options = kwargs.get("cors_options", None)
-        self.suggesters = kwargs.get("suggesters", None)
-        self.analyzers = kwargs.get("analyzers", None)
-        self.tokenizers = kwargs.get("tokenizers", None)
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
-        self.normalizers = kwargs.get("normalizers", None)
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.similarity = kwargs.get("similarity", None)
-        self.semantic_search = kwargs.get("semantic_search", None)
-        self.vector_search = kwargs.get("vector_search", None)
-        self.e_tag = kwargs.get("e_tag", None)
+        self.name = name
+        self.fields = fields
+        self.scoring_profiles = scoring_profiles
+        self.default_scoring_profile = default_scoring_profile
+        self.cors_options = cors_options
+        self.suggesters = suggesters
+        self.analyzers = analyzers
+        self.tokenizers = tokenizers
+        self.token_filters = token_filters
+        self.char_filters = char_filters
+        self.normalizers = normalizers
+        self.encryption_key = encryption_key
+        self.similarity = similarity
+        self.semantic_search = semantic_search
+        self.vector_search = vector_search
+        self.e_tag = e_tag
 
     def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
