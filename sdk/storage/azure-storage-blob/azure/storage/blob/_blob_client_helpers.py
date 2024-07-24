@@ -48,12 +48,12 @@ from ._shared.base_client import parse_query
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
-    read_length,
     validate_and_format_range_headers
 )
 from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
-from ._shared.uploads import IterStreamer, prepare_upload_data
-from ._shared.uploads_async import AsyncIterStreamer
+from ._shared.streams import IterStreamer
+from ._shared.streams_async import AsyncIterStreamer
+from ._shared.uploads import prepare_upload_data
 from ._shared.validation import (
     calculate_md5,
     calculate_crc64_bytes,

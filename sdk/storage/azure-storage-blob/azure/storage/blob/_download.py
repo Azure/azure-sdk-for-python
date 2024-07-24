@@ -11,7 +11,7 @@ import warnings
 from io import BytesIO, StringIO
 from typing import (
     Any, Callable, cast, Dict, Generator,
-    Generic, IO, Iterator, List, Optional,
+    Generic, IO, Iterator, List, Literal, Optional,
     overload, Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
@@ -66,7 +66,7 @@ def process_content(
         start_offset: int,
         end_offset: int,
         encryption: Dict[str, Any],
-        validate_content: Any) -> bytes:
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]]) -> bytes:
     if download is None:
         raise ValueError("Response cannot be None.")
 
@@ -102,7 +102,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
         current_progress: int,
         start_range: int,
         end_range: int,
-        validate_content: bool,
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
         encryption_options: Dict[str, Any],
         encryption_data: Optional["_EncryptionData"] = None,
         stream: Any = None,
@@ -348,7 +348,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: bool = None,  # type: ignore [assignment]
+        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
         encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         max_concurrency: int = 1,
         name: str = None,  # type: ignore [assignment]

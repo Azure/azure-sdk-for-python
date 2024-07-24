@@ -1114,8 +1114,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     ) -> Dict[str, Any]:
         """Upload a range of bytes to a file.
 
-        :param bytes data:
+        :param data:
             The data to upload.
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param int offset:
             Start of byte range to use for uploading a section of the file.
             The range can be up to 4 MB in size.
