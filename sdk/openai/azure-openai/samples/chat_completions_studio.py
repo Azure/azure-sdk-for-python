@@ -22,6 +22,10 @@ USAGE:
     2) AZURE_OPENAI_CHAT_DEPLOYMENT - the deployment name you chose when deploying your model.
 """
 
+import os
+from ..tests.conftest import GA, ENV_AZURE_OPENAI_ENDPOINT
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
+
 def chat_completion_studio_viewcode() -> None:
     #[START chat_completion_studio_viewcode]
     import os
@@ -39,7 +43,7 @@ def chat_completion_studio_viewcode() -> None:
     client = AzureOpenAI(
         azure_endpoint=endpoint,
         azure_ad_token_provider=token_provider,
-        api_version="2024-02-01",
+        api_version=GA,
     )
 
     completion = client.chat.completions.create(
