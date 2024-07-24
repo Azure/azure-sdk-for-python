@@ -14,7 +14,6 @@ from unittest import mock
 import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient, BlobType
-from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,

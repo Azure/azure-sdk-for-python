@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +50,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +59,7 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -82,7 +87,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +96,7 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -122,7 +127,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -132,11 +137,11 @@ def build_create_or_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str"),
+        "privateCloudName": _SERIALIZER.url("private_cloud_name", private_cloud_name, "str", pattern=r"^[-\w\._]+$"),
         "globalReachConnectionName": _SERIALIZER.url(
             "global_reach_connection_name", global_reach_connection_name, "str", pattern=r"^[-\w\._]+$"
         ),
@@ -165,7 +170,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -174,7 +179,7 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
@@ -218,16 +223,13 @@ class GlobalReachConnectionsOperations:
     def list(
         self, resource_group_name: str, private_cloud_name: str, **kwargs: Any
     ) -> Iterable["_models.GlobalReachConnection"]:
-        """List global reach connections in a private cloud.
-
-        List global reach connections in a private cloud.
+        """List GlobalReachConnection resources by PrivateCloud.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GlobalReachConnection or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.avs.models.GlobalReachConnection]
@@ -239,7 +241,7 @@ class GlobalReachConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.GlobalReachConnectionList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -250,17 +252,16 @@ class GlobalReachConnectionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     private_cloud_name=private_cloud_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -272,13 +273,13 @@ class GlobalReachConnectionsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("GlobalReachConnectionList", pipeline_response)
@@ -288,11 +289,11 @@ class GlobalReachConnectionsOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -305,32 +306,24 @@ class GlobalReachConnectionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections"
-    }
-
     @distributed_trace
     def get(
         self, resource_group_name: str, private_cloud_name: str, global_reach_connection_name: str, **kwargs: Any
     ) -> _models.GlobalReachConnection:
-        """Get a global reach connection by name in a private cloud.
-
-        Get a global reach connection by name in a private cloud.
+        """Get a GlobalReachConnection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param global_reach_connection_name: Name of the global reach connection in the private cloud.
-         Required.
+        :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GlobalReachConnection or the result of cls(response)
         :rtype: ~azure.mgmt.avs.models.GlobalReachConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -344,22 +337,21 @@ class GlobalReachConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.GlobalReachConnection] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             global_reach_connection_name=global_reach_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -372,23 +364,19 @@ class GlobalReachConnectionsOperations:
         deserialized = self._deserialize("GlobalReachConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         private_cloud_name: str,
         global_reach_connection_name: str,
-        global_reach_connection: Union[_models.GlobalReachConnection, IO],
+        global_reach_connection: Union[_models.GlobalReachConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.GlobalReachConnection:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -411,7 +399,7 @@ class GlobalReachConnectionsOperations:
         else:
             _json = self._serialize.body(global_reach_connection, "GlobalReachConnection")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             global_reach_connection_name=global_reach_connection_name,
@@ -420,16 +408,15 @@ class GlobalReachConnectionsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -439,20 +426,19 @@ class GlobalReachConnectionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("GlobalReachConnection", pipeline_response)
 
         if response.status_code == 201:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
             deserialized = self._deserialize("GlobalReachConnection", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}"
-    }
 
     @overload
     def begin_create_or_update(
@@ -465,31 +451,20 @@ class GlobalReachConnectionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GlobalReachConnection]:
-        """Create or update a global reach connection in a private cloud.
-
-        Create or update a global reach connection in a private cloud.
+        """Create a GlobalReachConnection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud. Required.
+        :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param global_reach_connection_name: Name of the global reach connection in the private cloud.
-         Required.
+        :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
-        :param global_reach_connection: A global reach connection in the private cloud. Required.
+        :param global_reach_connection: Resource create parameters. Required.
         :type global_reach_connection: ~azure.mgmt.avs.models.GlobalReachConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GlobalReachConnection or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.GlobalReachConnection]
@@ -502,36 +477,25 @@ class GlobalReachConnectionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         global_reach_connection_name: str,
-        global_reach_connection: IO,
+        global_reach_connection: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GlobalReachConnection]:
-        """Create or update a global reach connection in a private cloud.
-
-        Create or update a global reach connection in a private cloud.
+        """Create a GlobalReachConnection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud. Required.
+        :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param global_reach_connection_name: Name of the global reach connection in the private cloud.
-         Required.
+        :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
-        :param global_reach_connection: A global reach connection in the private cloud. Required.
-        :type global_reach_connection: IO
+        :param global_reach_connection: Resource create parameters. Required.
+        :type global_reach_connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GlobalReachConnection or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.GlobalReachConnection]
@@ -544,35 +508,21 @@ class GlobalReachConnectionsOperations:
         resource_group_name: str,
         private_cloud_name: str,
         global_reach_connection_name: str,
-        global_reach_connection: Union[_models.GlobalReachConnection, IO],
+        global_reach_connection: Union[_models.GlobalReachConnection, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GlobalReachConnection]:
-        """Create or update a global reach connection in a private cloud.
-
-        Create or update a global reach connection in a private cloud.
+        """Create a GlobalReachConnection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_cloud_name: The name of the private cloud. Required.
+        :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param global_reach_connection_name: Name of the global reach connection in the private cloud.
-         Required.
+        :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
-        :param global_reach_connection: A global reach connection in the private cloud. Is either a
-         GlobalReachConnection type or a IO type. Required.
-        :type global_reach_connection: ~azure.mgmt.avs.models.GlobalReachConnection or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param global_reach_connection: Resource create parameters. Is either a GlobalReachConnection
+         type or a IO[bytes] type. Required.
+        :type global_reach_connection: ~azure.mgmt.avs.models.GlobalReachConnection or IO[bytes]
         :return: An instance of LROPoller that returns either GlobalReachConnection or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.avs.models.GlobalReachConnection]
@@ -605,32 +555,32 @@ class GlobalReachConnectionsOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("GlobalReachConnection", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.GlobalReachConnection].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}"
-    }
+        return LROPoller[_models.GlobalReachConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, private_cloud_name: str, global_reach_connection_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -644,22 +594,21 @@ class GlobalReachConnectionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             private_cloud_name=private_cloud_name,
             global_reach_connection_name=global_reach_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -669,37 +618,27 @@ class GlobalReachConnectionsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}"
-    }
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(
         self, resource_group_name: str, private_cloud_name: str, global_reach_connection_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Delete a global reach connection in a private cloud.
-
-        Delete a global reach connection in a private cloud.
+        """Delete a GlobalReachConnection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param private_cloud_name: Name of the private cloud. Required.
         :type private_cloud_name: str
-        :param global_reach_connection_name: Name of the global reach connection in the private cloud.
-         Required.
+        :param global_reach_connection_name: Name of the global reach connection. Required.
         :type global_reach_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -727,23 +666,21 @@ class GlobalReachConnectionsOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AVS/privateClouds/{privateCloudName}/globalReachConnections/{globalReachConnectionName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
