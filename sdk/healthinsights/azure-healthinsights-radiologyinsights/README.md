@@ -89,7 +89,7 @@ For an example how to create a client, a request and get the result see the exam
 * [Age Mismatch](#get-age-mismatch-inference-information)
 * [Complete Order Discrepancy](#get-complete-order-discrepancy-inference-information)
 * [Critical Result](#get-critical-result-inference-information)
-* [Finding](#get-finding-information)
+* [Finding](#get-finding-inference-information)
 * [Follow-up Communication](#get-follow-up-communication-information)
 * [Follow-up Recommendation](#get-follow-up-recommendation-information)
 * [Laterality Discrepancy](#get-laterality-discrepancy-information)
@@ -333,8 +333,6 @@ additional questions or comments.
 [radiology_insights_docs]: https://learn.microsoft.com/azure/azure-health-insights/radiology-insights/
 [azure_sub]: https://azure.microsoft.com/free/
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
-[azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
-[azure_cli]: https://learn.microsoft.com/cli/azure/
 [inferences]: https://learn.microsoft.com/azure/azure-health-insights/radiology-insights/inferences
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [python]: https://www.python.org/downloads/

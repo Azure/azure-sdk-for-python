@@ -6,26 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload, MutableMapping
 
 __all__: List[str] = [
     "RadiologyInsightsClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
-from io import IOBase
-import json
-import sys
-import logging
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
-
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
-)
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -34,19 +20,12 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._model_base import _deserialize
 from ._operations import RadiologyInsightsClientOperationsMixin as GeneratedRadiologyInsightsClientOperationsMixin
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOperationsMixin):
 
     @overload
@@ -58,8 +37,23 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:...
-        
+    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
+        # pylint: disable=line-too-long
+        """Create Radiology Insights inference result.
+
+        Creates a Radiology Insights inference result with the given request body.
+
+        :param id: The unique ID of the inference result. Required.
+        :type id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsJob
+        :keyword expand: Expand the indicated resources into the response. Default value is None.
+        :paramtype expand: list[str]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:"""
 
     @overload
     async def begin_infer_radiology_insights(
@@ -70,8 +64,23 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:...
-        
+    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
+        # pylint: disable=line-too-long
+        """Create Radiology Insights inference result.
+
+        Creates a Radiology Insights inference result with the given request body.
+
+        :param id: The unique ID of the inference result. Required.
+        :type id: str
+        :param resource: The resource instance. Required.
+        :type resource: JSON
+        :keyword expand: Expand the indicated resources into the response. Default value is None.
+        :paramtype expand: list[str]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body. Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:"""
 
     @overload
     async def begin_infer_radiology_insights(
@@ -82,9 +91,23 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         expand: Optional[List[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:...
-        
+    ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
+        # pylint: disable=line-too-long
+        """Create Radiology Insights inference result.
 
+        Creates a Radiology Insights inference result with the given request body.
+
+        :param id: The unique ID of the inference result. Required.
+        :type id: str
+        :param resource: The resource instance. Required.
+        :type resource: IO[bytes]
+        :keyword expand: Expand the indicated resources into the response. Default value is None.
+        :paramtype expand: list[str]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body. Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:"""
 
     @distributed_trace_async
     async def begin_infer_radiology_insights(
@@ -95,7 +118,21 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
         expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RadiologyInsightsInferenceResult]:
-        
+        # pylint: disable=line-too-long
+        """Create Radiology Insights inference result.
+
+        Creates a Radiology Insights inference result with the given request body.
+
+        :param id: The unique ID of the inference result. Required.
+        :type id: str
+        :param resource: The resource instance. Is one of the following types: RadiologyInsightsJob, JSON, IO[bytes] Required.
+        :type resource: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsJob or JSON or IO[bytes]
+        :keyword expand: Expand the indicated resources into the response. Default value is None.
+        :paramtype expand: list[str]
+        :return: An instance of AsyncLROPoller that returns RadiologyInsightsInferenceResult. The RadiologyInsightsInferenceResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
+        :raises ~azure.core.exceptions.HttpResponseError:"""
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -116,7 +153,6 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
                 **kwargs
             )# type: ignore
             await raw_result.http_response.read()
-            logger.debug(f"Raw result: {raw_result}")
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
@@ -155,7 +191,7 @@ class RadiologyInsightsClientOperationsMixin(GeneratedRadiologyInsightsClientOpe
             )
         return AsyncLROPoller[_models.RadiologyInsightsInferenceResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-            )
+        )
 
 def patch_sdk():
     """Do not remove from this file.
@@ -164,4 +200,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
