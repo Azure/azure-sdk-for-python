@@ -111,6 +111,8 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
                 decoded[name] = value # no type info, property should parse automatically
             elif edm_type == EdmType.BINARY:
                 decoded[name] = _decode_base64_to_bytes(value)
+            elif edm_type == EdmType.INT64:
+                decoded[name] = EntityProperty(int(value), edm_type)
             elif edm_type == EdmType.DATETIME:
                 decoded[name] = _from_entity_datetime(value)
             elif edm_type == EdmType.GUID:
