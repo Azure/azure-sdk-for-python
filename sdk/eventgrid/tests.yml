@@ -13,3 +13,6 @@ extends:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_STORAGE_CONNECTION_STRING: $(python-storage-blob-connection-string)
+        EVENTGRID_SAS: $(python-sdk-test-eg-sas)
+        STORAGE_QUEUE_NAME: $(python-storage-queue-name)
