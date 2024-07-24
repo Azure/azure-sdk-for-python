@@ -22,7 +22,6 @@ USAGE:
     2) AZURE_OPENAI_CHAT_DEPLOYMENT - the deployment name you chose when deploying your model.
 """
 
-
 def chat_completion_studio_viewcode() -> None:
     #[START chat_completion_studio_viewcode]
     import os
@@ -33,7 +32,8 @@ def chat_completion_studio_viewcode() -> None:
     deployment = os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"]
 
     token_provider = get_bearer_token_provider(
-        DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"
+        DefaultAzureCredential(),
+        "https://cognitiveservices.azure.com/.default"
     )
 
     client = AzureOpenAI(

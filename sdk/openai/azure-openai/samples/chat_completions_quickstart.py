@@ -41,7 +41,7 @@ def chat_completion_quickstart() -> None:
     )
 
     response = client.chat.completions.create(
-        model="gpt-4-0613", #os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"],
+        model=os.environ["AZURE_OPENAI_CHAT_DEPLOYMENT"], #"gpt-4-0613",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {
