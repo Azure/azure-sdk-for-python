@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 
-RUN_BREAKING_CHANGES_PACKAGES = []
+RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*"]
 
 
 # See Readme for ignore format
