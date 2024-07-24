@@ -352,9 +352,11 @@ class TestModelAsyncClient(ModelClientTestBase):
     async def test_async_embeddings_with_defaults_check_transport_not_closed(self, **kwargs):
         transport = AioHttpTransport()
         async with self._create_async_embeddings_client(transport=transport, **kwargs) as client1:
+            # assert transport.session is None # Why is it not None here?
             response = await client1.embed(input=["first phrase", "second phrase", "third phrase"])
             self._print_embeddings_result(response)
             self._validate_embeddings_result(response)
+            assert transport.session is not None
             async with client1.with_defaults() as client2:
                 assert transport.session is not None
      
@@ -801,9 +803,11 @@ class TestModelAsyncClient(ModelClientTestBase):
     async def test_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
         transport = AioHttpTransport()
         async with self._create_async_chat_client(transport=transport, **kwargs) as client1:
+            # assert transport.session is None  # Why is this not None here?
             response = await client1.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
             self._print_chat_completions_result(response)
             self._validate_chat_completions_result(response, ["5280", "5,280"])
+            assert transport.session is not None
             async with client1.with_defaults() as client2:
                 assert transport.session is not None
 

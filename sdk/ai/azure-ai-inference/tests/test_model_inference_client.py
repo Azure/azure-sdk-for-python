@@ -354,9 +354,11 @@ class TestModelClient(ModelClientTestBase):
     def test_embeddings_with_defaults_check_transport_not_closed(self, **kwargs):
         transport = RequestsTransport()
         client1 = self._create_embeddings_client(transport=transport, **kwargs)
+        assert transport.session is None
         response = client1.embed(input=["first phrase", "second phrase", "third phrase"])
         self._print_embeddings_result(response)
         self._validate_embeddings_result(response)
+        assert transport.session is not None
         client2 = client1.with_defaults()
         assert transport.session is not None
         client1.close()
@@ -847,9 +849,11 @@ class TestModelClient(ModelClientTestBase):
     def test_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
         transport = RequestsTransport()
         client1 = self._create_chat_client(transport=transport, **kwargs)
+        assert transport.session is None
         response = client1.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
+        assert transport.session is not None
         client2 = client1.with_defaults()
         assert transport.session is not None
         client1.close()
