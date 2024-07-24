@@ -232,9 +232,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             **kwargs,
         )
     
-    async def _get_message_buffer_length(consumer):
-        async with consumer._message_buffer_lock:
-            return len(consumer._message_buffer)
 
     @staticmethod
     async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
@@ -265,8 +262,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         try:
             while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
+                    # set a default value of consumer._prefetch for buffer length
+                    buff_length = 300
                     await consumer._open() # pylint: disable=protected-access
-                    if await PyamqpTransportAsync._get_message_buffer_length(consumer) < max_batch_size : # pylint: disable=protected-access
+                    async with consumer._message_buffer_lock:
+                        buff_length = len(consumer._message_buffer)
+                    if buff_length < max_batch_size : # pylint: disable=protected-access
                             running = await cast(ReceiveClientAsync, consumer._handler)._client_run_async(
                                 batch=consumer._prefetch
                             )
