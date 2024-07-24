@@ -105,17 +105,9 @@ steps:
   # we need to publish an empty artifact. when publishing an empty artifact, let's ensure that there isn't anything to
   # cause CG or SBOM generation to have to do actual work.
   - pwsh: |
-      Write-Host "BEFORE"
-
-      Get-ChildItem -R $(Build.SourcesDirectory) | % { Write-Host $_.FullName }
-
       Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse `
         | Where-Object { !($_.Name.EndsWith("CredScanSuppression.json")) -and ($_.PSIsContainer -ne $true) } `
         | Remove-Item -Force -Recurse
-
-      Write-Host "AFTER"
-
-      Get-ChildItem -R $(Build.SourcesDirectory) | % { Write-Host $_.FullName }
     displayName: Clean up repo
     condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
 
