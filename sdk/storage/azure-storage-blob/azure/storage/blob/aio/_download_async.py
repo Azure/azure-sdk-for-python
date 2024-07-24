@@ -10,7 +10,6 @@ import asyncio
 import codecs
 import sys
 import warnings
-from aiohttp import ClientPayloadError
 from io import BytesIO, StringIO
 from itertools import islice
 from typing import (
@@ -20,7 +19,7 @@ from typing import (
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError, IncompleteReadError, ServiceResponseError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -122,6 +121,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 download_range[1],
                 check_content_md5=self.validate_content
             )
+
             retry_active = True
             retry_total = 3
             while retry_active:
@@ -134,17 +134,17 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                         download_stream_current=self.progress_total,
                         **self.request_options
                     ))
-                    retry_active = False
-
                 except HttpResponseError as error:
                     process_storage_error(error)
-                except IncompleteReadError as error:
+                
+                try:
+                    chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
+                    retry_active = False
+                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
-                        raise ServiceResponseError(error, error=error)
+                        raise HttpResponseError(error, error=error) from error
                     await asyncio.sleep(1)
-
-            chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
             content_length = response.content_length
 
             # This makes sure that if_match is set so that we can validate
@@ -353,7 +353,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._initial_range[1],
             start_range_required=False,
             end_range_required=False,
-            check_content_md5=self._validate_content)
+            check_content_md5=self._validate_content
+        )
 
         retry_active = True
         retry_total = 3
@@ -365,7 +366,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     validate_content=self._validate_content,
                     data_stream_total=None,
                     download_stream_current=0,
-                    **self._request_options))
+                    **self._request_options
+                ))
 
                 # Check the location we read from to ensure we use the same one
                 # for subsequent requests.
@@ -386,7 +388,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self.size = self._file_size - self._start_range
                 else:
                     self.size = self._file_size
-                retry_active = False
 
             except HttpResponseError as error:
                 if self._start_range is None and error.response and error.status_code == 416:
@@ -407,22 +408,23 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     self._file_size = 0
                 else:
                     process_storage_error(error)
-
-            except ClientPayloadError as error:
+            
+            try:
+                if self.size == 0:
+                    self._current_content = b""
+                else:
+                    self._current_content = await process_content(
+                        response,
+                        self._initial_offset[0],
+                        self._initial_offset[1],
+                        self._encryption_options
+                    )
+                retry_active = False
+            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
-                    raise ServiceResponseError(error, error=error)
+                    raise HttpResponseError(error, error=error) from error
                 await asyncio.sleep(1)
-
-        if self.size == 0:
-            self._current_content = b""
-        else:
-            self._current_content = await process_content(
-                response,
-                self._initial_offset[0],
-                self._initial_offset[1],
-                self._encryption_options
-            )
         self._download_offset += len(self._current_content)
         self._raw_download_offset += response.content_length
 
