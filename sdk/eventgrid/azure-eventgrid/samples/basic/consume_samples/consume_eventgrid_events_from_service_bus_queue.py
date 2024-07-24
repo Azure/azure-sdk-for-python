@@ -19,7 +19,7 @@ USAGE:
 
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
-from azure.core.credentials import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 import os
 import json
 

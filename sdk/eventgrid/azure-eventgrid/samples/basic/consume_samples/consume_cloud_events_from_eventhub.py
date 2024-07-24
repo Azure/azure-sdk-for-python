@@ -21,7 +21,7 @@ import os
 import json
 from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
-from azure.core.credentials import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 EVENTHUB_FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_FULLY_QUALIFIED_NAMESPACE"]
