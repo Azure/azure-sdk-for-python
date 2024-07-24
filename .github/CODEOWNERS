@@ -412,6 +412,10 @@
 # PRLabel: %Cognitive - Text Analytics
 /sdk/textanalytics/                                                  @quentinRobinson @wangyuantao
 
+# ServiceLabel: %Health Deidentification
+# PRLabel: %Health Deidentification
+/sdk/healthdataaiservices/                                           @GrahamMThomas @danielszaniszlo
+
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
 # ServiceOwners: @bojunehsu @vkurpad
