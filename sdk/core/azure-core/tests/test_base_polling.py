@@ -154,7 +154,8 @@ def polling_response():
             None,
             response,
         )
-        response.status_code = 200
+        response._content = b'lro response'
+        response._is_closed = True
         if http_request:
             request = create_http_request(http_request, "PUT", "http://example.org/polling", {"x-ms-client-request-id":"testid"})
         else:
@@ -719,7 +720,8 @@ class TestBasePolling(object):
         poll = LROPoller(CLIENT, response, TestBasePolling.mock_outputs, LROBasePolling(0))
         with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
             poll.result()
-        assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        
+        assert error.value.continuation_token == poll.continuation_token()
 
         LOCATION_BODY = json.dumps({"name": TEST_NAME})
         POLLING_STATUS = 200
