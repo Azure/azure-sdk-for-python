@@ -679,23 +679,23 @@ async def test_long_running_negative(http_request, http_response):
     # Test LRO PUT throws for invalid json
     LOCATION_BODY = "{"
     response = TestBasePolling.mock_send(http_request, http_response, "POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
     with pytest.raises(DecodeError):
-        await poll
+        await poll.result()
 
     LOCATION_BODY = "{'\"}"
     response = TestBasePolling.mock_send(http_request, http_response, "POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
     with pytest.raises(DecodeError):
-        await poll
+        await poll.result()
 
     LOCATION_BODY = "{"
     POLLING_STATUS = 203
     response = TestBasePolling.mock_send(http_request, http_response, "POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
+    poll = AsyncLROPoller(CLIENT, response, TestBasePolling.mock_outputs, AsyncLROBasePolling(0))
     with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
-        await poll
-    assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
+        await poll.result()
+    assert error.value.continuation_token == poll.continuation_token()
 
     LOCATION_BODY = json.dumps({"name": TEST_NAME})
     POLLING_STATUS = 200
