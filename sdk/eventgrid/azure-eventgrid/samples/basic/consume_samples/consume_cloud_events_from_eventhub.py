@@ -24,7 +24,7 @@ from azure.eventhub import EventHubConsumerClient
 from azure.identity import DefaultAzureCredential
 
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
-EVENTHUB_FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_FULLY_QUALIFIED_NAMESPACE"]
+EVENTHUB_FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 
 
 def on_event(partition_context, event):

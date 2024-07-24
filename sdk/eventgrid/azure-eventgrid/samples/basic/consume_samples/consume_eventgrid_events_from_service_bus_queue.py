@@ -25,7 +25,7 @@ import json
 
 # all types of EventGridEvents below produce same DeserializedEvent
 queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
-fully_qualified_namespace = os.environ["SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE"]
+fully_qualified_namespace = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 
 with ServiceBusClient(fully_qualified_namespace, DefaultAzureCredential()) as sb_client:
     payload = sb_client.get_queue_receiver(queue_name).receive_messages()
