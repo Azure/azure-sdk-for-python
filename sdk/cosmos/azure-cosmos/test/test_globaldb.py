@@ -424,39 +424,40 @@ class TestGlobalDB(unittest.TestCase):
         container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # Replace GetDatabaseAccount method
-        self.OriginalGetDatabaseAccount = client.client_connection.GetDatabaseAccount
-        cc_copy = client.client_connection
-        cc_copy.GetDatabaseAccount = _mock_get_database_account
-        client.client_connection = cc_copy
+        try:
+            self.OriginalGetDatabaseAccount = client.client_connection.GetDatabaseAccount
+            cc_copy = client.client_connection
+            cc_copy.GetDatabaseAccount = _mock_get_database_account
+            client.client_connection = cc_copy
 
-        # Replace _PipelineRunFunction to send a 403/3
-        self.original_pipeline_function = _synchronized_request._PipelineRunFunction
-        _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function_error
+            # Replace _PipelineRunFunction to send a 403/3
+            self.original_pipeline_function = _synchronized_request._PipelineRunFunction
+            _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function_error
 
-        document_definition = {'id': 'doc7',
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
+            document_definition = {'id': 'doc7',
+                                   'pk': 'pk',
+                                   'name': 'sample document',
+                                   'key': 'value'}
 
-        max_retry_attempt_count = 10
-        retry_after_in_milliseconds = 500
-        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
-        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = (
-            retry_after_in_milliseconds)
+            max_retry_attempt_count = 10
+            retry_after_in_milliseconds = 500
+            _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
+            _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = (
+                retry_after_in_milliseconds)
 
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.FORBIDDEN,
-            SubStatusCodes.WRITE_FORBIDDEN,
-            container.create_item,
-            document_definition)
+            self.__AssertHTTPFailureWithStatus(
+                StatusCodes.FORBIDDEN,
+                SubStatusCodes.WRITE_FORBIDDEN,
+                container.create_item,
+                document_definition)
 
-        # Verify next outgoing requests have the new updated regions from the 403 retry
-        _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function
-        container.create_item(document_definition)
-        _synchronized_request._PipelineRunFunction = self.original_pipeline_function
-
-        cc_copy.GetDatabaseAccount = self.OriginalGetDatabaseAccount
-        client.client_connection = cc_copy
+            # Verify next outgoing requests have the new updated regions from the 403 retry
+            _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function
+            container.create_item(document_definition)
+        finally:
+            _synchronized_request._PipelineRunFunction = self.original_pipeline_function
+            cc_copy.GetDatabaseAccount = self.OriginalGetDatabaseAccount
+            client.client_connection = cc_copy
 
     def test_global_db_service_request_errors(self):
         connection_policy = documents.ConnectionPolicy()
