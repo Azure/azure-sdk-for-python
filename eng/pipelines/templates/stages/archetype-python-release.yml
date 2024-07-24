@@ -301,8 +301,6 @@ stages:
         - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
           parameters:
             TargetPath: $(Pipeline.Workspace)
-          artifact: ${{parameters.ArtifactName}}
-          timeoutInMinutes: 5
         - task: UsePythonVersion@0
         - script: |
             set -e
