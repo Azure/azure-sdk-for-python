@@ -17,8 +17,9 @@ Example to show managing subscription entities under a ServiceBus Namespace, inc
 import os
 import uuid
 from azure.servicebus.management import ServiceBusAdministrationClient
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
 SUBSCRIPTION_NAME = "sb_mgmt_sub" + str(uuid.uuid4())
 
@@ -68,7 +69,8 @@ def get_subscription_runtime_properties(servicebus_mgmt_client):
     print("")
 
 
-with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+credential = DefaultAzureCredential()
+with ServiceBusAdministrationClient(FULLY_QUALIFIED_NAMESPACE, credential) as servicebus_mgmt_client:
     create_subscription(servicebus_mgmt_client)
     list_subscriptions(servicebus_mgmt_client)
     get_and_update_subscription(servicebus_mgmt_client)

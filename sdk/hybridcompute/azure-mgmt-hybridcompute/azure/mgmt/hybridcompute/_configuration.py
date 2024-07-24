@@ -28,13 +28,13 @@ class HybridComputeManagementClientConfiguration:  # pylint: disable=too-many-in
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-03-31-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-05-20-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-03-31-preview")
+        api_version: str = kwargs.pop("api_version", "2024-05-20-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

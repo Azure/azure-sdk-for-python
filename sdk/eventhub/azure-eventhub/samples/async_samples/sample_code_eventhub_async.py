@@ -24,11 +24,14 @@ def example_create_async_eventhub_producer_client():
     # [START create_eventhub_producer_client_from_conn_str_async]
     import os
     from azure.eventhub.aio import EventHubProducerClient
-    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    from azure.identity.aio import DefaultAzureCredential
+
+    fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
     eventhub_name = os.environ['EVENT_HUB_NAME']
-    producer = EventHubProducerClient.from_connection_string(
-        conn_str=event_hub_connection_str,
-        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
+        credential=DefaultAzureCredential()
     )
     # [END create_eventhub_producer_client_from_conn_str_async]
 
@@ -52,10 +55,13 @@ def example_create_async_eventhub_consumer_client():
     # [START create_eventhub_consumer_client_from_conn_str_async]
     import os
     from azure.eventhub.aio import EventHubConsumerClient
-    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    from azure.identity.aio import DefaultAzureCredential
+
+    fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
     eventhub_name = os.environ['EVENT_HUB_NAME']
-    consumer = EventHubConsumerClient.from_connection_string(
-        conn_str=event_hub_connection_str,
+    consumer = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        credential=DefaultAzureCredential(),
         consumer_group='$Default',
         eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
     )
@@ -150,13 +156,15 @@ async def example_eventhub_async_producer_send_and_close():
     import os
     from azure.eventhub.aio import EventHubProducerClient
     from azure.eventhub import EventData
+    from azure.identity.aio import DefaultAzureCredential
 
-    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
     eventhub_name = os.environ['EVENT_HUB_NAME']
 
-    producer = EventHubProducerClient.from_connection_string(
-        conn_str=event_hub_connection_str,
-        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
+        credential=DefaultAzureCredential()
     )
     try:
         event_data_batch = await producer.create_batch()
@@ -177,15 +185,17 @@ async def example_eventhub_async_producer_send_and_close():
 async def example_eventhub_async_consumer_receive_and_close():
     # [START eventhub_consumer_client_close_async]
     import os
+    from azure.identity.aio import DefaultAzureCredential
 
-    event_hub_connection_str = os.environ['EVENT_HUB_CONN_STR']
+    fully_qualified_namespace = os.environ["EVENT_HUB_HOSTNAME"]
     eventhub_name = os.environ['EVENT_HUB_NAME']
 
     from azure.eventhub.aio import EventHubConsumerClient
-    consumer = EventHubConsumerClient.from_connection_string(
-        conn_str=event_hub_connection_str,
+    consumer = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
         consumer_group='$Default',
-        eventhub_name=eventhub_name  # EventHub name should be specified if it doesn't show up in connection string.
+        eventhub_name=eventhub_name,  # EventHub name should be specified if it doesn't show up in connection string.
+        credential=DefaultAzureCredential()
     )
 
     logger = logging.getLogger("azure.eventhub")

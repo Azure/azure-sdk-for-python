@@ -59,7 +59,7 @@ class ServiceBusResourceGroupPreparer(AzureMgmtPreparer):
         self.location = location
         self.parameter_name = parameter_name
         self.parameter_name_for_location = parameter_name_for_location
-        env_value = os.environ.get("AZURE_RESOURCEGROUP_NAME", None)
+        env_value = os.environ.get("SERVICEBUS_RESOURCE_GROUP", None)
         self._need_creation = True
         if env_value:
             self.resource_random_name = env_value

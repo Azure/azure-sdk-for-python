@@ -68,7 +68,7 @@ parameters:
     default: false
   - name: TestProxy
     type: boolean
-    default: false
+    default: true
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
