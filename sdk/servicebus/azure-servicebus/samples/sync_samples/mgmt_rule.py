@@ -21,8 +21,9 @@ from azure.servicebus.management import (
     ServiceBusAdministrationClient,
     SqlRuleFilter
 )
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
 SUBSCRIPTION_NAME = os.environ['SERVICEBUS_SUBSCRIPTION_NAME']
 RULE_NAME = "sb_mgmt_rule" + str(uuid.uuid4())
@@ -97,7 +98,8 @@ def get_and_update_rule(servicebus_mgmt_client):
     )
 
 
-with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+credential = DefaultAzureCredential()
+with ServiceBusAdministrationClient(FULLY_QUALIFIED_NAMESPACE, credential) as servicebus_mgmt_client:
     create_rule(servicebus_mgmt_client)
     list_rules(servicebus_mgmt_client)
     get_and_update_rule(servicebus_mgmt_client)

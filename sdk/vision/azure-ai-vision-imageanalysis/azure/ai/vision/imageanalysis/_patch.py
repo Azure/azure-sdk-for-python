@@ -20,8 +20,10 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
     :param endpoint: Azure AI Computer Vision endpoint (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential used to authenticate requests to the service. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-10-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -71,14 +73,14 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
         :paramtype model_version: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         visual_features_impl: List[Union[str, _models.VisualFeatures]] = list(visual_features)
 
         return ImageAnalysisClientOperationsMixin._analyze_from_url(  # pylint: disable=protected-access
             self,
-            image_content=_models._models.ImageUrl(url=image_url),  # pylint: disable=protected-access
+            image_url=_models._models.ImageUrl(url=image_url),  # pylint: disable=protected-access
             visual_features=visual_features_impl,
             language=language,
             gender_neutral_caption=gender_neutral_caption,
@@ -86,7 +88,6 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
             model_version=model_version,
             **kwargs
         )
-
 
     @distributed_trace
     def analyze(
@@ -132,14 +133,14 @@ class ImageAnalysisClient(ImageAnalysisClientGenerated):
         :paramtype model_version: str
         :return: ImageAnalysisResult. The ImageAnalysisResult is compatible with MutableMapping
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         visual_features_impl: List[Union[str, _models.VisualFeatures]] = list(visual_features)
 
         return ImageAnalysisClientOperationsMixin._analyze_from_image_data(  # pylint: disable=protected-access
             self,
-            image_content=image_data,
+            image_data=image_data,
             visual_features=visual_features_impl,
             language=language,
             gender_neutral_caption=gender_neutral_caption,

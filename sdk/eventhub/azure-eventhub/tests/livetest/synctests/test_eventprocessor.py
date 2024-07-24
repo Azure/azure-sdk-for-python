@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import pytest
 import threading
@@ -12,7 +12,9 @@ from azure.eventhub import EventData, CloseReason, LoadBalancingStrategy
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub._eventprocessor.event_processor import EventProcessor
 from azure.eventhub._eventprocessor.ownership_manager import OwnershipManager
-from azure.eventhub._eventprocessor.in_memory_checkpoint_store import InMemoryCheckpointStore
+from azure.eventhub._eventprocessor.in_memory_checkpoint_store import (
+    InMemoryCheckpointStore,
+)
 from azure.eventhub._client_base import _Address
 
 
@@ -32,10 +34,21 @@ def test_loadbalancer_balance():
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
-            consumer = MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
+            consumer = MockEventhubConsumer(
+                on_event_received=on_event_received, **kwargs
+            )
             return consumer
 
         def get_partition_ids(self):
@@ -56,11 +69,13 @@ def test_loadbalancer_balance():
     eventhub_client = MockEventHubClient()
     checkpoint_store = InMemoryCheckpointStore()
     threads = []
-    event_processor1 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group='$default',
-                                      checkpoint_store=checkpoint_store,
-                                      on_event=event_handler,
-                                      load_balancing_interval=0.3)
+    event_processor1 = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        load_balancing_interval=0.3,
+    )
 
     thread1 = threading.Thread(target=event_processor1.start)
     thread1.start()
@@ -68,11 +83,13 @@ def test_loadbalancer_balance():
 
     time.sleep(2)
     ep1_after_start = len(event_processor1._consumers)
-    event_processor2 = EventProcessor(eventhub_client=eventhub_client,
-                                      consumer_group='$default',
-                                      checkpoint_store=checkpoint_store,
-                                      on_event=event_handler,
-                                      load_balancing_interval=0.3)
+    event_processor2 = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        load_balancing_interval=0.3,
+    )
 
     thread2 = threading.Thread(target=event_processor2.start)
     thread2.start()
@@ -94,16 +111,27 @@ def test_loadbalancer_balance():
 
 def test_loadbalancer_list_ownership_error():
     class ErrorCheckpointStore(InMemoryCheckpointStore):
-        def list_ownership(self, fully_qualified_namespace, eventhub_name, consumer_group):
+        def list_ownership(
+            self, fully_qualified_namespace, eventhub_name, consumer_group
+        ):
             raise RuntimeError("Test runtime error")
 
     class MockEventHubClient:
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
             return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
@@ -129,12 +157,14 @@ def test_loadbalancer_list_ownership_error():
     eventhub_client = MockEventHubClient()
     checkpoint_store = ErrorCheckpointStore()
 
-    event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group='$default',
-                                     checkpoint_store=checkpoint_store,
-                                     on_event=event_handler,
-                                     on_error=on_error,
-                                     load_balancing_interval=1)
+    event_processor = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        on_error=on_error,
+        load_balancing_interval=1,
+    )
 
     thread = threading.Thread(target=event_processor.start)
     thread.start()
@@ -157,7 +187,9 @@ def test_partition_processor():
         assert_map["initialize"] = "called"
 
     def event_handler(partition_context, event):
-        event_map[partition_context.partition_id] = event_map.get(partition_context.partition_id, 0) + 1
+        event_map[partition_context.partition_id] = (
+            event_map.get(partition_context.partition_id, 0) + 1
+        )
         partition_context.update_checkpoint(event)
         assert_map["checkpoint"] = "checkpoint called"
 
@@ -171,9 +203,18 @@ def test_partition_processor():
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
             return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
@@ -195,14 +236,16 @@ def test_partition_processor():
 
     checkpoint_store = InMemoryCheckpointStore()
 
-    event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group='$default',
-                                     checkpoint_store=checkpoint_store,
-                                     on_event=event_handler,
-                                     on_error=error_handler,
-                                     on_partition_initialize=partition_initialize_handler,
-                                     on_partition_close=partition_close_handler,
-                                     load_balancing_interval=0.3)
+    event_processor = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        on_error=error_handler,
+        on_partition_initialize=partition_initialize_handler,
+        on_partition_close=partition_close_handler,
+        load_balancing_interval=0.3,
+    )
 
     thread = threading.Thread(target=event_processor.start)
     thread.start()
@@ -213,7 +256,7 @@ def test_partition_processor():
     thread.join()
     assert ep_partitions == 2
     assert assert_map["initialize"] == "called"
-    assert event_map['0'] >= 1 and event_map['1'] >= 1
+    assert event_map["0"] >= 1 and event_map["1"] >= 1
     assert assert_map["checkpoint"] == "checkpoint called"
     assert "error" not in assert_map
     assert assert_map["close_reason"] == CloseReason.SHUTDOWN
@@ -221,6 +264,7 @@ def test_partition_processor():
 
 def test_partition_processor_process_events_error():
     assert_result = {}
+
     def event_handler(partition_context, event):
         if partition_context.partition_id == "1":
             raise RuntimeError("processing events error")
@@ -240,9 +284,18 @@ def test_partition_processor_process_events_error():
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
             return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
@@ -263,13 +316,15 @@ def test_partition_processor_process_events_error():
     eventhub_client = MockEventHubClient()
     checkpoint_store = InMemoryCheckpointStore()
 
-    event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group='$default',
-                                     checkpoint_store=checkpoint_store,
-                                     on_event=event_handler,
-                                     on_error=error_handler,
-                                     on_partition_close=partition_close_handler,
-                                     load_balancing_interval=1)
+    event_processor = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        on_error=error_handler,
+        on_partition_close=partition_close_handler,
+        load_balancing_interval=1,
+    )
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -280,6 +335,7 @@ def test_partition_processor_process_events_error():
 
 def test_partition_processor_process_eventhub_consumer_error():
     assert_result = {}
+
     def event_handler(partition_context, events):
         pass
 
@@ -293,9 +349,18 @@ def test_partition_processor_process_eventhub_consumer_error():
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
             return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
@@ -309,19 +374,22 @@ def test_partition_processor_process_eventhub_consumer_error():
         def receive(self, *args, **kwargs):
             time.sleep(0.5)
             raise EventHubError("Mock EventHubConsumer EventHubError")
+
         def close(self):
             pass
 
     eventhub_client = MockEventHubClient()
     checkpoint_store = InMemoryCheckpointStore()
 
-    event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group='$default',
-                                     checkpoint_store=checkpoint_store,
-                                     on_event=event_handler,
-                                     on_error=error_handler,
-                                     on_partition_close=partition_close_handler,
-                                     load_balancing_interval=1)
+    event_processor = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        on_error=error_handler,
+        on_partition_close=partition_close_handler,
+        load_balancing_interval=1,
+    )
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -355,9 +423,18 @@ def test_partition_processor_process_error_close_error():
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
             return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
@@ -382,17 +459,29 @@ def test_partition_processor_process_error_close_error():
         def release_ownership(self, partition_id):
             self.called = True
 
-    eventhub_client = MockEventHubClient()  # EventHubClient.from_connection_string(connection_str, receive_timeout=3)
+    eventhub_client = (
+        MockEventHubClient()
+    )  # EventHubClient(fully_qualified_namespace, eventhub_name, credential, receive_timeout=3)
     checkpoint_store = InMemoryCheckpointStore()
-    ownership_manager = MockOwnershipManager(eventhub_client, "$Default", "owner", checkpoint_store, 10.0, LoadBalancingStrategy.GREEDY, "0")
-    event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group='$default',
-                                     checkpoint_store=checkpoint_store,
-                                     on_event=event_handler,
-                                     on_error=error_handler,
-                                     on_partition_initialize=partition_initialize_handler,
-                                     on_partition_close=partition_close_handler,
-                                     load_balancing_interval=1)
+    ownership_manager = MockOwnershipManager(
+        eventhub_client,
+        "$Default",
+        "owner",
+        checkpoint_store,
+        10.0,
+        LoadBalancingStrategy.GREEDY,
+        "0",
+    )
+    event_processor = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        on_error=error_handler,
+        on_partition_initialize=partition_initialize_handler,
+        on_partition_close=partition_close_handler,
+        load_balancing_interval=1,
+    )
     event_processor._ownership_manager = ownership_manager
     thread = threading.Thread(target=event_processor.start)
     thread.start()
@@ -409,9 +498,10 @@ def test_partition_processor_process_error_close_error():
 
 def test_partition_processor_process_update_checkpoint_error():
     assert_map = {}
+
     class ErrorCheckpointStore(InMemoryCheckpointStore):
         def update_checkpoint(self, checkpoint):
-            if checkpoint['partition_id'] == "1":
+            if checkpoint["partition_id"] == "1":
                 raise ValueError("Mocked error")
 
     def event_handler(partition_context, event):
@@ -428,9 +518,18 @@ def test_partition_processor_process_update_checkpoint_error():
         eventhub_name = "test_eventhub_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
-        def _create_consumer(self, consumer_group, partition_id, event_position, on_event_received, **kwargs):
+        def _create_consumer(
+            self,
+            consumer_group,
+            partition_id,
+            event_position,
+            on_event_received,
+            **kwargs
+        ):
             return MockEventhubConsumer(on_event_received=on_event_received, **kwargs)
 
         def get_partition_ids(self):
@@ -451,13 +550,15 @@ def test_partition_processor_process_update_checkpoint_error():
     eventhub_client = MockEventHubClient()
     checkpoint_store = ErrorCheckpointStore()
 
-    event_processor = EventProcessor(eventhub_client=eventhub_client,
-                                     consumer_group='$default',
-                                     checkpoint_store=checkpoint_store,
-                                     on_event=event_handler,
-                                     on_error=error_handler,
-                                     on_partition_close=partition_close_handler,
-                                     load_balancing_interval=1)
+    event_processor = EventProcessor(
+        eventhub_client=eventhub_client,
+        consumer_group="$default",
+        checkpoint_store=checkpoint_store,
+        on_event=event_handler,
+        on_error=error_handler,
+        on_partition_close=partition_close_handler,
+        load_balancing_interval=1,
+    )
     thread = threading.Thread(target=event_processor.start)
     thread.start()
     time.sleep(2)
@@ -471,7 +572,9 @@ def test_ownership_manager_release_partition():
         eventhub_name = "test_eh_name"
 
         def __init__(self):
-            self._address = _Address(hostname="test", path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname="test", path=MockEventHubClient.eventhub_name
+            )
 
         def get_partition_ids(self):
             return ["0", "1"]
@@ -484,7 +587,15 @@ def test_ownership_manager_release_partition():
             self.released = ownsership
 
     checkpoint_store = MockCheckpointStore()
-    ownership_manager = OwnershipManager(MockEventHubClient(), "$Default", "owner", checkpoint_store, 10.0, LoadBalancingStrategy.GREEDY, "0")
+    ownership_manager = OwnershipManager(
+        MockEventHubClient(),
+        "$Default",
+        "owner",
+        checkpoint_store,
+        10.0,
+        LoadBalancingStrategy.GREEDY,
+        "0",
+    )
     ownership_manager.cached_parition_ids = ["0", "1"]
     ownership_manager.owned_partitions = []
     ownership_manager.release_ownership("1")
@@ -502,11 +613,15 @@ def test_ownership_manager_release_partition():
     ownership_manager.release_ownership("0")
     assert checkpoint_store.released is None
 
-    ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "foo", "last_modified_time": time.time()}]
+    ownership_manager.owned_partitions = [
+        {"partition_id": "0", "owner_id": "foo", "last_modified_time": time.time()}
+    ]
     ownership_manager.release_ownership("0")
     assert checkpoint_store.released is None
 
-    ownership_manager.owned_partitions = [{"partition_id": "0", "owner_id": "owner", "last_modified_time": time.time()}]
+    ownership_manager.owned_partitions = [
+        {"partition_id": "0", "owner_id": "owner", "last_modified_time": time.time()}
+    ]
     ownership_manager.release_ownership("0")
     assert checkpoint_store.released[0]["owner_id"] == ""
 
@@ -515,72 +630,87 @@ def test_ownership_manager_release_partition():
     "ownerships, partitions, expected_result",
     [
         ([], ["0", "1", "2"], 3),
-        (['ownership_active0', 'ownership_active1'], ["0", "1", "2"], 1),
-        (['ownership_active0', 'ownership_expired'], ["0", "1", "2"], 2),
-        (['ownership_active0', 'ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 2),
-        (['ownership_active0'], ["0", "1", "2", "3"], 2),
-        (['ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 4),
-        (['ownership_active0', 'ownership_active1'], ["0", "1"], 0),
-        (['ownership_active0', 'ownership_self_owned'], ["0", "1"], 1),
-        (['ownership_active0', 'ownership_active1'], [str(i) for i in range(32)], 11),
-        (['ownership_active0'], [str(i) for i in range(32)], 16),
-    ]
+        (["ownership_active0", "ownership_active1"], ["0", "1", "2"], 1),
+        (["ownership_active0", "ownership_expired"], ["0", "1", "2"], 2),
+        (
+            ["ownership_active0", "ownership_expired", "ownership_released"],
+            ["0", "1", "2", "3"],
+            2,
+        ),
+        (["ownership_active0"], ["0", "1", "2", "3"], 2),
+        (["ownership_expired", "ownership_released"], ["0", "1", "2", "3"], 4),
+        (["ownership_active0", "ownership_active1"], ["0", "1"], 0),
+        (["ownership_active0", "ownership_self_owned"], ["0", "1"], 1),
+        (["ownership_active0", "ownership_active1"], [str(i) for i in range(32)], 11),
+        (["ownership_active0"], [str(i) for i in range(32)], 16),
+    ],
 )
 def test_balance_ownership_greedy(ownerships, partitions, expected_result):
     ownership_ref = {
-        'ownership_active0': {
+        "ownership_active0": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "0",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_0",
-            "last_modified_time": time.time()
+            "last_modified_time": time.time(),
         },
-        'ownership_active1': {
+        "ownership_active1": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
-            "last_modified_time": time.time()
+            "last_modified_time": time.time(),
         },
-        'ownership_self_owned': {
+        "ownership_self_owned": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": TEST_OWNER,
-            "last_modified_time": time.time()
+            "last_modified_time": time.time(),
         },
-        'ownership_expired': {
+        "ownership_expired": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "2",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
-            "last_modified_time": time.time() - 100000
+            "last_modified_time": time.time() - 100000,
         },
-        'ownership_released': {
+        "ownership_released": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "3",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "",
-            "last_modified_time": time.time()
-        }
+            "last_modified_time": time.time(),
+        },
     }
+
     class MockEventHubClient:
         eventhub_name = TEST_EVENTHUB
 
         def __init__(self):
-            self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name
+            )
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     mock_client = MockEventHubClient()
     current_ownerships = [ownership_ref[o] for o in ownerships]
-    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, LoadBalancingStrategy.GREEDY, None)
+    om = OwnershipManager(
+        mock_client,
+        TEST_CONSUMER_GROUP,
+        TEST_OWNER,
+        None,
+        10,
+        LoadBalancingStrategy.GREEDY,
+        None,
+    )
     to_claim_ownership = om._balance_ownership(current_ownerships, partitions)
     assert len(to_claim_ownership) == expected_result
 
@@ -589,69 +719,84 @@ def test_balance_ownership_greedy(ownerships, partitions, expected_result):
     "ownerships, partitions, expected_result",
     [
         ([], ["0", "1", "2"], 1),
-        (['ownership_active0', 'ownership_active1'], ["0", "1", "2"], 1),
-        (['ownership_active0', 'ownership_expired'], ["0", "1", "2"], 1),
-        (['ownership_active0', 'ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 1),
-        (['ownership_active0'], ["0", "1", "2", "3"], 1),
-        (['ownership_expired', 'ownership_released'], ["0", "1", "2", "3"], 1),
-        (['ownership_active0', 'ownership_active1'], ["0", "1"], 0),
-        (['ownership_active0', 'ownership_self_owned'], ["0", "1"], 1),
-    ]
+        (["ownership_active0", "ownership_active1"], ["0", "1", "2"], 1),
+        (["ownership_active0", "ownership_expired"], ["0", "1", "2"], 1),
+        (
+            ["ownership_active0", "ownership_expired", "ownership_released"],
+            ["0", "1", "2", "3"],
+            1,
+        ),
+        (["ownership_active0"], ["0", "1", "2", "3"], 1),
+        (["ownership_expired", "ownership_released"], ["0", "1", "2", "3"], 1),
+        (["ownership_active0", "ownership_active1"], ["0", "1"], 0),
+        (["ownership_active0", "ownership_self_owned"], ["0", "1"], 1),
+    ],
 )
 def test_balance_ownership_balanced(ownerships, partitions, expected_result):
     ownership_ref = {
-        'ownership_active0': {
+        "ownership_active0": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "0",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_0",
-            "last_modified_time": time.time()
+            "last_modified_time": time.time(),
         },
-        'ownership_active1': {
+        "ownership_active1": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
-            "last_modified_time": time.time()
+            "last_modified_time": time.time(),
         },
-        'ownership_self_owned': {
+        "ownership_self_owned": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "1",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": TEST_OWNER,
-            "last_modified_time": time.time()
+            "last_modified_time": time.time(),
         },
-        'ownership_expired': {
+        "ownership_expired": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "2",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "owner_1",
-            "last_modified_time": time.time() - 100000
+            "last_modified_time": time.time() - 100000,
         },
-        'ownership_released': {
+        "ownership_released": {
             "fully_qualified_namespace": TEST_NAMESPACE,
             "partition_id": "3",
             "eventhub_name": TEST_EVENTHUB,
             "consumer_group": TEST_CONSUMER_GROUP,
             "owner_id": "",
-            "last_modified_time": time.time()
-        }
+            "last_modified_time": time.time(),
+        },
     }
+
     class MockEventHubClient:
         eventhub_name = TEST_EVENTHUB
 
         def __init__(self):
-            self._address = _Address(hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name)
+            self._address = _Address(
+                hostname=TEST_NAMESPACE, path=MockEventHubClient.eventhub_name
+            )
 
         def get_partition_ids(self):
             return ["0", "1"]
 
     mock_client = MockEventHubClient()
     current_ownerships = [ownership_ref[o] for o in ownerships]
-    om = OwnershipManager(mock_client, TEST_CONSUMER_GROUP, TEST_OWNER, None, 10, LoadBalancingStrategy.BALANCED, None)
+    om = OwnershipManager(
+        mock_client,
+        TEST_CONSUMER_GROUP,
+        TEST_OWNER,
+        None,
+        10,
+        LoadBalancingStrategy.BALANCED,
+        None,
+    )
     to_claim_ownership = om._balance_ownership(current_ownerships, partitions)
     assert len(to_claim_ownership) == expected_result

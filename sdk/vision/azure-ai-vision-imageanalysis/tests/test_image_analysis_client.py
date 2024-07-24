@@ -65,6 +65,17 @@ class TestImageAnalysisClient(ImageAnalysisTestBase):
 
         self.client.close()
 
+    # Test a single visual feature from an image url, using Entra ID authentication
+    @ServicePreparer()
+    @recorded_by_proxy
+    def test_analyze_sync_single_feature_from_url_entra_id_auth(self, **kwargs):
+
+        self._create_client_for_standard_analysis_with_entra_id_auth(sync=True, **kwargs)
+
+        self._do_analysis(image_source=self.IMAGE_URL,visual_features=[sdk.models.VisualFeatures.OBJECTS], **kwargs)
+
+        self.client.close()
+
     # **********************************************************************************
     #
     #                            ERROR TESTS
