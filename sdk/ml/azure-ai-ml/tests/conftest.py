@@ -97,12 +97,8 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         ignored_query_parameters="api-version",
     )
 
-    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000")
-    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000")
-    resource_group = os.environ.get("ML_RESOURCE_GROUP", "00000")
-    add_general_regex_sanitizer(regex=resource_group, value="00000")
-    workspace_name = os.environ.get("ML_WORKSPACE_NAME", "00000")
-    add_general_regex_sanitizer(regex=workspace_name, value="00000")
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
 
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
@@ -137,9 +133,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
+    #  - AZSDK3436: $..resourceGroup
     #  - AZSDK3493: $..name
     #  - AZSDK2003: Location
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003", "AZSDK3436"])
 
 
 def pytest_addoption(parser):
