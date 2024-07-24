@@ -20,7 +20,7 @@ from typing import (
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import HttpResponseError, IncompleteReadError, ServiceResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -138,7 +138,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
                 except HttpResponseError as error:
                     process_storage_error(error)
-                except ClientPayloadError as error:
+                except IncompleteReadError as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise ServiceResponseError(error, error=error)
