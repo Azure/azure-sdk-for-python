@@ -822,7 +822,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         self.key_version = key_version
         self.vault_uri = vault_uri
         self.application_id = application_id
-        self.application_secret = kwargs.get("application_secret", None)
+        self.application_secret = application_secret
 
     def _to_generated(self):
         if self.application_id and self.application_secret:
