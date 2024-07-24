@@ -1,9 +1,9 @@
 # Release History
 
-## 1.0.0b1 (1970-01-01)
+## 1.0.0b1 (2024-08-15)
 
-- Initial version
+- Azure Health Deidentification client library
 
 ### Features Added
 
-- Initial Code
+- Azure Health Deidentification client library
