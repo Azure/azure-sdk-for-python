@@ -11,6 +11,7 @@ from model_inference_test_base import (
     ServicePreparerAOAIChatCompletions,
     ServicePreparerEmbeddings,
 )
+from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
@@ -71,33 +72,35 @@ class TestModelClient(ModelClientTestBase):
         assert client2._temperature == 8.976
         assert client2._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.AUTO
         assert client2._tools == [ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2]
+        assert client2._top_p == 9.876
         assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
 
         client3 = client2.with_defaults(
             model_extras={"key2": "value2"},
-            model="some-other-model-id",
+            model="",
             frequency_penalty=0.456,
-            max_tokens=768,
+            max_tokens=0,
             presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            response_format=None,
             seed=987,
             stop=["stop3"],
             temperature=5.432,
             tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
             tools=[ModelClientTestBase.TOOL2],
-            top_p=3.456,
+            top_p=0.0,
         )
         assert client3._model_extras == {"key2": "value2"}
-        assert client3._model == "some-other-model-id"
+        assert client3._model == ""
         assert client3._frequency_penalty == 0.456
-        assert client3._max_tokens == 768
+        assert client3._max_tokens == 0
         assert client3._presence_penalty == 1.234
-        assert client3._response_format == sdk.models.ChatCompletionsResponseFormat.TEXT
+        assert client3._response_format == sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT
         assert client3._seed == 987
         assert client3._stop == ["stop3"]
         assert client3._temperature == 5.432
         assert client3._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED
         assert client3._tools == [ModelClientTestBase.TOOL2]
+        assert client3._top_p == 0.0
         assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
         # pylint: enable=protected-access
 
@@ -343,6 +346,21 @@ class TestModelClient(ModelClientTestBase):
         self._print_embeddings_result(response)
         self._validate_embeddings_result(response)
         client.close()
+
+    # Make sure that the child client you get from a with_defaults() call does not close the 
+    # transport of the parent client.
+    @ServicePreparerEmbeddings()
+    @recorded_by_proxy
+    def test_embeddings_with_defaults_check_transport_not_closed(self, **kwargs):
+        transport = RequestsTransport()
+        client1 = self._create_embeddings_client(transport=transport, **kwargs)
+        response = client1.embed(input=["first phrase", "second phrase", "third phrase"])
+        self._print_embeddings_result(response)
+        self._validate_embeddings_result(response)
+        client2 = client1.with_defaults()
+        assert transport.session is not None
+        client1.close()
+        client2.close()
 
     # **********************************************************************************
     #
@@ -821,6 +839,21 @@ class TestModelClient(ModelClientTestBase):
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
         client.close()
+
+    # Make sure that the child client you get from a with_defaults() call does not close the 
+    # transport of the parent client.
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
+        transport = RequestsTransport()
+        client1 = self._create_chat_client(transport=transport, **kwargs)
+        response = client1.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["5280", "5,280"])
+        client2 = client1.with_defaults()
+        assert transport.session is not None
+        client1.close()
+        client2.close()
 
     # **********************************************************************************
     #

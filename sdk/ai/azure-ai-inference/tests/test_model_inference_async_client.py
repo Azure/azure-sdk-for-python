@@ -12,6 +12,7 @@ from model_inference_test_base import (
     ServicePreparerAOAIChatCompletions,
     ServicePreparerEmbeddings,
 )
+from azure.core.pipeline.transport import AioHttpTransport
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
@@ -61,6 +62,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         assert client2._temperature == 8.976
         assert client2._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.AUTO
         assert client2._tools == [ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2]
+        assert client2._top_p == 9.876
         assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
 
         client3 = client2.with_defaults(
@@ -88,6 +90,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         assert client3._temperature == 5.432
         assert client3._tool_choice == sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED
         assert client3._tools == [ModelClientTestBase.TOOL2]
+        assert client3._top_p == 3.456
         assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
         # pylint: enable=protected-access
 
@@ -116,17 +119,17 @@ class TestModelAsyncClient(ModelClientTestBase):
         assert client2._init_kwargs.get("some_input_arg") == "some_input_value"
 
         client3 = client2.with_defaults(
-            dimensions=1024,
+            dimensions=None,
             encoding_format=sdk.models.EmbeddingEncodingFormat.UINT8,
             input_type=sdk.models.EmbeddingInputType.DOCUMENT,
             model_extras={"key2": "value2"},
-            model="some-other-model-id",
+            model="",
         )
-        assert client3._dimensions == 1024
+        assert client3._dimensions == 2048
         assert client3._encoding_format == sdk.models.EmbeddingEncodingFormat.UINT8
         assert client3._input_type == sdk.models.EmbeddingInputType.DOCUMENT
         assert client3._model_extras == {"key2": "value2"}
-        assert client3._model == "some-other-model-id"
+        assert client3._model == ""
         assert client3._init_kwargs.get("some_input_arg") == "some_input_value"
         # pylint: enable=protected-access
 
@@ -342,6 +345,19 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._validate_embeddings_result(response)
         await client.close()
 
+    # Make sure that the child client you get from a with_defaults() call does not close the 
+    # transport of the parent client.
+    @ServicePreparerEmbeddings()
+    @recorded_by_proxy_async
+    async def test_async_embeddings_with_defaults_check_transport_not_closed(self, **kwargs):
+        transport = AioHttpTransport()
+        async with self._create_async_embeddings_client(transport=transport, **kwargs) as client1:
+            response = await client1.embed(input=["first phrase", "second phrase", "third phrase"])
+            self._print_embeddings_result(response)
+            self._validate_embeddings_result(response)
+            async with client1.with_defaults() as client2:
+                assert transport.session is not None
+     
     # **********************************************************************************
     #
     #         CHAT COMPLETIONS REGRESSION TESTS - NO SERVICE RESPONSER REQUIRED
@@ -777,6 +793,19 @@ class TestModelAsyncClient(ModelClientTestBase):
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
         await client.close()
+
+    # Make sure that the child client you get from a with_defaults() call does not close the 
+    # transport of the parent client.
+    @ServicePreparerChatCompletions()
+    @recorded_by_proxy_async
+    async def test_chat_completions_with_defaults_check_transport_not_closed(self, **kwargs):
+        transport = AioHttpTransport()
+        async with self._create_async_chat_client(transport=transport, **kwargs) as client1:
+            response = await client1.complete(messages=[sdk.models.UserMessage(content="How many feet are in a mile?")])
+            self._print_chat_completions_result(response)
+            self._validate_chat_completions_result(response, ["5280", "5,280"])
+            async with client1.with_defaults() as client2:
+                assert transport.session is not None
 
     # **********************************************************************************
     #
