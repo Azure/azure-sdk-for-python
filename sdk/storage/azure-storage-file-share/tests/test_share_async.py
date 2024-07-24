@@ -38,9 +38,12 @@ from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 TEST_INTENT = "backup"
-TEST_SHARE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
-                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
-                         'S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL'
+TEST_SHARE_PERMISSIONS_IN_SDDL = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-160"
+                                 "4012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397"
+                                 "955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
+TEST_SHARE_PERMISSIONS_IN_BINARY = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+                                   "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+                                   "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
 # ------------------------------------------------------------------------------
 
 
@@ -1590,7 +1593,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share()
-        permission_key = await share_client.create_permission_for_share(TEST_SHARE_PERMISSIONS)
+        permission_key = await share_client.create_permission_for_share(TEST_SHARE_PERMISSIONS_IN_SDDL)
         assert permission_key is not None
 
         server_returned_permission = await share_client.get_permission_for_share(permission_key)
@@ -1610,25 +1613,20 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share()
-        permission_key = await share_client.create_permission_for_share(TEST_SHARE_PERMISSIONS)
+        permission_key = await share_client.create_permission_for_share(TEST_SHARE_PERMISSIONS_IN_SDDL)
         assert permission_key is not None
-
-        server_returned_permission = await share_client.get_permission_for_share(
-            permission_key,
-            file_permission_format="binary"
-        )
-        expected_server_permission = (
-            'AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw'
-            + 'ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA'
-            + 'AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA='
-        )
-        assert server_returned_permission == expected_server_permission
 
         server_returned_permission = await share_client.get_permission_for_share(
             permission_key,
             file_permission_format="SDDL"
         )
-        assert server_returned_permission == TEST_SHARE_PERMISSIONS
+        assert server_returned_permission == TEST_SHARE_PERMISSIONS_IN_SDDL
+
+        server_returned_permission = await share_client.get_permission_for_share(
+            permission_key,
+            file_permission_format="binary"
+        )
+        assert server_returned_permission == TEST_SHARE_PERMISSIONS_IN_BINARY
 
         await self._delete_shares(share_client.share_name)
 

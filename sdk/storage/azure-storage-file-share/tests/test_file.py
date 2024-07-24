@@ -40,9 +40,12 @@ TEST_BLOB_PREFIX = 'blob'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
 LARGE_FILE_SIZE = 64 * 1024 + 5
-TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
-                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
-                        'S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL'
+TEST_FILE_PERMISSIONS_IN_SDDL = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-160"
+                                 "4012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397"
+                                 "955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
+TEST_FILE_PERMISSIONS_IN_BINARY = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+                                   "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+                                   "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
 TEST_INTENT = "backup"
 # ------------------------------------------------------------------------------
 
@@ -2359,7 +2362,7 @@ class TestStorageFile(StorageRecordedTestCase):
         copy = file_client.start_copy_from_url(
             source_client.url,
             ignore_read_only=True,
-            file_permission=TEST_FILE_PERMISSIONS,
+            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
@@ -3552,13 +3555,13 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS_IN_SDDL)
 
         source_file = share_client.get_file_client('file1')
         source_file.create_file(1024)
 
         # Act
-        new_file = source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS)
+        new_file = source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS_IN_SDDL)
 
         # Assert
         props = new_file.get_file_properties()
@@ -3575,7 +3578,7 @@ class TestStorageFile(StorageRecordedTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
 
         source_file = share_client.get_file_client('file1')
-        source_file.create_file(1024, file_permission=TEST_FILE_PERMISSIONS)
+        source_file.create_file(1024, file_permission=TEST_FILE_PERMISSIONS_IN_SDDL)
 
         source_props = source_file.get_file_properties()
         source_permission_key = source_props.permission_key
@@ -3775,7 +3778,7 @@ class TestStorageFile(StorageRecordedTestCase):
         source_file = share_client.get_file_client('file1')
         source_file.create_file(
             1024,
-            file_permission=TEST_FILE_PERMISSIONS,
+            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
             file_permission_format="SDDL"
         )
         props = source_file.get_file_properties()
@@ -3785,13 +3788,14 @@ class TestStorageFile(StorageRecordedTestCase):
 
         new_file = source_file.rename_file(
             'file2',
-            file_permission=TEST_FILE_PERMISSIONS,
-            file_permission_format="SDDL"
+            file_permission=TEST_FILE_PERMISSIONS_IN_BINARY,
+            file_permission_format="binary"
         )
         props = new_file.get_file_properties()
+        expected_permission_key = '8984294407537026961*15810287295243203168'
         assert props is not None
         assert props.name == 'file2'
-        assert props.permission_key == '8984294407537026961*15810287295243203168'
+        assert props.permission_key == expected_permission_key
 
         content_settings = ContentSettings(
             content_language='spanish',
@@ -3799,17 +3803,17 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         new_file.set_http_headers(
             content_settings=content_settings,
-            file_permission=TEST_FILE_PERMISSIONS,
+            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
             file_permission_format="SDDL"
         )
 
         # Assert
-        properties = new_file.get_file_properties()
-        assert properties.content_settings.content_language == content_settings.content_language
-        assert properties.content_settings.content_disposition == content_settings.content_disposition
-        assert properties.last_write_time is not None
-        assert properties.creation_time is not None
-        assert properties.permission_key is not None
+        props = new_file.get_file_properties()
+        assert props.creation_time is not None
+        assert props.last_write_time is not None
+        assert props.content_settings.content_language == content_settings.content_language
+        assert props.content_settings.content_disposition == content_settings.content_disposition
+        assert props.permission_key == expected_permission_key
 
         new_file.delete_file()
 

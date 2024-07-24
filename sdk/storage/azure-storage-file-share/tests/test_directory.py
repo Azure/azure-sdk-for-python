@@ -22,9 +22,12 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
-TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
-                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
-                        'S-1-5-21-397955417-626881126-188441444-3053964)'
+TEST_FILE_PERMISSIONS_IN_SDDL = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-160"
+                                 "4012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397"
+                                 "955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
+TEST_FILE_PERMISSIONS_IN_BINARY = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+                                   "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+                                   "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
 TEST_INTENT = "backup"
 
 
@@ -1193,12 +1196,12 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS_IN_SDDL)
 
         source_directory = share_client.create_directory('dir1')
 
         # Act
-        new_directory = source_directory.rename_directory('dir2', file_permission=TEST_FILE_PERMISSIONS)
+        new_directory = source_directory.rename_directory('dir2', file_permission=TEST_FILE_PERMISSIONS_IN_SDDL)
 
         # Assert
         props = new_directory.get_directory_properties()
@@ -1214,7 +1217,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
-        source_directory = share_client.create_directory('dir1', file_permission=TEST_FILE_PERMISSIONS)
+        source_directory = share_client.create_directory('dir1', file_permission=TEST_FILE_PERMISSIONS_IN_SDDL)
         source_props = source_directory.get_directory_properties()
         source_permission_key = source_props.permission_key
 
@@ -1395,6 +1398,53 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
         # Assert
         directory_client.exists()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_file_permission_format_for_directory_operations(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = share_client.create_directory('dir1')
+
+        directory_properties_on_creation = directory_client.get_directory_properties()
+        last_write_time = directory_properties_on_creation.last_write_time
+        creation_time = directory_properties_on_creation.creation_time
+        change_time = directory_properties_on_creation.change_time
+
+        new_last_write_time = last_write_time + timedelta(hours=1)
+        new_creation_time = creation_time + timedelta(hours=1)
+        new_change_time = change_time + timedelta(hours=1)
+        expected_permission_key = '8984294407537026961*15810287295243203168'
+
+        directory_client.set_http_headers(
+            file_attributes='None',
+            file_creation_time=new_creation_time,
+            file_last_write_time=new_last_write_time,
+            file_change_time=new_change_time,
+            file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
+            file_permission_format="SDDL"
+        )
+
+        props = directory_client.get_directory_properties()
+        assert props is not None
+        assert props.creation_time == new_creation_time
+        assert props.last_write_time == new_last_write_time
+        assert props.change_time == new_change_time
+        assert props.permission_key == expected_permission_key
+
+        new_directory_client = directory_client.rename_directory(
+            'dir2',
+            file_permission=TEST_FILE_PERMISSIONS_IN_BINARY,
+            file_permission_format="binary"
+        )
+        props = new_directory_client.get_directory_properties()
+        assert props is not None
+        assert props.permission_key == expected_permission_key
+
+        new_directory_client.delete_directory()
 
 
 # ------------------------------------------------------------------------------

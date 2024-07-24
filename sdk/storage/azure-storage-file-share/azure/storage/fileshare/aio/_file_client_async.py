@@ -1000,6 +1000,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             directory/file. Note: Only one of the x-ms-file-permission or
             x-ms-file-permission-key should be specified.
         :type permission_key: str
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. Acceptable values are "SDDL" or "binary".
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat or None
         :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
