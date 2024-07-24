@@ -8,11 +8,13 @@ from __future__ import annotations
 import os
 import csv
 import typing
-import requests
 import base64
 import json
 import glob
 import pathlib
+
+import requests
+import markdown
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import (
@@ -101,7 +103,6 @@ class TestsPipelineResult(typing.TypedDict):
     link: str
     multi_library: bool
     result: DEVOPS_BUILD_STATUS
-    samples: CheckStatus
     tests: CheckStatus
 
 
@@ -161,7 +162,9 @@ def get_dataplane() -> dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]:
                 continue
             service_directory = pathlib.Path(service).name
             dataplane.setdefault(service_directory, {})
-            dataplane[service_directory][package_name] = LibraryStatus(path=package_path)
+            dataplane[service_directory][package_name] = LibraryStatus(
+                path=package_path
+            )
     return dataplane
 
 
@@ -187,13 +190,29 @@ def get_pipelines(
             if service_directory == pipeline_name.split("python - ")[1]:
                 pipelines[service_directory].update(
                     CIPipelineResult(
-                        ci={"id": p["id"], "multi_library": len(libraries) > 1}
+                        ci={
+                            "id": p["id"],
+                            "multi_library": len(libraries) > 1,
+                            "link": "",
+                            "result": "UNKNOWN",
+                            "ci": CheckStatus(status="UNKNOWN"),
+                            "mypy": CheckStatus(status="UNKNOWN"),
+                            "pyright": CheckStatus(status="UNKNOWN"),
+                            "pylint": CheckStatus(status="UNKNOWN"),
+                            "sphinx": CheckStatus(status="UNKNOWN"),
+                        }
                     )
                 )
             if f"{service_directory} - tests" == pipeline_name.split("python - ")[1]:
                 pipelines[service_directory].update(
                     TestsPipelineResult(
-                        tests={"id": p["id"], "multi_library": len(libraries) > 1}
+                        tests={
+                            "id": p["id"],
+                            "multi_library": len(libraries) > 1,
+                            "link": "",
+                            "result": "UNKNOWN",
+                            "tests": CheckStatus(status="UNKNOWN"),
+                        }
                     )
                 )
             if (
@@ -205,6 +224,12 @@ def get_pipelines(
                         tests_weekly={
                             "id": p["id"],
                             "multi_library": len(libraries) > 1,
+                            "link": "",
+                            "result": "UNKNOWN",
+                            "next_mypy": CheckStatus(status="UNKNOWN"),
+                            "next_pyright": CheckStatus(status="UNKNOWN"),
+                            "next_pylint": CheckStatus(status="UNKNOWN"),
+                            "tests_weekly": CheckStatus(status="UNKNOWN"),
                         }
                     )
                 )
@@ -237,7 +262,7 @@ def record_test_result(
 
 def record_all(
     task: typing.Literal["ci", "tests", "tests_weekly"],
-    pipeline: CIPipelineResult | TestsPipelineResult,
+    pipeline: CIPipelineResult | TestsPipelineResult | TestsWeeklyPipelineResult,
     status: typing.Literal["succeeded", "UNKNOWN"],
 ) -> None:
     if task == "ci":
@@ -550,37 +575,100 @@ def write_to_markdown(
             "Tests - CI",
             "Tests - Live",
         ]
-        file.write('|' + '|'.join(column_names) + '|\n')
-        
+        file.write("|" + "|".join(column_names) + "|\n")
+
         # Write the header separator
-        file.write('|' + '---|' * len(column_names) + '\n')
+        file.write("|" + "---|" * len(column_names) + "\n")
 
         for _, libs in libraries.items():
             for library, details in libs.items():
                 if details["status"] == "DISABLED":
-                    status_colored = f'<span style="color: red;">{details["status"]}</span>'
+                    status_colored = (
+                        f'<span style="color: red;">{details["status"]}</span>'
+                    )
                 elif details["status"] == "NEEDS_ACTION":
-                    status_colored = f'<span style="color: orange;">{details["status"]}</span>'
+                    status_colored = (
+                        f'<span style="color: orange;">{details["status"]}</span>'
+                    )
                 elif details["status"] == "GOOD":
-                    status_colored = f'<span style="color: green;">{details["status"]}</span>'
+                    status_colored = (
+                        f'<span style="color: green;">{details["status"]}</span>'
+                    )
 
-                if details["status"]  == "DISABLED":
-                    row = [library, status_colored] + [''] * (len(column_names) - 2)
+                if details["status"] == "DISABLED":
+                    row = [library, status_colored] + [""] * (len(column_names) - 2)
                 else:
                     row = [
                         library,
                         status_colored,
-                        details["mypy"]["status"] + (f" ([link]({details["mypy"]["link"]}))" if details["mypy"]["link"] is not None else ""),
-                        details["pyright"]["status"] + (f" ([link]({details["pyright"]["link"]}))" if details["pyright"]["link"] is not None else ""),
+                        details["mypy"]["status"]
+                        + (
+                            f" ([link]({details["mypy"]["link"]}))"
+                            if details["mypy"]["link"] is not None
+                            else ""
+                        ),
+                        details["pyright"]["status"]
+                        + (
+                            f" ([link]({details["pyright"]["link"]}))"
+                            if details["pyright"]["link"] is not None
+                            else ""
+                        ),
                         details["type_check_samples"]["status"],
-                        details["pylint"]["status"] + (f" ([link]({details["pylint"]["link"]}))" if details["pylint"]["link"] is not None else ""),
-                        details["sphinx"]["status"] + (f" ([link]({details["sphinx"]["link"]}))" if details["sphinx"]["link"] is not None else ""),
-                        details["ci"]["status"] + (f" ([link]({details["ci"]["link"]}))" if details["ci"]["link"] is not None else ""),
-                        details["tests"]["status"] + (f" ([link]({details["tests"]["link"]}))" if details["tests"]["link"] is not None else ""),
+                        details["pylint"]["status"]
+                        + (
+                            f" ([link]({details["pylint"]["link"]}))"
+                            if details["pylint"]["link"] is not None
+                            else ""
+                        ),
+                        details["sphinx"]["status"]
+                        + (
+                            f" ([link]({details["sphinx"]["link"]}))"
+                            if details["sphinx"]["link"] is not None
+                            else ""
+                        ),
+                        details["ci"]["status"]
+                        + (
+                            f" ([link]({details["ci"]["link"]}))"
+                            if details["ci"]["link"] is not None
+                            else ""
+                        ),
+                        details["tests"]["status"]
+                        + (
+                            f" ([link]({details["tests"]["link"]}))"
+                            if details["tests"]["link"] is not None
+                            else ""
+                        ),
                     ]
 
                 row_str = [str(item).strip() for item in row]
-                file.write('|' + '|'.join(row_str) + '|\n')
+                file.write("|" + "|".join(row_str) + "|\n")
+
+
+def write_to_html(
+    libraries: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
+) -> None:
+    write_to_markdown(libraries)
+    with open("./health_report.md", "r") as f:
+        markd = f.read()
+
+    html = markdown.markdown(markd, extensions=["tables"])
+
+    css_styles = """
+    <style>
+    table {
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+    }
+    </style>
+    """
+
+    html_with_css = css_styles + html
+
+    with open("./health_report.html", "w", encoding="utf-8") as file:
+        file.write(html_with_css)
 
 
 libraries = get_dataplane()
@@ -594,5 +682,6 @@ for service, pipeline_ids in pipelines.items():
 
 
 report_status(libraries, pipelines)
-write_to_markdown(libraries)
+# write_to_markdown(libraries)
 # write_to_csv(libraries)
+write_to_html(libraries)
