@@ -12,6 +12,8 @@ from .._generated.models import (
     SearchIndex as _SearchIndex,
     PatternTokenizer as _PatternTokenizer,
     LexicalAnalyzerName,
+    VectorEncodingFormat,
+    SearchFieldDataType,
 )
 from ._models import (
     pack_analyzer,
@@ -153,11 +155,11 @@ class SearchField(_serialization.Model):
         "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
         "whitespace".
     :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :ivar normalizer: The name of the normalizer to use for the field. This option can be used only
+    :ivar normalizer_name: The name of the normalizer to use for the field. This option can be used only
         with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
         cannot be changed for the field. Must be null for complex fields. Known values are:
         "asciifolding", "elision", "lowercase", "standard", and "uppercase".
-    :vartype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
+    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
@@ -176,26 +178,48 @@ class SearchField(_serialization.Model):
     :vartype vector_encoding_format: str or ~azure.search.documents.indexes.models.VectorEncodingFormat
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        *,
+        name: str,
+        type: Union[str, SearchFieldDataType],
+        key: Optional[bool] = None,
+        hidden: Optional[bool] = None,
+        stored: Optional[bool] = None,
+        searchable: Optional[bool] = None,
+        filterable: Optional[bool] = None,
+        sortable: Optional[bool] = None,
+        facetable: Optional[bool] = None,
+        analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        synonym_map_names: Optional[List[str]] = None,
+        fields: Optional[List["SearchField"]] = None,
+        normalizer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        vector_search_dimensions: Optional[int] = None,
+        vector_search_profile_name: Optional[str] = None,
+        vector_encoding_format: Optional[Union[str, VectorEncodingFormat]] = None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
-        self.name = kwargs["name"]
-        self.type = kwargs["type"]
-        self.key = kwargs.get("key", None)
-        self.hidden = kwargs.get("hidden", None)
-        self.stored = kwargs.get("stored", None)
-        self.searchable = kwargs.get("searchable", None)
-        self.filterable = kwargs.get("filterable", None)
-        self.sortable = kwargs.get("sortable", None)
-        self.facetable = kwargs.get("facetable", None)
-        self.analyzer_name = kwargs.get("analyzer_name", None)
-        self.search_analyzer_name = kwargs.get("search_analyzer_name", None)
-        self.index_analyzer_name = kwargs.get("index_analyzer_name", None)
-        self.normalizer_name = kwargs.get("normalizer_name", None)
-        self.synonym_map_names = kwargs.get("synonym_map_names", None)
-        self.fields = kwargs.get("fields", None)
-        self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
-        self.vector_search_profile_name = kwargs.get("vector_search_profile_name", None)
-        self.vector_encoding_format = kwargs.get("vector_encoding_format", None)
+        self.name = name
+        self.type = type
+        self.key = key
+        self.hidden = hidden
+        self.stored = stored
+        self.searchable = searchable
+        self.filterable = filterable
+        self.sortable = sortable
+        self.facetable = facetable
+        self.analyzer_name = analyzer_name
+        self.search_analyzer_name = search_analyzer_name
+        self.index_analyzer_name = index_analyzer_name
+        self.synonym_map_names = synonym_map_names
+        self.fields = fields
+        self.normalizer_name = normalizer_name
+        self.vector_search_dimensions = vector_search_dimensions
+        self.vector_search_profile_name = vector_search_profile_name
+        self.vector_encoding_format = vector_encoding_format
 
     def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
