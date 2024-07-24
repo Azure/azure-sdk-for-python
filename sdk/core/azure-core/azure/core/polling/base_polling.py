@@ -635,7 +635,7 @@ class _SansIOLROBasePolling(
             self._initial_response.http_response.status_code,
             self._initial_response.http_response.headers,
         )
-        pipeline_response = PipelineResponse(poller_request, poller_response, self._initial_response.context) # in async
+        pipeline_response = PipelineResponse(poller_request, poller_response, self._initial_response.context)
         return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
     @classmethod
@@ -876,7 +876,7 @@ class LROResponse(HttpResponseImpl):
             self,
             response: AllHttpResponseType,
             request: HttpRequest,
-            status_code: int, 
+            status_code: int,
             headers: MutableMapping[str, str]
         ):
         super(LROResponse, self).__init__(
@@ -884,7 +884,7 @@ class LROResponse(HttpResponseImpl):
             internal_response=None,
             status_code=status_code,
             reason=None,
-            content_type=None, 
+            content_type=None,
             headers=headers,
             stream_download_generator=None,
         )
@@ -893,7 +893,6 @@ class LROResponse(HttpResponseImpl):
             self._content = response.content
         else:
             self._content = _get_content(response)
-    
 
 __all__ = [
     "BadResponse",
