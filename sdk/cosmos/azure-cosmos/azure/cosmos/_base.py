@@ -65,9 +65,9 @@ _COMMON_OPTIONS = {
 
 # Cosmos resource ID validation regex breakdown:
 # ^ Match start of string.
-# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
+# [^/\#?] Match any character that is not /\#?\n\r\t.
 # $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:

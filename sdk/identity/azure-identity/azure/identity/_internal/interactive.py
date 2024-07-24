@@ -189,7 +189,7 @@ class InteractiveCredential(MsalCredential, ABC):
     def authenticate(
         self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
     ) -> AuthenticationRecord:
-        """Interactively authenticate a user.
+        """Interactively authenticate a user. This method will always generate a challenge to the user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token

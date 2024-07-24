@@ -20,8 +20,9 @@ import asyncio
 import uuid
 from azure.servicebus.management import SqlRuleFilter
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
 SUBSCRIPTION_NAME = os.environ['SERVICEBUS_SUBSCRIPTION_NAME']
 RULE_NAME = "sb_mgmt_rule" + str(uuid.uuid4())
@@ -97,7 +98,8 @@ async def get_and_update_rule(servicebus_mgmt_client):
 
 
 async def main():
-    async with ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR) as servicebus_mgmt_client:
+    credential = DefaultAzureCredential()
+    async with ServiceBusAdministrationClient(FULLY_QUALIFIED_NAMESPACE, credential) as servicebus_mgmt_client:
         await create_rule(servicebus_mgmt_client)
         await list_rules(servicebus_mgmt_client)
         await get_and_update_rule(servicebus_mgmt_client)

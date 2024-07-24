@@ -191,7 +191,10 @@ def get_ds_name_and_path_prefix(asset_uri: str, registry_name: Optional[str] = N
     if registry_name:
         try:
             split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
-            path_prefix = split_paths[0][3]
+            if split_paths[0][3] == "":
+                path_prefix = split_paths[0][2]
+            else:
+                path_prefix = split_paths[0][3]
         except Exception as e:
             msg = "Registry asset URI could not be parsed."
             raise MlException(message=msg, no_personal_data_message=msg) from e
