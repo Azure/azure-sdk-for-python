@@ -38,6 +38,9 @@ from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 TEST_INTENT = "backup"
+TEST_SHARE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
+                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
+                         'S-1-5-21-397955417-626881126-188441444-3053964)'
 # ------------------------------------------------------------------------------
 
 
@@ -1586,11 +1589,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
-                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
-                                "S-1-5-21-397955417-626881126-188441444-3053964)"
         share_client = await self._create_share()
-        permission_key = await share_client.create_permission_for_share(user_given_permission)
+        permission_key = await share_client.create_permission_for_share(TEST_SHARE_PERMISSIONS)
         assert permission_key is not None
 
         server_returned_permission = await share_client.get_permission_for_share(permission_key)
@@ -1609,11 +1609,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
-                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
-                                "S-1-5-21-397955417-626881126-188441444-3053964)"
         share_client = await self._create_share()
-        permission_key = await share_client.create_permission_for_share(user_given_permission)
+        permission_key = await share_client.create_permission_for_share(TEST_SHARE_PERMISSIONS)
         assert permission_key is not None
 
         server_returned_permission = await share_client.get_permission_for_share(
@@ -1631,7 +1628,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             permission_key,
             file_permission_format="SDDL"
         )
-        expected_server_permission = user_given_permission + 'S:NO_ACCESS_CONTROL'
+        expected_server_permission = TEST_SHARE_PERMISSIONS + 'S:NO_ACCESS_CONTROL'
         assert server_returned_permission == expected_server_permission
 
         await self._delete_shares(share_client.share_name)
