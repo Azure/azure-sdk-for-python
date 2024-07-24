@@ -308,7 +308,7 @@
 
 # PRLabel: %ML-Assets
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                          @achauhan-scc @kingernupur
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                        @achauhan-scc @kingernupu
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                        @achauhan-scc @kingernupur
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_code_operations.py              @achauhan-scc @kingernupur 
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_component_operations.py         @achauhan-scc @kingernupur
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_environment_operations.py       @achauhan-scc @kingernupur 
