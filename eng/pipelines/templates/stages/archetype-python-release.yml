@@ -107,9 +107,9 @@ stages:
                     steps:
                       - checkout: self
 
-                      - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-                        parameters:
-                          TargetPath: $(Pipeline.Workspace)
+                      - download: current
+                        artifact: ${{parameters.ArtifactName}}
+                        timeoutInMinutes: 5
 
                       - task: UsePythonVersion@0
                         inputs:
@@ -230,9 +230,7 @@ stages:
                               Paths:
                                 - sdk/**/*.md
                                 - .github/CODEOWNERS
-                          - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-                            parameters:
-                              TargetPath: $(Pipeline.Workspace)
+                          - download: current
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
                               PackageInfoLocations:
@@ -297,10 +295,9 @@ stages:
           name: azsdk-pool-mms-ubuntu-2004-general
           os: linux
         steps:
-        - checkout: none
-        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-          parameters:
-            TargetPath: $(Pipeline.Workspace)
+        - download: current
+          artifact: ${{parameters.ArtifactName}}
+          timeoutInMinutes: 5
         - task: UsePythonVersion@0
         - script: |
             set -e
@@ -341,9 +338,7 @@ stages:
               Paths:
                 - sdk/**/*.md
                 - .github/CODEOWNERS
-          - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-            parameters:
-              TargetPath: $(Pipeline.Workspace)
+          - download: current
           - pwsh: |
               Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
             displayName: Show visible artifacts
