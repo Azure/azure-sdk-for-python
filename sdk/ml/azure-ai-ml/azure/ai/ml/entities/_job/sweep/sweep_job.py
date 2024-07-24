@@ -71,8 +71,10 @@ module_logger = logging.getLogger(__name__)
 class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     """Sweep job for hyperparameter tuning.
 
-    Note that for sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix AZUREML_SWEEP_
+    .. admonition:: Note
+    For sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix AZUREML_SWEEP_
     Example: If you have a parameter named learning_rate, you can access it as 'AZUREML_SWEEP_learning_rate'.
+
 
     :keyword name: Name of the job.
     :paramtype name: str
