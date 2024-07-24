@@ -635,8 +635,8 @@ class _SansIOLROBasePolling(
             self._initial_response.http_response.status_code,
             self._initial_response.http_response.headers,
         )
-        continuation_token = PipelineResponse(poller_request, poller_response, self._initial_response.context) # in async
-        return base64.b64encode(pickle.dumps(continuation_token)).decode("ascii")
+        pipeline_response = PipelineResponse(poller_request, poller_response, self._initial_response.context) # in async
+        return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
     @classmethod
     def from_continuation_token(
