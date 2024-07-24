@@ -12,8 +12,9 @@ Examples to show sending events in buffered mode to an Event Hub.
 import time
 import os
 from azure.eventhub import EventHubProducerClient, EventData
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
@@ -27,9 +28,10 @@ def on_error(events, pid, error):
     print(events, pid, error)
 
 
-producer = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
+producer = EventHubProducerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
     eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
     buffered_mode=True,
     on_success=on_success,
     on_error=on_error

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -28,6 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._data_protection_operations import build_check_feature_support_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,7 +76,6 @@ class DataProtectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FeatureValidationResponseBase or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.FeatureValidationResponseBase
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -79,7 +83,7 @@ class DataProtectionOperations:
 
     @overload
     async def check_feature_support(
-        self, location: str, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FeatureValidationResponseBase:
         """Validates if a feature is supported.
 
@@ -88,11 +92,10 @@ class DataProtectionOperations:
         :param location: Required.
         :type location: str
         :param parameters: Feature support request object. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FeatureValidationResponseBase or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.FeatureValidationResponseBase
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -100,7 +103,7 @@ class DataProtectionOperations:
 
     @distributed_trace_async
     async def check_feature_support(
-        self, location: str, parameters: Union[_models.FeatureValidationRequestBase, IO], **kwargs: Any
+        self, location: str, parameters: Union[_models.FeatureValidationRequestBase, IO[bytes]], **kwargs: Any
     ) -> _models.FeatureValidationResponseBase:
         """Validates if a feature is supported.
 
@@ -109,17 +112,13 @@ class DataProtectionOperations:
         :param location: Required.
         :type location: str
         :param parameters: Feature support request object. Is either a FeatureValidationRequestBase
-         type or a IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase or IO[bytes]
         :return: FeatureValidationResponseBase or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.FeatureValidationResponseBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -142,23 +141,22 @@ class DataProtectionOperations:
         else:
             _json = self._serialize.body(parameters, "FeatureValidationRequestBase")
 
-        request = build_check_feature_support_request(
+        _request = build_check_feature_support_request(
             location=location,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.check_feature_support.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -170,10 +168,6 @@ class DataProtectionOperations:
         deserialized = self._deserialize("FeatureValidationResponseBase", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    check_feature_support.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/checkFeatureSupport"
-    }
+        return deserialized  # type: ignore

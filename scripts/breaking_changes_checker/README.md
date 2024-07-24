@@ -89,6 +89,28 @@ Example:
 C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --latest-pypi-version
 ```
 
+### Changelog reporting
+
+The breaking changes tool also supports reporting general changes between library versions. The changes will be reported in changelog format and will be reported as `### Breaking Changes` or `### Features Added`.
+
+To get changelog output use the `--changelog` flag:
+
+```
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --changelog
+```
+
+Example output:
+
+```
+### Breaking Changes
+
+The model or publicly exposed class 'azure.contoso.widgetmanager.models.Widget' had its instance variable 'bar' deleted or renamed in the current version
+
+### Features Added
+
+The model or publicly exposed class 'azure.contoso.widgetmanager.models.Widget' had property 'foo' added in the current version
+```
+
 ### Generating code reports
 
 The breaking changes tools also supports generating a code report for a given library which can later be used as an input for breaking changes comparison.
