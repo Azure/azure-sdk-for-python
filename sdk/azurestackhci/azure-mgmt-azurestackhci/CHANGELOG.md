@@ -1,5 +1,82 @@
 # Release History
 
+## 8.0.0 (2024-08-18)
+
+### Features Added
+
+  - Added operation ArcSettingsOperations.begin_initialize_disable_process
+  - Added operation ArcSettingsOperations.consent_and_install_default_extensions
+  - Added operation ClustersOperations.begin_configure_remote_support
+  - Added operation ClustersOperations.begin_extend_software_assurance_benefit
+  - Added operation ClustersOperations.begin_trigger_log_collection
+  - Added operation ExtensionsOperations.begin_upgrade
+  - Added operation group DeploymentSettingsOperations
+  - Added operation group EdgeDevicesOperations
+  - Added operation group OffersOperations
+  - Added operation group PublishersOperations
+  - Added operation group SecuritySettingsOperations
+  - Added operation group SkusOperations
+  - Added operation group UpdateRunsOperations
+  - Added operation group UpdateSummariesOperations
+  - Added operation group UpdatesOperations
+  - Model ArcConnectivityProperties has a new parameter service_configurations
+  - Model ArcSetting has a new parameter default_extensions
+  - Model ArcSetting has a new parameter system_data
+  - Model Cluster has a new parameter connectivity_status
+  - Model Cluster has a new parameter isolated_vm_attestation_configuration
+  - Model Cluster has a new parameter log_collection_properties
+  - Model Cluster has a new parameter principal_id
+  - Model Cluster has a new parameter remote_support_properties
+  - Model Cluster has a new parameter resource_provider_object_id
+  - Model Cluster has a new parameter software_assurance_properties
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter tenant_id
+  - Model Cluster has a new parameter type_identity_type
+  - Model Cluster has a new parameter user_assigned_identities
+  - Model ClusterNode has a new parameter ehc_resource_id
+  - Model ClusterNode has a new parameter last_licensing_timestamp
+  - Model ClusterNode has a new parameter node_type
+  - Model ClusterNode has a new parameter oem_activation
+  - Model ClusterNode has a new parameter os_display_version
+  - Model ClusterPatch has a new parameter principal_id
+  - Model ClusterPatch has a new parameter tenant_id
+  - Model ClusterPatch has a new parameter type
+  - Model ClusterPatch has a new parameter user_assigned_identities
+  - Model ClusterReportedProperties has a new parameter cluster_type
+  - Model ClusterReportedProperties has a new parameter manufacturer
+  - Model ClusterReportedProperties has a new parameter oem_activation
+  - Model ClusterReportedProperties has a new parameter supported_capabilities
+  - Model Extension has a new parameter enable_automatic_upgrade
+  - Model Extension has a new parameter managed_by
+  - Model Extension has a new parameter system_data
+  - Model PerNodeExtensionState has a new parameter instance_view
+  - Model PerNodeExtensionState has a new parameter type_handler_version
+  - Model PerNodeState has a new parameter arc_node_service_principal_object_id
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Model ArcSetting no longer has parameter created_at
+  - Model ArcSetting no longer has parameter created_by
+  - Model ArcSetting no longer has parameter created_by_type
+  - Model ArcSetting no longer has parameter last_modified_at
+  - Model ArcSetting no longer has parameter last_modified_by
+  - Model ArcSetting no longer has parameter last_modified_by_type
+  - Model Cluster no longer has parameter created_at
+  - Model Cluster no longer has parameter created_by
+  - Model Cluster no longer has parameter created_by_type
+  - Model Cluster no longer has parameter last_modified_at
+  - Model Cluster no longer has parameter last_modified_by
+  - Model Cluster no longer has parameter last_modified_by_type
+  - Model Extension no longer has parameter created_at
+  - Model Extension no longer has parameter created_by
+  - Model Extension no longer has parameter created_by_type
+  - Model Extension no longer has parameter last_modified_at
+  - Model Extension no longer has parameter last_modified_by
+  - Model Extension no longer has parameter last_modified_by_type
+
 ## 8.0.0b3 (2023-10-23)
 
 ### Features Added
