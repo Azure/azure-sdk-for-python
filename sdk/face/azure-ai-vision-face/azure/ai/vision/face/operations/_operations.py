@@ -33,7 +33,6 @@ from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import (
     FaceClientMixinABC,
-    FaceServiceClientMixinABC,
     FaceSessionClientMixinABC,
     prepare_multipart_form_data,
 )
