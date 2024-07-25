@@ -331,12 +331,12 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
 
 
 def remove_json_files(pkg_dir: str) -> None:
-    # stable_json = os.path.join(pkg_dir, "stable.json")
-    # current_json = os.path.join(pkg_dir, "current.json")
-    # if os.path.isfile(stable_json):
-    #     os.remove(stable_json)
-    # if os.path.isfile(current_json):
-    #     os.remove(current_json)
+    stable_json = os.path.join(pkg_dir, "stable.json")
+    current_json = os.path.join(pkg_dir, "current.json")
+    if os.path.isfile(stable_json):
+        os.remove(stable_json)
+    if os.path.isfile(current_json):
+        os.remove(current_json)
     _LOGGER.info("cleaning up")
 
 
