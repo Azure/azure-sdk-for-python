@@ -118,7 +118,6 @@ class ReceiverLink(Link):
                 self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
-                    delivery_tag=self._first_frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None
@@ -141,7 +140,7 @@ class ReceiverLink(Link):
         self,
         first: int,
         last: Optional[int],
-        delivery_tag: bytes,
+        delivery_tag: Optional[bytes],
         settled: Optional[bool],
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
@@ -174,6 +173,27 @@ class ReceiverLink(Link):
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
         self._received_delivery_tags.remove(delivery_tag)
 
+
+    def _incoming_disposition(self, frame):
+        # If delivery_id is not settled, return
+        # if not frame[3]:  # settled
+        #     return
+        # TODO: would we ever receive a not settled disposition?
+        range_end = (frame[2] or frame[1]) + 1  # first or last
+        settled_ids = list(range(frame[1], range_end))
+        unsettled = []
+        for delivery in self._pending_receipts:
+            if delivery.sent and delivery.frame[1] in settled_ids:
+                delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
+                continue
+            unsettled.append(delivery)
+        self._pending_receipts = unsettled
+
+
+    def _remove_pending_deliveries(self):
+        self._pending_receipts = []
+        # TODO: Add in error handling
+
     def attach(self):
         super().attach()
         self._received_payload = bytearray()
@@ -184,7 +204,6 @@ class ReceiverLink(Link):
         wait: Union[bool, float] = False,
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
-        delivery_tag: bytes,
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None,
@@ -195,7 +214,6 @@ class ReceiverLink(Link):
         self._outgoing_disposition(
             first_delivery_id,
             last_delivery_id,
-            delivery_tag,
             settled,
             delivery_state,
             batchable,
