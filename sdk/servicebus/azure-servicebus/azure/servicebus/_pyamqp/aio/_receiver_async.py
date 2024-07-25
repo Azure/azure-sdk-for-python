@@ -175,8 +175,8 @@ class ReceiverLink(Link):
 
     async def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return
-        if not frame[3]:  # settled
-            return
+        # if not frame[3]:  # settled
+        #     return
         range_end = (frame[2] or frame[1]) + 1  # first or last
         settled_ids = list(range(frame[1], range_end))
         unsettled = []
