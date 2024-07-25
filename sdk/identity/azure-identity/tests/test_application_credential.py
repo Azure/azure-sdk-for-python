@@ -43,14 +43,19 @@ def test_iterates_only_once():
     """When a credential succeeds, AzureApplicationCredential should use that credential thereafter"""
 
     expected_token = AccessToken("***", 42)
-    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
-    successful_credential = Mock(get_token=Mock(return_value=expected_token))
+    unavailable_credential = Mock(
+        spec_set=["get_token"], get_token=Mock(side_effect=CredentialUnavailableError(message="..."))
+    )
+    successful_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=expected_token))
 
     credential = AzureApplicationCredential()
     credential.credentials = [
         unavailable_credential,
         successful_credential,
-        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
+        Mock(
+            spec_set=["get_token"],
+            get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token")),
+        ),
     ]
 
     for n in range(3):

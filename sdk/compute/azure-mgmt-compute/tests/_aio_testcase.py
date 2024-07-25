@@ -23,7 +23,7 @@ class AzureMgmtAsyncTestCase(AzureMgmtRecordedTestCase):
             from azure.identity.aio import DefaultAzureCredential
             credential = DefaultAzureCredential()
         else:
-            credential = Mock(get_token=lambda _: self.mock_completed_future(AccessToken("fake-token", 0)))
+            credential = Mock(spec_set=["get_token"], get_token=lambda _: self.mock_completed_future(AccessToken("fake-token", 0)))
         return client(
             credential=credential,
             subscription_id=self.settings.SUBSCRIPTION_ID

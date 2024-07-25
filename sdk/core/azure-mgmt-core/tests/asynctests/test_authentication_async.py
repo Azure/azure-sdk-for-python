@@ -75,7 +75,7 @@ async def test_claims_challenge():
         assert scopes == (expected_scope,)
         return next(tokens)
 
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
     transport = Mock(send=Mock(wraps=send))
     policies = [AsyncARMChallengeAuthenticationPolicy(credential, expected_scope)]
     pipeline = AsyncPipeline(transport=transport, policies=policies)
@@ -113,7 +113,7 @@ async def test_multiple_claims_challenges():
         return AccessToken("***", 42)
 
     transport = Mock(send=Mock(wraps=send))
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
     policies = [AsyncARMChallengeAuthenticationPolicy(credential, "scope")]
     pipeline = AsyncPipeline(transport=transport, policies=policies)
 
@@ -151,8 +151,8 @@ async def test_auxiliary_authentication_policy():
         get_token_calls2 += 1
         return second_token
 
-    fake_credential1 = Mock(get_token=get_token1)
-    fake_credential2 = Mock(get_token=get_token2)
+    fake_credential1 = Mock(spec_set=["get_token"], get_token=get_token1)
+    fake_credential2 = Mock(spec_set=["get_token"], get_token=get_token2)
     policies = [
         AsyncAuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
         Mock(send=verify_authorization_header),

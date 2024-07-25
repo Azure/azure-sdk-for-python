@@ -81,7 +81,7 @@ async def test_windows_fallback():
 
     sync_get_token = mock.Mock()
     with mock.patch("azure.identity.aio._credentials.azd_cli._SyncAzureDeveloperCliCredential") as fallback:
-        fallback.return_value = mock.Mock(get_token=sync_get_token)
+        fallback.return_value = mock.Mock(spec_set=["get_token"], get_token=sync_get_token)
         with mock.patch(AzureDeveloperCliCredential.__module__ + ".asyncio.get_event_loop"):
             # asyncio.get_event_loop now returns Mock, i.e. never ProactorEventLoop
             credential = AzureDeveloperCliCredential()

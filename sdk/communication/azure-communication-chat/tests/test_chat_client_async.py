@@ -29,7 +29,7 @@ def _convert_datetime_to_utc_int(input):
 async def mock_get_token(*_, **__):
     return AccessToken("some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=timezone.utc)))
 
-credential = Mock(get_token=mock_get_token)
+credential = Mock(spec_set=["get_token"], get_token=mock_get_token)
 
 
 @pytest.mark.asyncio

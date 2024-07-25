@@ -81,8 +81,8 @@ def test_auxiliary_authentication_policy():
         )
         return Mock()
 
-    fake_credential1 = Mock(get_token=Mock(return_value=first_token))
-    fake_credential2 = Mock(get_token=Mock(return_value=second_token))
+    fake_credential1 = Mock(spec_set=["get_token"], get_token=Mock(return_value=first_token))
+    fake_credential2 = Mock(spec_set=["get_token"], get_token=Mock(return_value=second_token))
     policies = [
         AuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
         Mock(send=verify_authorization_header),
@@ -136,7 +136,7 @@ def test_claims_challenge():
         assert scopes == (expected_scope,)
         return next(tokens)
 
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
     transport = Mock(send=Mock(wraps=send))
     policies = [ARMChallengeAuthenticationPolicy(credential, expected_scope)]
     pipeline = Pipeline(transport=transport, policies=policies)

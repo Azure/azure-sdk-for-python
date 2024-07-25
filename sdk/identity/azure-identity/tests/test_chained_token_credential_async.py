@@ -66,9 +66,9 @@ async def test_chain_attempts_all_credentials():
 
     expected_token = AccessToken("expected_token", 0)
     credentials = [
-        Mock(get_token=Mock(wraps=credential_unavailable)),
-        Mock(get_token=Mock(wraps=credential_unavailable)),
-        Mock(get_token=wrap_in_future(lambda _, **__: expected_token)),
+        Mock(spec_set=["get_token"], get_token=Mock(wraps=credential_unavailable)),
+        Mock(spec_set=["get_token"], get_token=Mock(wraps=credential_unavailable)),
+        Mock(spec_set=["get_token"], get_token=wrap_in_future(lambda _, **__: expected_token)),
     ]
 
     token = await ChainedTokenCredential(*credentials).get_token("scope")
@@ -88,9 +88,9 @@ async def test_chain_raises_for_unexpected_error():
     expected_message = "it can't be done"
 
     credentials = [
-        Mock(get_token=Mock(wraps=credential_unavailable)),
-        Mock(get_token=Mock(side_effect=ValueError(expected_message))),
-        Mock(get_token=Mock(wraps=wrap_in_future(lambda _, **__: AccessToken("**", 42)))),
+        Mock(spec_set=["get_token"], get_token=Mock(wraps=credential_unavailable)),
+        Mock(spec_set=["get_token"], get_token=Mock(side_effect=ValueError(expected_message))),
+        Mock(spec_set=["get_token"], get_token=Mock(wraps=wrap_in_future(lambda _, **__: AccessToken("**", 42)))),
     ]
 
     with pytest.raises(ClientAuthenticationError) as ex:
@@ -103,8 +103,8 @@ async def test_chain_raises_for_unexpected_error():
 @pytest.mark.asyncio
 async def test_returns_first_token():
     expected_token = Mock()
-    first_credential = Mock(get_token=wrap_in_future(lambda _, **__: expected_token))
-    second_credential = Mock(get_token=Mock())
+    first_credential = Mock(spec_set=["get_token"], get_token=wrap_in_future(lambda _, **__: expected_token))
+    second_credential = Mock(spec_set=["get_token"], get_token=Mock())
 
     aggregate = ChainedTokenCredential(first_credential, second_credential)
     credential = await aggregate.get_token("scope")
@@ -148,7 +148,7 @@ async def test_managed_identity_imds_probe():
     # ensure e.g. $MSI_ENDPOINT isn't set, so we get ImdsCredential
     with patch.dict("os.environ", clear=True):
         credentials = [
-            Mock(get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
+            Mock(spec_set=["get_token"], get_token=Mock(side_effect=CredentialUnavailableError(message=""))),
             ManagedIdentityCredential(transport=transport),
         ]
         token = await ChainedTokenCredential(*credentials).get_token(scope)
@@ -165,9 +165,9 @@ async def test_managed_identity_failed_probe():
 
     expected_token = AccessToken("**", 42)
     credentials = [
-        Mock(get_token=Mock(wraps=credential_unavailable)),
+        Mock(spec_set=["get_token"], get_token=Mock(wraps=credential_unavailable)),
         ManagedIdentityCredential(transport=transport),
-        Mock(get_token=Mock(wraps=wrap_in_future(lambda _, **__: expected_token))),
+        Mock(spec_set=["get_token"], get_token=Mock(wraps=wrap_in_future(lambda _, **__: expected_token))),
     ]
 
     with patch.dict("os.environ", clear=True):

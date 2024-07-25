@@ -53,14 +53,19 @@ def test_context_manager():
 def test_iterates_only_once():
     """When a credential succeeds, DefaultAzureCredential should use that credential thereafter, ignoring the others"""
 
-    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
-    successful_credential = Mock(get_token=Mock(return_value=AccessToken("***", 42)))
+    unavailable_credential = Mock(
+        spec_set=["get_token"], get_token=Mock(side_effect=CredentialUnavailableError(message="..."))
+    )
+    successful_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
 
     credential = DefaultAzureCredential()
     credential.credentials = [
         unavailable_credential,
         successful_credential,
-        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
+        Mock(
+            spec_set=["get_token"],
+            get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token")),
+        ),
     ]
 
     for n in range(3):
