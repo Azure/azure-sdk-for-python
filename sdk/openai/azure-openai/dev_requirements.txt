@@ -3,4 +3,5 @@
 httpx
 aiohttp
 openai
-PIL
+pillow
+requests
