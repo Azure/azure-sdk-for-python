@@ -47,7 +47,7 @@ async def process_content(data: Any, start_offset: int, end_offset: int, encrypt
     if data is None:
         raise ValueError("Response cannot be None.")
     await data.response.read()
-    content = data.response.content
+    content = cast(bytes, data.response.content)
     if encryption.get('key') is not None or encryption.get('resolver') is not None:
         try:
             return decrypt_blob(
