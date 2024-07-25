@@ -134,6 +134,10 @@ PipelineResults = typing.Union[
     CIPipelineResult, TestsPipelineResult, TestsWeeklyPipelineResult
 ]
 
+# todos
+# 1. filters for sdk-owned libraries and libraries that return status GOOD
+# 2. report legend and actions needed
+# 3. put in a webapp/powerbi with auto-refresh
 
 def is_package_inactive(package_path: str) -> bool:
     return INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
@@ -165,7 +169,9 @@ def get_dataplane() -> dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]:
             dataplane[service_directory][package_name] = LibraryStatus(
                 path=package_path
             )
-    return dataplane
+
+    sorted_libs = {key: dataplane[key] for key in sorted(dataplane)}
+    return sorted_libs
 
 
 def get_pipelines(
