@@ -102,6 +102,20 @@ def get_parameter_default(param: inspect.Parameter) -> None:
     return default_value
 
 
+def get_property_type(node: ast.AST) -> str:
+    if hasattr(node, "value"):
+        if isinstance(node.value, ast.Call):
+            if hasattr(node.value.func, "id"):
+                return node.value.func.id
+            elif hasattr(node.value.func, "attr"):
+                return node.value.func.attr
+        elif isinstance(node.value, ast.Name):
+            return node.value.id
+        elif isinstance(node.value, ast.Constant):
+            return node.value.value
+    return None
+
+
 def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
     assign_nodes = [node for node in node.body if isinstance(node, ast.AnnAssign)]
     # Check for class level attributes that follow the pattern: foo: List["_models.FooItem"] = rest_field(name="foo")
@@ -130,28 +144,15 @@ def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
                 if hasattr(assign, "target"):
                     if hasattr(assign.target, "attr") and not assign.target.attr.startswith("_"):
                         attr = assign.target
-                        attribute_names.update({attr.attr: attr.attr})
+                        attribute_names.update({attr.attr: {
+                                "attr_type": get_property_type(assign),
+                                "default": default
+                            }})
                 if hasattr(assign, "targets"):
                     for target in assign.targets:
                         if hasattr(target, "attr") and not target.attr.startswith("_"):
-                            if isinstance(assign, ast.AnnAssign):
-                                if isinstance(assign.annotation, ast.Name):
-                                    attr_type = assign.annotation.value.id
-                            if isinstance(assign, ast.Assign):
-                                if isinstance(assign.value, ast.Call):
-                                    # FIXME: Do we want the attr or the type defined in value?
-                                    if isinstance(assign.value.func, ast.Attribute):
-                                        attr_type = assign.value.func.attr
-                                    else:
-                                        attr_type = assign.value.func.id
-                                elif isinstance(assign.value, ast.Name):
-                                    attr_type = assign.value.id
-                                elif isinstance(assign.value, ast.Constant):
-                                    default = assign.value.value 
-                            if target.attr == "queue_name":
-                                breakpoint()
                             attribute_names.update({target.attr: {
-                                "attr_type": attr_type,
+                                "attr_type": get_property_type(assign),
                                 "default": default
                             }})
 

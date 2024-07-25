@@ -479,7 +479,8 @@ class BreakingChangesTracker:
                 for property in deleted_props:
                     bc = None
                     if self.class_name.endswith("Client"):
-                        if self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"].lower().endswith("operations"):
+                        property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
+                        if property_type is not None and property_type.lower().endswith("operations"):
                             bc = (
                                 self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
                                 BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
