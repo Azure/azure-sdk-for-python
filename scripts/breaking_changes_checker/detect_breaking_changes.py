@@ -304,7 +304,7 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
 
     print("===== report changes begin =====")
     print(checker.report_changes())
-    print("===== report changes end =====")
+    print("===== changelog end =====")
     if not changelog and checker.breaking_changes:
         exit(1)
 
