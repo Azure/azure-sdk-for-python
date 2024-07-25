@@ -106,6 +106,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
+
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
@@ -294,7 +295,6 @@ stages:
           name: azsdk-pool-mms-ubuntu-2004-general
           os: linux
         steps:
-        - checkout: none
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
