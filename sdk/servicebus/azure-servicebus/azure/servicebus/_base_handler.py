@@ -354,7 +354,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-
         if error._shutdown_handler:
             self._close_handler()
         if not error._retryable:
