@@ -24,6 +24,8 @@ USAGE:
     4) AZURE_OPENAI_SEARCH_INDEX - the index name you chose when creating your Azure Search index.
 """
 
+# These lines are intentionally excluded from the sample code, we use them to configure any vars
+# or to tweak usage in ways that keep samples looking consistent when rendered in docs and tools
 import os
 os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
 
