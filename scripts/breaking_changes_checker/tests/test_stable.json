@@ -1170,10 +1170,22 @@
           }
         },
         "properties": {
-          "queue_name": "queue_name",
-          "message_encode_policy": "message_encode_policy",
-          "message_decode_policy": "message_decode_policy",
-          "version": "version"
+          "queue_name": {
+            "attr_type": null,
+            "default": null
+          },
+          "message_encode_policy": {
+            "attr_type": null,
+            "default": null
+          },
+          "message_decode_policy": {
+            "attr_type": null,
+            "default": null
+          },
+          "version": {
+            "attr_type": null,
+            "default": null
+          }
         }
       },
       "QueueMessage": {
@@ -1602,7 +1614,10 @@
           }
         },
         "properties": {
-          "version": "version"
+          "version": {
+            "attr_type": null,
+            "default": null
+          }
         }
       },
       "ResourceTypes": {
@@ -2391,7 +2406,10 @@
           }
         },
         "properties": {
-          "version": "version"
+          "version": {
+            "attr_type": null,
+            "default": null
+          }
         }
       },
       "QueueServiceClient": {
@@ -2577,7 +2595,10 @@
           }
         },
         "properties": {
-          "version": "version"
+          "version": {
+            "attr_type": null,
+            "default": null
+          }
         }
       }
     },

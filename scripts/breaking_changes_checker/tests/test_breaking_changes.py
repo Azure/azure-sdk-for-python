@@ -395,7 +395,7 @@ def test_pass_custom_reports_breaking(capsys):
     target_report = "test_current.json"
 
     try:
-        main(None, None, None, None, "tests", False, False, source_report, target_report)
+        main(None, None, None, None, "tests", False, False, False, source_report, target_report)
     except SystemExit as e:
         if e.code == 1:
             out, _ = capsys.readouterr()

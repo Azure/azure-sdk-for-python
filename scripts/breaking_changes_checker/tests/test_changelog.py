@@ -312,7 +312,7 @@ def test_pass_custom_reports_changelog(capsys):
     target_report = "test_current.json"
 
     try:
-        main(None, None, None, None, "tests", True, False, source_report, target_report)
+        main(None, None, None, None, "tests", True, False, False, source_report, target_report)
         out, _ = capsys.readouterr()
         assert "### Breaking Changes" in out
     except SystemExit as e:
