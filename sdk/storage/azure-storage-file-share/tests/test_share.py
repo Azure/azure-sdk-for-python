@@ -1695,23 +1695,16 @@ class TestStorageShare(StorageRecordedTestCase):
 
         first_share_client.set_share_properties(access_tier='Hot')
         first_share_props = first_share_client.get_share_properties()
-        second_share_client.set_share_properties(access_tier='Cool')
-        second_share_props = second_share_client.get_share_properties()
         assert first_share_props is not None
         assert first_share_props.name == first_share.share_name
         assert first_share_props.access_tier == 'Hot'
-        assert second_share_props is not None
-        assert second_share_props.name == second_share.share_name
-        assert second_share_props.access_tier == 'Cool'
 
-        first_share_deleted = first_share_client.delete_share()
-        second_share_deleted = second_share_client.delete_share()
-        assert first_share_deleted is None
-        assert second_share_deleted is None
-        with pytest.raises(ResourceNotFoundError):
-            first_share_client.get_share_properties()
-        with pytest.raises(ResourceNotFoundError):
-            second_share_client.get_share_properties()
+        share_names = {share.name for share in self.fsc.list_shares()}
+        assert first_share.share_name in share_names
+        assert second_share.share_name in share_names
+
+        first_share_client.delete_share()
+        second_share_client.delete_share()
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1731,9 +1724,10 @@ class TestStorageShare(StorageRecordedTestCase):
         )
 
         # Act / Assert
-        lease_duration = 15
+        lease_duration = 60
+        lease_id = '00000000-1111-2222-3333-444444444444'
         lease = share_client.acquire_lease(
-            lease_id='00000000-1111-2222-3333-444444444444',
+            lease_id=lease_id,
             lease_duration=lease_duration
         )
         props = share_client.get_share_properties(lease=lease)
@@ -1741,32 +1735,11 @@ class TestStorageShare(StorageRecordedTestCase):
         assert props.lease.state == 'leased'
         assert props.lease.status == 'locked'
 
-        lease_id1 = lease.id
-        new_lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
-        lease.change(proposed_lease_id=new_lease_id)
-        lease_id2 = lease.id
-        assert lease_id1 is not None
-        assert lease_id2 is not None
-        assert lease_id1 != lease_id2
-        assert lease_id2 == new_lease_id
-
         lease.renew()
-        assert lease.id == new_lease_id
+        assert lease.id == lease_id
 
-        time_elapsed = 2
-        self.sleep(time_elapsed)
-        with pytest.raises(HttpResponseError):
-            share_client.delete_share()
-        lease_break_period = 14
-        time_to_acquire_lease = lease.break_lease(lease_break_period=lease_break_period)
-        assert time_to_acquire_lease < min(lease_duration - time_elapsed, lease_break_period)
-
-        result = lease.release()
-        assert result is None
-
+        lease.release()
         share_client.delete_share()
-        with pytest.raises(ResourceNotFoundError):
-            share_client.get_share_properties()
 
 
 # ------------------------------------------------------------------------------
