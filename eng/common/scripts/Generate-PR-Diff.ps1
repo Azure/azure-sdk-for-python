@@ -19,7 +19,12 @@ Param (
   [string] $TargetPath
 )
 
-. (Join-Path $PSScriptRoot "Helpers" "git-helpers.ps1")
+
+$path = (Join-Path $PSScriptRoot "Helpers" "git-helpers.ps1")
+
+Write-Host "This is what we're trying to dot include $path"
+
+. $path
 
 function Get-ChangedServices {
     Param (
