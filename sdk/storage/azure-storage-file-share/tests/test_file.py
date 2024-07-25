@@ -3779,7 +3779,7 @@ class TestStorageFile(StorageRecordedTestCase):
         source_file.create_file(
             1024,
             file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
-            file_permission_format="SDDL"
+            file_permission_format="sddl"
         )
         props = source_file.get_file_properties()
         assert props is not None
@@ -3787,7 +3787,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
         server_returned_permission = share_client.get_permission_for_share(
             props.permission_key,
-            file_permission_format="SDDL"
+            file_permission_format="sddl"
         )
         assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 
@@ -3813,7 +3813,7 @@ class TestStorageFile(StorageRecordedTestCase):
         new_file.set_http_headers(
             content_settings=content_settings,
             file_permission=TEST_FILE_PERMISSIONS_IN_SDDL,
-            file_permission_format="SDDL"
+            file_permission_format="sddl"
         )
         props = new_file.get_file_properties()
         assert props is not None
@@ -3823,7 +3823,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
         server_returned_permission = share_client.get_permission_for_share(
             props.permission_key,
-            file_permission_format="SDDL"
+            file_permission_format="sddl"
         )
         assert server_returned_permission == TEST_FILE_PERMISSIONS_IN_SDDL
 

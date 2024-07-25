@@ -858,7 +858,7 @@ class DirectoryOperations:
          x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
          returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
          permission is returned as a base64 string representing the binary encoding of the permission.
-         Known values are: "SDDL" and "binary". Default value is None.
+         Known values are: "Sddl" and "Binary". Default value is None.
         :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
@@ -1364,7 +1364,7 @@ class DirectoryOperations:
          x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
          returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
          permission is returned as a base64 string representing the binary encoding of the permission.
-         Known values are: "SDDL" and "binary". Default value is None.
+         Known values are: "Sddl" and "Binary". Default value is None.
         :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value

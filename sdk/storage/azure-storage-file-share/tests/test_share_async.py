@@ -1618,7 +1618,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         server_returned_permission = await share_client.get_permission_for_share(
             permission_key,
-            file_permission_format="SDDL"
+            file_permission_format="sddl"
         )
         assert server_returned_permission == TEST_SHARE_PERMISSIONS_IN_SDDL
 
