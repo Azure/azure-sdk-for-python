@@ -31,8 +31,8 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
         _LOGGER.warning(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
         raise e
     result = [l for l in output.decode("utf-8").split(os.linesep)]
-    begin = result.index("===== report changes begin =====")
-    end = result.index("===== report changes end =====")
+    begin = result.index("===== changelog start =====")
+    end = result.index("===== changelog end =====")
     if begin == -1 or end == -1:
         warn_info = "Failed to get changelog from breaking change detector"
         _LOGGER.warning(warn_info)
