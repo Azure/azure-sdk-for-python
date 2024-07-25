@@ -942,7 +942,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             File permission, a Portable SDDL
         :keyword file_permission_format:
             Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
-        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -973,7 +973,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Key of the file permission to retrieve
         :keyword file_permission_format:
             Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
-        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

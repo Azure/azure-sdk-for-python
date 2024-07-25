@@ -274,7 +274,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :type permission_key: str
         :keyword file_permission_format:
             Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
-        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
@@ -830,7 +830,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             Note: Only one of the file-permission or file-permission-key should be specified.
         :keyword file_permission_format:
             Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
-        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_attributes:
             The file system attributes for the file.
         :paramtype file_attributes: ~azure.storage.fileshare.NTFSAttributes or str
@@ -999,7 +999,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :type permission_key: str
         :keyword file_permission_format:
             Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
-        :paramtype file_permission_format: Optional[Literal["SDDL", "binary"]]
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_change_time:
             Change time for the file. If not specified, change time will be set to the current date/time.
 
