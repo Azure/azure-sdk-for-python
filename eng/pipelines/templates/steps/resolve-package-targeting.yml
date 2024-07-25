@@ -6,8 +6,9 @@ parameters:
     type: string
 
 steps:
-  # if triggered for a PR, handle PR diff side
-  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), ne('${{ parameters.PackagePropertiesFolder }}','') }}:
+  # if triggered for a PR, handle PR diff side adding the default for packageproperties folder will mean this will always act
+  # as a non-pr resolution
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), ne(parameters.PackagePropertiesFolder, '') }}:
     - pwsh: |
         $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
           | Where-Object { $_.Extension -eq '.json' } `
