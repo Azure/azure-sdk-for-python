@@ -104,7 +104,7 @@ from ...operations._operations import (
     build_person_groups_update_person_request,
     build_person_groups_update_request,
 )
-from .._vendor import FaceClientMixinABC, FaceServiceClientMixinABC, FaceSessionClientMixinABC
+from .._vendor import FaceClientMixinABC, FaceSessionClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
