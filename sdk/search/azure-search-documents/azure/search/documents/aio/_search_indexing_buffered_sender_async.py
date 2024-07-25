@@ -324,7 +324,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not self._index_key:
             await self._callback_fail(action)
             return
-        key = action.additional_properties.get(self._index_key) if action.additional_properties else ""
+        key = cast(str, action.additional_properties.get(self._index_key) if action.additional_properties else "")
         counter = self._retry_counter.get(key)
         if not counter:
             # first time that fails
