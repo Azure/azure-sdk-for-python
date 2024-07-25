@@ -82,8 +82,8 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
     :vartype conformance_operations: spatio.operations.ConformanceOperationsOperations
     :ivar search_operations: SearchOperationsOperations operations
     :vartype search_operations: spatio.operations.SearchOperationsOperations
-    :ivar get_operations: GetOperationsOperations operations
-    :vartype get_operations: spatio.operations.GetOperationsOperations
+    :ivar get_operations_collections: GetOperationsOperations operations
+    :vartype get_operations_collections: spatio.operations.GetOperationsOperations
     :ivar create_operations_collections: createOperationsOperations operations
     :vartype create_operations_collections: spatio.operations.createOperationsOperations
     :ivar update_operations: updateOperationsOperations operations
@@ -193,7 +193,7 @@ class AzureOrbitalPlanetaryComputerClient:  # pylint: disable=client-accepts-api
         self.search_operations = SearchOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.get_operations = GetOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.get_operations_collections= GetOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.create_operations_collections = createOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

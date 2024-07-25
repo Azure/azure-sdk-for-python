@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, ove
 
 from .. import _model_base
 from .._model_base import rest_field
+from .._vendor import FileType
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -225,60 +226,6 @@ class DefaultLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Feature(_model_base.Model):
-    """Feature Model.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: Type. Required. "Feature"
-    :vartype type: str or ~spatio.models.FeatureType
-    :ivar geometry: Geometry. Required.
-    :vartype geometry: ~spatio.models.FeatureGeometry
-    :ivar properties: Properties. Required.
-    :vartype properties: ~spatio.models.FeatureProperties
-    :ivar id: Id.
-    :vartype id: any
-    :ivar bbox: Bbox.
-    :vartype bbox: any
-    """
-
-    type: Union[str, "_models.FeatureType"] = rest_field()
-    """Type. Required. \"Feature\""""
-    geometry: "_models.FeatureGeometry" = rest_field()
-    """Geometry. Required."""
-    properties: "_models.FeatureProperties" = rest_field()
-    """Properties. Required."""
-    id: Optional[Any] = rest_field()
-    """Id."""
-    bbox: Optional[Any] = rest_field()
-    """Bbox."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.FeatureType"],
-        geometry: "_models.FeatureGeometry",
-        properties: "_models.FeatureProperties",
-        id: Optional[Any] = None,  # pylint: disable=redefined-builtin
-        bbox: Optional[Any] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class FeatureGeometry(_model_base.Model):
-    """Geometry."""
-
-
 class FeaturePolygonDictStrRioTilerModelsInfo(_model_base.Model):
     """Feature Model.
 
@@ -326,10 +273,6 @@ class FeaturePolygonDictStrRioTilerModelsInfo(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class FeatureProperties(_model_base.Model):
-    """Properties."""
 
 
 class GeoCatalogCollection(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -429,123 +372,6 @@ class GeoCatalogCollection(_model_base.Model):  # pylint: disable=too-many-insta
 
 class Geojson(_model_base.Model):
     """GeoJSON Feature or FeatureCollection."""
-
-
-class Geojson0(Feature):
-    """GeoJSON Feature.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: Type. Required. "Feature"
-    :vartype type: str or ~spatio.models.FeatureType
-    :ivar geometry: Geometry. Required.
-    :vartype geometry: ~spatio.models.FeatureGeometry
-    :ivar properties: Properties. Required.
-    :vartype properties: ~spatio.models.FeatureProperties
-    :ivar id: Id.
-    :vartype id: any
-    :ivar bbox: Bbox.
-    :vartype bbox: any
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.FeatureType"],
-        geometry: "_models.FeatureGeometry",
-        properties: "_models.FeatureProperties",
-        id: Optional[Any] = None,  # pylint: disable=redefined-builtin
-        bbox: Optional[Any] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Geojson1(Feature):
-    """GeoJSON Feature.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: Type. Required. "Feature"
-    :vartype type: str or ~spatio.models.FeatureType
-    :ivar geometry: Geometry. Required.
-    :vartype geometry: ~spatio.models.FeatureGeometry
-    :ivar properties: Properties. Required.
-    :vartype properties: ~spatio.models.FeatureProperties
-    :ivar id: Id.
-    :vartype id: any
-    :ivar bbox: Bbox.
-    :vartype bbox: any
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.FeatureType"],
-        geometry: "_models.FeatureGeometry",
-        properties: "_models.FeatureProperties",
-        id: Optional[Any] = None,  # pylint: disable=redefined-builtin
-        bbox: Optional[Any] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Geojson2(Feature):
-    """GeoJSON Feature.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: Type. Required. "Feature"
-    :vartype type: str or ~spatio.models.FeatureType
-    :ivar geometry: Geometry. Required.
-    :vartype geometry: ~spatio.models.FeatureGeometry
-    :ivar properties: Properties. Required.
-    :vartype properties: ~spatio.models.FeatureProperties
-    :ivar id: Id.
-    :vartype id: any
-    :ivar bbox: Bbox.
-    :vartype bbox: any
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.FeatureType"],
-        geometry: "_models.FeatureGeometry",
-        properties: "_models.FeatureProperties",
-        id: Optional[Any] = None,  # pylint: disable=redefined-builtin
-        bbox: Optional[Any] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class ImageRequest(_model_base.Model):

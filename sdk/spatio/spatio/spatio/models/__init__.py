@@ -12,15 +12,9 @@ from ._models import AzMapsToken
 from ._models import BadRequest
 from ._models import Bounds
 from ._models import DefaultLocation
-from ._models import Feature
-from ._models import FeatureGeometry
 from ._models import FeaturePolygonDictStrRioTilerModelsInfo
-from ._models import FeatureProperties
 from ._models import GeoCatalogCollection
 from ._models import Geojson
-from ._models import Geojson0
-from ._models import Geojson1
-from ._models import Geojson2
 from ._models import ImageRequest
 from ._models import ImageResponse
 from ._models import IngestionDefinition
@@ -73,36 +67,8 @@ from ._models import UserCollectionSettings
 from ._models import VectorTileOptions
 
 from ._enums import Algorithm
-from ._enums import Algorithm0
-from ._enums import Algorithm1
-from ._enums import Algorithm10
-from ._enums import Algorithm11
-from ._enums import Algorithm12
-from ._enums import Algorithm13
-from ._enums import Algorithm14
-from ._enums import Algorithm15
-from ._enums import Algorithm16
-from ._enums import Algorithm17
-from ._enums import Algorithm18
-from ._enums import Algorithm19
-from ._enums import Algorithm2
-from ._enums import Algorithm20
-from ._enums import Algorithm21
-from ._enums import Algorithm22
-from ._enums import Algorithm23
-from ._enums import Algorithm24
-from ._enums import Algorithm25
-from ._enums import Algorithm26
-from ._enums import Algorithm27
-from ._enums import Algorithm3
-from ._enums import Algorithm4
-from ._enums import Algorithm5
-from ._enums import Algorithm6
-from ._enums import Algorithm7
-from ._enums import Algorithm8
-from ._enums import Algorithm9
+from ._enums import ColorMapNames
 from ._enums import FeaturePolygonDictStrRioTilerModelsInfoType
-from ._enums import FeatureType
 from ._enums import GeoCatalogCollectionType
 from ._enums import ImageRequestFormat
 from ._enums import ImageType
@@ -113,128 +79,17 @@ from ._enums import MetadataType
 from ._enums import NodataTypes
 from ._enums import OperationStatus
 from ._enums import PartitionTypeScheme
-from ._enums import Paths10M3PplApiMosaicSearchidWmtscapabilitiesXmlGetParameters2Schema
-from ._enums import (
-    Paths12Z2742ApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyWidthXHeightFormatGetParameters23Schema,
-)
-from ._enums import Paths143XwndApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyFormatGetParameters23Schema
-from ._enums import Paths14Al5EqApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters3Schema
-from ._enums import Paths16Yed9YApiCollectionsCollectionidItemsItemidPreviewGetParameters18Schema
-from ._enums import Paths1Cbjd4ZApiMosaicSearchidTilesTilematrixsetidZXYScaleXFormatGetParameters21Schema
-from ._enums import Paths1D0N3Y8ApiMosaicSearchidTilesTilematrixsetidZXYScaleXGetParameters21Schema
-from ._enums import Paths1E52KilApiCollectionsCollectionidItemsItemidTilesZXYScaleXGetParameters20Schema
-from ._enums import Paths1Eac3YhApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters3Schema
-from ._enums import Paths1Fi8KxhApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters19Schema
-from ._enums import Paths1H5Csh7ApiMosaicSearchidTilematrixsetidWmtscapabilitiesXmlGetParameters2Schema
-from ._enums import Paths1HjtyveApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters20Schema
-from ._enums import Paths1Hm3CymApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYGetParameters20Schema
-from ._enums import Paths1InxkmsApiMosaicSearchidTilesZXYGetParameters21Schema
-from ._enums import Paths1Jjrcv9ApiMosaicSearchidTilesZXYScaleXFormatGetParameters21Schema
-from ._enums import Paths1M9KdiwApiCollectionsCollectionidItemsItemidPreviewFormatGetParameters18Schema
-from ._enums import Paths1NvnarrApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters2Schema
-from ._enums import Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema
-from ._enums import Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema
-from ._enums import (
-    Paths1Qjg5T5ApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters19Schema,
-)
-from ._enums import Paths1QvggpkApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters3Schema
-from ._enums import Paths1T1RghjApiMosaicSearchidTilesZXYFormatGetParameters21Schema
-from ._enums import Paths6B5V9CApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXGetParameters20Schema
-from ._enums import Paths8Rr605ApiMosaicSearchidTilesTilematrixsetidZXYGetParameters21Schema
-from ._enums import (
-    PathsAa76DeApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters3Schema,
-)
-from ._enums import PathsD0Pq0BApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters19Schema
-from ._enums import PathsE255ZyApiCollectionsCollectionidItemsItemidTilesZXYScaleXFormatGetParameters20Schema
-from ._enums import PathsGdshl3ApiMosaicSearchidTilejsonJsonGetParameters2Schema
-from ._enums import (
-    PathsNadiz3ApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXFormatGetParameters20Schema,
-)
-from ._enums import PathsNwbo2EApiCollectionsCollectionidItemsItemidTilesZXYGetParameters20Schema
-from ._enums import PathsOg81NeApiCollectionsCollectionidItemsItemidTilesZXYFormatGetParameters20Schema
-from ._enums import PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema
-from ._enums import PathsR1Up92ApiMosaicSearchidTilesTilematrixsetidZXYFormatGetParameters21Schema
-from ._enums import PathsS5MjfnApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters19Schema
-from ._enums import PathsTl93ReApiMosaicSearchidTilejsonJsonGetParameters20Schema
-from ._enums import PathsUh495CApiMosaicSearchidTilesZXYScaleXGetParameters21Schema
-from ._enums import PathsUpa60XApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYFormatGetParameters20Schema
 from ._enums import PixelSelection
-from ._enums import PixelSelection0
-from ._enums import PixelSelection1
-from ._enums import PixelSelection2
-from ._enums import PixelSelection3
-from ._enums import PixelSelection4
-from ._enums import PixelSelection5
-from ._enums import PixelSelection6
-from ._enums import PixelSelection7
-from ._enums import PixelSelection8
 from ._enums import PolygonType
 from ._enums import QueryableDefinitionDataType
 from ._enums import RegisterMosaicFilterLang
 from ._enums import RenderOptionType
 from ._enums import Resampling
-from ._enums import Resampling0
-from ._enums import Resampling1
-from ._enums import Resampling10
-from ._enums import Resampling11
-from ._enums import Resampling12
-from ._enums import Resampling13
-from ._enums import Resampling14
-from ._enums import Resampling15
-from ._enums import Resampling16
-from ._enums import Resampling17
-from ._enums import Resampling18
-from ._enums import Resampling19
-from ._enums import Resampling2
-from ._enums import Resampling20
-from ._enums import Resampling21
-from ._enums import Resampling22
-from ._enums import Resampling23
-from ._enums import Resampling24
-from ._enums import Resampling25
-from ._enums import Resampling26
-from ._enums import Resampling27
-from ._enums import Resampling28
-from ._enums import Resampling29
-from ._enums import Resampling3
-from ._enums import Resampling30
-from ._enums import Resampling31
-from ._enums import Resampling4
-from ._enums import Resampling5
-from ._enums import Resampling6
-from ._enums import Resampling7
-from ._enums import Resampling8
-from ._enums import Resampling9
 from ._enums import SearchPostRequestFilterLang
 from ._enums import SortDirections
 from ._enums import TileJsonScheme
 from ._enums import TileMatrixCornerOfOrigin
 from ._enums import Tilematrixsetid
-from ._enums import Tilematrixsetid0
-from ._enums import Tilematrixsetid1
-from ._enums import Tilematrixsetid10
-from ._enums import Tilematrixsetid11
-from ._enums import Tilematrixsetid12
-from ._enums import Tilematrixsetid13
-from ._enums import Tilematrixsetid14
-from ._enums import Tilematrixsetid15
-from ._enums import Tilematrixsetid16
-from ._enums import Tilematrixsetid17
-from ._enums import Tilematrixsetid18
-from ._enums import Tilematrixsetid19
-from ._enums import Tilematrixsetid2
-from ._enums import Tilematrixsetid20
-from ._enums import Tilematrixsetid21
-from ._enums import Tilematrixsetid22
-from ._enums import Tilematrixsetid23
-from ._enums import Tilematrixsetid24
-from ._enums import Tilematrixsetid3
-from ._enums import Tilematrixsetid4
-from ._enums import Tilematrixsetid5
-from ._enums import Tilematrixsetid6
-from ._enums import Tilematrixsetid7
-from ._enums import Tilematrixsetid8
-from ._enums import Tilematrixsetid9
 from ._enums import Version
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -247,15 +102,9 @@ __all__ = [
     "BadRequest",
     "Bounds",
     "DefaultLocation",
-    "Feature",
-    "FeatureGeometry",
     "FeaturePolygonDictStrRioTilerModelsInfo",
-    "FeatureProperties",
     "GeoCatalogCollection",
     "Geojson",
-    "Geojson0",
-    "Geojson1",
-    "Geojson2",
     "ImageRequest",
     "ImageResponse",
     "IngestionDefinition",
@@ -307,36 +156,8 @@ __all__ = [
     "UserCollectionSettings",
     "VectorTileOptions",
     "Algorithm",
-    "Algorithm0",
-    "Algorithm1",
-    "Algorithm10",
-    "Algorithm11",
-    "Algorithm12",
-    "Algorithm13",
-    "Algorithm14",
-    "Algorithm15",
-    "Algorithm16",
-    "Algorithm17",
-    "Algorithm18",
-    "Algorithm19",
-    "Algorithm2",
-    "Algorithm20",
-    "Algorithm21",
-    "Algorithm22",
-    "Algorithm23",
-    "Algorithm24",
-    "Algorithm25",
-    "Algorithm26",
-    "Algorithm27",
-    "Algorithm3",
-    "Algorithm4",
-    "Algorithm5",
-    "Algorithm6",
-    "Algorithm7",
-    "Algorithm8",
-    "Algorithm9",
+    "ColorMapNames",
     "FeaturePolygonDictStrRioTilerModelsInfoType",
-    "FeatureType",
     "GeoCatalogCollectionType",
     "ImageRequestFormat",
     "ImageType",
@@ -347,120 +168,17 @@ __all__ = [
     "NodataTypes",
     "OperationStatus",
     "PartitionTypeScheme",
-    "Paths10M3PplApiMosaicSearchidWmtscapabilitiesXmlGetParameters2Schema",
-    "Paths12Z2742ApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyWidthXHeightFormatGetParameters23Schema",
-    "Paths143XwndApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyFormatGetParameters23Schema",
-    "Paths14Al5EqApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters3Schema",
-    "Paths16Yed9YApiCollectionsCollectionidItemsItemidPreviewGetParameters18Schema",
-    "Paths1Cbjd4ZApiMosaicSearchidTilesTilematrixsetidZXYScaleXFormatGetParameters21Schema",
-    "Paths1D0N3Y8ApiMosaicSearchidTilesTilematrixsetidZXYScaleXGetParameters21Schema",
-    "Paths1E52KilApiCollectionsCollectionidItemsItemidTilesZXYScaleXGetParameters20Schema",
-    "Paths1Eac3YhApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters3Schema",
-    "Paths1Fi8KxhApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters19Schema",
-    "Paths1H5Csh7ApiMosaicSearchidTilematrixsetidWmtscapabilitiesXmlGetParameters2Schema",
-    "Paths1HjtyveApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters20Schema",
-    "Paths1Hm3CymApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYGetParameters20Schema",
-    "Paths1InxkmsApiMosaicSearchidTilesZXYGetParameters21Schema",
-    "Paths1Jjrcv9ApiMosaicSearchidTilesZXYScaleXFormatGetParameters21Schema",
-    "Paths1M9KdiwApiCollectionsCollectionidItemsItemidPreviewFormatGetParameters18Schema",
-    "Paths1NvnarrApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters2Schema",
-    "Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema",
-    "Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema",
-    "Paths1Qjg5T5ApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters19Schema",
-    "Paths1QvggpkApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters3Schema",
-    "Paths1T1RghjApiMosaicSearchidTilesZXYFormatGetParameters21Schema",
-    "Paths6B5V9CApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXGetParameters20Schema",
-    "Paths8Rr605ApiMosaicSearchidTilesTilematrixsetidZXYGetParameters21Schema",
-    "PathsAa76DeApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters3Schema",
-    "PathsD0Pq0BApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters19Schema",
-    "PathsE255ZyApiCollectionsCollectionidItemsItemidTilesZXYScaleXFormatGetParameters20Schema",
-    "PathsGdshl3ApiMosaicSearchidTilejsonJsonGetParameters2Schema",
-    "PathsNadiz3ApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXFormatGetParameters20Schema",
-    "PathsNwbo2EApiCollectionsCollectionidItemsItemidTilesZXYGetParameters20Schema",
-    "PathsOg81NeApiCollectionsCollectionidItemsItemidTilesZXYFormatGetParameters20Schema",
-    "PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema",
-    "PathsR1Up92ApiMosaicSearchidTilesTilematrixsetidZXYFormatGetParameters21Schema",
-    "PathsS5MjfnApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters19Schema",
-    "PathsTl93ReApiMosaicSearchidTilejsonJsonGetParameters20Schema",
-    "PathsUh495CApiMosaicSearchidTilesZXYScaleXGetParameters21Schema",
-    "PathsUpa60XApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYFormatGetParameters20Schema",
     "PixelSelection",
-    "PixelSelection0",
-    "PixelSelection1",
-    "PixelSelection2",
-    "PixelSelection3",
-    "PixelSelection4",
-    "PixelSelection5",
-    "PixelSelection6",
-    "PixelSelection7",
-    "PixelSelection8",
     "PolygonType",
     "QueryableDefinitionDataType",
     "RegisterMosaicFilterLang",
     "RenderOptionType",
     "Resampling",
-    "Resampling0",
-    "Resampling1",
-    "Resampling10",
-    "Resampling11",
-    "Resampling12",
-    "Resampling13",
-    "Resampling14",
-    "Resampling15",
-    "Resampling16",
-    "Resampling17",
-    "Resampling18",
-    "Resampling19",
-    "Resampling2",
-    "Resampling20",
-    "Resampling21",
-    "Resampling22",
-    "Resampling23",
-    "Resampling24",
-    "Resampling25",
-    "Resampling26",
-    "Resampling27",
-    "Resampling28",
-    "Resampling29",
-    "Resampling3",
-    "Resampling30",
-    "Resampling31",
-    "Resampling4",
-    "Resampling5",
-    "Resampling6",
-    "Resampling7",
-    "Resampling8",
-    "Resampling9",
     "SearchPostRequestFilterLang",
     "SortDirections",
     "TileJsonScheme",
     "TileMatrixCornerOfOrigin",
     "Tilematrixsetid",
-    "Tilematrixsetid0",
-    "Tilematrixsetid1",
-    "Tilematrixsetid10",
-    "Tilematrixsetid11",
-    "Tilematrixsetid12",
-    "Tilematrixsetid13",
-    "Tilematrixsetid14",
-    "Tilematrixsetid15",
-    "Tilematrixsetid16",
-    "Tilematrixsetid17",
-    "Tilematrixsetid18",
-    "Tilematrixsetid19",
-    "Tilematrixsetid2",
-    "Tilematrixsetid20",
-    "Tilematrixsetid21",
-    "Tilematrixsetid22",
-    "Tilematrixsetid23",
-    "Tilematrixsetid24",
-    "Tilematrixsetid3",
-    "Tilematrixsetid4",
-    "Tilematrixsetid5",
-    "Tilematrixsetid6",
-    "Tilematrixsetid7",
-    "Tilematrixsetid8",
-    "Tilematrixsetid9",
     "Version",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

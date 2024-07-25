@@ -27,6 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
+from .._vendor import prepare_multipart_form_data
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -1109,7 +1110,6 @@ def build_create_operations_collection_asset_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1125,8 +1125,6 @@ def build_create_operations_collection_asset_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1225,7 +1223,6 @@ def build_update_operations_collection_asset_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1242,8 +1239,6 @@ def build_update_operations_collection_asset_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1857,7 +1852,7 @@ def build_statistics_operations_api_collections_collection_id_items_item_id_stat
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling0]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
@@ -1933,7 +1928,7 @@ def build_geojson_operations_statistics_api_collections_collection_id_items_item
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling1]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
@@ -2019,14 +2014,12 @@ def build_geojson_operations_crop_api_collections_collection_id_items_item_id_cr
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling19]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm15]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2106,16 +2099,14 @@ def build_geojson_operations_crop_api_collections_collection_id_items_item_id_cr
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling20]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm16]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2197,16 +2188,14 @@ def build_geojson_operations_crop_api_collections_collection_id_items_item_id_cr
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling21]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm17]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2294,16 +2283,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling2]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.PathsNadiz3ApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXFormatGetParameters20Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2372,7 +2356,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     z: int,
     x: int,
     y: int,
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid0],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     scale: int,
     collection_id: str,
     item_id: str,
@@ -2386,16 +2370,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling3]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm0]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.Paths6B5V9CApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXGetParameters20Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2465,7 +2444,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     z: int,
     x: int,
     y: int,
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid1],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     format: Union[str, _models.ImageType],
     collection_id: str,
     item_id: str,
@@ -2479,16 +2458,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling4]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm1]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.PathsUpa60XApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYFormatGetParameters20Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2558,7 +2532,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     z: int,
     x: int,
     y: int,
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid2],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     collection_id: str,
     item_id: str,
     *,
@@ -2572,15 +2546,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_tile
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling5]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm2]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str, _models.Paths1Hm3CymApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYGetParameters20Schema
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2656,7 +2626,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     collection_id: str,
     item_id: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid3]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
     assets: Optional[List[str]] = None,
@@ -2665,13 +2635,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling6]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm3]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsE255ZyApiCollectionsCollectionidItemsItemidTilesZXYScaleXFormatGetParameters20Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2745,7 +2713,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     collection_id: str,
     item_id: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid4]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     format: Optional[Union[str, _models.ImageType]] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
@@ -2755,13 +2723,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling7]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm4]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1E52KilApiCollectionsCollectionidItemsItemidTilesZXYScaleXGetParameters20Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2836,7 +2802,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     collection_id: str,
     item_id: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid5]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     scale: Optional[int] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
@@ -2846,13 +2812,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling8]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm5]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsOg81NeApiCollectionsCollectionidItemsItemidTilesZXYFormatGetParameters20Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -2926,7 +2890,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     collection_id: str,
     item_id: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid6]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     scale: Optional[int] = None,
     format: Optional[Union[str, _models.ImageType]] = None,
     buffer: Optional[float] = None,
@@ -2937,13 +2901,11 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling9]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm6]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsNwbo2EApiCollectionsCollectionidItemsItemidTilesZXYGetParameters20Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -3012,7 +2974,7 @@ def build_tile_operations_api_collections_collection_id_items_item_id_tiles_z_x_
 
 
 def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_scale_x_format_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid13],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     scale: int,
     format: Union[str, _models.ImageType],
     searchid: str,
@@ -3029,14 +2991,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_sca
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling22]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm18]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1Cbjd4ZApiMosaicSearchidTilesTilematrixsetidZXYScaleXFormatGetParameters21Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3120,7 +3080,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_sca
 
 
 def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_scale_x_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid14],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     scale: int,
     searchid: str,
     z: int,
@@ -3137,14 +3097,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_sca
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling23]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection0]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm19]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1D0N3Y8ApiMosaicSearchidTilesTilematrixsetidZXYScaleXGetParameters21Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3229,7 +3187,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_sca
 
 
 def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_format_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid15],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     format: Union[str, _models.ImageType],
     searchid: str,
     z: int,
@@ -3246,14 +3204,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_for
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling24]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection1]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm20]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsR1Up92ApiMosaicSearchidTilesTilematrixsetidZXYFormatGetParameters21Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3338,7 +3294,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_for
 
 
 def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid16],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     searchid: str,
     z: int,
     x: int,
@@ -3355,14 +3311,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_get
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling25]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection2]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm21]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths8Rr605ApiMosaicSearchidTilesTilematrixsetidZXYGetParameters21Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3455,7 +3409,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_scale_x_format_get_req
     x: int,
     y: int,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid17]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
     assets: Optional[List[str]] = None,
@@ -3465,14 +3419,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_scale_x_format_get_req
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling26]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection3]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm22]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1Jjrcv9ApiMosaicSearchidTilesZXYScaleXFormatGetParameters21Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3563,7 +3515,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_scale_x_get_request(  
     x: int,
     y: int,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid18]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     format: Optional[Union[str, _models.ImageType]] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
@@ -3574,12 +3526,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_scale_x_get_request(  
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling27]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection4]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm23]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[Union[str, _models.PathsUh495CApiMosaicSearchidTilesZXYScaleXGetParameters21Schema]] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3671,7 +3623,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_format_get_request(  #
     x: int,
     y: int,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid19]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     scale: Optional[int] = None,
     buffer: Optional[float] = None,
     color_formula: Optional[str] = None,
@@ -3682,14 +3634,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_format_get_request(  #
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling28]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection5]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm24]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1T1RghjApiMosaicSearchidTilesZXYFormatGetParameters21Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3780,7 +3730,7 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_get_request(  # pylint
     x: int,
     y: int,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid20]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     scale: Optional[int] = None,
     format: Optional[Union[str, _models.ImageType]] = None,
     buffer: Optional[float] = None,
@@ -3792,12 +3742,12 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_get_request(  # pylint
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling29]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection6]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm25]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[Union[str, _models.Paths1InxkmsApiMosaicSearchidTilesZXYGetParameters21Schema]] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -3884,16 +3834,11 @@ def build_tile_operations_api_mosaic_searchid_tiles_z_x_y_get_request(  # pylint
 
 
 def build_tilejson_operations_api_collections_collection_id_items_item_id_tile_matrix_set_id_tilejson_json_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid7],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     collection_id: str,
     item_id: str,
     *,
-    tile_format: Optional[
-        Union[
-            str,
-            _models.Paths14Al5EqApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters3Schema,
-        ]
-    ] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -3905,16 +3850,11 @@ def build_tilejson_operations_api_collections_collection_id_items_item_id_tile_m
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling10]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm7]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.Paths1Fi8KxhApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters19Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -3986,10 +3926,8 @@ def build_tilejson_operations_api_collections_collection_id_items_item_id_tilejs
     collection_id: str,
     item_id: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid8]] = None,
-    tile_format: Optional[
-        Union[str, _models.Paths1Eac3YhApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters3Schema]
-    ] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4001,13 +3939,11 @@ def build_tilejson_operations_api_collections_collection_id_items_item_id_tilejs
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling11]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm8]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsD0Pq0BApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters19Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -4077,12 +4013,10 @@ def build_tilejson_operations_api_collections_collection_id_items_item_id_tilejs
 
 
 def build_tilejson_operations_api_mosaic_searchid_tile_matrix_set_id_tilejson_json_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid21],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     searchid: str,
     *,
-    tile_format: Optional[
-        Union[str, _models.Paths1NvnarrApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters2Schema]
-    ] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4095,14 +4029,12 @@ def build_tilejson_operations_api_mosaic_searchid_tile_matrix_set_id_tilejson_js
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling30]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection7]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm26]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1HjtyveApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters20Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -4191,8 +4123,8 @@ def build_tilejson_operations_api_mosaic_searchid_tile_matrix_set_id_tilejson_js
 def build_tilejson_operations_api_mosaic_searchid_tilejson_json_get_request(  # pylint: disable=name-too-long
     searchid: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid22]] = None,
-    tile_format: Optional[Union[str, _models.PathsGdshl3ApiMosaicSearchidTilejsonJsonGetParameters2Schema]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4205,12 +4137,12 @@ def build_tilejson_operations_api_mosaic_searchid_tilejson_json_get_request(  # 
     collection: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling31]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection8]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm27]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[Union[str, _models.PathsTl93ReApiMosaicSearchidTilejsonJsonGetParameters20Schema]] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     scan_limit: Optional[int] = None,
@@ -4298,16 +4230,11 @@ def build_tilejson_operations_api_mosaic_searchid_tilejson_json_get_request(  # 
 
 
 def build_wmts_operations_api_collections_collection_id_items_item_id_tile_matrix_set_id_w_m_t_s_capabilities_xml_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid9],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     collection_id: str,
     item_id: str,
     *,
-    tile_format: Optional[
-        Union[
-            str,
-            _models.PathsAa76DeApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters3Schema,
-        ]
-    ] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4319,16 +4246,11 @@ def build_wmts_operations_api_collections_collection_id_items_item_id_tile_matri
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling12]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm9]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.Paths1Qjg5T5ApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters19Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -4399,10 +4321,8 @@ def build_wmts_operations_api_collections_collection_id_items_item_id_w_m_t_s_ca
     collection_id: str,
     item_id: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid10]] = None,
-    tile_format: Optional[
-        Union[str, _models.Paths1QvggpkApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters3Schema]
-    ] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4414,13 +4334,11 @@ def build_wmts_operations_api_collections_collection_id_items_item_id_w_m_t_s_ca
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling13]] = None,
-    algorithm: Optional[Union[str, _models.Algorithm10]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.PathsS5MjfnApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters19Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -4489,12 +4407,10 @@ def build_wmts_operations_api_collections_collection_id_items_item_id_w_m_t_s_ca
 
 
 def build_wmts_operations_api_mosaic_searchid_tile_matrix_set_id_w_m_t_s_capabilities_xml_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid23],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     searchid: str,
     *,
-    tile_format: Optional[
-        Union[str, _models.Paths1H5Csh7ApiMosaicSearchidTilematrixsetidWmtscapabilitiesXmlGetParameters2Schema]
-    ] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4534,10 +4450,8 @@ def build_wmts_operations_api_mosaic_searchid_tile_matrix_set_id_w_m_t_s_capabil
 def build_wmts_operations_api_mosaic_searchid_w_m_t_s_capabilities_xml_get_request(  # pylint: disable=name-too-long
     searchid: str,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid24]] = None,
-    tile_format: Optional[
-        Union[str, _models.Paths10M3PplApiMosaicSearchidWmtscapabilitiesXmlGetParameters2Schema]
-    ] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+    tile_format: Optional[Union[str, _models.ImageType]] = None,
     tile_scale: Optional[int] = None,
     minzoom: Optional[int] = None,
     maxzoom: Optional[int] = None,
@@ -4588,7 +4502,7 @@ def build_point_operations_api_collections_collection_id_items_item_id_point_lon
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling14]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4646,16 +4560,14 @@ def build_preview_operations_api_collections_collection_id_items_item_id_preview
     dst_crs: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling15]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm11]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths1M9KdiwApiCollectionsCollectionidItemsItemidPreviewFormatGetParameters18Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -4734,16 +4646,14 @@ def build_preview_operations_api_collections_collection_id_items_item_id_preview
     dst_crs: Optional[str] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling16]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm12]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[str, _models.Paths16Yed9YApiCollectionsCollectionidItemsItemidPreviewGetParameters18Schema]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -4830,17 +4740,12 @@ def build_part_operations_api_collections_collection_id_items_item_id_crop_minx_
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling17]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm13]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.Paths12Z2742ApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyWidthXHeightFormatGetParameters23Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -4928,19 +4833,14 @@ def build_part_operations_api_collections_collection_id_items_item_id_crop_minx_
     asset_as_band: Optional[bool] = None,
     nodata: Optional[str] = None,
     unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling18]] = None,
+    resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    algorithm: Optional[Union[str, _models.Algorithm14]] = None,
+    algorithm: Optional[Union[str, _models.Algorithm]] = None,
     algorithm_params: Optional[str] = None,
     rescale: Optional[List[str]] = None,
-    colormap_name: Optional[
-        Union[
-            str,
-            _models.Paths143XwndApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyFormatGetParameters23Schema,
-        ]
-    ] = None,
+    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     **kwargs: Any,
@@ -5037,7 +4937,7 @@ def build_register_operations_search_api_mosaic_register_post_request(  # pylint
 
 
 def build_assets_operations_for_tile_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_assets_get_request(  # pylint: disable=name-too-long
-    tile_matrix_set_id: Union[str, _models.Tilematrixsetid11],
+    tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
     searchid: str,
     z: int,
     x: int,
@@ -5093,7 +4993,7 @@ def build_assets_operations_for_tile_api_mosaic_searchid_tiles_z_x_y_assets_get_
     x: int,
     y: int,
     *,
-    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid12]] = None,
+    tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
@@ -5674,7 +5574,6 @@ def build_create_operations_collection_asset_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5690,8 +5589,6 @@ def build_create_operations_collection_asset_request(  # pylint: disable=name-to
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -10133,6 +10030,146 @@ class createOperationsOperations:
 
         return deserialized  # type: ignore
 
+    @overload
+    def collection_asset(self, collection_id: str, body: JSON, **kwargs: Any) -> _models.GeoCatalogCollection:
+        """Create Collection Asset.
+
+        Create a new asset in the Collection metadata and write the associated
+        file to managed storage.
+
+        Args:
+        request: The incoming request.
+        asset: The Asset object to write, without a valid href to the asset.
+        file: The file to write.
+        collection_id: The ID of the collection to write the asset to.
+        content_type: The content type of the request.
+
+        Returns:
+        A Response object containing the newly created asset.
+
+        :param collection_id: STAC Collection ID. Required.
+        :type collection_id: str
+        :param body: Required.
+        :type body: JSON
+        :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoCatalogCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "data": "str",
+                    "file": filetype
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "description": "str",
+                    "extent": {
+                        "str": {}
+                    },
+                    "id": "str",
+                    "license": "str",
+                    "links": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_version": "str",
+                    "type": "str",
+                    "assets": {
+                        "str": {}
+                    },
+                    "keywords": [
+                        "str"
+                    ],
+                    "msft:short_description": "str",
+                    "providers": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_extensions": [
+                        "str"
+                    ],
+                    "summaries": {
+                        "str": {}
+                    },
+                    "title": "str"
+                }
+        """
+
+    @overload
+    def collection_asset(
+        self, collection_id: str, *, file: bytes, data: str, **kwargs: Any
+    ) -> _models.GeoCatalogCollection:
+        """Create Collection Asset.
+
+        Create a new asset in the Collection metadata and write the associated
+        file to managed storage.
+
+        Args:
+        request: The incoming request.
+        asset: The Asset object to write, without a valid href to the asset.
+        file: The file to write.
+        collection_id: The ID of the collection to write the asset to.
+        content_type: The content type of the request.
+
+        Returns:
+        A Response object containing the newly created asset.
+
+        :param collection_id: STAC Collection ID. Required.
+        :type collection_id: str
+        :keyword file: Required.
+        :paramtype file: bytes
+        :keyword data: Required.
+        :paramtype data: str
+        :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoCatalogCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "description": "str",
+                    "extent": {
+                        "str": {}
+                    },
+                    "id": "str",
+                    "license": "str",
+                    "links": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_version": "str",
+                    "type": "str",
+                    "assets": {
+                        "str": {}
+                    },
+                    "keywords": [
+                        "str"
+                    ],
+                    "msft:short_description": "str",
+                    "providers": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_extensions": [
+                        "str"
+                    ],
+                    "summaries": {
+                        "str": {}
+                    },
+                    "title": "str"
+                }
+        """
+
     @distributed_trace
     def collection_asset(
         self, collection_id: str, body: JSON = _Unset, *, file: bytes = _Unset, data: str = _Unset, **kwargs: Any
@@ -10154,7 +10191,7 @@ class createOperationsOperations:
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
-        :param body: Required.
+        :param body: Is one of the following types: JSON Required.
         :type body: JSON
         :keyword file: Required.
         :paramtype file: bytes
@@ -10170,7 +10207,7 @@ class createOperationsOperations:
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "data": "str",
-                    "file": bytes("bytes", encoding="utf-8")
+                    "file": filetype
                 }
 
                 # response body for status code(s): 200
@@ -10217,10 +10254,9 @@ class createOperationsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[_models.GeoCatalogCollection] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -10230,13 +10266,16 @@ class createOperationsOperations:
                 raise TypeError("missing required argument: data")
             body = {"data": data, "file": file}
             body = {k: v for k, v in body.items() if v is not None}
-        _content = body
+        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _file_fields: List[str] = ["file"]
+        _data_fields: List[str] = ["data"]
+        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_create_operations_collection_asset_request(
             collection_id=collection_id,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            files=_files,
+            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -10870,6 +10909,152 @@ class updateOperationsOperations:
 
         return deserialized  # type: ignore
 
+    @overload
+    def collection_asset(
+        self, collection_id: str, asset_id: str, body: JSON, **kwargs: Any
+    ) -> _models.GeoCatalogCollection:
+        """Update Collection Asset.
+
+        Update an existing asset in a given collection.
+
+        Args:
+        request: The incoming request.
+        asset: The Asset object to update.
+        file: The file to update (optional).
+        collection_id: The ID of the collection to update the asset in.
+        asset_id: The ID of the asset to update.
+        content_type: The content type of the request.
+
+        Returns:
+        A Response object containing the updated asset.
+
+        :param collection_id: STAC Collection ID. Required.
+        :type collection_id: str
+        :param asset_id: STAC Asset ID. Required.
+        :type asset_id: str
+        :param body: Required.
+        :type body: JSON
+        :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoCatalogCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "data": "str",
+                    "file": filetype
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "description": "str",
+                    "extent": {
+                        "str": {}
+                    },
+                    "id": "str",
+                    "license": "str",
+                    "links": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_version": "str",
+                    "type": "str",
+                    "assets": {
+                        "str": {}
+                    },
+                    "keywords": [
+                        "str"
+                    ],
+                    "msft:short_description": "str",
+                    "providers": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_extensions": [
+                        "str"
+                    ],
+                    "summaries": {
+                        "str": {}
+                    },
+                    "title": "str"
+                }
+        """
+
+    @overload
+    def collection_asset(
+        self, collection_id: str, asset_id: str, *, data: str, file: Optional[bytes] = None, **kwargs: Any
+    ) -> _models.GeoCatalogCollection:
+        """Update Collection Asset.
+
+        Update an existing asset in a given collection.
+
+        Args:
+        request: The incoming request.
+        asset: The Asset object to update.
+        file: The file to update (optional).
+        collection_id: The ID of the collection to update the asset in.
+        asset_id: The ID of the asset to update.
+        content_type: The content type of the request.
+
+        Returns:
+        A Response object containing the updated asset.
+
+        :param collection_id: STAC Collection ID. Required.
+        :type collection_id: str
+        :param asset_id: STAC Asset ID. Required.
+        :type asset_id: str
+        :keyword data: Required.
+        :paramtype data: str
+        :keyword file: Default value is None.
+        :paramtype file: bytes
+        :return: GeoCatalogCollection. The GeoCatalogCollection is compatible with MutableMapping
+        :rtype: ~spatio.models.GeoCatalogCollection
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "description": "str",
+                    "extent": {
+                        "str": {}
+                    },
+                    "id": "str",
+                    "license": "str",
+                    "links": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_version": "str",
+                    "type": "str",
+                    "assets": {
+                        "str": {}
+                    },
+                    "keywords": [
+                        "str"
+                    ],
+                    "msft:short_description": "str",
+                    "providers": [
+                        {
+                            "str": {}
+                        }
+                    ],
+                    "stac_extensions": [
+                        "str"
+                    ],
+                    "summaries": {
+                        "str": {}
+                    },
+                    "title": "str"
+                }
+        """
+
     @distributed_trace
     def collection_asset(
         self,
@@ -10900,7 +11085,7 @@ class updateOperationsOperations:
         :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
         :type asset_id: str
-        :param body: Required.
+        :param body: Is one of the following types: JSON Required.
         :type body: JSON
         :keyword data: Required.
         :paramtype data: str
@@ -10916,7 +11101,7 @@ class updateOperationsOperations:
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "data": "str",
-                    "file": bytes("bytes", encoding="utf-8")
+                    "file": filetype
                 }
 
                 # response body for status code(s): 200
@@ -10963,10 +11148,9 @@ class updateOperationsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[_models.GeoCatalogCollection] = kwargs.pop("cls", None)
 
         if body is _Unset:
@@ -10974,14 +11158,17 @@ class updateOperationsOperations:
                 raise TypeError("missing required argument: data")
             body = {"data": data, "file": file}
             body = {k: v for k, v in body.items() if v is not None}
-        _content = body
+        _body = body.as_dict() if isinstance(body, _model_base.Model) else body
+        _file_fields: List[str] = ["file"]
+        _data_fields: List[str] = ["data"]
+        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_update_operations_collection_asset_request(
             collection_id=collection_id,
             asset_id=asset_id,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            files=_files,
+            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -13958,7 +14145,7 @@ class statisticsOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling0]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
@@ -13991,7 +14178,7 @@ class statisticsOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling0
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -14116,7 +14303,7 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling1]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
@@ -14155,7 +14342,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling1
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -14218,7 +14405,7 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling1]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
@@ -14257,7 +14444,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling1
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -14314,7 +14501,7 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling1]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
@@ -14353,7 +14540,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling1
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -14410,7 +14597,7 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling1]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
@@ -14448,7 +14635,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling1
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -14572,7 +14759,7 @@ class geojsonOperationsOperations:
         item_id: str,
         height: int,
         width: int,
-        body: _models.Geojson0,
+        body: _models.Geojson,
         *,
         color_formula: Optional[str] = None,
         coord_crs: Optional[str] = None,
@@ -14582,17 +14769,12 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling19]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm15]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -14614,7 +14796,7 @@ class geojsonOperationsOperations:
         :param width: Required.
         :type width: int
         :param body: Required.
-        :type body: ~spatio.models.Geojson0
+        :type body: ~spatio.models.Geojson
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -14635,12 +14817,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling19
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm15
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14677,8 +14859,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14694,13 +14875,7 @@ class geojsonOperationsOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
-                    "geometry": {},
-                    "properties": {},
-                    "type": "str",
-                    "bbox": {},
-                    "id": {}
-                }
+                body = {}
         """
 
     @overload
@@ -14721,17 +14896,12 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling19]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm15]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -14774,12 +14944,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling19
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm15
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14816,8 +14986,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14848,17 +15017,12 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling19]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm15]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -14901,12 +15065,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling19
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm15
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -14943,8 +15107,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -14965,7 +15128,7 @@ class geojsonOperationsOperations:
         item_id: str,
         height: int,
         width: int,
-        body: Union[_models.Geojson0, JSON, IO[bytes]],
+        body: Union[_models.Geojson, JSON, IO[bytes]],
         *,
         color_formula: Optional[str] = None,
         coord_crs: Optional[str] = None,
@@ -14975,17 +15138,12 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling19]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm15]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -15005,8 +15163,8 @@ class geojsonOperationsOperations:
         :type height: int
         :param width: Required.
         :type width: int
-        :param body: Is one of the following types: Geojson0, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson0 or JSON or IO[bytes]
+        :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
+        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -15027,12 +15185,12 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling19
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm15
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15069,8 +15227,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsQvqoiaApiCollectionsCollectionidItemsItemidCropWidthXHeightFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15083,13 +15240,7 @@ class geojsonOperationsOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
-                    "geometry": {},
-                    "properties": {},
-                    "type": "str",
-                    "bbox": {},
-                    "id": {}
-                }
+                body = {}
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -15165,7 +15316,7 @@ class geojsonOperationsOperations:
         format: Union[str, _models.ImageType],
         collection_id: str,
         item_id: str,
-        body: _models.Geojson1,
+        body: _models.Geojson,
         *,
         color_formula: Optional[str] = None,
         coord_crs: Optional[str] = None,
@@ -15175,16 +15326,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling20]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm16]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -15202,7 +15351,7 @@ class geojsonOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Required.
-        :type body: ~spatio.models.Geojson1
+        :type body: ~spatio.models.Geojson
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -15223,7 +15372,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling20
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -15232,7 +15381,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm16
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15269,8 +15418,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15286,13 +15434,7 @@ class geojsonOperationsOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
-                    "geometry": {},
-                    "properties": {},
-                    "type": "str",
-                    "bbox": {},
-                    "id": {}
-                }
+                body = {}
         """
 
     @overload
@@ -15311,16 +15453,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling20]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm16]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -15359,7 +15499,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling20
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -15368,7 +15508,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm16
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15405,8 +15545,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15435,16 +15574,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling20]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm16]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -15483,7 +15620,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling20
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -15492,7 +15629,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm16
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15529,8 +15666,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15549,7 +15685,7 @@ class geojsonOperationsOperations:
         format: Union[str, _models.ImageType],
         collection_id: str,
         item_id: str,
-        body: Union[_models.Geojson1, JSON, IO[bytes]],
+        body: Union[_models.Geojson, JSON, IO[bytes]],
         *,
         color_formula: Optional[str] = None,
         coord_crs: Optional[str] = None,
@@ -15559,16 +15695,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling20]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm16]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -15584,8 +15718,8 @@ class geojsonOperationsOperations:
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param body: Is one of the following types: Geojson1, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson1 or JSON or IO[bytes]
+        :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
+        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
         :keyword color_formula: rio-color formula (info: https://github.com/mapbox/rio-color). Default
          value is None.
         :paramtype color_formula: str
@@ -15606,7 +15740,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling20
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -15615,7 +15749,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm16
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15652,8 +15786,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1O2X8OjApiCollectionsCollectionidItemsItemidCropFormatPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15666,13 +15799,7 @@ class geojsonOperationsOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
-                    "geometry": {},
-                    "properties": {},
-                    "type": "str",
-                    "bbox": {},
-                    "id": {}
-                }
+                body = {}
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -15747,7 +15874,7 @@ class geojsonOperationsOperations:
         self,
         collection_id: str,
         item_id: str,
-        body: _models.Geojson2,
+        body: _models.Geojson,
         *,
         format: Optional[Union[str, _models.ImageType]] = None,
         color_formula: Optional[str] = None,
@@ -15758,16 +15885,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling21]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm17]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -15782,7 +15907,7 @@ class geojsonOperationsOperations:
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Required.
-        :type body: ~spatio.models.Geojson2
+        :type body: ~spatio.models.Geojson
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
         :paramtype format: str or ~spatio.models.ImageType
@@ -15806,7 +15931,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling21
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -15815,7 +15940,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm17
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15852,8 +15977,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -15869,13 +15993,7 @@ class geojsonOperationsOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
-                    "geometry": {},
-                    "properties": {},
-                    "type": "str",
-                    "bbox": {},
-                    "id": {}
-                }
+                body = {}
         """
 
     @overload
@@ -15894,16 +16012,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling21]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm17]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -15942,7 +16058,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling21
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -15951,7 +16067,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm17
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -15988,8 +16104,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16018,16 +16133,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling21]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm17]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
@@ -16066,7 +16179,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling21
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -16075,7 +16188,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm17
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16112,8 +16225,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16131,7 +16243,7 @@ class geojsonOperationsOperations:
         self,
         collection_id: str,
         item_id: str,
-        body: Union[_models.Geojson2, JSON, IO[bytes]],
+        body: Union[_models.Geojson, JSON, IO[bytes]],
         *,
         format: Optional[Union[str, _models.ImageType]] = None,
         color_formula: Optional[str] = None,
@@ -16142,16 +16254,14 @@ class geojsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling21]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm17]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -16164,8 +16274,8 @@ class geojsonOperationsOperations:
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param body: Is one of the following types: Geojson2, JSON, IO[bytes] Required.
-        :type body: ~spatio.models.Geojson2 or JSON or IO[bytes]
+        :param body: Is one of the following types: Geojson, JSON, IO[bytes] Required.
+        :type body: ~spatio.models.Geojson or JSON or IO[bytes]
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
         :paramtype format: str or ~spatio.models.ImageType
@@ -16189,7 +16299,7 @@ class geojsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling21
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -16198,7 +16308,7 @@ class geojsonOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm17
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16235,8 +16345,7 @@ class geojsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1P3OtkApiCollectionsCollectionidItemsItemidCropPostParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16249,13 +16358,7 @@ class geojsonOperationsOperations:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
-                body = {
-                    "geometry": {},
-                    "properties": {},
-                    "type": "str",
-                    "bbox": {},
-                    "id": {}
-                }
+                body = {}
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
@@ -16363,16 +16466,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling2]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.PathsNadiz3ApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXFormatGetParameters20Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -16426,7 +16524,7 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling2
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
         :paramtype algorithm: str or ~spatio.models.Algorithm
@@ -16466,8 +16564,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsNadiz3ApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXFormatGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16542,7 +16639,7 @@ class tileOperationsOperations:
         z: int,
         x: int,
         y: int,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid0],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         scale: int,
         collection_id: str,
         item_id: str,
@@ -16556,16 +16653,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling3]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm0]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.Paths6B5V9CApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXGetParameters20Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -16587,7 +16679,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid0
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param collection_id: STAC Collection Identifier. Required.
@@ -16619,10 +16711,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling3
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm0
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16659,8 +16751,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths6B5V9CApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYScaleXGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16735,7 +16826,7 @@ class tileOperationsOperations:
         z: int,
         x: int,
         y: int,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid1],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         format: Union[str, _models.ImageType],
         collection_id: str,
         item_id: str,
@@ -16749,16 +16840,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling4]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm1]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.PathsUpa60XApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYFormatGetParameters20Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -16780,7 +16866,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid1
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
         :type format: str or ~spatio.models.ImageType
@@ -16812,10 +16898,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling4
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm1
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -16852,8 +16938,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsUpa60XApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYFormatGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -16928,7 +17013,7 @@ class tileOperationsOperations:
         z: int,
         x: int,
         y: int,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid2],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         collection_id: str,
         item_id: str,
         *,
@@ -16942,16 +17027,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling5]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm2]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.Paths1Hm3CymApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYGetParameters20Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -16973,7 +17053,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid2
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -17005,10 +17085,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling5
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm2
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17045,8 +17125,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1Hm3CymApiCollectionsCollectionidItemsItemidTilesTilematrixsetidZXYGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17126,7 +17205,7 @@ class tileOperationsOperations:
         collection_id: str,
         item_id: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid3]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
         assets: Optional[List[str]] = None,
@@ -17135,15 +17214,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling6]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm3]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str, _models.PathsE255ZyApiCollectionsCollectionidItemsItemidTilesZXYScaleXFormatGetParameters20Schema
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -17174,7 +17249,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid3
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -17197,10 +17272,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling6
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm3
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17237,8 +17312,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsE255ZyApiCollectionsCollectionidItemsItemidTilesZXYScaleXFormatGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17319,7 +17393,7 @@ class tileOperationsOperations:
         collection_id: str,
         item_id: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid4]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         format: Optional[Union[str, _models.ImageType]] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
@@ -17329,13 +17403,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling7]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm4]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1E52KilApiCollectionsCollectionidItemsItemidTilesZXYScaleXGetParameters20Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -17363,7 +17435,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid4
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
         :paramtype format: str or ~spatio.models.ImageType
@@ -17389,10 +17461,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling7
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm4
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17429,8 +17501,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1E52KilApiCollectionsCollectionidItemsItemidTilesZXYScaleXGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17509,7 +17580,7 @@ class tileOperationsOperations:
         collection_id: str,
         item_id: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid5]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         scale: Optional[int] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
@@ -17519,13 +17590,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling8]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm5]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsOg81NeApiCollectionsCollectionidItemsItemidTilesZXYFormatGetParameters20Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -17554,7 +17623,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid5
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
@@ -17579,10 +17648,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling8
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm5
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17619,8 +17688,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsOg81NeApiCollectionsCollectionidItemsItemidTilesZXYFormatGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17698,7 +17766,7 @@ class tileOperationsOperations:
         collection_id: str,
         item_id: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid6]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         scale: Optional[int] = None,
         format: Optional[Union[str, _models.ImageType]] = None,
         buffer: Optional[float] = None,
@@ -17709,13 +17777,11 @@ class tileOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling9]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm6]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsNwbo2EApiCollectionsCollectionidItemsItemidTilesZXYGetParameters20Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -17741,7 +17807,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid6
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
@@ -17769,10 +17835,10 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling9
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm6
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -17809,8 +17875,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsNwbo2EApiCollectionsCollectionidItemsItemidTilesZXYGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -17882,7 +17947,7 @@ class tileOperationsOperations:
     @distributed_trace
     def api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_scale_x_format_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid13],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         scale: int,
         format: Union[str, _models.ImageType],
         searchid: str,
@@ -17899,14 +17964,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling22]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm18]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1Cbjd4ZApiMosaicSearchidTilesTilematrixsetidZXYScaleXFormatGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -17924,7 +17987,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid13
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
@@ -17965,13 +18028,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling22
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
         :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm18
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -18008,8 +18071,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1Cbjd4ZApiMosaicSearchidTilesTilematrixsetidZXYScaleXFormatGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -18103,7 +18165,7 @@ class tileOperationsOperations:
     @distributed_trace
     def api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_scale_x_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid14],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         scale: int,
         searchid: str,
         z: int,
@@ -18120,14 +18182,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling23]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection0]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm19]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1D0N3Y8ApiMosaicSearchidTilesTilematrixsetidZXYScaleXGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -18145,7 +18205,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid14
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param scale: Required.
         :type scale: int
         :param searchid: Search Id (pgSTAC Search Hash). Required.
@@ -18186,13 +18246,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling23
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection0
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm19
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -18229,8 +18289,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1D0N3Y8ApiMosaicSearchidTilesTilematrixsetidZXYScaleXGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -18324,7 +18383,7 @@ class tileOperationsOperations:
     @distributed_trace
     def api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_format_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid15],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         format: Union[str, _models.ImageType],
         searchid: str,
         z: int,
@@ -18341,14 +18400,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling24]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection1]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm20]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsR1Up92ApiMosaicSearchidTilesTilematrixsetidZXYFormatGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -18366,7 +18423,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid15
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Required.
         :type format: str or ~spatio.models.ImageType
@@ -18407,13 +18464,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling24
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection1
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm20
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -18450,8 +18507,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsR1Up92ApiMosaicSearchidTilesTilematrixsetidZXYFormatGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -18545,7 +18601,7 @@ class tileOperationsOperations:
     @distributed_trace
     def api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid16],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         searchid: str,
         z: int,
         x: int,
@@ -18562,14 +18618,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling25]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection2]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm21]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths8Rr605ApiMosaicSearchidTilesTilematrixsetidZXYGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -18587,7 +18641,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid16
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -18628,13 +18682,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling25
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection2
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm21
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -18671,8 +18725,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths8Rr605ApiMosaicSearchidTilesTilematrixsetidZXYGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -18773,7 +18826,7 @@ class tileOperationsOperations:
         x: int,
         y: int,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid17]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
         assets: Optional[List[str]] = None,
@@ -18783,14 +18836,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling26]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection3]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm22]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1Jjrcv9ApiMosaicSearchidTilesZXYScaleXFormatGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -18824,7 +18875,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid17
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
          Output
          **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
@@ -18849,13 +18900,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling26
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection3
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm22
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -18892,8 +18943,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1Jjrcv9ApiMosaicSearchidTilesZXYScaleXFormatGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -18993,7 +19043,7 @@ class tileOperationsOperations:
         x: int,
         y: int,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid18]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         format: Optional[Union[str, _models.ImageType]] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
@@ -19004,14 +19054,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling27]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection4]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm23]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsUh495CApiMosaicSearchidTilesZXYScaleXGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -19042,7 +19090,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid18
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
          "pngraw". Default value is None.
         :paramtype format: str or ~spatio.models.ImageType
@@ -19070,13 +19118,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling27
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection4
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm23
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -19113,8 +19161,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsUh495CApiMosaicSearchidTilesZXYScaleXGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -19214,7 +19261,7 @@ class tileOperationsOperations:
         x: int,
         y: int,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid19]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         scale: Optional[int] = None,
         buffer: Optional[float] = None,
         color_formula: Optional[str] = None,
@@ -19225,14 +19272,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling28]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection5]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm24]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1T1RghjApiMosaicSearchidTilesZXYFormatGetParameters21Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -19264,7 +19309,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid19
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
@@ -19291,13 +19336,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling28
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection5
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm24
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -19334,8 +19379,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1T1RghjApiMosaicSearchidTilesZXYFormatGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -19434,7 +19478,7 @@ class tileOperationsOperations:
         x: int,
         y: int,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid20]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         scale: Optional[int] = None,
         format: Optional[Union[str, _models.ImageType]] = None,
         buffer: Optional[float] = None,
@@ -19446,12 +19490,12 @@ class tileOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling29]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection6]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm25]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[Union[str, _models.Paths1InxkmsApiMosaicSearchidTilesZXYGetParameters21Schema]] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -19480,7 +19524,7 @@ class tileOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid20
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword scale: Default value is None.
         :paramtype scale: int
         :keyword format: Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and
@@ -19510,13 +19554,13 @@ class tileOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling29
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection6
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm25
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -19553,8 +19597,7 @@ class tileOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1InxkmsApiMosaicSearchidTilesZXYGetParameters21Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -19666,16 +19709,11 @@ class tilejsonOperationsOperations:
     @distributed_trace
     def api_collections_collection_id_items_item_id_tile_matrix_set_id_tilejson_json_get(  # pylint: disable=name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid7],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         collection_id: str,
         item_id: str,
         *,
-        tile_format: Optional[
-            Union[
-                str,
-                _models.Paths14Al5EqApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters3Schema,
-            ]
-        ] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -19687,16 +19725,11 @@ class tilejsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling10]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm7]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.Paths1Fi8KxhApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters19Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -19709,7 +19742,7 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid7
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
@@ -19718,8 +19751,7 @@ class tilejsonOperationsOperations:
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.Paths14Al5EqApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters3Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -19748,10 +19780,10 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling10
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm7
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -19788,8 +19820,7 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1Fi8KxhApiCollectionsCollectionidItemsItemidTilematrixsetidTilejsonJsonGetParameters19Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -19904,10 +19935,8 @@ class tilejsonOperationsOperations:
         collection_id: str,
         item_id: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid8]] = None,
-        tile_format: Optional[
-            Union[str, _models.Paths1Eac3YhApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters3Schema]
-        ] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -19919,13 +19948,11 @@ class tilejsonOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling11]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm8]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsD0Pq0BApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters19Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -19942,13 +19969,12 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid8
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.Paths1Eac3YhApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters3Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -19977,10 +20003,10 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling11
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm8
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -20017,8 +20043,7 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsD0Pq0BApiCollectionsCollectionidItemsItemidTilejsonJsonGetParameters19Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -20130,12 +20155,10 @@ class tilejsonOperationsOperations:
     @distributed_trace
     def api_mosaic_searchid_tile_matrix_set_id_tilejson_json_get(  # pylint: disable=name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid21],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         searchid: str,
         *,
-        tile_format: Optional[
-            Union[str, _models.Paths1NvnarrApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters2Schema]
-        ] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -20148,14 +20171,12 @@ class tilejsonOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling30]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection7]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm26]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1HjtyveApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters20Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -20173,15 +20194,14 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid21
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.Paths1NvnarrApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters2Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -20212,13 +20232,13 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling30
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection7
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm26
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -20255,8 +20275,7 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1HjtyveApiMosaicSearchidTilematrixsetidTilejsonJsonGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -20392,8 +20411,8 @@ class tilejsonOperationsOperations:
         self,
         searchid: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid22]] = None,
-        tile_format: Optional[Union[str, _models.PathsGdshl3ApiMosaicSearchidTilejsonJsonGetParameters2Schema]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -20406,14 +20425,12 @@ class tilejsonOperationsOperations:
         collection: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling31]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection8]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm27]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsTl93ReApiMosaicSearchidTilejsonJsonGetParameters20Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         scan_limit: Optional[int] = None,
@@ -20433,13 +20450,12 @@ class tilejsonOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid22
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword tile_format: Default will be automatically defined if the output image needs a mask
          (png) or
          not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
          Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.PathsGdshl3ApiMosaicSearchidTilejsonJsonGetParameters2Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -20470,13 +20486,13 @@ class tilejsonOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling31
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
          "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~spatio.models.PixelSelection8
+        :paramtype pixel_selection: str or ~spatio.models.PixelSelection
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm27
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -20513,8 +20529,7 @@ class tilejsonOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsTl93ReApiMosaicSearchidTilejsonJsonGetParameters20Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -20666,16 +20681,11 @@ class wmtsOperationsOperations:
     @distributed_trace
     def api_collections_collection_id_items_item_id_tile_matrix_set_id_w_m_t_s_capabilities_xml_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid9],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         collection_id: str,
         item_id: str,
         *,
-        tile_format: Optional[
-            Union[
-                str,
-                _models.PathsAa76DeApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters3Schema,
-            ]
-        ] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -20687,16 +20697,11 @@ class wmtsOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling12]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm9]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.Paths1Qjg5T5ApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters19Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -20709,15 +20714,14 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid9
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.PathsAa76DeApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters3Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -20746,10 +20750,10 @@ class wmtsOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling12
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm9
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -20786,8 +20790,7 @@ class wmtsOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1Qjg5T5ApiCollectionsCollectionidItemsItemidTilematrixsetidWmtscapabilitiesXmlGetParameters19Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -20863,10 +20866,8 @@ class wmtsOperationsOperations:
         collection_id: str,
         item_id: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid10]] = None,
-        tile_format: Optional[
-            Union[str, _models.Paths1QvggpkApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters3Schema]
-        ] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -20878,13 +20879,11 @@ class wmtsOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling13]] = None,
-        algorithm: Optional[Union[str, _models.Algorithm10]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.PathsS5MjfnApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters19Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -20901,11 +20900,10 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid10
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.Paths1QvggpkApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters3Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -20934,10 +20932,10 @@ class wmtsOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling13
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm10
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -20974,8 +20972,7 @@ class wmtsOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.PathsS5MjfnApiCollectionsCollectionidItemsItemidWmtscapabilitiesXmlGetParameters19Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -21050,12 +21047,10 @@ class wmtsOperationsOperations:
     @distributed_trace
     def api_mosaic_searchid_tile_matrix_set_id_w_m_t_s_capabilities_xml_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid23],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         searchid: str,
         *,
-        tile_format: Optional[
-            Union[str, _models.Paths1H5Csh7ApiMosaicSearchidTilematrixsetidWmtscapabilitiesXmlGetParameters2Schema]
-        ] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -21069,13 +21064,12 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid23
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.Paths1H5Csh7ApiMosaicSearchidTilematrixsetidWmtscapabilitiesXmlGetParameters2Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -21136,10 +21130,8 @@ class wmtsOperationsOperations:
         self,
         searchid: str,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid24]] = None,
-        tile_format: Optional[
-            Union[str, _models.Paths10M3PplApiMosaicSearchidWmtscapabilitiesXmlGetParameters2Schema]
-        ] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
+        tile_format: Optional[Union[str, _models.ImageType]] = None,
         tile_scale: Optional[int] = None,
         minzoom: Optional[int] = None,
         maxzoom: Optional[int] = None,
@@ -21155,11 +21147,10 @@ class wmtsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid24
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
          "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or
-         ~spatio.models.Paths10M3PplApiMosaicSearchidWmtscapabilitiesXmlGetParameters2Schema
+        :paramtype tile_format: str or ~spatio.models.ImageType
         :keyword tile_scale: Tile size scale. 1=256x256, 2=512x512... Default value is None.
         :paramtype tile_scale: int
         :keyword minzoom: Overwrite default minzoom. Default value is None.
@@ -21248,7 +21239,7 @@ class pointOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling14]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         **kwargs: Any,
     ) -> _models.TitilerCoreModelsResponsesPoint:
         """Point.
@@ -21280,7 +21271,7 @@ class pointOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling14
+        :paramtype resampling: str or ~spatio.models.Resampling
         :return: TitilerCoreModelsResponsesPoint. The TitilerCoreModelsResponsesPoint is compatible
          with MutableMapping
         :rtype: ~spatio.models.TitilerCoreModelsResponsesPoint
@@ -21393,16 +21384,14 @@ class previewOperationsOperations:
         dst_crs: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling15]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm11]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths1M9KdiwApiCollectionsCollectionidItemsItemidPreviewFormatGetParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -21437,7 +21426,7 @@ class previewOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling15
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -21446,7 +21435,7 @@ class previewOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm11
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -21483,8 +21472,7 @@ class previewOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths1M9KdiwApiCollectionsCollectionidItemsItemidPreviewFormatGetParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -21566,16 +21554,14 @@ class previewOperationsOperations:
         dst_crs: Optional[str] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling16]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm12]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[str, _models.Paths16Yed9YApiCollectionsCollectionidItemsItemidPreviewGetParameters18Schema]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -21610,7 +21596,7 @@ class previewOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling16
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -21619,7 +21605,7 @@ class previewOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm12
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -21656,8 +21642,7 @@ class previewOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths16Yed9YApiCollectionsCollectionidItemsItemidPreviewGetParameters18Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -21764,17 +21749,12 @@ class partOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling17]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm13]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.Paths12Z2742ApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyWidthXHeightFormatGetParameters23Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -21824,12 +21804,12 @@ class partOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling17
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm13
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -21866,8 +21846,7 @@ class partOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths12Z2742ApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyWidthXHeightFormatGetParameters23Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -21959,19 +21938,14 @@ class partOperationsOperations:
         asset_as_band: Optional[bool] = None,
         nodata: Optional[str] = None,
         unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling18]] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        algorithm: Optional[Union[str, _models.Algorithm14]] = None,
+        algorithm: Optional[Union[str, _models.Algorithm]] = None,
         algorithm_params: Optional[str] = None,
         rescale: Optional[List[str]] = None,
-        colormap_name: Optional[
-            Union[
-                str,
-                _models.Paths143XwndApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyFormatGetParameters23Schema,
-            ]
-        ] = None,
+        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
@@ -22017,7 +21991,7 @@ class partOperationsOperations:
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~spatio.models.Resampling18
+        :paramtype resampling: str or ~spatio.models.Resampling
         :keyword max_size: Default value is None.
         :paramtype max_size: int
         :keyword height: Default value is None.
@@ -22026,7 +22000,7 @@ class partOperationsOperations:
         :paramtype width: int
         :keyword algorithm: Algorithm name. Known values are: "hillshade", "contours",
          "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~spatio.models.Algorithm14
+        :paramtype algorithm: str or ~spatio.models.Algorithm
         :keyword algorithm_params: Algorithm parameter. Default value is None.
         :paramtype algorithm_params: str
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
@@ -22063,8 +22037,7 @@ class partOperationsOperations:
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or
-         ~spatio.models.Paths143XwndApiCollectionsCollectionidItemsItemidCropMinxMinyMaxxMaxyFormatGetParameters23Schema
+        :paramtype colormap_name: str or ~spatio.models.ColorMapNames
         :keyword colormap: JSON encoded custom Colormap. Default value is None.
         :paramtype colormap: str
         :keyword return_mask: Add mask to the output data. Default value is None.
@@ -22443,7 +22416,7 @@ class assetsOperationsOperations:
     @distributed_trace
     def for_tile_api_mosaic_searchid_tiles_tile_matrix_set_id_z_x_y_assets_get(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
-        tile_matrix_set_id: Union[str, _models.Tilematrixsetid11],
+        tile_matrix_set_id: Union[str, _models.Tilematrixsetid],
         searchid: str,
         z: int,
         x: int,
@@ -22464,7 +22437,7 @@ class assetsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Required.
-        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid11
+        :type tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :param searchid: Search Id (pgSTAC Search Hash). Required.
         :type searchid: str
         :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
@@ -22553,7 +22526,7 @@ class assetsOperationsOperations:
         x: int,
         y: int,
         *,
-        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid12]] = None,
+        tile_matrix_set_id: Optional[Union[str, _models.Tilematrixsetid]] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
@@ -22580,7 +22553,7 @@ class assetsOperationsOperations:
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
          "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
          "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid12
+        :paramtype tile_matrix_set_id: str or ~spatio.models.Tilematrixsetid
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
