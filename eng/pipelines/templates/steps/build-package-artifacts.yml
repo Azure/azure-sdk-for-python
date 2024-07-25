@@ -61,12 +61,6 @@ steps:
         ./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath "$(Build.SourcesDirectory)" -ArtifactPath "$location"
       displayName: Generate PR Diff
 
-    - task: PowerShell@2
-      inputs:
-        filePath: 'eng/common/scripts/Generate-PR-Diff.ps1'
-        arguments: ''
-      displayName: 'Generate PR Diff'
-
     - pwsh: |
         Write-Host "We freshly generated the PR diff, and this is what it sees!"
         Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
