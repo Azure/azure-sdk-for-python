@@ -4,6 +4,7 @@ parameters:
     default: 'azure-*'
   - name: PackagePropertiesFolder
     type: string
+    default: ''
 
 steps:
   # if triggered for a PR, handle PR diff side adding the default for packageproperties folder will mean this will always act
